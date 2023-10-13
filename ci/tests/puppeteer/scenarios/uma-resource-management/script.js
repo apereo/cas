@@ -3,13 +3,13 @@ const cas = require('../../cas.js');
 
 (async () => {
     let url = `https://localhost:8443/cas/oauth2.0/.well-known/uma-configuration`;
-    await cas.doGet(url, res => {
+    await cas.doGet(url, async res => {
         assert(res.data.issuer !== null);
         assert(res.data.rpt_endpoint !== null);
         assert(res.data.permission_registration_endpoint !== null);
         assert(res.data.resource_set_registration_endpoint !== null);
         assert(res.data.requesting_party_claims_endpoint !== null);
-    }, error => {
+    }, async error => {
         throw `Operation failed: ${error}`;
     });
 

@@ -110,7 +110,7 @@ class RegisteredServiceAuthenticationPolicyResolverTests {
 
         val policies = resolver.resolve(transaction);
         assertEquals(1, policies.size());
-        assertTrue(policies.iterator().next() instanceof AtLeastOneCredentialValidatedAuthenticationPolicy);
+        assertInstanceOf(AtLeastOneCredentialValidatedAuthenticationPolicy.class, policies.iterator().next());
     }
 
     @Test
@@ -123,7 +123,7 @@ class RegisteredServiceAuthenticationPolicyResolverTests {
 
         val policies = resolver.resolve(transaction);
         assertEquals(1, policies.size());
-        assertTrue(policies.iterator().next() instanceof AllAuthenticationHandlersSucceededAuthenticationPolicy);
+        assertInstanceOf(AllAuthenticationHandlersSucceededAuthenticationPolicy.class, policies.iterator().next());
     }
 
     @Test
@@ -153,7 +153,7 @@ class RegisteredServiceAuthenticationPolicyResolverTests {
 
         val policies = resolver.resolve(transaction);
         assertEquals(1, policies.size());
-        assertTrue(policies.iterator().next() instanceof NotPreventedAuthenticationPolicy);
+        assertInstanceOf(NotPreventedAuthenticationPolicy.class, policies.iterator().next());
     }
 
     @Test
@@ -166,7 +166,7 @@ class RegisteredServiceAuthenticationPolicyResolverTests {
 
         val policies = resolver.resolve(transaction);
         assertEquals(1, policies.size());
-        assertTrue(policies.iterator().next() instanceof GroovyScriptAuthenticationPolicy);
+        assertInstanceOf(GroovyScriptAuthenticationPolicy.class, policies.iterator().next());
     }
 
     @Test
@@ -186,7 +186,7 @@ class RegisteredServiceAuthenticationPolicyResolverTests {
             RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
         val policies = resolver.resolve(transaction);
         assertEquals(1, policies.size());
-        assertTrue(policies.iterator().next() instanceof RestfulAuthenticationPolicy);
+        assertInstanceOf(RestfulAuthenticationPolicy.class, policies.iterator().next());
     }
 
 }

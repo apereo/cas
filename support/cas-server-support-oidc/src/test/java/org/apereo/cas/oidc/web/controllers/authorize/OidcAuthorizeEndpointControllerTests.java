@@ -122,7 +122,7 @@ class OidcAuthorizeEndpointControllerTests {
 
             val modelAndView = oidcAuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
             val view = modelAndView.getView();
-            assertTrue(view instanceof RedirectView);
+            assertInstanceOf(RedirectView.class, view);
             val url = ((AbstractUrlBasedView) view).getUrl();
             assertTrue(url.startsWith("https://oauth.example.org/"));
 

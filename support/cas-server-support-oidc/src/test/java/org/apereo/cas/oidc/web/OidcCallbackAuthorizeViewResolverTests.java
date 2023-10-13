@@ -47,7 +47,7 @@ class OidcCallbackAuthorizeViewResolverTests extends AbstractOidcTests {
 
         val mv = callbackAuthorizeViewResolver.resolve(context, manager, "https://github.com");
         assertNotNull(mv);
-        assertTrue(mv.getView() instanceof RedirectView);
+        assertInstanceOf(RedirectView.class, mv.getView());
     }
 
     @Test
@@ -65,7 +65,7 @@ class OidcCallbackAuthorizeViewResolverTests extends AbstractOidcTests {
         manager.save(true, profile, false);
         val mv = callbackAuthorizeViewResolver.resolve(context, manager, url);
         assertNotNull(mv);
-        assertTrue(mv.getView() instanceof RedirectView);
+        assertInstanceOf(RedirectView.class, mv.getView());
     }
 
     @Test
@@ -130,6 +130,6 @@ class OidcCallbackAuthorizeViewResolverTests extends AbstractOidcTests {
 
         val mv = callbackAuthorizeViewResolver.resolve(context, manager, url);
         assertNotNull(mv);
-        assertTrue(mv.getView() instanceof RedirectView);
+        assertInstanceOf(RedirectView.class, mv.getView());
     }
 }

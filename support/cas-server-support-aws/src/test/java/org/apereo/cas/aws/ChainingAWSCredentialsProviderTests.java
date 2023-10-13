@@ -31,7 +31,7 @@ class ChainingAWSCredentialsProviderTests {
             "profilePath", path);
         val credentials = p.resolveCredentials();
         assertNotNull(credentials);
-        assertTrue(credentials instanceof AwsBasicCredentials);
+        assertInstanceOf(AwsBasicCredentials.class, credentials);
         assertNotNull(ChainingAWSCredentialsProvider.getInstance());
     }
 }

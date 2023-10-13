@@ -47,14 +47,14 @@ const os = require("os");
     await cas.click(page, "#confirm");
     await page.waitForNavigation();
     await cas.assertTicketParameter(page);
-    
+
     const baseUrl = "https://localhost:8443/cas/actuator/attributeConsent";
     const url = `${baseUrl}/casuser`;
     await cas.log(`Trying ${url}`);
     let response = await cas.goto(page, url);
     await cas.log(`${response.status()} ${response.statusText()}`);
     assert(response.ok());
-    
+
     let template = path.join(__dirname, 'consent-record.json');
     let body = fs.readFileSync(template, 'utf8');
     await cas.log(`Import consent record:\n${body}`);
@@ -63,17 +63,17 @@ const os = require("os");
         'Content-Length': body.length,
         'Content-Type': 'application/json'
     }, 201, body);
-    
+
     await cas.doGet(`${baseUrl}/export`,
-    res => {
-        const tempDir = os.tmpdir();
-        let exported = path.join(tempDir, 'consent.zip');
-        res.data.pipe(fs.createWriteStream(exported));
-        cas.log(`Exported consent records are at ${exported}`);
-    },
-    error => {
-        throw error;
-    }, {}, "stream");
+        async res => {
+            const tempDir = os.tmpdir();
+            let exported = path.join(tempDir, 'consent.zip');
+            res.data.pipe(fs.createWriteStream(exported));
+            cas.log(`Exported consent records are at ${exported}`);
+        },
+        async error => {
+            throw error;
+        }, {}, "stream");
 
     await cas.doRequest(`${baseUrl}/casuser/1`, "DELETE");
     await cas.doRequest(`${baseUrl}/casuser`, "DELETE");

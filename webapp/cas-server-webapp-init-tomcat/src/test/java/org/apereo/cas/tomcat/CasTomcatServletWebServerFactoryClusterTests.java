@@ -62,7 +62,7 @@ class CasTomcatServletWebServerFactoryClusterTests {
             val cluster = (SimpleTcpCluster) tomcatServer.getTomcat().getEngine().getCluster();
             val channel = (GroupChannel) cluster.getChannel();
             val membership = channel.getMembershipService();
-            assertTrue(membership instanceof McastService);
+            assertInstanceOf(McastService.class, membership);
         } finally {
             server.stop();
         }

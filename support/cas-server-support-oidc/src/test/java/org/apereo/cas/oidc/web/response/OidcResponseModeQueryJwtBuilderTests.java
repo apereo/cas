@@ -53,7 +53,7 @@ class OidcResponseModeQueryJwtBuilderTests {
             assertNotNull(builder);
             val mv = builder.build(registeredService, "https://apereo.github.io",
                 Map.of("code", "123456", "state", "abcdef"));
-            assertTrue(mv.getView() instanceof RedirectView);
+            assertInstanceOf(RedirectView.class, mv.getView());
             val view = (RedirectView) mv.getView();
             assertEquals("https://apereo.github.io", view.getUrl());
             assertTrue(mv.getModel().containsKey("response"));
@@ -68,7 +68,7 @@ class OidcResponseModeQueryJwtBuilderTests {
             assertNotNull(builder);
             val mv = builder.build(registeredService, "https://apereo.github.io",
                 Map.of("code", "123456", "state", "abcdef"));
-            assertTrue(mv.getView() instanceof RedirectView);
+            assertInstanceOf(RedirectView.class, mv.getView());
             val view = (RedirectView) mv.getView();
             assertEquals("https://apereo.github.io", view.getUrl());
             assertTrue(mv.getModel().containsKey("response"));

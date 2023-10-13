@@ -107,7 +107,7 @@ class SurrogatePrincipalResolverTests {
         credential.setUsername("test");
         val p = resolver.resolve(credential, Optional.of(CoreAuthenticationTestUtils.getPrincipal("test")),
             Optional.of(mock(AuthenticationHandler.class)), Optional.of(CoreAuthenticationTestUtils.getService()));
-        assertTrue(p instanceof SurrogatePrincipal);
+        assertInstanceOf(SurrogatePrincipal.class, p);
         assertEquals(p.getId(), surrogateTrait.getSurrogateUsername());
     }
 

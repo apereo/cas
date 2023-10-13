@@ -60,7 +60,7 @@ class OidcIntrospectionEndpointControllerTests extends AbstractOidcTests {
         ticketRegistry.addTicket(accessToken);
         request.addParameter(OAuth20Constants.TOKEN, accessToken.getId());
         val result = oidcIntrospectionEndpointController.handleRequest(request, response);
-        assertTrue(JWTParser.parse(result.getBody().toString()) instanceof EncryptedJWT);
+        assertInstanceOf(EncryptedJWT.class, JWTParser.parse(result.getBody().toString()));
         assertEquals(OAuth20Constants.INTROSPECTION_JWT_HEADER_CONTENT_TYPE, result.getHeaders().getContentType().toString());
     }
 
@@ -80,7 +80,7 @@ class OidcIntrospectionEndpointControllerTests extends AbstractOidcTests {
         ticketRegistry.addTicket(accessToken);
         request.addParameter(OAuth20Constants.TOKEN, accessToken.getId());
         val result = oidcIntrospectionEndpointController.handleRequest(request, response).getBody();
-        assertTrue(JWTParser.parse(result.toString()) instanceof SignedJWT);
+        assertInstanceOf(SignedJWT.class, JWTParser.parse(result.toString()));
     }
 
     @Test
@@ -137,7 +137,7 @@ class OidcIntrospectionEndpointControllerTests extends AbstractOidcTests {
         ticketRegistry.addTicket(accessToken);
         request.addParameter(OAuth20Constants.TOKEN, accessToken.getId());
         val result = oidcIntrospectionEndpointController.handleRequest(request, response);
-        assertTrue(JWTParser.parse(result.getBody().toString()) instanceof PlainJWT);
+        assertInstanceOf(PlainJWT.class, JWTParser.parse(result.getBody().toString()));
         assertEquals(OAuth20Constants.INTROSPECTION_JWT_HEADER_CONTENT_TYPE, result.getHeaders().getContentType().toString());
     }
 

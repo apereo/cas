@@ -7,10 +7,10 @@ const assert = require("assert");
 
 async function callRegisteredServices() {
     const baseUrl = "https://localhost:8443/cas/actuator/registeredServices";
-    await cas.doGet(baseUrl, res => {
+    await cas.doGet(baseUrl, async res => {
         assert(res.status === 200);
         cas.log(`Services found: ${res.data[1].length}`);
-    }, err => {
+    }, async err => {
         throw err;
     }, {
         'Content-Type': 'application/json'

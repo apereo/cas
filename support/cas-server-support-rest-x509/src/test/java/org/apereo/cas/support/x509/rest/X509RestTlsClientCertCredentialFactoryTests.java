@@ -37,7 +37,7 @@ class X509RestTlsClientCertCredentialFactoryTests {
             request.setAttribute(REQUEST_ATTRIBUTE_X509_CERTIFICATE, certs);
 
             val cred = factory.fromRequest(request, null).getFirst();
-            assertTrue(cred instanceof X509CertificateCredential);
+            assertInstanceOf(X509CertificateCredential.class, cred);
         }
     }
 

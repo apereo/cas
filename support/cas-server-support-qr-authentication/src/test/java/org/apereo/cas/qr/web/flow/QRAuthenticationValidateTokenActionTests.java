@@ -39,7 +39,7 @@ class QRAuthenticationValidateTokenActionTests {
         context.setParameter("deviceId", "abcdefgh987654321");
         val result = qrAuthenticationValidateWebSocketChannelAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_FINALIZE, result.getId());
-        assertTrue(WebUtils.getCredential(context) instanceof QRAuthenticationTokenCredential);
+        assertInstanceOf(QRAuthenticationTokenCredential.class, WebUtils.getCredential(context));
     }
 
 }

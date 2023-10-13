@@ -1,5 +1,8 @@
 package org.apereo.cas.authentication.attribute;
 
+import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -23,9 +26,11 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -160,6 +165,48 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
     }
 
     @Override
+    public Map<String, List<Object>> resolveAttributeValues(final Collection<String> attributeDefinitions,
+                                                            final Map<String, List<Object>> availableAttributes,
+                                                            final Principal principal,
+                                                            final RegisteredService registeredService,
+                                                            final Service service) {
+        val finalAttributes = new LinkedHashMap<String, List<Object>>(attributeDefinitions.size());
+        attributeDefinitions.forEach(entry -> locateAttributeDefinition(entry).ifPresentOrElse(definition -> {
+            val attributeValues = determineValuesForAttributeDefinition(availableAttributes, entry, definition);
+            LOGGER.trace("Resolving attribute [{}] from attribute definition store with values [{}]", entry, attributeValues);
+            val attributeDefinitionResolutionContext = AttributeDefinitionResolutionContext.builder()
+                .attributeValues(attributeValues)
+                .principal(principal)
+                .registeredService(registeredService)
+                .service(service)
+                .attributes(availableAttributes)
+                .scope(this.scope)
+                .build();
+            val result = resolveAttributeValues(entry, attributeDefinitionResolutionContext);
+            if (result.isPresent()) {
+                val resolvedValues = result.get().getValue();
+                if (resolvedValues.isEmpty()) {
+                    LOGGER.debug("Unable to produce or determine attributes values for attribute definition [{}]", definition);
+                } else {
+                    LOGGER.trace("Resolving attribute [{}] based on attribute definition [{}]", entry, definition);
+                    val attributeKeys = org.springframework.util.StringUtils.commaDelimitedListToSet(
+                        StringUtils.defaultIfBlank(definition.getName(), entry));
+
+                    attributeKeys.forEach(key -> {
+                        LOGGER.trace("Determined attribute name to be [{}] with values [{}]", key, resolvedValues);
+                        finalAttributes.put(key, resolvedValues);
+                    });
+                }
+            }
+        }, () -> {
+            LOGGER.trace("Using already-resolved attribute name/value, as no attribute definition was found for [{}]", entry);
+            finalAttributes.put(entry, availableAttributes.get(entry));
+        }));
+        LOGGER.trace("Final collection of attributes resolved from attribute definition store is [{}]", finalAttributes);
+        return finalAttributes;
+    }
+
+    @Override
     public Optional<Pair<AttributeDefinition, List<Object>>> resolveAttributeValues(
         final String key,
         final AttributeDefinitionResolutionContext context) {
@@ -208,6 +255,16 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
         close();
     }
 
+    private static List<Object> determineValuesForAttributeDefinition(final Map<String, List<Object>> attributes,
+                                                                      final String entry,
+                                                                      final AttributeDefinition definition) {
+        val attributeKey = StringUtils.defaultIfBlank(definition.getAttribute(), entry);
+        if (attributes.containsKey(attributeKey)) {
+            return attributes.get(attributeKey);
+        }
+        return new ArrayList<>(0);
+    }
+    
     private void loadAttributeDefinitionsFromInputStream(final Resource resource) {
         try {
             LOGGER.trace("Loading attribute definitions from [{}]", resource);

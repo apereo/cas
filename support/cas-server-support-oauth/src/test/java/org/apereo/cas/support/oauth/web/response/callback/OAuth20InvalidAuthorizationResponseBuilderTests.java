@@ -65,7 +65,7 @@ class OAuth20InvalidAuthorizationResponseBuilderTests extends AbstractOAuth20Tes
         assertTrue(oauthInvalidAuthorizationBuilder.supports(context));
 
         val mv = oauthInvalidAuthorizationBuilder.build(context);
-        assertTrue(mv.getView() instanceof RedirectView);
+        assertInstanceOf(RedirectView.class, mv.getView());
         val mvView = (RedirectView) mv.getView();
         assertEquals("https://github.com/apereo/cas", mvView.getUrl());
         assertTrue(mv.getModel().containsKey(OAuth20Constants.ERROR));

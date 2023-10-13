@@ -35,7 +35,7 @@ class DefaultOAuth20AuthorizationModelAndViewBuilderTests extends AbstractOAuth2
         val mv = oauthAuthorizationModelAndViewBuilder.build(registeredService, OAuth20ResponseModeTypes.FRAGMENT,
             "https://github.com/apereo/cas?one=value&two=value&code=123456",
             Map.of("code", "123456"));
-        assertTrue(mv.getView() instanceof RedirectView);
+        assertInstanceOf(RedirectView.class, mv.getView());
         val view = (RedirectView) mv.getView();
         assertTrue(mv.getModel().isEmpty());
         assertEquals("code=123456", new URI(view.getUrl()).getFragment());

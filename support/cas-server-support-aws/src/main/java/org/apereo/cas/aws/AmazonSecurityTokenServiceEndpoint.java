@@ -87,7 +87,6 @@ public class AmazonSecurityTokenServiceEndpoint extends BaseCasActuatorEndpoint 
     /**
      * Fetch credentials.
      *
-     * @param duration     the duration
      * @param tokenCode    the token code
      * @param profile      the profile
      * @param serialNumber the serial number
@@ -108,8 +107,7 @@ public class AmazonSecurityTokenServiceEndpoint extends BaseCasActuatorEndpoint 
         @Parameter(name = "request"),
         @Parameter(name = "response")
     })
-    public ResponseEntity<String> fetchCredentials(@RequestParam(required = false, defaultValue = "PT1H") final String duration,
-                                                   @RequestParam(value = "token", required = false) final String tokenCode,
+    public ResponseEntity<String> fetchCredentials(@RequestParam(value = "token", required = false) final String tokenCode,
                                                    @RequestParam(required = false) final String profile,
                                                    @RequestParam(required = false) final String serialNumber,
                                                    @RequestParam(required = false) final String roleArn,
@@ -139,7 +137,8 @@ public class AmazonSecurityTokenServiceEndpoint extends BaseCasActuatorEndpoint 
         val builder = StsClient.builder();
         AmazonClientConfigurationBuilder.prepareSyncClientBuilder(builder, credentials, amz);
         val client = builder.build();
-
+        
+        val duration = StringUtils.defaultIfBlank(requestBody.getFirst("duration"), "PT15S");
         if (amz.isRbacEnabled()) {
             val attributeValues = principal.getAttributes().get(amz.getPrincipalAttributeName());
             LOGGER.debug("Found roles [{}]", attributeValues);
@@ -156,6 +155,7 @@ public class AmazonSecurityTokenServiceEndpoint extends BaseCasActuatorEndpoint 
             }
             val role = StringUtils.defaultIfBlank(roleArn, attributeValues.getFirst().toString());
             LOGGER.debug("Using role [{}]", role);
+
             val roleRequest = AssumeRoleRequest.builder()
                 .durationSeconds(Long.valueOf(Beans.newDuration(duration).toSeconds()).intValue())
                 .roleArn(role)

@@ -20,24 +20,24 @@ const os = require("os");
     }
 
     await cas.doGet(baseUrl,
-        res => {
+        async res => {
             assert(res.status === 200);
             assert(res.data[1].length === 100);
         },
-        error => {
+        async error => {
             throw error;
         }, {
             'Content-Type': 'application/json'
         });
 
     await cas.doGet(`${baseUrl}/export`,
-        res => {
+        async res => {
             const tempDir = os.tmpdir();
             let exported = path.join(tempDir, 'services.zip');
             res.data.pipe(fs.createWriteStream(exported));
             cas.log(`Exported services are at ${exported}`);
         },
-        error => {
+        async error => {
             throw error;
         }, {}, "stream")
 })();

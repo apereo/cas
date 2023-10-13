@@ -156,6 +156,7 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
         CasCoreNotificationsConfiguration.class,
         CasCoreLogoutConfiguration.class,
         CasCoreServicesConfiguration.class,
+        CasPersonDirectoryTestConfiguration.class,
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
     })
     public static class SharedTestConfiguration {

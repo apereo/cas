@@ -30,7 +30,7 @@ class OidcResponseModeFragmentJwtBuilderTests extends AbstractOidcTests {
         assertNotNull(builder);
         val mv = builder.build(registeredService, "https://apereo.github.io",
             Map.of("code", "123456", "state", "abcdef"));
-        assertTrue(mv.getView() instanceof RedirectView);
+        assertInstanceOf(RedirectView.class, mv.getView());
         val view = (RedirectView) mv.getView();
         val urlBuilder = new URIBuilder(view.getUrl());
         assertTrue(urlBuilder.getFragment().startsWith("response="));
@@ -44,7 +44,7 @@ class OidcResponseModeFragmentJwtBuilderTests extends AbstractOidcTests {
         assertNotNull(builder);
         val mv = builder.build(registeredService, "https://apereo.github.io",
             Map.of("code", "123456", "state", "abcdef"));
-        assertTrue(mv.getView() instanceof RedirectView);
+        assertInstanceOf(RedirectView.class, mv.getView());
         val view = (RedirectView) mv.getView();
         val urlBuilder = new URIBuilder(view.getUrl());
         assertTrue(urlBuilder.getFragment().startsWith("response="));

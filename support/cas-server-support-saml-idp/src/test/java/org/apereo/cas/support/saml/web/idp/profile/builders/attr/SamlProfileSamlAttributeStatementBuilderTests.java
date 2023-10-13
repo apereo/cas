@@ -62,7 +62,7 @@ class SamlProfileSamlAttributeStatementBuilderTests extends BaseSamlIdPConfigura
         assertFalse(attributes.isEmpty());
         val result = attributes.stream().filter(a -> "customNameId".equals(a.getName())).findFirst();
         assertTrue(result.isPresent());
-        assertTrue(result.get().getAttributeValues().getFirst() instanceof NameIDType);
+        assertInstanceOf(NameIDType.class, result.get().getAttributeValues().getFirst());
     }
 
     @Test
@@ -88,7 +88,7 @@ class SamlProfileSamlAttributeStatementBuilderTests extends BaseSamlIdPConfigura
         assertFalse(attributes.isEmpty());
         val result = attributes.stream().filter(a -> "customNameId".equals(a.getName())).findFirst();
         assertTrue(result.isPresent());
-        assertTrue(result.get().getAttributeValues().getFirst() instanceof NameIDType);
+        assertInstanceOf(NameIDType.class, result.get().getAttributeValues().getFirst());
     }
 
     @Test

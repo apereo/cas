@@ -76,7 +76,7 @@ class SamlIdPConsentableAttributeBuilderTests extends BaseSamlIdPWebflowTests {
             .name("unknown")
             .values(CollectionUtils.wrapList(value))
             .build());
-        assertTrue(attribute.getValues().getFirst() instanceof Serializable);
+        assertInstanceOf(Serializable.class, attribute.getValues().getFirst());
     }
 
     @Test

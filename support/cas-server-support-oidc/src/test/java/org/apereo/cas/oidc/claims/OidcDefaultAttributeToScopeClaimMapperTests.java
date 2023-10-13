@@ -70,11 +70,11 @@ class OidcDefaultAttributeToScopeClaimMapperTests {
                 CollectionUtils.wrap("status1", "true",
                     "status2", false, "status3", 1));
             var value = mapper.mapClaim("active1", oidcRegisteredService, principal, null).getFirst();
-            assertTrue(value instanceof Boolean);
+            assertInstanceOf(Boolean.class, value);
             value = mapper.mapClaim("active2", oidcRegisteredService, principal, null).getFirst();
-            assertTrue(value instanceof Boolean);
+            assertInstanceOf(Boolean.class, value);
             value = mapper.mapClaim("active3", oidcRegisteredService, principal, null).getFirst();
-            assertTrue(value instanceof Number);
+            assertInstanceOf(Number.class, value);
         }
 
         @Test

@@ -11,7 +11,7 @@ const cas = require('../../cas.js');
     await login("https://apereo.github.io");
 
     await cas.logg("Checking for SSO sessions for all users");
-    await cas.doGet(`${baseUrl}?type=ALL`, res => {
+    await cas.doGet(`${baseUrl}?type=ALL`, async res => {
         assert(res.status === 200);
         let index = Object.keys(res.data.activeSsoSessions).length - 1;
         let activeSession = res.data.activeSsoSessions[index];
@@ -19,7 +19,7 @@ const cas = require('../../cas.js');
         assert(activeSession.number_of_uses === 4);
         let services = activeSession.authenticated_services;
         assert(Object.keys(services).length) === 4;
-    }, err => {
+    }, async err => {
         throw err;
     })
 })();

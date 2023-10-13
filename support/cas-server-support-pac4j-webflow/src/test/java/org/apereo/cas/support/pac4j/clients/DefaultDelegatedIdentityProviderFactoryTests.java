@@ -254,7 +254,7 @@ class DefaultDelegatedIdentityProviderFactoryTests {
             assertEquals(1, clients.size());
             val client = (SAML2Client) clients.iterator().next();
             assertNotNull(client.getConfiguration().getSamlMessageStoreFactory());
-            assertTrue(client.getConfiguration().getMetadataSigner() instanceof DefaultSAML2MetadataSigner);
+            assertInstanceOf(DefaultSAML2MetadataSigner.class, client.getConfiguration().getMetadataSigner());
         }
     }
 
@@ -295,13 +295,13 @@ class DefaultDelegatedIdentityProviderFactoryTests {
             val saml2clients = delegatedIdentityProviderFactory.build();
             assertEquals(1, saml2clients.size());
             val client = (SAML2Client) saml2clients.stream().findFirst().get();
-            assertTrue(client.getConfiguration().getSamlAttributeConverter() instanceof GroovyAttributeConverter);
+            assertInstanceOf(GroovyAttributeConverter.class, client.getConfiguration().getSamlAttributeConverter());
         }
     }
 
     @Nested
     @TestPropertySource(properties = {
-        "cas.authn.pac4j.saml[0].saml2-attribute-converter=org.apereo.cas.support.pac4j.clients.DefaultDelegatedClientFactoryTests.CustomAttributeConverterForTest",
+        "cas.authn.pac4j.saml[0].saml2-attribute-converter=org.apereo.cas.support.pac4j.clients.DefaultDelegatedIdentityProviderFactoryTests.CustomAttributeConverterForTest",
         "cas.authn.pac4j.saml[0].keystore-path=file:/tmp/keystore-${#randomNumber6}.jks",
         "cas.authn.pac4j.saml[0].keystore-password=1234567890",
         "cas.authn.pac4j.saml[0].private-key-password=1234567890",
@@ -319,7 +319,7 @@ class DefaultDelegatedIdentityProviderFactoryTests {
             assertEquals(1, saml2clients.size());
 
             val client = (SAML2Client) saml2clients.stream().findFirst().get();
-            assertTrue(client.getConfiguration().getSamlAttributeConverter() instanceof CustomAttributeConverterForTest);
+            assertInstanceOf(CustomAttributeConverterForTest.class, client.getConfiguration().getSamlAttributeConverter());
         }
     }
 
@@ -367,7 +367,7 @@ class DefaultDelegatedIdentityProviderFactoryTests {
             val clients = delegatedIdentityProviderFactory.build();
             assertEquals(1, clients.size());
             val client = (SAML2Client) clients.iterator().next();
-            assertTrue(client.getConfiguration().getSamlMessageStoreFactory() instanceof HttpSessionStoreFactory);
+            assertInstanceOf(HttpSessionStoreFactory.class, client.getConfiguration().getSamlMessageStoreFactory());
         }
     }
 }

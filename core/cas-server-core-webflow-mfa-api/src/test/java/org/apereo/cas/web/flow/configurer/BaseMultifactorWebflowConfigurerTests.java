@@ -72,7 +72,7 @@ public abstract class BaseMultifactorWebflowConfigurerTests {
         assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_MFA_CHECK_AVAILABLE));
         assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_MFA_FAILURE));
         val loginFlow = (Flow) loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
-        assertTrue(loginFlow.getState(getMultifactorEventId()) instanceof SubflowState);
+        assertInstanceOf(SubflowState.class, loginFlow.getState(getMultifactorEventId()));
     }
 
     @Test

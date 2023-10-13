@@ -54,7 +54,7 @@ class X509RestMultipartBodyCredentialFactoryTests {
         scan.close();
         requestBody.add("cert", certStr);
         val cred = factory.fromRequest(new MockHttpServletRequest(), requestBody).getFirst();
-        assertTrue(cred instanceof X509CertificateCredential);
+        assertInstanceOf(X509CertificateCredential.class, cred);
     }
 
     @Test

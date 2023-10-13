@@ -40,7 +40,7 @@ class UmaRequestingPartyClaimsCollectionEndpointControllerTests extends BaseUmaE
         val view = umaRequestingPartyClaimsCollectionEndpointController.getClaims(id,
             service.getServiceId(), ticketId,
             "state", results.getLeft(), results.getMiddle());
-        assertTrue(view instanceof RedirectView);
+        assertInstanceOf(RedirectView.class, view);
     }
 
     private static UmaPermissionTicket getUmaPermissionTicket(final String ticketId) {

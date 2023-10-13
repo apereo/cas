@@ -6,11 +6,11 @@ const path = require("path");
 
 (async () => {
     await cas.doGet("https://localhost:8443/cas/actuator/resolveAttributes/casuser",
-        res => {
+        async res => {
             assert(res.data.uid !== null);
             assert(res.data.attributes !== null);
             assert(Object.keys(res.data.attributes).length === 0)
-        }, error => {
+        }, async error => {
             throw error;
         }, { 'Content-Type': "application/json" });
 
