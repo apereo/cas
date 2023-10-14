@@ -20,16 +20,10 @@ const os = require("os");
         }, 201, serviceBody);
     }
 
-    await cas.doGet(baseUrl,
-        async res => {
-            assert(res.status === 200);
-            assert(res.data[1].length === totalCount);
-        },
-        async error => {
-            throw error;
-        }, {
-            'Content-Type': 'application/json'
-        });
+    let body = JSON.parse(await cas.doRequest(baseUrl, "GET", {
+        'Content-Type': 'application/json'
+    }, 200));
+    assert(body[1].length === totalCount);
 
     await cas.doGet(`${baseUrl}/export`,
         res => {

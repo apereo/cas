@@ -11,13 +11,8 @@ const path = require('path');
         await cas.gotoLogin(page);
         await page.waitForTimeout(1000);
 
-        await cas.doGet('https://localhost:8443/cas/sp/metadata', res => assert(res.status === 200), () => {
-            throw 'Operation failed to capture metadata';
-        });
-
-        await cas.doGet('https://localhost:8443/cas/sp/idp/metadata', res => assert(res.status === 200), () => {
-            throw 'Operation failed to capture metadata';
-        });
+        await cas.doRequest('https://localhost:8443/cas/sp/metadata', "GET", {}, 200);
+        await cas.doRequest('https://localhost:8443/cas/sp/idp/metadata', "GET", {}, 200);
 
         const spEntityId = "cas:apereo:pac4j:saml";
         await cas.goto(page, `http://localhost:9443/simplesaml/saml2/idp/SSOService.php?spentityid=${spEntityId}`);
