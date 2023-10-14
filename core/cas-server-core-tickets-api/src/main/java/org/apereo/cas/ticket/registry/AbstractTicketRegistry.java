@@ -322,7 +322,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
             return null;
         }
         if (!(ticketToProcess instanceof final EncodedTicket encodedTicket)) {
-            LOGGER.warn("Ticket passed is not an encoded ticket: [{}], no decoding is necessary.",
+            LOGGER.debug("Ticket passed is not an encoded ticket: [{}], no decoding is necessary.",
                 ticketToProcess.getClass().getSimpleName());
             return ticketToProcess;
         }

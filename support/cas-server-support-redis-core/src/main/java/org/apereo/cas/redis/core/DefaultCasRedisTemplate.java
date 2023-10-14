@@ -19,15 +19,14 @@ import java.util.stream.StreamSupport;
  */
 public class DefaultCasRedisTemplate<K, V> extends RedisTemplate<K, V> implements CasRedisTemplate<K, V> {
     @Override
-    public Stream<String> scan(final String pattern, final long count) {
+    public Stream<String> scan(final String pattern, final Long count) {
         var scanOptions = ScanOptions.scanOptions().match(pattern);
-        if (count > 0) {
+        if (count != null && count > 0) {
             scanOptions = scanOptions.count(count);
         }
-
         val connection = Objects.requireNonNull(getConnectionFactory()).getConnection();
         val cursor = connection.keyCommands().scan(scanOptions.build());
-        return StreamSupport
+        var resultingStream = StreamSupport
             .stream(Spliterators.spliteratorUnknownSize(cursor, Spliterator.ORDERED), false)
             .onClose(() -> {
                 IOUtils.closeQuietly(cursor);
@@ -35,6 +34,10 @@ public class DefaultCasRedisTemplate<K, V> extends RedisTemplate<K, V> implement
             })
             .map(key -> (String) getKeySerializer().deserialize(key))
             .distinct();
+        if (count != null && count > 0) {
+            resultingStream = resultingStream.limit(count);
+        }
+        return resultingStream;
     }
 
     @Override

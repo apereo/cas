@@ -6,6 +6,8 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import org.jooq.lambda.Unchecked;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -194,4 +196,16 @@ public interface TicketRegistry {
      * @return the string
      */
     String digestIdentifier(String id);
+
+    /**
+     * Query the registry and return the results.
+     * This operations allows one to interact with the registry
+     * in raw form without a lot of post-processing of the ticket objects.
+     * Registry implementations are to decide which criteria options they wish to support.
+     * @param criteria the criteria
+     * @return the results
+     */
+    default List<? extends Serializable> query(final TicketRegistryQueryCriteria criteria) {
+        return new ArrayList<>();
+    }
 }
