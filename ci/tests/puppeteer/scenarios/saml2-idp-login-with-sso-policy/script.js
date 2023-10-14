@@ -12,7 +12,7 @@ const cas = require('../../cas.js');
     
     await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
     await page.waitForTimeout(2000);
-    await cas.removeDirectory(path.join(__dirname, '/saml-md'));
+    await cas.removeDirectoryOrFile(path.join(__dirname, '/saml-md'));
     await cas.assertVisibility(page, '#username');
     await cas.assertVisibility(page, '#password');
 

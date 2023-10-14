@@ -99,7 +99,7 @@ async function staleAuthenticationFlow(context) {
         }, 200);
     }
     
-    await cas.removeDirectory(path.join(__dirname, '/saml-md'));
+    await cas.removeDirectoryOrFile(path.join(__dirname, '/saml-md'));
     await browser.close();
 })();
 

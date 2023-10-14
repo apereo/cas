@@ -53,7 +53,7 @@ const assert = require('assert');
     await cas.logg(`Second authentication instant: ${nextAuthData}`);
     assert(nextAuthData !== initialAuthData);
 
-    await cas.removeDirectory(path.join(__dirname, '/saml-md'));
+    await cas.removeDirectoryOrFile(path.join(__dirname, '/saml-md'));
     await browser.close();
 })();
 

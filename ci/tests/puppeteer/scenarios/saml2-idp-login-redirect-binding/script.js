@@ -18,7 +18,7 @@ const cas = require('../../cas.js');
         await cas.log(authData);
 
     } finally {
-        await cas.removeDirectory(path.join(__dirname, '/saml-md'));
+        await cas.removeDirectoryOrFile(path.join(__dirname, '/saml-md'));
     }
     await browser.close();
 })();

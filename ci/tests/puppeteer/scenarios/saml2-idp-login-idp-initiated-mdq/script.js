@@ -49,7 +49,7 @@ async function tryServiceProviders(entityIds, page, timeout) {
     await tryServiceProviders(entityIds, page, 15);
     await tryServiceProviders(entityIds, page, 5);
 
-    await cas.removeDirectory(path.join(__dirname, '/saml-md'));
+    await cas.removeDirectoryOrFile(path.join(__dirname, '/saml-md'));
     await browser.close();
 })();
 

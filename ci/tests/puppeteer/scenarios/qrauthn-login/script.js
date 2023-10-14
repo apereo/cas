@@ -5,6 +5,7 @@ const fs = require('fs');
 const qrCode = require('qrcode-reader');
 const SockJS = require('sockjs-client');
 const StompJS = require('@stomp/stompjs');
+const querystring = require("querystring");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -17,6 +18,8 @@ const StompJS = require('@stomp/stompjs');
 
     let src = await page.$eval("#qrcode", element => element.getAttribute("src"));
     let data = src.replace(/^data:image\/jpeg;base64,/, "");
+
+    await cas.removeDirectoryOrFile(`${__dirname}/out.ignore`);
     await fs.writeFileSync(`${__dirname}/out.ignore`, data, 'base64');
     let buffer = fs.readFileSync(`${__dirname}/out.ignore`);
 
@@ -55,8 +58,15 @@ async function connectAndLogin(channelId, page) {
     client.onConnect = frame => {
         const deviceId = `QRDevicePuppeteer`;
         cas.logg(`We have now connected ${frame.headers['message']}`);
-        const parameters = `username=casuser&password=Mellon&token=true&QR_AUTHENTICATION_DEVICE_ID=${deviceId}`;
-        executeRequest(`https://localhost:8443/cas/v1/tickets?${parameters}`, 201)
+
+        let formData = {
+            username: 'casuser',
+            password: 'Mellon',
+            token: true,
+            QR_AUTHENTICATION_DEVICE_ID: deviceId
+        };
+        let postData = querystring.stringify(formData);
+        executeRequest(`https://localhost:8443/cas/v1/tickets`, 201, postData)
             .then(token => {
                 cas.log(`Received token ${token}`);
                 let payload = JSON.stringify({'token': token});
@@ -85,9 +95,10 @@ async function connectAndLogin(channelId, page) {
 }
 
 
-async function executeRequest(url, statusCode) {
+async function executeRequest(url, statusCode, requestBody) {
     return await cas.doRequest(url, "POST", {
         'Accept': 'application/json',
+        'Content-Length': Buffer.byteLength(requestBody),
         'Content-Type': 'application/x-www-form-urlencoded'
-    }, statusCode);
+    }, statusCode, requestBody);
 }

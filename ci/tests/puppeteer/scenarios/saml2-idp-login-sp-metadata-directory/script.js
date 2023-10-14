@@ -24,7 +24,7 @@ const path = require("path");
         assert(content.form.SAMLResponse != null);
         await cas.gotoLogout(page);
     }
-    await cas.removeDirectory(path.join(__dirname, '/saml-md'));
+    await cas.removeDirectoryOrFile(path.join(__dirname, '/saml-md'));
     await browser.close();
 })();
 

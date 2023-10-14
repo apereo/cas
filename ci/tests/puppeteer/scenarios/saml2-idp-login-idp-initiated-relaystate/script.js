@@ -36,6 +36,6 @@ async function unsolicited(page, target) {
     await unsolicited(page, "https://github.com/apereo/cas");
     await page.waitForTimeout(4000);
 
-    await cas.removeDirectory(path.join(__dirname, '/saml-md'));
+    await cas.removeDirectoryOrFile(path.join(__dirname, '/saml-md'));
     await browser.close();
 })();

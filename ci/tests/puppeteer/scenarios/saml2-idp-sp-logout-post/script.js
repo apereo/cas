@@ -30,6 +30,6 @@ const path = require("path");
     await cas.log("Checking for page URL...");
     await cas.logPage(page);
     assert(await page.url() === 'https://samltest.id/Shibboleth.sso/SLO/POST');
-    await cas.removeDirectory(path.join(__dirname, '/saml-md'));
+    await cas.removeDirectoryOrFile(path.join(__dirname, '/saml-md'));
     await browser.close();
 })();

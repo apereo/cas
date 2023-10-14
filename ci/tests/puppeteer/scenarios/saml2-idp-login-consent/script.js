@@ -30,7 +30,7 @@ const assert = require("assert");
     await cas.log(payload);
     assert(payload.form.RelayState != null);
     assert(payload.form.SAMLResponse != null);
-    await cas.removeDirectory(path.join(__dirname, '/saml-md'));
+    await cas.removeDirectoryOrFile(path.join(__dirname, '/saml-md'));
     await browser.close();
 })();
 

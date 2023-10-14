@@ -74,7 +74,7 @@ exports.logPage = async(page) => {
     await this.log(`Page URL: ${url}`);
 };
 
-exports.removeDirectory = async (directory) => {
+exports.removeDirectoryOrFile = async (directory) => {
     this.logg(`Removing directory ${colors.green(directory)}`);
     if (fs.existsSync(directory)) {
         await fs.rmSync(directory, {recursive: true});

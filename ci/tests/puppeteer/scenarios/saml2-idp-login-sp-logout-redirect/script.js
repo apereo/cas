@@ -45,7 +45,7 @@ const fs = require("fs");
         await cas.assertVisibility(page, "#logoutRedirectButton");
         await cas.click(page, "#logoutRedirectButton");
     } finally {
-        await cas.removeDirectory(path.join(__dirname, '/saml-md'));
+        await cas.removeDirectoryOrFile(path.join(__dirname, '/saml-md'));
         await browser.close();
     }
 })();

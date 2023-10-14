@@ -44,7 +44,7 @@ const assert = require('assert');
     await cas.logPage(page);
     await page.waitForTimeout(3000);
     assert(url.startsWith("http://localhost:9443/simplesaml/"));
-    await cas.removeDirectory(path.join(__dirname, '/saml-md'));
+    await cas.removeDirectoryOrFile(path.join(__dirname, '/saml-md'));
     await browser.close();
 })();
 

@@ -41,7 +41,7 @@ async function getActuatorEndpoint(entityId, password = "Mellon") {
     await cas.log(`Trying ${endpoint} via POST without password`);
     await cas.log(await cas.doRequest(endpoint, "POST", {}, 200));
 
-    await cas.removeDirectory(path.join(__dirname, '/saml-md'));
+    await cas.removeDirectoryOrFile(path.join(__dirname, '/saml-md'));
 })();
 
 

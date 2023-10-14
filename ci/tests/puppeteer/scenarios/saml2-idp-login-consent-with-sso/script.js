@@ -43,7 +43,7 @@ const assert = require("assert");
     let authData = JSON.parse(await cas.innerHTML(page, "details pre"));
     await cas.log(authData);
 
-    await cas.removeDirectory(path.join(__dirname, '/saml-md'));
+    await cas.removeDirectoryOrFile(path.join(__dirname, '/saml-md'));
     await browser.close();
 })();
 
