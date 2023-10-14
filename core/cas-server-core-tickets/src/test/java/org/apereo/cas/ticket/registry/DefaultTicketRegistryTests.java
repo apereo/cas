@@ -50,7 +50,7 @@ class DefaultTicketRegistryTests extends BaseTicketRegistryTests {
 
         val count = registry.countSessionsFor(user);
         assertEquals(1, count);
-        assertEquals(0, registry.query(TicketRegistryQueryCriteria.builder().build()).count());
+        assertEquals(0, registry.query(TicketRegistryQueryCriteria.builder().build()).size());
     }
 
 

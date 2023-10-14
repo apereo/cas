@@ -97,7 +97,7 @@ const assert = require('assert');
 
     assert(url.startsWith("https://localhost:8443/cas/login"));
     await cas.assertCookie(page, false);
-    await cas.removeDirectory(path.join(__dirname, '/saml-md'));
+    await cas.removeDirectoryOrFile(path.join(__dirname, '/saml-md'));
     
     await browser.close();
 })();

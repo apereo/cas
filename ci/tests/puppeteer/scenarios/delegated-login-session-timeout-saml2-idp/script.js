@@ -29,7 +29,7 @@ const assert = require('assert');
     assert(url.includes("https://localhost:8443/cas/login"));
     await cas.assertInnerText(page, "#content h2", "Application Not Authorized to Use CAS");
     
-    await cas.removeDirectory(path.join(__dirname, '/saml-md'));
+    await cas.removeDirectoryOrFile(path.join(__dirname, '/saml-md'));
     await browser.close();
 })();
 

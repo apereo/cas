@@ -27,6 +27,6 @@ const cas = require('../../cas.js');
     await page.waitForTimeout(2000);
     const content = await page.content();
     assert(content.includes('id="service1"'));
-    await cas.removeDirectory(path.join(__dirname, '/saml-md'));
+    await cas.removeDirectoryOrFile(path.join(__dirname, '/saml-md'));
     await browser.close();
 })();
