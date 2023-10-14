@@ -34,5 +34,8 @@ const cas = require('../../cas.js');
             assert(result.authentication.attributes["authnContextClass"][0] === "mfa-simple");
         }, error => {
             throw error;
-        }, {'Content-Type': "application/json"});
+        },
+        {
+            'Content-Type': "application/json"
+        });
 })();
