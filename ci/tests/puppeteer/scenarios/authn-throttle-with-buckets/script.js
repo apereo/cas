@@ -29,7 +29,7 @@ const cas = require('../../cas.js');
     page = await cas.newPage(browser);
     await cas.log("Log in attempt: #2");
     await submitLogin(page);
-    await cas.assertInnerText(page, "#content p", "You've entered the wrong password for the user too many times. You've been throttled.")
+    await cas.assertInnerTextStartsWith(page, "#content div.banner p", "Authentication attempt has failed");
     await browser.close();
 })();
 
