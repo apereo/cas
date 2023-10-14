@@ -1,5 +1,6 @@
 const assert = require('assert');
 const cas = require('../../cas.js');
+const querystring = require("querystring");
 
 (async () => {
     const service = "https://apereo.github.io";
@@ -7,35 +8,36 @@ const cas = require('../../cas.js');
     let buff = Buffer.alloc(value.length, value);
     let authzHeader = buff.toString('base64');
 
-    await cas.doPost(`https://localhost:8443/cas/actuator/mfaSimple?service=${service}`, "",
+    let body = JSON.parse(await cas.doRequest(`https://localhost:8443/cas/actuator/mfaSimple?service=${service}`, "GET",
         {
             "Credential": authzHeader,
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         },
-        async res => {
-            assert(res.data.id !== undefined);
-            assert(res.data.ttl !== undefined);
-            assert(res.data.principal === "casuser");
-            assert(res.data.service === service);
+        200));
 
-            let params = `username=casuser&password=Mellon&sotp=${res.data.id}`;
-            await cas.log(`Authenticating user via ${params}`);
-            const body = await cas.doRequest(`https://localhost:8443/cas/v1/users?${params}`, "POST",
-                {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                }, 200);
-           
-            let result = JSON.parse(body);
-            console.dir(result, {depth: null, colors: true});
-            
-            assert(result.authentication.principal.id === "casuser");
-            assert(result.authentication.attributes["authnContextClass"][0] === "mfa-simple");
-        }, error => {
-            throw error;
-        },
+    assert(body.id !== undefined);
+    assert(body.ttl !== undefined);
+    assert(body.principal === "casuser");
+    assert(body.service === service);
+    
+    let formData = {
+        username: 'casuser',
+        password: 'Mellon',
+        sotp: body.id
+    };
+    let postData = querystring.stringify(formData);
+    await cas.log(`Authenticating user via ${postData}`);
+    let result = JSON.parse(await cas.doRequest("https://localhost:8443/cas/v1/users", "POST",
         {
-            'Content-Type': "application/json"
-        });
+            'Content-Length': Buffer.byteLength(postData),
+            'Accept': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        200, postData));
+    console.dir(result, {depth: null, colors: true});
+
+    assert(result.authentication.principal.id === "casuser");
+    assert(result.authentication.attributes["authnContextClass"][0] === "mfa-simple");
+
 })();

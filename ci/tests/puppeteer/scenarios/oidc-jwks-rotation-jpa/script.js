@@ -1,25 +1,12 @@
 const cas = require('../../cas.js');
-const assert = require('assert');
 
 (async () => {
     await cas.logg("Rotating keys...");
-    await cas.doGet("https://localhost:8443/cas/actuator/oidcJwks/rotate",
-        async res => assert(res.status === 200),
-        async error => {
-            throw error;
-        });
+    await cas.doRequest("https://localhost:8443/cas/actuator/oidcJwks/rotate", "GET", {}, 200);
 
     await cas.logg("Revoking keys...");
-    await cas.doGet("https://localhost:8443/cas/actuator/oidcJwks/revoke",
-        async res => assert(res.status === 200),
-        async error => {
-            throw error;
-        });
+    await cas.doRequest("https://localhost:8443/cas/actuator/oidcJwks/revoke", "GET", {}, 200);
 
     await cas.logg("Fetching all current keys...");
-    await cas.doGet("https://localhost:8443/cas/oidc/jwks?state=current",
-        async res => assert(res.status === 200),
-        async error => {
-            throw error;
-        })
+    await cas.doRequest("https://localhost:8443/cas/oidc/jwks?state=current", "GET", {}, 200);
 })();
