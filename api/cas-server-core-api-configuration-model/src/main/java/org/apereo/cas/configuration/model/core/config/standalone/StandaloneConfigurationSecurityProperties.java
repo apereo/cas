@@ -41,7 +41,7 @@ public class StandaloneConfigurationSecurityProperties implements Serializable {
      * Total number of iterations to use when deciphering settings.
      * Default value comes from Jasypt {@value StandardPBEByteEncryptor#DEFAULT_KEY_OBTENTION_ITERATIONS}
      */
-    private long iteration;
+    private long iterations;
 
     /**
      * Secret key/password to use when deciphering settings.
