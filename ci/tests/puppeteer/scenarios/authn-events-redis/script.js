@@ -52,7 +52,8 @@ const fs = require('fs');
     await cas.doRequest("https://localhost:8443/cas/actuator/events", "DELETE");
     await cas.log("Checking events...");
     await cas.doGet("https://localhost:8443/cas/actuator/events",
-        async res => assert(Object.keys(res.data[1]).length === 0), async error => {
+        async res => assert(Object.keys(res.data[1]).length === 0),
+        async error => {
             throw error;
         }, {'Content-Type': "application/json"});
 
