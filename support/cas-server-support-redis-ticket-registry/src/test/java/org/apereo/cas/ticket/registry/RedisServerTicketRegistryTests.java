@@ -12,6 +12,7 @@ import org.apereo.cas.util.ServiceTicketIdGenerator;
 import org.apereo.cas.util.TicketGrantingTicketIdGenerator;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
+import org.apereo.cas.util.thread.Cleanable;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -145,7 +146,7 @@ class RedisServerTicketRegistryTests {
         @RepeatedTest(2)
         void verifyLargeDataset() throws Throwable {
             LOGGER.info("Current repetition: [{}]", useEncryption ? "Encrypted" : "Plain");
-            val authentication = CoreAuthenticationTestUtils.getAuthentication();
+            val authentication = CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString());
             val ticketGrantingTicketToAdd = Stream.generate(() -> {
                     val tgtId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
                         .getNewTicketId(TicketGrantingTicket.PREFIX);
@@ -170,6 +171,34 @@ class RedisServerTicketRegistryTests {
                 Unchecked.consumer(__ -> getNewTicketRegistry().serviceTicketCount()));
             executedTimedOperation("Counting all user sessions",
                 Unchecked.consumer(__ -> getNewTicketRegistry().countSessionsFor(authentication.getPrincipal().getId())));
+        }
+
+        @RepeatedTest(2)
+        void verifyRegistryQuery() throws Throwable {
+            LOGGER.info("Current repetition: [{}]", useEncryption ? "Encrypted" : "Plain");
+            val authentication = CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString());
+            val ticketGrantingTicketToAdd = Stream.generate(() -> {
+                    val tgtId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
+                        .getNewTicketId(TicketGrantingTicket.PREFIX);
+                    return new TicketGrantingTicketImpl(tgtId, authentication, NeverExpiresExpirationPolicy.INSTANCE);
+                })
+                .limit(5);
+            getNewTicketRegistry().addTicket(ticketGrantingTicketToAdd);
+
+            val criteria1 = new TicketRegistryQueryCriteria()
+                .setCount(5L)
+                .setDecode(Boolean.FALSE)
+                .setType(TicketGrantingTicket.PREFIX);
+            val queryResults1 = getNewTicketRegistry().query(criteria1);
+            assertEquals(criteria1.getCount(), queryResults1.size());
+
+            ((Cleanable) getNewTicketRegistry()).clean();
+            val criteria2 = new TicketRegistryQueryCriteria()
+                .setCount(5L)
+                .setDecode(Boolean.TRUE)
+                .setType(TicketGrantingTicket.PREFIX);
+            val queryResults = getNewTicketRegistry().query(criteria2);
+            assertEquals(criteria2.getCount(), queryResults.size());
         }
 
         private static <T> T executedTimedOperation(final String name, final Supplier<T> operation) {

@@ -103,4 +103,14 @@ public class RedisCompositeKey {
     public RedisCompositeKey withTicketId(final String ticketPrefix, final String encodedId) {
         return RedisCompositeKey.forTickets().withQuery(ticketPrefix + ':' + encodedId);
     }
+
+    /**
+     * Remove the starting prefix from the key.
+     *
+     * @param key the key
+     * @return the string
+     */
+    public String withoutPrefix(final String key) {
+        return StringUtils.removeStart(key, this.prefix + ':');
+    }
 }

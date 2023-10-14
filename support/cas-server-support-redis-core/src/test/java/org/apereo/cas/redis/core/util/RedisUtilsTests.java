@@ -45,9 +45,8 @@ class RedisUtilsTests {
         template.initialize();
         val redisKeyPrefix = "CAS_TEST:";
         val keySize = 10;
-        val scanCount = 1000;
         IntStream.range(0, keySize).forEach(i -> template.boundValueOps(redisKeyPrefix + i).set("TEST"));
-        try (val keys = template.scan(redisKeyPrefix + '*', scanCount)) {
+        try (val keys = template.scan(redisKeyPrefix + '*', 1000L)) {
             assertEquals(keySize, keys.count());
         }
     }
