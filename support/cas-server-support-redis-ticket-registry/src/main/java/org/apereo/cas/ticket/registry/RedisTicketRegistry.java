@@ -12,13 +12,15 @@ import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
-
+import org.apereo.cas.util.thread.Cleanable;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.redis.lettucemod.api.sync.RedisModulesCommands;
 import com.redis.lettucemod.search.CreateOptions;
 import com.redis.lettucemod.search.Document;
 import com.redis.lettucemod.search.Field;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
@@ -32,7 +34,7 @@ import org.springframework.data.redis.core.convert.KeyspaceConfiguration;
 import org.springframework.data.redis.core.convert.MappingConfiguration;
 import org.springframework.data.redis.core.index.IndexConfiguration;
 import org.springframework.data.redis.core.mapping.RedisMappingContext;
-
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -56,12 +58,13 @@ import java.util.stream.StreamSupport;
  */
 @Slf4j
 @Monitorable
-public class RedisTicketRegistry extends AbstractTicketRegistry {
+public class RedisTicketRegistry extends AbstractTicketRegistry implements Cleanable {
 
     private static final String SEARCH_INDEX_NAME = RedisTicketDocument.class.getSimpleName() + "Index";
 
     private final CasRedisTemplates casRedisTemplates;
 
+    @Getter(AccessLevel.PACKAGE)
     private final Cache<String, Ticket> ticketCache;
 
     private final RedisTicketRegistryMessagePublisher messagePublisher;
@@ -107,8 +110,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
                 return null;
             });
         }
-        ticketCache.invalidateAll();
-        messagePublisher.deleteAll();
+        clean();
         return size.get();
     }
 
@@ -267,6 +269,46 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
             .orElseGet(() -> super.getSessionsWithAttributes(queryAttributes));
     }
 
+
+    @Override
+    public List<? extends Serializable> query(final TicketRegistryQueryCriteria queryCriteria) {
+        val keyPattern = RedisCompositeKey.forTickets()
+            .withIdPattern(queryCriteria.getType())
+            .toKeyPattern();
+        if (BooleanUtils.isTrue(queryCriteria.getDecode())) {
+            try (val scanResults = casRedisTemplates.getTicketsRedisTemplate().scan(keyPattern, queryCriteria.getCount())) {
+                return scanResults
+                    .map(key -> Optional.ofNullable(ticketCache.getIfPresent(RedisCompositeKey.forTickets().withoutPrefix(key)))
+                        .orElseGet(() -> {
+                            val adapter = buildRedisKeyValueAdapter(key);
+                            return Stream.ofNullable(adapter.get(key, key, RedisTicketDocument.class))
+                                .filter(Objects::nonNull)
+                                .map(this::deserializeAsTicket)
+                                .filter(Objects::nonNull)
+                                .findFirst()
+                                .orElse(null);
+                        }))
+                    .filter(Objects::nonNull)
+                    .map(this::decodeTicket)
+                    .filter(ticket -> !ticket.isExpired())
+                    .peek(ticket -> {
+                        val redisTicketsKey = RedisCompositeKey.forTickets()
+                            .withTicketId(ticket.getPrefix(), digestIdentifier(ticket.getId()));
+                        ticketCache.put(redisTicketsKey.getQuery(), ticket);
+                    })
+                    .collect(Collectors.toList());
+            }
+        }
+        val keys = fetchKeysForTickets(keyPattern);
+        return (queryCriteria.getCount() != null ? keys.limit(queryCriteria.getCount()) : keys).collect(Collectors.toList());
+    }
+
+    @Override
+    public void clean() {
+        ticketCache.invalidateAll();
+        messagePublisher.deleteAll();
+    }
+
     private Stream<String> fetchKeysForTickets() {
         return fetchKeysForTickets(RedisCompositeKey.forTickets().toKeyPattern());
     }
@@ -410,7 +452,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     @Data
     public static class CasRedisTemplates {
         private final CasRedisTemplate<String, RedisTicketDocument> ticketsRedisTemplate;
-        
+
         private final CasRedisTemplate<String, String> sessionsRedisTemplate;
     }
 }

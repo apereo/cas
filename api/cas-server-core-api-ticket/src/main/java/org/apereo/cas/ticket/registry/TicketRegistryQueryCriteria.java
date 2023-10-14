@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.With;
+import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 import java.io.Serial;
 import java.io.Serializable;
@@ -23,6 +24,7 @@ import java.io.Serializable;
 @With
 @SuperBuilder
 @ToString
+@Accessors(chain = true)
 public class TicketRegistryQueryCriteria implements Serializable {
     @Serial
     private static final long serialVersionUID = 3295014227993873566L;

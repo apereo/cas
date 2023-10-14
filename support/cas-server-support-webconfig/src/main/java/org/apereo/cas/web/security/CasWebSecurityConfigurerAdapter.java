@@ -111,7 +111,7 @@ public class CasWebSecurityConfigurerAdapter {
         LOGGER.debug("Configuring protocol endpoints [{}] to exclude/ignore from http security", patterns);
         var requests = http.authorizeHttpRequests(customizer -> {
             val matchers = patterns.stream().map(AntPathRequestMatcher::new).toList().toArray(new RequestMatcher[0]);
-            customizer.requestMatchers(matchers).anonymous();
+            customizer.requestMatchers(matchers).permitAll();
         });
         webSecurityConfigurers
             .stream()
@@ -185,9 +185,9 @@ public class CasWebSecurityConfigurerAdapter {
 
     protected void configureEndpointAccessForStaticResources(final HttpSecurity requests) throws Exception {
         requests.authorizeHttpRequests(customizer -> {
-            customizer.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).anonymous();
-            customizer.requestMatchers(new AntPathRequestMatcher("/resources/**")).anonymous();
-            customizer.requestMatchers(new AntPathRequestMatcher("/static/**")).anonymous();
+            customizer.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll();
+            customizer.requestMatchers(new AntPathRequestMatcher("/resources/**")).permitAll();
+            customizer.requestMatchers(new AntPathRequestMatcher("/static/**")).permitAll();
         });
     }
 
@@ -216,7 +216,7 @@ public class CasWebSecurityConfigurerAdapter {
 
     protected void configureEndpointAccessPermitAll(final HttpSecurity requests,
                                                     final EndpointRequest.EndpointRequestMatcher endpoint) throws Exception {
-        requests.authorizeHttpRequests(customizer -> customizer.requestMatchers(endpoint).anonymous());
+        requests.authorizeHttpRequests(customizer -> customizer.requestMatchers(endpoint).permitAll());
     }
 
     protected void configureEndpointAccessToDenyAll(final HttpSecurity requests,
@@ -227,7 +227,7 @@ public class CasWebSecurityConfigurerAdapter {
     protected void configureEndpointAccessAnonymously(final HttpSecurity requests,
                                                       final EndpointRequest.EndpointRequestMatcher endpoint) throws Exception {
 
-        requests.authorizeHttpRequests(customizer -> customizer.requestMatchers(endpoint).anonymous());
+        requests.authorizeHttpRequests(customizer -> customizer.requestMatchers(endpoint).permitAll());
     }
 
     protected void configureEndpointAccessByIpAddress(final HttpSecurity requests,
