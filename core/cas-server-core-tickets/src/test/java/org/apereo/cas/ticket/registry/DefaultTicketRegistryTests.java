@@ -7,13 +7,10 @@ import org.apereo.cas.ticket.DefaultTicketCatalog;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.cipher.DefaultTicketCipherExecutor;
-
 import lombok.val;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
-
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -53,6 +50,7 @@ class DefaultTicketRegistryTests extends BaseTicketRegistryTests {
 
         val count = registry.countSessionsFor(user);
         assertEquals(1, count);
+        assertEquals(0, registry.query(TicketRegistryQueryCriteria.builder().build()).count());
     }
 
 

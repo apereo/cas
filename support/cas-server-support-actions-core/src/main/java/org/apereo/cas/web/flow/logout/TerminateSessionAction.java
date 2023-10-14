@@ -153,7 +153,7 @@ public class TerminateSessionAction extends BaseCasWebflowAction {
             .toList();
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val session = request.getSession(false);
-        FunctionUtils.doIfNull(session, HttpSession::invalidate);
+        FunctionUtils.doIfNotNull(session, HttpSession::invalidate);
         terminationHandlers.forEach(processor -> processor.afterSessionTermination(terminationResults, requestContext));
     }
 
