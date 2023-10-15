@@ -1,5 +1,5 @@
 {
-  "dependencies": "mongo-ticket-registry,mongo-service-registry,mongo-monitor,session-mongo",
+  "dependencies": "reports,mongo-ticket-registry,mongo-service-registry,mongo-monitor,session-mongo",
   "conditions": {
     "docker": "true"
   },
@@ -13,7 +13,7 @@
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
 
     "--management.health.mongoHealthIndicator.enabled=true",
-    "--management.endpoints.web.exposure.include=health",
+    "--management.endpoints.web.exposure.include=health,ticketRegistry,ssoSessions",
     "--management.endpoint.health.show-details=always",
     "--management.endpoints.enabled-by-default=true",
 

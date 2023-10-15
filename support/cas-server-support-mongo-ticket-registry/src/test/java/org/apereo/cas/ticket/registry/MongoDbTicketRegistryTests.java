@@ -11,11 +11,13 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
+import org.apereo.cas.util.TicketGrantingTicketIdGenerator;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.Getter;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
@@ -26,6 +28,8 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.context.TestPropertySource;
 
+import java.util.UUID;
+import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -71,17 +75,43 @@ class MongoDbTicketRegistryTests extends BaseTicketRegistryTests {
 
     @RepeatedTest(2)
     void verifyUpdateFirstAndClean() throws Throwable {
-        val originalAuthn = CoreAuthenticationTestUtils.getAuthentication();
+        val originalAuthn = CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString());
         val result = newTicketRegistry.updateTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId,
             originalAuthn, NeverExpiresExpirationPolicy.INSTANCE));
         assertNull(result);
+    }
+
+    @RepeatedTest(2)
+    void verifyQuery() throws Throwable {
+        val authentication = CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString());
+        val ticketGrantingTicketToAdd = Stream.generate(() -> {
+                val tgtId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
+                    .getNewTicketId(TicketGrantingTicket.PREFIX);
+                return new TicketGrantingTicketImpl(tgtId, authentication, NeverExpiresExpirationPolicy.INSTANCE);
+            })
+            .limit(5);
+        getNewTicketRegistry().addTicket(ticketGrantingTicketToAdd);
+
+        val criteria1 = new TicketRegistryQueryCriteria()
+            .setCount(5L)
+            .setDecode(Boolean.FALSE)
+            .setType(TicketGrantingTicket.PREFIX);
+        val queryResults1 = getNewTicketRegistry().query(criteria1);
+        assertEquals(criteria1.getCount(), queryResults1.size());
+
+        val criteria2 = new TicketRegistryQueryCriteria()
+            .setCount(5L)
+            .setDecode(Boolean.TRUE)
+            .setType(TicketGrantingTicket.PREFIX);
+        val queryResults = getNewTicketRegistry().query(criteria2);
+        assertEquals(criteria2.getCount(), queryResults.size());
     }
 
     @RepeatedTest(1)
     void verifyBadTicketInCatalog() throws Throwable {
         val ticket = new MockTicketGrantingTicket("casuser");
         val catalog = mock(TicketCatalog.class);
-        val defn = new DefaultTicketDefinition(ticket.getClass(), TicketGrantingTicket.class, ticket.getPrefix(), 0);
+        val ticketDefinition = new DefaultTicketDefinition(ticket.getClass(), TicketGrantingTicket.class, ticket.getPrefix(), 0);
         when(catalog.find(any(Ticket.class))).thenReturn(null);
         val mgr = mock(TicketSerializationManager.class);
         when(mgr.serializeTicket(any())).thenReturn("{}");
@@ -89,13 +119,13 @@ class MongoDbTicketRegistryTests extends BaseTicketRegistryTests {
         registry.addTicket(ticket);
         assertNull(registry.updateTicket(ticket));
 
-        when(catalog.find(any(Ticket.class))).thenReturn(defn);
-        defn.getProperties().setStorageName(null);
+        when(catalog.find(any(Ticket.class))).thenReturn(ticketDefinition);
+        ticketDefinition.getProperties().setStorageName(null);
         registry.addTicket(ticket);
         assertNull(registry.updateTicket(ticket));
 
         when(catalog.find(any(Ticket.class))).thenThrow(new RuntimeException());
-        defn.getProperties().setStorageName(null);
+        ticketDefinition.getProperties().setStorageName(null);
         registry.addTicket(ticket);
         assertNull(registry.updateTicket(ticket));
 

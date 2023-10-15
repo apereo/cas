@@ -17,7 +17,7 @@
     "--management.health.redis.enabled=true",
     "--management.health.redisHealthIndicator.enabled=true",
 
-    "--management.endpoints.web.exposure.include=health,ssoSessions",
+    "--management.endpoints.web.exposure.include=health,ssoSessions,ticketRegistry",
     "--management.endpoint.health.show-details=always",
     "--management.endpoints.enabled-by-default=true",
     
