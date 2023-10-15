@@ -598,6 +598,5 @@ boolean projectShouldBePublished(Project project) {
 }
 
 boolean projectRequiresLombok(Project project) {
-    return !["api", "core", "docs", "support", "webapp"].contains(project.name)
-            && !project.getPath().contains("cas-server-documentation")
+    return !["api", "core", "docs", "support", "webapp"].contains(project.name) && project.name != "cas-server-documentation"
 }

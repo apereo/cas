@@ -120,6 +120,8 @@
                                             CAS properties can be specified using the YAML syntax:<p/>
 
                                             {%- assign propertyWords = include.name | split: "." -%}
+                                            {%- assign totalWords = propertyWords | size -%}
+
                                             {%- for word in propertyWords -%}
                                                 {%- assign count = 2 -%}
                                                 {%- assign indentCount = forloop.index | times: count | minus: 2 -%}
@@ -136,7 +138,7 @@
 
                                                 {%- assign path = path | append: indentation | append: listIndicator | append: word | replace: "[]", "" | append: ": " -%}
 
-                                                {%- if forloop.index == 5 -%}
+                                                {%- if forloop.index == totalWords -%}
                                                     {%- assign path = path | append: propertyValueFormatted -%}
                                                 {%- else -%}
                                                     {%- assign path = path | append: "\n" -%}

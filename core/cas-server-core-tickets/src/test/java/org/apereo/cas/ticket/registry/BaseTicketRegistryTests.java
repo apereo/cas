@@ -56,7 +56,6 @@ import org.apereo.cas.util.ServiceTicketIdGenerator;
 import org.apereo.cas.util.TicketGrantingTicketIdGenerator;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -77,7 +76,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.util.AopTestUtils;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.io.Serial;
 import java.time.Clock;
 import java.time.ZoneOffset;
@@ -89,7 +87,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-
 import static org.awaitility.Awaitility.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.*;
@@ -377,7 +374,8 @@ public abstract class BaseTicketRegistryTests {
         var services = ((AuthenticatedServicesAwareTicketGrantingTicket) found).getServices();
         assertTrue(services.isEmpty(), () -> "Ticket services should be empty. useEncryption[" + useEncryption + ']');
 
-        tgt.grantServiceTicket("ST-1", RegisteredServiceTestUtils.getService("TGT_UPDATE_TEST"),
+        val service = RegisteredServiceTestUtils.getService("TGT_UPDATE_TEST");
+        tgt.grantServiceTicket("ST-1", service,
             NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy);
         ticketRegistry.updateTicket(tgt);
         val tgtResult = ticketRegistry.getTicket(tgt.getId(), TicketGrantingTicket.class);
