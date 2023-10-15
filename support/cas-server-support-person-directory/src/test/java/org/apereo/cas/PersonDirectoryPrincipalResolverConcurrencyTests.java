@@ -102,7 +102,7 @@ class PersonDirectoryPrincipalResolverConcurrencyTests {
                     }
                 });
             }
-            assertTrue(allExecutorThreadsReady.await(runnables.size() * 10, TimeUnit.MILLISECONDS),
+            assertTrue(allExecutorThreadsReady.await(runnables.size() * 10L, TimeUnit.MILLISECONDS),
                 "Timeout initializing threads! Perform long lasting initializations before passing runnables to assertConcurrent");
             afterInitBlocker.countDown();
             assertTrue(allDone.await(maxTimeoutSeconds, TimeUnit.SECONDS), () -> message + " timeout! More than " + maxTimeoutSeconds + " seconds");

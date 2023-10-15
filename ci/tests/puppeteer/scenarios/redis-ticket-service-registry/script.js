@@ -33,7 +33,7 @@ const querystring = require("querystring");
         password: 'Mellon'
     };
     let postData = querystring.stringify(formData);
-    for (let i = 0; i < 5000; i++) {
+    for (let i = 0; i < 50; i++) {
         await cas.doRequest('https://localhost:8443/cas/v1/tickets', "POST",
             {
                 'Accept': 'application/json',

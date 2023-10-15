@@ -6,8 +6,8 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo" level="debug" />
-        <Logger name="org.ldaptive" level="info"  />
+        <Logger name="org.apereo" level="error" />
+        <Logger name="org.ldaptive" level="warn"  />
         <Root level="off">
             <AppenderRef ref="console"/>
         </Root>
