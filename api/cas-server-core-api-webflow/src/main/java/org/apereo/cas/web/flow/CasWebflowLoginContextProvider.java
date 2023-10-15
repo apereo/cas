@@ -2,7 +2,6 @@ package org.apereo.cas.web.flow;
 
 import org.springframework.core.Ordered;
 import org.springframework.webflow.execution.RequestContext;
-
 import java.util.Optional;
 
 /**
@@ -11,7 +10,6 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@FunctionalInterface
 public interface CasWebflowLoginContextProvider extends Ordered {
 
     /**
@@ -20,7 +18,9 @@ public interface CasWebflowLoginContextProvider extends Ordered {
      * @param requestContext the request context
      * @return the candidate username
      */
-    Optional<String> getCandidateUsername(RequestContext requestContext);
+    default Optional<String> getCandidateUsername(final RequestContext requestContext) {
+        return Optional.empty();
+    }
 
     /**
      * Is login form username input disabled?
@@ -42,6 +42,16 @@ public interface CasWebflowLoginContextProvider extends Ordered {
         return false;
     }
 
+    /**
+     * Is login form viewable?.
+     *
+     * @param requestContext the request context
+     * @return the boolean
+     */
+    default boolean isLoginFormViewable(final RequestContext requestContext) {
+        return false;
+    }
+
     @Override
     default int getOrder() {
         return Ordered.LOWEST_PRECEDENCE;
@@ -55,4 +65,5 @@ public interface CasWebflowLoginContextProvider extends Ordered {
     default String getName() {
         return getClass().getSimpleName();
     }
+
 }

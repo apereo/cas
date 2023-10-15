@@ -15,7 +15,6 @@ dependencies {
     implementation project(":core:cas-server-core-validation-api")
 
     implementation project(":support:cas-server-support-thymeleaf-core")
-    implementation project(":support:cas-server-support-pac4j-core")
     implementation project(":support:cas-server-support-themes")
 
     testImplementation project(":core:cas-server-core")

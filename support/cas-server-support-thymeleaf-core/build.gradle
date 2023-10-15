@@ -13,8 +13,6 @@ dependencies {
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-validation-api")
 
-    implementation project(":support:cas-server-support-pac4j-core")
-
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core-tickets")

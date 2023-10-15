@@ -49,10 +49,14 @@ as a [Graal VM native image](../installation/GraalVM-NativeImage-Installation.ht
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) have selectively switched
 to build and verify Graal VM native images and we plan to extend the coverage to all such scenarios in the coming releases.
 
-### CAS Initializr
+### CAS Initializr & OpenRewrite
 
 [CAS Initializr](../installation/WAR-Overlay-Initializr.html) is now able to produce upgrade recipes based on [OpenRewrite](https://docs.openrewrite.org/).
 The goal is to allow for in-place automatic upgrades using recipes that understand the differences and nuances from one CAS version to the next.
+
+<div class="alert alert-info">:information_source: <strong>Rough Waters Ahead</strong><p>
+Like a cake still baking in the oven, this feature is a masterpiece in the making. It might be still a little doughy and 
+half-baked, so approach with care and a pinch of curiosity. </p></div>
 
 ### Testing Strategy
 
@@ -61,18 +65,26 @@ and scenarios. At the moment, total number of jobs stands at approximately `441`
 test coverage of the CAS codebase is approximately `94%`. Furthermore, a large number of test categories that group internal unit tests
 are now configured to run with parallelism enabled.
 
-### Account Profile
+### Account Profile & Multifactor Authentication
 
 [Account profile management](../registration/Account-Management-Overview.html) is now able to allow users to register their own multifactor authentication devices.
 Registration flows are supported for [Google Authenticator](../mfa/GoogleAuthenticator-Authentication.html) 
 and [FIDO2 WebAuthn](../mfa/FIDO2-WebAuthn-Authentication-Registration.html).
 
+### Refactoring & Cleanup
+
+There has been lots of internal cleanup, refactoring and build system improvements to remove assumptions and hard dependencies between CAS modules.
+As a result, about **33 MB worth of cruft** has been removed from the CAS web application and the final packaged artifact is now leaner. While the changes
+should generally prove invisible to the deployer, functionality that deals with fetching attributes from LDAP and Active Directory
+systems should be reviewed carefully to make sure [the correct module listed here](../integration/Attribute-Resolution-LDAP.html) is included in the build
+where and when necessary.
+
 ## Other Stuff
-      
-- Lots of internal cleanup, refactoring and build system improvements to remove assumptions and hard dependencies between CAS modules. 
-- In OpenID Connect, requests that carry a `client_secret` as a request parameter are now rejected and/or ignored.
+
+- When using [OpenID Connect](../protocol/OIDC-Protocol.html), requests that carry a `client_secret` as a querystring parameter are now rejected and/or ignored.
 - Changes to Spring Security configuration to allow basic authentication requests to pass through correctly to CAS endpoints, where appropriate.
 - Apache Shiro, only used to assist with database password encoding and hashing functions, is now fully removed from CAS codebase.
+- A new and somewhat humble [actuator endpoint](../ticketing/Configuring-Ticketing-Components.html) to interact with and query the CAS ticket registry.
 
 ## Library Upgrades
    
