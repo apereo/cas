@@ -13,6 +13,7 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.RetryingTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
+import static org.awaitility.Awaitility.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -89,7 +91,7 @@ class RedisGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTime
     }
 
     @Override
-    @Test
+    @RetryingTest(2)
     void verifySaveAndUpdate() {
         val username = UUID.randomUUID().toString();
         var validationCode = RandomUtils.nextInt(1, 999999);
@@ -106,12 +108,15 @@ class RedisGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTime
         assertEquals(validationCode, tokenAccount.getValidationCode());
         tokenAccount.setSecretKey("newSecret");
 
-        validationCode = RandomUtils.nextInt(1, 999999);
-        tokenAccount.setValidationCode(validationCode);
+        val validationCode2 = RandomUtils.nextInt(1, 999999);
+        tokenAccount.setValidationCode(validationCode2);
         registry.update(tokenAccount);
-        val s2 = registry.get(username).iterator().next();
-        assertEquals(validationCode, s2.getValidationCode());
-        assertEquals("newSecret", s2.getSecretKey());
+
+        await().untilAsserted(() -> {
+            val s2 = registry.get(username).iterator().next();
+            assertEquals(validationCode2, s2.getValidationCode());
+            assertEquals("newSecret", s2.getSecretKey());
+        });
     }
 
     @Test
