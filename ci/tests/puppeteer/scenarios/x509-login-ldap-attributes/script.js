@@ -63,10 +63,17 @@ const request = require('request');
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
     await cas.assertInnerTextContains(page, "#content div p", "1234567890@college.edu");
 
-    await cas.assertInnerTextContains(page, "#attribute-tab-0 table#attributesTable tbody", "casuserx509");
-    await cas.assertInnerTextContains(page, "#attribute-tab-0 table#attributesTable tbody", "someattribute");
-    await cas.assertInnerTextContains(page, "#attribute-tab-0 table#attributesTable tbody", "user-account-control");
+    // make sure attribute from attribute repository that is not active does not show up
     await cas.assertInnerTextDoesNotContain(page, "#attribute-tab-0 table#attributesTable tbody", "shouldntbehere");
+
+    // check for samaccountname attribute that should have come from ADCERT attribute repository
+    await cas.assertInnerTextContains(page, "#attribute-tab-0 table#attributesTable tbody", "casuserx509");
+
+    // check for attribute from groovy attribute repository that should be enabled
+    await cas.assertInnerTextContains(page, "#attribute-tab-0 table#attributesTable tbody", "someattribute");
+
+    // check for another attribute from ADCERT attribute repository
+    await cas.assertInnerTextContains(page, "#attribute-tab-0 table#attributesTable tbody", "user-account-control");
 
     await browser.close();
 })();
