@@ -20,7 +20,6 @@ import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointR
 import org.springframework.boot.actuate.endpoint.web.PathMappedEndpoints;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.jaas.JaasAuthenticationProvider;
 import org.springframework.security.config.Customizer;
@@ -28,16 +27,13 @@ import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationConverter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
-import org.springframework.util.ReflectionUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -54,7 +50,16 @@ public class CasWebSecurityConfigurerAdapter {
     private final ObjectPostProcessor<BasicAuthenticationFilter> basicAuthFilterPostProcessor = new ObjectPostProcessor<>() {
         @Override
         public <O extends BasicAuthenticationFilter> O postProcess(final O object) {
-            return (O) new CasBasicAuthenticationFilter(object, getAllowedPatternsToIgnore());
+            val patternsToIgnore = getAllowedPatternsToIgnore()
+                .stream().map(AntPathRequestMatcher::new).collect(Collectors.toSet());
+            object.setAuthenticationConverter(new BasicAuthenticationConverter() {
+                @Override
+                public UsernamePasswordAuthenticationToken convert(final HttpServletRequest request) {
+                    val requestIsNotIgnored = patternsToIgnore.stream().noneMatch(requestMatcher -> requestMatcher.matches(request));
+                    return requestIsNotIgnored ? super.convert(request) : null;
+                }
+            });
+            return object;
         }
     };
 
@@ -74,8 +79,7 @@ public class CasWebSecurityConfigurerAdapter {
     }
 
     private static void configureJaasAuthenticationProvider(final HttpSecurity http,
-                                                            final JaasSecurityActuatorEndpointsMonitorProperties jaas)
-        throws Exception {
+                                                            final JaasSecurityActuatorEndpointsMonitorProperties jaas) throws Exception {
         val provider = new JaasAuthenticationProvider();
         provider.setLoginConfig(jaas.getLoginConfig());
         provider.setLoginContextName(jaas.getLoginContextName());
@@ -260,36 +264,5 @@ public class CasWebSecurityConfigurerAdapter {
         http.authorizeHttpRequests(customizer -> customizer.requestMatchers(endpoint)
                 .hasAnyAuthority(properties.getRequiredAuthorities().toArray(ArrayUtils.EMPTY_STRING_ARRAY)))
             .httpBasic(customizer -> customizer.withObjectPostProcessor(basicAuthFilterPostProcessor));
-    }
-
-    private static final class CasBasicAuthenticationFilter extends BasicAuthenticationFilter {
-        private final List<RequestMatcher> patternsToIgnore;
-
-        private CasBasicAuthenticationFilter(final BasicAuthenticationFilter delegate, final List<String> patternsToIgnore) {
-            super(getField("authenticationManager", delegate, AuthenticationManager.class),
-                getField("authenticationEntryPoint", delegate, AuthenticationEntryPoint.class));
-            setField("authenticationConverter", this, new CasBasicAuthenticationConverter());
-            this.patternsToIgnore = patternsToIgnore.stream().map(AntPathRequestMatcher::new).collect(Collectors.toList());
-        }
-
-        private final class CasBasicAuthenticationConverter extends BasicAuthenticationConverter {
-            @Override
-            public UsernamePasswordAuthenticationToken convert(final HttpServletRequest request) {
-                val requestIsNotIgnored = patternsToIgnore.stream().noneMatch(requestMatcher -> requestMatcher.matches(request));
-                return requestIsNotIgnored ? super.convert(request) : null;
-            }
-        }
-
-        private static void setField(final String name, final Object instance, final Object value) {
-            val field = ReflectionUtils.findField(instance.getClass(), name);
-            Objects.requireNonNull(field).trySetAccessible();
-            ReflectionUtils.setField(field, instance, value);
-        }
-
-        private static <T> T getField(final String name, final Object instance, final Class<T> clazz) {
-            val field = ReflectionUtils.findField(instance.getClass(), name);
-            Objects.requireNonNull(field).trySetAccessible();
-            return clazz.cast(ReflectionUtils.getField(field, instance));
-        }
     }
 }
