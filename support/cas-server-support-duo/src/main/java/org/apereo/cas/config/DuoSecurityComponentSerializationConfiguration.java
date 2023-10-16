@@ -1,8 +1,8 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationService;
-import org.apereo.cas.adaptors.duo.authn.DuoSecurityCredential;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityDirectCredential;
+import org.apereo.cas.adaptors.duo.authn.DuoSecurityUniversalPromptCredential;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
@@ -35,7 +35,7 @@ public class DuoSecurityComponentSerializationConfiguration {
         return BeanSupplier.of(ComponentSerializationPlanConfigurer.class)
             .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> plan -> {
-                plan.registerSerializableClass(DuoSecurityCredential.class);
+                plan.registerSerializableClass(DuoSecurityUniversalPromptCredential.class);
                 plan.registerSerializableClass(DuoSecurityDirectCredential.class);
             })
             .otherwiseProxy()

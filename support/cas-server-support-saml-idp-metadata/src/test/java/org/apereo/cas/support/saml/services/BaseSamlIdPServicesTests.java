@@ -38,7 +38,7 @@ public abstract class BaseSamlIdPServicesTests {
     protected OpenSamlConfigBean openSamlConfigBean;
 
     @Autowired
-    @Qualifier("httpClient")
+    @Qualifier(HttpClient.BEAN_NAME_HTTPCLIENT)
     protected HttpClient httpClient;
 
     @Autowired

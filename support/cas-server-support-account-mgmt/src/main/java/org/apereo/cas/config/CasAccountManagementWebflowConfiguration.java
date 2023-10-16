@@ -146,7 +146,7 @@ public class CasAccountManagementWebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AccountRegistrationProvisionerConfigurer restfulAccountRegistrationProvisionerConfigurer(
-            @Qualifier("httpClient")
+            @Qualifier(HttpClient.BEAN_NAME_HTTPCLIENT)
             final HttpClient httpClient,
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {

@@ -339,7 +339,7 @@ public class SamlIdPEndpointsConfiguration {
             final SingleLogoutMessageCreator samlLogoutBuilder,
             @Qualifier("singleLogoutServiceLogoutUrlBuilder")
             final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder,
-            @Qualifier("httpClient")
+            @Qualifier(HttpClient.BEAN_NAME_HTTPCLIENT)
             final HttpClient httpClient,
             @Qualifier("velocityEngineFactory")
             final VelocityEngine velocityEngineFactory,

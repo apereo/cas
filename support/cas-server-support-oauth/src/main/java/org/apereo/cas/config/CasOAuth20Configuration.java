@@ -161,6 +161,8 @@ import org.pac4j.core.profile.factory.ProfileManagerFactory;
 import org.pac4j.http.client.direct.DirectBasicAuthClient;
 import org.pac4j.http.client.direct.DirectFormClient;
 import org.pac4j.http.client.direct.HeaderClient;
+import org.pac4j.http.credentials.authenticator.X509Authenticator;
+import org.pac4j.http.credentials.extractor.X509CredentialsExtractor;
 import org.pac4j.jee.context.JEEContext;
 import org.pac4j.jee.context.JEEContextFactory;
 import org.pac4j.jee.context.session.JEESessionStore;
@@ -493,9 +495,22 @@ public class CasOAuth20Configuration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public Client x509CertificateClient(
+            @Qualifier("oauthX509CertificateAuthenticator") final Authenticator oauthX509CertificateAuthenticator) {
+            val accessTokenClient = new HeaderClient();
+            accessTokenClient.setCredentialsExtractor(new X509CredentialsExtractor("jakarta.servlet.request.X509Certificate"));
+            accessTokenClient.setAuthenticator(oauthX509CertificateAuthenticator);
+            accessTokenClient.setName(Authenticators.CAS_OAUTH_CLIENT_X509_CERTIFICATE_AUTHN);
+            accessTokenClient.init();
+            return accessTokenClient;
+        }
+
+        @Bean
         @ConditionalOnMissingBean(name = "oauthSecConfigClients")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public BeanContainer<Client> oauthSecConfigClients(
+            @Qualifier("x509CertificateClient") final Client x509CertificateClient,
             @Qualifier("basicAuthClient") final Client basicAuthClient,
             @Qualifier("directFormClient") final Client directFormClient,
             @Qualifier("pkceAuthnFormClient") final Client pkceAuthnFormClient,
@@ -518,6 +533,7 @@ public class CasOAuth20Configuration {
             clientList.add(directFormClient);
             clientList.add(userFormClient);
             clientList.add(accessTokenClient);
+            clientList.add(x509CertificateClient);
 
             return BeanContainer.of(clientList);
         }
@@ -1376,6 +1392,15 @@ public class CasOAuth20Configuration {
             @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry) {
             return new OAuth20AccessTokenAuthenticator(ticketRegistry, accessTokenJwtBuilder);
         }
+
+
+        @ConditionalOnMissingBean(name = "oauthX509CertificateAuthenticator")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public Authenticator oauthX509CertificateAuthenticator() {
+            return new X509Authenticator();
+        }
+
     }
 
     @Configuration(value = "CasOAuth20AuditConfiguration", proxyBeanMethods = false)

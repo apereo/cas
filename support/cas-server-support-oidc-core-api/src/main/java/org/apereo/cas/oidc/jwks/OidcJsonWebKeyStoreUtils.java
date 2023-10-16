@@ -3,6 +3,7 @@ package org.apereo.cas.oidc.jwks;
 import org.apereo.cas.oidc.token.OidcRegisteredServiceJwtCipherExecutor;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.util.JsonUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
@@ -53,24 +54,25 @@ public class OidcJsonWebKeyStoreUtils {
     /**
      * Gets json web key set.
      *
-     * @param service        the service
+     * @param oidcRegisteredService        the service
      * @param resourceLoader the resource loader
      * @param usage          the usage
      * @return the json web key set
      */
-    public static Optional<JsonWebKeySet> getJsonWebKeySet(final OidcRegisteredService service,
+    public static Optional<JsonWebKeySet> getJsonWebKeySet(final OidcRegisteredService oidcRegisteredService,
                                                            final ResourceLoader resourceLoader,
                                                            final Optional<OidcJsonWebKeyUsage> usage) {
+        RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(oidcRegisteredService);
         return FunctionUtils.doAndHandle(
                 () -> {
-                    val serviceJwks = SpringExpressionLanguageValueResolver.getInstance().resolve(service.getJwks());
+                    val serviceJwks = SpringExpressionLanguageValueResolver.getInstance().resolve(oidcRegisteredService.getJwks());
                     LOGGER.trace("Loading JSON web key from [{}]", serviceJwks);
-                    val resource = getJsonWebKeySetResource(service, resourceLoader);
+                    val resource = getJsonWebKeySetResource(oidcRegisteredService, resourceLoader);
                     if (resource == null) {
-                        LOGGER.debug("No JSON web keys or keystore resource could be found for [{}]", service.getServiceId());
+                        LOGGER.debug("No JSON web keys or keystore resource could be found for [{}]", oidcRegisteredService.getServiceId());
                         return Optional.empty();
                     }
-                    val requestedKid = Optional.ofNullable(service.getJwksKeyId());
+                    val requestedKid = Optional.ofNullable(oidcRegisteredService.getJwksKeyId());
                     return buildJsonWebKeySet(resource, requestedKid, usage);
                 },
                 (CheckedFunction<Throwable, Optional<JsonWebKeySet>>) throwable -> {
