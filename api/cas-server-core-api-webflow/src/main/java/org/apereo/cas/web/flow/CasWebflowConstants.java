@@ -1721,11 +1721,6 @@ public interface CasWebflowConstants {
     String ACTION_ID_CHECK_WEB_AUTHENTICATION_REQUEST = "checkWebAuthenticationRequestAction";
 
     /**
-     * Action id 'prepareDuoWebLoginFormAction .
-     */
-    String ACTION_ID_PREPARE_DUO_WEB_LOGIN_FORM = "prepareDuoWebLoginFormAction";
-
-    /**
      * Action id 'duoAuthenticationWebflowAction .
      */
     String ACTION_ID_DUO_AUTHENTICATION_WEBFLOW = "duoAuthenticationWebflowAction";

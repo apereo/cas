@@ -133,7 +133,7 @@ public class CasCoreHttpConfiguration {
             return factoryBean.getObject();
         }
 
-        @ConditionalOnMissingBean(name = "httpClient")
+        @ConditionalOnMissingBean(name = HttpClient.BEAN_NAME_HTTPCLIENT)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public FactoryBean<SimpleHttpClient> httpClient(

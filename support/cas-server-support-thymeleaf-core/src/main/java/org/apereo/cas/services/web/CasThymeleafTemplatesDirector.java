@@ -54,7 +54,7 @@ public class CasThymeleafTemplatesDirector {
         val providers = webflowExecutionPlan.getWebflowLoginContextProviders();
         return requestContext != null
             && (WebUtils.isCasLoginFormViewable(requestContext) || providers.isEmpty()
-            || providers.stream().anyMatch(provider -> provider.isLoginFormViewable(requestContext)));
+            || providers.stream().noneMatch(provider -> provider.isLoginFormViewable(requestContext)));
     }
 
     /**

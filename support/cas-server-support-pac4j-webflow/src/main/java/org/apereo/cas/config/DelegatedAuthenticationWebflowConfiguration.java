@@ -162,8 +162,12 @@ public class DelegatedAuthenticationWebflowConfiguration {
         @ConditionalOnMissingBean(name = "delegatedCasWebflowExecutionPlanConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowExecutionPlanConfigurer delegatedCasWebflowExecutionPlanConfigurer(
+            @Qualifier("delegatedAuthenticationCasWebflowLoginContextProvider") final CasWebflowLoginContextProvider delegatedAuthenticationCasWebflowLoginContextProvider,
             @Qualifier("delegatedAuthenticationWebflowConfigurer") final CasWebflowConfigurer delegatedAuthenticationWebflowConfigurer) {
-            return plan -> plan.registerWebflowConfigurer(delegatedAuthenticationWebflowConfigurer);
+            return plan -> {
+                plan.registerWebflowConfigurer(delegatedAuthenticationWebflowConfigurer);
+                plan.registerWebflowLoginContextProvider(delegatedAuthenticationCasWebflowLoginContextProvider);
+            };
         }
     }
 

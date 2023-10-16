@@ -56,7 +56,7 @@ public class CasSpringBootAdminConfiguration {
         @Bean
         public RegistrationClient registrationClient(
             final ObjectMapper objectMapper,
-            @Qualifier("httpClient") final HttpClient httpClient,
+            @Qualifier(HttpClient.BEAN_NAME_HTTPCLIENT) final HttpClient httpClient,
             final ClientProperties client) {
 
             objectMapper.findAndRegisterModules()
@@ -85,7 +85,7 @@ public class CasSpringBootAdminConfiguration {
         @ConditionalOnMissingBean(name = "springBootAdminWebClientCustomizer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public InstanceWebClientCustomizer springBootAdminWebClientCustomizer(
-            @Qualifier("httpClient") final HttpClient httpClient) throws Exception {
+            @Qualifier(HttpClient.BEAN_NAME_HTTPCLIENT) final HttpClient httpClient) throws Exception {
             val sslContext = SslContextBuilder
                 .forClient()
                 .trustManager(httpClient.httpClientFactory().getTrustManagers()[0])

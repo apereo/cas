@@ -51,6 +51,7 @@ dependencies {
     testImplementation libraries.hazelcast
     testImplementation libraries.casclient
     testImplementation libraries.mongo
+    testImplementation libraries.ldaptive
 
     compileOnly project(":support:cas-server-support-discovery-profile-core")
     compileOnly project(":support:cas-server-support-jpa-util")

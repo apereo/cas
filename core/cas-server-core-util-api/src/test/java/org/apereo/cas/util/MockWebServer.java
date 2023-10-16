@@ -54,6 +54,16 @@ public class MockWebServer implements Closeable {
 
     private Thread workerThread;
 
+    public MockWebServer(final boolean ssl, final String resource) {
+        val port = getRandomPort();
+        try {
+            this.worker = new Worker(getServerSocket(port, ssl),
+                new ByteArrayResource(resource.getBytes(StandardCharsets.UTF_8)), MediaType.APPLICATION_JSON_VALUE, HttpStatus.OK);
+        } catch (final Exception e) {
+            throw new IllegalArgumentException("Cannot create Web server on port " + port, e);
+        }
+    }
+
     public MockWebServer(final boolean ssl, final Resource resource) {
         val port = getRandomPort();
         try {

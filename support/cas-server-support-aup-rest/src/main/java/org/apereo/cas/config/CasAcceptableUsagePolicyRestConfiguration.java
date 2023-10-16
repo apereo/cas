@@ -32,7 +32,7 @@ public class CasAcceptableUsagePolicyRestConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository(
-        @Qualifier("httpClient")
+        @Qualifier(HttpClient.BEAN_NAME_HTTPCLIENT)
         final HttpClient httpClient,
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,

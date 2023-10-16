@@ -207,7 +207,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
         final CasConfigurationProperties casProperties,
         @Qualifier("yubicoClient")
         final YubicoClient yubicoClient,
-        @Qualifier("httpClient")
+        @Qualifier(HttpClient.BEAN_NAME_HTTPCLIENT)
         final HttpClient httpClient,
         @Qualifier("yubikeyBypassEvaluator")
         final MultifactorAuthenticationProviderBypassEvaluator yubikeyBypassEvaluator,

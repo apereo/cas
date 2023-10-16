@@ -29,8 +29,8 @@ import static org.mockito.Mockito.*;
 @EnabledIfEnvironmentVariable(named = "AZURE_AD_DOMAIN", matches = ".+")
 class AzureActiveDirectoryAuthenticationTests {
 
-    private static String AZURE_AD_USER_PASSWORD;
-    private static String AZURE_AD_DOMAIN;
+    private static final String AZURE_AD_USER_PASSWORD;
+    private static final String AZURE_AD_DOMAIN;
 
     static {
         AZURE_AD_USER_PASSWORD = System.getenv("AZURE_AD_USER_PASSWORD");

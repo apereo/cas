@@ -63,6 +63,11 @@ public interface DuoSecurityAuthenticationService extends Serializable {
     String RESULT_KEY_MESSAGE_DETAIL = "message_detail";
 
     /**
+     * Threshold to compare against error codes returned from Duo.
+     */
+    int RESULT_CODE_ERROR_THRESHOLD = 49999;
+
+    /**
      * Verify the authentication response from Duo.
      *
      * @param credential signed request token
