@@ -8,6 +8,7 @@
   "evaluationOrder": 1,
   "generateRefreshToken": "true",
   "jwtAccessToken": "true",
+  "tokenEndpointAuthenticationMethod": "private_key_jwt",
   "scopes" : [ "java.util.HashSet", [ "profile", "email", "address", "phone" ] ],
   "supportedGrantTypes": [ "java.util.HashSet", [ "client_credentials" ] ],
   "jwks": "enTHR15K28p0N6f404HaC9Vp1cfIBgQiHhmbgBiO7UHEnSiNJudxtDhPQNFjFQtOVSjEYu0pr5yxEeBAiO6IlA"
