@@ -29,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.CallContext;
+import org.pac4j.core.credentials.CredentialSource;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
@@ -85,12 +86,13 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
                 LOGGER.debug("Skipping authenticator [{}]; service access is rejected for [{}] or the authentication request is not supported", name, registeredService);
                 return Optional.empty();
             }
-            
-            if (!OAuth20Utils.isTokenAuthenticationMethodSupportedFor(callContext, registeredService, "client_secret_basic", "client_secret_post")) {
-                LOGGER.warn("Client authentication method is not supported for service [{}]", registeredService.getName());
+
+            val requiredAuthnMethod = CredentialSource.FORM.name().equalsIgnoreCase(upc.getSource()) ? "client_secret_post" : "client_secret_basic";
+            if (!OAuth20Utils.isTokenAuthenticationMethodSupportedFor(callContext, registeredService, requiredAuthnMethod)) {
+                LOGGER.warn("Client authentication method [{}] is not supported for service [{}]", requiredAuthnMethod, registeredService.getName());
                 return Optional.empty();
             }
-            
+
             val service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
             validateCredentials(upc, registeredService, callContext);
 
