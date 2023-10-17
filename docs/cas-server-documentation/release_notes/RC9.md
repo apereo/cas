@@ -85,6 +85,7 @@ where and when necessary.
 - Changes to Spring Security configuration to allow basic authentication requests to pass through correctly to CAS endpoints where appropriate.
 - Apache Shiro, only used to assist with database password encoding and hashing functions, is now fully removed from CAS codebase.
 - A new and somewhat humble [actuator endpoint](../ticketing/Configuring-Ticketing-Components.html) to interact with and query the CAS ticket registry.
+- X.509 client authentication is now available as an authentication for the access token endpoint in [OpenID Connect](../protocol/OIDC-Protocol.html). 
 
 ## Library Upgrades
   
@@ -94,6 +95,7 @@ where and when necessary.
 - Spring
 - Spring Data
 - Spring Security
+- Apache Log4j
 - Spring Integration
 - Hjson
 - Apache Tomcat
