@@ -508,6 +508,7 @@ layout: null
                 * [Dynamic Registration](/cas/{{ version }}/authentication/OIDC-Authentication-Dynamic-Registration.html) 
             * [Discovery](/cas/{{ version }}/authentication/OIDC-Authentication-Discovery.html)
             * [DPoP](/cas/{{ version }}/authentication/OIDC-Authentication-DPoP.html)
+            * [Token Authentication](/cas/{{ version }}/authentication/OIDC-Authentication-AccessToken-AuthMethods.html)
             * [JWKS](#oidcjwksmenu)
                 * [Overview](/cas/{{ version }}/authentication/OIDC-Authentication-JWKS.html)
                 * [Storage](/cas/{{ version }}/authentication/OIDC-Authentication-JWKS-Storage.html)
