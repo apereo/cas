@@ -27,20 +27,20 @@ class OidcJsonWebKeyStoreUtilsTests extends AbstractOidcTests {
     void verifyKeySet() throws Throwable {
         val service = getOidcRegisteredService();
         service.setJwks(StringUtils.EMPTY);
-        assertTrue(OidcJsonWebKeyStoreUtils.getJsonWebKeySet(service, resourceLoader, Optional.of(OidcJsonWebKeyUsage.SIGNING)).isEmpty());
+        assertTrue(OidcJsonWebKeyStoreUtils.getJsonWebKeySet(service, applicationContext, Optional.of(OidcJsonWebKeyUsage.SIGNING)).isEmpty());
     }
 
     @Test
     void verifyBadSvc() throws Throwable {
         assertTrue(OidcJsonWebKeyStoreUtils.getJsonWebKeySet(
-            null, resourceLoader, Optional.of(OidcJsonWebKeyUsage.SIGNING)).isEmpty());
+            null, applicationContext, Optional.of(OidcJsonWebKeyUsage.SIGNING)).isEmpty());
     }
 
     @Test
     void verifyEmptyKeySet() throws Throwable {
         val service = getOidcRegisteredService();
         service.setJwks(new JsonWebKeySet(List.of()).toJson());
-        assertTrue(OidcJsonWebKeyStoreUtils.getJsonWebKeySet(service, resourceLoader, Optional.of(OidcJsonWebKeyUsage.SIGNING)).isEmpty());
+        assertTrue(OidcJsonWebKeyStoreUtils.getJsonWebKeySet(service, applicationContext, Optional.of(OidcJsonWebKeyUsage.SIGNING)).isEmpty());
     }
 
     @Test

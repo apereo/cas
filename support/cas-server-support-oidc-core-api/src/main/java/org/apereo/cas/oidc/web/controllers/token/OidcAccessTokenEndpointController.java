@@ -6,7 +6,6 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
-
 import com.nimbusds.oauth2.sdk.dpop.verifiers.InvalidDPoPProofException;
 import lombok.val;
 import org.pac4j.jee.context.JEEContext;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -40,8 +38,9 @@ public class OidcAccessTokenEndpointController extends OAuth20AccessTokenEndpoin
     @Override
     public ModelAndView handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         val webContext = new JEEContext(request, response);
-        if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, OidcConstants.ACCESS_TOKEN_URL)
-            && !getConfigurationContext().getIssuerService().validateIssuer(webContext, OidcConstants.TOKEN_URL)) {
+        val issuerService = getConfigurationContext().getIssuerService();
+        if (!issuerService.validateIssuer(webContext, OidcConstants.ACCESS_TOKEN_URL)
+            && !issuerService.validateIssuer(webContext, OidcConstants.TOKEN_URL)) {
             return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_REQUEST, "Invalid issuer");
         }
         return super.handleRequest(request, response);

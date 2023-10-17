@@ -9,6 +9,7 @@ import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreUtils;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
 import org.apereo.cas.services.OidcRegisteredService;
+import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
@@ -16,7 +17,6 @@ import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jwt.JWT;
@@ -35,7 +35,6 @@ import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.profile.CommonProfile;
 import org.springframework.context.ApplicationContext;
-
 import java.util.Optional;
 
 /**
@@ -47,45 +46,23 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 public class OidcJwtAuthenticator implements Authenticator {
-    /**
-     * OIDC issuer service.
-     */
     protected final OidcIssuerService issuerService;
 
-    /**
-     * Services Manager.
-     */
     protected final ServicesManager servicesManager;
 
-    /**
-     * Registered service access strategy.
-     */
     protected final AuditableExecution registeredServiceAccessStrategyEnforcer;
 
-    /**
-     * Ticket registry.
-     */
     protected final TicketRegistry ticketRegistry;
 
-    /**
-     * Web application service factory.
-     */
     protected final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory;
 
-    /**
-     * CAS properties.
-     */
     protected final CasConfigurationProperties casProperties;
 
-    /**
-     * Resource loader instance.
-     */
     protected final ApplicationContext applicationContext;
 
     protected JWT verifyCredentials(final UsernamePasswordCredentials credentials,
                                     final WebContext webContext) throws Throwable {
-        if (!StringUtils.equalsIgnoreCase(OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER,
-            credentials.getUsername())) {
+        if (!StringUtils.equalsIgnoreCase(OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER, credentials.getUsername())) {
             LOGGER.debug("client assertion type is not set to [{}]", OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER);
             return null;
         }
@@ -107,18 +84,24 @@ public class OidcJwtAuthenticator implements Authenticator {
         }
         return null;
     }
-    
+
 
     @Override
     public Optional<Credentials> validate(final CallContext callContext, final Credentials creds) {
-        return FunctionUtils.doUnchecked(() -> {
+        return FunctionUtils.doAndHandle(() -> {
             val registeredService = getOidcRegisteredService(callContext);
-            
+            RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
+
+            if (!OAuth20Utils.isTokenAuthenticationMethodSupportedFor(callContext, registeredService, "client_secret_jwt", "private_key_jwt")) {
+                LOGGER.warn("Private key JWT authentication method is not supported for service [{}]", registeredService.getName());
+                return Optional.<Credentials>empty();
+            }
+
             val credentials = (UsernamePasswordCredentials) creds;
             val jwt = verifyCredentials(credentials, callContext.webContext());
             if (jwt == null) {
                 LOGGER.warn("Unable to verify credentials");
-                return Optional.empty();
+                return Optional.<Credentials>empty();
             }
 
             val keys = OidcJsonWebKeyStoreUtils.getJsonWebKeySet(registeredService,
@@ -136,8 +119,11 @@ public class OidcJwtAuthenticator implements Authenticator {
                             .build();
                         determineUserProfile(credentials, consumer);
                     }))));
-            return Optional.of(credentials);
-        });
+            return Optional.<Credentials>of(credentials);
+        }, e -> {
+            LoggingUtils.error(LOGGER, e);
+            return Optional.<Credentials>empty();
+        }).get();
     }
 
     protected OidcRegisteredService getOidcRegisteredService(final CallContext callContext) throws Throwable {
@@ -156,7 +142,7 @@ public class OidcJwtAuthenticator implements Authenticator {
         val accessResult = registeredServiceAccessStrategyEnforcer.execute(audit);
         return accessResult.isExecutionFailure() ? null : registeredService;
     }
-    
+
     protected void determineUserProfile(final UsernamePasswordCredentials credentials,
                                         final JwtConsumer consumer) throws Exception {
         FunctionUtils.doAndHandle(__ -> {
@@ -170,7 +156,7 @@ public class OidcJwtAuthenticator implements Authenticator {
 
     protected boolean validateJwtAlgorithm(final Algorithm alg) {
         return JWSAlgorithm.Family.HMAC_SHA.contains(alg)
-               || JWSAlgorithm.Family.RSA.contains(alg)
-               || JWSAlgorithm.Family.EC.contains(alg);
+            || JWSAlgorithm.Family.RSA.contains(alg)
+            || JWSAlgorithm.Family.EC.contains(alg);
     }
 }

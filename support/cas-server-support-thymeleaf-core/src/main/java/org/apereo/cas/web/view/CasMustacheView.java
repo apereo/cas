@@ -23,7 +23,7 @@ import java.util.Map;
  */
 @Setter
 public class CasMustacheView extends MustacheView {
-    private Mustache.Compiler compiler;
+    protected Mustache.Compiler compiler;
 
     @Override
     protected void renderMergedTemplateModel(final Map<String, Object> model, final HttpServletRequest request,
@@ -31,9 +31,9 @@ public class CasMustacheView extends MustacheView {
         val resource = getApplicationContext().getResource(getUrl());
         try (val reader = new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8);
              val writer = new StringWriter()) {
-            val template = this.compiler.compile(reader);
+            val template = compiler.compile(reader);
             template.execute(model, writer);
-            LoggingUtils.protocolMessage("CAS Response", Map.of(), writer.toString());
+            LoggingUtils.protocolMessage("CAS Validation Response", Map.of(), writer.toString());
             response.getWriter().write(writer.toString());
         }
     }

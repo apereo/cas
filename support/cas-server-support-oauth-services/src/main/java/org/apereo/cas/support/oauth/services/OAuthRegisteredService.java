@@ -69,7 +69,9 @@ public class OAuthRegisteredService extends BaseWebBasedRegisteredService {
     private String introspectionEncryptedResponseAlg;
 
     private String introspectionEncryptedResponseEncoding;
-    
+
+    private String tokenEndpointAuthenticationMethod = "client_secret_basic";
+
     @JsonIgnore
     @Override
     public String getFriendlyName() {

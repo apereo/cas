@@ -9,6 +9,11 @@ package org.apereo.cas.support.oauth;
 public interface OAuth20Constants {
 
     /**
+     * Internal attribute to indicate whether the incoming request is an access token request.
+     */
+    String REQUEST_ATTRIBUTE_ACCESS_TOKEN_REQUEST = "oauth.request.access-token";
+    
+    /**
      * The prompt parameter.
      */
     String PROMPT = "prompt";

@@ -52,7 +52,7 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * This is {@link CasWebAppSecurityConfiguration}.
+ * This is {@link CasWebSecurityConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
@@ -62,7 +62,7 @@ import java.util.List;
 @AutoConfiguration
 @EnableMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 @EnableWebSecurity
-public class CasWebAppSecurityConfiguration {
+public class CasWebSecurityConfiguration {
 
     @Bean
     @Lazy(false)

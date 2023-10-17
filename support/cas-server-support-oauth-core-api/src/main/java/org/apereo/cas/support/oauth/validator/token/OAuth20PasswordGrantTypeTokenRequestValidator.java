@@ -1,10 +1,10 @@
 package org.apereo.cas.support.oauth.validator.token;
 
 import org.apereo.cas.audit.AuditableContext;
+import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -12,8 +12,6 @@ import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
-
-import java.util.Objects;
 
 /**
  * This is {@link OAuth20PasswordGrantTypeTokenRequestValidator}.
@@ -45,7 +43,7 @@ public class OAuth20PasswordGrantTypeTokenRequestValidator extends BaseOAuth20To
         val clientId = clientIdAndSecret.getKey();
         LOGGER.debug("Received grant type [{}] with client id [{}]", grantType, clientId);
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(getConfigurationContext().getServicesManager(), clientId);
-        Objects.requireNonNull(registeredService, () -> "Registered service cannot be found for client " + clientId);
+        RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
         val service = getConfigurationContext().getWebApplicationServiceServiceFactory().createService(registeredService.getServiceId());
         val audit = AuditableContext.builder()
             .service(service)

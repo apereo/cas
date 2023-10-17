@@ -105,11 +105,6 @@ public class OAuth20HandlerInterceptorAdapter implements AsyncHandlerInterceptor
         return doesUriMatchPattern(requestPath, getAccessTokenUrls());
     }
 
-    /**
-     * Get access token urls.
-     *
-     * @return the string [ ]
-     */
     protected List<String> getAccessTokenUrls() {
         return CollectionUtils.wrapList(OAuth20Constants.ACCESS_TOKEN_URL, OAuth20Constants.TOKEN_URL);
     }
@@ -132,15 +127,17 @@ public class OAuth20HandlerInterceptorAdapter implements AsyncHandlerInterceptor
         val accessTokenRequest = isAccessTokenRequest(request, response);
         val extractor = extractAccessTokenGrantRequest(context);
         if (accessTokenRequest) {
+            request.setAttribute(OAuth20Constants.REQUEST_ATTRIBUTE_ACCESS_TOKEN_REQUEST, Boolean.TRUE);
             if (extractor.isPresent()) {
                 val ext = extractor.get();
                 return ext.getResponseType() != OAuth20ResponseTypes.DEVICE_CODE;
             }
-        } else {
-            if (extractor.isPresent()) {
-                val ext = extractor.get();
-                return ext.requestMustBeAuthenticated();
-            }
+            return true;
+        }
+        
+        if (extractor.isPresent()) {
+            val ext = extractor.get();
+            return ext.requestMustBeAuthenticated();
         }
         return false;
     }

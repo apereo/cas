@@ -74,7 +74,7 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
             LOGGER.debug("Authenticating credential [{}]", credentials);
             val upc = (UsernamePasswordCredentials) credentials;
             val id = upc.getUsername();
-            val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, id);
+            val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, id);
             val audit = AuditableContext.builder()
                 .registeredService(registeredService)
                 .build();
@@ -85,6 +85,12 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
                 LOGGER.debug("Skipping authenticator [{}]; service access is rejected for [{}] or the authentication request is not supported", name, registeredService);
                 return Optional.empty();
             }
+            
+            if (!OAuth20Utils.isTokenAuthenticationMethodSupportedFor(callContext, registeredService, "client_secret_basic", "client_secret_post")) {
+                LOGGER.warn("Client authentication method is not supported for service [{}]", registeredService.getName());
+                return Optional.empty();
+            }
+            
             val service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
             validateCredentials(upc, registeredService, callContext);
 

@@ -44,8 +44,6 @@ public class OidcRegisteredService extends OAuthRegisteredService {
     @DurationCapable
     private String jwksCacheDuration;
 
-    private String tokenEndpointAuthenticationMethod = "client_secret_basic";
-
     @JacksonInject("signIdToken")
     private boolean signIdToken = true;
 
@@ -82,10 +80,7 @@ public class OidcRegisteredService extends OAuthRegisteredService {
      * @return the subject type
      */
     public String getSubjectType() {
-        if (StringUtils.isBlank(this.subjectType)) {
-            return OidcSubjectTypes.PUBLIC.getType();
-        }
-        return subjectType;
+        return StringUtils.defaultIfBlank(subjectType, OidcSubjectTypes.PUBLIC.getType());
     }
 
     @JsonIgnore
