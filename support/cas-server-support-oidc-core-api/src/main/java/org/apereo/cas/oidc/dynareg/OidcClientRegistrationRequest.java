@@ -69,7 +69,7 @@ public class OidcClientRegistrationRequest implements Serializable {
     private String termsOfUseUri;
 
     @JsonProperty("token_endpoint_auth_method")
-    private String tokenEndpointAuthMethod;
+    private String tokenEndpointAuthMethod = "client_secret_basic";
 
     @JsonProperty("grant_types")
     private List<String> grantTypes = new ArrayList<>(0);
