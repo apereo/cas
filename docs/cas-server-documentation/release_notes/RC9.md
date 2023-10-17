@@ -79,6 +79,12 @@ should generally prove invisible to the deployer, functionality that deals with 
 systems should be reviewed carefully to make sure [the correct module listed here](../integration/Attribute-Resolution-LDAP.html) is included in the build
 where and when necessary.
 
+### OpenID Connect Access Token Authentication
+
+Requests to the OpenID Connect access token endpoint have started to enforce the required authentication method
+assigned to the relying party and registered service definition. The default authentication method has always been `client_secret_basic`
+and the endpoint will begin to enforce this for all requests. 
+
 ## Other Stuff
 
 - When using [OpenID Connect](../protocol/OIDC-Protocol.html), requests that carry a `client_secret` as a querystring parameter are now rejected and/or ignored.
