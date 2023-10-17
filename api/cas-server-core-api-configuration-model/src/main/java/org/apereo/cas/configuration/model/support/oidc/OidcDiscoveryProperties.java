@@ -193,7 +193,7 @@ public class OidcDiscoveryProperties implements Serializable {
      * List of client authentication methods supported by token endpoint.
      */
     private List<String> tokenEndpointAuthMethodsSupported =
-        Stream.of("client_secret_basic", "client_secret_post", "client_secret_jwt", "private_key_jwt").toList();
+        Stream.of("client_secret_basic", "client_secret_post", "client_secret_jwt", "private_key_jwt", "tls_client_auth").toList();
 
     /**
      * List of PKCE code challenge methods supported.

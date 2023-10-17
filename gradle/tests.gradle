@@ -269,7 +269,7 @@ tasks.withType(Test).configureEach {
     jvmArgs = list
 
     classpath = it.classpath + files("${projectDir}/src/main/resources") + files("${projectDir}/src/test/resources")
-    def ansi = project.ansi
+
     testLogging {
         events "PASSED", "SKIPPED", "FAILED", "STANDARD_OUT", "STANDARD_ERROR"
         exceptionFormat = "full"
@@ -279,8 +279,9 @@ tasks.withType(Test).configureEach {
         showStandardStreams = verbose
         showExceptions = verbose
         showCauses = verbose
-
+        /*
         if (verbose && ci) {
+            def ansi = project.ansi
             beforeSuite { desc ->
                 if (!desc.parent) {
                     ansi.cyan "Started running test suite [${desc.displayName}] @ ${new java.util.Date()} "
@@ -306,6 +307,7 @@ Results for test suite [${desc.displayName}]: ${result.resultType} @ ${new java.
                 }
             }
         }
+         */
     }
     def skipRetry = providers.systemProperty('skipTestRetry').present
     if (!skipRetry) {

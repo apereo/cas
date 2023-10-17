@@ -36,6 +36,7 @@ import org.apereo.cas.support.oauth.authenticator.OAuth20DefaultCasAuthenticatio
 import org.apereo.cas.support.oauth.authenticator.OAuth20ProofKeyCodeExchangeAuthenticator;
 import org.apereo.cas.support.oauth.authenticator.OAuth20RefreshTokenAuthenticator;
 import org.apereo.cas.support.oauth.authenticator.OAuth20UsernamePasswordAuthenticator;
+import org.apereo.cas.support.oauth.authenticator.OAuth20X509Authenticator;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfileDataCreator;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
@@ -161,7 +162,6 @@ import org.pac4j.core.profile.factory.ProfileManagerFactory;
 import org.pac4j.http.client.direct.DirectBasicAuthClient;
 import org.pac4j.http.client.direct.DirectFormClient;
 import org.pac4j.http.client.direct.HeaderClient;
-import org.pac4j.http.credentials.authenticator.X509Authenticator;
 import org.pac4j.http.credentials.extractor.X509CredentialsExtractor;
 import org.pac4j.jee.context.JEEContext;
 import org.pac4j.jee.context.JEEContextFactory;
@@ -1397,8 +1397,13 @@ public class CasOAuth20Configuration {
         @ConditionalOnMissingBean(name = "oauthX509CertificateAuthenticator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public Authenticator oauthX509CertificateAuthenticator() {
-            return new X509Authenticator();
+        public Authenticator oauthX509CertificateAuthenticator(
+            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
+            final OAuth20RequestParameterResolver oauthRequestParameterResolver,
+            @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
+            final AuthenticationSystemSupport authenticationSystemSupport,
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
+            return new OAuth20X509Authenticator(servicesManager, oauthRequestParameterResolver);
         }
 
     }

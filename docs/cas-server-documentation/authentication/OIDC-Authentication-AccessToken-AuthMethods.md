@@ -35,3 +35,12 @@ Enforced and required client authentication methods may be tuned and controlled 
 
 If the `tokenEndpointAuthenticationMethod` field is left blank, all available authentication methods are evaluated for access token requests
 and authentication method enforcement should effectively be disabled.
+
+## mTLS Client Authentication
+
+In order to utilize TLS for client authentication, the TLS connection between the client and CAS MUST have been established 
+or re-established with mutual-TLS X.509 certificate authentication during the TLS handshake. For all requests to CAS 
+utilizing mutual-TLS client authentication, the client MUST include the `client_id` parameter which enables the 
+CAS server to easily identify the client independently from the content of the certificate and 
+locate the client configuration using the client identifier and check the certificate presented in 
+the TLS handshake against the expected credentials for that client. 
