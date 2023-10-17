@@ -98,7 +98,7 @@ If you (or your employer) benefit from this project, please consider becoming a 
 [githubreleases]: https://github.com/apereo/cas/releases
 [gettingstarted]: https://apereo.github.io/cas/development/planning/Getting-Started.html
 [overlay]: https://apereo.github.io/cas/development/installation/WAR-Overlay-Installation.html
-[contribute]: https://apereo.github.io/cas/development/developer/Contributor-Guidelines.html
+[contribute]: https://apereo.github.io/cas/developer/Contributor-Guidelines.html
 [cassonatype]: https://oss.sonatype.org/content/repositories/snapshots/org/apereo/cas/
 [casmavencentral]: https://search.maven.org/search?q=g:org.apereo.cas
 [releasenotes]: https://github.com/apereo/cas/releases
