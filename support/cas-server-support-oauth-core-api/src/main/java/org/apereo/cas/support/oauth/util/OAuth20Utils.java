@@ -22,6 +22,7 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.profile.ProfileManager;
@@ -32,6 +33,7 @@ import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 import jakarta.servlet.http.HttpServletResponse;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -342,5 +344,25 @@ public class OAuth20Utils {
         if (StringUtils.isNotBlank(redirectUri)) {
             RedirectURIValidator.ensureLegal(URI.create(redirectUri));
         }
+    }
+
+    private static boolean isAccessTokenRequest(final WebContext webContext) {
+        return (Boolean) webContext.getRequestAttribute(OAuth20Constants.REQUEST_ATTRIBUTE_ACCESS_TOKEN_REQUEST).orElse(false);
+    }
+
+    /**
+     * Is token authentication method supported for service.
+     *
+     * @param callContext          the call context
+     * @param registeredService    the registered service
+     * @param authenticationMethod the authentication method
+     * @return true/false
+     */
+    public static boolean isTokenAuthenticationMethodSupportedFor(final CallContext callContext,
+                                                                  final OAuthRegisteredService registeredService,
+                                                                  final String... authenticationMethod) {
+        return !OAuth20Utils.isAccessTokenRequest(callContext.webContext())
+            || StringUtils.isBlank(registeredService.getTokenEndpointAuthenticationMethod())
+            || Arrays.stream(authenticationMethod).anyMatch(method -> StringUtils.equalsIgnoreCase(registeredService.getTokenEndpointAuthenticationMethod(), method));
     }
 }

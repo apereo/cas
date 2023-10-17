@@ -499,7 +499,7 @@ public class CasOAuth20Configuration {
         public Client x509CertificateClient(
             @Qualifier("oauthX509CertificateAuthenticator") final Authenticator oauthX509CertificateAuthenticator) {
             val accessTokenClient = new HeaderClient();
-            accessTokenClient.setCredentialsExtractor(new X509CredentialsExtractor("jakarta.servlet.request.X509Certificate"));
+            accessTokenClient.setCredentialsExtractor(new X509CredentialsExtractor());
             accessTokenClient.setAuthenticator(oauthX509CertificateAuthenticator);
             accessTokenClient.setName(Authenticators.CAS_OAUTH_CLIENT_X509_CERTIFICATE_AUTHN);
             accessTokenClient.init();

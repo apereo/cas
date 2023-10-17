@@ -3,7 +3,6 @@ package org.apereo.cas.oidc.jwks;
 import org.apereo.cas.oidc.token.OidcRegisteredServiceJwtCipherExecutor;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.util.JsonUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
@@ -62,7 +61,6 @@ public class OidcJsonWebKeyStoreUtils {
     public static Optional<JsonWebKeySet> getJsonWebKeySet(final OidcRegisteredService oidcRegisteredService,
                                                            final ResourceLoader resourceLoader,
                                                            final Optional<OidcJsonWebKeyUsage> usage) {
-        RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(oidcRegisteredService);
         return FunctionUtils.doAndHandle(
                 () -> {
                     val serviceJwks = SpringExpressionLanguageValueResolver.getInstance().resolve(oidcRegisteredService.getJwks());

@@ -120,7 +120,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
@@ -128,6 +127,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.context.ConfigurableWebApplicationContext;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
@@ -307,7 +307,7 @@ public abstract class AbstractOAuth20Tests {
     protected HandlerInterceptor requiresAuthenticationInterceptor;
 
     @Autowired
-    protected ConfigurableApplicationContext applicationContext;
+    protected ConfigurableWebApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("defaultOAuthCodeFactory")
@@ -381,6 +381,11 @@ public abstract class AbstractOAuth20Tests {
         when(accessToken.getExpirationPolicy()).thenReturn(NeverExpiresExpirationPolicy.INSTANCE);
         when(accessToken.getCreationTime()).thenReturn(ZonedDateTime.now(Clock.systemUTC()));
         return accessToken;
+    }
+
+    protected static OAuthRegisteredService getRegisteredService(final OAuth20GrantTypes... grantTypes) {
+        return getRegisteredService("https://oauth-%s.example.org".formatted(RandomUtils.randomAlphabetic(6)),
+            UUID.randomUUID().toString(), UUID.randomUUID().toString(), Set.of(grantTypes));
     }
 
     protected static OAuthRegisteredService getRegisteredService(final String clientId,
