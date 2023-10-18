@@ -101,6 +101,22 @@ class OAuth20AccessTokenEndpointControllerTests {
         }
 
         @Test
+        void verifyX509ClientCredentialsFailsToPassIP() throws Throwable {
+            val service = getRegisteredService(OAuth20GrantTypes.CLIENT_CREDENTIALS);
+            service.setJwtAccessToken(true);
+            service.setTokenEndpointAuthenticationMethod("tls_client_auth");
+            service.setTlsClientAuthSanIp("1.2.3.4");
+            servicesManager.save(service);
+            val certificate = CertUtils.readCertificate(new ClassPathResource("RSA1024x509Cert.pem").getInputStream());
+            mvc.perform(post("/cas" + CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL)
+                    .queryParam(OAuth20Constants.CLIENT_ID, service.getClientId())
+                    .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.CLIENT_CREDENTIALS.name())
+                    .requestAttr("jakarta.servlet.request.X509Certificate", new X509Certificate[] {certificate}))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.access_token").doesNotExist());
+        }
+
+        @Test
         void verifyX509ClientCredentialsAsJWT() throws Throwable {
             val service = getRegisteredService(OAuth20GrantTypes.CLIENT_CREDENTIALS);
             service.setJwtAccessToken(true);
