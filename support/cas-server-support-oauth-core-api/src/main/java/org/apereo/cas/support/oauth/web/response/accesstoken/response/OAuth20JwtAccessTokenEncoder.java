@@ -89,8 +89,8 @@ public class OAuth20JwtAccessTokenEncoder implements CipherExecutor<String, Stri
                 });
         }
 
-        if (attributes.containsKey("x509-digest")) {
-            CollectionUtils.firstElement(attributes.get("x509-digest"))
+        if (attributes.containsKey(OAuth20Constants.X509_CERTIFICATE_DIGEST)) {
+            CollectionUtils.firstElement(attributes.get(OAuth20Constants.X509_CERTIFICATE_DIGEST))
                 .ifPresent(conf -> {
                     val confirmation = new X509CertificateConfirmation(new Base64URL(conf.toString()));
                     val claim = confirmation.toJWTClaim();
