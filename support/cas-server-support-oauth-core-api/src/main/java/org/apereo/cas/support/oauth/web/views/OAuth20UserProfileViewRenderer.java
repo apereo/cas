@@ -31,6 +31,11 @@ public interface OAuth20UserProfileViewRenderer {
      * Attribute in the model that represents collection of attributes.
      */
     String MODEL_ATTRIBUTE_ATTRIBUTES = "attributes";
+    
+    /**
+     * Default bean name.
+     */
+    String BEAN_NAME = "oauthUserProfileViewRenderer";
 
     /**
      * Render.

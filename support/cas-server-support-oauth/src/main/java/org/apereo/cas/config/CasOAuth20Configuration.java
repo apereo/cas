@@ -262,7 +262,7 @@ public class CasOAuth20Configuration {
             @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER) final CasCookieBuilder ticketGrantingTicketCookieGenerator,
             @Qualifier("oAuth2UserProfileDataCreator") final OAuth20UserProfileDataCreator oAuth2UserProfileDataCreator,
             @Qualifier("oauthDistributedSessionCookieGenerator") final CasCookieBuilder oauthDistributedSessionCookieGenerator,
-            @Qualifier("oauthUserProfileViewRenderer") final OAuth20UserProfileViewRenderer oauthUserProfileViewRenderer,
+            @Qualifier(OAuth20UserProfileViewRenderer.BEAN_NAME) final OAuth20UserProfileViewRenderer oauthUserProfileViewRenderer,
             @Qualifier(WebApplicationService.BEAN_NAME_FACTORY) final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             @Qualifier(TicketFactory.BEAN_NAME) final TicketFactory ticketFactory,
             @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
@@ -762,7 +762,7 @@ public class CasOAuth20Configuration {
             return new OAuth20ResponseModeFragmentBuilder();
         }
 
-        @ConditionalOnMissingBean(name = "oauthUserProfileViewRenderer")
+        @ConditionalOnMissingBean(name = OAuth20UserProfileViewRenderer.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20UserProfileViewRenderer oauthUserProfileViewRenderer(

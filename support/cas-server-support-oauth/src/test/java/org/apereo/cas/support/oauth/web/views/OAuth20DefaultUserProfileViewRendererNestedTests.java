@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
 class OAuth20DefaultUserProfileViewRendererNestedTests extends AbstractOAuth20Tests {
 
     @Autowired
-    @Qualifier("oauthUserProfileViewRenderer")
+    @Qualifier(OAuth20UserProfileViewRenderer.BEAN_NAME)
     private OAuth20UserProfileViewRenderer oauthUserProfileViewRenderer;
 
     @Test
