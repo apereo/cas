@@ -15,6 +15,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import com.nimbusds.jose.Header;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jwt.JWTParser;
+import com.nimbusds.oauth2.sdk.auth.X509CertificateConfirmation;
 import com.nimbusds.oauth2.sdk.dpop.JWKThumbprintConfirmation;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
@@ -74,12 +75,13 @@ public class OAuth20JwtAccessTokenEncoder implements CipherExecutor<String, Stri
     protected JwtBuilder.JwtRequest getJwtRequestBuilder(
         final OAuthRegisteredService registeredService,
         final OAuth20AccessToken accessToken) {
+        
         val authentication = accessToken.getAuthentication();
         val attributes = new HashMap<>(authentication.getAttributes());
         attributes.putAll(authentication.getPrincipal().getAttributes());
 
-        if (accessToken.getAuthentication().containsAttribute(OAuth20Constants.DPOP_CONFIRMATION)) {
-            CollectionUtils.firstElement(accessToken.getAuthentication().getAttributes().get(OAuth20Constants.DPOP_CONFIRMATION))
+        if (attributes.containsKey(OAuth20Constants.DPOP_CONFIRMATION)) {
+            CollectionUtils.firstElement(attributes.get(OAuth20Constants.DPOP_CONFIRMATION))
                 .ifPresent(conf -> {
                     val confirmation = new JWKThumbprintConfirmation(new Base64URL(conf.toString()));
                     val claim = confirmation.toJWTClaim();
@@ -87,8 +89,18 @@ public class OAuth20JwtAccessTokenEncoder implements CipherExecutor<String, Stri
                 });
         }
 
+        if (attributes.containsKey("x509-digest")) {
+            CollectionUtils.firstElement(attributes.get("x509-digest"))
+                .ifPresent(conf -> {
+                    val confirmation = new X509CertificateConfirmation(new Base64URL(conf.toString()));
+                    val claim = confirmation.toJWTClaim();
+                    attributes.put(claim.getKey(), List.of(claim.getValue()));
+                });
+        }
+
         val builder = JwtBuilder.JwtRequest.builder();
-        val dt = authentication.getAuthenticationDate().plusSeconds(accessToken.getExpirationPolicy().getTimeToLive());
+        val validUntilDate = authentication.getAuthenticationDate()
+            .plusSeconds(accessToken.getExpirationPolicy().getTimeToLive());
 
         val serviceAudiences = registeredService.getAudience().isEmpty()
             ? Set.of(accessToken.getClientId())
@@ -98,7 +110,7 @@ public class OAuth20JwtAccessTokenEncoder implements CipherExecutor<String, Stri
             .issueDate(DateTimeUtils.dateOf(authentication.getAuthenticationDate()))
             .jwtId(accessToken.getId())
             .subject(authentication.getPrincipal().getId())
-            .validUntilDate(DateTimeUtils.dateOf(dt))
+            .validUntilDate(DateTimeUtils.dateOf(validUntilDate))
             .attributes(attributes)
             .registeredService(Optional.of(registeredService))
             .issuer(StringUtils.defaultIfBlank(this.issuer, casProperties.getServer().getPrefix()))
