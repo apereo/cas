@@ -35,8 +35,8 @@ import org.apereo.cas.webauthn.storage.JsonResourceWebAuthnCredentialRepository;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 import org.apereo.cas.webauthn.web.WebAuthnController;
 import org.apereo.cas.webauthn.web.WebAuthnRegisteredDevicesEndpoint;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.yubico.core.DefaultSessionManager;
 import com.yubico.core.InMemoryRegistrationStorage;
@@ -101,12 +101,12 @@ public class WebAuthnConfiguration {
     private static final int CACHE_MAX_SIZE = 10_000;
 
     private static <K, V> Cache<K, V> newCache() {
-        return CacheBuilder.newBuilder().maximumSize(CACHE_MAX_SIZE)
+        return Caffeine.newBuilder().maximumSize(CACHE_MAX_SIZE)
             .expireAfterAccess(Duration.ofMinutes(5)).build();
     }
 
     @Configuration(value = "WebAuthnMetadataServiceConfiguration",
-                   proxyBeanMethods = false)
+        proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class WebAuthnMetadataServiceConfiguration {
         @Bean
@@ -170,7 +170,7 @@ public class WebAuthnConfiguration {
     }
 
     @Configuration(value = "WebAuthnCoreConfiguration",
-                   proxyBeanMethods = false)
+        proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class WebAuthnCoreConfiguration {
         @ConditionalOnMissingBean(name = "webAuthnSessionManager")
@@ -193,7 +193,7 @@ public class WebAuthnConfiguration {
     }
 
     @Configuration(value = "WebAuthnSchedulerConfiguration",
-                   proxyBeanMethods = false)
+        proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class WebAuthnSchedulerConfiguration {
         @ConditionalOnMissingBean(name = "webAuthnDeviceRepositoryCleanerScheduler")
@@ -217,7 +217,7 @@ public class WebAuthnConfiguration {
         private final WebAuthnCredentialRepository repository;
 
         @Scheduled(initialDelayString = "${cas.authn.mfa.web-authn.cleaner.schedule.start-delay:PT20S}",
-                   fixedDelayString = "${cas.authn.mfa.web-authn.cleaner.schedule.repeat-interval:PT5M}")
+            fixedDelayString = "${cas.authn.mfa.web-authn.cleaner.schedule.repeat-interval:PT5M}")
         @Override
         public void clean() {
             LOGGER.debug("Starting to clean expired devices from repository");
@@ -236,7 +236,7 @@ public class WebAuthnConfiguration {
             @Qualifier(WebAuthnCredentialRepository.BEAN_NAME) final WebAuthnCredentialRepository webAuthnCredentialRepository,
             @Qualifier("webAuthnMetadataService") final AttestationTrustSource webAuthnMetadataService,
             @Qualifier("webAuthnSessionManager") final SessionManager webAuthnSessionManager) throws Exception {
-            
+
             val webAuthn = casProperties.getAuthn().getMfa().getWebAuthn().getCore();
             val serverName = casProperties.getServer().getName();
             val defaultRelyingPartyId = RelyingPartyIdentity

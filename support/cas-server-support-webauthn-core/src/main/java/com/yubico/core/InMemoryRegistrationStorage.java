@@ -28,13 +28,11 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.webauthn.storage.BaseWebAuthnCredentialRepository;
-
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.yubico.data.CredentialRegistration;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -47,10 +45,11 @@ import java.util.stream.Stream;
 public class InMemoryRegistrationStorage extends BaseWebAuthnCredentialRepository {
 
     @Getter
-    private final Cache<String, Set<CredentialRegistration>> storage = CacheBuilder.newBuilder()
+    private final Cache<String, Set<CredentialRegistration>> storage = Caffeine.newBuilder()
         .maximumSize(5000)
         .expireAfterAccess(1, TimeUnit.DAYS)
         .build();
+
     public InMemoryRegistrationStorage(final CasConfigurationProperties properties,
                                           final CipherExecutor<String, String> cipherExecutor) {
         super(properties, cipherExecutor);
@@ -58,17 +57,17 @@ public class InMemoryRegistrationStorage extends BaseWebAuthnCredentialRepositor
 
     @Override
     public boolean addRegistrationByUsername(final String username, final CredentialRegistration reg) {
-        return FunctionUtils.doUnchecked(() -> storage.get(username.toLowerCase(Locale.ENGLISH), HashSet::new).add(reg));
+        return FunctionUtils.doUnchecked(() -> storage.get(username.toLowerCase(Locale.ENGLISH), __ -> new HashSet<>()).add(reg));
     }
 
     @Override
     public Collection<CredentialRegistration> getRegistrationsByUsername(final String username) {
-        return FunctionUtils.doUnchecked(() -> storage.get(username.toLowerCase(Locale.ENGLISH), HashSet::new));
+        return FunctionUtils.doUnchecked(() -> storage.get(username.toLowerCase(Locale.ENGLISH), __ -> new HashSet<>()));
     }
 
     @Override
     public boolean removeRegistrationByUsername(final String username, final CredentialRegistration credentialRegistration) {
-        return FunctionUtils.doUnchecked(() -> storage.get(username.toLowerCase(Locale.ENGLISH), HashSet::new).remove(credentialRegistration));
+        return FunctionUtils.doUnchecked(() -> storage.get(username.toLowerCase(Locale.ENGLISH), __ -> new HashSet<>()).remove(credentialRegistration));
     }
 
     @Override

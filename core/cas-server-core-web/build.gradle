@@ -23,7 +23,6 @@ dependencies {
     testRuntimeOnly libraries.webjarsbootstrap
     testRuntimeOnly libraries.websockets
     
-    implementation libraries.nimbus
     implementation libraries.snakeyaml
 }
 

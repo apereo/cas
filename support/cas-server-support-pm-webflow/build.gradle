@@ -32,8 +32,7 @@ dependencies {
     implementation project(":support:cas-server-support-pm")
     implementation project(":support:cas-server-support-pm-core")
     implementation project(":support:cas-server-support-token-core-api")
-    
-    implementation libraries.nimbus
+
     implementation libraries.mail
 
     testImplementation project(":support:cas-server-support-themes")
