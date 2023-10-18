@@ -62,13 +62,13 @@ public class OidcJwksEndpointController extends BaseOidcController {
         "/**/" + OidcConstants.JWKS_URL
     }, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Produces the collection of keys from the keystore", parameters = @Parameter(name = "state", description = "Filter keys by their state name", required = false))
-    public ResponseEntity<String> handleRequestInternal(final HttpServletRequest request,
+    public ResponseEntity handleRequestInternal(final HttpServletRequest request,
                                                         final HttpServletResponse response,
                                                         @RequestParam(value = "state", required = false)
                                                         final String state) {
         val webContext = new JEEContext(request, response);
         if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, OidcConstants.JWKS_URL)) {
-            val body = OAuth20Utils.toJson(OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer"));
+            val body = OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer");
             return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
         }
         try {
@@ -79,8 +79,8 @@ public class OidcJwksEndpointController extends BaseOidcController {
             val servicesManager = getConfigurationContext().getServicesManager();
             servicesManager.getAllServicesOfType(OidcRegisteredService.class)
                 .stream()
-                .filter(s -> {
-                    val serviceJwks = SpringExpressionLanguageValueResolver.getInstance().resolve(s.getJwks());
+                .filter(service -> {
+                    val serviceJwks = SpringExpressionLanguageValueResolver.getInstance().resolve(service.getJwks());
                     return StringUtils.isNotBlank(serviceJwks);
                 })
                 .forEach(service -> {

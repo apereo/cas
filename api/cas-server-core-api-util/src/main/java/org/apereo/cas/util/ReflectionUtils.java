@@ -78,7 +78,7 @@ public class ReflectionUtils {
 
             return scanResult.getAllClasses()
                 .stream()
-                .filter(c -> c.getSimpleName().equalsIgnoreCase(simpleName))
+                .filter(classInfo -> classInfo.getSimpleName().equalsIgnoreCase(simpleName))
                 .findFirst()
                 .map(ClassInfo::loadClass);
         }

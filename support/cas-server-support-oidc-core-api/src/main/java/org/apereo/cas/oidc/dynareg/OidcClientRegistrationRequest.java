@@ -113,4 +113,19 @@ public class OidcClientRegistrationRequest implements Serializable {
 
     @JsonProperty("introspection_encrypted_response_enc")
     private String introspectionEncryptedResponseEncoding;
+    
+    @JsonProperty("tls_client_auth_subject_dn")
+    private String tlsClientAuthSubjectDn;
+
+    @JsonProperty("tls_client_auth_san_dns")
+    private String tlsClientAuthSanDns;
+
+    @JsonProperty("tls_client_auth_san_uri")
+    private String tlsClientAuthSanUri;
+
+    @JsonProperty("tls_client_auth_san_ip")
+    private String tlsClientAuthSanIp;
+
+    @JsonProperty("tls_client_auth_san_email")
+    private String tlsClientAuthSanEmail;
 }

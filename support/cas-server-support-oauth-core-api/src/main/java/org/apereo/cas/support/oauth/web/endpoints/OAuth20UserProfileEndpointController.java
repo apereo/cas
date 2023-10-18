@@ -5,7 +5,6 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -15,13 +14,10 @@ import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.util.Locale;
 import java.util.Map;
 
@@ -39,10 +35,8 @@ public class OAuth20UserProfileEndpointController<T extends OAuth20Configuration
     }
 
     protected static ResponseEntity buildUnauthorizedResponseEntity(final String code) {
-        val map = new LinkedMultiValueMap<String, String>(1);
-        map.add(OAuth20Constants.ERROR, code);
-        val value = OAuth20Utils.toJson(map);
-        return new ResponseEntity<>(value, HttpStatus.UNAUTHORIZED);
+        val map = OAuth20Utils.getErrorResponseBody(code, HttpStatus.UNAUTHORIZED.getReasonPhrase());
+        return new ResponseEntity<>(map, HttpStatus.UNAUTHORIZED);
     }
 
     /**

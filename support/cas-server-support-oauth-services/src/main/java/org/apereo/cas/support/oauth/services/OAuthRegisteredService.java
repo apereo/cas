@@ -72,6 +72,16 @@ public class OAuthRegisteredService extends BaseWebBasedRegisteredService {
 
     private String tokenEndpointAuthenticationMethod;
 
+    private String tlsClientAuthSubjectDn;
+
+    private String tlsClientAuthSanDns;
+
+    private String tlsClientAuthSanUri;
+
+    private String tlsClientAuthSanIp;
+
+    private String tlsClientAuthSanEmail;
+
     @JsonIgnore
     @Override
     public String getFriendlyName() {

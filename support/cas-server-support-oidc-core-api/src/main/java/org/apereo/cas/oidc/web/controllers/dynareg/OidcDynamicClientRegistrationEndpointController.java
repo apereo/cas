@@ -15,7 +15,6 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20Jwt
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
 import org.apereo.cas.util.LoggingUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -25,11 +24,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -65,7 +61,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOidcCon
 
         val webContext = new JEEContext(request, response);
         if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, OidcConstants.REGISTRATION_URL)) {
-            val body = OAuth20Utils.toJson(OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer"));
+            val body = OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer");
             return new ResponseEntity(body, HttpStatus.BAD_REQUEST);
         }
         try {
@@ -92,9 +88,8 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOidcCon
             return new ResponseEntity<>(clientResponse, HttpStatus.CREATED);
         } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
-            val map = new HashMap<String, String>();
-            map.put("error", "invalid_client_metadata");
-            map.put("error_description", StringUtils.defaultIfBlank(e.getMessage(), "None"));
+            val map = OAuth20Utils.getErrorResponseBody("invalid_client_metadata",
+                StringUtils.defaultIfBlank(e.getMessage(), "None"));
             return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
         }
     }
@@ -104,13 +99,12 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOidcCon
         final HttpServletResponse response,
         final OidcRegisteredService registeredService,
         final OidcClientRegistrationRequest registrationRequest) throws Throwable {
-        val authn = DefaultAuthenticationBuilder.newInstance()
-            .setPrincipal(PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(registeredService.getClientId()))
-            .build();
+
+        val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(registeredService.getClientId());
+        val authn = DefaultAuthenticationBuilder.newInstance().setPrincipal(principal).build();
         val clientConfigUri = OidcClientRegistrationUtils.getClientConfigurationUri(registeredService,
             getConfigurationContext().getCasProperties().getServer().getPrefix());
         val service = getConfigurationContext().getWebApplicationServiceServiceFactory().createService(clientConfigUri);
-
         val factory = (OAuth20AccessTokenFactory) getConfigurationContext().getTicketFactory().get(OAuth20AccessToken.class);
         val accessToken = factory.create(service, authn,
             List.of(OidcConstants.CLIENT_CONFIGURATION_SCOPE),
