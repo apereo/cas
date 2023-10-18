@@ -96,7 +96,7 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
      * @param response the response
      * @return the response entity
      */
-    @PostMapping('/' + OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.INTROSPECTION_URL)
+    @PostMapping(OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.INTROSPECTION_URL)
     public ResponseEntity<? extends BaseOAuth20IntrospectionAccessTokenResponse> handlePostRequest(final HttpServletRequest request,
                                                                                                    final HttpServletResponse response) {
         ResponseEntity<? extends BaseOAuth20IntrospectionAccessTokenResponse> result;
