@@ -49,6 +49,11 @@ public class OidcDiscoveryProperties implements Serializable {
     private boolean authorizationResponseIssuerParameterSupported;
 
     /**
+     * Boolean value indicating server support for mutual-TLS client certificate-bound access tokens. 
+     */
+    private boolean tlsClientCertificateBoundAccessTokens;
+
+    /**
      * Boolean parameter indicating
      * whether the authorization server (CAS) accepts authorization request
      * data only via the pushed authorization request method.

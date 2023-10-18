@@ -124,14 +124,26 @@ class OAuth20AccessTokenEndpointControllerTests {
             service.setTokenEndpointAuthenticationMethod(OAuth20ClientAuthenticationMethods.TLS_CLIENT_AUTH.getType());
             servicesManager.save(service);
             val certificate = CertUtils.readCertificate(new ClassPathResource("RSA1024x509Cert.pem").getInputStream());
-            mvc.perform(post("/cas" + CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL)
+            val accessToken = mvc.perform(post("/cas" + CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL)
                     .queryParam(OAuth20Constants.CLIENT_ID, service.getClientId())
                     .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.CLIENT_CREDENTIALS.name())
                     .requestAttr("jakarta.servlet.request.X509Certificate", new X509Certificate[] {certificate}))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.access_token").exists())
                 .andExpect(request().attribute(OAuth20Constants.REQUEST_ATTRIBUTE_ACCESS_TOKEN_REQUEST, Boolean.TRUE))
+                .andReturn()
+                .getModelAndView()
+                .getModel()
+                .get("access_token");
+
+            mvc.perform(post("/cas" + CONTEXT + OAuth20Constants.INTROSPECTION_URL)
+                    .param(OAuth20Constants.TOKEN, accessToken.toString())
+                    .headers(HttpUtils.createBasicAuthHeaders(service.getClientId(), service.getClientSecret()))
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.cnf.x5t#S256").exists())
                 .andReturn();
+
         }
 
         @Test

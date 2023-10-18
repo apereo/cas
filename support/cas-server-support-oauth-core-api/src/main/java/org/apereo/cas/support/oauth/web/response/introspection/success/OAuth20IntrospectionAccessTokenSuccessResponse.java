@@ -3,10 +3,12 @@ package org.apereo.cas.support.oauth.web.response.introspection.success;
 import org.apereo.cas.support.oauth.web.response.introspection.BaseOAuth20IntrospectionAccessTokenResponse;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serial;
+import java.io.Serializable;
 
 /**
  * This is {@link OAuth20IntrospectionAccessTokenSuccessResponse}.
@@ -50,8 +52,16 @@ public class OAuth20IntrospectionAccessTokenSuccessResponse extends BaseOAuth20I
     private String grantType;
 
     @JsonProperty("cnf")
-    private DPopConfirmation dPopConfirmation;
+    private Confirmation confirmation = new Confirmation();
 
-    public record DPopConfirmation(String jkt) {
+    @Data
+    public static class Confirmation implements Serializable {
+        @Serial
+        private static final long serialVersionUID = 5434898952283549630L;
+
+        private String jkt;
+
+        @JsonProperty("x5t#S256")
+        private String x5t;
     }
 }
