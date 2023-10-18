@@ -15,6 +15,9 @@ import org.apereo.cas.ticket.registry.RedisTicketDocument;
 import org.apereo.cas.ticket.registry.RedisTicketRegistry;
 import org.apereo.cas.ticket.registry.RedisTicketRegistryCacheEndpoint;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.registry.key.PrincipalRedisKeyGenerator;
+import org.apereo.cas.ticket.registry.key.RedisKeyGeneratorFactory;
+import org.apereo.cas.ticket.registry.key.TicketRedisKeyGenerator;
 import org.apereo.cas.ticket.registry.pub.DefaultRedisTicketRegistryMessagePublisher;
 import org.apereo.cas.ticket.registry.pub.RedisTicketRegistryMessagePublisher;
 import org.apereo.cas.ticket.registry.sub.DefaultRedisTicketRegistryMessageListener;
@@ -209,7 +212,18 @@ public class RedisTicketRegistryConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "redisKeyGeneratorFactory")
+        public RedisKeyGeneratorFactory redisKeyGeneratorFactory() {
+            val factory = new RedisKeyGeneratorFactory();
+            factory.registerRedisKeyGenerators(new TicketRedisKeyGenerator(), new PrincipalRedisKeyGenerator());
+            return factory;
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TicketRegistry ticketRegistry(
+            @Qualifier("redisKeyGeneratorFactory")
+            final RedisKeyGeneratorFactory redisKeyGeneratorFactory,
             @Qualifier("casRedisTemplates")
             final RedisTicketRegistry.CasRedisTemplates casRedisTemplates,
             @Qualifier(TicketCatalog.BEAN_NAME)
@@ -229,7 +243,8 @@ public class RedisTicketRegistryConfiguration {
                     val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(redis.getCrypto(), "redis");
                     val searchCommands = redis.isEnableRedisSearch() ? RedisObjectFactory.newRedisModulesCommands(redis) : Optional.<RedisModulesCommands>empty();
                     return new RedisTicketRegistry(cipher, ticketSerializationManager, ticketCatalog,
-                        casRedisTemplates, redisTicketRegistryCache, redisTicketRegistryMessagePublisher, searchCommands);
+                        casRedisTemplates, redisTicketRegistryCache, redisTicketRegistryMessagePublisher,
+                        searchCommands, redisKeyGeneratorFactory);
                 })
                 .otherwise(() -> new DefaultTicketRegistry(ticketSerializationManager, ticketCatalog))
                 .get();

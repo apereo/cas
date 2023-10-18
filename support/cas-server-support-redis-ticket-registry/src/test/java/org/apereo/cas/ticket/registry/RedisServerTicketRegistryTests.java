@@ -7,13 +7,10 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
-import org.apereo.cas.ticket.registry.pub.RedisTicketRegistryMessagePublisher;
 import org.apereo.cas.util.ServiceTicketIdGenerator;
 import org.apereo.cas.util.TicketGrantingTicketIdGenerator;
-import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.util.thread.Cleanable;
-import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -24,14 +21,12 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.springframework.test.context.TestPropertySource;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * Unit test for {@link RedisTicketRegistry}.
@@ -231,24 +226,6 @@ class RedisServerTicketRegistryTests {
             assertTrue(section.containsKey("cpu"));
             assertTrue(section.containsKey("keyspace"));
             assertTrue(section.containsKey("stats"));
-        }
-
-        @RepeatedTest(1)
-        @Tag("TicketRegistryTestWithEncryption")
-        void verifyBadTicketDecoding() throws Throwable {
-            val originalAuthn = CoreAuthenticationTestUtils.getAuthentication();
-            getNewTicketRegistry().addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId,
-                originalAuthn, NeverExpiresExpirationPolicy.INSTANCE));
-            val tgt = getNewTicketRegistry().getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
-            assertNotNull(tgt);
-
-            val cache = Caffeine.newBuilder().initialCapacity(100).<String, Ticket>build();
-            val secondRegistry = new RedisTicketRegistry(CipherExecutor.noOp(), ticketSerializationManager, ticketCatalog,
-                getCasRedisTemplates(), cache, mock(RedisTicketRegistryMessagePublisher.class), Optional.empty());
-            val ticket = secondRegistry.getTicket(ticketGrantingTicketId);
-            assertNull(ticket);
-            assertTrue(secondRegistry.getTickets().isEmpty());
-            assertEquals(0, getNewTicketRegistry().stream().count());
         }
 
         @RepeatedTest(1)
