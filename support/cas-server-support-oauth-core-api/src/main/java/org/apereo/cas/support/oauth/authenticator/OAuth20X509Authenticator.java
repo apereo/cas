@@ -6,6 +6,8 @@ import org.apereo.cas.support.oauth.OAuth20ClientAuthenticationMethods;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.DigestUtils;
+import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,7 @@ import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.exception.CredentialsException;
 import org.pac4j.core.profile.UserProfile;
+import org.pac4j.http.credentials.X509Credentials;
 import org.pac4j.http.credentials.authenticator.X509Authenticator;
 import java.util.Optional;
 
@@ -47,6 +50,10 @@ public class OAuth20X509Authenticator implements Authenticator {
         val result = x509Authenticator.validate(ctx, credentials);
         if (result.isPresent()) {
             val profile = result.get().getUserProfile();
+            val certificate = ((X509Credentials) credentials).getCertificate();
+            val digest = EncodingUtils.encodeBase64(DigestUtils.digest("SHA-256", certificate.getPublicKey().getEncoded()));
+            profile.addAttribute("x509-digest", digest);
+
             val attributeMap = CollectionUtils.<String, String>wrap(
                 "x509-sanEmail", registeredService.getTlsClientAuthSanEmail(),
                 "x509-sanDNS", registeredService.getTlsClientAuthSanDns(),
@@ -61,6 +68,7 @@ public class OAuth20X509Authenticator implements Authenticator {
                 throw new CredentialsException("Unable to accept certificate");
             }
         }
+
         return result;
     }
 
