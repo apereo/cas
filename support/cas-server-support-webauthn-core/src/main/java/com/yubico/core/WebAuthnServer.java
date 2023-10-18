@@ -31,7 +31,7 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.google.common.cache.Cache;
+import com.github.benmanes.caffeine.cache.Cache;
 import com.yubico.data.AssertionRequestWrapper;
 import com.yubico.data.AssertionResponse;
 import com.yubico.data.CredentialRegistration;

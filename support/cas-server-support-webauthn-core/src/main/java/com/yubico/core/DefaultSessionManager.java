@@ -1,7 +1,8 @@
 package com.yubico.core;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
+
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.yubico.webauthn.data.ByteArray;
 import lombok.NonNull;
 import java.util.Optional;
@@ -13,8 +14,8 @@ public class DefaultSessionManager implements SessionManager {
 
     private final Cache<ByteArray, ByteArray> usersToSessionIds = newCache();
 
-    private static <K, V> Cache<K, V> newCache() {
-        return CacheBuilder.newBuilder()
+    private static <K, V> Cache<ByteArray, ByteArray> newCache() {
+        return Caffeine.newBuilder()
             .maximumSize(100L)
             .expireAfterAccess(5L, TimeUnit.MINUTES)
             .build();
@@ -22,7 +23,7 @@ public class DefaultSessionManager implements SessionManager {
 
     @Override
     public ByteArray createSession(@NonNull final ByteArray userHandle) throws ExecutionException {
-        var sessionId = usersToSessionIds.get(userHandle, () -> SessionManager.generateRandom(32));
+        var sessionId = usersToSessionIds.get(userHandle, __ -> SessionManager.generateRandom(32));
         sessionIdsToUsers.put(sessionId, userHandle);
         return sessionId;
     }

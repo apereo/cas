@@ -1,7 +1,6 @@
 package com.yubico.webauthn.attestation;
 
 import org.apereo.cas.util.function.FunctionUtils;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -9,7 +8,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.MoreObjects;
-import com.google.common.collect.ImmutableList;
 import com.yubico.internal.util.CertificateParser;
 import com.yubico.internal.util.ExceptionUtil;
 import com.yubico.internal.util.JacksonCodecs;
@@ -17,7 +15,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.cert.CertificateException;
@@ -115,6 +112,6 @@ public class MetadataObject {
     }
 
     public List<JsonNode> getDevices() {
-        return MoreObjects.firstNonNull(devices, ImmutableList.of());
+        return MoreObjects.firstNonNull(devices, List.of());
     }
 }

@@ -3511,7 +3511,7 @@ ext.libraries = [
                 },
                 dependencies.create("org.webjars:jquery:$jqueryVersion") {},
                 dependencies.create("org.webjars:highlightjs:$highlightJsVersion") {},
-                dependencies.create("org.webjars.bowergithub.dropbox:zxcvbn:$zxcvbnVersion") {
+                dependencies.create("org.webjars:zxcvbn:$zxcvbnVersion") {
                 },
                 dependencies.create("org.webjars:datatables:$datatablesVersion") {
                     exclude(group: "org.webjars", module: "jquery")

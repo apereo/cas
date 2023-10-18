@@ -3,13 +3,13 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
 
-import com.google.common.collect.Maps;
 import lombok.val;
 import org.apache.commons.codec.binary.Hex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -83,10 +83,10 @@ public interface ProtocolAttributeEncoder {
     static Map<String, Object> decodeAttributes(final Map<String, Object> attributes,
                                                 final RegisteredService registeredService,
                                                 final WebApplicationService webApplicationService) {
-        val finalAttributes = Maps.<String, Object>newHashMapWithExpectedSize(attributes.size());
-        attributes.forEach((k, v) -> {
-            val attributeName = ProtocolAttributeEncoder.decodeAttribute(k);
-            LOGGER.debug("Decoded SAML attribute [{}] to [{}] with value(s) [{}]", k, attributeName, v);
+        val finalAttributes = new HashMap<String, Object>(attributes.size());
+        attributes.forEach((key, v) -> {
+            val attributeName = ProtocolAttributeEncoder.decodeAttribute(key);
+            LOGGER.debug("Decoded SAML attribute [{}] to [{}] with value(s) [{}]", key, attributeName, v);
             finalAttributes.put(attributeName, v);
         });
         return finalAttributes;
@@ -108,7 +108,7 @@ public interface ProtocolAttributeEncoder {
      */
     default Map<String, Object> encodeAttributes(final Map<String, Object> attributes,
                                                  final RegisteredService registeredService, final WebApplicationService webApplicationService) {
-        val finalAttributes = Maps.<String, Object>newHashMapWithExpectedSize(attributes.size());
+        val finalAttributes = new HashMap<String, Object>(attributes.size());
         attributes.forEach((k, v) -> {
             val attributeName = decodeAttribute(k);
             LOGGER.debug("Decoded attribute [{}] to [{}] with value(s) [{}]", k, attributeName, v);

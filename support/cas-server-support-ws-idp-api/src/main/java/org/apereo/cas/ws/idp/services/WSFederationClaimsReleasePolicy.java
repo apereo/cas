@@ -8,7 +8,6 @@ import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.ws.idp.WSFederationClaims;
-import com.google.common.collect.Maps;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import java.io.Serial;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -49,7 +49,7 @@ public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAt
                                                            final Map<String, List<Object>> attrs) {
         val resolvedAttributes = new TreeMap<String, List<Object>>(String.CASE_INSENSITIVE_ORDER);
         resolvedAttributes.putAll(attrs);
-        val attributesToRelease = Maps.<String, List<Object>>newHashMapWithExpectedSize(resolvedAttributes.size());
+        val attributesToRelease = new HashMap<String, List<Object>>(resolvedAttributes.size());
 
         getAllowedAttributes()
             .entrySet()

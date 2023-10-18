@@ -1,12 +1,12 @@
 package org.apereo.cas.interrupt;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.util.MockRequestContext;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.webflow.test.MockRequestContext;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,7 +25,7 @@ class GroovyScriptInterruptInquirerTests {
             CoreAuthenticationTestUtils.getRegisteredService(),
             CoreAuthenticationTestUtils.getService(),
             CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
-            new MockRequestContext());
+            MockRequestContext.create());
         assertNotNull(response);
         assertFalse(response.isBlock());
         assertTrue(response.isSsoEnabled());
