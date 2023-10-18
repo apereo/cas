@@ -51,11 +51,11 @@ class ActiveDirectoryGoogleAuthenticatorTokenCredentialRepositoryTests extends B
         val socketFactory = sslUtil.createSSLSocketFactory();
 
         @Cleanup
-        val c = new LDAPConnection(socketFactory, "localhost", 10636,
+        val connection = new LDAPConnection(socketFactory, "localhost", 10636,
             bindInit.getBindDn(), bindInit.getBindCredential().getString());
 
         val mod = new Modification(ModificationType.REPLACE, "streetAddress", " ");
-        c.modify(String.format("CN=%s,CN=Users,DC=cas,DC=example,DC=org", uid), mod);
+        connection.modify(String.format("CN=%s,CN=Users,DC=cas,DC=example,DC=org", uid), mod);
 
         return uid;
     }

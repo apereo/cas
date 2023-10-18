@@ -39,9 +39,7 @@ public class OAuth20DefaultUserProfileViewRenderer implements OAuth20UserProfile
 
     protected ResponseEntity renderProfileForModel(final Map<String, Object> userProfile,
                                                    final OAuth20AccessToken accessToken, final HttpServletResponse response) {
-        val json = OAuth20Utils.toJson(userProfile);
-        LOGGER.debug("Final user profile is [{}]", json);
-        return new ResponseEntity<>(json, HttpStatus.OK);
+        return new ResponseEntity<>(userProfile, HttpStatus.OK);
     }
 
     protected Map<String, Object> getRenderedUserProfile(final Map<String, Object> model,
