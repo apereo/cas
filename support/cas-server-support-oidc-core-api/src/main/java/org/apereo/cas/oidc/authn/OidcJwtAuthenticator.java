@@ -11,6 +11,7 @@ import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.OAuth20ClientAuthenticationMethods;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.code.OAuth20Code;
@@ -92,7 +93,9 @@ public class OidcJwtAuthenticator implements Authenticator {
             val registeredService = getOidcRegisteredService(callContext);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
 
-            if (!OAuth20Utils.isTokenAuthenticationMethodSupportedFor(callContext, registeredService, "client_secret_jwt", "private_key_jwt")) {
+            if (!OAuth20Utils.isTokenAuthenticationMethodSupportedFor(callContext, registeredService,
+                OAuth20ClientAuthenticationMethods.CLIENT_SECRET_JWT.getType(),
+                OAuth20ClientAuthenticationMethods.PRIVATE_KEY_JWT.getType())) {
                 LOGGER.warn("Private key JWT authentication method is not supported for service [{}]", registeredService.getName());
                 return Optional.<Credentials>empty();
             }

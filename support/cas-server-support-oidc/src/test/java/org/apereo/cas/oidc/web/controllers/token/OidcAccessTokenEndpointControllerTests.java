@@ -5,6 +5,7 @@ import org.apereo.cas.config.CasWebSecurityConfiguration;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.web.controllers.profile.OidcUserProfileEndpointController;
+import org.apereo.cas.support.oauth.OAuth20ClientAuthenticationMethods;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.util.EncodingUtils;
@@ -78,7 +79,7 @@ class OidcAccessTokenEndpointControllerTests {
             val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
             registeredService.setEncryptIdToken(false);
             registeredService.setJwks(key);
-            registeredService.setTokenEndpointAuthenticationMethod("private_key_jwt");
+            registeredService.setTokenEndpointAuthenticationMethod(OAuth20ClientAuthenticationMethods.PRIVATE_KEY_JWT.getType());
             val claims = getClaims(registeredService.getClientId(),
                 oidcIssuerService.determineIssuer(Optional.of(registeredService)),
                 registeredService.getClientId(), registeredService.getClientId());

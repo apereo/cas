@@ -1,6 +1,7 @@
 package org.apereo.cas.support.oauth;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 /**
  * The OAuth grant types (on the access token request).
@@ -9,6 +10,7 @@ import lombok.Getter;
  * @since 5.0.0
  */
 @Getter
+@RequiredArgsConstructor
 public enum OAuth20GrantTypes {
 
     /**
@@ -41,8 +43,4 @@ public enum OAuth20GrantTypes {
     UMA_TICKET("urn:ietf:params:oauth:grant-type:uma-ticket");
 
     private final String type;
-
-    OAuth20GrantTypes(final String type) {
-        this.type = type;
-    }
 }

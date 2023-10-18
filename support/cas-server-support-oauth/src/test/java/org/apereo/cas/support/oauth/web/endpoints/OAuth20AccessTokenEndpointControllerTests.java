@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.support.oauth.OAuth20ClientAuthenticationMethods;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
@@ -73,7 +74,7 @@ class OAuth20AccessTokenEndpointControllerTests {
         @Test
         void verifyClientCredentialsWithTlsEnabled() throws Throwable {
             val service = getRegisteredService(OAuth20GrantTypes.CLIENT_CREDENTIALS);
-            service.setTokenEndpointAuthenticationMethod("tls_client_auth");
+            service.setTokenEndpointAuthenticationMethod(OAuth20ClientAuthenticationMethods.TLS_CLIENT_AUTH.getType());
             servicesManager.save(service);
             val certificate = CertUtils.readCertificate(new ClassPathResource("RSA1024x509Cert.pem").getInputStream());
             mvc.perform(post("/cas" + CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL)
@@ -104,7 +105,7 @@ class OAuth20AccessTokenEndpointControllerTests {
         void verifyX509ClientCredentialsFailsToPassIP() throws Throwable {
             val service = getRegisteredService(OAuth20GrantTypes.CLIENT_CREDENTIALS);
             service.setJwtAccessToken(true);
-            service.setTokenEndpointAuthenticationMethod("tls_client_auth");
+            service.setTokenEndpointAuthenticationMethod(OAuth20ClientAuthenticationMethods.TLS_CLIENT_AUTH.getType());
             service.setTlsClientAuthSanIp("1.2.3.4");
             servicesManager.save(service);
             val certificate = CertUtils.readCertificate(new ClassPathResource("RSA1024x509Cert.pem").getInputStream());
@@ -120,7 +121,7 @@ class OAuth20AccessTokenEndpointControllerTests {
         void verifyX509ClientCredentialsAsJWT() throws Throwable {
             val service = getRegisteredService(OAuth20GrantTypes.CLIENT_CREDENTIALS);
             service.setJwtAccessToken(true);
-            service.setTokenEndpointAuthenticationMethod("tls_client_auth");
+            service.setTokenEndpointAuthenticationMethod(OAuth20ClientAuthenticationMethods.TLS_CLIENT_AUTH.getType());
             servicesManager.save(service);
             val certificate = CertUtils.readCertificate(new ClassPathResource("RSA1024x509Cert.pem").getInputStream());
             mvc.perform(post("/cas" + CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL)
@@ -137,7 +138,7 @@ class OAuth20AccessTokenEndpointControllerTests {
         void verifyClientCredentialsWithBasicAuth() throws Throwable {
             val service = getRegisteredService(OAuth20GrantTypes.CLIENT_CREDENTIALS);
             service.setJwtAccessToken(true);
-            service.setTokenEndpointAuthenticationMethod("client_secret_basic");
+            service.setTokenEndpointAuthenticationMethod(OAuth20ClientAuthenticationMethods.CLIENT_SECRET_BASIC.getType());
             servicesManager.save(service);
             mvc.perform(post("/cas" + CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL)
                     .headers(HttpUtils.createBasicAuthHeaders(service.getClientId(), service.getClientSecret()))
@@ -152,7 +153,7 @@ class OAuth20AccessTokenEndpointControllerTests {
         void verifyClientCredentialsWithFormPost() throws Throwable {
             val service = getRegisteredService(OAuth20GrantTypes.CLIENT_CREDENTIALS);
             service.setJwtAccessToken(true);
-            service.setTokenEndpointAuthenticationMethod("client_secret_post");
+            service.setTokenEndpointAuthenticationMethod(OAuth20ClientAuthenticationMethods.CLIENT_SECRET_POST.getType());
             servicesManager.save(service);
             mvc.perform(post("/cas" + CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL)
                     .param(OAuth20Constants.CLIENT_ID, service.getClientId())

@@ -1,6 +1,7 @@
 package org.apereo.cas.support.oauth;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 /**
  * The OAuth response types (on the authorize request).
@@ -9,6 +10,7 @@ import lombok.Getter;
  * @since 5.0.0
  */
 @Getter
+@RequiredArgsConstructor
 public enum OAuth20ResponseTypes {
 
     /**
@@ -41,8 +43,4 @@ public enum OAuth20ResponseTypes {
     ID_TOKEN("id_token");
 
     private final String type;
-
-    OAuth20ResponseTypes(final String type) {
-        this.type = type;
-    }
 }

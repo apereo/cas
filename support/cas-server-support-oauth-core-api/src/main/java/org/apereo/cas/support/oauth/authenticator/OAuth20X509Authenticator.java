@@ -2,6 +2,7 @@ package org.apereo.cas.support.oauth.authenticator;
 
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.OAuth20ClientAuthenticationMethods;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.util.CollectionUtils;
@@ -37,7 +38,7 @@ public class OAuth20X509Authenticator implements Authenticator {
         val clientIdAndSecret = requestParameterResolver.resolveClientIdAndClientSecret(ctx);
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientIdAndSecret.getKey());
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
-        if (!OAuth20Utils.isTokenAuthenticationMethodSupportedFor(ctx, registeredService, "tls_client_auth")) {
+        if (!OAuth20Utils.isTokenAuthenticationMethodSupportedFor(ctx, registeredService, OAuth20ClientAuthenticationMethods.TLS_CLIENT_AUTH.getType())) {
             LOGGER.warn("TLS authentication method is not supported for service [{}]", registeredService.getName());
             return Optional.empty();
         }
