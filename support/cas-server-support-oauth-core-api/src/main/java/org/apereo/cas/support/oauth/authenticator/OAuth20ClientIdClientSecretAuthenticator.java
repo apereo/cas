@@ -10,6 +10,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredServiceUsernameProviderContext;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.OAuth20ClientAuthenticationMethods;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
@@ -87,7 +88,9 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
                 return Optional.empty();
             }
 
-            val requiredAuthnMethod = CredentialSource.FORM.name().equalsIgnoreCase(upc.getSource()) ? "client_secret_post" : "client_secret_basic";
+            val requiredAuthnMethod = CredentialSource.FORM.name().equalsIgnoreCase(upc.getSource())
+                ? OAuth20ClientAuthenticationMethods.CLIENT_SECRET_POST.getType()
+                : OAuth20ClientAuthenticationMethods.CLIENT_SECRET_BASIC.getType();
             if (!OAuth20Utils.isTokenAuthenticationMethodSupportedFor(callContext, registeredService, requiredAuthnMethod)) {
                 LOGGER.warn("Client authentication method [{}] is not supported for service [{}]", requiredAuthnMethod, registeredService.getName());
                 return Optional.empty();

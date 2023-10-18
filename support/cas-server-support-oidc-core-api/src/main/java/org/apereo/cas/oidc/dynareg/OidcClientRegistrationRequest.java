@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.dynareg;
 
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreJacksonDeserializer;
+import org.apereo.cas.support.oauth.OAuth20ClientAuthenticationMethods;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -69,7 +70,7 @@ public class OidcClientRegistrationRequest implements Serializable {
     private String termsOfUseUri;
 
     @JsonProperty("token_endpoint_auth_method")
-    private String tokenEndpointAuthMethod = "client_secret_basic";
+    private String tokenEndpointAuthMethod = OAuth20ClientAuthenticationMethods.CLIENT_SECRET_BASIC.getType();
 
     @JsonProperty("grant_types")
     private List<String> grantTypes = new ArrayList<>(0);
