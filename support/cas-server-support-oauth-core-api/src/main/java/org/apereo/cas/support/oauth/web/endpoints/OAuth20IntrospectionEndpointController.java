@@ -24,6 +24,7 @@ import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,12 +48,6 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
         super(oAuthConfigurationContext);
     }
 
-    /**
-     * Build unauthorized response entity.
-     *
-     * @param code the code
-     * @return the response entity
-     */
     private static ResponseEntity<OAuth20IntrospectionAccessTokenFailureResponse> buildUnauthorizedResponseEntity(
         final String code, final boolean isAuthenticationFailure) {
         val response = new OAuth20IntrospectionAccessTokenFailureResponse();
@@ -77,7 +72,8 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
      * @param response the response
      * @return the response entity
      */
-    @GetMapping(OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.INTROSPECTION_URL)
+    @GetMapping(value = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.INTROSPECTION_URL,
+        produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<? extends BaseOAuth20IntrospectionAccessTokenResponse> handleRequest(
         final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         return handlePostRequest(request, response);
@@ -91,7 +87,8 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
      * @return the response entity
      * @throws Throwable the throwable
      */
-    @PostMapping(OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.INTROSPECTION_URL)
+    @PostMapping(value = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.INTROSPECTION_URL,
+        produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity handlePostRequest(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         try {
             val context = new JEEContext(request, response);

@@ -18,7 +18,6 @@ import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
 import org.apereo.cas.ticket.accesstoken.OAuth20DefaultAccessTokenFactory;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -29,14 +28,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
-
+import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -155,19 +152,13 @@ class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Tests {
         assertEquals(HttpStatus.OK, entity.getStatusCode());
         assertEquals(MediaType.APPLICATION_JSON_VALUE, mockResponse.getContentType());
 
-        val expected = "{\"id\":\"" + ID + "\",\"attributes\":[{\"" + NAME + "\":\"" + VALUE + "\"},{\"" + NAME2
-            + "\":[\"" + VALUE + "\",\"" + VALUE + "\"]}]}";
-        val expectedObj = MAPPER.readTree(expected);
-        val receivedObj = MAPPER.readTree(Objects.requireNonNull(entity.getBody()).toString());
-        assertEquals(expectedObj.get("id").asText(), receivedObj.get("id").asText());
-
-        val expectedAttributes = expectedObj.get(ATTRIBUTES_PARAM);
-        val receivedAttributes = receivedObj.get(ATTRIBUTES_PARAM);
-
-        assertEquals(expectedAttributes.findValue(NAME).asText(), receivedAttributes.findValue(NAME).asText());
-        assertEquals(expectedAttributes.findValues(NAME2), receivedAttributes.findValues(NAME2));
+        val receivedBody = (Map) entity.getBody();
+        assertEquals(ID, receivedBody.get("id"));
+        val attributes = (Map<String, List>) receivedBody.get("attributes");
+        assertEquals(VALUE, attributes.get(NAME).get(0));
+        assertEquals(list, attributes.get(NAME2));
     }
-
+    
     @Test
     void verifyOKWithExpiredTicketGrantingTicket() throws Throwable {
         val map = new HashMap<String, List<Object>>();
@@ -204,14 +195,11 @@ class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Tests {
         expectedObj.put("id", ID);
         expectedObj.put("attributes", attrNode);
 
-        val receivedObj = MAPPER.readTree(entity.getBody().toString());
-        assertEquals(expectedObj.get("id").asText(), receivedObj.get("id").asText());
-
-        val expectedAttributes = expectedObj.get(ATTRIBUTES_PARAM);
-        val receivedAttributes = receivedObj.get(ATTRIBUTES_PARAM);
-
-        assertEquals(expectedAttributes.findValue(NAME).asText(), receivedAttributes.findValue(NAME).asText());
-        assertEquals(expectedAttributes.findValues(NAME2), receivedAttributes.findValues(NAME2));
+        val receivedBody = (Map) entity.getBody();
+        assertEquals(ID, receivedBody.get("id"));
+        val attributes = (Map<String, List>) receivedBody.get("attributes");
+        assertEquals(VALUE, attributes.get(NAME).get(0));
+        assertEquals(list, attributes.get(NAME2));
     }
 
     @Test
@@ -237,16 +225,10 @@ class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Tests {
         assertEquals(HttpStatus.OK, entity.getStatusCode());
         assertEquals(MediaType.APPLICATION_JSON_VALUE, mockResponse.getContentType());
 
-        val expected = "{\"id\":\"" + ID + "\",\"attributes\":[{\"" + NAME + "\":\"" + VALUE + "\"},{\"" + NAME2
-            + "\":[\"" + VALUE + "\",\"" + VALUE + "\"]}]}";
-        val expectedObj = MAPPER.readTree(expected);
-        val receivedObj = MAPPER.readTree(entity.getBody().toString());
-        assertEquals(expectedObj.get("id").asText(), receivedObj.get("id").asText());
-
-        val expectedAttributes = expectedObj.get(ATTRIBUTES_PARAM);
-        val receivedAttributes = receivedObj.get(ATTRIBUTES_PARAM);
-
-        assertEquals(expectedAttributes.findValue(NAME).asText(), receivedAttributes.findValue(NAME).asText());
-        assertEquals(expectedAttributes.findValues(NAME2), receivedAttributes.findValues(NAME2));
+        val receivedBody = (Map) entity.getBody();
+        assertEquals(ID, receivedBody.get("id"));
+        val attributes = (Map<String, List>) receivedBody.get("attributes");
+        assertEquals(VALUE, attributes.get(NAME).get(0));
+        assertEquals(list, attributes.get(NAME2));
     }
 }
