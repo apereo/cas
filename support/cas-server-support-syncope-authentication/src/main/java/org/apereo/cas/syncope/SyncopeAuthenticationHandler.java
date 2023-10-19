@@ -1,5 +1,6 @@
 package org.apereo.cas.syncope;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
@@ -38,6 +39,10 @@ import java.util.Optional;
 public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
+    
+    private static final String MUST_CHANGE_PASSWORD_RESPONSE = "Please change your password first";
+    
+    private static final String SUSPENDED_RESPONSE = "is suspended";
 
     private final SyncopeAuthenticationProperties properties;
 
@@ -86,10 +91,32 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
                 .build();
             response = Objects.requireNonNull(HttpUtils.execute(exec));
             LOGGER.debug("Received http response status as [{}]", response.getStatusLine());
-            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                val result = EntityUtils.toString(response.getEntity());
-                LOGGER.debug("Received user object as [{}]", result);
-                return Optional.of(MAPPER.readTree(result));
+            switch (response.getStatusLine().getStatusCode()) {
+                case HttpStatus.SC_OK: {
+                    val result = EntityUtils.toString(response.getEntity());
+                    LOGGER.debug("Received user object as [{}]", result);
+                    return Optional.of(MAPPER.readTree(result));
+                }
+                case HttpStatus.SC_FORBIDDEN: {
+                    val header = response.getFirstHeader("x-application-error-info").getValue();
+                    LOGGER.debug("Received header error info [{}]", header);
+                    ObjectNode result = MAPPER.createObjectNode();
+                    if (header.contains(MUST_CHANGE_PASSWORD_RESPONSE)) {
+                        LOGGER.debug("User is Must Change Password");
+                        result.put("mustChangePassword", 1);
+                    }
+                    return Optional.of(result);
+                }
+                case HttpStatus.SC_UNAUTHORIZED: {
+                    val header = response.getFirstHeader("x-application-error-info").getValue();
+                    LOGGER.debug("Received header error info [{}]", header);
+                    ObjectNode result = MAPPER.createObjectNode();
+                    if (header.contains(SUSPENDED_RESPONSE)) {
+                        LOGGER.debug("User is Suspended");
+                        result.put("suspended", 1);
+                    }
+                    return Optional.of(result);
+                }
             }
         } finally {
             HttpUtils.close(response);
