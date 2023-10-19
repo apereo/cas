@@ -1,0 +1,24 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": ".*",
+  "name": "CAS",
+  "id": 1,
+  "evaluationOrder": 100,
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "excludeDefaultAttributes": true,
+    "authorizedToReleaseAuthenticationAttributes": true
+  },
+  "multifactorPolicy": {
+    "@class": "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
+    "multifactorAuthenticationProviders": [
+      "java.util.HashSet",
+      [
+        "mfa-simple"
+      ]
+    ],
+    "failureMode": "CLOSED",
+    "principalAttributeNameTrigger": "mfaRequired",
+    "principalAttributeValueToMatch": "TRUE"
+  }
+}
