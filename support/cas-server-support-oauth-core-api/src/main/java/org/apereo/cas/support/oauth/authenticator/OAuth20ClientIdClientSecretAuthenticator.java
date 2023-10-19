@@ -89,9 +89,9 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
             }
 
             val requiredAuthnMethod = CredentialSource.FORM.name().equalsIgnoreCase(upc.getSource())
-                ? OAuth20ClientAuthenticationMethods.CLIENT_SECRET_POST.getType()
-                : OAuth20ClientAuthenticationMethods.CLIENT_SECRET_BASIC.getType();
-            if (!OAuth20Utils.isTokenAuthenticationMethodSupportedFor(callContext, registeredService, requiredAuthnMethod)) {
+                ? OAuth20ClientAuthenticationMethods.CLIENT_SECRET_POST
+                : OAuth20ClientAuthenticationMethods.CLIENT_SECRET_BASIC;
+            if (!isAuthenticationMethodSupported(callContext, registeredService, requiredAuthnMethod)) {
                 LOGGER.warn("Client authentication method [{}] is not supported for service [{}]", requiredAuthnMethod, registeredService.getName());
                 return Optional.empty();
             }
@@ -126,6 +126,11 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
             credentials.setUserProfile(profile);
             return Optional.of(credentials);
         });
+    }
+
+    protected boolean isAuthenticationMethodSupported(final CallContext callContext, final OAuthRegisteredService registeredService,
+                                                      final OAuth20ClientAuthenticationMethods requiredAuthnMethod) {
+        return OAuth20Utils.isTokenAuthenticationMethodSupportedFor(callContext, registeredService, requiredAuthnMethod);
     }
 
     protected Principal buildAuthenticatedPrincipal(final Principal resolvedPrincipal, final OAuthRegisteredService registeredService,

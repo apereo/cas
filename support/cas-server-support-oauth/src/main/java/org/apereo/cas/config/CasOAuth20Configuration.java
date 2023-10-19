@@ -1307,7 +1307,8 @@ public class CasOAuth20Configuration {
                 oauthRequestParameterResolver,
                 oauth20ClientSecretValidator,
                 profileScopeToAttributesFilter,
-                ticketFactory, applicationContext);
+                ticketFactory,
+                applicationContext);
         }
 
         @ConditionalOnMissingBean(name = "oauthProofKeyCodeExchangeAuthenticator")

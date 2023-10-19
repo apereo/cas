@@ -2,6 +2,8 @@ package org.apereo.cas.support.oauth;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
+import java.util.Arrays;
 
 /**
  * The OAuth client authentication methods.
@@ -39,4 +41,17 @@ public enum OAuth20ClientAuthenticationMethods {
     TLS_CLIENT_AUTH("tls_client_auth");
 
     private final String type;
+
+    /**
+     * Parse oauth20 client authentication methods.
+     *
+     * @param type the type
+     * @return the oauth20 client authentication methods
+     */
+    public static OAuth20ClientAuthenticationMethods parse(final String type) {
+        return Arrays.stream(OAuth20ClientAuthenticationMethods.values())
+            .filter(method -> StringUtils.equalsIgnoreCase(method.getType(), type))
+            .findFirst()
+            .orElseThrow();
+    }
 }

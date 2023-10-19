@@ -489,7 +489,6 @@ public class OidcEndpointsConfiguration {
         }
     }
 
-
     @Configuration(value = "OidcCasDiscoveryProfileConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @ConditionalOnClass(CasServerProfileCustomizer.class)
