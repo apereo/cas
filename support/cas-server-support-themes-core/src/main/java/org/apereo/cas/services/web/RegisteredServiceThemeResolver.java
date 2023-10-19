@@ -59,11 +59,11 @@ import java.nio.charset.StandardCharsets;
 @Slf4j
 @RequiredArgsConstructor
 public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
-    private final ObjectProvider<ServicesManager> servicesManager;
+    protected final ObjectProvider<ServicesManager> servicesManager;
 
-    private final ObjectProvider<AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies;
+    protected final ObjectProvider<AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies;
 
-    private final ObjectProvider<CasConfigurationProperties> casProperties;
+    protected final ObjectProvider<CasConfigurationProperties> casProperties;
 
     @Nonnull
     @Override
