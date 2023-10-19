@@ -5,6 +5,7 @@ import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreUtils;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
@@ -61,6 +62,8 @@ public class OidcJwtAuthenticator implements Authenticator {
 
     protected final ApplicationContext applicationContext;
 
+    protected final OidcServerDiscoverySettings oidcServerDiscoverySettings;
+
     protected JWT verifyCredentials(final UsernamePasswordCredentials credentials,
                                     final WebContext webContext) throws Throwable {
         if (!StringUtils.equalsIgnoreCase(OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER, credentials.getUsername())) {
@@ -93,11 +96,16 @@ public class OidcJwtAuthenticator implements Authenticator {
             val registeredService = getOidcRegisteredService(callContext);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
 
-            if (!OAuth20Utils.isTokenAuthenticationMethodSupportedFor(callContext, registeredService,
-                OAuth20ClientAuthenticationMethods.CLIENT_SECRET_JWT.getType(),
-                OAuth20ClientAuthenticationMethods.PRIVATE_KEY_JWT.getType())) {
-                LOGGER.warn("Private key JWT authentication method is not supported for service [{}]", registeredService.getName());
-                return Optional.<Credentials>empty();
+            if (OAuth20Utils.isAccessTokenRequest(callContext.webContext())) {
+                val authMethodDisabled = oidcServerDiscoverySettings.getTokenEndpointAuthMethodsSupported()
+                    .stream()
+                    .map(OAuth20ClientAuthenticationMethods::parse)
+                    .noneMatch(method -> method == OAuth20ClientAuthenticationMethods.CLIENT_SECRET_JWT || method == OAuth20ClientAuthenticationMethods.PRIVATE_KEY_JWT);
+                if (authMethodDisabled || !OAuth20Utils.isTokenAuthenticationMethodSupportedFor(callContext, registeredService,
+                    OAuth20ClientAuthenticationMethods.CLIENT_SECRET_JWT, OAuth20ClientAuthenticationMethods.PRIVATE_KEY_JWT)) {
+                    LOGGER.warn("Private key JWT authentication method is not enabled for CAS, or is not supported for service [{}]", registeredService.getName());
+                    return Optional.<Credentials>empty();
+                }
             }
 
             val credentials = (UsernamePasswordCredentials) creds;

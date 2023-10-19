@@ -9,6 +9,7 @@ import org.apereo.cas.support.oauth.OAuth20ClientAuthenticationMethods;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.crypto.CertUtils;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.jwk.Curve;
 import com.nimbusds.jose.jwk.gen.ECKeyGenerator;
@@ -25,6 +26,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,6 +36,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.security.cert.X509Certificate;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -100,6 +103,43 @@ class OidcAccessTokenEndpointControllerTests {
                 .andReturn();
         }
 
+        @Test
+        void verifyClientCredentialsWithFormPost() throws Throwable {
+            val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+            registeredService.setEncryptIdToken(false);
+            registeredService.setJwtAccessToken(true);
+            registeredService.setSupportedGrantTypes(Set.of(OAuth20GrantTypes.CLIENT_CREDENTIALS.getType()));
+            registeredService.setTokenEndpointAuthenticationMethod(OAuth20ClientAuthenticationMethods.CLIENT_SECRET_POST.getType());
+            servicesManager.save(registeredService);
+            mvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.TOKEN_URL)
+                    .secure(true)
+                    .param(OAuth20Constants.CLIENT_ID, registeredService.getClientId())
+                    .param(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecret())
+                    .queryParam(OAuth20Constants.CLIENT_ID, registeredService.getClientId())
+                    .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.CLIENT_CREDENTIALS.name()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.access_token").exists())
+                .andReturn();
+        }
+
+        @Test
+        void verifyClientCredentialsWithTlsEnabled() throws Throwable {
+            val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+            registeredService.setEncryptIdToken(false);
+            registeredService.setJwtAccessToken(true);
+            registeredService.setSupportedGrantTypes(Set.of(OAuth20GrantTypes.CLIENT_CREDENTIALS.getType()));
+            registeredService.setTokenEndpointAuthenticationMethod(OAuth20ClientAuthenticationMethods.TLS_CLIENT_AUTH.getType());
+            servicesManager.save(registeredService);
+            val certificate = CertUtils.readCertificate(new ClassPathResource("RSA1024x509Cert.pem").getInputStream());
+            mvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.TOKEN_URL)
+                    .secure(true)
+                    .queryParam(OAuth20Constants.CLIENT_ID, registeredService.getClientId())
+                    .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.CLIENT_CREDENTIALS.name())
+                    .requestAttr("jakarta.servlet.request.X509Certificate", new X509Certificate[] {certificate}))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.access_token").exists())
+                .andReturn();
+        }
     }
 
     @Nested

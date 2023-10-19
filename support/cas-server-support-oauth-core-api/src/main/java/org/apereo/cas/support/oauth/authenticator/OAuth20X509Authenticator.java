@@ -4,6 +4,7 @@ import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20ClientAuthenticationMethods;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.util.CollectionUtils;
@@ -42,10 +43,12 @@ public class OAuth20X509Authenticator implements Authenticator {
         val clientIdAndSecret = requestParameterResolver.resolveClientIdAndClientSecret(ctx);
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientIdAndSecret.getKey());
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
-        if (!OAuth20Utils.isTokenAuthenticationMethodSupportedFor(ctx, registeredService, OAuth20ClientAuthenticationMethods.TLS_CLIENT_AUTH.getType())) {
+
+        if (!isAuthenticationMethodSupported(ctx, registeredService)) {
             LOGGER.warn("TLS authentication method is not supported for service [{}]", registeredService.getName());
             return Optional.empty();
         }
+
         val allowedSubjectPattern = StringUtils.defaultIfBlank(registeredService.getTlsClientAuthSubjectDn(), "CN=(.*?)(?:,|$)");
         val x509Authenticator = new X509Authenticator(allowedSubjectPattern);
         val result = x509Authenticator.validate(ctx, credentials);
@@ -64,7 +67,7 @@ public class OAuth20X509Authenticator implements Authenticator {
             val accepted = attributeMap
                 .entrySet()
                 .stream()
-                .allMatch(entry -> isAcceptableAttribute(profile, entry.getKey(), entry.getValue()));
+                .allMatch(entry -> isAcceptableX509Attribute(profile, entry.getKey(), entry.getValue()));
             if (!accepted) {
                 throw new CredentialsException("Unable to accept certificate");
             }
@@ -73,7 +76,11 @@ public class OAuth20X509Authenticator implements Authenticator {
         return result;
     }
 
-    protected boolean isAcceptableAttribute(final UserProfile profile, final String pattern, final String attribute) {
+    protected boolean isAuthenticationMethodSupported(final CallContext ctx, final OAuthRegisteredService registeredService) {
+        return OAuth20Utils.isTokenAuthenticationMethodSupportedFor(ctx, registeredService, OAuth20ClientAuthenticationMethods.TLS_CLIENT_AUTH);
+    }
+
+    protected boolean isAcceptableX509Attribute(final UserProfile profile, final String pattern, final String attribute) {
         return FunctionUtils.doIfNotBlank(pattern,
             () -> {
                 val values = CollectionUtils.toCollection(profile.getAttribute(attribute));

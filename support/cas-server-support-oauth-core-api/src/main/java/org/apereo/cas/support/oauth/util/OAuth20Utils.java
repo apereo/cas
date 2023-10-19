@@ -5,6 +5,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.services.query.RegisteredServiceQuery;
+import org.apereo.cas.support.oauth.OAuth20ClientAuthenticationMethods;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
@@ -346,7 +347,13 @@ public class OAuth20Utils {
         }
     }
 
-    private static boolean isAccessTokenRequest(final WebContext webContext) {
+    /**
+     * Is access token request?.
+     *
+     * @param webContext the web context
+     * @return the boolean
+     */
+    public static boolean isAccessTokenRequest(final WebContext webContext) {
         return (Boolean) webContext.getRequestAttribute(OAuth20Constants.REQUEST_ATTRIBUTE_ACCESS_TOKEN_REQUEST).orElse(false);
     }
 
@@ -360,9 +367,9 @@ public class OAuth20Utils {
      */
     public static boolean isTokenAuthenticationMethodSupportedFor(final CallContext callContext,
                                                                   final OAuthRegisteredService registeredService,
-                                                                  final String... authenticationMethod) {
+                                                                  final OAuth20ClientAuthenticationMethods... authenticationMethod) {
         return !OAuth20Utils.isAccessTokenRequest(callContext.webContext())
             || StringUtils.isBlank(registeredService.getTokenEndpointAuthenticationMethod())
-            || Arrays.stream(authenticationMethod).anyMatch(method -> StringUtils.equalsIgnoreCase(registeredService.getTokenEndpointAuthenticationMethod(), method));
+            || Arrays.stream(authenticationMethod).anyMatch(method -> StringUtils.equalsIgnoreCase(registeredService.getTokenEndpointAuthenticationMethod(), method.getType()));
     }
 }
