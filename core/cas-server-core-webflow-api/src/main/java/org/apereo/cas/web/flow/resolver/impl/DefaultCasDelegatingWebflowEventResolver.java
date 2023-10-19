@@ -141,7 +141,7 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
     protected Event buildEventFromException(final Throwable exception,
                                             final RequestContext requestContext,
                                             final Credential credential,
-                                            final WebApplicationService service) {
+                                            final Service service) {
         val event = WebflowExceptionTranslator.from(exception, requestContext);
         LoggingUtils.warn(LOGGER, exception);
         val attributes = new LocalAttributeMap<>();
@@ -195,9 +195,11 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
         return registeredService;
     }
 
-    protected WebApplicationService locateServiceForRequest(final RequestContext context) {
+    protected Service locateServiceForRequest(final RequestContext context) throws Throwable {
         val serviceFromRequest = WebUtils.getService(getConfigurationContext().getArgumentExtractors(), context);
         val serviceFromFlow = WebUtils.getService(context);
-        return ObjectUtils.defaultIfNull(serviceFromRequest, serviceFromFlow);
+        val finalService = ObjectUtils.defaultIfNull(serviceFromRequest, serviceFromFlow);
+
+        return getConfigurationContext().getAuthenticationRequestServiceSelectionStrategies().resolveService(finalService);
     }
 }
