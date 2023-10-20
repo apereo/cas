@@ -2558,6 +2558,7 @@ ext.libraries = [
         springbootjetty            : [
                 dependencies.create("org.springframework.boot:spring-boot-starter-jetty:$springBootVersion") {
                     exclude(group: "org.ow2.asm", module: "asm")
+                    exclude(group: "org.apache.tomcat.embed", module: "tomcat-embed-el")
                 },
                 dependencies.create("jakarta.annotation:jakarta.annotation-api:$jakartaAnnotationApiVersion")
         ],
