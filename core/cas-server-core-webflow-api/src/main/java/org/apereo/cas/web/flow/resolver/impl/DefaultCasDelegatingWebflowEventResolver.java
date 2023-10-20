@@ -199,7 +199,6 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
         val serviceFromRequest = WebUtils.getService(getConfigurationContext().getArgumentExtractors(), context);
         val serviceFromFlow = WebUtils.getService(context);
         val finalService = ObjectUtils.defaultIfNull(serviceFromRequest, serviceFromFlow);
-
         return getConfigurationContext().getAuthenticationRequestServiceSelectionStrategies().resolveService(finalService);
     }
 }
