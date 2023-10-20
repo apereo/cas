@@ -61,7 +61,7 @@ half-baked, so approach with care and a pinch of curiosity. </p></div>
 ### Testing Strategy
 
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `441` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `443` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`. Furthermore, a large number of test categories that group internal unit tests
 are now configured to run with parallelism enabled.
 
@@ -83,7 +83,8 @@ where and when necessary.
 
 Requests to the OpenID Connect access token endpoint have started to enforce the required authentication method
 assigned to the relying party and registered service definition. The default authentication method has always been `client_secret_basic`
-and the endpoint will begin to enforce this for all requests. 
+and the endpoint will begin to enforce this for all requests. Furthermore, authentication methods will be deactivated and disabled
+if support for a method is not defined and declared in OpenID discovery metadata.
 
 ## Other Stuff
 
