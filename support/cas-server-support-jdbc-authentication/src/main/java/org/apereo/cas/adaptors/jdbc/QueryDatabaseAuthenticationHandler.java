@@ -10,6 +10,7 @@ import org.apereo.cas.configuration.model.support.jdbc.authn.QueryJdbcAuthentica
 import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -124,13 +125,14 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
     }
 
     private Map<String, Object> query(final UsernamePasswordCredential credential) {
-        if (properties.getSql().contains("?")) {
-            return getJdbcTemplate().queryForMap(properties.getSql(), credential.getUsername());
+        val sql = SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getSql());
+        if (sql.contains("?")) {
+            return getJdbcTemplate().queryForMap(sql, credential.getUsername());
         }
         val parameters = new LinkedHashMap<String, Object>();
         parameters.put("username", credential.getUsername());
         parameters.put("password", credential.toPassword());
-        return getNamedParameterJdbcTemplate().queryForMap(properties.getSql(), parameters);
+        return getNamedParameterJdbcTemplate().queryForMap(sql, parameters);
     }
 
     private void collectPrincipalAttributes(final Map<String, List<Object>> attributes, final Map<String, Object> dbFields) {
