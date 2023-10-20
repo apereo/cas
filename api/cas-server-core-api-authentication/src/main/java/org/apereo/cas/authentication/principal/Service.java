@@ -35,4 +35,12 @@ public interface Service extends Principal {
      * @param attributes the new attributes
      */
     void setAttributes(Map<String, List<Object>> attributes);
+
+    /**
+     * Return the original url provided (as {@code service} or {@code targetService} request parameter).
+     * Used to reconstruct the redirect url.
+     *
+     * @return the original url provided.
+     */
+    String getOriginalUrl();
 }

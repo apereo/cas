@@ -30,14 +30,6 @@ public interface WebApplicationService extends Service {
     String getSource();
 
     /**
-     * Return the original url provided (as {@code service} or {@code targetService} request parameter).
-     * Used to reconstruct the redirect url.
-     *
-     * @return the original url provided.
-     */
-    String getOriginalUrl();
-
-    /**
      * Ticket validation response MUST be produced based on the parameter value.
      * Supported values are XML and JSON. If this parameter is not set,
      * the default XML format will be used. If the parameter value is not supported by the CAS server,

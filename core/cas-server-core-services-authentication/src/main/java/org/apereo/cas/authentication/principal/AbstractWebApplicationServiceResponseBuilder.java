@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.principal;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.services.CasModelRegisteredService;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.UrlValidator;
@@ -32,61 +33,33 @@ public abstract class AbstractWebApplicationServiceResponseBuilder implements Re
     @Serial
     private static final long serialVersionUID = -4584738964007702423L;
 
-    /**
-     * Services manager instance.
-     */
     protected final ServicesManager servicesManager;
 
     private final UrlValidator urlValidator;
 
     private int order;
 
-    /**
-     * Build redirect.
-     *
-     * @param service    the service
-     * @param parameters the parameters
-     * @return the response
-     */
     protected Response buildRedirect(final WebApplicationService service, final Map<String, String> parameters) {
         return DefaultResponse.getRedirectResponse(determineServiceResponseUrl(service), parameters);
     }
 
-    /**
-     * Determine service response url and provide url.
-     *
-     * @param service the service
-     * @return the string
-     */
     protected String determineServiceResponseUrl(final WebApplicationService service) {
-        val registeredService = this.servicesManager.findServiceBy(service);
+        val registeredService = servicesManager.findServiceBy(service);
         if (registeredService instanceof final CasModelRegisteredService casService) {
             if (StringUtils.isNotBlank(casService.getRedirectUrl())
                 && getUrlValidator().isValid(casService.getRedirectUrl())) {
                 return casService.getRedirectUrl();
             }
         }
-        return service.getOriginalUrl();
+        return CollectionUtils.firstElement(service.getAttributes().get(Service.class.getName()))
+            .map(Object::toString)
+            .orElseGet(service::getOriginalUrl);
     }
 
-    /**
-     * Build header response.
-     *
-     * @param service    the service
-     * @param parameters the parameters
-     * @return the response
-     */
     protected Response buildHeader(final WebApplicationService service, final Map<String, String> parameters) {
         return DefaultResponse.getHeaderResponse(determineServiceResponseUrl(service), parameters);
     }
 
-    /**
-     * Build post.
-     *
-     * @param service    the service
-     * @param parameters the parameters
-     * @return the response
-     */
     protected Response buildPost(final WebApplicationService service, final Map<String, String> parameters) {
         return DefaultResponse.getPostResponse(determineServiceResponseUrl(service), parameters);
     }
