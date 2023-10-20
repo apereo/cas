@@ -671,7 +671,7 @@ if [[ "${RERUN}" != "true" && "${NATIVE_BUILD}" == "false" ]]; then
       fi
 
       if [[ $RC -ne 0 ]]; then
-        printred "\nUnable to launch CAS instance #${c} under process id ${pid}."
+        printred "Unable to launch CAS instance #${c} under process id ${pid}."
         printred "Killing process id $pid and exiting"
         kill -9 "$pid"
         exit 3
