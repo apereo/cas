@@ -98,13 +98,20 @@ if support for a method is not defined and declared in OpenID discovery metadata
   
 - Jacoco 
 - Jackson
-- Spring Boot
 - Spring
+- Spring Boot
 - Spring Data
 - Spring Security
-- Apache Log4j
 - Spring Integration
+- Spring Kafka
+- Spring AMQP
+- Apache Log4j
 - Hjson
 - Apache Tomcat
 - Pac4j
+- Hazelcast
+- JAXB
+- Twilio
+- Amazon SDK
+- jsoup
 - Spring Shell
