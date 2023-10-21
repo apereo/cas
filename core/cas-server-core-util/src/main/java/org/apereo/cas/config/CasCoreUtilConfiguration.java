@@ -23,22 +23,33 @@ import lombok.val;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnThreading;
+import org.springframework.boot.autoconfigure.task.TaskExecutionProperties;
+import org.springframework.boot.autoconfigure.task.TaskSchedulingProperties;
+import org.springframework.boot.autoconfigure.thread.Threading;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.task.SimpleAsyncTaskExecutorBuilder;
+import org.springframework.boot.task.SimpleAsyncTaskExecutorCustomizer;
+import org.springframework.boot.task.SimpleAsyncTaskSchedulerBuilder;
+import org.springframework.boot.task.SimpleAsyncTaskSchedulerCustomizer;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Role;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.convert.converter.ConverterRegistry;
 import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.core.io.Resource;
+import org.springframework.core.task.TaskDecorator;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.validation.beanvalidation.BeanValidationPostProcessor;
 import jakarta.validation.MessageInterpolator;
@@ -75,8 +86,8 @@ public class CasCoreUtilConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Lazy(false)
         public InitializingBean casCoreUtilInitialization(
-                final ConfigurableApplicationContext applicationContext,
-                final List<Converter> allConverters) {
+            final ConfigurableApplicationContext applicationContext,
+            final List<Converter> allConverters) {
             return () -> {
                 val registry = (ConverterRegistry) DefaultConversionService.getSharedInstance();
                 allConverters.forEach(converter -> {
@@ -152,7 +163,7 @@ public class CasCoreUtilConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "ticketCatalogMessageSanitationContributor")
         public MessageSanitationContributor defaultMessageSanitationContributor(
-                @Qualifier(TicketCatalog.BEAN_NAME) final ObjectProvider<TicketCatalog> ticketCatalog) {
+            @Qualifier(TicketCatalog.BEAN_NAME) final ObjectProvider<TicketCatalog> ticketCatalog) {
             return new TicketCatalogMessageSanitationContributor(ticketCatalog);
         }
 
@@ -168,13 +179,73 @@ public class CasCoreUtilConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public MessageSanitizer messageSanitizer(final List<MessageSanitationContributor> contributors) {
             val prefixes = contributors
-                    .stream()
-                    .map(MessageSanitationContributor::getTicketIdentifierPrefixes)
-                    .filter(Objects::nonNull)
-                    .flatMap(List::stream)
-                    .collect(Collectors.joining("|"));
+                .stream()
+                .map(MessageSanitationContributor::getTicketIdentifierPrefixes)
+                .filter(Objects::nonNull)
+                .flatMap(List::stream)
+                .collect(Collectors.joining("|"));
             val pattern = Pattern.compile("(?:(?:" + prefixes + ")-\\d+-)([\\w.-]+)");
             return new DefaultMessageSanitizer(pattern);
+        }
+    }
+
+    /**
+     * The following bean definitions exist to assist with creating
+     * task executors and schedulers when virtual threads are enabled,
+     * and to bypass issues related to the correct selection of the
+     * JDK-21 version of {@code VirtualThreadDelegate} that is packaged in
+     * Spring in a format compliant with multi-release (MR) JARs.
+     * <p/>
+     * In other words, at runtime we expect to see the copy of {@code VirtualThreadDelegate}
+     * that is designed to support virtual threads in JDK 21, and yet, the default version
+     * of this class is loaded which leads to the following error when virtual threads are enabled:
+     * {@code UnsupportedOperationException: Virtual threads not supported on JDK <21}.
+     * <p/>
+     * As of this writing, it's not immediately clear why the JDK-21 version of this class is not chosen correctly.
+     * Our best guess is that this is likely due to Gradle's lack of support for MR JARs, or it might
+     * have something to do with how the Spring Boot classloader loads Uber JARs.
+     * <p/>
+     * We expect to remove the below bean definitions once support for MR JARs improves,
+     * or when the default version {@code VirtualThreadDelegate} is able to directly support JDK 21
+     * and virtual threads without relying on MR JARs.
+     */
+    @Configuration(value = "CasCoreTaskSchedulingConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties({
+        CasConfigurationProperties.class,
+        TaskSchedulingProperties.class,
+        TaskExecutionProperties.class
+    })
+    @ConditionalOnThreading(Threading.VIRTUAL)
+    public static class CasCoreTaskSchedulingConfiguration {
+        @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
+        @Bean(name = "simpleAsyncTaskSchedulerBuilder")
+        public SimpleAsyncTaskSchedulerBuilder simpleAsyncTaskSchedulerBuilder(
+            final TaskSchedulingProperties properties,
+            final ObjectProvider<SimpleAsyncTaskSchedulerCustomizer> taskSchedulerCustomizers) {
+            val customizers = taskSchedulerCustomizers.orderedStream().collect(Collectors.toList());
+            customizers.add(taskExecutor -> taskExecutor.setThreadFactory(Thread.ofVirtual().factory()));
+            return new SimpleAsyncTaskSchedulerBuilder()
+                .threadNamePrefix(properties.getThreadNamePrefix())
+                .customizers(customizers)
+                .concurrencyLimit(properties.getSimple().getConcurrencyLimit())
+                .virtualThreads(false);
+        }
+
+        @Bean(name = "simpleAsyncTaskExecutorBuilder")
+        @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
+        public SimpleAsyncTaskExecutorBuilder simpleAsyncTaskExecutorBuilder(
+            final TaskExecutionProperties properties,
+            final ObjectProvider<SimpleAsyncTaskExecutorCustomizer> taskExecutorCustomizers,
+            final ObjectProvider<TaskDecorator> taskDecorator) {
+            val customizers = taskExecutorCustomizers.orderedStream().collect(Collectors.toList());
+            customizers.add(taskExecutor -> taskExecutor.setThreadFactory(Thread.ofVirtual().factory()));
+
+            return new SimpleAsyncTaskExecutorBuilder()
+                .threadNamePrefix(properties.getThreadNamePrefix())
+                .customizers(customizers)
+                .taskDecorator(taskDecorator.getIfUnique())
+                .concurrencyLimit(properties.getSimple().getConcurrencyLimit())
+                .virtualThreads(false);
         }
     }
 }
