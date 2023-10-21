@@ -1,0 +1,7 @@
+{
+  "dependencies": "trusted-webflow",
+  "conditions": {
+    "docker": "true"
+  },
+  "initScript": "${PWD}/ci/tests/nginx/run-nginx-server.sh"
+}

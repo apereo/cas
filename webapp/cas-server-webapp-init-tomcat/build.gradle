@@ -2,6 +2,9 @@ description = "Apereo CAS Web Application via Apache Tomcat"
 
 dependencies {
     api libraries.springboottomcat
+
+    implementation libraries.springsecurityconfig
+    implementation libraries.springsecurityweb
     
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-util-api") 

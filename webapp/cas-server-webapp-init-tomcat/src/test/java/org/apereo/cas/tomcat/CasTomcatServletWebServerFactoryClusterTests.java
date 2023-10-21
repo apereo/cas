@@ -3,7 +3,8 @@ package org.apereo.cas.tomcat;
 import org.apereo.cas.config.CasEmbeddedContainerTomcatConfiguration;
 import org.apereo.cas.config.CasEmbeddedContainerTomcatFiltersConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-
+import org.apereo.cas.util.http.HttpExecutionRequest;
+import org.apereo.cas.util.http.HttpUtils;
 import lombok.val;
 import org.apache.catalina.ha.tcp.SimpleTcpCluster;
 import org.apache.catalina.tribes.group.GroupChannel;
@@ -18,7 +19,11 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.embedded.tomcat.TomcatWebServer;
 import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
-
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.http.HttpMethod;
+import org.springframework.web.context.ConfigurableWebApplicationContext;
+import java.util.Map;
+import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -28,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
     CasEmbeddedContainerTomcatConfiguration.class,
     CasEmbeddedContainerTomcatFiltersConfiguration.class
 },
@@ -52,17 +58,30 @@ class CasTomcatServletWebServerFactoryClusterTests {
     @Qualifier("casTomcatEmbeddedServletContainerCustomizer")
     private ServletWebServerFactoryCustomizer casTomcatEmbeddedServletContainerCustomizer;
 
+    @Autowired
+    private ConfigurableWebApplicationContext applicationContext;
+
     @Test
     void verifyOperation() throws Throwable {
         casTomcatEmbeddedServletContainerCustomizer.customize(casServletWebServerFactory);
         val server = casServletWebServerFactory.getWebServer();
         try {
-            server.start();
             val tomcatServer = (TomcatWebServer) server;
+            tomcatServer.start();
             val cluster = (SimpleTcpCluster) tomcatServer.getTomcat().getEngine().getCluster();
             val channel = (GroupChannel) cluster.getChannel();
             val membership = channel.getMembershipService();
             assertInstanceOf(McastService.class, membership);
+
+            val givenRemoteUser = UUID.randomUUID().toString();
+            val response = HttpUtils.execute(HttpExecutionRequest.builder()
+                .method(HttpMethod.GET)
+                .headers(Map.of("REMOTE_USER", givenRemoteUser))
+                .url("http://localhost:8183/custom")
+                .build());
+            val remoteUser = response.getHeader("REMOTE_USER").getValue();
+            assertEquals(givenRemoteUser, remoteUser);
+
         } finally {
             server.stop();
         }

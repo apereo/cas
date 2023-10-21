@@ -7,13 +7,16 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.catalina.authenticator.BasicAuthenticator;
 import org.apache.catalina.connector.Connector;
+import org.apache.catalina.connector.Request;
+import org.apache.catalina.connector.Response;
+import org.apache.catalina.realm.GenericPrincipal;
 import org.apache.catalina.valves.ExtendedAccessLogValve;
 import org.apache.catalina.valves.SSLValve;
+import org.apache.catalina.valves.ValveBase;
 import org.apache.catalina.valves.rewrite.RewriteValve;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.coyote.ajp.AbstractAjpProtocol;
@@ -30,8 +33,9 @@ import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactor
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
 import org.springframework.util.ReflectionUtils;
-
+import jakarta.servlet.ServletException;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
@@ -96,6 +100,7 @@ public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServer
             configureRewriteValve(tomcat);
             configureSSLValve(tomcat);
             configureBasicAuthn(tomcat);
+            configureRemoteUserValve(tomcat);
             finalizeConnectors(tomcat);
         }
     }
@@ -303,6 +308,23 @@ public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServer
 
             LOGGER.debug("Creating rewrite valve configuration for the embedded tomcat container...");
             tomcat.addContextValves(valve);
+        }
+    }
+
+    private static void configureRemoteUserValve(final TomcatServletWebServerFactory tomcat) {
+        tomcat.addContextValves(new RemoteUserValve());
+    }
+
+    private static final class RemoteUserValve extends ValveBase {
+        @Override
+        public void invoke(final Request request, final Response response) throws IOException, ServletException {
+            val username = request.getHeader("REMOTE_USER");
+            if (StringUtils.isNotBlank(username)) {
+                val principal = new GenericPrincipal(username);
+                request.setUserPrincipal(principal);
+                response.setHeader("REMOTE_USER", username);
+            }
+            getNext().invoke(request, response);
         }
     }
 
