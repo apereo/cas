@@ -372,7 +372,7 @@ exports.doRequest = async (url, method = "GET",
 
         this.logg(`Contacting ${url} via ${method}`);
         const handler = async (res) => {
-            this.logg(`Response status code: ${res.statusCode}`);
+            await this.logg(`Response status code: ${res.statusCode}`);
             if (statusCode > 0) {
                 assert(res.statusCode === statusCode);
             }
