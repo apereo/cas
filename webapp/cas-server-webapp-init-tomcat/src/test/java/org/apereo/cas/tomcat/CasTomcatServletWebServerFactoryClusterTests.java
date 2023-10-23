@@ -60,9 +60,6 @@ class CasTomcatServletWebServerFactoryClusterTests {
     @Qualifier("casTomcatEmbeddedServletContainerCustomizer")
     private ServletWebServerFactoryCustomizer casTomcatEmbeddedServletContainerCustomizer;
 
-    @Autowired
-    private ConfigurableWebApplicationContext applicationContext;
-
     @Test
     void verifyOperation() throws Throwable {
         casTomcatEmbeddedServletContainerCustomizer.customize(casServletWebServerFactory);
