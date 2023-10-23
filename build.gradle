@@ -62,6 +62,7 @@ ext {
 
     excludedFilesFromTestCoverage = [
         '**/docs/**',
+        '**/org/springframework/**',
         '**/soap/generated/**',
         '**/com/duosecurity/**',
         '**/org/apereo/inspektr/**',
