@@ -6,6 +6,8 @@ import lombok.val;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
@@ -27,8 +29,13 @@ import static org.mockito.Mockito.*;
         WebMvcAutoConfiguration.class,
         HazelcastSessionConfiguration.class
     },
-    properties = "cas.webflow.session.server.hazelcast.cluster.core.instance-name=hzsessioninstance")
+    properties = {
+        "cas.webflow.session.server.hazelcast.cluster.network.port-auto-increment=false",
+        "cas.webflow.session.server.hazelcast.cluster.network.port=5709",
+        "cas.webflow.session.server.hazelcast.cluster.core.instance-name=hzsessioninstance"
+    })
 @Tag("Hazelcast")
+@Execution(ExecutionMode.SAME_THREAD)
 class HazelcastSessionConfigurationTests {
     @Autowired
     @Qualifier("hazelcastInstance")
