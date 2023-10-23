@@ -40,6 +40,8 @@ import static org.junit.jupiter.api.Assertions.*;
     properties = {
         "server.port=8183",
         "server.ssl.enabled=false",
+        "cas.server.tomcat.remote-user-valve.remote-user-header=REMOTE_USER",
+        "cas.server.tomcat.remote-user-valve.allowed-ip-address-regex=.+",
         "cas.server.tomcat.clustering.enabled=true",
         "cas.server.tomcat.clustering.clustering-type=DEFAULT"
     },
@@ -79,9 +81,10 @@ class CasTomcatServletWebServerFactoryClusterTests {
                 .headers(Map.of("REMOTE_USER", givenRemoteUser))
                 .url("http://localhost:8183/custom")
                 .build());
-            val remoteUser = response.getHeader("REMOTE_USER").getValue();
+            val responseHeader = response.getHeader("X-Remote-User");
+            assertNotNull(responseHeader);
+            val remoteUser = responseHeader.getValue();
             assertEquals(givenRemoteUser, remoteUser);
-
         } finally {
             server.stop();
         }

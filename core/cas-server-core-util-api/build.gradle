@@ -16,6 +16,7 @@ dependencies {
     implementation libraries.semver
     implementation libraries.oshi
     implementation libraries.apachevelocity
+    implementation libraries.springsecurityweb
 
     testImplementation libraries.nimbus
 }
