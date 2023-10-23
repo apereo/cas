@@ -107,6 +107,10 @@ backend cas-pool
 
 {% include_cached casproperties.html properties="cas.server.tomcat.rewrite-valve." %}
 
+#### Remote User Valve
+
+{% include_cached casproperties.html properties="cas.server.tomcat.remote-user-valve." %}
+
 #### Basic Authentication
 
 {% include_cached casproperties.html properties="cas.server.tomcat.basic-authn." %}

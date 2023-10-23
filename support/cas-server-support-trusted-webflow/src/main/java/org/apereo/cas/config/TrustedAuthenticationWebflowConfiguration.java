@@ -2,13 +2,14 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.TrustedAuthenticationWebflowConfigurer;
-
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -20,7 +21,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.security.web.authentication.preauth.RequestHeaderAuthenticationFilter;
-import org.springframework.security.web.util.matcher.RegexRequestMatcher;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
@@ -57,16 +57,17 @@ public class TrustedAuthenticationWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public FilterRegistrationBean<RequestHeaderAuthenticationFilter> casRequestHeaderAuthenticationFilter(
             final CasConfigurationProperties casProperties) {
+            val valve = casProperties.getServer().getTomcat().getRemoteUserValve();
             val filter = new RequestHeaderAuthenticationFilter();
-            filter.setPrincipalRequestHeader("REMOTE_USER");
+            filter.setPrincipalRequestHeader(StringUtils.defaultIfBlank(valve.getRemoteUserHeader(), "NA"));
             filter.setExceptionIfHeaderMissing(false);
-            filter.setRequiresAuthenticationRequestMatcher(RegexRequestMatcher.regexMatcher(".+"));
+            filter.setRequiresAuthenticationRequestMatcher(request -> RegexUtils.matchesIpAddress(valve.getAllowedIpAddressRegex(), request.getRemoteAddr()));
             filter.setAuthenticationManager(authentication -> authentication);
             val bean = new FilterRegistrationBean<>(filter);
-            bean.setName("RequestHeaderAuthenticationFilter");
+            bean.setName("casRequestHeaderAuthenticationFilter");
             bean.setAsyncSupported(true);
             bean.setOrder(0);
-            bean.setEnabled(true);
+            bean.setEnabled(StringUtils.isNotBlank(valve.getRemoteUserHeader()));
             return bean;
         }
     }

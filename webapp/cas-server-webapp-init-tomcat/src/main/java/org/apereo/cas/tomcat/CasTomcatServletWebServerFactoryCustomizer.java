@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomca
 import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatHttpProxyProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -311,18 +312,23 @@ public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServer
         }
     }
 
-    private static void configureRemoteUserValve(final TomcatServletWebServerFactory tomcat) {
-        tomcat.addContextValves(new RemoteUserValve());
+    private void configureRemoteUserValve(final TomcatServletWebServerFactory tomcat) {
+        val valve = casProperties.getServer().getTomcat().getRemoteUserValve();
+        if (StringUtils.isNotBlank(valve.getRemoteUserHeader())) {
+            tomcat.addContextValves(new RemoteUserValve());
+        }
     }
 
-    private static final class RemoteUserValve extends ValveBase {
+    private final class RemoteUserValve extends ValveBase {
         @Override
         public void invoke(final Request request, final Response response) throws IOException, ServletException {
-            val username = request.getHeader("REMOTE_USER");
-            if (StringUtils.isNotBlank(username)) {
+            val valve = casProperties.getServer().getTomcat().getRemoteUserValve();
+            val username = request.getHeader(valve.getRemoteUserHeader());
+            LOGGER.debug("Received remote user [{}] from [{}]", username, request.getRemoteAddr());
+            if (StringUtils.isNotBlank(username) && RegexUtils.matchesIpAddress(valve.getAllowedIpAddressRegex(), request.getRemoteAddr())) {
                 val principal = new GenericPrincipal(username);
                 request.setUserPrincipal(principal);
-                response.setHeader("REMOTE_USER", username);
+                response.setHeader("X-Remote-User", username);
             }
             getNext().invoke(request, response);
         }

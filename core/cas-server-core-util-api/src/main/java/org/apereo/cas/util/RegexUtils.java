@@ -4,6 +4,7 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.security.web.util.matcher.IpAddressMatcher;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -156,5 +157,23 @@ public class RegexUtils {
             .stream()
             .filter(entry -> find(compiledPattern, entry.toString()))
             .findFirst();
+    }
+
+    /**
+     * Matches ip address.
+     *
+     * @param pattern    the pattern
+     * @param remoteAddr the remote addr
+     * @return the boolean
+     */
+    public static boolean matchesIpAddress(final String pattern, final String remoteAddr) {
+        try {
+            val ipAddressMatcher = new IpAddressMatcher(pattern);
+            LOGGER.trace("Attempting to match [{}] against [{}] as a IP or netmask", remoteAddr, pattern);
+            return ipAddressMatcher.matches(remoteAddr);
+        } catch (final Exception e) {
+            LOGGER.trace("Falling back to regex match. Couldn't treat [{}] as an IP address or netmask: [{}]", pattern, e.getMessage());
+            return find(pattern, remoteAddr);
+        }
     }
 }
