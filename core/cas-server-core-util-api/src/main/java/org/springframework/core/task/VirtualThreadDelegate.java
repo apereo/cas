@@ -28,6 +28,7 @@ import java.util.concurrent.ThreadFactory;
  * @author Misagh Moayyed
  * @see VirtualThreadTaskExecutor
  * @since 7.0.0
+ * @deprecated since 7.0.0 for removal.
  */
 @Deprecated(since = "7.0.0", forRemoval = true)
 @SuppressWarnings("UnusedMethod")
