@@ -136,7 +136,7 @@ jobs:
           source ./ci/tests/puppeteer/configure-ci.sh ${{matrix.scenario}}
           echo "NODE_VERSION_REQUIRED=$(echo $NODE_REQUIRED)" >> $GITHUB_ENV
       - name: Set up Nodejs
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION_REQUIRED }}
           cache: 'npm'
@@ -182,7 +182,7 @@ jobs:
           source ./ci/tests/puppeteer/configure-ci.sh ${{matrix.scenario}}
           echo "NODE_VERSION_REQUIRED=$(echo $NODE_REQUIRED)" >> $GITHUB_ENV
       - name: Set up Nodejs
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_CURRENT }}
           check-latest: true
