@@ -2,6 +2,7 @@ package org.apereo.cas.authentication.bypass.audit;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.util.AopUtils;
 
 import lombok.Setter;
@@ -36,6 +37,8 @@ public class MultifactorAuthenticationProviderBypassAuditResourceResolver implem
             values.put("principal", authn.getPrincipal().getId());
             values.put("provider", provider.getId());
             values.put("bypassed", BooleanUtils.toBoolean(returnValue.toString()));
+            val bypass = (MultifactorAuthenticationProviderBypassEvaluator) jp.getTarget();
+            values.put("source", bypass.getId());
             return new String[]{toResourceString(values)};
         }
         return ArrayUtils.EMPTY_STRING_ARRAY;

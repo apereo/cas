@@ -11,7 +11,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-
 import com.duosecurity.client.Http;
 import com.duosecurity.client.Util;
 import com.duosecurity.duoweb.DuoWebException;
@@ -29,7 +28,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.ReflectionUtils;
-
 import javax.net.ssl.X509TrustManager;
 import java.io.Serial;
 import java.net.URI;
@@ -157,7 +155,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
         }
         return Optional.empty();
     }
-    
+
     protected abstract DuoSecurityAuthenticationResult authenticateInternal(Credential credential) throws Exception;
 
     protected String getHttpResponse(final Http userRequest) throws Exception {
@@ -190,33 +188,31 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
         ReflectionUtils.makeAccessible(Objects.requireNonNull(hostField));
         ReflectionUtils.setField(hostField, request, originalHost);
 
-        val pinner = buildCertificatePinner(request, host);
-
         val factory = httpClient.httpClientFactory();
-        val clientInstance = new OkHttpClient.Builder()
-            .certificatePinner(pinner)
+        val clientInstanceBuilder = new OkHttpClient.Builder()
             .connectTimeout(DEFAULT_HTTP_TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .readTimeout(DEFAULT_HTTP_TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .writeTimeout(DEFAULT_HTTP_TIMEOUT_SECONDS, TimeUnit.SECONDS)
-            .hostnameVerifier(factory.getHostnameVerifier())
-            .sslSocketFactory(factory.getSslContext().getSocketFactory(), (X509TrustManager) factory.getTrustManagers()[0])
-            .build();
-        
-        val httpClientField = ReflectionUtils.findField(Http.class, "httpClient");
-        ReflectionUtils.makeAccessible(Objects.requireNonNull(httpClientField));
-        ReflectionUtils.setField(httpClientField, request, clientInstance);
-        
-        return request;
-    }
-
-    private static CertificatePinner buildCertificatePinner(final Http request, final String host) {
-        return FunctionUtils.doIf("localhost".equalsIgnoreCase(host), () -> CertificatePinner.DEFAULT, () -> {
+            .hostnameVerifier(factory.getHostnameVerifier());
+        if ("localhost".equalsIgnoreCase(host)) {
+            clientInstanceBuilder
+                .certificatePinner(CertificatePinner.DEFAULT)
+                .sslSocketFactory(factory.getSslContext().getSocketFactory(), (X509TrustManager) factory.getTrustManagers()[0]);
+        } else {
             val caCertificatesField = ReflectionUtils.findField(Http.class, "DEFAULT_CA_CERTS");
             ReflectionUtils.makeAccessible(Objects.requireNonNull(caCertificatesField));
             val certificates = (String[]) ReflectionUtils.getField(caCertificatesField, request);
-            return Util.createPinner(host, certificates);
-        }).get();
+            val pinner = Util.createPinner(host, certificates);
+            clientInstanceBuilder.certificatePinner(pinner);
+        }
+        val httpClientField = ReflectionUtils.findField(Http.class, "httpClient");
+        ReflectionUtils.makeAccessible(Objects.requireNonNull(httpClientField));
+
+        val clientInstance = clientInstanceBuilder.build();
+        ReflectionUtils.setField(httpClientField, request, clientInstance);
+        return request;
     }
+
 
     protected void configureHttpRequest(final Http request) {
         val factory = httpClient.httpClientFactory();
