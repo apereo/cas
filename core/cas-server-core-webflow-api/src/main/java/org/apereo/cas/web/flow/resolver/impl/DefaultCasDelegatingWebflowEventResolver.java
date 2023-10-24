@@ -22,6 +22,7 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
@@ -62,7 +63,9 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
         val credential = getCredentialFromContext(context);
-        val service = WebUtils.getService(context);
+        val service = locateServiceForRequest(context);
+        LOGGER.trace("Resolved service [{}]", service);
+        
         try {
             if (credential != null) {
                 val builder = getConfigurationContext().getAuthenticationSystemSupport()
@@ -198,7 +201,7 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
 
     protected Event returnAuthenticationExceptionEventIfNeeded(final Exception exception,
                                                                final Credential credential,
-                                                               final WebApplicationService service) {
+                                                               final Service service) {
         val result = (exception instanceof AuthenticationException || exception instanceof AbstractTicketException)
             ? Optional.of(exception)
             : (exception.getCause() instanceof AuthenticationException || exception.getCause() instanceof AbstractTicketException)
@@ -217,5 +220,12 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
                 return newEvent(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, attributes);
             })
             .orElse(null);
+    }
+
+    protected Service locateServiceForRequest(final RequestContext context) {
+        val serviceFromRequest = WebUtils.getService(getConfigurationContext().getArgumentExtractors(), context);
+        val serviceFromFlow = WebUtils.getService(context);
+        val finalService = ObjectUtils.defaultIfNull(serviceFromRequest, serviceFromFlow);
+        return getConfigurationContext().getAuthenticationRequestServiceSelectionStrategies().resolveService(finalService);
     }
 }

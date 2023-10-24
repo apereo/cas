@@ -13,12 +13,14 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
+import org.apereo.cas.web.support.ArgumentExtractor;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
+import java.util.List;
 
 /**
  * This is {@link CasWebflowEventResolutionConfigurationContext}.
@@ -60,4 +62,6 @@ public class CasWebflowEventResolutionConfigurationContext {
     private final MultifactorAuthenticationContextValidator authenticationContextValidator;
 
     private final PrincipalFactory principalFactory;
+
+    private final List<ArgumentExtractor> argumentExtractors;
 }

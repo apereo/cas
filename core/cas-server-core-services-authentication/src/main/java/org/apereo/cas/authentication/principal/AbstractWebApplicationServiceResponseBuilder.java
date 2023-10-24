@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.principal;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.services.CasModelRegisteredService;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.UrlValidator;
@@ -66,7 +67,9 @@ public abstract class AbstractWebApplicationServiceResponseBuilder implements Re
                 return casService.getRedirectUrl();
             }
         }
-        return service.getOriginalUrl();
+        return CollectionUtils.firstElement(service.getAttributes().get(Service.class.getName()))
+            .map(Object::toString)
+            .orElseGet(service::getOriginalUrl);
     }
 
     /**

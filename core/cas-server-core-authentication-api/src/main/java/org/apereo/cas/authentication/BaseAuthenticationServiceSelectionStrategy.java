@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.CollectionUtils;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.val;
 import org.springframework.core.Ordered;
+import java.util.LinkedHashMap;
 
 /**
  * This is {@link BaseAuthenticationServiceSelectionStrategy}.
@@ -40,7 +42,9 @@ public abstract class BaseAuthenticationServiceSelectionStrategy implements Auth
      */
     protected Service createService(final String identifier, final Service original) {
         val result = webApplicationServiceFactory.createService(identifier);
-        result.setAttributes(original.getAttributes());
+        val attributes = new LinkedHashMap<>(original.getAttributes());
+        attributes.put(Service.class.getName(), CollectionUtils.wrapList(original.getOriginalUrl()));
+        result.setAttributes(attributes);
         return result;
     }
 }
