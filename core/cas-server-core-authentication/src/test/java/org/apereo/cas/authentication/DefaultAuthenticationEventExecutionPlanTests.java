@@ -20,6 +20,10 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.List;
 import java.util.Set;
@@ -34,6 +38,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Authentication")
+@SpringBootTest(classes = RefreshAutoConfiguration.class)
 class DefaultAuthenticationEventExecutionPlanTests {
     @Mock
     private ServicesManager servicesManager;
@@ -41,6 +46,9 @@ class DefaultAuthenticationEventExecutionPlanTests {
     @Mock
     private AttributeDefinitionStore attributeDefinitionStore;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+    
     @BeforeEach
     public void before() throws Exception {
         MockitoAnnotations.openMocks(this).close();
@@ -70,6 +78,7 @@ class DefaultAuthenticationEventExecutionPlanTests {
             .principalNameTransformer(formUserId -> formUserId)
             .useCurrentPrincipalId(false)
             .resolveAttributes(true)
+            .applicationContext(applicationContext)
             .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.REPLACE))
             .activeAttributeRepositoryIdentifiers(CollectionUtils.wrapSet(IPersonAttributeDao.WILDCARD))
             .build();

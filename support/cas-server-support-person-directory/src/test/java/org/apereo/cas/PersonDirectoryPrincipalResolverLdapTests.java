@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -75,24 +76,29 @@ class PersonDirectoryPrincipalResolverLdapTests {
     @Autowired
     @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
-    
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @Test
     void verifyResolver() throws Throwable {
         val attributeMerger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
-        val resolver = PersonDirectoryPrincipalResolver.newPersonDirectoryPrincipalResolver(PrincipalFactoryUtils.newPrincipalFactory(),
+        val resolver = PersonDirectoryPrincipalResolver.newPersonDirectoryPrincipalResolver(
+            applicationContext, PrincipalFactoryUtils.newPrincipalFactory(),
             this.attributeRepository, attributeMerger, servicesManager, attributeDefinitionStore, casProperties.getPersonDirectory());
-        val p = resolver.resolve(new UsernamePasswordCredential("admin", "password"),
+        val principal = resolver.resolve(new UsernamePasswordCredential("admin", "password"),
             Optional.of(CoreAuthenticationTestUtils.getPrincipal("admin")),
             Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()),
             Optional.of(CoreAuthenticationTestUtils.getService()));
-        assertNotNull(p);
-        assertTrue(p.getAttributes().containsKey("description"));
-        assertTrue(p.getAttributes().containsKey("entryDN"));
+        assertNotNull(principal);
+        assertTrue(principal.getAttributes().containsKey("description"));
+        assertTrue(principal.getAttributes().containsKey("entryDN"));
     }
 
     @Test
     void verifyChainedResolver() throws Throwable {
-        val resolver = PersonDirectoryPrincipalResolver.newPersonDirectoryPrincipalResolver(PrincipalFactoryUtils.newPrincipalFactory(),
+        val resolver = PersonDirectoryPrincipalResolver.newPersonDirectoryPrincipalResolver(
+            applicationContext, PrincipalFactoryUtils.newPrincipalFactory(),
             this.attributeRepository,
             CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
             servicesManager, attributeDefinitionStore,

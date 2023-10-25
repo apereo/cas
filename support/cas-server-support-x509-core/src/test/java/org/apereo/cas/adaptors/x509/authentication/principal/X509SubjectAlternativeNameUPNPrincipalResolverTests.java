@@ -18,15 +18,17 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import java.io.FileInputStream;
 import java.security.cert.CertificateFactory;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 import java.util.stream.Stream;
-
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.params.provider.Arguments.arguments;
+import static org.junit.jupiter.params.provider.Arguments.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -36,6 +38,7 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @Tag("X509")
+@SpringBootTest(classes = RefreshAutoConfiguration.class)
 class X509SubjectAlternativeNameUPNPrincipalResolverTests {
 
     @Mock
@@ -44,11 +47,14 @@ class X509SubjectAlternativeNameUPNPrincipalResolverTests {
     @Mock
     private AttributeDefinitionStore attributeDefinitionStore;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @BeforeEach
     public void before() throws Exception {
         MockitoAnnotations.openMocks(this).close();
     }
-    
+
     /**
      * Gets the unit test parameters.
      *
@@ -90,8 +96,8 @@ class X509SubjectAlternativeNameUPNPrincipalResolverTests {
     @ParameterizedTest
     @MethodSource("getTestParameters")
     void verifyResolvePrincipalInternal(final String certPath,
-                                               final String expectedResult,
-                                               final String alternatePrincipalAttribute) throws Throwable {
+                                        final String expectedResult,
+                                        final String alternatePrincipalAttribute) throws Throwable {
 
         val context = PrincipalResolutionContext.builder()
             .attributeDefinitionStore(attributeDefinitionStore)
@@ -103,6 +109,7 @@ class X509SubjectAlternativeNameUPNPrincipalResolverTests {
             .principalNameTransformer(formUserId -> formUserId)
             .useCurrentPrincipalId(false)
             .resolveAttributes(true)
+            .applicationContext(applicationContext)
             .activeAttributeRepositoryIdentifiers(CollectionUtils.wrapSet(IPersonAttributeDao.WILDCARD))
             .build();
         val resolver = new X509SubjectAlternativeNameUPNPrincipalResolver(context);
@@ -137,6 +144,7 @@ class X509SubjectAlternativeNameUPNPrincipalResolverTests {
             .principalNameTransformer(formUserId -> formUserId)
             .useCurrentPrincipalId(false)
             .resolveAttributes(true)
+            .applicationContext(applicationContext)
             .activeAttributeRepositoryIdentifiers(CollectionUtils.wrapSet(IPersonAttributeDao.WILDCARD))
             .build();
         val resolver = new X509SubjectAlternativeNameUPNPrincipalResolver(context);

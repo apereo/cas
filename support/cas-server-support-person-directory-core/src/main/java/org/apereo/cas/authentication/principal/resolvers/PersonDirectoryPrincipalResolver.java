@@ -10,6 +10,8 @@ import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
+import org.apereo.cas.persondir.AttributeRepositoryResolver;
+import org.apereo.cas.persondir.DefaultAttributeRepositoryResolver;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.model.TriStateBoolean;
@@ -26,10 +28,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.merger.IAttributeMerger;
 import org.jooq.lambda.Unchecked;
+import org.springframework.context.ConfigurableApplicationContext;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,7 +74,8 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         }
         LOGGER.trace("Creating principal for [{}]", principalId);
         if (context.isResolveAttributes()) {
-            val attributes = retrievePersonAttributes(principalId, credential, currentPrincipal, new HashMap<>(0), service);
+            val attributes = retrievePersonAttributes(principalId, credential,
+                currentPrincipal, new HashMap<>(0), service, handler);
             if (attributes == null || attributes.isEmpty()) {
                 LOGGER.debug("Principal id [{}] did not specify any attributes", principalId);
                 if (!context.isReturnNullIfNoAttributes()) {
@@ -172,34 +175,36 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
                                                                  final Credential credential,
                                                                  final Optional<Principal> currentPrincipal,
                                                                  final Map<String, List<Object>> queryAttributes,
-                                                                 final Optional<Service> givenService) {
+                                                                 final Optional<Service> givenService,
+                                                                 final Optional<AuthenticationHandler> handler) throws Throwable {
 
         queryAttributes.computeIfAbsent("credentialId", __ -> CollectionUtils.wrapList(credential.getId()));
         queryAttributes.computeIfAbsent("credentialClass", __ -> CollectionUtils.wrapList(credential.getClass().getSimpleName()));
 
-        val repositoryIds = new HashSet<>(context.getActiveAttributeRepositoryIdentifiers());
-        if (repositoryIds.isEmpty()) {
-            repositoryIds.add(IPersonAttributeDao.WILDCARD);
-        }
-        givenService.ifPresent(service -> {
-            val registeredService = context.getServicesManager().findServiceBy(service);
-            if (registeredService != null && registeredService.getAttributeReleasePolicy() != null
-                && registeredService.getAttributeReleasePolicy().getPrincipalAttributesRepository() != null) {
-                val serviceRepositories = registeredService.getAttributeReleasePolicy()
-                    .getPrincipalAttributesRepository().getAttributeRepositoryIds();
-                if (serviceRepositories != null && !serviceRepositories.isEmpty()) {
-                    repositoryIds.clear();
-                    repositoryIds.addAll(serviceRepositories);
-                }
-            }
+        val attributes = new LinkedHashMap<String, List<Object>>();
+        currentPrincipal.ifPresent(p -> {
+            attributes.putAll(p.getAttributes());
+            attributes.put("currentPrincipalId", CollectionUtils.wrap(p.getId()));
         });
+        val principal = context.getPrincipalFactory().createPrincipal(principalId, attributes);
+        val service = givenService.orElse(null);
+        val query = new AttributeRepositoryResolver.AttributeRepositoryQuery(handler.orElse(null), principal,
+            service, context.getActiveAttributeRepositoryIdentifiers());
+
+        val repositoryResolver = context.getApplicationContext().containsBean(AttributeRepositoryResolver.BEAN_NAME)
+            ? context.getApplicationContext().getBean(AttributeRepositoryResolver.BEAN_NAME, AttributeRepositoryResolver.class)
+            : new DefaultAttributeRepositoryResolver(context.getServicesManager());
+
+        val repositoryIds = repositoryResolver.resolve(query);
+        LOGGER.debug("The following attribute repository IDs are resolved: [{}]", repositoryIds);
+
         val attributeFetcher = PrincipalAttributeRepositoryFetcher.builder()
             .attributeRepository(context.getAttributeRepository())
             .principalId(principalId)
             .activeAttributeRepositoryIdentifiers(repositoryIds)
             .currentPrincipal(currentPrincipal.orElse(null))
             .queryAttributes(queryAttributes)
-            .service(givenService.orElse(null))
+            .service(service)
             .build();
         return attributeFetcher.retrieve();
     }
@@ -249,6 +254,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     /**
      * New person directory principal resolver.
      *
+     * @param applicationContext       the application context
      * @param principalFactory         the principal factory
      * @param attributeRepository      the attribute repository
      * @param attributeMerger          the attribute merger
@@ -258,13 +264,14 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
      * @return the principal resolver
      */
     public static PrincipalResolver newPersonDirectoryPrincipalResolver(
+        final ConfigurableApplicationContext applicationContext,
         final PrincipalFactory principalFactory,
         final IPersonAttributeDao attributeRepository,
         final IAttributeMerger attributeMerger,
         final ServicesManager servicesManager,
         final AttributeDefinitionStore attributeDefinitionStore,
         final PersonDirectoryPrincipalResolverProperties... personDirectory) {
-        return newPersonDirectoryPrincipalResolver(principalFactory, attributeRepository,
+        return newPersonDirectoryPrincipalResolver(applicationContext, principalFactory, attributeRepository,
             attributeMerger, PersonDirectoryPrincipalResolver.class, servicesManager, attributeDefinitionStore, personDirectory);
     }
 
@@ -272,6 +279,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
      * New person directory principal resolver.
      *
      * @param <T>                      the type parameter
+     * @param applicationContext       the application context
      * @param principalFactory         the principal factory
      * @param attributeRepository      the attribute repository
      * @param attributeMerger          the attribute merger
@@ -282,6 +290,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
      * @return the resolver
      */
     public static <T extends PrincipalResolver> T newPersonDirectoryPrincipalResolver(
+        final ConfigurableApplicationContext applicationContext,
         final PrincipalFactory principalFactory,
         final IPersonAttributeDao attributeRepository,
         final IAttributeMerger attributeMerger,
@@ -290,7 +299,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         final AttributeDefinitionStore attributeDefinitionStore,
         final PersonDirectoryPrincipalResolverProperties... personDirectory) {
 
-        val context = buildPrincipalResolutionContext(principalFactory, attributeRepository, attributeMerger,
+        val context = buildPrincipalResolutionContext(applicationContext, principalFactory, attributeRepository, attributeMerger,
             servicesManager, attributeDefinitionStore, personDirectory);
         return newPersonDirectoryPrincipalResolver(resolverClass, context);
     }
@@ -314,13 +323,17 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     /**
      * New PrincipalResolutionContext.
      *
-     * @param principalFactory    the principal factory
-     * @param attributeRepository the attribute repository
-     * @param attributeMerger     the attribute merger
-     * @param personDirectory     the person directory properties
+     * @param applicationContext       the application context
+     * @param principalFactory         the principal factory
+     * @param attributeRepository      the attribute repository
+     * @param attributeMerger          the attribute merger
+     * @param servicesManager          the services manager
+     * @param attributeDefinitionStore the attribute definition store
+     * @param personDirectory          the person directory properties
      * @return the resolver
      */
     public static PrincipalResolutionContext buildPrincipalResolutionContext(
+        final ConfigurableApplicationContext applicationContext,
         final PrincipalFactory principalFactory,
         final IPersonAttributeDao attributeRepository,
         final IAttributeMerger attributeMerger,
@@ -342,6 +355,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
 
         return PrincipalResolutionContext.builder()
             .servicesManager(servicesManager)
+            .applicationContext(applicationContext)
             .attributeDefinitionStore(attributeDefinitionStore)
             .attributeRepository(attributeRepository)
             .attributeMerger(attributeMerger)

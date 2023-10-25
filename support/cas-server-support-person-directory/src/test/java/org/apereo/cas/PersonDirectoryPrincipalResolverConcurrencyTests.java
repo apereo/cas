@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -54,6 +55,9 @@ class PersonDirectoryPrincipalResolverConcurrencyTests {
     private static final int NUM_USERS = 100;
 
     private static final int EXECUTIONS_PER_USER = 1000;
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
@@ -113,10 +117,10 @@ class PersonDirectoryPrincipalResolverConcurrencyTests {
 
     @BeforeEach
     protected void setUp() {
-        this.personDirectoryResolver = PersonDirectoryPrincipalResolver.newPersonDirectoryPrincipalResolver(
-            PrincipalFactoryUtils.newPrincipalFactory(),
-            attributeRepository,
-            CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
+        val attributeMerger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
+        personDirectoryResolver = PersonDirectoryPrincipalResolver.newPersonDirectoryPrincipalResolver(
+            applicationContext, PrincipalFactoryUtils.newPrincipalFactory(),
+            attributeRepository, attributeMerger,
             servicesManager, attributeDefinitionStore,
             casProperties.getPersonDirectory()
         );

@@ -206,6 +206,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
         @ConditionalOnMissingBean(name = "jaasPersonDirectoryPrincipalResolvers")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public BeanContainer<PrincipalResolver> jaasPersonDirectoryPrincipalResolvers(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier(AttributeDefinitionStore.BEAN_NAME)
             final AttributeDefinitionStore attributeDefinitionStore,
             @Qualifier(ServicesManager.BEAN_NAME)
@@ -220,7 +221,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
                 .map(jaas -> {
                     val jaasPrincipal = jaas.getPrincipal();
                     var attributeMerger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
-                    return PersonDirectoryPrincipalResolver.newPersonDirectoryPrincipalResolver(jaasPrincipalFactory,
+                    return PersonDirectoryPrincipalResolver.newPersonDirectoryPrincipalResolver(applicationContext, jaasPrincipalFactory,
                         attributeRepository, attributeMerger, servicesManager, attributeDefinitionStore, jaasPrincipal, personDirectory);
                 })
                 .collect(Collectors.toList()));

@@ -18,6 +18,10 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.Optional;
 
@@ -29,10 +33,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.1
  */
 @Tag("Spnego")
+@SpringBootTest(classes = RefreshAutoConfiguration.class)
 class SpnegoCredentialsToPrincipalResolverTests {
     private SpnegoPrincipalResolver resolver;
 
     private SpnegoCredential spnegoCredentials;
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @Mock
     private ServicesManager servicesManager;
@@ -53,6 +61,7 @@ class SpnegoCredentialsToPrincipalResolverTests {
             .principalNameTransformer(formUserId -> formUserId)
             .useCurrentPrincipalId(false)
             .resolveAttributes(true)
+            .applicationContext(applicationContext)
             .activeAttributeRepositoryIdentifiers(CollectionUtils.wrapSet(IPersonAttributeDao.WILDCARD))
             .build();
         this.resolver = new SpnegoPrincipalResolver(context);

@@ -32,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -62,6 +63,9 @@ class PersonDirectoryPrincipalResolverTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @Mock
     private ServicesManager servicesManager;
 
@@ -88,6 +92,7 @@ class PersonDirectoryPrincipalResolverTests {
         return PrincipalResolutionContext.builder()
             .attributeDefinitionStore(attributeDefinitionStore)
             .servicesManager(servicesManager)
+            .applicationContext(applicationContext)
             .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(casProperties))
             .attributeRepository(attributeRepository)
             .principalFactory(PrincipalFactoryUtils.newPrincipalFactory());
@@ -472,12 +477,7 @@ class PersonDirectoryPrincipalResolverTests {
     void verifyPersonDirectoryOverrides() throws Throwable {
         val principal = new PersonDirectoryPrincipalResolverProperties();
         val personDirectory = new PersonDirectoryPrincipalResolverProperties();
-        val principalResolutionContext = PersonDirectoryPrincipalResolver.buildPrincipalResolutionContext(
-            PrincipalFactoryUtils.newPrincipalFactory(),
-            new StubPersonAttributeDao(Collections.<String, List<Object>>emptyMap()),
-            CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.ADD),
-            mock(ServicesManager.class), mock(AttributeDefinitionStore.class),
-            principal, personDirectory);
+        val principalResolutionContext = buildPrincipalResolutionContext(principal, personDirectory);
         assertFalse(principalResolutionContext.isUseCurrentPrincipalId());
         assertTrue(principalResolutionContext.isResolveAttributes());
         assertFalse(principalResolutionContext.isReturnNullIfNoAttributes());
@@ -491,12 +491,7 @@ class PersonDirectoryPrincipalResolverTests {
         personDirectory.setAttributeResolutionEnabled(TriStateBoolean.FALSE);
         personDirectory.setActiveAttributeRepositoryIds("test1,test2");
         personDirectory.setPrincipalAttribute("principalAttribute");
-        val principalResolutionContext2 = PersonDirectoryPrincipalResolver.buildPrincipalResolutionContext(
-            PrincipalFactoryUtils.newPrincipalFactory(),
-            new StubPersonAttributeDao(Collections.<String, List<Object>>emptyMap()),
-            CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.ADD),
-            mock(ServicesManager.class), mock(AttributeDefinitionStore.class),
-            principal, personDirectory);
+        val principalResolutionContext2 = buildPrincipalResolutionContext(principal, personDirectory);
         assertTrue(principalResolutionContext2.isUseCurrentPrincipalId());
         assertFalse(principalResolutionContext2.isResolveAttributes());
         assertTrue(principalResolutionContext2.isReturnNullIfNoAttributes());
@@ -509,28 +504,28 @@ class PersonDirectoryPrincipalResolverTests {
         principal.setAttributeResolutionEnabled(TriStateBoolean.TRUE);
         principal.setActiveAttributeRepositoryIds("test1,test2,test3");
         principal.setPrincipalAttribute("principalAttribute2");
-        val principalResolutionContext3 = PersonDirectoryPrincipalResolver.buildPrincipalResolutionContext(
-            PrincipalFactoryUtils.newPrincipalFactory(),
-            new StubPersonAttributeDao(Collections.<String, List<Object>>emptyMap()),
-            CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.ADD),
-            mock(ServicesManager.class), mock(AttributeDefinitionStore.class),
-            principal, personDirectory);
+        val principalResolutionContext3 = buildPrincipalResolutionContext(principal, personDirectory);
         assertFalse(principalResolutionContext3.isUseCurrentPrincipalId());
         assertTrue(principalResolutionContext3.isResolveAttributes());
         assertFalse(principalResolutionContext3.isReturnNullIfNoAttributes());
         assertEquals(3, principalResolutionContext3.getActiveAttributeRepositoryIdentifiers().size());
         assertEquals("principalAttribute2", principalResolutionContext3.getPrincipalAttributeNames());
 
-        val principalResolutionContext4 = PersonDirectoryPrincipalResolver.buildPrincipalResolutionContext(
-            PrincipalFactoryUtils.newPrincipalFactory(),
-            new StubPersonAttributeDao(Collections.<String, List<Object>>emptyMap()),
-            CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.ADD),
-            mock(ServicesManager.class), mock(AttributeDefinitionStore.class),
-            personDirectory);
+        val principalResolutionContext4 = buildPrincipalResolutionContext(personDirectory);
         assertTrue(principalResolutionContext4.isUseCurrentPrincipalId());
         assertFalse(principalResolutionContext4.isResolveAttributes());
         assertTrue(principalResolutionContext4.isReturnNullIfNoAttributes());
         assertEquals(2, principalResolutionContext4.getActiveAttributeRepositoryIdentifiers().size());
         assertEquals("principalAttribute", principalResolutionContext4.getPrincipalAttributeNames());
+    }
+
+    private PrincipalResolutionContext buildPrincipalResolutionContext(final PersonDirectoryPrincipalResolverProperties... properties) {
+        return PersonDirectoryPrincipalResolver.buildPrincipalResolutionContext(
+            applicationContext,
+            PrincipalFactoryUtils.newPrincipalFactory(),
+            new StubPersonAttributeDao(Collections.emptyMap()),
+            CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.ADD),
+            mock(ServicesManager.class), mock(AttributeDefinitionStore.class),
+            properties);
     }
 }

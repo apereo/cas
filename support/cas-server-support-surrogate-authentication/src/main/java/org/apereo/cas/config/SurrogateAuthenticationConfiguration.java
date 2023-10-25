@@ -212,6 +212,7 @@ public class SurrogateAuthenticationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PrincipalResolver surrogatePrincipalResolver(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier(AttributeDefinitionStore.BEAN_NAME)
             final AttributeDefinitionStore attributeDefinitionStore,
             @Qualifier(ServicesManager.BEAN_NAME)
@@ -226,7 +227,8 @@ public class SurrogateAuthenticationConfiguration {
             val principal = casProperties.getAuthn().getSurrogate().getPrincipal();
             val personDirectory = casProperties.getPersonDirectory();
             val attributeMerger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
-            val resolver = PersonDirectoryPrincipalResolver.newPersonDirectoryPrincipalResolver(surrogatePrincipalFactory,
+            val resolver = PersonDirectoryPrincipalResolver.newPersonDirectoryPrincipalResolver(
+                applicationContext, surrogatePrincipalFactory,
                 attributeRepository, attributeMerger, SurrogatePrincipalResolver.class,
                 servicesManager, attributeDefinitionStore,
                 principal, personDirectory);

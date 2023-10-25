@@ -24,6 +24,7 @@ import org.ldaptive.Credential;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
@@ -68,6 +69,9 @@ class PersonDirectoryPrincipalResolverOpenLdapTests {
     @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @Test
     void verifyResolverWithTags() throws Throwable {
         val bindInit = new BindConnectionInitializer("cn=admin,dc=example,dc=org", new Credential("P@ssw0rd"));
@@ -80,20 +84,21 @@ class PersonDirectoryPrincipalResolverOpenLdapTests {
         val rs = new ByteArrayInputStream(ldif.getBytes(StandardCharsets.UTF_8));
         LdapIntegrationTestsOperations.populateEntries(connection, rs, "ou=people,dc=example,dc=org", bindInit);
 
-        val resolver = PersonDirectoryPrincipalResolver.newPersonDirectoryPrincipalResolver(PrincipalFactoryUtils.newPrincipalFactory(),
+        val resolver = PersonDirectoryPrincipalResolver.newPersonDirectoryPrincipalResolver(
+            applicationContext, PrincipalFactoryUtils.newPrincipalFactory(),
             this.attributeRepository,
             CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
             servicesManager, attributeDefinitionStore,
             casProperties.getPersonDirectory());
-        val p = resolver.resolve(new UsernamePasswordCredential(uid, "password"),
+        val principal = resolver.resolve(new UsernamePasswordCredential(uid, "password"),
             Optional.of(CoreAuthenticationTestUtils.getPrincipal(uid)),
             Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()),
             Optional.of(CoreAuthenticationTestUtils.getService()));
-        assertNotNull(p);
-        assertTrue(p.getAttributes().containsKey("homePostalAddress;lang-jp"));
-        assertTrue(p.getAttributes().containsKey("homePostalAddress;lang-fr"));
-        assertTrue(p.getAttributes().containsKey("cn"));
-        assertTrue(p.getAttributes().containsKey("surname"));
+        assertNotNull(principal);
+        assertTrue(principal.getAttributes().containsKey("homePostalAddress;lang-jp"));
+        assertTrue(principal.getAttributes().containsKey("homePostalAddress;lang-fr"));
+        assertTrue(principal.getAttributes().containsKey("cn"));
+        assertTrue(principal.getAttributes().containsKey("surname"));
     }
 
     protected String getLdif(final String user) {

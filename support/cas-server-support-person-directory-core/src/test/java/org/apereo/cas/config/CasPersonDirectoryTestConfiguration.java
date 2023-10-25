@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import java.util.List;
 import java.util.Map;
@@ -61,6 +62,7 @@ public class CasPersonDirectoryTestConfiguration {
 
     @Bean
     public PrincipalResolutionExecutionPlanConfigurer testPersonDirectoryPrincipalResolutionExecutionPlanConfigurer(
+        final ConfigurableApplicationContext applicationContext,
         @Qualifier(AttributeDefinitionStore.BEAN_NAME)
         final AttributeDefinitionStore attributeDefinitionStore,
         @Qualifier(ServicesManager.BEAN_NAME)
@@ -71,7 +73,9 @@ public class CasPersonDirectoryTestConfiguration {
         return plan -> {
             val personDirectory = casProperties.getPersonDirectory();
             val attributeMerger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
-            val resolver = PersonDirectoryPrincipalResolver.newPersonDirectoryPrincipalResolver(PrincipalFactoryUtils.newPrincipalFactory(),
+            val resolver = PersonDirectoryPrincipalResolver.newPersonDirectoryPrincipalResolver(
+                applicationContext,
+                PrincipalFactoryUtils.newPrincipalFactory(),
                 attributeRepository,
                 attributeMerger,
                 servicesManager, attributeDefinitionStore,

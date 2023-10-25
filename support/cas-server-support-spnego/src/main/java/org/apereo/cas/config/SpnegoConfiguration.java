@@ -118,6 +118,7 @@ public class SpnegoConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "spnegoPrincipalResolver")
     public PrincipalResolver spnegoPrincipalResolver(
+        final ConfigurableApplicationContext applicationContext,
         @Qualifier(AttributeDefinitionStore.BEAN_NAME)
         final AttributeDefinitionStore attributeDefinitionStore,
         @Qualifier(ServicesManager.BEAN_NAME)
@@ -131,7 +132,8 @@ public class SpnegoConfiguration {
         val spnegoPrincipal = casProperties.getAuthn().getSpnego().getPrincipal();
         val attributeMerger = CoreAuthenticationUtils.getAttributeMerger(
             casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
-        return PersonDirectoryPrincipalResolver.newPersonDirectoryPrincipalResolver(spnegoPrincipalFactory,
+        return PersonDirectoryPrincipalResolver.newPersonDirectoryPrincipalResolver(
+            applicationContext, spnegoPrincipalFactory,
             attributeRepository, attributeMerger, SpnegoPrincipalResolver.class,
             servicesManager, attributeDefinitionStore,
             spnegoPrincipal, personDirectory);

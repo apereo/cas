@@ -14,7 +14,6 @@ import org.apereo.cas.authentication.surrogate.SurrogateCredentialTrait;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
-
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
@@ -29,11 +28,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-
+import org.springframework.context.ConfigurableApplicationContext;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -51,6 +49,9 @@ class SurrogatePrincipalResolverTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+    
     @Mock
     private ServicesManager servicesManager;
 
@@ -194,13 +195,14 @@ class SurrogatePrincipalResolverTests {
         assertEquals(surrogateCreds.getId(), surrogatePrincipal.getId());
     }
 
-    private PrincipalResolutionContext getPrincipalResolutionContext(final String principalAttributes,
-                                                                     final IPersonAttributeDao attributeRepository) {
+    private PrincipalResolutionContext getPrincipalResolutionContext(
+        final String principalAttributes,
+        final IPersonAttributeDao attributeRepository) {
         return PrincipalResolutionContext.builder()
             .attributeDefinitionStore(attributeDefinitionStore)
             .servicesManager(servicesManager)
-            .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(
-                casProperties.getAuthn().getAttributeRepository().getCore().getMerger()))
+            .applicationContext(applicationContext)
+            .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()))
             .attributeRepository(attributeRepository)
             .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())
             .returnNullIfNoAttributes(false)

@@ -35,6 +35,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -91,6 +92,7 @@ public class TrustedAuthenticationConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "trustedPrincipalResolver")
         public PrincipalResolver trustedPrincipalResolver(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier(AttributeDefinitionStore.BEAN_NAME)
             final AttributeDefinitionStore attributeDefinitionStore,
             @Qualifier(ServicesManager.BEAN_NAME)
@@ -106,7 +108,8 @@ public class TrustedAuthenticationConfiguration {
             val personDirectory = casProperties.getPersonDirectory();
             val trusted = casProperties.getAuthn().getTrusted().getPersonDirectory();
             val attributeMerger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
-            val bearingPrincipalResolver = PersonDirectoryPrincipalResolver.newPersonDirectoryPrincipalResolver(trustedPrincipalFactory,
+            val bearingPrincipalResolver = PersonDirectoryPrincipalResolver.newPersonDirectoryPrincipalResolver(
+                applicationContext, trustedPrincipalFactory,
                 attributeRepository, attributeMerger, PrincipalBearingPrincipalResolver.class,
                 servicesManager, attributeDefinitionStore, trusted, personDirectory);
             resolver.setChain(CollectionUtils.wrapList(new EchoingPrincipalResolver(), bearingPrincipalResolver));
