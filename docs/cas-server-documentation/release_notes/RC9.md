@@ -81,7 +81,7 @@ where and when necessary.
 
 ### OpenID Connect Access Token Authentication
 
-Requests to the OpenID Connect access token endpoint have started to enforce the required authentication method
+Requests to the OpenID Connect access token endpoint have started to enforce the [required authentication method](../authentication/OIDC-Authentication-AccessToken-AuthMethods.html)
 assigned to the relying party and registered service definition. The default authentication method has always been `client_secret_basic`
 and the endpoint will begin to enforce this for all requests. Furthermore, authentication methods will be deactivated and disabled
 if support for a method is not defined and declared in OpenID discovery metadata.
@@ -93,6 +93,10 @@ if support for a method is not defined and declared in OpenID discovery metadata
 - Apache Shiro, only used to assist with database password encoding and hashing functions, is now fully removed from CAS codebase.
 - A new and somewhat humble [actuator endpoint](../ticketing/Configuring-Ticketing-Components.html) to interact with and query the CAS ticket registry.
 - X.509 client authentication is now available as an authentication for the access token endpoint in [OpenID Connect](../protocol/OIDC-Protocol.html). 
+- Authentication requests received from the [Shibboleth IdP](../integration/Shibboleth.html) are able to locate the correct service definition in the registry. 
+- [Apache Tomcat](../installation/Servlet-Container-Embedded-Tomcat-RemoteUserValve.html) is now able to support `REMOTE_USER` authentication directly.
+- Internal refactoring of the [Redis Ticket Registry](../ticketing/Redis-Ticket-Registry.html) to support custom key construction and patterns for ticket objects and other entries.
+- Client TLS settings are now supported for [OpenID Connect](../authentication/OIDC-Authentication-AccessToken-AuthMethods.html) relying parties and applications. This capability is also extended to [Dynamic Client Registration](../authentication/OIDC-Authentication-Dynamic-Registration.html) requests.
 
 ## Library Upgrades
   
@@ -114,4 +118,6 @@ if support for a method is not defined and declared in OpenID discovery metadata
 - Twilio
 - Amazon SDK
 - jsoup
+- CosmosDB
+- Nimbus OIDC
 - Spring Shell
