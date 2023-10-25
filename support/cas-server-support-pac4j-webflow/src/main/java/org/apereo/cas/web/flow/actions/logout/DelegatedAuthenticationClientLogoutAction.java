@@ -113,7 +113,7 @@ public class DelegatedAuthenticationClientLogoutAction extends BaseCasWebflowAct
      */
     protected Optional<Client> findCurrentClient(final UserProfile currentProfile) {
         return currentProfile == null
-                ? Optional.<Client>empty()
+                ? Optional.empty()
                 : identityProviders.findClient(currentProfile.getClientName());
     }
 }

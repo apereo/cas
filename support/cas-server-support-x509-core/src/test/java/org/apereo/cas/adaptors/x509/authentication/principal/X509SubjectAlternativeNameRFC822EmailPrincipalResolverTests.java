@@ -18,6 +18,10 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.io.FileInputStream;
 import java.security.cert.CertificateFactory;
@@ -36,6 +40,7 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @Tag("X509")
+@SpringBootTest(classes = RefreshAutoConfiguration.class)
 class X509SubjectAlternativeNameRFC822EmailPrincipalResolverTests {
 
     @Mock
@@ -44,6 +49,9 @@ class X509SubjectAlternativeNameRFC822EmailPrincipalResolverTests {
     @Mock
     private AttributeDefinitionStore attributeDefinitionStore;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+    
     @BeforeEach
     public void before() throws Exception {
         MockitoAnnotations.openMocks(this).close();
@@ -107,6 +115,7 @@ class X509SubjectAlternativeNameRFC822EmailPrincipalResolverTests {
             .principalNameTransformer(formUserId -> formUserId)
             .useCurrentPrincipalId(false)
             .resolveAttributes(true)
+            .applicationContext(applicationContext)
             .activeAttributeRepositoryIdentifiers(CollectionUtils.wrapSet(IPersonAttributeDao.WILDCARD))
             .build();
 
@@ -145,6 +154,7 @@ class X509SubjectAlternativeNameRFC822EmailPrincipalResolverTests {
             .principalNameTransformer(formUserId -> formUserId)
             .useCurrentPrincipalId(false)
             .resolveAttributes(true)
+            .applicationContext(applicationContext)
             .activeAttributeRepositoryIdentifiers(CollectionUtils.wrapSet(IPersonAttributeDao.WILDCARD))
             .build();
 

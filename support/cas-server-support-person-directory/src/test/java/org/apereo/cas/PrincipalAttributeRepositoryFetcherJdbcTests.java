@@ -43,6 +43,7 @@ class PrincipalAttributeRepositoryFetcherJdbcTests extends BaseJdbcAttributeRepo
             .servicesManager(servicesManager)
             .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED))
             .attributeRepository(attributeRepository)
+            .applicationContext(applicationContext)
             .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())
             .resolveAttributes(true)
             .build();
@@ -65,6 +66,7 @@ class PrincipalAttributeRepositoryFetcherJdbcTests extends BaseJdbcAttributeRepo
             .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())
             .resolveAttributes(true)
             .returnNullIfNoAttributes(true)
+            .applicationContext(applicationContext)
             .build();
         val resolver = new PersonDirectoryPrincipalResolver(context);
         val credential = CoreAuthenticationTestUtils.getHttpBasedServiceCredentials();

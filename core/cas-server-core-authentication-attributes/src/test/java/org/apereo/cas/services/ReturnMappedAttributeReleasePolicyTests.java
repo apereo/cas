@@ -103,7 +103,7 @@ class ReturnMappedAttributeReleasePolicyTests {
     void verifyInlinedGroovyAttributes() throws Throwable {
         val allowedAttributes = ArrayListMultimap.<String, Object>create();
         allowedAttributes.put("attr1", "groovy { logger.debug('Running script...'); return 'DOMAIN\\\\' + attributes['uid'][0] }");
-        val wrap = CollectionUtils.<String, Object>wrap(allowedAttributes);
+        val wrap = CollectionUtils.wrap(allowedAttributes);
         val policyWritten = new ReturnMappedAttributeReleasePolicy().setAllowedAttributes(wrap);
         val registeredService = CoreAttributesTestUtils.getRegisteredService();
         when(registeredService.getAttributeReleasePolicy()).thenReturn(policyWritten);
@@ -124,7 +124,7 @@ class ReturnMappedAttributeReleasePolicyTests {
     void verifyInlinedGroovyMultipleAttributes() throws Throwable {
         val allowedAttributes = ArrayListMultimap.<String, Object>create();
         allowedAttributes.put("attr1", "groovy { logger.debug('Running script...'); return ['one', 'two'] }");
-        val wrap = CollectionUtils.<String, Object>wrap(allowedAttributes);
+        val wrap = CollectionUtils.wrap(allowedAttributes);
         val policyWritten = new ReturnMappedAttributeReleasePolicy().setAllowedAttributes(wrap);
         val registeredService = CoreAttributesTestUtils.getRegisteredService();
         when(registeredService.getAttributeReleasePolicy()).thenReturn(policyWritten);
@@ -151,7 +151,7 @@ class ReturnMappedAttributeReleasePolicyTests {
         val allowedAttributes = ArrayListMultimap.<String, Object>create();
         val attributeName = UUID.randomUUID().toString();
         allowedAttributes.put(attributeName, "file:" + file.getCanonicalPath());
-        val wrap = CollectionUtils.<String, Object>wrap(allowedAttributes);
+        val wrap = CollectionUtils.wrap(allowedAttributes);
         val policyWritten = new ReturnMappedAttributeReleasePolicy().setAllowedAttributes(wrap);
         val registeredService = CoreAttributesTestUtils.getRegisteredService();
         when(registeredService.getAttributeReleasePolicy()).thenReturn(policyWritten);
@@ -209,7 +209,7 @@ class ReturnMappedAttributeReleasePolicyTests {
         val allowedAttributes = ArrayListMultimap.<String, Object>create();
         val attributeName = UUID.randomUUID().toString();
         allowedAttributes.put(attributeName, "classpath:GroovyMappedAttribute.groovy");
-        val wrap = CollectionUtils.<String, Object>wrap(allowedAttributes);
+        val wrap = CollectionUtils.wrap(allowedAttributes);
         val policyWritten = new ReturnMappedAttributeReleasePolicy().setAllowedAttributes(wrap);
         val registeredService = CoreAttributesTestUtils.getRegisteredService();
         when(registeredService.getAttributeReleasePolicy()).thenReturn(policyWritten);
@@ -344,7 +344,7 @@ class ReturnMappedAttributeReleasePolicyTests {
         allowedAttributes.put("attr1", "groovy { $bad-script-here$ }");
         allowedAttributes.put("uid", "userId");
 
-        val wrap = CollectionUtils.<String, Object>wrap(allowedAttributes);
+        val wrap = CollectionUtils.wrap(allowedAttributes);
         val policyWritten = new ReturnMappedAttributeReleasePolicy().setAllowedAttributes(wrap);
         val registeredService = CoreAttributesTestUtils.getRegisteredService();
         when(registeredService.getAttributeReleasePolicy()).thenReturn(policyWritten);
@@ -394,7 +394,7 @@ class ReturnMappedAttributeReleasePolicyTests {
         allowedAttributes.put("taxId", "groovy { attributes['fiscalNumber'][0] }");
         allowedAttributes.put("uid", "uid");
 
-        val wrap = CollectionUtils.<String, Object>wrap(allowedAttributes);
+        val wrap = CollectionUtils.wrap(allowedAttributes);
         val policy = new ReturnMappedAttributeReleasePolicy().setAllowedAttributes(wrap);
         val registeredService = CoreAttributesTestUtils.getRegisteredService();
         when(registeredService.getAttributeReleasePolicy()).thenReturn(policy);

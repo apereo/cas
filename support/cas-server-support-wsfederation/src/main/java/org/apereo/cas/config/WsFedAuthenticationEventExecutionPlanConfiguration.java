@@ -158,6 +158,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlanConfigurer wsfedAuthenticationEventExecutionPlanConfigurer(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier(AttributeDefinitionStore.BEAN_NAME)
             final AttributeDefinitionStore attributeDefinitionStore,
             final CasConfigurationProperties casProperties,
@@ -187,7 +188,8 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
                             .orElseThrow(() ->
                                 new RuntimeException("Unable to find configuration for identity provider " + wsfed.getIdentityProviderUrl()));
                         val principal = wsfed.getPrincipal();
-                        val resolver = PersonDirectoryPrincipalResolver.newPersonDirectoryPrincipalResolver(wsfedPrincipalFactory, attributeRepository,
+                        val resolver = PersonDirectoryPrincipalResolver.newPersonDirectoryPrincipalResolver(
+                            applicationContext, wsfedPrincipalFactory, attributeRepository,
                             CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
                             WsFederationCredentialsToPrincipalResolver.class, servicesManager, attributeDefinitionStore,
                             principal, personDirectory);

@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.merger.IAttributeMerger;
+import org.springframework.context.ApplicationContext;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -70,4 +71,6 @@ public class PrincipalResolutionContext {
     private final ServicesManager servicesManager;
 
     private final AttributeDefinitionStore attributeDefinitionStore;
+
+    private final ApplicationContext applicationContext;
 }

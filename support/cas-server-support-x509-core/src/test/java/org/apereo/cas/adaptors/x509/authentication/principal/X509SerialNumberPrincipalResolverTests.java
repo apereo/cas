@@ -18,6 +18,10 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.math.BigInteger;
 import java.security.cert.X509Certificate;
@@ -32,6 +36,7 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0.6
  */
 @Tag("X509")
+@SpringBootTest(classes = RefreshAutoConfiguration.class)
 class X509SerialNumberPrincipalResolverTests {
     private static final CasX509Certificate VALID_CERTIFICATE = new CasX509Certificate(true);
 
@@ -44,6 +49,9 @@ class X509SerialNumberPrincipalResolverTests {
 
     @Mock
     private AttributeDefinitionStore attributeDefinitionStore;
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @BeforeEach
     public void setup() throws Exception {
@@ -58,6 +66,7 @@ class X509SerialNumberPrincipalResolverTests {
             .principalNameTransformer(formUserId -> formUserId)
             .useCurrentPrincipalId(false)
             .resolveAttributes(true)
+            .applicationContext(applicationContext)
             .activeAttributeRepositoryIdentifiers(CollectionUtils.wrapSet(IPersonAttributeDao.WILDCARD))
             .build();
         resolver = new X509SerialNumberPrincipalResolver(resolutionContext);

@@ -18,6 +18,10 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.Optional;
 
@@ -28,7 +32,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.0.0
  */
 @Tag("Attributes")
+@SpringBootTest(classes = RefreshAutoConfiguration.class)
 class PrincipalBearingCredentialsToPrincipalResolverTests {
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+    
     private PrincipalBearingPrincipalResolver resolver;
 
     @Mock
@@ -50,6 +58,7 @@ class PrincipalBearingCredentialsToPrincipalResolverTests {
             .principalNameTransformer(formUserId -> formUserId)
             .useCurrentPrincipalId(false)
             .resolveAttributes(true)
+            .applicationContext(applicationContext)
             .activeAttributeRepositoryIdentifiers(CollectionUtils.wrapSet(IPersonAttributeDao.WILDCARD))
             .build();
         this.resolver = new PrincipalBearingPrincipalResolver(context);
