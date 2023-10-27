@@ -36,6 +36,7 @@ import java.util.List;
 public class DuoSecurityUserDevice implements Serializable {
     @Serial
     private static final long serialVersionUID = -6631171454545763954L;
+
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 

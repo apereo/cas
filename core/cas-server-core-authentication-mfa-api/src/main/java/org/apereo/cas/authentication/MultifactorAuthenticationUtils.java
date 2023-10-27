@@ -291,7 +291,7 @@ public class MultifactorAuthenticationUtils {
         return getAvailableMultifactorAuthenticationProviders(context)
             .values()
             .stream()
-            .filter(provider -> provider.matches(providerId))
+            .filter(provider -> StringUtils.isNotBlank(providerId) && provider.matches(providerId))
             .findFirst();
     }
 }

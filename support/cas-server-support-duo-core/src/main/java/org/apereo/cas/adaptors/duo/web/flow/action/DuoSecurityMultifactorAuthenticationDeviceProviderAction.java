@@ -75,6 +75,5 @@ public class DuoSecurityMultifactorAuthenticationDeviceProviderAction extends Ba
                     .build();
             })
             .collect(Collectors.toList());
-
     }
 }

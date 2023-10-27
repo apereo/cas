@@ -74,6 +74,15 @@
                     </a>
 
                     <a class="mdc-list-item list-group-item list-group-item-action"
+                       onclick="showPanel('#divMultifactorTrustedDevices');"
+                       id="linkMfaTrustedDevices"
+                       th:if="${multifactorTrustedDevices}"
+                       href="#divMultifactorTrustedDevices">
+                        <i class="mdi mdi-account-reactivate fa fa-key"></i>&nbsp;
+                        <span class="mdc-list-item__text">Multifactor Trusted Devices</span>
+                    </a>
+
+                    <a class="mdc-list-item list-group-item list-group-item-action"
                        onclick="showPanel('#divConsentDecisions');"
                        id="linkConsentDecisions"
                        th:if="${consentDecisions}"

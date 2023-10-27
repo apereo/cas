@@ -40,7 +40,6 @@ class MultifactorAuthenticationPrepareTrustDeviceViewActionTests {
             "cas.authn.mfa.trusted.core.auto-assign-device-name=true"
         })
     @Nested
-    @Tag("WebflowMfaActions")
     class AutoNamingStrategy extends AbstractMultifactorAuthenticationTrustStorageTests {
         private MockRequestContext context;
 
@@ -75,7 +74,6 @@ class MultifactorAuthenticationPrepareTrustDeviceViewActionTests {
 
     @SpringBootTest(classes = AbstractMultifactorAuthenticationTrustStorageTests.SharedTestConfiguration.class)
     @Nested
-    @Tag("WebflowMfaActions")
     class DefaultNamingStrategy extends AbstractMultifactorAuthenticationTrustStorageTests {
         private MockRequestContext context;
         

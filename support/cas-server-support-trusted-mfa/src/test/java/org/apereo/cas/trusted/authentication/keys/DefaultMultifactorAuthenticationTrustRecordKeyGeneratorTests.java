@@ -21,5 +21,6 @@ class DefaultMultifactorAuthenticationTrustRecordKeyGeneratorTests {
         val gen = new DefaultMultifactorAuthenticationTrustRecordKeyGenerator();
         val record = MultifactorAuthenticationTrustRecord.newInstance("casuser", "geography", "fingerprint");
         assertNotNull(gen.generate(record));
+        assertNotNull(record.toJson());
     }
 }
