@@ -397,7 +397,7 @@ subprojects {
                     "Implementation-Vendor": projectGroup,
                     "Created-By": projectGroup)
             if (generateTimestamps) {
-                attributes("Implementation-Date": java.time.ZonedDateTime.now(ZoneId.systemDefault()))
+                attributes("Implementation-Date": java.time.ZonedDateTime.now(java.time.ZoneOffset.UTC))
             }
             attributes(
                     "Specification-Version": projectSpecVersion,
