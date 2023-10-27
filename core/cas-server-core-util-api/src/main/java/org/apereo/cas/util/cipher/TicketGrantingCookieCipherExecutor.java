@@ -35,12 +35,12 @@ public class TicketGrantingCookieCipherExecutor extends BaseStringCipherExecutor
     }
 
     @Override
-    protected String getEncryptionKeySetting() {
+    public String getEncryptionKeySetting() {
         return "cas.tgc.crypto.encryption.key";
     }
 
     @Override
-    protected String getSigningKeySetting() {
+    public String getSigningKeySetting() {
         return "cas.tgc.crypto.signing.key";
     }
 }

@@ -22,6 +22,12 @@ public interface AttributeRepositoryResolver {
      */
     String BEAN_NAME = "attributeRepositoryResolver";
 
+    /**
+     * Resolve attribute repository ids that should be used for attribute fetching..
+     *
+     * @param query the query
+     * @return the set
+     */
     Set<String> resolve(AttributeRepositoryQuery query);
 
     @SuperBuilder

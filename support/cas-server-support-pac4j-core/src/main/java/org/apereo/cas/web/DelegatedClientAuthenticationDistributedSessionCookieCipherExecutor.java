@@ -23,12 +23,12 @@ public class DelegatedClientAuthenticationDistributedSessionCookieCipherExecutor
     }
 
     @Override
-    protected String getEncryptionKeySetting() {
+    public String getEncryptionKeySetting() {
         return "cas.authn.pac4j.core.session-replication.cookie.crypto.encryption.key";
     }
 
     @Override
-    protected String getSigningKeySetting() {
+    public String getSigningKeySetting() {
         return "cas.authn.pac4j.core.session-replication.cookie.crypto.signing.key";
     }
 }

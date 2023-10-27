@@ -23,12 +23,12 @@ public class SamlIdPDistributedSessionCookieCipherExecutor extends BaseStringCip
     }
 
     @Override
-    protected String getEncryptionKeySetting() {
+    public String getEncryptionKeySetting() {
         return "cas.authn.saml-idp.core.session-replication.cookie.crypto.encryption.key";
     }
 
     @Override
-    protected String getSigningKeySetting() {
+    public String getSigningKeySetting() {
         return "cas.authn.saml-idp.core.session-replication.cookie.crypto.signing.key";
     }
 }

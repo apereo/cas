@@ -4,7 +4,9 @@ import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.interrupt.InterruptCoreProperties;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
+import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -117,6 +119,8 @@ public class InterruptWebflowConfigurer extends AbstractCasWebflowConfigurer {
         val target = getRealSubmissionState(flow).getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
         createTransitionForState(inquireState, CasWebflowConstants.TRANSITION_ID_INTERRUPT_SKIPPED, target);
         createTransitionForState(inquireState, CasWebflowConstants.TRANSITION_ID_INTERRUPT_REQUIRED, CasWebflowConstants.STATE_ID_INTERRUPT_VIEW);
+        val sendTicketState = getState(flow, CasWebflowConstants.STATE_ID_SEND_TICKET_GRANTING_TICKET, ActionState.class);
+        sendTicketState.getExitActionList().add(new ConsumerExecutionAction(WebUtils::removeInterruptAuthenticationFlowFinalized));
     }
 
     private EvaluateAction getInquireInterruptAction() {

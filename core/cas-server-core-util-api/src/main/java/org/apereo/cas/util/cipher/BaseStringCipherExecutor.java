@@ -4,6 +4,7 @@ import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.crypto.PropertyBoundCipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.jwt.JsonWebTokenEncryptor;
 
@@ -35,7 +36,8 @@ import java.util.LinkedHashMap;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Setter
 @Getter
-public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Serializable, String> {
+public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Serializable, String>
+    implements PropertyBoundCipherExecutor<Serializable, String> {
     private CipherOperationsStrategyType strategyType = CipherOperationsStrategyType.ENCRYPT_AND_SIGN;
 
     private String encryptionAlgorithm = KeyManagementAlgorithmIdentifiers.DIRECT;
@@ -171,23 +173,6 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         return this.encryptionEnabled && key != null;
     }
 
-    /**
-     * Gets encryption key setting.
-     *
-     * @return the encryption key setting
-     */
-    protected String getEncryptionKeySetting() {
-        return "N/A";
-    }
-
-    /**
-     * Gets signing key setting.
-     *
-     * @return the signing key setting
-     */
-    protected String getSigningKeySetting() {
-        return "N/A";
-    }
 
     protected String encryptValueAsJwt(final Key encryptionKey, final Serializable value) {
         val headers = new LinkedHashMap<>(getCommonHeaders());

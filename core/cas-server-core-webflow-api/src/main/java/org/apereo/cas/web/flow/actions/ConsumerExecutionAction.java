@@ -39,9 +39,12 @@ public class ConsumerExecutionAction extends BaseCasWebflowAction {
         response.setStatus(HttpStatus.NO_CONTENT.value());
         ctx.getExternalContext().recordResponseComplete();
     });
+
     private final Consumer<RequestContext> task;
+
     @Setter
     private String eventId;
+
     @Override
     public Event doExecuteInternal(final RequestContext requestContext) {
         this.task.accept(requestContext);

@@ -79,7 +79,7 @@ class SendTicketGrantingTicketActionTests {
             val tgt = new MockTicketGrantingTicket(UUID.randomUUID().toString());
             WebUtils.putTicketGrantingTicketInScopes(context, tgt);
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
-            context.getHttpServletRequest().setCookies(context.getHttpServletResponse().getCookies());
+            context.setRequestCookiesFromResponse();
             assertEquals(tgt.getId(), getTicketGrantingTicketCookieGenerator().retrieveCookieValue(context.getHttpServletRequest()));
         }
 
@@ -97,7 +97,7 @@ class SendTicketGrantingTicketActionTests {
             WebUtils.putTicketGrantingTicketInScopes(context, tgt);
 
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
-            context.getHttpServletRequest().setCookies(context.getHttpServletResponse().getCookies());
+            context.setRequestCookiesFromResponse();
             assertEquals(tgt.getId(), getTicketGrantingTicketCookieGenerator().retrieveCookieValue(context.getHttpServletRequest()));
         }
     }

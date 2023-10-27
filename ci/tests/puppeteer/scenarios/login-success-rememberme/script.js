@@ -2,7 +2,8 @@ const puppeteer = require('puppeteer');
 const cas = require('../../cas.js');
 const assert = require("assert");
 
-async function loginAndVerify(browser) {
+async function loginAndVerify() {
+    let browser = await puppeteer.launch(cas.browserOptions());
     let page = await cas.newPage(browser);
     await cas.gotoLogout(page);
     await cas.gotoLogin(page);
@@ -17,8 +18,9 @@ async function loginAndVerify(browser) {
     await cas.logg(`Current date: ${now}`);
     now.setDate(now.getDate() + 1);
     assert(now.getDate() === date.getDate());
-    await page.close();
+    await browser.close();
 
+    browser = await puppeteer.launch(cas.browserOptions());
     page = await cas.newPage(browser);
     await cas.gotoLogin(page);
     tgc = await cas.assertCookie(page);
@@ -31,12 +33,11 @@ async function loginAndVerify(browser) {
     assert(now.getDate() === date.getDate());
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
+    await browser.close();
 }
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
-    await loginAndVerify(browser);
+    await loginAndVerify();
     await cas.refreshContext();
-    await loginAndVerify(browser);
-    await browser.close();
+    await loginAndVerify();
 })();

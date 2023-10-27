@@ -24,12 +24,12 @@ public class PasswordResetTokenCipherExecutor extends BaseStringCipherExecutor {
     }
 
     @Override
-    protected String getEncryptionKeySetting() {
+    public String getEncryptionKeySetting() {
         return "cas.authn.pm.reset.crypto.encryption.key";
     }
 
     @Override
-    protected String getSigningKeySetting() {
+    public String getSigningKeySetting() {
         return "cas.authn.pm.reset.crypto.signing.key";
     }
 }

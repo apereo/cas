@@ -24,12 +24,12 @@ public class AccountRegistrationTokenCipherExecutor extends BaseStringCipherExec
     }
 
     @Override
-    protected String getEncryptionKeySetting() {
+    public String getEncryptionKeySetting() {
         return "cas.account-registration.core.crypto.encryption.key";
     }
 
     @Override
-    protected String getSigningKeySetting() {
+    public String getSigningKeySetting() {
         return "cas.account-registration.core.crypto.signing.key";
     }
 }
