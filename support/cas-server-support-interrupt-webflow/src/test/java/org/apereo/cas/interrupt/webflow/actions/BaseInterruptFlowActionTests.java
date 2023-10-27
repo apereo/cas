@@ -31,12 +31,12 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Import;
 
 /**
- * This is {@link InterruptFlowActionTests}.
+ * This is {@link BaseInterruptFlowActionTests}.
  *
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-public class InterruptFlowActionTests {
+public abstract class BaseInterruptFlowActionTests {
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class

@@ -1,6 +1,6 @@
 package org.apereo.cas.interrupt;
 
-import org.apereo.cas.interrupt.webflow.actions.InterruptFlowActionTests;
+import org.apereo.cas.interrupt.webflow.actions.BaseInterruptFlowActionTests;
 import org.apereo.cas.util.crypto.PropertyBoundCipherExecutor;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("Cipher")
-@SpringBootTest(classes = InterruptFlowActionTests.SharedTestConfiguration.class)
+@SpringBootTest(classes = BaseInterruptFlowActionTests.SharedTestConfiguration.class)
 public class InterruptTrackingCookieCipherExecutorTests {
     @Autowired
     @Qualifier("interruptCookieCipherExecutor")

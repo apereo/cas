@@ -27,4 +27,13 @@ The account management dashboard allows one to examine their login activity for 
 
 ## Multifactor Registered Devices
 
-If multifactor authentication is turned on in CAS, certain multifactor providers may able to present a list of registered MFA devices for the authenticated user. This capability [depends on the provider](../mfa/Configuring-Multifactor-Authentication.html) and whether it's able to support the account profile management feature.
+If multifactor authentication is turned on in CAS, certain multifactor providers may able to present a list of 
+registered MFA devices for the authenticated user. Multifactor providers
+may also allow the user to register their device with CAS and opt into a registration workflow.
+
+This capability [depends on the provider](../mfa/Configuring-Multifactor-Authentication.html) and whether it's able to support the 
+account profile management feature. The following providers are supported:
+
+- [Duo Security](../mfa/DuoSecurity-Authentication.html)
+- [Google Authenticator](../mfa/GoogleAuthenticator-Authentication.html)
+- [FIDO2 WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html)
