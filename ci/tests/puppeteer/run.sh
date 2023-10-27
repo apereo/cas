@@ -318,7 +318,7 @@ if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
 
   buildcmd=$(printf '%s' \
       "./gradlew :webapp:cas-server-webapp-${project}:build \
-      -DskipNestedConfigMetadataGen=true -x check -x test -x javadoc --build-cache --configure-on-demand --parallel \
+      -DskipNestedConfigMetadataGen=true --no-configuration-cache -x check -x test -x javadoc --build-cache --configure-on-demand --parallel \
       ${BUILD_SCRIPT} ${DAEMON} -DcasModules="${dependencies}" --no-watch-fs --max-workers=8 ${BUILDFLAGS}")
   echo $buildcmd
 
