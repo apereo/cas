@@ -1816,6 +1816,26 @@ public class WebUtils {
     }
 
     /**
+     * Put multifactor authentication trusted devices.
+     *
+     * @param requestContext the request context
+     * @param accounts       the accounts
+     */
+    public static void putMultifactorAuthenticationTrustedDevices(final RequestContext requestContext, final List accounts) {
+        requestContext.getFlowScope().put("multifactorTrustedDevices", accounts);
+    }
+
+    /**
+     * Gets multifactor authentication trusted devices.
+     *
+     * @param requestContext the request context
+     * @return the multifactor authentication trusted devices
+     */
+    public List getMultifactorAuthenticationTrustedDevices(final RequestContext requestContext) {
+        return requestContext.getFlowScope().get("multifactorTrustedDevices", List.class);
+    }
+
+    /**
      * Gets multifactor authentication registered devices.
      *
      * @param requestContext the request context

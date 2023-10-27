@@ -60,6 +60,8 @@ public class MultifactorAuthenticationRegisteredDevice implements Serializable {
 
     private final String lastUsedDateTime;
 
+    private final String expirationDateTime;
+
     /**
      * The actual device record produced by the provider
      * typically captured here as JSON.
