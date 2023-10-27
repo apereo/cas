@@ -20,6 +20,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.Ordered;
 
 /**
@@ -36,6 +37,7 @@ import org.springframework.core.Ordered;
 @ConditionalOnBean(name = ExecutableObserver.BEAN_NAME)
 @AutoConfiguration
 @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
+@Lazy(false)
 public class CasCoreTicketsMonitoringConfiguration {
 
     @Bean

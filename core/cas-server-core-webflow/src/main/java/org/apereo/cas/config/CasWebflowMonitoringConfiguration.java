@@ -6,7 +6,7 @@ import org.apereo.cas.monitor.ExecutableObserver;
 import org.apereo.cas.monitor.MonitorableTask;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
+import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -20,41 +20,51 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.Ordered;
+import org.springframework.webflow.context.ExternalContext;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
- * This is {@link CasCoreServicesMonitoringConfiguration}.
+ * This is {@link CasWebflowMonitoringConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 7.0.0
  */
+@AutoConfiguration
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = {
     CasFeatureModule.FeatureCatalog.Monitoring,
-    CasFeatureModule.FeatureCatalog.TicketRegistry
+    CasFeatureModule.FeatureCatalog.Authentication
 })
 @ConditionalOnBean(name = ExecutableObserver.BEAN_NAME)
-@AutoConfiguration
 @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
+@EnableAspectJAutoProxy
 @Lazy(false)
-public class CasCoreServicesMonitoringConfiguration {
+public class CasWebflowMonitoringConfiguration {
     @Bean
-    @ConditionalOnMissingBean(name = "servicesManagerMonitoringAspect")
-    public ServicesManagerMonitoringAspect servicesManagerMonitoringAspect(final ObjectProvider<ExecutableObserver> observer) {
-        return new ServicesManagerMonitoringAspect(observer);
+    @ConditionalOnMissingBean(name = "casWebflowMonitoringAspect")
+    public CasWebflowMonitoringAspect casWebflowMonitoringAspect(final ObjectProvider<ExecutableObserver> observer) {
+        return new CasWebflowMonitoringAspect(observer);
     }
 
     @Aspect
     @Slf4j
     @SuppressWarnings("UnusedMethod")
-    record ServicesManagerMonitoringAspect(ObjectProvider<ExecutableObserver> observerProvider) {
+    record CasWebflowMonitoringAspect(ObjectProvider<ExecutableObserver> observerProvider) {
 
-        @Around("allComponentsInServiceManagementNamespace()")
-        public Object aroundServiceManagementOperations(final ProceedingJoinPoint joinPoint) throws Throwable {
+        @Around("allComponentsThatAreWebflowExecutors()")
+        public Object aroundWebflowOperations(final ProceedingJoinPoint joinPoint) throws Throwable {
             val observer = observerProvider.getObject();
-            val taskName = joinPoint.getSignature().getDeclaringTypeName() + '.' + joinPoint.getSignature().getName();
-            val task = new MonitorableTask(taskName);
+            val flowId = joinPoint.getArgs()[0].toString();
+            val externalContext = (ExternalContext) joinPoint.getArgs()[2];
+            val httpRequest = (HttpServletRequest) externalContext.getNativeRequest();
+            val taskName = joinPoint.getSignature().getDeclaringTypeName() + '.' + flowId;
+            httpRequest.setAttribute("observingWebflowId", flowId);
+            val task = new MonitorableTask(taskName)
+                .withBoundedValue("flowId", flowId)
+                .withBoundedValue("url", WebUtils.getHttpRequestFullUrl(httpRequest));
             return observer.supply(task, () -> executeJoinpoint(joinPoint));
         }
 
@@ -66,8 +76,9 @@ public class CasCoreServicesMonitoringConfiguration {
             });
         }
 
-        @Pointcut("within(org.apereo.cas.services.mgmt.*)")
-        private void allComponentsInServiceManagementNamespace() {
+        @Pointcut("within(org.springframework.webflow.executor.FlowExecutor+) && execution(* launchExecution(String,*,org.springframework.webflow.context.ExternalContext,..))")
+        private void allComponentsThatAreWebflowExecutors() {
         }
+
     }
 }

@@ -29,6 +29,7 @@ import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CasWebflowContextConfiguration;
+import org.apereo.cas.config.CasWebflowMonitoringConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
@@ -111,6 +112,7 @@ public abstract class BaseWebflowConfigurerTests {
         CasCoreLogoutConfiguration.class,
         CasWebflowContextConfiguration.class,
         CasCoreWebflowConfiguration.class,
+        CasWebflowMonitoringConfiguration.class,
         CasCoreNotificationsConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasCoreServicesAuthenticationConfiguration.class,

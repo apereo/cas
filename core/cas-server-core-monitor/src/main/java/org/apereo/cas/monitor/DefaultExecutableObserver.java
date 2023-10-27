@@ -19,7 +19,7 @@ import java.util.function.Supplier;
  */
 @RequiredArgsConstructor
 public class DefaultExecutableObserver implements ExecutableObserver {
-    private static final KeyValue[] EMPTY_KEYVALUES_ARRAY = {};
+    private static final KeyValue[] EMPTY_KEY_VALUES_ARRAY = {};
 
     private final ObservationRegistry observationRegistry;
 
@@ -49,6 +49,6 @@ public class DefaultExecutableObserver implements ExecutableObserver {
             .filter(entry -> StringUtils.isNotBlank(entry.getValue()))
             .map(entry -> KeyValue.of(entry.getKey(), entry.getValue()))
             .toList()
-            .toArray(EMPTY_KEYVALUES_ARRAY);
+            .toArray(EMPTY_KEY_VALUES_ARRAY);
     }
 }
