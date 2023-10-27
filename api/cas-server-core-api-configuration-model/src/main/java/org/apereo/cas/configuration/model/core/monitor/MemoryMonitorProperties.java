@@ -30,5 +30,5 @@ public class MemoryMonitorProperties implements Serializable {
      * If the amount of free memory available reaches this point
      * the memory monitor will report back a warning status as a health check.
      */
-    private int freeMemThreshold = 10;
+    private double freeMemThreshold = 10;
 }

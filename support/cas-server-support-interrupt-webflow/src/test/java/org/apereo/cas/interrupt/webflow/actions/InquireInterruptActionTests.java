@@ -47,7 +47,7 @@ class InquireInterruptActionTests {
     @Nested
     @SpringBootTest(classes = {
         InterruptActiveTestConfiguration.class,
-        InterruptFlowActionTests.SharedTestConfiguration.class
+        BaseInterruptFlowActionTests.SharedTestConfiguration.class
     })
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     class InterruptActiveTests {
@@ -125,7 +125,7 @@ class InquireInterruptActionTests {
     @Nested
     @SpringBootTest(classes = {
         InterruptNoneTestConfiguration.class,
-        InterruptFlowActionTests.SharedTestConfiguration.class
+        BaseInterruptFlowActionTests.SharedTestConfiguration.class
     })
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     class InterruptNoneTests {

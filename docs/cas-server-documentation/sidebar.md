@@ -234,7 +234,7 @@ layout: null
             *   [Apache Syncope](/cas/{{ version }}/integration/Attribute-Resolution-Syncope.html)
             *   [Microsoft Entra](/cas/{{ version }}/integration/Attribute-Resolution-AzureAD.html)
             *   [Custom](/cas/{{ version }}/integration/Attribute-Resolution-Custom.html)
-            *   [Selection](/cas/{{ version }}/integration/Attribute-Release-RepositorySelection.html)
+            *   [Selection](/cas/{{ version }}/integration/Attribute-Resolution-RepositorySelection.html)
             *   [Filtering](/cas/{{ version }}/integration/Attribute-Release-RepositoryFiltering.html)
     *   [Attribute Release](#attrrelease)
         *   [Overview](/cas/{{ version }}/integration/Attribute-Release.html)

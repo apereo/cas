@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("WebflowActions")
-@SpringBootTest(classes = InterruptFlowActionTests.SharedTestConfiguration.class)
+@SpringBootTest(classes = BaseInterruptFlowActionTests.SharedTestConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class FinalizeInterruptFlowActionTests {
 
