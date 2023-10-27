@@ -88,7 +88,7 @@ if support for a method is not defined and declared in OpenID discovery metadata
 
 ## Other Stuff
 
-- When using [OpenID Connect](../protocol/OIDC-Protocol.html), requests that carry a `client_secret` as a querystring parameter are now rejected and/or ignored.
+- When using [OpenID Connect](../protocol/OIDC-Protocol.html), requests that carry a `client_secret` as a query parameter are now rejected and/or ignored.
 - Changes to Spring Security configuration to allow basic authentication requests to pass through correctly to CAS endpoints where appropriate.
 - Apache Shiro, only used to assist with database password encoding and hashing functions, is now fully removed from CAS codebase.
 - A new and somewhat humble [actuator endpoint](../ticketing/Configuring-Ticketing-Components.html) to interact with and query the CAS ticket registry.
