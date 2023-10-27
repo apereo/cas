@@ -65,7 +65,7 @@ public class SystemUtils {
         info.put("CAS Version", StringUtils.defaultIfBlank(CasVersion.getVersion(), "Not Available"));
         info.put("CAS Branch", StringUtils.defaultIfBlank(GIT_PROPERTIES.getBranch(), "master"));
         info.put("CAS Commit Id", StringUtils.defaultIfBlank(GIT_PROPERTIES.getCommitId(), "Not Available"));
-        info.put("CAS Build Date/Time", CasVersion.getDateTime());
+        
         info.put("Spring Boot Version", SpringBootVersion.getVersion());
         info.put("Spring Version", SpringVersion.getVersion());
 

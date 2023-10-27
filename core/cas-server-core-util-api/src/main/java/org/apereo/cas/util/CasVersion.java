@@ -1,11 +1,6 @@
 package org.apereo.cas.util;
 
 import lombok.experimental.UtilityClass;
-import lombok.val;
-import org.jooq.lambda.Unchecked;
-
-import java.time.Instant;
-import java.time.ZonedDateTime;
 
 /**
  * Class that exposes the CAS version. Fetches the "Implementation-Version"
@@ -22,7 +17,7 @@ public class CasVersion {
      * @return the string
      */
     public static String asString() {
-        return getVersion() + " - " + getSpecificationVersion() + " - " + getDateTime().toString();
+        return getVersion() + " - " + getSpecificationVersion();
     }
 
     /**
@@ -42,19 +37,5 @@ public class CasVersion {
      */
     public static String getSpecificationVersion() {
         return CasVersion.class.getPackage().getSpecificationVersion();
-    }
-
-    /**
-     * Gets last modified date/time for the module.
-     *
-     * @return the date/time
-     */
-    public static ZonedDateTime getDateTime() {
-        return Unchecked.supplier(() -> {
-            val clazz = CasVersion.class;
-            val resource = clazz.getResource(clazz.getSimpleName() + ".class");
-            val time = Instant.ofEpochMilli(resource.openConnection().getLastModified());
-            return DateTimeUtils.zonedDateTimeOf(time);
-        }).get();
     }
 }
