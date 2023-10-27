@@ -20,8 +20,7 @@ const cas = require('../../cas.js');
     await cas.assertVisibility(page, '#field2');
     await cas.assertVisibility(page, '#field2-value');
 
-    let cancel = await page.$('#cancel');
-    assert(cancel == null);
+    await cas.assertInvisibility(page, "#cancel");
     await cas.submitForm(page, "#fm1");
     await cas.assertCookie(page);
     await page.waitForTimeout(1000);

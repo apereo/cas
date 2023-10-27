@@ -18,6 +18,7 @@ useful during development, testing and demos.
 {
   "casuser" : {
     "message" : "Announcement message <strong>goes here</strong>.",
+    "messageCode" : "interrupt.message.body",
     "links" : {
       "Go to Location1" : "https://www.location1.com",
       "Go to Location2" : "https://www.location2.com"
@@ -34,3 +35,18 @@ useful during development, testing and demos.
   }
 }
 ```
+
+## Interrupt Payload
+
+Each interrupt strategy is ultimately tasked to produce a response that contains the following settings:
+
+| Field                      | Description                                                                                                                                                           |
+|----------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `message`                  | Announcement message to display on the screen.                                                                                                                        |
+| `links`                    | A map of links to display on the screen where key is the link text and value is the destination.                                                                      |
+| `interrupt`                | `true/false` to indicate whether CAS should interrupt the authentication flow.                                                                                        |
+| `block`                    | `true/false` to indicate whether CAS should block the authentication flow altogether.                                                                                 |
+| `ssoEnabled`               | `true/false` to indicate whether CAS should permit the authentication but not establish SSO.                                                                          |
+| `autoRedirect`             | `true/false` to indicate whether CAS should auto-redirect to the first provided link.                                                                                 |
+| `autoRedirectAfterSeconds` | Indicate whether CAS should auto-redirect after the configured number of seconds. The default is `-1`, meaning delayed redirect functionality should not be executed. |
+

@@ -26,12 +26,12 @@ public class CacheCredentialsCipherExecutor extends BaseStringCipherExecutor {
     }
 
     @Override
-    protected String getEncryptionKeySetting() {
+    public String getEncryptionKeySetting() {
         return "cas.clearpass.crypto.encryption.key";
     }
 
     @Override
-    protected String getSigningKeySetting() {
+    public String getSigningKeySetting() {
         return "cas.clearpass.crypto.signing.key";
     }
 }

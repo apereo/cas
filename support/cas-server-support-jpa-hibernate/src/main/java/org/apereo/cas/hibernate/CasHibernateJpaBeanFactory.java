@@ -8,13 +8,17 @@ import org.apereo.cas.jpa.JpaBeanFactory;
 import org.apereo.cas.jpa.JpaPersistenceProviderConfigurer;
 import org.apereo.cas.jpa.JpaPersistenceProviderContext;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.boot.model.naming.PhysicalNamingStrategy;
-import org.hibernate.cfg.AvailableSettings;
+import org.hibernate.cfg.BatchSettings;
+import org.hibernate.cfg.JdbcSettings;
+import org.hibernate.cfg.MappingSettings;
+import org.hibernate.cfg.SchemaToolingSettings;
+import org.hibernate.cfg.StatisticsSettings;
+import org.hibernate.cfg.TransactionSettings;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.ApplicationContextAware;
@@ -22,7 +26,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
-
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.spi.PersistenceProvider;
 import java.io.Serializable;
@@ -52,25 +55,25 @@ public class CasHibernateJpaBeanFactory implements JpaBeanFactory {
     public FactoryBean<EntityManagerFactory> newEntityManagerFactoryBean(final JpaConfigurationContext config,
                                                                          final AbstractJpaProperties jpaProperties) {
         val properties = new Properties();
-        properties.put(AvailableSettings.DIALECT, jpaProperties.getDialect());
-        properties.put(AvailableSettings.HBM2DDL_AUTO, jpaProperties.getDdlAuto());
-        properties.put(AvailableSettings.STATEMENT_BATCH_SIZE, jpaProperties.getBatchSize());
-        properties.put(AvailableSettings.GENERATE_STATISTICS, jpaProperties.isGenerateStatistics());
+        properties.put(JdbcSettings.DIALECT, jpaProperties.getDialect());
+        properties.put(SchemaToolingSettings.HBM2DDL_AUTO, jpaProperties.getDdlAuto());
+        properties.put(BatchSettings.STATEMENT_BATCH_SIZE, jpaProperties.getBatchSize());
+        properties.put(StatisticsSettings.GENERATE_STATISTICS, jpaProperties.isGenerateStatistics());
 
         if (StringUtils.isNotBlank(jpaProperties.getDefaultCatalog())) {
-            properties.put(AvailableSettings.DEFAULT_CATALOG, jpaProperties.getDefaultCatalog());
+            properties.put(MappingSettings.DEFAULT_CATALOG, jpaProperties.getDefaultCatalog());
         }
         if (StringUtils.isNotBlank(jpaProperties.getDefaultSchema())) {
-            properties.put(AvailableSettings.DEFAULT_SCHEMA, jpaProperties.getDefaultSchema());
+            properties.put(MappingSettings.DEFAULT_SCHEMA, jpaProperties.getDefaultSchema());
         }
-        properties.put(AvailableSettings.ENABLE_LAZY_LOAD_NO_TRANS, Boolean.TRUE);
-        properties.put(AvailableSettings.FORMAT_SQL, Boolean.TRUE);
+        properties.put(TransactionSettings.ENABLE_LAZY_LOAD_NO_TRANS, Boolean.TRUE);
+        properties.put(JdbcSettings.FORMAT_SQL, Boolean.TRUE);
         properties.put("hibernate.connection.useUnicode", Boolean.TRUE);
         properties.put("hibernate.connection.characterEncoding", StandardCharsets.UTF_8.name());
         properties.put("hibernate.connection.charSet", StandardCharsets.UTF_8.name());
-        properties.put(AvailableSettings.AUTOCOMMIT, jpaProperties.isAutocommit());
-        properties.put("hibernate.jdbc.time_zone", "UTC");
-        properties.put("hibernate.jdbc.fetch_size", jpaProperties.getFetchSize());
+        properties.put(JdbcSettings.AUTOCOMMIT, jpaProperties.isAutocommit());
+        properties.put(JdbcSettings.JDBC_TIME_ZONE, "UTC");
+        properties.put(JdbcSettings.STATEMENT_FETCH_SIZE, jpaProperties.getFetchSize());
 
         FunctionUtils.doIfNotNull(jpaProperties.getPhysicalNamingStrategyClassName(),
             __ -> {
@@ -79,7 +82,7 @@ public class CasHibernateJpaBeanFactory implements JpaBeanFactory {
                 if (namingStrategy instanceof final ApplicationContextAware aware) {
                     aware.setApplicationContext(applicationContext);
                 }
-                properties.put(AvailableSettings.PHYSICAL_NAMING_STRATEGY, namingStrategy);
+                properties.put(MappingSettings.PHYSICAL_NAMING_STRATEGY, namingStrategy);
             });
         properties.putAll(jpaProperties.getProperties());
 

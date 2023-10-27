@@ -134,7 +134,7 @@ class MultifactorAuthenticationTests extends BaseCasWebflowMultifactorAuthentica
         assertEquals(2, authn.getSuccesses().size());
         assertTrue(authn.getSuccesses().containsKey(AcceptUsersAuthenticationHandler.class.getSimpleName()));
         assertTrue(authn.getSuccesses().containsKey(TestOneTimePasswordAuthenticationHandler.class.getSimpleName()));
-        assertTrue(authn.getAttributes().containsKey(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS));
+        assertTrue(authn.containsAttribute(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS));
     }
 
     private AuthenticationResult processAuthenticationAttempt(final Service service, final Credential... credential) throws Throwable {

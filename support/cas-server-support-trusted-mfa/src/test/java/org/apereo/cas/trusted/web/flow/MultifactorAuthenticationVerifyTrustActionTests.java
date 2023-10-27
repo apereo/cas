@@ -70,14 +70,14 @@ class MultifactorAuthenticationVerifyTrustActionTests extends AbstractMultifacto
 
         assertNotNull(context.getHttpServletResponse().getCookies());
         assertEquals(1, context.getHttpServletResponse().getCookies().length);
-        context.getHttpServletRequest().setCookies(context.getHttpServletResponse().getCookies());
+        context.setRequestCookiesFromResponse();
 
         val authn = RegisteredServiceTestUtils.getAuthentication(record.getPrincipal());
         WebUtils.putAuthentication(authn, context);
         assertEquals("yes", mfaVerifyTrustAction.execute(context).getId());
 
         assertTrue(MultifactorAuthenticationTrustUtils.isMultifactorAuthenticationTrustedInScope(context));
-        assertTrue(authn.getAttributes().containsKey(casProperties.getAuthn().getMfa().getTrusted().getCore().getAuthenticationContextAttribute()));
+        assertTrue(authn.containsAttribute(casProperties.getAuthn().getMfa().getTrusted().getCore().getAuthenticationContextAttribute()));
     }
 
     @Test

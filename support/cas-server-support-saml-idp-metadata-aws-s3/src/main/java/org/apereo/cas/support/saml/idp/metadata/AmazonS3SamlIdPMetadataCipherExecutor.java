@@ -22,12 +22,12 @@ public class AmazonS3SamlIdPMetadataCipherExecutor extends BaseStringCipherExecu
     }
 
     @Override
-    protected String getEncryptionKeySetting() {
+    public String getEncryptionKeySetting() {
         return "cas.authn.saml-idp.metadata.amazon-s3.crypto.encryption.key";
     }
 
     @Override
-    protected String getSigningKeySetting() {
+    public String getSigningKeySetting() {
         return "cas.authn.saml-idp.metadata.amazon-s3.crypto.signing.key";
     }
 }

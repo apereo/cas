@@ -14,9 +14,7 @@ const cas = require('../../cas.js');
     await cas.assertVisibility(page, '#surrogateTarget');
 
     await cas.assertVisibility(page, '#submit');
-
-    let cancel = await page.$('#cancel');
-    assert(cancel == null);
+    await cas.assertInvisibility(page, "#cancel");
 
     await cas.assertVisibility(page, '#login');
 

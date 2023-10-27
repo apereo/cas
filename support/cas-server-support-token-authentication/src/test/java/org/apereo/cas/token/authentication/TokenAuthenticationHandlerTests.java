@@ -118,7 +118,7 @@ class TokenAuthenticationHandlerTests {
         tokenAuthenticationPostProcessor.process(authenticationBuilder,
             CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(service));
         val authentication = authenticationBuilder.build();
-        assertTrue(authentication.getAttributes().containsKey(TokenConstants.PARAMETER_NAME_TOKEN));
+        assertTrue(authentication.containsAttribute(TokenConstants.PARAMETER_NAME_TOKEN));
         val token = authentication.getAttributes().get(TokenConstants.PARAMETER_NAME_TOKEN).getFirst().toString();
         val credential = new TokenCredential(token, service);
         val result = tokenAuthenticationHandler.authenticate(credential, credential.getService());

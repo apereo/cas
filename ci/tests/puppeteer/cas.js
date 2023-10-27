@@ -252,11 +252,19 @@ exports.assertCookie = async (page, cookieMustBePresent = true, cookieName = "TG
     }
 };
 
-exports.submitForm = async (page, selector, predicate = undefined) => {
+exports.submitForm = async (page, selector, predicate = undefined, statusCode = 0) => {
     await this.log(`Submitting form ${selector}`);
     if (predicate === undefined) {
-        await this.log("Waiting for page to produce a valid response status code");
-        predicate = async response => response.status() > 0;
+        predicate = async response => {
+            const responseStatus = response.status();
+            await this.log(`Page response status: ${responseStatus}`);
+            if (statusCode <= 0) {
+                await this.log("Waiting for page to produce a valid response status code");
+                return responseStatus > statusCode;
+            }
+            await this.log(`Waiting for page response status code ${statusCode}`);
+            return responseStatus === statusCode;
+        };
     }
     return await Promise.all([
         page.waitForResponse(predicate),
@@ -332,8 +340,33 @@ exports.assertParameter = async (page, param) => {
     return value;
 };
 
+exports.assertPageUrl = async(page, url) => {
+    let result = await page.url();
+    assert(result === url);
+};
+
+exports.assertPageUrlStartsWith = async(page, url) => {
+    let result = await page.url();
+    assert(result.startsWith(url));
+};
+
+exports.assertPageUrlProtocol = async(page, protocol) => {
+    let result = new URL(await page.url());
+    assert(result.protocol === protocol);
+};
+
+exports.assertPageUrlHost = async(page, host) => {
+    let result = new URL(await page.url());
+    assert(result.host === host);
+};
+
+exports.assertPageUrlPort = async(page, port) => {
+    let result = new URL(await page.url());
+    assert(result.port === port);
+};
+
 exports.assertMissingParameter = async (page, param) => {
-    let result = new URL(page.url());
+    let result = new URL(await page.url());
     assert(result.searchParams.has(param) === false);
 };
 

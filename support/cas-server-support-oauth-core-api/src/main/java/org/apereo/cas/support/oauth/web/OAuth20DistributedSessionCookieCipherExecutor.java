@@ -23,12 +23,12 @@ public class OAuth20DistributedSessionCookieCipherExecutor extends BaseStringCip
     }
 
     @Override
-    protected String getEncryptionKeySetting() {
+    public String getEncryptionKeySetting() {
         return "cas.authn.oauth.session-replication.cookie.crypto.encryption.key";
     }
 
     @Override
-    protected String getSigningKeySetting() {
+    public String getSigningKeySetting() {
         return "cas.authn.oauth.session-replication.cookie.crypto.signing.key";
     }
 }

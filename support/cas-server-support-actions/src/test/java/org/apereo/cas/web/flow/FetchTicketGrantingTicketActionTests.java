@@ -34,7 +34,7 @@ class FetchTicketGrantingTicketActionTests extends AbstractWebflowActionsTests {
         val tgt = new MockTicketGrantingTicket("casuser");
         getTicketRegistry().addTicket(tgt);
         getTicketGrantingTicketCookieGenerator().addCookie(context.getHttpServletResponse(), tgt.getId());
-        context.getHttpServletRequest().setCookies(context.getHttpServletResponse().getCookies());
+        context.setRequestCookiesFromResponse();
         assertNull(action.execute(context));
         assertNotNull(WebUtils.getTicketGrantingTicket(context));
     }

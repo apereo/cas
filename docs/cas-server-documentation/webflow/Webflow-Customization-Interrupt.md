@@ -34,72 +34,16 @@ Support is enabled by including the following dependency in the WAR overlay:
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-interrupt-webflow" %}
 
 {% include_cached casproperties.html properties="cas.interrupt.core" %}
-      
-## Tracking Interrupts
-
-The execution of the interrupt inquiry is tracked and remembered as a dedicated CAS cookie and under a specific 
-authentication attribute. The calculation of the inquiry trigger would take into account both options, depending on
-whether interrupt is set to trigger after authentication or single sign-on.
-
-{% include_cached casproperties.html properties="cas.interrupt.cookie" %}
 
 ## Interrupt Payload
-
-Each interrupt strategy is ultimately tasked to produce a response that contains the following settings:
-
-| Field                      | Description                                                                                                                                                           |
-|----------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `message`                  | Announcement message to display on the screen.                                                                                                                        |
-| `links`                    | A map of links to display on the screen where key is the link text and value is the destination.                                                                      |
-| `interrupt`                | `true/false` to indicate whether CAS should interrupt the authentication flow.                                                                                        |
-| `block`                    | `true/false` to indicate whether CAS should block the authentication flow altogether.                                                                                 |
-| `ssoEnabled`               | `true/false` to indicate whether CAS should permit the authentication but not establish SSO.                                                                          |
-| `autoRedirect`             | `true/false` to indicate whether CAS should auto-redirect to the first provided link.                                                                                 |
-| `autoRedirectAfterSeconds` | Indicate whether CAS should auto-redirect after the configured number of seconds. The default is `-1`, meaning delayed redirect functionality should not be executed. |
+         
+The interrupt response payload that is ultimately passed down to the CAS user interface is produced by
+interrupt strategies described below. The payload structure regardless of the producer strategy is shown here
+by the [JSON interrupt strategy](Webflow-Customization-Interrupt-JSON.html).
 
 ## Interrupt Trigger Modes
-
-Authentication interrupts and notifications are executed in the overall flow using one of the following strategies. The
-trigger strategy is defined globally via CAS settings.
-
-{% tabs interrupttriggermodes %}
-
-{% tab interrupttriggermodes After Authentication %}
-
-This is the default strategy that allows the interrupt query to execute after the
-primary authentication event and before the single sign-on event. This means an authenticated user has been
-identified by CAS and by extension is made available to the interrupt, and interrupt has the ability to
-decide whether a single sign-on session can be established for the user.
-
-<div class="alert alert-info">:information_source: <strong>Can We SSO Into Links?</strong><p>
-No. The collection of <code>links</code> are just links and are not tied in any way to the 
-CAS authentication sequence, meaning they do not activate a state, transition or view in 
-that sequence to trigger CAS into generating tickets, executing certain 
-actions, etc. Any link in this collection is exactly that; just a link. If a 
-link points to applications that are integrated with CAS, accessing those 
-applications via the link will prompt the user for credentials again 
-specially if single sign-on isn't already established. Remember that 
-interrupt notifications typically execute after the authentication step 
-and before any single sign-on session is created.</p></div>
-
-{% endtab %}
-
-{% tab interrupttriggermodes After Single Sign-on %}
-
-Alternatively, the interrupt query can execute once the single sign-on session has been established.
-In this mode, the authenticated user has been identified by CAS and linked to the single sign-on session. Note that
-interrupt here loses the ability to decide whether a single sign-on session can be established for the user, and interrupt
-responses indicating this option will have no impact, since the query and interrupt responses
-happen after the creation of the SSO session.
-
-<div class="alert alert-info">:information_source: <strong>Can We SSO Into Links?</strong><p>
-Yes. In this strategy, links to external applications presented by the interrupt response
-should be able to take advantage of the established single sign-on session.</p>
-</div>
-
-{% endtab %}
-
-{% endtabs %}
+        
+Please [see this guide](Webflow-Customization-Interrupt-TriggerModes.html) to learn more.
 
 ## Interrupt Strategies
 
@@ -112,32 +56,3 @@ Interrupt queries can be executed via the following ways:
 | Groovy          | [See this guide](Webflow-Customization-Interrupt-Groovy.html).         |
 | REST            | [See this guide](Webflow-Customization-Interrupt-REST.html).           |
 | Custom          | [See this guide](Webflow-Customization-Interrupt-Custom.html).         |
-
-## Interrupt Policy Per Service
-
-Application definitions may be assigned a dedicated webflow interrupt policy. A sample JSON file follows:
-
-```json
-{
-  "@class" : "org.apereo.cas.services.CasRegisteredService",
-  "serviceId" : "^https://.+",
-  "name" : "sample service",
-  "id" : 100,
-  "webflowInterruptPolicy" : {
-    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceWebflowInterruptPolicy",
-    "enabled": true,
-    "forceExecution": "TRUE",
-    "attributeName": "mem...of",
-    "attributeValue": "^st[a-z]ff$"
-  }
-}
-```
-
-The following policy settings are supported:
-
-| Field             | Description                                                                                                       |
-|-------------------|-------------------------------------------------------------------------------------------------------------------|
-| `enabled`         | Whether interrupt notifications are enabled for this application. Default is `true`.                              |
-| `forceExecution`  | Whether execution should proceed anyway, regardless. Accepted values are `TRUE`, `FALSE` or `UNDEFINED`.          |
-| `attributeName`   | Regular expression pattern to compare against authentication and principal attribute names to trigger interrupt.  |
-| `attributeValue`  | Regular expression pattern to compare against authentication and principal attribute values to trigger interrupt. |

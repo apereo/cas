@@ -25,12 +25,12 @@ public class DuoSecurityAuthenticationRegistrationCipherExecutor extends BaseStr
     }
 
     @Override
-    protected String getEncryptionKeySetting() {
+    public String getEncryptionKeySetting() {
         return "cas.authn.mfa.duo[0].registration.crypto.encryption.key";
     }
 
     @Override
-    protected String getSigningKeySetting() {
+    public String getSigningKeySetting() {
         return "cas.authn.mfa.duo[0].registration.crypto.signing.key";
     }
 }

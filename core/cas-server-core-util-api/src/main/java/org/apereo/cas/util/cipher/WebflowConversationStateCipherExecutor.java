@@ -39,12 +39,12 @@ public class WebflowConversationStateCipherExecutor extends BaseBinaryCipherExec
     }
 
     @Override
-    protected String getEncryptionKeySetting() {
+    public String getEncryptionKeySetting() {
         return "cas." + this.cipherName + ".crypto.encryption.key";
     }
 
     @Override
-    protected String getSigningKeySetting() {
+    public String getSigningKeySetting() {
         return "cas." + this.cipherName + ".crypto.signing.key";
     }
 }

@@ -1,0 +1,17 @@
+{
+  "dependencies": "interrupt-webflow",
+  "properties": [
+    "--cas.interrupt.core.trigger-mode=AFTER_SSO",
+    "--cas.interrupt.groovy.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/interrupt.groovy",
+
+    "--cas.audit.slf4j.use-single-line=true",
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+    "--cas.service-registry.core.init-from-json=true",
+
+    "--cas.message-bundle.base-names=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/custom_messages,classpath:messages"
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+}

@@ -11,5 +11,14 @@
       "field1" : [ "value1", "value2" ],
       "field2" : [ "value3", "value4" ]
     }
+  },
+  "casblock" : {
+    "message" : "You are blocked",
+    "links" : {
+      "Go to Google" : "https://www.google.com"
+    },
+    "ssoEnabled" : false,
+    "interrupt" : true,
+    "block": true
   }
 }

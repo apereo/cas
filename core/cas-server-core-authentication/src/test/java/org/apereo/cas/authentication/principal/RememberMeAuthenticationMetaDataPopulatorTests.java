@@ -65,7 +65,7 @@ class RememberMeAuthenticationMetaDataPopulatorTests {
             .setSupportedIpAddresses("123.+"));
         val auth = builder.build();
 
-        assertFalse(auth.getAttributes().containsKey(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME));
+        assertFalse(auth.containsAttribute(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME));
     }
 
     @Test
@@ -96,7 +96,7 @@ class RememberMeAuthenticationMetaDataPopulatorTests {
             .setSupportedIpAddresses("192.+"));
         val auth = builder.build();
 
-        assertFalse(auth.getAttributes().containsKey(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME));
+        assertFalse(auth.containsAttribute(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME));
     }
 
     @Test

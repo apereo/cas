@@ -96,6 +96,7 @@ if support for a method is not defined and declared in OpenID discovery metadata
 - Authentication requests received from the [Shibboleth IdP](../integration/Shibboleth.html) are able to locate the correct service definition in the registry. 
 - [Apache Tomcat](../installation/Servlet-Container-Embedded-Tomcat-RemoteUserValve.html) is now able to support `REMOTE_USER` authentication directly.
 - Internal refactoring of the [Redis Ticket Registry](../ticketing/Redis-Ticket-Registry.html) to support custom key construction and patterns for ticket objects and other entries.
+- Incremental improvements to [authentication webflow interrupts](../webflow/Webflow-Customization-Interrupt.html) to handle interrupt tracking better when payloads change dynamically.
 - Client TLS settings are now supported for [OpenID Connect](../authentication/OIDC-Authentication-AccessToken-AuthMethods.html) relying parties and applications. This capability is also extended to [Dynamic Client Registration](../authentication/OIDC-Authentication-Dynamic-Registration.html) requests.
 
 ## Library Upgrades
@@ -117,7 +118,13 @@ if support for a method is not defined and declared in OpenID discovery metadata
 - JAXB
 - Twilio
 - Amazon SDK
+- Commons CLI
+- Commons IO
+- Swagger
 - jsoup
 - CosmosDB
 - Nimbus OIDC
 - Spring Shell
+- Azure Spring Cloud
+- MySQL Driver
+- MSSQL Driver

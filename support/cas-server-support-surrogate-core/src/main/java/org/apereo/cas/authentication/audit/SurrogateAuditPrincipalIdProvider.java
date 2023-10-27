@@ -40,6 +40,6 @@ public class SurrogateAuditPrincipalIdProvider extends DefaultAuditPrincipalIdPr
     public boolean supports(final JoinPoint auditTarget, final Authentication authentication,
                             final Object resultValue, final Exception exception) {
         return super.supports(auditTarget, authentication, resultValue, exception)
-            && authentication.getAttributes().containsKey(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_USER);
+            && authentication.containsAttribute(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_USER);
     }
 }

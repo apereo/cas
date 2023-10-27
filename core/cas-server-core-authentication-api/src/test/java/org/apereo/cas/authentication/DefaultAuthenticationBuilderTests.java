@@ -113,7 +113,7 @@ class DefaultAuthenticationBuilderTests {
         val authn2 = builder2.build();
 
         authn.replaceAttributes(authn2);
-        assertTrue(authn.getAttributes().containsKey("authn2"));
+        assertTrue(authn.containsAttribute("authn2"));
         assertTrue(authn.containsAttribute("authn2"));
     }
 
@@ -122,7 +122,7 @@ class DefaultAuthenticationBuilderTests {
         val authn = DefaultAuthenticationBuilder.newInstance(CoreAuthenticationTestUtils.getAuthentication(Map.of("cn", List.of("cn1"))))
             .mergeAttributes(Map.of("cn", List.of("cn2")))
             .build();
-        assertTrue(authn.getAttributes().containsKey("cn"));
+        assertTrue(authn.containsAttribute("cn"));
         assertEquals(List.of("cn1", "cn2"), authn.getAttributes().get("cn"));
     }
 }

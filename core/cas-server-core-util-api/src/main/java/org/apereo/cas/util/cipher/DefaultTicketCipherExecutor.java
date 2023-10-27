@@ -22,12 +22,12 @@ public class DefaultTicketCipherExecutor extends BaseBinaryCipherExecutor {
     }
 
     @Override
-    protected String getEncryptionKeySetting() {
+    public String getEncryptionKeySetting() {
         return "cas.ticket.registry." + this.cipherName + ".crypto.encryption.key";
     }
 
     @Override
-    protected String getSigningKeySetting() {
+    public String getSigningKeySetting() {
         return "cas.ticket.registry." + this.cipherName + ".crypto.signing.key";
     }
 }

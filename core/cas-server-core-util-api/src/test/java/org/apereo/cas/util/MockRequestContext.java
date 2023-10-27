@@ -106,6 +106,11 @@ public class MockRequestContext extends MockRequestControlContext {
         return this;
     }
 
+    public MockRequestContext setRequestCookiesFromResponse() {
+        getHttpServletRequest().setCookies(getHttpServletResponse().getCookies());
+        return this;
+    }
+
 
     public static MockRequestContext create() throws Exception {
         val staticContext = new StaticApplicationContext();
