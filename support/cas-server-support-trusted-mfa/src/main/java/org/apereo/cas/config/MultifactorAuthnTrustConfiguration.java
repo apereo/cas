@@ -86,8 +86,10 @@ public class MultifactorAuthnTrustConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public MultifactorAuthenticationTrustStorage mfaTrustEngine(
             final CasConfigurationProperties casProperties,
-            @Qualifier("mfaTrustCipherExecutor") final CipherExecutor mfaTrustCipherExecutor,
-            @Qualifier("mfaTrustRecordKeyGenerator") final MultifactorAuthenticationTrustRecordKeyGenerator mfaTrustRecordKeyGenerator) {
+            @Qualifier("mfaTrustCipherExecutor")
+            final CipherExecutor mfaTrustCipherExecutor,
+            @Qualifier("mfaTrustRecordKeyGenerator")
+            final MultifactorAuthenticationTrustRecordKeyGenerator mfaTrustRecordKeyGenerator) throws Throwable {
             val trusted = casProperties.getAuthn().getMfa().getTrusted();
             val storage = Caffeine.newBuilder().initialCapacity(INITIAL_CACHE_SIZE)
                 .maximumSize(MAX_CACHE_SIZE).expireAfter(new MultifactorAuthenticationTrustRecordExpiry()).build(s -> {

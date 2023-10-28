@@ -99,11 +99,6 @@ public class PathWatcherService implements WatcherService, Runnable, DisposableB
         close();
     }
 
-    /**
-     * Handle event.
-     *
-     * @param key the key
-     */
     private void handleEvent(final WatchKey key) {
         key.pollEvents().forEach(Unchecked.consumer(event -> {
             val eventName = event.kind().name();
