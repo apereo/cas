@@ -25,6 +25,7 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
@@ -109,6 +110,10 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
         getMfaTrustEngine().remove(DateTimeUtils.zonedDateTimeOf(record.getExpirationDate()).plusDays(1));
         getMfaTrustEngine().remove(record.getRecordKey());
         assertNull(getMfaTrustEngine().get(record.getId()));
+
+        if (mfaTrustEngine instanceof final DisposableBean disposableBean) {
+            disposableBean.destroy();
+        }
     }
 
     @ImportAutoConfiguration({

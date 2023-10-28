@@ -65,7 +65,7 @@ CAS development is powered by the following tools, projects and services.
       <img src="https://github.com/apereo/cas/assets/1205228/11d83496-1abe-4f5a-b1e2-e313607cd595" class="card-img-top">
       </a>
       <div class="card-body">
-        <p class="card-text">The IDE that makes development a more productive and enjoyable experience</p>
+        <p class="card-text">IntelliJ IDE makes development a more productive and enjoyable experience</p>
       </div>
     </div>
   </div>
@@ -91,6 +91,21 @@ Spring applications.</p>
         YourKit, LLC is the creator of <a href="https://www.yourkit.com/java/profiler/">YourKit Java Profiler</a> 
 and <a href="https://www.yourkit.com/.net/profiler/">YourKit .NET Profiler</a>, innovative and intelligent 
 tools for profiling Java and .NET applications.
+        </p>
+      </div>
+    </div>
+  </div>
+
+<div class="col-sm-2 d-flex align-items-stretch">
+    <div class="card" style="width: 16rem;">
+      <a href="https://www.gradle.org">
+      <img src="https://github.com/apereo/cas/assets/1205228/2774ecf6-c60c-4a66-9f5c-2fe8baaa7825"
+           style="filter: brightness(300%)" class="card-img-top mt-2 ms-2 pe-4">
+      </a>
+      <div class="card-body">
+        <p class="card-text">
+        Gradle Build Tool is a fast, dependable, and adaptable open-source build automation tool with an elegant and extensible declarative build language. 
+From mobile apps to microservices, from small startups to big enterprises, Gradle helps teams build, automate and deliver better software, faster.
         </p>
       </div>
     </div>

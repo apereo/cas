@@ -1,8 +1,6 @@
 package org.apereo.cas.trusted.authentication.storage;
 
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
-
-import lombok.Getter;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterAll;
@@ -10,7 +8,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
-
 import java.io.File;
 
 /**
@@ -22,16 +19,15 @@ import java.io.File;
 @SpringBootTest(classes = AbstractMultifactorAuthenticationTrustStorageTests.SharedTestConfiguration.class)
 @TestPropertySource(properties = "cas.authn.mfa.trusted.json.location=file:${java.io.tmpdir}/trusted-device.json")
 @Tag("FileSystem")
-@Getter
 class JsonMultifactorAuthenticationTrustStorageTests extends AbstractMultifactorAuthenticationTrustStorageTests {
 
     @BeforeAll
-        public static void beforeClass() {
+    public static void beforeClass() {
         deleteJsonFile();
     }
 
     @AfterAll
-        public static void afterClass() {
+    public static void afterClass() {
         deleteJsonFile();
     }
 
