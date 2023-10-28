@@ -10,6 +10,13 @@ services:
       - REDIS_MASTER_PORT_NUMBER=6379
     ports:
       - "6379:6379"
+  redis-master2:
+    image: redis/redis-stack:${REDIS_VERSION}
+    container_name: redis_server_master2
+    environment:
+      - REDIS_PASSWORD=pAssw0rd123
+    ports:
+      - "16389:6379"
 
   sentinel_1:
     image: bitnami/redis-sentinel:${REDIS_SENTINEL_VERSION}
