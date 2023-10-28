@@ -7,6 +7,7 @@ import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import com.redis.lettucemod.search.Field;
 import io.lettuce.core.ReadFrom;
+import io.lettuce.core.RedisConnectionException;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
@@ -54,6 +55,27 @@ class RedisObjectFactoryTests {
         props.getPool().setEnabled(true);
         val connection = RedisObjectFactory.newRedisConnectionFactory(props, true, CasSSLContext.disabled());
         assertNotNull(connection);
+    }
+
+    @Test
+    void verifyConnectionWithUsernamePassword() throws Throwable {
+        val props = new BaseRedisProperties();
+        props.setHost("localhost");
+        props.setPort(16389);
+        props.setUsername("default");
+        props.setPassword("pAssw0rd123");
+        val connection = RedisObjectFactory.newRedisModulesCommands(props);
+        assertNotNull(connection);
+    }
+
+    @Test
+    void verifyConnectionWithPassword() throws Throwable {
+        val props = new BaseRedisProperties();
+        props.setHost("localhost");
+        props.setPort(16389);
+        props.setUsername(null);
+        props.setPassword("pAssw0rd123");
+        assertThrows(RedisConnectionException.class, () -> RedisObjectFactory.newRedisModulesCommands(props));
     }
 
     @Test
