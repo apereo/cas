@@ -310,8 +310,8 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
         try (val in = Files.newBufferedReader(file.toPath())) {
             return this.registeredServiceSerializers
                 .stream()
-                .filter(s -> s.supports(file))
-                .map(s -> s.load(in))
+                .filter(serializer -> serializer.supports(file))
+                .map(serializer -> serializer.load(in))
                 .filter(Objects::nonNull)
                 .flatMap(Collection::stream)
                 .map(this::invokeServiceRegistryListenerPostLoad)
