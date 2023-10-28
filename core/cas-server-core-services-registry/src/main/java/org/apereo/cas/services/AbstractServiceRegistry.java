@@ -21,14 +21,8 @@ import java.util.Collection;
 @Getter
 public abstract class AbstractServiceRegistry implements ServiceRegistry {
 
-    /**
-     * The Event publisher.
-     */
     private final ConfigurableApplicationContext applicationContext;
 
-    /**
-     * The Service registry listeners.
-     */
     private final Collection<ServiceRegistryListener> serviceRegistryListeners;
 
     /**
@@ -43,12 +37,6 @@ public abstract class AbstractServiceRegistry implements ServiceRegistry {
         }
     }
 
-    /**
-     * Invoke service registry listener pre save.
-     *
-     * @param registeredService the registered service
-     * @return the registered service
-     */
     protected RegisteredService invokeServiceRegistryListenerPreSave(final RegisteredService registeredService) {
         if (serviceRegistryListeners != null) {
             serviceRegistryListeners.forEach(listener -> listener.preSave(registeredService));
@@ -56,12 +44,6 @@ public abstract class AbstractServiceRegistry implements ServiceRegistry {
         return registeredService;
     }
 
-    /**
-     * Invoke service registry listener post load.
-     *
-     * @param registeredService the registered service
-     * @return the registered service
-     */
     protected RegisteredService invokeServiceRegistryListenerPostLoad(final RegisteredService registeredService) {
         if (serviceRegistryListeners != null) {
             serviceRegistryListeners.forEach(listener -> listener.postLoad(registeredService));
