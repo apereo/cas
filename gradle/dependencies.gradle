@@ -1574,13 +1574,27 @@ ext.libraries = [
                 dependencies.create("org.slf4j:slf4j-api:$slf4jVersion"),
                 dependencies.create("org.slf4j:jul-to-slf4j:$slf4jVersion")
         ],
-        metrics                    : [
-                dependencies.create("io.micrometer:micrometer-core:$micrometerVersion") {
+        tracingbrave : [
+                dependencies.create("io.micrometer:micrometer-tracing-bridge-brave:$micrometerOtelVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "commons-lang", module: "commons-lang")
                 },
+                dependencies.create("io.zipkin.reporter2:zipkin-reporter-brave:$zipkinBraveVersion") {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                }
+        ],
+        tracingotel : [
                 dependencies.create("io.micrometer:micrometer-tracing-bridge-otel:$micrometerOtelVersion") {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                }
+        ],
+        metrics                    : [
+                dependencies.create("io.micrometer:micrometer-core:$micrometerVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "commons-lang", module: "commons-lang")

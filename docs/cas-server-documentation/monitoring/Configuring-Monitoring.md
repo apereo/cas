@@ -36,7 +36,7 @@ to <i>interrogate</i> the entire cluster by running distributed queries to calcu
 {% include_cached actuators.html endpoints="health" 
 healthIndicators="ping,diskSpaceHealthIndicator,memoryHealthIndicator,systemHealthIndicator,sessionHealthIndicator" %}
 
-### Advanced
+## Advanced
 
 Monitors can also be managed using any one of the following strategies.
 

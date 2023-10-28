@@ -652,7 +652,9 @@ layout: null
         *   [JDBC](/cas/{{ version }}/monitoring/Configuring-Monitoring-JDBC.html)
         *   [LDAP](/cas/{{ version }}/monitoring/Configuring-Monitoring-LDAP.html)
         *   [Redis](/cas/{{ version }}/monitoring/Configuring-Monitoring-Redis.html)
-
+  *   [Tracing](#tracingoverview)
+      *   [Overview](/cas/{{ version }}/monitoring/Configuring-Tracing.html)
+      
 * [User Interface](#user_interface)
     *   [Overview](/cas/{{ version }}/ux/User-Interface-Customization.html)
     *   [CSS & JavaScript](/cas/{{ version }}/ux/User-Interface-Customization-CSSJS.html)
