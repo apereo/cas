@@ -16,9 +16,10 @@ dependencies {
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-monitor")
     
+    implementation libraries.metrics
+
     compileOnly libraries.mongo
     compileOnly libraries.redis
-    implementation libraries.metrics
     compileOnly libraries.influxdb
     compileOnly libraries.squareup
     compileOnly libraries.okhttp
