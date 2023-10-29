@@ -4,7 +4,6 @@ import org.apereo.cas.CasLabels;
 import org.apereo.cas.MonitoredRepository;
 import org.apereo.cas.PullRequestListener;
 import org.apereo.cas.github.PullRequest;
-
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +11,6 @@ import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.StringUtils;
-
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.regex.Pattern;
@@ -48,9 +46,15 @@ public class CasPullRequestListener implements PullRequestListener {
                 repository.approveAndMergePullRequest(pr);
             } else {
                 var files = repository.getPullRequestFiles(pr);
-                if (files.size() == 1 && files.get(0).getFilename().endsWith("locust/requirements.txt")) {
-                    log.info("Merging pull request {}", pr);
-                    repository.approveAndMergePullRequest(pr);
+                if (files.size() == 1) {
+                    var firstFile = files.get(0).getFilename();
+
+                    if (firstFile.endsWith("locust/requirements.txt")
+                        || firstFile.endsWith("client/package-lock.json")
+                        || firstFile.endsWith("client/.nvmrc")) {
+                        log.info("Merging pull request {}", pr);
+                        repository.approveAndMergePullRequest(pr);
+                    }
                 }
             }
         }
@@ -58,8 +62,8 @@ public class CasPullRequestListener implements PullRequestListener {
 
     private boolean shouldDisregardPullRequest(final PullRequest pr) {
         return processDependencyUpgradesPullRequests(pr)
-               || processLabelSeeMaintenancePolicy(pr)
-               || processInvalidPullRequest(pr);
+            || processLabelSeeMaintenancePolicy(pr)
+            || processInvalidPullRequest(pr);
     }
 
     @SneakyThrows
@@ -145,20 +149,20 @@ public class CasPullRequestListener implements PullRequestListener {
             return;
         }
 
-        
+
         val files = repository.getPullRequestFiles(pr);
-        
+
         val modifiesJava = files.stream().anyMatch(file ->
             !file.getFilename().contains("Tests") && file.getFilename().endsWith(".java"));
 
         val modifiesUI = files.stream().anyMatch(file ->
             file.getFilename().endsWith(".css") ||
-            file.getFilename().endsWith(".html") ||
-            file.getFilename().endsWith(".js"));
+                file.getFilename().endsWith(".html") ||
+                file.getFilename().endsWith(".js"));
 
         if (modifiesJava || modifiesUI) {
             val hasTests = files.stream().anyMatch(file -> file.getFilename().endsWith("Tests.java")
-                                                           || file.getFilename().matches(".*puppeteer.*scenarios.*script.*"));
+                || file.getFilename().matches(".*puppeteer.*scenarios.*script.*"));
             if (!hasTests) {
                 var isCommitter = repository.getGitHubProperties().getRepository().getCommitters().contains(pr.getUser().getLogin());
                 if (!isCommitter) {
@@ -199,20 +203,20 @@ public class CasPullRequestListener implements PullRequestListener {
                 .filter(file -> {
                     var filename = file.getFilename();
                     return !filename.contains("src/test/java")
-                           && !filename.endsWith(".html")
-                           && !filename.endsWith(".properties")
-                           && !filename.endsWith(".js")
-                           && !filename.endsWith(".yml")
-                           && !filename.endsWith(".yaml")
-                           && !filename.endsWith(".json")
-                           && !filename.endsWith(".jpg")
-                           && !filename.endsWith(".jpeg")
-                           && !filename.endsWith(".sh")
-                           && !filename.endsWith(".bat")
-                           && !filename.endsWith(".txt")
-                           && !filename.endsWith(".md")
-                           && !filename.endsWith(".gif")
-                           && !filename.endsWith(".css");
+                        && !filename.endsWith(".html")
+                        && !filename.endsWith(".properties")
+                        && !filename.endsWith(".js")
+                        && !filename.endsWith(".yml")
+                        && !filename.endsWith(".yaml")
+                        && !filename.endsWith(".json")
+                        && !filename.endsWith(".jpg")
+                        && !filename.endsWith(".jpeg")
+                        && !filename.endsWith(".sh")
+                        && !filename.endsWith(".bat")
+                        && !filename.endsWith(".txt")
+                        && !filename.endsWith(".md")
+                        && !filename.endsWith(".gif")
+                        && !filename.endsWith(".css");
                 })
                 .count();
 
@@ -228,7 +232,7 @@ public class CasPullRequestListener implements PullRequestListener {
             }
         }
 
-        if (pr.getTitle().matches("Update\\s\\w.java")) {
+        if (pr.getTitle().matches("Update\\s\\w.java") || pr.getTitle().matches("^\\w+$")) {
             log.info("Closing invalid pull request {} with a bad description/title", pr);
             repository.labelPullRequestAs(pr, CasLabels.LABEL_PROPOSAL_DECLINED);
             repository.labelPullRequestAs(pr, CasLabels.LABEL_SEE_CONTRIBUTOR_GUIDELINES);
@@ -351,7 +355,7 @@ public class CasPullRequestListener implements PullRequestListener {
                 }
                 if (assign) {
                     val ci = l == CasLabels.LABEL_CI
-                             && repository.getGitHubProperties().getRepository().getCommitters().contains(pr.getUser().getLogin());
+                        && repository.getGitHubProperties().getRepository().getCommitters().contains(pr.getUser().getLogin());
                     if (l != CasLabels.LABEL_CI || ci) {
                         log.info("Assigning label {} to pr {}", l, pr);
                         repository.labelPullRequestAs(pr, l);
