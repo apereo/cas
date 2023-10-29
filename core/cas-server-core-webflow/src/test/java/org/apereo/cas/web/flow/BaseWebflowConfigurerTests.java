@@ -37,6 +37,7 @@ import org.apereo.services.persondir.support.StubPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.actuate.autoconfigure.observation.ObservationAutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -44,6 +45,7 @@ import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.autoconfigure.mail.MailSenderValidatorAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
+import org.springframework.boot.test.autoconfigure.actuate.observability.AutoConfigureObservability;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -70,6 +72,7 @@ import java.util.Map;
     "cas.webflow.crypto.encryption.key=qLhvLuaobvfzMmbo9U_bYA",
     "cas.webflow.crypto.signing.key=oZeAR5pEXsolruu4OQYsQKxf-FCvFzSsKlsVaKmfIl6pNzoPm6zPW94NRS1af7vT-0bb3DpPBeksvBXjloEsiA"
 })
+@AutoConfigureObservability
 public abstract class BaseWebflowConfigurerTests {
     @Autowired
     protected ConfigurableApplicationContext applicationContext;
@@ -92,6 +95,7 @@ public abstract class BaseWebflowConfigurerTests {
         WebMvcAutoConfiguration.class,
         MailSenderAutoConfiguration.class,
         MailSenderValidatorAutoConfiguration.class,
+        ObservationAutoConfiguration.class,
         AopAutoConfiguration.class
     })
     @SpringBootConfiguration
@@ -128,7 +132,6 @@ public abstract class BaseWebflowConfigurerTests {
         CasCoreAuditConfiguration.class,
         CasCoreUtilConfiguration.class
     })
-
     public static class SharedTestConfiguration {
 
         @TestConfiguration(value = "AttributeRepositoryTestConfiguration", proxyBeanMethods = false)

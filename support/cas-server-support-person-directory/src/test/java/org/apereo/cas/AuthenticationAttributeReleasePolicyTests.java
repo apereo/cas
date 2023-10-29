@@ -35,6 +35,7 @@ import org.springframework.boot.actuate.autoconfigure.observation.ObservationAut
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.autoconfigure.actuate.observability.AutoConfigureObservability;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -81,6 +82,7 @@ import static org.mockito.Mockito.*;
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Authentication")
+@AutoConfigureObservability
 class AuthenticationAttributeReleasePolicyTests {
     @Autowired
     @Qualifier(AuthenticationManager.BEAN_NAME)
