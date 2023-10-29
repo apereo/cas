@@ -36,7 +36,7 @@ const path = require("path");
     await cas.assertVisibility(page, '#field2');
     await cas.assertVisibility(page, '#field2-value');
     await cas.submitForm(page, "#fm1");
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(6000);
     await cas.screenshot(page);
     await page.waitForSelector('#table_with_attributes', {visible: true});
     await cas.assertInnerTextContains(page, "#content p", "status page of SimpleSAMLphp");

@@ -102,12 +102,6 @@
                         accesskey="l">
                     <span class="mdc-button__label" th:text="#{screen.interrupt.btn.proceed}">Proceed</span>
                 </button>
-
-                <span th:if="${interruptTriggerMode == 'AFTER_AUTHENTICATION'}">
-                    <a class="mdc-button mdc-button--raised me-2" id="login" name="login" th:href="${service?.id} ?: @{/login}">
-                        <span class="mdc-button__label" th:text="#{screen.error.page.loginagain}">Login Again</span>
-                    </a>
-                </span>
             </div>
         </form>
 

@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.5.0
  */
 @Tag("Metrics")
-class MemoryHealthIndicatorTests {
+class MemoryMonitorHealthIndicatorTests {
 
     @Test
     void verifyObserveOk() throws Throwable {

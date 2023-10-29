@@ -5,6 +5,7 @@ import lombok.val;
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.Status;
+import java.text.NumberFormat;
 
 /**
  * Monitors JVM memory usage.
@@ -30,14 +31,15 @@ public class MemoryMonitorHealthIndicator extends AbstractHealthIndicator {
         val usedMemory = totalMemory - freeMemory;
         val maxMemory = runtime.maxMemory();
         val availableMemory = maxMemory - usedMemory;
-        val freeMemoryPercentage = (double) freeMemory * PERCENTAGE_VALUE / maxMemory;
+        val availableMemoryPercentage = (double) availableMemory * PERCENTAGE_VALUE / maxMemory;
+        val percentFormat = NumberFormat.getPercentInstance();
         builder
             .withDetail("availableMemory", availableMemory)
             .withDetail("maxMemory", maxMemory)
             .withDetail("usedMemory", usedMemory)
             .withDetail("totalMemory", totalMemory)
             .withDetail("freeMemory", freeMemory)
-            .withDetail("freeMemoryPercentage", totalMemory)
-            .status(freeMemoryPercentage < freeMemoryWarnThreshold ? Status.DOWN : Status.UP);
+            .withDetail("freeMemoryPercentage", percentFormat.format(availableMemoryPercentage))
+            .status(availableMemoryPercentage < freeMemoryWarnThreshold ? Status.DOWN : Status.UP);
     }
 }
