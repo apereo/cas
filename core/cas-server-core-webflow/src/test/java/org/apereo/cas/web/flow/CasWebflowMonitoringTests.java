@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.actuate.autoconfigure.observation.ObservationAutoConfiguration;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
@@ -25,7 +24,6 @@ import static org.mockito.Mockito.*;
 @Tag("WebflowConfig")
 @Import({
     CasWebflowMonitoringTests.FlowExecutorTestConfiguration.class,
-    ObservationAutoConfiguration.class,
     CasCoreMonitorConfiguration.class
 })
 public class CasWebflowMonitoringTests extends BaseWebflowConfigurerTests {
