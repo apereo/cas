@@ -11,11 +11,9 @@ import org.apereo.cas.web.flow.actions.MultifactorAuthenticationTrustedDevicePro
 import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import java.time.ZonedDateTime;
 
 /**
  * This is {@link DefaultMultifactorAuthenticationTrustedDeviceProviderAction}.
