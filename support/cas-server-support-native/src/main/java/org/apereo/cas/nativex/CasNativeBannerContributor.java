@@ -14,12 +14,13 @@ import java.util.Formatter;
  * @since 7.0.0
  */
 public class CasNativeBannerContributor implements BannerContributor {
+    private static final String GRAALVM_VERSION = Version.getCurrent().toString();
+
     @Override
     public void contribute(final Formatter formatter, final Environment environment) {
         val javaVendor = System.getProperty("java.vendor.version");
         if (StringUtils.isNotBlank(javaVendor) && javaVendor.contains("GraalVM")) {
-            val version = Version.getCurrent().toString();
-            formatter.format("Graal VM SDK Version: %s%n", version);
+            formatter.format("Graal VM SDK Version: %s%n", GRAALVM_VERSION);
         }
     }
 }
