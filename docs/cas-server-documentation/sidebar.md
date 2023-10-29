@@ -735,7 +735,11 @@ layout: null
         *   [SmsMode](/cas/{{ version }}/notifications/SMS-Messaging-Configuration-SmsMode.html)
         *   [Amazon SNS](/cas/{{ version }}/notifications/SMS-Messaging-Configuration-AmazonSNS.html)
         *   [Nexmo](/cas/{{ version }}/notifications/SMS-Messaging-Configuration-Nexmo.html)
-    *   [Sending Notifications](/cas/{{ version }}/notifications/Notifications-Configuration.html)
+    *   [Making Phone Calls](#phonecalls)
+        *   [Overview](/cas/{{ version }}/notifications/Phone-Calls-Configuration.html)
+        *   [Twilio](/cas/{{ version }}/notifications/SMS-Messaging-Configuration-Twilio.html)
+        *   [Custom](/cas/{{ version }}/notifications/Phone-Calls-Configuration-Custom.html)
+    * [Sending Notifications](/cas/{{ version }}/notifications/Notifications-Configuration.html)
 
 * [Integration](#appintegration)
     *   [SAML2 Service Providers](/cas/{{ version }}/integration/Configuring-SAML-SP-Integrations.html)
