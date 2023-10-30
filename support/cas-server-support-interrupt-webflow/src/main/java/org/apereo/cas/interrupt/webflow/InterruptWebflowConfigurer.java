@@ -119,8 +119,6 @@ public class InterruptWebflowConfigurer extends AbstractCasWebflowConfigurer {
         val target = getRealSubmissionState(flow).getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
         createTransitionForState(inquireState, CasWebflowConstants.TRANSITION_ID_INTERRUPT_SKIPPED, target);
         createTransitionForState(inquireState, CasWebflowConstants.TRANSITION_ID_INTERRUPT_REQUIRED, CasWebflowConstants.STATE_ID_INTERRUPT_VIEW);
-        val sendTicketState = getState(flow, CasWebflowConstants.STATE_ID_SEND_TICKET_GRANTING_TICKET, ActionState.class);
-        sendTicketState.getExitActionList().add(new ConsumerExecutionAction(WebUtils::removeInterruptAuthenticationFlowFinalized));
     }
 
     private EvaluateAction getInquireInterruptAction() {
