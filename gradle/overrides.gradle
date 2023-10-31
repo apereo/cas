@@ -94,7 +94,7 @@ configurations.configureEach {
                 if (requested.group == "com.microsoft.sqlserver")  {
                     details.useVersion("${mssqlServerVersion}")
                 }
-                if (requested.group == "com.oracle.ojdbc:ojdbc10")  {
+                if (requested.group == "com.oracle.database.jdbc")  {
                     details.useVersion("${oracleJdbcVersion}")
                 }
                 if (requested.group == "io.netty")  {

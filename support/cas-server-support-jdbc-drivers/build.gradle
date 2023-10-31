@@ -17,7 +17,7 @@ dependencies {
     runtimeOnly "org.mariadb.jdbc:mariadb-java-client:$mariaDbVersion"
     runtimeOnly "net.sourceforge.jtds:jtds:$jtdsVersion"
     runtimeOnly "com.microsoft.sqlserver:mssql-jdbc:$mssqlServerVersion"
-    runtimeOnly "com.oracle.ojdbc:ojdbc10:$oracleJdbcVersion"
+    runtimeOnly "com.oracle.database.jdbc:ojdbc11:$oracleJdbcVersion"
     runtimeOnly "com.h2database:h2:$h2Version"
     runtimeOnly "org.hibernate.orm:hibernate-community-dialects:$hibernateVersion"
 }
