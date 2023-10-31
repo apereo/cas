@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -35,5 +36,12 @@ class RegexUtilsTests {
     @Test
     void verifyNullRegex() throws Throwable {
         assertFalse(RegexUtils.isValidRegex(null));
+    }
+
+    @Test
+    void verifyPatternCollection() throws Throwable {
+        val patterns = List.of("^abc", "^\\d{3}\\w+");
+        val result = RegexUtils.findFirst(patterns, List.of("hello", "world", "911/", "911Z")).get();
+        assertEquals("911Z", result);
     }
 }

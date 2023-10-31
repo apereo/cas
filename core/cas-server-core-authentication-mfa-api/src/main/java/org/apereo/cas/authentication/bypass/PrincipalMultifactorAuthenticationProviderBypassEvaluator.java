@@ -8,6 +8,7 @@ import org.apereo.cas.services.RegisteredService;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.util.StringUtils;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -50,7 +51,8 @@ public class PrincipalMultifactorAuthenticationProviderBypassEvaluator extends B
         val principal = resolvePrincipal(authentication.getPrincipal());
         LOGGER.debug("Evaluating multifactor authentication bypass properties for principal [{}], service [{}] and provider [{}]",
             principal.getId(), registeredService, provider);
-        val bypass = locateMatchingAttributeValue(this.attributeName, this.attributeValue, principal.getAttributes(), true);
+        val bypass = locateMatchingAttributeValue(this.attributeName, StringUtils.commaDelimitedListToSet(attributeValue),
+            principal.getAttributes(), true);
         if (bypass) {
             LOGGER.debug("Bypass rules for principal [{}] indicate the request may be ignored", principal.getId());
             return false;

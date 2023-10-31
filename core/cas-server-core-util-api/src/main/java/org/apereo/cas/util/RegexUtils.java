@@ -160,6 +160,21 @@ public class RegexUtils {
     }
 
     /**
+     * Find first matching pattern in the given collection of elements.
+     *
+     * @param patterns the patterns
+     * @param elements the elements
+     * @return the optional
+     */
+    public static Optional<String> findFirst(final Collection<String> patterns, final Collection elements) {
+        return patterns
+            .stream()
+            .map(RegexUtils::createPattern)
+            .flatMap(compiledPattern -> elements.stream().filter(r -> find(compiledPattern, r.toString())))
+            .findFirst();
+    }
+
+    /**
      * Matches ip address.
      *
      * @param pattern    the pattern
