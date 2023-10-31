@@ -1,0 +1,15 @@
+{
+  "casuser" : {
+    "message" : "We interrupted your login to bring you a few messages!",
+    "links" : {
+      "Go to Google" : "https://www.google.com",
+      "Go to Yahoo" : "https://www.yahoo.com"
+    },
+    "ssoEnabled" : true,
+    "interrupt" : true,
+    "data" : {
+      "field1" : [ "value1", "value2" ],
+      "field2" : [ "value3", "value4" ]
+    }
+  }
+}

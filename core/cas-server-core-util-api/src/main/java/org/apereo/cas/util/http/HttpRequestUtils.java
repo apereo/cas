@@ -185,4 +185,14 @@ public class HttpRequestUtils {
         return HttpStatus.SERVICE_UNAVAILABLE;
 
     }
+
+    /**
+     * Gets full request url.
+     *
+     * @param request the request
+     * @return the full request url
+     */
+    public static String getFullRequestUrl(final HttpServletRequest request) {
+        return request.getRequestURI() + (request.getQueryString() != null ? '?' + request.getQueryString() : StringUtils.EMPTY);
+    }
 }

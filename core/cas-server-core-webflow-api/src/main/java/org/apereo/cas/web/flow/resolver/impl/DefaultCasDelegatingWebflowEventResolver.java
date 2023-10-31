@@ -11,6 +11,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
@@ -149,6 +150,8 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
         attributes.put(Credential.class.getName(), credential);
         attributes.put(WebApplicationService.class.getName(), service);
         attributes.putAll(event.getAttributes());
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        attributes.put("url", HttpRequestUtils.getFullRequestUrl(request));
         return newEvent(event.getId(), attributes);
     }
 

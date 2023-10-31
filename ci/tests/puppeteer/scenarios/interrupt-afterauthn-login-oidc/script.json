@@ -1,0 +1,47 @@
+{
+  "dependencies": "simple-mfa,reports,oidc,interrupt-webflow",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    "--cas.audit.slf4j.use-single-line=true",
+    
+    "--cas.tgc.crypto.encryption.key=u696jJnPvm1DHLR7yVCSKMMzzoPoFxJZW4-MP1CkM5w",
+    "--cas.tgc.crypto.signing.key=zPdNCd0R1oMR0ClzEqZzapkte8rO0tNvygYjmHoUhitAu6CBscwMC3ZTKy8tleTKiQ6GVcuiQQgxfd1nSKxf7w",
+
+    "--cas.webflow.crypto.signing.key=v43dwqO_GbGSVsFqgPFpVdwdMSEunMUzc4QSF13x18kInHPeRuvntleljO5Y5cKqDGAFe1vv10mM4tpyoKyBBA",
+    "--cas.webflow.crypto.encryption.key=2PikjfOKY6n8Bbux2cy-Hg",
+    
+    "--cas.authn.attribute-repository.stub.attributes.given_name=Apereo",
+    "--cas.authn.attribute-repository.stub.attributes.family_name=CAS",
+    "--cas.authn.attribute-repository.stub.attributes.uid=casuser",
+    "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
+    "--cas.authn.attribute-repository.core.merger=MULTIVALUED",
+
+    "--cas.authn.mfa.triggers.global.global-provider-id=mfa-simple",
+
+    "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",
+    "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/keystore.jwks",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.enabled-by-default=true",
+
+    "--spring.mail.host=localhost",
+    "--spring.mail.port=25000",
+
+    "--cas.authn.mfa.simple.mail.html=false",
+    "--cas.authn.mfa.simple.mail.from=cas@example.com",
+    "--cas.authn.mfa.simple.mail.subject=CAS Token",
+    "--cas.authn.mfa.simple.mail.text=${token}",
+
+    "--cas.interrupt.core.trigger-mode=AFTER_AUTHENTICATION",
+    "--cas.interrupt.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json"
+  ],
+  "initScript": "${PWD}/ci/tests/mail/run-mail-server.sh,${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+}

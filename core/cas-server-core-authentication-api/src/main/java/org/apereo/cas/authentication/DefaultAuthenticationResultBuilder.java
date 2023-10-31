@@ -110,27 +110,12 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
         return res;
     }
 
-    /**
-     * Merge authentication attributes.
-     *
-     * @param authenticationAttributes the authentication attributes
-     * @param merger                   the merger
-     * @param authn                    the authn
-     */
     protected void mergeAuthenticationAttributes(final Map<String, List<Object>> authenticationAttributes,
-                                                 final IAttributeMerger merger,
-                                                 final Authentication authn) {
+                                                 final IAttributeMerger merger, final Authentication authn) {
         authenticationAttributes.putAll(CoreAuthenticationUtils.mergeAttributes(authenticationAttributes, authn.getAttributes(), merger));
         LOGGER.debug("Finalized authentication attributes [{}] for inclusion in this authentication result", authenticationAttributes);
     }
 
-    /**
-     * Merge principal attributes.
-     *
-     * @param principalAttributes the principal attributes
-     * @param merger              the merger
-     * @param authn               the authn
-     */
     protected void mergePrincipalAttributes(final Map<String, List<Object>> principalAttributes,
                                             final IAttributeMerger merger,
                                             final Authentication authn) {

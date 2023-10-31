@@ -1,17 +1,14 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.util.EncodingUtils;
-
+import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.RegExUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.context.servlet.DefaultFlowUrlHandler;
 import org.springframework.webflow.core.collection.AttributeMap;
-
 import jakarta.servlet.http.HttpServletRequest;
-
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -66,7 +63,7 @@ public class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
 
     @Override
     public String createFlowDefinitionUrl(final String flowId, final AttributeMap input, final HttpServletRequest request) {
-        return request.getRequestURI() + (request.getQueryString() != null ? '?' + request.getQueryString() : StringUtils.EMPTY);
+        return HttpRequestUtils.getFullRequestUrl(request);
     }
 
     @Override
