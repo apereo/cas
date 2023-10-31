@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
+import org.apereo.cas.authentication.PrincipalElectionStrategyConflictResolver;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStoreConfigurer;
 import org.apereo.cas.authentication.attribute.DefaultAttributeDefinitionStore;
@@ -112,16 +113,24 @@ public class CasCoreAuthenticationPrincipalConfiguration {
             return CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
         }
 
+        @ConditionalOnMissingBean(name = "defaultPrincipalElectionStrategyConflictResolver")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public PrincipalElectionStrategyConflictResolver defaultPrincipalElectionStrategyConflictResolver(final CasConfigurationProperties casProperties) {
+            return CoreAuthenticationUtils.newPrincipalElectionStrategyConflictResolver(casProperties.getPersonDirectory());
+        }
+
         @ConditionalOnMissingBean(name = "defaultPrincipalElectionStrategyConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PrincipalElectionStrategyConfigurer defaultPrincipalElectionStrategyConfigurer(
+            @Qualifier("defaultPrincipalElectionStrategyConflictResolver")
+            final PrincipalElectionStrategyConflictResolver defaultPrincipalElectionStrategyConflictResolver,
             @Qualifier("principalElectionAttributeMerger") final IAttributeMerger attributeMerger,
             final CasConfigurationProperties casProperties,
             @Qualifier(PrincipalFactory.BEAN_NAME) final PrincipalFactory principalFactory) {
             return chain -> {
-                val conflictResolver = CoreAuthenticationUtils.newPrincipalElectionStrategyConflictResolver(casProperties.getPersonDirectory());
-                val strategy = new DefaultPrincipalElectionStrategy(principalFactory, conflictResolver);
+                val strategy = new DefaultPrincipalElectionStrategy(principalFactory, defaultPrincipalElectionStrategyConflictResolver);
                 strategy.setAttributeMerger(attributeMerger);
                 chain.registerElectionStrategy(strategy);
             };

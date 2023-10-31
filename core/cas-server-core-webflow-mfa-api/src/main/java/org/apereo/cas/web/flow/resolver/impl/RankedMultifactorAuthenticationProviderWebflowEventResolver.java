@@ -10,6 +10,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.SingleSignOnParticipationRequest;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
@@ -66,6 +67,8 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
         final MultifactorAuthenticationProvider provider) {
         val attributeMap = MultifactorAuthenticationUtils.buildEventAttributeMap(authentication.getPrincipal(),
             Optional.ofNullable(service), Optional.ofNullable(registeredService), provider);
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        attributeMap.put("url", HttpRequestUtils.getFullRequestUrl(request));
         LOGGER.trace("Event attribute map for [{}] is [{}]", id, attributeMap);
         val resultEvent = MultifactorAuthenticationUtils.validateEventIdForMatchingTransitionInContext(id, Optional.of(context), attributeMap);
         LOGGER.trace("Finalized event for multifactor provider  [{}] is [{}]", id, resultEvent);
@@ -176,8 +179,10 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
     }
 
     protected Set<Event> resumeFlow(final RequestContext context) {
-        val success = new EventFactorySupport().event(this,
-            CasWebflowConstants.TRANSITION_ID_SUCCESS, new LocalAttributeMap<>());
+        val attributes = new LocalAttributeMap<>();
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        attributes.put("url", HttpRequestUtils.getFullRequestUrl(request));
+        val success = new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_SUCCESS, attributes);
         return CollectionUtils.wrapSet(success);
     }
 }
