@@ -27,6 +27,7 @@ import java.io.Serial;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -47,7 +48,8 @@ public abstract class BaseMultifactorAuthenticationProviderBypassEvaluator imple
 
     private final String id = this.getClass().getSimpleName();
 
-    protected static boolean locateMatchingAttributeValue(final String attrName, final String attrValue,
+    protected static boolean locateMatchingAttributeValue(final String attrName,
+                                                          final Set<String> attrValue,
                                                           final Map<String, List<Object>> attributes,
                                                           final boolean matchIfNoValueProvided) {
         LOGGER.debug("Locating matching attribute [{}] with value [{}] amongst the attribute collection [{}]", attrName, attrValue, attributes);
@@ -61,7 +63,7 @@ public abstract class BaseMultifactorAuthenticationProviderBypassEvaluator imple
             return false;
         }
 
-        if (StringUtils.isBlank(attrValue)) {
+        if (attrValue == null || attrValue.isEmpty()) {
             LOGGER.debug("No attribute value to match is provided; Match result is set to [{}]", matchIfNoValueProvided);
             return matchIfNoValueProvided;
         }
@@ -70,11 +72,9 @@ public abstract class BaseMultifactorAuthenticationProviderBypassEvaluator imple
             .entrySet()
             .stream()
             .filter(e -> {
-                val valuesCol = CollectionUtils.toCollection(e.getValue());
-                LOGGER.debug("Matching attribute [{}] with values [{}] against [{}]", e.getKey(), valuesCol, attrValue);
-                return valuesCol
-                    .stream()
-                    .anyMatch(v -> RegexUtils.find(attrValue, v.toString()));
+                val allValues = CollectionUtils.toCollection(e.getValue());
+                LOGGER.debug("Matching attribute [{}] with values [{}] against [{}]", e.getKey(), allValues, attrValue);
+                return RegexUtils.findFirst(attrValue, allValues).isPresent();
             }).collect(Collectors.toSet());
 
         LOGGER.debug("Matching attribute values remaining are [{}]", values);

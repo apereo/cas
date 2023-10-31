@@ -6,12 +6,10 @@ import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties;
 import org.apereo.cas.services.RegisteredService;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
+import org.springframework.util.StringUtils;
 import jakarta.servlet.http.HttpServletRequest;
-
 import java.io.Serial;
 
 /**
@@ -34,17 +32,11 @@ public class AuthenticationMultifactorAuthenticationProviderBypassEvaluator exte
         this.bypassProperties = bypassProperties;
     }
 
-    /**
-     * Skip bypass and support event based on authentication attributes.
-     *
-     * @param bypass the bypass settings for the provider.
-     * @param authn  the authn
-     * @return true/false
-     */
     protected static boolean locateMatchingAttributeBasedOnAuthenticationAttributes(
         final MultifactorAuthenticationProviderBypassProperties bypass, final Authentication authn) {
         return locateMatchingAttributeValue(bypass.getAuthenticationAttributeName(),
-            bypass.getAuthenticationAttributeValue(), authn.getAttributes(), false);
+            StringUtils.commaDelimitedListToSet(bypass.getAuthenticationAttributeValue()),
+            authn.getAttributes(), false);
     }
 
     @Override
@@ -59,10 +51,9 @@ public class AuthenticationMultifactorAuthenticationProviderBypassEvaluator exte
             LOGGER.debug("Bypass rules for authentication for principal [{}] indicate the request may be ignored", principal.getId());
             return false;
         }
-
         val bypassByAuthnMethod = locateMatchingAttributeValue(
             AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE,
-            bypassProperties.getAuthenticationMethodName(),
+            StringUtils.commaDelimitedListToSet(bypassProperties.getAuthenticationMethodName()),
             authentication.getAttributes(), false
         );
         if (bypassByAuthnMethod) {
@@ -72,7 +63,7 @@ public class AuthenticationMultifactorAuthenticationProviderBypassEvaluator exte
 
         val bypassByHandlerName = locateMatchingAttributeValue(
             AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS,
-            bypassProperties.getAuthenticationHandlerName(),
+            StringUtils.commaDelimitedListToSet(bypassProperties.getAuthenticationHandlerName()),
             authentication.getAttributes(), false
         );
         if (bypassByHandlerName) {

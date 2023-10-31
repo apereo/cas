@@ -53,7 +53,7 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationProvide
                 }
 
                 val bypass = locateMatchingAttributeValue(mfaPolicy.getBypassPrincipalAttributeName(),
-                    mfaPolicy.getBypassPrincipalAttributeValue(),
+                    org.springframework.util.StringUtils.commaDelimitedListToSet(mfaPolicy.getBypassPrincipalAttributeValue()),
                     principal.getAttributes(), true);
                 if (bypass) {
                     LOGGER.debug("Bypass rules for principal [{}] indicate the request may be ignored", principal.getId());
