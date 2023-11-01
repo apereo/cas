@@ -121,3 +121,10 @@ is strongly discouraged.</p></div>
 {% endtab %}
 
 {% endtabs %}
+
+## How Do I Choose?
+
+Changing the `TGT` policy is a matter of organizational policy, and typically one that would control the length of the 
+overall SSO session for the best user experience. Unless you have good reason to do so or a business use case dictates a scenario, 
+the defaults generally are appropriate. Overall, you want to try to keep the length of the SSO session to a minimum to 
+avoid security issues, but not too small to cause user annoyance with repeated logins.

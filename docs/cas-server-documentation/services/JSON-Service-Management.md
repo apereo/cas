@@ -128,10 +128,33 @@ Multiline strings with proper whitespace handling should also be supported:
 
 {% endtabs %}
 
-## Replication
+## Clustering & Replication
 
 If CAS is deployed in a cluster, the service definition files must be kept in sync for all CAS 
 nodes. Please [review this guide](Configuring-Service-Replication.html) to learn more about available options.
+
+You might be wondering: _but, is using the file system with JSON ([or YAML](YAML-Service-Management.html)) files a good solution for CAS deployments?_
+
+Like almost everything else in life, it depends. 
+
+If you have a single CAS server, packaging the JSON files with the CAS web application is easy. 
+You just have to remember (which might be the downside) to redeploy and rebuild CAS every time you add, 
+remove or make changes to any of the files. Your build then becomes immutable which may or may not be a good thing. 
+You may alternatively decide to not package these files with the CAS web application and instead move them outside 
+to a different location, removing the need for rebuilding. You then have to worry about where 
+that location might be, and what permissions it should be given to the process that reads data from it etc, 
+and how are changes to files in that directory tracked and managed by source control.
+
+If you have `N` CAS server nodes in a cluster, you should consider the following:
+
+- If the JSON files are packaged with the CAS web application, you have to rebuild and redeploy CAS `N` times.
+- If the JSON files are outside the CAS web application, you need to make sure `N` CAS servers in the cluster have access to the same shared location, or you may look at replication options [outlined here](Configuring-Service-Replication.html). Managing files in an external location not tied to the CAS build _might_ make it challenging for you to track such changes in source control.
+
+You may alternatively decide to not use the filesystem and instead opt for a proper external _data store_. 
+Then, you would of course remove issues regarding rebuilds and 
+keeping files in sync across CAS nodes because the database must be centralized and shared by all 
+nodes. Instead, you add the extra overhead of managing, updating and maintaining a 
+separate database which generally should remain available as much as CAS itself.
 
 ## Auto Initialization
 
