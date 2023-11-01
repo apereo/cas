@@ -45,14 +45,10 @@ Note that running CAS as a standalone and fully executable web application
 is supported on most Linux and OS X distributions. 
 Other platforms such as Windows may require custom configuration.
 
-### Apache Tomcat
+The following embedded servlet containers are available:
 
-Please see [this guide](Configuring-Servlet-Container-Embedded-Tomcat.html).
-
-### Jetty
-
-Please see [this guide](Configuring-Servlet-Container-Embedded-Jetty.html).
-
-### Undertow
-
-Please see [this guide](Configuring-Servlet-Container-Embedded-Undertow.html).
+| Option        | Reference                                                                      |
+|---------------|--------------------------------------------------------------------------------|
+| Apache Tomcat | Please see [this guide](Configuring-Servlet-Container-Embedded-Tomcat.html).   |
+| Jetty         | Please see [this guide](Configuring-Servlet-Container-Embedded-Jetty.html).    |
+| Undertow      | Please see [this guide](Configuring-Servlet-Container-Embedded-Undertow.html). |

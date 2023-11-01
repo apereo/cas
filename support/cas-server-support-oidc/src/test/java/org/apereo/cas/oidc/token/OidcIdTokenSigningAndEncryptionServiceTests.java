@@ -3,6 +3,7 @@ package org.apereo.cas.oidc.token;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.oidc.issuer.OidcDefaultIssuerService;
+import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -61,6 +62,17 @@ class OidcIdTokenSigningAndEncryptionServiceTests {
         void verifyOperation() throws Throwable {
             val claims = getClaims();
             val result = oidcTokenSigningAndEncryptionService.encode(getOidcRegisteredService(), claims);
+            assertNotNull(result);
+        }
+
+        @Test
+        void verifyEncryptionOptional() throws Throwable {
+            val claims = getClaims();
+            val service = getOidcRegisteredService();
+            service.setJwks(null);
+            service.setEncryptIdToken(true);
+            service.setIdTokenEncryptionOptional(true);
+            val result = oidcTokenSigningAndEncryptionService.encode(service, claims);
             assertNotNull(result);
         }
 
