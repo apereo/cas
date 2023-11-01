@@ -3,7 +3,9 @@ package org.apereo.cas.util;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.experimental.UtilityClass;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import java.net.URL;
+import java.time.Clock;
 import java.time.ZonedDateTime;
 import java.util.jar.Manifest;
 
@@ -58,7 +60,8 @@ public class CasVersion {
             val manifestPath = classPath.substring(0, classPath.lastIndexOf('!') + 1) + "/META-INF/MANIFEST.MF";
             val manifest = new Manifest(new URL(manifestPath).openStream());
             val attributes = manifest.getMainAttributes();
-            return attributes.getValue("Implementation-Date");
+            return StringUtils.defaultIfBlank(attributes.getValue("Implementation-Date"),
+                ZonedDateTime.now(Clock.systemUTC()).toString());
         });
     }
 }

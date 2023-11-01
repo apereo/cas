@@ -1,10 +1,13 @@
 package org.apereo.cas.audit.spi.resource;
 
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.RegisteredServiceAwareAuthenticationTransaction;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.core.audit.AuditEngineProperties;
 import org.apereo.cas.util.AopUtils;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -20,7 +23,8 @@ import org.aspectj.lang.JoinPoint;
  */
 @RequiredArgsConstructor
 public class CredentialsAsFirstParameterResourceResolver implements AuditResourceResolver {
-    private final AuditEngineProperties properties;
+    protected final AuthenticationServiceSelectionPlan serviceSelectionStrategy;
+    protected final AuditEngineProperties properties;
 
     @Override
     public String[] resolveFrom(final JoinPoint joinPoint, final Object retval) {
@@ -32,12 +36,6 @@ public class CredentialsAsFirstParameterResourceResolver implements AuditResourc
         return toResources(AopUtils.unWrapJoinPoint(joinPoint).getArgs());
     }
 
-    /**
-     * Turn the arguments into a list.
-     *
-     * @param args the args
-     * @return the string[]
-     */
     private String[] toResources(final Object[] args) {
         val object = args[0];
         if (object instanceof final AuthenticationTransaction transaction) {
@@ -52,7 +50,7 @@ public class CredentialsAsFirstParameterResourceResolver implements AuditResourc
             FunctionUtils.doIfNotNull(rsat.getRegisteredService(), registeredService -> {
                 payload.put("registeredServiceId", registeredService.getServiceId());
                 payload.put("registeredServiceName", registeredService.getName());
-                payload.put("service", transaction.getService().getId());
+                payload.put("service", getServiceId(transaction.getService()));
             });
         }
         val auditFormat = AuditFormats.valueOf(properties.getAuditFormat().name());
@@ -62,5 +60,10 @@ public class CredentialsAsFirstParameterResourceResolver implements AuditResourc
     protected String toResourceString(final Object credential) {
         val auditFormat = AuditFormats.valueOf(properties.getAuditFormat().name());
         return auditFormat.serialize(credential);
+    }
+
+    private String getServiceId(final Service service) {
+        val serviceId = FunctionUtils.doUnchecked(() -> serviceSelectionStrategy.resolveService(service).getId());
+        return DigestUtils.abbreviate(serviceId, properties.getAbbreviationLength());
     }
 }

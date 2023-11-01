@@ -1,9 +1,8 @@
 package org.apereo.cas.audit.spi.principal;
 
 import org.apereo.cas.audit.AuditableContext;
+import org.apereo.cas.audit.spi.BaseAuditConfigurationTests;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.config.CasCoreAuditConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.slo.SingleLogoutExecutionRequest;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -22,10 +21,8 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import java.util.UUID;
 import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
@@ -39,12 +36,7 @@ import static org.mockito.Mockito.*;
  * @since 7.0.0
  */
 @Tag("Audits")
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
-    CasCoreUtilConfiguration.class,
-    CasCoreAuditConfiguration.class
-})
+@SpringBootTest(classes = BaseAuditConfigurationTests.SharedTestConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class DefaultAuditPrincipalResolverTests {
     @Autowired

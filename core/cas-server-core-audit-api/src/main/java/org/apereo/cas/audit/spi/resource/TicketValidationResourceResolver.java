@@ -1,14 +1,13 @@
 package org.apereo.cas.audit.spi.resource;
 
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.configuration.model.core.audit.AuditEngineProperties;
 import org.apereo.cas.util.AopUtils;
 import org.apereo.cas.validation.Assertion;
-
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.aspectj.lang.JoinPoint;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,8 +20,9 @@ import java.util.Map;
  */
 public class TicketValidationResourceResolver extends TicketAsFirstParameterResourceResolver {
 
-    public TicketValidationResourceResolver(final AuditEngineProperties properties) {
-        super(properties);
+    public TicketValidationResourceResolver(final AuthenticationServiceSelectionPlan serviceSelectionStrategy,
+                                            final AuditEngineProperties properties) {
+        super(serviceSelectionStrategy, properties);
     }
 
     @Override
