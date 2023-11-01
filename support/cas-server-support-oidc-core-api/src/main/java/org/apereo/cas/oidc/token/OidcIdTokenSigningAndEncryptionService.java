@@ -98,14 +98,17 @@ public class OidcIdTokenSigningAndEncryptionService extends BaseOidcJsonWebKeyTo
 
     @Override
     protected String encryptToken(final OAuthRegisteredService service, final String innerJwt) {
-        if (service instanceof final OidcRegisteredService svc) {
-            val jsonWebKey = getJsonWebKeyForEncryption(svc);
+        if (service instanceof final OidcRegisteredService registeredService) {
+            val jsonWebKey = getJsonWebKeyForEncryption(registeredService);
+            if (jsonWebKey == null && registeredService.isIdTokenEncryptionOptional()) {
+                return innerJwt;
+            }
 
             return JsonWebTokenEncryptor.builder()
                 .key(jsonWebKey.getPublicKey())
                 .keyId(jsonWebKey.getKeyId())
-                .algorithm(svc.getIdTokenEncryptionAlg())
-                .encryptionMethod(svc.getIdTokenEncryptionEncoding())
+                .algorithm(registeredService.getIdTokenEncryptionAlg())
+                .encryptionMethod(registeredService.getIdTokenEncryptionEncoding())
                 .allowedAlgorithms(discoverySettings.getIdTokenEncryptionAlgValuesSupported())
                 .allowedContentEncryptionAlgorithms(discoverySettings.getIdTokenEncryptionEncodingValuesSupported())
                 .build()
