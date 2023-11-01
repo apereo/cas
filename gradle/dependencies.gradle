@@ -7,6 +7,11 @@ ext.libraries = [
                     exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
                 }
         ],
+        slack                      : [
+                dependencies.create("com.slack.api:slack-api-client:$slackClientVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                }
+        ],
         googlecloudpubsub          : [
                 dependencies.create("com.google.cloud:spring-cloud-gcp-starter-pubsub:$googleCloudSdkVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")

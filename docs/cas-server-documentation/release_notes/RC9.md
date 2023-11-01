@@ -98,6 +98,7 @@ if support for a method is not defined and declared in OpenID discovery metadata
 - Internal refactoring of the [Redis Ticket Registry](../ticketing/Redis-Ticket-Registry.html) to support custom key construction and patterns for ticket objects and other entries.
 - Incremental improvements to [authentication webflow interrupts](../webflow/Webflow-Customization-Interrupt.html) to handle interrupt tracking better when payloads change dynamically.
 - Client TLS settings are now supported for [OpenID Connect](../authentication/OIDC-Authentication-AccessToken-AuthMethods.html) relying parties and applications. This capability is also extended to [Dynamic Client Registration](../authentication/OIDC-Authentication-Dynamic-Registration.html) requests.
+- CAS notifications can now be [sent to Slack](../notifications/Notifications-Configuration-Slack.html) too.
 
 ## Library Upgrades
   
