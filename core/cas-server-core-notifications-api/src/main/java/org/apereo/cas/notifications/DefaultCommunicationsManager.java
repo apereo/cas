@@ -56,7 +56,8 @@ public class DefaultCommunicationsManager implements CommunicationsManager {
 
     @Override
     public boolean notify(final Principal principal, final String title, final String body) {
-        return notificationSender.notify(principal, Map.of("title", title, "message", body));
+        return notificationSender.notify(principal, Map.of(NotificationSender.ATTRIBUTE_NOTIFICATION_TITLE, title,
+            NotificationSender.ATTRIBUTE_NOTIFICATION_MESSAGE, body));
     }
 
     @Override
