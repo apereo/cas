@@ -2,6 +2,8 @@ package org.apereo.cas.audit.spi;
 
 import org.apereo.cas.audit.spi.resource.TicketValidationResourceResolver;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
+import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.validation.Assertion;
 
 import lombok.val;
@@ -27,7 +29,8 @@ public class TicketValidationResourceResolverTests {
 
     @BeforeEach
     public void setup() {
-        resolver = new TicketValidationResourceResolver();
+        resolver = new TicketValidationResourceResolver(
+            new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
     }
 
     @Test
