@@ -1,6 +1,8 @@
 package org.apereo.cas.pm;
 
 import org.apereo.cas.config.CasCoreAuditConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
+import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
@@ -32,6 +34,8 @@ import static org.junit.jupiter.api.Assertions.*;
     WebMvcAutoConfiguration.class,
     PasswordManagementConfiguration.class,
     MailSenderAutoConfiguration.class,
+    CasCoreConfiguration.class,
+    CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreNotificationsConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,

@@ -3,7 +3,6 @@ package org.apereo.cas.oidc.token;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.oidc.issuer.OidcDefaultIssuerService;
-import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
