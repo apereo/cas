@@ -66,6 +66,11 @@ public class AccountManagementRegistrationCoreProperties implements Serializable
     private String passwordPolicyPattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[$@$!%*?&])[A-Za-z\\d$@$!%*?&]{8,10}";
 
     /**
+     * The minimum strength required for the password (from 0=Worst to 4=Strong).
+     */
+    private int passwordMinimumStrength = 0;
+
+    /**
      * Whether account registration should present security
      * questions and how many, to complete the registration process.
      */

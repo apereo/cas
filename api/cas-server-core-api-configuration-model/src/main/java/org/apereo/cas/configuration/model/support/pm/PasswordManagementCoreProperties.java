@@ -59,4 +59,9 @@ public class PasswordManagementCoreProperties implements Serializable {
      * The password length used by CAS when suggesting generated passwords.
      */
     private long passwordPolicyPasswordLength = 10;
+
+    /**
+     * The minimum strength required for the password (from 0=Worst to 4=Strong).
+     */
+    private int passwordMinimumStrength = 0;
 }

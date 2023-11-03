@@ -1744,6 +1744,17 @@ public class WebUtils {
     }
 
     /**
+     * Put password minimum strength.
+     *
+     * @param requestContext the request context
+     * @param minimumStrength the password minimum strength
+     */
+    public static void putPasswordMinimumStrength(final RequestContext requestContext, final int minimumStrength) {
+        val flowScope = requestContext.getFlowScope();
+        flowScope.put("passwordMinimumStrength", minimumStrength);
+    }
+
+    /**
      * Is interrupt authentication flow finalized.
      *
      * @param requestContext the request context
