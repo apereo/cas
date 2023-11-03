@@ -2,6 +2,8 @@ package org.apereo.cas.audit;
 
 import org.apereo.cas.audit.spi.BaseAuditConfigurationTests;
 import org.apereo.cas.config.CasCoreAuditConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
+import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasHibernateJpaConfiguration;
 import org.apereo.cas.config.CasJdbcAuditConfiguration;
@@ -38,6 +40,8 @@ import java.util.UUID;
         CasJdbcAuditConfiguration.class,
         CasHibernateJpaConfiguration.class,
         CasCoreUtilConfiguration.class,
+        CasCoreConfiguration.class,
+        CasCoreAuthenticationPrincipalConfiguration.class,
         AopAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         RefreshAutoConfiguration.class

@@ -2,6 +2,8 @@ package org.apereo.cas.audit;
 
 import org.apereo.cas.audit.spi.BaseAuditConfigurationTests;
 import org.apereo.cas.config.CasCoreAuditConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
+import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasSupportDynamoDbAuditConfiguration;
@@ -26,6 +28,8 @@ import software.amazon.awssdk.core.SdkSystemSetting;
  */
 @SpringBootTest(classes = {
     CasCoreAuditConfiguration.class,
+    CasCoreConfiguration.class,
+    CasCoreAuthenticationPrincipalConfiguration.class,
     CasSupportDynamoDbAuditConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
