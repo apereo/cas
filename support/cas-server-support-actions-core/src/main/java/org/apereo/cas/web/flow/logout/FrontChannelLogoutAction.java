@@ -42,7 +42,6 @@ public class FrontChannelLogoutAction extends AbstractLogoutAction {
 
     @Override
     protected Event doInternalExecute(final RequestContext context) {
-
         val logoutRequests = WebUtils.getLogoutRequests(context);
         if (logoutRequests == null || logoutRequests.isEmpty()) {
             return getFinishLogoutEvent();
@@ -56,25 +55,26 @@ public class FrontChannelLogoutAction extends AbstractLogoutAction {
         val logoutUrls = new HashMap<SingleLogoutRequestContext, LogoutHttpMessage>();
         logoutRequests
             .stream()
-            .filter(r -> r.getStatus() == LogoutRequestStatus.NOT_ATTEMPTED)
-            .forEach(r -> {
-                LOGGER.debug("Using logout url [{}] for front-channel logout requests", r.getLogoutUrl().toExternalForm());
+            .filter(url -> url.getStatus() == LogoutRequestStatus.NOT_ATTEMPTED)
+            .forEach(url -> {
+                LOGGER.debug("Using logout url [{}] for front-channel logout requests", url.getLogoutUrl().toExternalForm());
                 logoutExecutionPlan.getSingleLogoutServiceMessageHandlers()
                     .stream()
                     .sorted(Comparator.comparing(SingleLogoutServiceMessageHandler::getOrder))
-                    .filter(handler -> handler.supports(r.getExecutionRequest(), r.getService()))
-                    .map(Unchecked.function(handler -> handler.createSingleLogoutMessage(r)))
+                    .filter(handler -> handler.supports(url.getExecutionRequest(), url.getService()))
+                    .map(Unchecked.function(handler -> handler.createSingleLogoutMessage(url)))
                     .forEach(logoutMessage -> {
-                        LOGGER.debug("Front-channel logout message to send to [{}] is [{}]", r.getLogoutUrl(), logoutMessage);
-                        val msg = new LogoutHttpMessage(r.getLogoutUrl(), logoutMessage.getPayload(), true);
-                        logoutUrls.put(r, msg);
-                        r.setStatus(LogoutRequestStatus.SUCCESS);
-                        r.getService().setLoggedOutAlready(true);
+                        LOGGER.debug("Front-channel logout message to send to [{}] is [{}]", url.getLogoutUrl(), logoutMessage);
+                        val msg = new LogoutHttpMessage(url.getLogoutUrl(), logoutMessage.getPayload(), true);
+                        logoutUrls.put(url, msg);
+                        url.setStatus(LogoutRequestStatus.SUCCESS);
+                        url.getService().setLoggedOutAlready(true);
                     });
             });
 
         if (!logoutUrls.isEmpty()) {
             WebUtils.putLogoutUrls(context, logoutUrls);
+            context.getFlowScope().put("logoutPropagationType", casProperties.getSlo().getLogoutPropagationType());
             return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_PROPAGATE);
         }
 

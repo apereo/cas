@@ -33,15 +33,14 @@
         <div class="alert alert-success">
             <h2 th:utext="#{screen.logout.header}">Logout successful</h2>
             <p id="logoutMessage" th:utext="#{screen.logout.fc.success}">You have successfully logged out of the Central Authentication
-                Service. Given single logout is enabled with CAS, \
-                the following list of applications are <strong> only notified</strong> to log you out and destroy your
-                user session. Remember that this \
-                is just a notification, not a guarantee. It is up the application itself to honor these notifications
-                and properly take action to log you \
-                out.</p>
+                Service. Given single logout is enabled with CAS, the following list of applications are <strong> only notified</strong> to log you out and destroy your
+                user session. Remember that this is just a notification, not a guarantee. It is up the application itself to honor these notifications
+                and properly take action to log you out.</p>
             <ul style="list-style-type: none;">
                 <li th:each="entry,iterStat : ${logoutUrls}">
-                    <script type="text/javascript" th:inline="javascript">
+
+                    <script type="text/javascript" th:inline="javascript"
+                            th:if="${#strings.equalsIgnoreCase(logoutPropagationType, 'AJAX')}">
                         /*<![CDATA[*/
                         $.ajax({
                             url: [[${@casThymeleafTemplatesDirector.getUrlExternalForm(entry.key.logoutUrl)}]],
@@ -50,12 +49,12 @@
                             contentType: [[${entry.value.contentType}]]
                             , data: [[${entry.value.message}]]
                             , success: data => {
-                                var index = [[${iterStat.index}]];
+                                const index = [[${iterStat.index}]];
                                 handleCallback(index, 200);
                             },
                             error: (err, textStatus, errorThrown) => {
-                                var index = [[${iterStat.index}]];
-                                console.log(`${err.status} ${textStatus} ${errorThrown}`)
+                                const index = [[${iterStat.index}]];
+                                console.log(`${err.status} ${textStatus} ${errorThrown}`);
                                 handleCallback(index, 500);
                             }
                         });
@@ -67,6 +66,10 @@
                            th:id="${'service'+iterStat.index}" title="Logout request pending..."> </i>
                         <kbd th:text="${entry.key.service.id}">Service id</kbd>
                     </p>
+
+                    <iframe width="1px" height="1px" style="display: none"
+                            th:src="${@casThymeleafTemplatesDirector.getUrlExternalForm(entry.key.logoutUrl) + '?' + entry.value.message}"
+                            th:if="${#strings.equalsIgnoreCase(logoutPropagationType, 'IFRAME')}"/>
                 </li>
             </ul>
 
