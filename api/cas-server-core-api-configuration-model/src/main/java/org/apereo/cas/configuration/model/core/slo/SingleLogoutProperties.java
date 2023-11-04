@@ -10,7 +10,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * This is {@link SingleLogOutProperties}.
+ * This is {@link SingleLogoutProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
@@ -19,7 +19,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class SingleLogOutProperties implements Serializable {
+public class SingleLogoutProperties implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 3676710533477055700L;
@@ -34,4 +34,28 @@ public class SingleLogOutProperties implements Serializable {
      * Whether SLO should be entirely disabled globally for the CAS deployment.
      */
     private boolean disabled;
+
+    /**
+     * Logout propagation type determines how SLO requests will be sent to applications.
+     * This is specially applicable when SLO requests are processed using a front-channel mechanism.
+     */
+    private LogoutPropagationTypes logoutPropagationType = LogoutPropagationTypes.AJAX;
+
+    /**
+     * The Logout propagation types.
+     */
+    public enum LogoutPropagationTypes {
+        /**
+         * This is the default propagation mechanism where logout requests
+         * are sent to applications using a AJAX call via {@code jsonp}.
+         */
+        AJAX,
+        /**
+         * The propagation mechanism will submit the logout request
+         * to the logout URL that is loaded inside an iframe. This is typically
+         * useful if the application receiving the logout request needs to generate HTML
+         * to process the logout request notification, specially if the application is a SPA.
+         */
+        IFRAME
+    }
 }
