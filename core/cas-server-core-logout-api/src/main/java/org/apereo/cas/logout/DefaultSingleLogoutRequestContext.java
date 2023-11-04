@@ -35,14 +35,8 @@ public class DefaultSingleLogoutRequestContext implements SingleLogoutRequestCon
     @Serial
     private static final long serialVersionUID = -6411421298859045022L;
 
-    /**
-     * The service ticket id.
-     */
     private final String ticketId;
 
-    /**
-     * The service.
-     */
     private final WebApplicationService service;
 
     private final URL logoutUrl;

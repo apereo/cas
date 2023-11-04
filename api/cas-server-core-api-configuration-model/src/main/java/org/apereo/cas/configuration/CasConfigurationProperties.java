@@ -16,7 +16,7 @@ import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
 import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
 import org.apereo.cas.configuration.model.core.rest.RestProperties;
 import org.apereo.cas.configuration.model.core.services.ServiceRegistryProperties;
-import org.apereo.cas.configuration.model.core.slo.SingleLogOutProperties;
+import org.apereo.cas.configuration.model.core.slo.SingleLogoutProperties;
 import org.apereo.cas.configuration.model.core.sso.SingleSignOnProperties;
 import org.apereo.cas.configuration.model.core.util.TicketProperties;
 import org.apereo.cas.configuration.model.core.web.LocaleProperties;
@@ -195,7 +195,7 @@ public class CasConfigurationProperties implements Serializable {
      * SLO functionality.
      */
     @NestedConfigurationProperty
-    private SingleLogOutProperties slo = new SingleLogOutProperties();
+    private SingleLogoutProperties slo = new SingleLogoutProperties();
 
     /**
      * SSO functionality.
