@@ -43,8 +43,7 @@ import software.amazon.awssdk.core.SdkSystemSetting;
     CasCoreWebConfiguration.class,
     CasCoreNotificationsConfiguration.class,
     RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
-    CasCoreWebConfiguration.class
+    WebMvcAutoConfiguration.class
 },
     properties = {
         "cas.audit.dynamo-db.endpoint=http://localhost:8000",
