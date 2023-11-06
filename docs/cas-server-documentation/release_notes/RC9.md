@@ -123,7 +123,9 @@ if support for a method is not defined and declared in OpenID discovery metadata
 - Commons IO
 - Swagger
 - jsoup
+- HikariCP
 - CosmosDB
+- JUnit
 - Nimbus OIDC
 - Spring Shell
 - Azure Spring Cloud

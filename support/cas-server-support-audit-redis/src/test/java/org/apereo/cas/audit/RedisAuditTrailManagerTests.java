@@ -26,6 +26,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
  */
 @SpringBootTest(classes = {
     CasCoreAuditConfiguration.class,
+    CasCoreConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasSupportRedisAuditConfiguration.class,

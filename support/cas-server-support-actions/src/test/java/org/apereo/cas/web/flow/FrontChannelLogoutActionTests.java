@@ -61,7 +61,6 @@ class FrontChannelLogoutActionTests {
             WebUtils.putLogoutRequests(context, List.of(sloReq));
             val event = frontChannelLogoutAction.execute(context);
             assertEquals(CasWebflowConstants.TRANSITION_ID_FINISH, event.getId());
-            assertTrue(context.getFlowScope().contains("logoutPropagationType"));
         }
     }
 
@@ -119,6 +118,7 @@ class FrontChannelLogoutActionTests {
             WebUtils.putLogoutRequests(context, List.of(sloReq));
             val event = frontChannelLogoutAction.execute(context);
             assertEquals(CasWebflowConstants.TRANSITION_ID_PROPAGATE, event.getId());
+            assertTrue(context.getFlowScope().contains("logoutPropagationType"));
         }
 
         @Test
