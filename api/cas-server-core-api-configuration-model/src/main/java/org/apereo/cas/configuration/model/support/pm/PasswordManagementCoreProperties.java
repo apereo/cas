@@ -45,9 +45,4 @@ public class PasswordManagementCoreProperties implements Serializable {
      */
     @RequiredProperty
     private String passwordPolicyPattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[$@$!%*?&])[A-Za-z\\d$@$!%*?&]{8,10}";
-
-    /**
-     * The minimum strength required for the password (from 0=Worst to 4=Strong).
-     */
-    private int passwordMinimumStrength = 0;
 }
