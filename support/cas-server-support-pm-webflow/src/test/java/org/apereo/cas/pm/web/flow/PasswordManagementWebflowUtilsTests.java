@@ -25,7 +25,6 @@ class PasswordManagementWebflowUtilsTests {
         val context = MockRequestContext.create();
         PasswordManagementWebflowUtils.putPasswordResetSecurityQuestions(context, List.of("Q1", "Q2"));
         WebUtils.putPasswordPolicyPattern(context, ".*");
-        WebUtils.putPasswordMinimumStrength(context, 0);
         assertFalse(PasswordManagementWebflowUtils.getPasswordResetQuestions(context, List.class).isEmpty());
     }
 
