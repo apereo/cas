@@ -104,14 +104,14 @@ public abstract class BaseLdapAuthenticationHandlerTests {
     @Test
     void verifyAuthenticateSuccess() throws Throwable {
         assertNotEquals(0, ldapAuthenticationHandlers.size());
-        ldapAuthenticationHandlers.toList().forEach(Unchecked.consumer(h -> {
+        for (val handler : ldapAuthenticationHandlers.toList()) {
             val credential = new UsernamePasswordCredential(getUsername(), getSuccessPassword());
-            val result = h.authenticate(credential, mock(Service.class));
+            val result = handler.authenticate(credential, mock(Service.class));
             assertNotNull(result.getPrincipal());
             assertEquals(credential.getUsername(), result.getPrincipal().getId());
             val attributes = result.getPrincipal().getAttributes();
             Arrays.stream(getPrincipalAttributes()).forEach(s -> assertTrue(attributes.containsKey(s)));
-        }));
+        }
     }
 
     String[] getPrincipalAttributes() {

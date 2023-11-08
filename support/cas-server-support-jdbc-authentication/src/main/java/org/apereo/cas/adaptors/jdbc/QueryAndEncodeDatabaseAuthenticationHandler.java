@@ -99,16 +99,15 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
             iterations = Integer.parseInt(longAsStr);
         }
 
-        if (!values.containsKey(properties.getSaltFieldName())) {
-            throw new IllegalArgumentException("Specified field name for salt does not exist in the results");
-        }
+        val dynaSalt = values.containsKey(properties.getSaltFieldName())
+            ? values.get(properties.getSaltFieldName()).toString().getBytes(StandardCharsets.UTF_8)
+            : ArrayUtils.EMPTY_BYTE_ARRAY;
 
-        val dynaSalt = values.get(properties.getSaltFieldName()).toString();
         val staticSalt = FunctionUtils.doIfNotBlank(properties.getStaticSalt(),
             () -> properties.getStaticSalt().getBytes(StandardCharsets.UTF_8),
             () -> ArrayUtils.EMPTY_BYTE_ARRAY);
 
         return DigestUtils.rawDigest(properties.getAlgorithmName(), staticSalt,
-            dynaSalt.getBytes(StandardCharsets.UTF_8), encodedPassword, iterations);
+            dynaSalt, encodedPassword, iterations);
     }
 }
