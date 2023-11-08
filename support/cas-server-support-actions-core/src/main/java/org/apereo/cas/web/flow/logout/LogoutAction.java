@@ -39,7 +39,6 @@ public class LogoutAction extends AbstractLogoutAction {
 
     @Override
     protected Event doInternalExecute(final RequestContext context) {
-
         val logoutRequests = WebUtils.getLogoutRequests(context);
         val needFrontSlo = FunctionUtils.doIf(logoutRequests != null,
                 () -> Objects.requireNonNull(logoutRequests)
