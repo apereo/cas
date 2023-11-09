@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.pac4j.oidc;
 
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jIdentifiableClientProperties;
 import org.apereo.cas.configuration.support.DurationCapable;
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -57,6 +58,7 @@ public abstract class BasePac4jOidcClientProperties extends Pac4jIdentifiableCli
     /**
      * Requested scope(s).
      */
+    @ExpressionLanguageCapable
     private String scope;
 
     /**
