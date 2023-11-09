@@ -82,4 +82,6 @@ class OidcRegisteredServiceTests {
         val serviceRead = MAPPER.readValue(JSON_FILE, OidcRegisteredService.class);
         assertEquals(serviceWritten, serviceRead);
     }
+
+
 }

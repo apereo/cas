@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.token;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
@@ -40,6 +41,8 @@ public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends
     protected final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> serviceJsonWebKeystoreCache;
 
     protected final OidcIssuerService issuerService;
+
+    protected final CasConfigurationProperties casProperties;
 
     @Override
     public String encode(final OAuthRegisteredService registeredService, final JwtClaims claims) {

@@ -39,6 +39,7 @@ public class OidcRegisteredService extends OAuthRegisteredService {
     @ExpressionLanguageCapable
     private String jwks;
 
+    @JacksonInject("jwksKeyId")
     private String jwksKeyId;
 
     @DurationCapable
@@ -53,10 +54,13 @@ public class OidcRegisteredService extends OAuthRegisteredService {
     @JacksonInject("idTokenEncryptionOptional")
     private boolean idTokenEncryptionOptional;
 
+    @JacksonInject("idTokenEncryptionAlg")
     private String idTokenEncryptionAlg;
 
+    @JacksonInject("idTokenSigningAlg")
     private String idTokenSigningAlg;
 
+    @JacksonInject("userInfoSigningAlg")
     private String userInfoSigningAlg;
 
     private String userInfoEncryptedResponseAlg;

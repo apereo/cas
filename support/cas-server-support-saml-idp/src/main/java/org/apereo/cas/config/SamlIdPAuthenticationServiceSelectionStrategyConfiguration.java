@@ -9,7 +9,6 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.authentication.SamlIdPServiceFactory;
 import org.apereo.cas.support.saml.services.SamlIdPEntityIdAuthenticationServiceSelectionStrategy;
-import org.apereo.cas.support.saml.services.SamlRegisteredServiceSerializationCustomizer;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperCustomizer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -42,7 +41,8 @@ public class SamlIdPAuthenticationServiceSelectionStrategyConfiguration {
         @ConditionalOnMissingBean(name = "samlRegisteredServiceSerializationCustomizer")
         public JacksonObjectMapperCustomizer samlRegisteredServiceSerializationCustomizer(
             final CasConfigurationProperties casProperties) {
-            return new SamlRegisteredServiceSerializationCustomizer(casProperties);
+            return JacksonObjectMapperCustomizer.mappedInjectableValues(
+                casProperties.getAuthn().getSamlIdp().getServices().getDefaults());
         }
     }
 
