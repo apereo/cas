@@ -1,7 +1,8 @@
 package org.apereo.cas.logout;
 
 import org.springframework.core.Ordered;
-import org.springframework.webflow.execution.RequestContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link LogoutRedirectionStrategy}.
@@ -9,6 +10,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
+@FunctionalInterface
 public interface LogoutRedirectionStrategy extends Ordered {
     /**
      * Default order value of th redirection strategy.
@@ -23,17 +25,23 @@ public interface LogoutRedirectionStrategy extends Ordered {
     /**
      * Whether this strategy supports the given context.
      *
-     * @param context the context
-     * @return true/false
+     * @param request  the request
+     * @param response the response
+     * @return true /false
      */
-    boolean supports(RequestContext context);
+    default boolean supports(final HttpServletRequest request, final HttpServletResponse response) {
+        return true;
+    }
 
     /**
      * Handle redirects.
      *
-     * @param context the context
+     * @param request  the request
+     * @param response the response
+     * @return the logout redirection response
+     * @throws Exception the exception
      */
-    void handle(RequestContext context);
+    LogoutRedirectionResponse handle(HttpServletRequest request, HttpServletResponse response) throws Exception;
 
     /**
      * Gets name.

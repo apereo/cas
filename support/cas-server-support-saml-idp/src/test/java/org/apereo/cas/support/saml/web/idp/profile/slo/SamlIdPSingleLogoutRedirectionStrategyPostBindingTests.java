@@ -6,7 +6,6 @@ import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -16,18 +15,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.webflow.context.ExternalContextHolder;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.execution.RequestContextHolder;
-import org.springframework.webflow.test.MockRequestContext;
-
 import java.nio.charset.StandardCharsets;
 import java.time.Clock;
 import java.time.ZonedDateTime;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -53,7 +45,6 @@ class SamlIdPSingleLogoutRedirectionStrategyPostBindingTests extends BaseSamlIdP
 
     @Test
     void verifyOperationForPostBinding() throws Throwable {
-        val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, "CasRelayState");
         val registeredService = getSamlRegisteredServiceFor(false, false,
@@ -73,16 +64,13 @@ class SamlIdPSingleLogoutRedirectionStrategyPostBindingTests extends BaseSamlIdP
         }
 
         val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
 
-        assertTrue(samlIdPSingleLogoutRedirectionStrategy.supports(context));
+        assertTrue(samlIdPSingleLogoutRedirectionStrategy.supports(request, response));
         assertNotNull(samlIdPSingleLogoutRedirectionStrategy.getName());
 
-        samlIdPSingleLogoutRedirectionStrategy.handle(context);
+        val logoutResponse = samlIdPSingleLogoutRedirectionStrategy.handle(request, response);
         assertNull(WebUtils.getLogoutRedirectUrl(request, String.class));
-        assertNotNull(WebUtils.getLogoutPostUrl(context));
-        assertNotNull(WebUtils.getLogoutPostData(context));
+        assertTrue(logoutResponse.getLogoutRedirectUrl().isPresent());
+        assertTrue(logoutResponse.getService().isPresent());
     }
 }
