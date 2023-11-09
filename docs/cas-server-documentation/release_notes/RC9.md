@@ -128,6 +128,7 @@ if support for a method is not defined and declared in OpenID discovery metadata
 - JUnit
 - Nimbus OIDC
 - Spring Shell
+- MariaDb
 - Azure Spring Cloud
 - MySQL Driver
 - MSSQL Driver
