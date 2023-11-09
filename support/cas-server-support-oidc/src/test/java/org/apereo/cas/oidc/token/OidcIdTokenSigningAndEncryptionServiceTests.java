@@ -1,8 +1,6 @@
 package org.apereo.cas.oidc.token;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
-import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
-import org.apereo.cas.oidc.issuer.OidcDefaultIssuerService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -12,7 +10,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 import java.util.Optional;
-import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -144,23 +141,21 @@ class OidcIdTokenSigningAndEncryptionServiceTests {
             oidcRegisteredService.setIdTokenEncryptionAlg(AlgorithmIdentifiers.NONE);
             assertThrows(IllegalArgumentException.class, () -> oidcTokenSigningAndEncryptionService.encode(oidcRegisteredService, claims));
         }
+    }
 
+    @Nested
+    @TestPropertySource(properties = {
+        "cas.authn.oidc.discovery.id-token-signing-alg-values-supported=none",
+        "cas.authn.oidc.discovery.id-token-encryption-encoding-values-supported=none"
+    })
+    class NoneTests extends AbstractOidcTests {
         @Test
         void verifyNoneSupported() throws Throwable {
-            val discovery = new OidcServerDiscoverySettings(casProperties.getAuthn().getOidc().getCore().getIssuer());
-            discovery.setIdTokenSigningAlgValuesSupported(Set.of(AlgorithmIdentifiers.NONE));
-            discovery.setIdTokenEncryptionAlgValuesSupported(Set.of(AlgorithmIdentifiers.NONE));
-            val service = new OidcIdTokenSigningAndEncryptionService(oidcDefaultJsonWebKeystoreCache,
-                oidcServiceJsonWebKeystoreCache,
-                new OidcDefaultIssuerService(casProperties.getAuthn().getOidc()),
-                discovery);
-
             val claims = getClaims();
             val oidcRegisteredService = getOidcRegisteredService();
             oidcRegisteredService.setIdTokenSigningAlg(AlgorithmIdentifiers.NONE);
             oidcRegisteredService.setIdTokenEncryptionAlg(AlgorithmIdentifiers.NONE);
-
-            val result = service.encode(oidcRegisteredService, claims);
+            val result = oidcTokenSigningAndEncryptionService.encode(oidcRegisteredService, claims);
             assertNotNull(result);
         }
     }

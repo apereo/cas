@@ -109,6 +109,7 @@ import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
+import org.apereo.cas.util.serialization.JacksonObjectMapperCustomizer;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
@@ -170,6 +171,15 @@ public class OidcConfiguration {
     @Configuration(value = "OidcServicesConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class OidcServicesConfiguration {
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "oidcRegisteredServiceSerializationCustomizer")
+        public JacksonObjectMapperCustomizer oidcRegisteredServiceSerializationCustomizer(
+            final CasConfigurationProperties casProperties) {
+            return JacksonObjectMapperCustomizer.mappedInjectableValues(
+                casProperties.getAuthn().getOidc().getServices().getDefaults());
+        }
 
         @Bean
         @ConditionalOnMissingBean(name = "oidcServiceRegistryListener")
@@ -425,6 +435,7 @@ public class OidcConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcTokenSigningAndEncryptionService")
         public OAuth20TokenSigningAndEncryptionService oidcTokenSigningAndEncryptionService(
+            final CasConfigurationProperties casProperties,
             @Qualifier(OidcServerDiscoverySettings.BEAN_NAME_FACTORY)
             final FactoryBean<OidcServerDiscoverySettings> oidcServerDiscoverySettingsFactory,
             @Qualifier("oidcServiceJsonWebKeystoreCache")
@@ -436,13 +447,15 @@ public class OidcConfiguration {
             return new OidcIdTokenSigningAndEncryptionService(oidcDefaultJsonWebKeystoreCache,
                 oidcServiceJsonWebKeystoreCache,
                 oidcIssuerService,
-                oidcServerDiscoverySettingsFactory.getObject());
+                oidcServerDiscoverySettingsFactory.getObject(),
+                casProperties);
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcUserProfileSigningAndEncryptionService")
         public OAuth20TokenSigningAndEncryptionService oidcUserProfileSigningAndEncryptionService(
+            final CasConfigurationProperties casProperties,
             @Qualifier(OidcServerDiscoverySettings.BEAN_NAME_FACTORY)
             final FactoryBean<OidcServerDiscoverySettings> oidcServerDiscoverySettingsFactory,
             @Qualifier("oidcServiceJsonWebKeystoreCache")
@@ -454,13 +467,15 @@ public class OidcConfiguration {
             return new OidcUserProfileSigningAndEncryptionService(oidcDefaultJsonWebKeystoreCache,
                 oidcServiceJsonWebKeystoreCache,
                 oidcIssuerService,
-                oidcServerDiscoverySettingsFactory.getObject());
+                oidcServerDiscoverySettingsFactory.getObject(),
+                casProperties);
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcTokenIntrospectionSigningAndEncryptionService")
         public OAuth20TokenSigningAndEncryptionService oidcTokenIntrospectionSigningAndEncryptionService(
+            final CasConfigurationProperties casProperties,
             @Qualifier(OidcServerDiscoverySettings.BEAN_NAME_FACTORY)
             final FactoryBean<OidcServerDiscoverySettings> oidcServerDiscoverySettingsFactory,
             @Qualifier("oidcServiceJsonWebKeystoreCache")
@@ -472,7 +487,8 @@ public class OidcConfiguration {
             return new OidcTokenIntrospectionSigningAndEncryptionService(oidcDefaultJsonWebKeystoreCache,
                 oidcServiceJsonWebKeystoreCache,
                 oidcIssuerService,
-                oidcServerDiscoverySettingsFactory.getObject());
+                oidcServerDiscoverySettingsFactory.getObject(),
+                casProperties);
         }
     }
 

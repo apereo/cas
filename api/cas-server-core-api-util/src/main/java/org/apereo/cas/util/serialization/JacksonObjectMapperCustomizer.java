@@ -2,7 +2,6 @@ package org.apereo.cas.util.serialization;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.core.Ordered;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,5 +44,20 @@ public interface JacksonObjectMapperCustomizer extends Ordered {
     @Override
     default int getOrder() {
         return Ordered.LOWEST_PRECEDENCE;
+    }
+
+    /**
+     * Mapped injectable values.
+     *
+     * @param injectables the injectables
+     * @return the jackson object mapper customizer
+     */
+    static JacksonObjectMapperCustomizer mappedInjectableValues(final Map<String, ?> injectables) {
+        return new JacksonObjectMapperCustomizer() {
+            @Override
+            public Map<String, ?> getInjectableValues() {
+                return injectables;
+            }
+        };
     }
 }

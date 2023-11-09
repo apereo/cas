@@ -62,7 +62,6 @@ public class JacksonObjectMapperFactory {
     @Builder.Default
     private final boolean defaultViewInclusion = true;
 
-
     @Builder.Default
     private final boolean quoteFieldNames = true;
 

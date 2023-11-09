@@ -67,6 +67,8 @@ upgrades increasing chances of breaking changes and a messy deployment at that.<
 
 Service definitions are typically managed and registered with CAS by the [service management](../services/Service-Management.html) facility.
 
+{% include_cached casproperties.html properties="cas.authn.oidc.services" %}
+
 ## Example
 
 An example registration record for an OpenID Connect relying party follows that allows the application with the redirect URI `https://app.example.org/oidc`

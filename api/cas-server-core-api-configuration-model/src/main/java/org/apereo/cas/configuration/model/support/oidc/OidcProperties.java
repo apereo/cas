@@ -59,6 +59,12 @@ public class OidcProperties implements Serializable {
     private OidcWebFingerProperties webfinger = new OidcWebFingerProperties();
 
     /**
+     * OIDC services settings.
+     */
+    @NestedConfigurationProperty
+    private OidcServicesProperties services = new OidcServicesProperties();
+
+    /**
      * OIDC logout configuration.
      */
     @NestedConfigurationProperty
