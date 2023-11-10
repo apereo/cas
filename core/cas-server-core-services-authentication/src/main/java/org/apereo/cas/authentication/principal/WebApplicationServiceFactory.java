@@ -21,8 +21,7 @@ import java.util.Optional;
  */
 @Slf4j
 public class WebApplicationServiceFactory extends AbstractServiceFactory<WebApplicationService> {
-
-
+    
     private static AbstractWebApplicationService determineWebApplicationFormat(
         final HttpServletRequest request,
         final AbstractWebApplicationService webApplicationService) {
