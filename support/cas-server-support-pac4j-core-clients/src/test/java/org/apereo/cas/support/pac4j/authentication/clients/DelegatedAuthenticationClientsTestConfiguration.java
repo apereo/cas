@@ -16,6 +16,7 @@ import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.credentials.SessionKeyCredentials;
+import org.pac4j.core.exception.http.AutomaticFormPostAction;
 import org.pac4j.core.exception.http.OkAction;
 import org.pac4j.core.logout.LogoutType;
 import org.pac4j.core.profile.CommonProfile;
@@ -33,6 +34,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -117,12 +119,22 @@ public class DelegatedAuthenticationClientsTestConfiguration {
         when(logoutClient.isInitialized()).thenReturn(true);
         when(logoutClient.processLogout(any(), any())).thenReturn(new OkAction("Hello!"));
 
+        val logoutPostClient = mock(BaseClient.class);
+        when(logoutPostClient.getName()).thenReturn("AutomaticPostLogoutClient");
+        when(logoutPostClient.getCredentialsExtractor()).thenReturn(callContext -> Optional.of(sessionKeyCredentials));
+        when(logoutPostClient.validateCredentials(any(), any())).thenReturn(Optional.of(sessionKeyCredentials));
+        when(logoutPostClient.getCredentials(any())).thenReturn(Optional.of(sessionKeyCredentials));
+        when(logoutPostClient.isInitialized()).thenReturn(true);
+        when(logoutPostClient.processLogout(any(), any()))
+            .thenReturn(new AutomaticFormPostAction("http://localhost/logout", Map.of("key", "value"), null));
+
         val failingClient = mock(IndirectClient.class);
         when(failingClient.getName()).thenReturn("FailingIndirectClient");
         doThrow(new IllegalArgumentException("Unable to init")).when(failingClient).init();
         customizers.forEach(customizer -> customizer.customize(failingClient));
 
-        val clients = List.of(saml2Client, casClient, facebookClient, oidcClient, logoutClient, failingClient, saml2PostClient);
+        val clients = List.of(saml2Client, casClient, facebookClient,
+            oidcClient, logoutClient, logoutPostClient, failingClient, saml2PostClient);
         return new RefreshableDelegatedIdentityProviders("https://cas.login.com", DelegatedIdentityProviderFactory.withClients(clients));
     }
 

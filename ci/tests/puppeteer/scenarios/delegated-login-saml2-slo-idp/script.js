@@ -29,7 +29,7 @@ const assert = require('assert');
     await page.waitForTimeout(2000);
 
     await cas.log("Checking CAS application access...");
-    url = await page.url();
+    let url = await page.url();
     await cas.logPage(page);
     await cas.screenshot(page);
     assert(url.startsWith("https://localhost:8444/protected"));

@@ -7,7 +7,8 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=https://localhost:8443/cas",
     "--cas.audit.engine.enabled=true",
-
+    "--cas.audit.slf4j.use-single-line=true",
+    
     "--management.endpoints.web.cors.allowed-headers=*",
     "--management.endpoints.web.cors.allowed-methods=OPTIONS,GET,POST",
     "--management.endpoints.web.cors.allowed-origin-patterns=http://localhost:9443",
@@ -40,7 +41,7 @@
     "--cas.authn.pac4j.core.session-replication.cookie.crypto.encryption.key=d-YgjeElQfIZsUCuHlvEN2UyaQsy6q2GxOXP1UPCs7I",
     "--cas.authn.pac4j.core.session-replication.cookie.crypto.signing.key=8_Zisbdbm_6eW1ZjkBUz17koElqlArO6805yAq85kCiVYI1RRJArLiFYLZRS00ZCoscwo8qjrgonvDIdbVbobA",
     
-    "--logging.level.org.apereo.cas=debug",
+    "--logging.level.org.apereo.cas=warn",
     "--logging.level.org.springframework.webflow=info",
     "--logging.level.org.springframework.webflow.mvc.servlet=warn",
 

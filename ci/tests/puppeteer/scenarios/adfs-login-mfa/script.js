@@ -36,7 +36,7 @@ const cas = require('../../cas.js');
     await cas.gotoLogin(page);
     await cas.assertCookie(page);
     await page.waitForTimeout(3000);
-    body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
+    let body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
     await cas.log(body);
     let json = JSON.parse(body);
     let authenticationSuccess = json.serviceResponse.authenticationSuccess;

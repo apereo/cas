@@ -33,7 +33,7 @@ const assert = require('assert');
     await page.waitForTimeout(2000);
 
     await cas.log("Checking CAS application access...");
-    url = await page.url();
+    let url = await page.url();
     await cas.logPage(page);
     await cas.screenshot(page);
     assert(url.startsWith("https://localhost:8444/protected"));
@@ -45,7 +45,7 @@ const assert = require('assert');
     await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
-    
+
     await cas.log(`Navigating to ${ssoSessionsUrl}`);
     await page.goto(ssoSessionsUrl);
     let content = await cas.textContent(page, "body");
@@ -70,7 +70,7 @@ const assert = require('assert');
         'Content-Type': "text/xml"
     }, res => {
         cas.log(res.status);
-        assert(res.status === 204);
+        assert(res.status === 200);
     }, err => {
         throw err;
     });
@@ -78,9 +78,9 @@ const assert = require('assert');
     await page.waitForTimeout(2000);
     await cas.log("Invoking SAML2 identity provider SLO...");
     await cas.goto(page, "http://localhost:9443/simplesaml/saml2/idp/SingleLogoutService.php?ReturnTo=https://apereo.github.io");
-    await page.waitForTimeout(6000);
-    url = await page.url();
+    await page.waitForTimeout(4000);
     await cas.logPage(page);
+    url = await page.url();
     assert(url.startsWith("https://apereo.github.io"));
 
     await cas.log("Going to CAS login page to check for session termination");

@@ -8,7 +8,8 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=https://localhost:8443/cas",
     "--cas.audit.engine.enabled=true",
-
+    "--cas.audit.slf4j.use-single-line=true",
+    
     "--management.endpoints.web.cors.allowed-headers=*",
     "--management.endpoints.web.cors.allowed-methods=OPTIONS,GET,POST",
     "--management.endpoints.web.cors.allowed-origin-patterns=http://localhost:9443",
@@ -35,7 +36,7 @@
 
     "--cas.service-registry.core.init-from-json=true",
     
-    "--logging.level.org.apereo.cas=debug",
+    "--logging.level.org.apereo.cas=info",
     "--logging.level.org.springframework.webflow=info",
     "--logging.level.org.springframework.webflow.mvc.servlet=warn",
 

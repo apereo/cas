@@ -26,10 +26,12 @@ import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
+import org.pac4j.core.exception.http.AutomaticFormPostAction;
 import org.pac4j.core.exception.http.HttpAction;
 import org.pac4j.core.exception.http.WithContentAction;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
+import org.springframework.http.HttpMethod;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -136,8 +138,14 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         } catch (final HttpAction e) {
             FunctionUtils.doIf(LOGGER.isDebugEnabled(),
                 o -> LOGGER.debug(e.getMessage(), e), o -> LOGGER.info(e.getMessage())).accept(e);
-            val content = e instanceof final WithContentAction withContentAction ? withContentAction.getContent() : StringUtils.EMPTY;
-            webContext.setRequestAttribute(SingleLogoutContinuation.class.getName(), new SingleLogoutContinuation(content));
+            val continuation = SingleLogoutContinuation.builder();
+            if (e instanceof final AutomaticFormPostAction formPostAction) {
+                continuation.method(HttpMethod.POST).url(formPostAction.getUrl()).data(formPostAction.getData());
+            }
+            if (e instanceof final WithContentAction withContentAction) {
+                continuation.content(withContentAction.getContent());
+            }
+            webContext.setRequestAttribute(SingleLogoutContinuation.class.getName(), continuation.build());
             return isLogoutRequest(clientCredential) ? getLogoutEvent(e) : success();
         } catch (final UnauthorizedServiceException e) {
             LOGGER.warn(e.getMessage(), e);

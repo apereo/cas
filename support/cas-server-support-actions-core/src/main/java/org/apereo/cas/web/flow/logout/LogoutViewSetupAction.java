@@ -49,7 +49,7 @@ public class LogoutViewSetupAction extends AbstractLogoutAction {
         val continuation = (SingleLogoutContinuation) request.getAttribute(SingleLogoutContinuation.class.getName());
         FunctionUtils.doIfNotNull(continuation, __ -> {
             context.getFlowScope().put(FLOW_SCOPE_ATTRIBUTE_PROCEED, Boolean.TRUE);
-            FunctionUtils.doIfNotBlank(continuation.content(), cnt -> context.getFlowScope().put(DynamicHtmlView.class.getName(), cnt));
+            FunctionUtils.doIfNotBlank(continuation.getContent(), cnt -> context.getFlowScope().put(DynamicHtmlView.class.getName(), cnt));
         });
         return null;
     }
