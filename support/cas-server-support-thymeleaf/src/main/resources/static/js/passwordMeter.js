@@ -115,10 +115,11 @@ function jqueryReady() {
 
         let passwordPolicyViolated = val === '' || !policyPatternRegex.test(val);
         let passwordMismatch = val !== '' && val !== cnf;
-        let disableSubmit = passwordPolicyViolated || passwordMismatch;
+        let result = zxcvbn(val);
+        let passwordTooWeak = passwordMinimumStrength > result.score;
+        let disableSubmit = passwordPolicyViolated || passwordMismatch || passwordTooWeak;
         $('#submit').prop('disabled', disableSubmit);
 
-        let result = zxcvbn(val);
         $('#strengthProgressBar').zxcvbnProgressBar({ passwordInput: 'password', bar: bar });
 
         // Check strength, update the text indicator
