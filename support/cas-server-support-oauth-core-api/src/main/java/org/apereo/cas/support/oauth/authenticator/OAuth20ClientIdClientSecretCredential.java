@@ -10,7 +10,7 @@ import java.io.Serial;
  * between normal person-level attribute resolution requests and those that just carry client ids
  * by using a query attribute for the credential class type.
  * This allows a repository to skip or execute a request based on the credential type,
- * separating person data and client-id level attributes.
+ * separating person data and client_id level attributes.
  *
  * @author Misagh Moayyed
  * @since 6.5.0
