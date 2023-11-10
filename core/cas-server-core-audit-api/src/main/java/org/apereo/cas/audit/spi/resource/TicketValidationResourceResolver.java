@@ -24,7 +24,7 @@ import java.util.LinkedHashMap;
 public class TicketValidationResourceResolver extends TicketAsFirstParameterResourceResolver {
     private AuditTrailManager.AuditFormats auditFormat = AuditTrailManager.AuditFormats.DEFAULT;
 
-    public TicketValidationResourceResolver(AuthenticationServiceSelectionPlan serviceSelectionStrategy) {
+    public TicketValidationResourceResolver(final AuthenticationServiceSelectionPlan serviceSelectionStrategy) {
         super(serviceSelectionStrategy);
     }
 
