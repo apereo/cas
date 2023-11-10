@@ -21,7 +21,7 @@ const assert = require("assert");
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
 
-    for (i = 0; i < 2; i++) {
+    for (let i = 0; i < 2; i++) {
         await cas.goto(page, "https://localhost:8443/cas/login?renew=true");
         await page.waitForTimeout(1000);
 

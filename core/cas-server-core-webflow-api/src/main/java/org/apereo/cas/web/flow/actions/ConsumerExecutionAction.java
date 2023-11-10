@@ -31,6 +31,16 @@ public class ConsumerExecutionAction extends BaseCasWebflowAction {
     });
 
     /**
+     * Consumer action that sets the response status to {@link HttpStatus#OK}
+     * and marks the response as completed.
+     */
+    public static final Action OK = new ConsumerExecutionAction(ctx -> {
+        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(ctx);
+        response.setStatus(HttpStatus.OK.value());
+        ctx.getExternalContext().recordResponseComplete();
+    });
+
+    /**
      * Consumer action that sets the response status to {@link HttpStatus#NO_CONTENT}
      * and marks the response as completed.
      */

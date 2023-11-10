@@ -10,7 +10,7 @@
             let divs = document.querySelectorAll('.mdc-text-field'),
                 field;
             let div;
-            for (i = 0; i < divs.length; ++i) {
+            for (let i = 0; i < divs.length; ++i) {
                 div = divs[i];
                 field = material.textField.MDCTextField.attachTo(div);
                 if (div.classList.contains('caps-check')) {

@@ -104,7 +104,7 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
         redirectToLogout.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_IDP_FINALIZE_LOGOUT));
 
         val logoutCompleted = createEndState(flow, "logoutCompleted");
-        logoutCompleted.setFinalResponseAction(ConsumerExecutionAction.NO_CONTENT);
+        logoutCompleted.setFinalResponseAction(ConsumerExecutionAction.OK);
     }
 
     protected void createClientActionState(final Flow flow) {

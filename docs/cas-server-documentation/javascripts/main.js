@@ -1,6 +1,5 @@
 var CONST_CURRENT_VER = "development";
 
-
 function isDocumentationSiteViewedLocally() {
   return location.href.startsWith("http://localhost:4000");
 }
@@ -24,7 +23,7 @@ function generateNavigationBarAndCrumbs() {
     } else {
       page = segments[i].replace(".html", "").replace(/-/g, " ").replace(/_/g, " ").replace(/index/g, "");
     }
-    crumbs += "<li class='" + clz + "'><a href='#'>" + page + "</a></li>";
+    crumbs += `<li class='${clz}'><a href='#'>${page}</a></li>`;
   }
             
   crumbs += "<li><div id='searchField' class></div></li></ol>";
@@ -108,7 +107,7 @@ function loadSidebarForActiveVersion() {
       }
 
       let count = 0;
-      let element = $("#sidebarTopics a[href*='/" + uri.filename() + "']");
+      let element = $(`#sidebarTopics a[href*='/${uri.filename()}']`);
       let parent = element.parent();
       while (parent != null && parent != undefined) {
         // parent.collapse('toggle');
@@ -127,7 +126,7 @@ function loadSidebarForActiveVersion() {
       element.prepend("<i class='fa fa-angle-double-right'></i>&nbsp;");
 
       if (uri.fragment() == null || uri.fragment() === "") {
-        setTimeout(function(){
+        setTimeout(() => {
           let top = $(element).offset().top;
           // console.log("Element top position: " + top);
           let offset = top <= 200 ? 30 : 150;
@@ -202,43 +201,42 @@ function toggleDarkMode() {
 }
 
 function generateToolbarIcons() {
-  var CAS_REPO_URL_GITHUB = $('#forkme_banner').attr('href');
-  var activeVersion = getActiveDocumentationVersionInView(true);
+  let CAS_REPO_URL_GITHUB = $('#forkme_banner').attr('href');
+  let activeVersion = getActiveDocumentationVersionInView(true);
 
-  var uri = new URI(document.location);
-  var segments = uri.segment();
-  var page = "";
+  let uri = new URI(document.location);
+  let segments = uri.segment();
+  let page = "";
 
-  for (var i = isDocumentationSiteViewedLocally() ? 0 : 1; i < segments.length; i++) {
+  for (let i = isDocumentationSiteViewedLocally() ? 0 : 1; i < segments.length; i++) {
     page += segments[i] + "/";
   }
-  editablePage = page.replace(".html", ".md");
+  let editablePage = page.replace(".html", ".md");
   editablePage = editablePage.replace(CONST_CURRENT_VER, "")
   editablePage = editablePage.replace(activeVersion, "")
-  if (editablePage == "") {
+  if (editablePage === "") {
     editablePage = "index.md";
   }
 
   $('#toolbarIcons').append("<a href='javascript:toggleDarkMode()'><i class='fa fa-moon' title='See this page running on localhost'></i></a>");
 
   let href = location.href.replace("https://apereo.github.io/cas", "http://localhost:4000");
-  $('#toolbarIcons').append("<a href='" + href + "'><i class='fab fa-codepen' title='See this page running on localhost'></i></a>");
+  $('#toolbarIcons').append(`<a href='${href}'><i class='fab fa-codepen' title='See this page running on localhost'></i></a>`);
 
-  if (activeVersion != CONST_CURRENT_VER && activeVersion != "") {
+  if (activeVersion != CONST_CURRENT_VER && activeVersion !== "") {
     let prefix = isDocumentationSiteViewedLocally() ? "/" : "/cas/";
     var linkToDev = prefix + page.replace(activeVersion, CONST_CURRENT_VER).replace("//", "/");
     linkToDev = linkToDev.replace("html/", "html");
 
-    $('#toolbarIcons').append("<a href='" + linkToDev +
-      "'><i class='fa fa-code' title='See the latest version of this page'></i></a>");
+    $('#toolbarIcons').append(`<a href='${linkToDev}'><i class='fa fa-code' title='See the latest version of this page'></i></a>`);
   }
- 
-  var baseLink = CAS_REPO_URL_GITHUB;
-  var editLink = "";
-  var historyLink = "";
-  var deleteLink = "";
 
-  if (activeVersion == "") {
+  let baseLink = CAS_REPO_URL_GITHUB;
+  let editLink = "";
+  let historyLink = "";
+  let deleteLink = "";
+
+  if (activeVersion === "") {
     editLink = baseLink + "/edit/gh-pages/";
     historyLink = baseLink + "/commits/gh-pages/";
     deleteLink = baseLink + "/delete/gh-pages/";
@@ -258,21 +256,16 @@ function generateToolbarIcons() {
 
   editLink += editablePage;
 
-
-  $('#toolbarIcons').append("<a target='_blank' href='" + editLink +
-    "'><i class='fa fa-pencil-alt' title='Edit with Github'></i></a>");
+  $('#toolbarIcons').append(`<a target='_blank' href='${editLink}'><i class='fa fa-pencil-alt' title='Edit with Github'></i></a>`);
 
   historyLink += editablePage;
 
 
-  $('#toolbarIcons').append("<a target='_blank' href='" + historyLink +
-    "'><i class='fa fa-history' title='View commit history on Github'></i></a>");
+  $('#toolbarIcons').append(`<a target='_blank' href='${historyLink}'><i class='fa fa-history' title='View commit history on Github'></i></a>`);
 
   deleteLink += editablePage;
 
-
-  $('#toolbarIcons').append("<a target='_blank' href='" + deleteLink +
-    "'><i class='fa fa-times' title='Delete with Github'></i></a>");
+  $('#toolbarIcons').append(`<a target='_blank' href='${deleteLink}'><i class='fa fa-times' title='Delete with Github'></i></a>`);
 }
 
 function generatePageTOC() {
@@ -330,10 +323,8 @@ function tocItem(id, text) {
 
 
 function guidGenerator() {
-  var S4 = function () {
-    return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
-  };
-  return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
+  let S4 = () => (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+  return (`${S4() + S4()}-${S4()}-${S4()}-${S4()}-${S4()}${S4()}${S4()}`);
 }
 
 
@@ -371,13 +362,11 @@ function initializePage() {
     new ClipboardJS('.copy-button');
 
     let tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-    let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-      return new bootstrap.Tooltip(tooltipTriggerEl)
-    });
+    let tooltipList = tooltipTriggerList.map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 
     let activeVersion = getActiveDocumentationVersionInView(true);
-    let filters = ["version: " + activeVersion];
-    console.log("Documentation search is filtering by " + filters);    
+    let filters = [`version: ${activeVersion}`];
+    console.log(`Documentation search is filtering by ${filters}`);
 
     docsearch({
       apiKey: 'a95d9cc5493147925fb5d4fdb5afb414',
@@ -411,7 +400,7 @@ $(function () {
 
 
 $(function () {
-  return $("h2, h3, h4, h5, h6").each(function (i, el) {
+  return $("h2, h3, h4, h5, h6").each((i, el) => {
     var $el, icon, id;
     $el = $(el);
     id = $el.attr('id');
@@ -427,14 +416,14 @@ let codes = document.querySelectorAll('.highlight > pre > code .rouge-code pre')
 let countID = 0;
 codes.forEach((code) => {
 
-  code.setAttribute("id", "code" + countID);
+  code.setAttribute("id", `code${countID}`);
   
   let btn = document.createElement('button');
   btn.innerHTML = "Copy";
   btn.className = "btn-copy-code";
   btn.setAttribute("data-clipboard-action", "copy");
-  btn.setAttribute("data-clipboard-target", "#code" + countID);
-  btn.setAttribute("onclick", "this.innerHTML='Copied';")
+  btn.setAttribute("data-clipboard-target", `#code${countID}`);
+  btn.setAttribute("onclick", "this.innerHTML='Copied';");
 
   let div = document.createElement('div');
   div.className = "div-code-button";
@@ -456,10 +445,8 @@ $(document).ready(() => {
       "pageLength": pageLength
     });
 
-    var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
-    var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
-      return new bootstrap.Popover(popoverTriggerEl)
-    })
+    let popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+    let popoverList = popoverTriggerList.map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
 });
 
 let ROWS = 5;
@@ -576,7 +563,7 @@ window.addEventListener('load', () => {
             // elements[position].classList.add('active');
             liTab.classList.add('active');
             
-            let tabs = $('#' + tabContentId + " ul.nav.nav-tabs li a").not("[href^='#notes']");
+            let tabs = $(`#${tabContentId} ul.nav.nav-tabs li a`).not("[href^='#notes']");
             for (let i = 0; i < tabs.length; i++) {
               let tb = tabs[i];
               tb.click();
