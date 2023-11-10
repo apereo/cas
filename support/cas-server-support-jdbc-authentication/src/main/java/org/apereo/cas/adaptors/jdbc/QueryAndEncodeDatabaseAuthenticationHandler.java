@@ -9,10 +9,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.model.support.jdbc.authn.QueryEncodeJdbcAuthenticationProperties;
 import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.util.DigestUtils;
-import org.apereo.cas.util.function.FunctionUtils;
 import lombok.val;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.dao.DataAccessException;
@@ -20,7 +17,6 @@ import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import javax.sql.DataSource;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -44,13 +40,16 @@ import java.util.Map;
 public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
 
     private final QueryEncodeJdbcAuthenticationProperties properties;
+    private final DatabasePasswordEncoder databasePasswordEncoder;
 
     public QueryAndEncodeDatabaseAuthenticationHandler(final QueryEncodeJdbcAuthenticationProperties properties,
                                                        final ServicesManager servicesManager,
                                                        final PrincipalFactory principalFactory,
-                                                       final DataSource dataSource) {
+                                                       final DataSource dataSource,
+                                                       final DatabasePasswordEncoder databasePasswordEncoder) {
         super(properties.getName(), servicesManager, principalFactory, properties.getOrder(), dataSource);
         this.properties = properties;
+        this.databasePasswordEncoder = databasePasswordEncoder;
     }
 
     @Override
@@ -59,7 +58,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
         val username = transformedCredential.getUsername();
         try {
             val values = performSqlQuery(username);
-            val digestedPassword = digestEncodedPassword(transformedCredential.toPassword(), values);
+            val digestedPassword = databasePasswordEncoder.encode(transformedCredential.toPassword(), values);
 
             if (!values.get(properties.getPasswordFieldName()).equals(digestedPassword)) {
                 throw new FailedLoginException("Password does not match value on record.");
@@ -90,24 +89,5 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
 
     protected Map<String, Object> performSqlQuery(final String username) {
         return getJdbcTemplate().queryForMap(properties.getSql(), username);
-    }
-
-    protected String digestEncodedPassword(final String encodedPassword, final Map<String, Object> values) {
-        var iterations = properties.getNumberOfIterations();
-        if (values.containsKey(properties.getNumberOfIterationsFieldName())) {
-            val longAsStr = values.get(properties.getNumberOfIterationsFieldName()).toString();
-            iterations = Integer.parseInt(longAsStr);
-        }
-
-        val dynaSalt = values.containsKey(properties.getSaltFieldName())
-            ? values.get(properties.getSaltFieldName()).toString().getBytes(StandardCharsets.UTF_8)
-            : ArrayUtils.EMPTY_BYTE_ARRAY;
-
-        val staticSalt = FunctionUtils.doIfNotBlank(properties.getStaticSalt(),
-            () -> properties.getStaticSalt().getBytes(StandardCharsets.UTF_8),
-            () -> ArrayUtils.EMPTY_BYTE_ARRAY);
-
-        return DigestUtils.rawDigest(properties.getAlgorithmName(), staticSalt,
-            dynaSalt, encodedPassword, iterations);
     }
 }
