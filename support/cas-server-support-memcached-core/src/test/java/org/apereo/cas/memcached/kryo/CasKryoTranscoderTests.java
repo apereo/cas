@@ -3,6 +3,8 @@ package org.apereo.cas.memcached.kryo;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
@@ -106,6 +108,7 @@ class CasKryoTranscoderTests {
     @Autowired
     @Qualifier(ServiceTicketSessionTrackingPolicy.BEAN_NAME)
     private ServiceTicketSessionTrackingPolicy serviceTicketSessionTrackingPolicy;
+
     @Autowired
     @Qualifier("componentSerializationPlan")
     private ComponentSerializationPlan componentSerializationPlan;
@@ -121,6 +124,8 @@ class CasKryoTranscoderTests {
         this.transcoder = MemcachedUtils.newTranscoder(props, classesToRegister);
         this.principalAttributes = new HashMap<>();
         this.principalAttributes.put(NICKNAME_KEY, List.of(NICKNAME_VALUE));
+        this.principalAttributes.put("geoLocationRequest", List.of(new GeoLocationRequest(1, 1)));
+        this.principalAttributes.put("geoLocationResponse", List.of(new GeoLocationResponse().addAddress("England")));
     }
 
     @Test
@@ -239,8 +244,7 @@ class CasKryoTranscoderTests {
     @Test
     void verifyEncodeDecodeTGTWithLinkedHashMap() throws Throwable {
         val userPassCredential = new UsernamePasswordCredential(USERNAME, PASSWORD);
-        val expectedTGT =
-            new MockTicketGrantingTicket(TGT_ID, userPassCredential, new LinkedHashMap<>(this.principalAttributes));
+        val expectedTGT = new MockTicketGrantingTicket(TGT_ID, userPassCredential, new LinkedHashMap<>(this.principalAttributes));
         expectedTGT.grantServiceTicket(ST_ID, RegisteredServiceTestUtils.getService(), null,
             false, serviceTicketSessionTrackingPolicy);
         val result = transcoder.encode(expectedTGT);
