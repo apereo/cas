@@ -86,19 +86,12 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
         return authenticateUsernamePasswordInternal(userPass, originalUserPass.toPassword());
     }
 
-    /**
-     * Transform password.
-     *
-     * @param userPass the user pass
-     * @throws FailedLoginException     the failed login exception
-     * @throws AccountNotFoundException the account not found exception
-     */
     protected void transformPassword(final UsernamePasswordCredential userPass) throws FailedLoginException, AccountNotFoundException {
         if (StringUtils.isBlank(userPass.toPassword())) {
             throw new FailedLoginException("Password is null.");
         }
-        LOGGER.debug("Attempting to encode credential password via [{}] for [{}]", this.passwordEncoder.getClass().getName(), userPass.getUsername());
-        val transformedPsw = this.passwordEncoder.encode(userPass.toPassword());
+        LOGGER.debug("Attempting to encode credential password via [{}] for [{}]", passwordEncoder.getClass().getName(), userPass.getUsername());
+        val transformedPsw = passwordEncoder.encode(userPass.toPassword());
         if (StringUtils.isBlank(transformedPsw)) {
             throw new AccountNotFoundException("Encoded password is null.");
         }
@@ -109,8 +102,8 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
         if (StringUtils.isBlank(userPass.getUsername())) {
             throw new AccountNotFoundException("Username is null.");
         }
-        LOGGER.debug("Transforming credential username via [{}]", this.principalNameTransformer.getClass().getName());
-        val transformedUsername = this.principalNameTransformer.transform(userPass.getUsername());
+        LOGGER.debug("Transforming credential username via [{}]", principalNameTransformer.getClass().getName());
+        val transformedUsername = principalNameTransformer.transform(userPass.getUsername());
         if (StringUtils.isBlank(transformedUsername)) {
             throw new AccountNotFoundException("Transformed username is null.");
         }
@@ -139,6 +132,6 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
      * @return true in case charSequence matched encoded password
      */
     protected boolean matches(final CharSequence charSequence, final String password) {
-        return this.passwordEncoder.matches(charSequence, password);
+        return passwordEncoder.matches(charSequence, password);
     }
 }
