@@ -93,24 +93,12 @@ public class DelegatedAuthenticationClientLogoutAction extends BaseCasWebflowAct
         return null;
     }
 
-    /**
-     * Finds the current profile from the context.
-     *
-     * @param webContext A web context (request + response).
-     * @return The common profile active.
-     */
     protected UserProfile findCurrentProfile(final JEEContext webContext) {
         val pm = new ProfileManager(webContext, this.sessionStore);
         val profile = pm.getProfile();
         return profile.orElse(null);
     }
 
-    /**
-     * Find the current client from the current profile.
-     *
-     * @param currentProfile the current profile
-     * @return the current client
-     */
     protected Optional<Client> findCurrentClient(final UserProfile currentProfile) {
         return currentProfile == null
                 ? Optional.empty()
