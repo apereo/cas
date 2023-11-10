@@ -24,6 +24,7 @@ import org.apereo.cas.support.wsfederation.web.WsFederationCookieGenerator;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -63,10 +64,9 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
     public static class WsFedAuthenticationProvidersConfiguration {
         private static WsFederationAttributeMutator getAttributeMutatorForWsFederationConfig(final WsFederationDelegationProperties wsfed) {
             val location = wsfed.getAttributeMutatorScript().getLocation();
-            if (location != null) {
-                return new GroovyWsFederationAttributeMutator(location);
-            }
-            return WsFederationAttributeMutator.noOp();
+            return location != null
+                ? new GroovyWsFederationAttributeMutator(new WatchableGroovyScriptResource(location))
+                : WsFederationAttributeMutator.noOp();
         }
 
         private static WsFederationConfiguration getWsFederationConfiguration(
