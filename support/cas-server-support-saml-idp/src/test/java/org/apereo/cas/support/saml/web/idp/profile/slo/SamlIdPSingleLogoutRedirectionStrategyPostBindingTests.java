@@ -70,7 +70,7 @@ class SamlIdPSingleLogoutRedirectionStrategyPostBindingTests extends BaseSamlIdP
 
         val logoutResponse = samlIdPSingleLogoutRedirectionStrategy.handle(request, response);
         assertNull(WebUtils.getLogoutRedirectUrl(request, String.class));
-        assertTrue(logoutResponse.getLogoutRedirectUrl().isPresent());
-        assertTrue(logoutResponse.getService().isPresent());
+        assertFalse(logoutResponse.getLogoutPostData().isEmpty());
+        assertTrue(logoutResponse.getLogoutPostUrl().isPresent());
     }
 }
