@@ -126,9 +126,12 @@ if support for a method is not defined and declared in OpenID discovery metadata
 - HikariCP
 - CosmosDB
 - JUnit
+- SendGrid
+- Netty
 - Nimbus OIDC
 - Spring Shell
 - MariaDb
+- MongoDb Driver
 - Azure Spring Cloud
 - MySQL Driver
 - MSSQL Driver
