@@ -14,6 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -25,6 +26,7 @@ import jakarta.persistence.Transient;
 import java.io.Serial;
 import java.io.Serializable;
 import java.security.GeneralSecurityException;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -41,28 +43,25 @@ import java.util.Set;
 @Setter
 @Getter
 @AllArgsConstructor
+@RequiredArgsConstructor
 public class GroovyScriptAuthenticationPolicy extends BaseAuthenticationPolicy {
 
     @Serial
     private static final long serialVersionUID = 6948477763790549040L;
 
-    private String script;
+    private final String script;
 
     @JsonIgnore
     @Transient
     @org.springframework.data.annotation.Transient
     private transient WatchableGroovyScriptResource executableScript;
 
-    public GroovyScriptAuthenticationPolicy(final String script) {
-        this.script = script;
-    }
-
     @Override
     public AuthenticationPolicyExecutionResult isSatisfiedBy(
         final Authentication auth,
         final Set<AuthenticationHandler> authenticationHandlers,
         final ConfigurableApplicationContext applicationContext,
-        final Optional<Serializable> assertion) throws Throwable {
+        final Map<String, ? extends Serializable> context) throws Throwable {
         initializeWatchableScriptIfNeeded();
         val ex = getScriptExecutionResult(auth);
         if (ex != null && ex.isPresent()) {

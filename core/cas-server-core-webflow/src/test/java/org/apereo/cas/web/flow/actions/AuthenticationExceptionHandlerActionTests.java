@@ -1,8 +1,7 @@
 package org.apereo.cas.web.flow.actions;
 
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
-import org.apereo.cas.authentication.ContextualAuthenticationPolicy;
+import org.apereo.cas.authentication.AuthenticationPolicy;
 import org.apereo.cas.configuration.model.core.web.MessageBundleProperties;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
@@ -25,7 +24,6 @@ import javax.security.auth.login.AccountNotFoundException;
 import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -105,25 +103,7 @@ class AuthenticationExceptionHandlerActionTests {
         val handler = new AuthenticationExceptionHandlerAction(getExceptionHandlers(catalog));
         val req = MockRequestContext.create();
 
-        val policy = new TestContextualAuthenticationPolicy();
-        val event = handler.handle(new UnsatisfiedAuthenticationPolicyException(policy), req);
+        val event = handler.handle(new UnsatisfiedAuthenticationPolicyException(AuthenticationPolicy.neverSatisfied()), req);
         assertEquals(UnsatisfiedAuthenticationPolicyException.class.getSimpleName(), event.getId());
-    }
-
-    private static final class TestContextualAuthenticationPolicy implements ContextualAuthenticationPolicy<Object> {
-        @Override
-        public Object getContext() {
-            return null;
-        }
-
-        @Override
-        public Optional<String> getCode() {
-            return Optional.of("CUSTOM_CODE");
-        }
-
-        @Override
-        public boolean isSatisfiedBy(final Authentication authentication) {
-            return false;
-        }
     }
 }

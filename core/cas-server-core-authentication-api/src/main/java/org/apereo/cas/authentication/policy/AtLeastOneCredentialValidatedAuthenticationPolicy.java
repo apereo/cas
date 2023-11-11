@@ -16,7 +16,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Optional;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -46,7 +46,7 @@ public class AtLeastOneCredentialValidatedAuthenticationPolicy extends BaseAuthe
     public AuthenticationPolicyExecutionResult isSatisfiedBy(final Authentication authn,
                                                              final Set<AuthenticationHandler> authenticationHandlers,
                                                              final ConfigurableApplicationContext applicationContext,
-                                                             final Optional<Serializable> assertion) throws Exception {
+                                                             final Map<String, ? extends Serializable> context) throws Exception {
         if (this.tryAll) {
             val match = authenticationHandlers.stream()
                 .allMatch(handler -> authn.getSuccesses().containsKey(handler.getName()));

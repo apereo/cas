@@ -21,8 +21,6 @@ import javax.security.auth.login.FailedLoginException;
 
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
-import java.util.LinkedHashSet;
-import java.util.Optional;
 
 import static org.apereo.cas.util.junit.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -47,8 +45,7 @@ class RestfulAuthenticationPolicyTests {
             props.setUrl("http://localhost:" + port);
             val policy = new RestfulAuthenticationPolicy(props);
             assertThrowsWithRootCause(GeneralSecurityException.class, exceptionClass,
-                () -> policy.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser"),
-                    new LinkedHashSet<>(), applicationContext, Optional.empty()));
+                () -> policy.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser"), applicationContext));
         }
     }
 
@@ -63,8 +60,7 @@ class RestfulAuthenticationPolicyTests {
             val props = new RestAuthenticationPolicyProperties();
             props.setUrl("http://localhost:9200");
             val policy = new RestfulAuthenticationPolicy(props);
-            assertTrue(policy.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser"),
-                new LinkedHashSet<>(), applicationContext, Optional.empty()).isSuccess());
+            assertTrue(policy.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser"), applicationContext).isSuccess());
         }
     }
 

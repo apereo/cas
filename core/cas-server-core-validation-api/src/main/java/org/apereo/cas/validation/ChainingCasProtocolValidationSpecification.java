@@ -42,12 +42,12 @@ public class ChainingCasProtocolValidationSpecification implements CasProtocolVa
         if (this.canBeSatisfiedByAnySpecification) {
             return this.specifications
                 .stream()
-                .peek(s -> s.setRenew(this.renew))
-                .anyMatch(s -> s.isSatisfiedBy(assertion, request));
+                .peek(spec -> spec.setRenew(this.renew))
+                .anyMatch(spec -> spec.isSatisfiedBy(assertion, request));
         }
         return this.specifications.stream()
-            .peek(s -> s.setRenew(this.renew))
-            .allMatch(s -> s.isSatisfiedBy(assertion, request));
+            .peek(spec -> spec.setRenew(this.renew))
+            .allMatch(spec -> spec.isSatisfiedBy(assertion, request));
     }
 
     @Override

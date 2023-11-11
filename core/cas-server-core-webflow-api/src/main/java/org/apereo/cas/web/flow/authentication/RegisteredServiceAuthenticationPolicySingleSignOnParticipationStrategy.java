@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow.authentication;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -13,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.context.ConfigurableApplicationContext;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -70,8 +72,8 @@ public class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrat
         return Optional.ofNullable(criteria)
             .map(Unchecked.function(cri -> {
                 val policy = criteria.toAuthenticationPolicy(registeredService);
-                val result = policy.isSatisfiedBy(authentication, assertedHandlers,
-                    applicationContext, Optional.empty());
+                val policyContext = Map.of(RegisteredService.class.getName(), registeredService);
+                val result = policy.isSatisfiedBy(authentication, assertedHandlers, applicationContext, policyContext);
                 return result.isSuccess();
             })).orElse(true);
     }

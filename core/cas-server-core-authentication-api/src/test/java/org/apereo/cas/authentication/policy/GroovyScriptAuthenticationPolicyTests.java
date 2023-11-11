@@ -13,8 +13,6 @@ import javax.security.auth.login.AccountNotFoundException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.security.GeneralSecurityException;
-import java.util.LinkedHashSet;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -41,8 +39,7 @@ class GroovyScriptAuthenticationPolicyTests {
         FileUtils.write(scriptFile, script, StandardCharsets.UTF_8);
         val p = new GroovyScriptAuthenticationPolicy("file:" + scriptFile.getCanonicalPath());
         assertThrows(GeneralSecurityException.class,
-            () -> p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication(),
-                new LinkedHashSet<>(), mock(ConfigurableApplicationContext.class), Optional.empty()));
+            () -> p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication(), mock(ConfigurableApplicationContext.class)));
     }
 
     @Test

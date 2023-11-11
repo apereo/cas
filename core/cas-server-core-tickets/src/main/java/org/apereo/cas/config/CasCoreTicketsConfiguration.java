@@ -56,6 +56,7 @@ import org.apereo.cas.util.lock.LockRepository;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -125,20 +126,24 @@ public class CasCoreTicketsConfiguration {
     @Configuration(value = "CasCoreTicketsAuthenticationPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreTicketsAuthenticationPlanConfiguration {
+        private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.policy.unique-principal.enabled").isTrue();
+        
         @ConditionalOnMissingBean(name = "ticketAuthenticationPolicyExecutionPlanConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlanConfigurer ticketAuthenticationPolicyExecutionPlanConfigurer(
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier(SingleSignOnParticipationStrategy.BEAN_NAME)
+            final ObjectProvider<SingleSignOnParticipationStrategy> singleSignOnParticipationStrategy,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             final CasConfigurationProperties casProperties) {
-            return plan -> {
-                val policyProps = casProperties.getAuthn().getPolicy();
-                if (policyProps.getUniquePrincipal().isEnabled()) {
-                    LOGGER.trace("Activating authentication policy [{}]", UniquePrincipalAuthenticationPolicy.class.getSimpleName());
-                    plan.registerAuthenticationPolicy(new UniquePrincipalAuthenticationPolicy(ticketRegistry));
-                }
-            };
+            return BeanSupplier.of(AuthenticationEventExecutionPlanConfigurer.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> plan -> plan.registerAuthenticationPolicy(
+                    new UniquePrincipalAuthenticationPolicy(ticketRegistry, singleSignOnParticipationStrategy)))
+                .otherwiseProxy()
+                .get();
         }
     }
 

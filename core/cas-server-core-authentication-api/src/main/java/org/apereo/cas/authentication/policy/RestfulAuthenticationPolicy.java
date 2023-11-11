@@ -31,7 +31,7 @@ import javax.security.auth.login.FailedLoginException;
 import java.io.Serial;
 import java.io.Serializable;
 import java.security.GeneralSecurityException;
-import java.util.Optional;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -81,7 +81,7 @@ public class RestfulAuthenticationPolicy extends BaseAuthenticationPolicy {
     public AuthenticationPolicyExecutionResult isSatisfiedBy(final Authentication authentication,
                                                              final Set<AuthenticationHandler> authenticationHandlers,
                                                              final ConfigurableApplicationContext applicationContext,
-                                                             final Optional<Serializable> assertion) throws Exception {
+                                                             final Map<String, ? extends Serializable> context) throws Exception {
         HttpResponse response = null;
         val principal = authentication.getPrincipal();
         try {

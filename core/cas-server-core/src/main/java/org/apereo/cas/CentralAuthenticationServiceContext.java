@@ -1,17 +1,15 @@
 package org.apereo.cas;
 
 import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.authentication.AuthenticationPolicy;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
-import org.apereo.cas.authentication.ContextualAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ServiceMatchingStrategy;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.lock.LockRepository;
-
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -41,7 +39,7 @@ public class CentralAuthenticationServiceContext {
 
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;
 
-    private final ContextualAuthenticationPolicyFactory<RegisteredService> authenticationPolicyFactory;
+    private final AuthenticationPolicy authenticationPolicy;
 
     private final ServiceMatchingStrategy serviceMatchingStrategy;
 
