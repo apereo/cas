@@ -82,7 +82,6 @@ import java.util.Optional;
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 @EnableScheduling
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-
 public abstract class BaseCasCoreTests {
 
     @Autowired

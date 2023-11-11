@@ -18,7 +18,7 @@ import org.springframework.util.StringUtils;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Optional;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -59,7 +59,7 @@ public abstract class BaseAuthenticationHandlerAuthenticationPolicy extends Base
     public AuthenticationPolicyExecutionResult isSatisfiedBy(final Authentication authn,
                                                              final Set<AuthenticationHandler> authenticationHandlers,
                                                              final ConfigurableApplicationContext applicationContext,
-                                                             final Optional<Serializable> assertion) {
+                                                             final Map<String, ? extends Serializable> context) {
         var credsOk = true;
         val sum = authn.getSuccesses().size() + authn.getFailures().size();
         if (this.tryAll) {

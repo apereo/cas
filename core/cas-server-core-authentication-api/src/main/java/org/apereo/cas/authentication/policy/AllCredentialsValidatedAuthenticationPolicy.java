@@ -14,7 +14,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Optional;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -37,7 +37,7 @@ public class AllCredentialsValidatedAuthenticationPolicy extends BaseAuthenticat
     public AuthenticationPolicyExecutionResult isSatisfiedBy(final Authentication authn,
                                                              final Set<AuthenticationHandler> authenticationHandlers,
                                                              final ConfigurableApplicationContext applicationContext,
-                                                             final Optional<Serializable> assertion) {
+                                                             final Map<String, ? extends Serializable> context) {
         LOGGER.debug("Successful authentications: [{}], credentials: [{}]",
             authn.getSuccesses().keySet(), authn.getCredentials());
         if (authn.getSuccesses().size() != authn.getCredentials().size()) {

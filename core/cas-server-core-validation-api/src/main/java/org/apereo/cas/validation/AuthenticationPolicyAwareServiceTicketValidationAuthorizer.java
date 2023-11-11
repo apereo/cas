@@ -3,6 +3,7 @@ package org.apereo.cas.validation;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
@@ -16,7 +17,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-import java.util.Optional;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -56,7 +57,8 @@ public class AuthenticationPolicyAwareServiceTicketValidationAuthorizer implemen
             try {
                 val simpleName = policy.getClass().getSimpleName();
                 LOGGER.trace("Executing authentication policy [{}]", simpleName);
-                val result = policy.isSatisfiedBy(primaryAuthentication, assertedHandlers, applicationContext, Optional.of(assertion));
+                val result = policy.isSatisfiedBy(primaryAuthentication, assertedHandlers, applicationContext,
+                    Map.of(Assertion.class.getName(), assertion, RegisteredService.class.getName(), registeredService));
                 if (!result.isSuccess()) {
                     throw UnauthorizedServiceException.denied("Unauthorized: %s".formatted(service.getId()));
                 }

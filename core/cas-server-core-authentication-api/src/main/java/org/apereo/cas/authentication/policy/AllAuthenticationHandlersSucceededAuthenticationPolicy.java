@@ -14,7 +14,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Optional;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -38,7 +38,7 @@ public class AllAuthenticationHandlersSucceededAuthenticationPolicy extends Base
     public AuthenticationPolicyExecutionResult isSatisfiedBy(final Authentication authn,
                                                              final Set<AuthenticationHandler> authenticationHandlers,
                                                              final ConfigurableApplicationContext applicationContext,
-                                                             final Optional<Serializable> assertion) {
+                                                             final Map<String, ? extends Serializable> context) {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Successful authentications: [{}], current authentication handlers [{}]", authn.getSuccesses().keySet(),
                 authenticationHandlers.stream().map(AuthenticationHandler::getName).collect(Collectors.joining(",")));

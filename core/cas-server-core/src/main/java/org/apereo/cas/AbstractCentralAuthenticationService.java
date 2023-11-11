@@ -5,13 +5,13 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.CasModelRegisteredService;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceAuthenticationPolicy;
 import org.apereo.cas.services.UnauthorizedProxyingException;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.apereo.cas.util.LoggingUtils;
-
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Setter;
@@ -19,9 +19,10 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.util.ObjectUtils;
-
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * An abstract implementation of the {@link CentralAuthenticationService} that provides access to
@@ -54,12 +55,16 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         }
     }
 
-    protected Authentication getAuthenticationSatisfiedByPolicy(final Authentication authentication,
-                                                                final Service service,
+    protected Authentication getAuthenticationSatisfiedByPolicy(final Authentication authentication, final Service service,
                                                                 final RegisteredService registeredService) throws AbstractTicketException {
-        val policy = configurationContext.getAuthenticationPolicyFactory().createPolicy(registeredService);
+        val policy = Optional.ofNullable(registeredService.getAuthenticationPolicy())
+            .map(RegisteredServiceAuthenticationPolicy::getCriteria)
+            .map(criteria -> criteria.toAuthenticationPolicy(registeredService))
+            .orElseGet(configurationContext::getAuthenticationPolicy);
         try {
-            if (policy.isSatisfiedBy(authentication)) {
+            val policyContext = Map.of(RegisteredService.class.getName(), registeredService, Service.class.getName(), service);
+            val executionResult = policy.isSatisfiedBy(authentication, configurationContext.getApplicationContext(), policyContext);
+            if (executionResult.isSuccess()) {
                 return authentication;
             }
         } catch (final Throwable e) {

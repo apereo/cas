@@ -9,7 +9,7 @@ import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
-import org.apereo.cas.authentication.policy.AcceptAnyAuthenticationPolicyFactory;
+import org.apereo.cas.authentication.policy.AtLeastOneCredentialValidatedAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.DefaultServiceMatchingStrategy;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
@@ -188,7 +188,7 @@ class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCoreTests {
             .ticketFactory(factory)
             .lockRepository(LockRepository.asDefault())
             .authenticationServiceSelectionPlan(authenticationRequestServiceSelectionStrategies)
-            .authenticationPolicyFactory(new AcceptAnyAuthenticationPolicyFactory())
+            .authenticationPolicy(new AtLeastOneCredentialValidatedAuthenticationPolicy(false))
             .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())
             .cipherExecutor(CipherExecutor.noOpOfStringToString())
             .registeredServiceAccessStrategyEnforcer(enforcer)
