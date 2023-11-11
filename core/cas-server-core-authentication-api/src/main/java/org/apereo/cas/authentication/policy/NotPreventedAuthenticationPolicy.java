@@ -15,7 +15,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Optional;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -44,7 +44,7 @@ public class NotPreventedAuthenticationPolicy extends AtLeastOneCredentialValida
     public AuthenticationPolicyExecutionResult isSatisfiedBy(final Authentication authentication,
                                                              final Set<AuthenticationHandler> authenticationHandlers,
                                                              final ConfigurableApplicationContext applicationContext,
-                                                             final Optional<Serializable> assertion) throws Exception {
+                                                             final Map<String, ? extends Serializable> context) throws Exception {
         val fail = authentication.getFailures().values()
             .stream()
             .anyMatch(failure -> failure.getClass().isAssignableFrom(PreventedException.class));
@@ -52,6 +52,6 @@ public class NotPreventedAuthenticationPolicy extends AtLeastOneCredentialValida
             LOGGER.warn("Authentication policy has failed given at least one authentication failure is found to prevent authentication");
             return AuthenticationPolicyExecutionResult.failure();
         }
-        return super.isSatisfiedBy(authentication, authenticationHandlers, applicationContext, assertion);
+        return super.isSatisfiedBy(authentication, authenticationHandlers, applicationContext, context);
     }
 }

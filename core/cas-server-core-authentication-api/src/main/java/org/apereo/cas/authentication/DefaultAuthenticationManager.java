@@ -82,12 +82,6 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         return auth;
     }
 
-    /**
-     * Populate authentication metadata attributes.
-     *
-     * @param builder     the builder
-     * @param transaction the transaction
-     */
     protected void invokeAuthenticationPostProcessors(final AuthenticationBuilder builder,
                                                       final AuthenticationTransaction transaction) {
         LOGGER.debug("Invoking authentication post processors for authentication transaction");
@@ -99,12 +93,6 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
             .forEach(Unchecked.consumer(processor -> processor.process(builder, transaction)));
     }
 
-    /**
-     * Populate authentication metadata attributes.
-     *
-     * @param builder     the builder
-     * @param transaction the transaction
-     */
     protected void populateAuthenticationMetadataAttributes(final AuthenticationBuilder builder,
                                                             final AuthenticationTransaction transaction) {
         LOGGER.debug("Invoking authentication metadata populators for authentication transaction");
@@ -115,12 +103,6 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
             .forEach(credential -> populator.populateAttributes(builder, transaction)));
     }
 
-    /**
-     * Add authentication method attribute.
-     *
-     * @param builder        the builder
-     * @param authentication the authentication
-     */
     protected void addAuthenticationMethodAttribute(final AuthenticationBuilder builder,
                                                     final Authentication authentication) {
         authentication.getSuccesses().values()
@@ -202,26 +184,12 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         LOGGER.debug("Final principal resolved for this authentication event is [{}]", principal);
         publishEvent(new CasAuthenticationPrincipalResolvedEvent(this, principal, clientInfo));
     }
-
-
-    /**
-     * Gets principal resolver linked to the handler if any.
-     *
-     * @param handler     the handler
-     * @param transaction the transaction
-     * @return the principal resolver linked to handler if any, or null.
-     */
+    
     protected PrincipalResolver getPrincipalResolverLinkedToHandlerIfAny(final AuthenticationHandler handler,
                                                                          final AuthenticationTransaction transaction) {
         return this.authenticationEventExecutionPlan.getPrincipalResolver(handler, transaction);
     }
 
-    /**
-     * Gets authentication metadata populators for transaction.
-     *
-     * @param transaction the transaction
-     * @return the authentication metadata populators for transaction
-     */
     protected Collection<AuthenticationMetaDataPopulator> getAuthenticationMetadataPopulatorsForTransaction(
         final AuthenticationTransaction transaction) {
         return this.authenticationEventExecutionPlan.getAuthenticationMetadataPopulators(transaction);
@@ -248,9 +216,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         val handlerSet = this.authenticationEventExecutionPlan.getAuthenticationHandlers(transaction);
         LOGGER.debug("Candidate resolved authentication handlers for this transaction are [{}]", handlerSet);
 
-        val it = credentials.iterator();
-        while (it.hasNext()) {
-            val credential = it.next();
+        for (val credential : credentials) {
             LOGGER.debug("Attempting to authenticate credential [{}]", credential);
 
             val itHandlers = handlerSet.iterator();
@@ -288,16 +254,6 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         return builder;
     }
 
-    /**
-     * Evaluate produced authentication context.
-     * We apply an implicit security policy of at least one successful authentication.
-     * Then, we apply the configured security policy.
-     *
-     * @param builder                the builder
-     * @param transaction            the transaction
-     * @param authenticationHandlers the authentication handlers
-     * @throws Throwable the throwable
-     */
     protected void evaluateFinalAuthentication(final AuthenticationBuilder builder,
                                                final AuthenticationTransaction transaction,
                                                final Set<AuthenticationHandler> authenticationHandlers) throws Throwable {
@@ -339,7 +295,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
                     .stream()
                     .filter(handler -> transaction.getCredentials().stream().anyMatch(handler::supports))
                     .collect(Collectors.toCollection(LinkedHashSet::new));
-                val result = policy.isSatisfiedBy(resultAuthentication, supportingHandlers, applicationContext, Optional.empty());
+                val result = policy.isSatisfiedBy(resultAuthentication, supportingHandlers, applicationContext);
                 executionResult.getResults().add(result);
                 if (!result.isSuccess()) {
                     executionResult.getFailures()
@@ -356,13 +312,6 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         return executionResult;
     }
 
-    /**
-     * Handle authentication exception.
-     *
-     * @param ex      the exception
-     * @param name    the name
-     * @param builder the builder
-     */
     protected void handleAuthenticationException(final Throwable ex, final String name, final AuthenticationBuilder builder) {
         LOGGER.trace(ex.getMessage(), ex);
         val msg = new StringBuilder(StringUtils.defaultString(ex.getMessage()));

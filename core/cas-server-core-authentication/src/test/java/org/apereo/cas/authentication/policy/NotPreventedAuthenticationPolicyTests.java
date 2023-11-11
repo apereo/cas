@@ -9,9 +9,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import java.util.Optional;
-import java.util.Set;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -29,13 +26,13 @@ class NotPreventedAuthenticationPolicyTests {
         val input = new NotPreventedAuthenticationPolicy();
         val builder = new DefaultAuthenticationBuilder(CoreAuthenticationTestUtils.getPrincipal());
         val authn = builder.addFailure("Prevented", new PreventedException("error")).build();
-        assertFalse(input.isSatisfiedBy(authn, Set.of(), mock(ConfigurableApplicationContext.class), Optional.empty()).isSuccess());
+        assertFalse(input.isSatisfiedBy(authn, mock(ConfigurableApplicationContext.class)).isSuccess());
     }
 
     @Test
     void verifyOperationNotPrevented() throws Throwable {
         val input = new NotPreventedAuthenticationPolicy();
         val authn = new DefaultAuthenticationBuilder(CoreAuthenticationTestUtils.getPrincipal()).build();
-        assertFalse(input.isSatisfiedBy(authn, Set.of(), mock(ConfigurableApplicationContext.class), Optional.empty()).isSuccess());
+        assertFalse(input.isSatisfiedBy(authn, mock(ConfigurableApplicationContext.class)).isSuccess());
     }
 }

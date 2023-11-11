@@ -12,7 +12,6 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,9 +19,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.StaticApplicationContext;
-
 import javax.security.auth.login.FailedLoginException;
-
 import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -31,7 +28,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -121,8 +117,7 @@ class DefaultAuthenticationManagerTests {
         val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
         authenticationExecutionPlan.registerAuthenticationPreProcessor(__ -> false);
 
-        val manager = new DefaultAuthenticationManager(authenticationExecutionPlan,
-            false, applicationContext);
+        val manager = getAuthenticationManager(authenticationExecutionPlan);
         assertThrows(AuthenticationException.class, () -> manager.authenticate(transaction));
     }
 
@@ -130,8 +125,7 @@ class DefaultAuthenticationManagerTests {
     void verifyNoHandlers() throws Throwable {
         val map = new HashMap<AuthenticationHandler, PrincipalResolver>();
         val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
-        val manager = new DefaultAuthenticationManager(authenticationExecutionPlan,
-            false, applicationContext);
+        val manager = getAuthenticationManager(authenticationExecutionPlan);
         assertThrows(AuthenticationException.class, () -> manager.authenticate(transaction));
     }
 
@@ -144,8 +138,7 @@ class DefaultAuthenticationManagerTests {
         val policy = new RequiredAuthenticationHandlerAuthenticationPolicy(
             SimpleTestUsernamePasswordAuthenticationHandler.class.getSimpleName());
         authenticationExecutionPlan.registerAuthenticationPolicy(policy);
-        val manager = new DefaultAuthenticationManager(authenticationExecutionPlan,
-            false, applicationContext);
+        val manager = getAuthenticationManager(authenticationExecutionPlan);
 
         val testTransaction = CoreAuthenticationTestUtils.getAuthenticationTransactionFactory()
             .newTransaction(CoreAuthenticationTestUtils.getService(), mock(Credential.class, withSettings().serializable()));
@@ -161,16 +154,16 @@ class DefaultAuthenticationManagerTests {
 
         val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
         val policy = mock(AuthenticationPolicy.class);
-        when(policy.isSatisfiedBy(any(), any(), any(), any()))
+        when(policy.isSatisfiedBy(any(), anySet(), any(), anyMap()))
             .thenReturn(AuthenticationPolicyExecutionResult.success());
         when(policy.shouldResumeOnFailure(any())).thenReturn(Boolean.FALSE);
 
-        authenticationExecutionPlan.registerAuthenticationPolicy(policy);
-        val manager = new DefaultAuthenticationManager(authenticationExecutionPlan,
-            false, applicationContext);
 
-        val testTransaction = CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(CoreAuthenticationTestUtils.getService(),
-            mock(Credential.class, withSettings().serializable()));
+        authenticationExecutionPlan.registerAuthenticationPolicy(policy);
+        val manager = getAuthenticationManager(authenticationExecutionPlan);
+
+        val testTransaction = CoreAuthenticationTestUtils.getAuthenticationTransactionFactory()
+            .newTransaction(CoreAuthenticationTestUtils.getService(), mock(Credential.class, withSettings().serializable()));
 
         assertThrows(AuthenticationException.class, () -> manager.authenticate(testTransaction));
     }
@@ -183,8 +176,7 @@ class DefaultAuthenticationManagerTests {
 
         map.put(newMockHandler(true), resolver);
         val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
-        val manager = new DefaultAuthenticationManager(authenticationExecutionPlan,
-            false, applicationContext);
+        val manager = getAuthenticationManager(authenticationExecutionPlan);
         assertThrows(UnresolvedPrincipalException.class, () -> manager.authenticate(transaction));
 
         when(resolver.supports(any())).thenReturn(Boolean.TRUE);
@@ -223,8 +215,7 @@ class DefaultAuthenticationManagerTests {
 
         val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
         authenticationExecutionPlan.registerAuthenticationPolicy(new AtLeastOneCredentialValidatedAuthenticationPolicy());
-        val manager = new DefaultAuthenticationManager(authenticationExecutionPlan,
-            false, applicationContext);
+        val manager = getAuthenticationManager(authenticationExecutionPlan);
 
         val auth = manager.authenticate(transaction);
         assertEquals(1, auth.getSuccesses().size());
@@ -238,8 +229,7 @@ class DefaultAuthenticationManagerTests {
         map.put(newMockHandler(false), null);
         val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
         authenticationExecutionPlan.registerAuthenticationPolicy(new AtLeastOneCredentialValidatedAuthenticationPolicy(true));
-        val manager = new DefaultAuthenticationManager(authenticationExecutionPlan,
-            false, applicationContext);
+        val manager = getAuthenticationManager(authenticationExecutionPlan);
         assertThrows(AuthenticationException.class, () -> manager.authenticate(transaction));
     }
 
@@ -251,8 +241,7 @@ class DefaultAuthenticationManagerTests {
 
         val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
         authenticationExecutionPlan.registerAuthenticationPolicy(new AtLeastOneCredentialValidatedAuthenticationPolicy());
-        val manager = new DefaultAuthenticationManager(authenticationExecutionPlan,
-            false, applicationContext);
+        val manager = getAuthenticationManager(authenticationExecutionPlan);
 
         assertThrows(AuthenticationException.class, () -> manager.authenticate(transaction));
     }
@@ -265,8 +254,7 @@ class DefaultAuthenticationManagerTests {
 
         val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
         authenticationExecutionPlan.registerAuthenticationPolicy(new AtLeastOneCredentialValidatedAuthenticationPolicy());
-        val manager = new DefaultAuthenticationManager(authenticationExecutionPlan,
-            false, applicationContext);
+        val manager = getAuthenticationManager(authenticationExecutionPlan);
 
         assertThrows(AuthenticationException.class, () -> manager.authenticate(transaction));
     }
@@ -279,8 +267,7 @@ class DefaultAuthenticationManagerTests {
 
         val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
         authenticationExecutionPlan.registerAuthenticationPolicy(new AllCredentialsValidatedAuthenticationPolicy());
-        val manager = new DefaultAuthenticationManager(authenticationExecutionPlan,
-            false, applicationContext);
+        val manager = getAuthenticationManager(authenticationExecutionPlan);
 
         val auth = manager.authenticate(transaction);
         assertEquals(2, auth.getSuccesses().size());
@@ -298,8 +285,7 @@ class DefaultAuthenticationManagerTests {
         when(policy.isSatisfiedBy(any(), any(), any(), any()))
             .thenThrow(new GeneralSecurityException(new FailedLoginException()));
         authenticationExecutionPlan.registerAuthenticationPolicy(policy);
-        val manager = new DefaultAuthenticationManager(authenticationExecutionPlan,
-            false, applicationContext);
+        val manager = getAuthenticationManager(authenticationExecutionPlan);
 
         assertThrows(AuthenticationException.class, () -> manager.authenticate(transaction));
     }
@@ -314,8 +300,7 @@ class DefaultAuthenticationManagerTests {
         when(policy.isSatisfiedBy(any(), any(), any(), any()))
             .thenThrow(new IllegalArgumentException());
         authenticationExecutionPlan.registerAuthenticationPolicy(policy);
-        val manager = new DefaultAuthenticationManager(authenticationExecutionPlan,
-            false, applicationContext);
+        val manager = getAuthenticationManager(authenticationExecutionPlan);
 
         assertThrows(AuthenticationException.class, () -> manager.authenticate(transaction));
     }
@@ -328,8 +313,7 @@ class DefaultAuthenticationManagerTests {
 
         val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
         authenticationExecutionPlan.registerAuthenticationPolicy(new AllCredentialsValidatedAuthenticationPolicy());
-        val manager = new DefaultAuthenticationManager(authenticationExecutionPlan,
-            false, applicationContext);
+        val manager = getAuthenticationManager(authenticationExecutionPlan);
 
         assertThrows(AuthenticationException.class, () -> manager.authenticate(transaction));
     }
@@ -342,8 +326,7 @@ class DefaultAuthenticationManagerTests {
 
         val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
         authenticationExecutionPlan.registerAuthenticationPolicy(new RequiredAuthenticationHandlerAuthenticationPolicy(HANDLER_A));
-        val manager = new DefaultAuthenticationManager(authenticationExecutionPlan,
-            false, applicationContext);
+        val manager = getAuthenticationManager(authenticationExecutionPlan);
 
 
         val auth = manager.authenticate(transaction);
@@ -359,8 +342,7 @@ class DefaultAuthenticationManagerTests {
 
         val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
         authenticationExecutionPlan.registerAuthenticationPolicy(new RequiredAuthenticationHandlerAuthenticationPolicy(HANDLER_B));
-        val manager = new DefaultAuthenticationManager(authenticationExecutionPlan,
-            false, applicationContext);
+        val manager = getAuthenticationManager(authenticationExecutionPlan);
 
         assertThrows(AuthenticationException.class, () -> manager.authenticate(transaction));
     }
@@ -373,11 +355,17 @@ class DefaultAuthenticationManagerTests {
 
         val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
         authenticationExecutionPlan.registerAuthenticationPolicy(new RequiredAuthenticationHandlerAuthenticationPolicy(Set.of(HANDLER_A), true));
-        val manager = new DefaultAuthenticationManager(authenticationExecutionPlan, false, applicationContext);
+        val manager = getAuthenticationManager(authenticationExecutionPlan);
 
         val auth = manager.authenticate(transaction);
         assertEquals(1, auth.getSuccesses().size());
         assertEquals(1, auth.getFailures().size());
         assertEquals(2, auth.getCredentials().size());
     }
+
+    private AuthenticationManager getAuthenticationManager(final AuthenticationEventExecutionPlan authenticationExecutionPlan) {
+        return new DefaultAuthenticationManager(authenticationExecutionPlan,
+            false, applicationContext);
+    }
+
 }

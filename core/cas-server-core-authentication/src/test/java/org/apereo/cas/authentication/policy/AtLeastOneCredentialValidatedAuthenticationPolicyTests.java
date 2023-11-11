@@ -10,9 +10,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import java.util.Optional;
-import java.util.Set;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -29,7 +26,7 @@ class AtLeastOneCredentialValidatedAuthenticationPolicyTests {
         val input = new AtLeastOneCredentialValidatedAuthenticationPolicy();
         val builder = new DefaultAuthenticationBuilder(CoreAuthenticationTestUtils.getPrincipal());
         val authn = builder.addFailure("Prevented", new PreventedException("error")).build();
-        assertFalse(input.isSatisfiedBy(authn, Set.of(), mock(ConfigurableApplicationContext.class), Optional.empty()).isSuccess());
+        assertFalse(input.isSatisfiedBy(authn, mock(ConfigurableApplicationContext.class)).isSuccess());
     }
 
     @Test
@@ -37,7 +34,7 @@ class AtLeastOneCredentialValidatedAuthenticationPolicyTests {
         val input = new AtLeastOneCredentialValidatedAuthenticationPolicy(true);
         val builder = new DefaultAuthenticationBuilder(CoreAuthenticationTestUtils.getPrincipal());
         val authn = builder.addFailure("Prevented", new PreventedException("error")).build();
-        assertFalse(input.isSatisfiedBy(authn, Set.of(), mock(ConfigurableApplicationContext.class), Optional.empty()).isSuccess());
+        assertFalse(input.isSatisfiedBy(authn, mock(ConfigurableApplicationContext.class)).isSuccess());
     }
 
     @Test
@@ -45,6 +42,6 @@ class AtLeastOneCredentialValidatedAuthenticationPolicyTests {
         val input = new AtLeastOneCredentialValidatedAuthenticationPolicy();
         val builder = new DefaultAuthenticationBuilder(CoreAuthenticationTestUtils.getPrincipal());
         val authn = builder.addSuccess("Handler1", mock(AuthenticationHandlerExecutionResult.class)).build();
-        assertTrue(input.isSatisfiedBy(authn, Set.of(), mock(ConfigurableApplicationContext.class), Optional.empty()).isSuccess());
+        assertTrue(input.isSatisfiedBy(authn, mock(ConfigurableApplicationContext.class)).isSuccess());
     }
 }
