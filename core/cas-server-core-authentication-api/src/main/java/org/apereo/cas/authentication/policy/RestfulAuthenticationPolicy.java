@@ -18,6 +18,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import lombok.val;
 import org.apache.hc.core5.http.HttpResponse;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -46,6 +47,7 @@ import java.util.Set;
 @Setter
 @Getter
 @AllArgsConstructor
+@Accessors(chain = true)
 public class RestfulAuthenticationPolicy extends BaseAuthenticationPolicy {
     @Serial
     private static final long serialVersionUID = -7688729533538097898L;
@@ -55,24 +57,24 @@ public class RestfulAuthenticationPolicy extends BaseAuthenticationPolicy {
 
     private final RestAuthenticationPolicyProperties properties;
 
-    private static Exception handleResponseStatusCode(final HttpStatus statusCode, final Principal p) {
+    private static Exception handleResponseStatusCode(final HttpStatus statusCode, final Principal principal) {
         if (statusCode == HttpStatus.FORBIDDEN || statusCode == HttpStatus.METHOD_NOT_ALLOWED) {
-            return new AccountDisabledException("Could not authenticate forbidden account for " + p.getId());
+            return new AccountDisabledException("Could not authenticate forbidden account for " + principal.getId());
         }
         if (statusCode == HttpStatus.UNAUTHORIZED) {
-            return new FailedLoginException("Could not authenticate account for " + p.getId());
+            return new FailedLoginException("Could not authenticate account for " + principal.getId());
         }
         if (statusCode == HttpStatus.NOT_FOUND) {
-            return new AccountNotFoundException("Could not locate account for " + p.getId());
+            return new AccountNotFoundException("Could not locate account for " + principal.getId());
         }
         if (statusCode == HttpStatus.LOCKED) {
-            return new AccountLockedException("Could not authenticate locked account for " + p.getId());
+            return new AccountLockedException("Could not authenticate locked account for " + principal.getId());
         }
         if (statusCode == HttpStatus.PRECONDITION_FAILED) {
-            return new AccountExpiredException("Could not authenticate expired account for " + p.getId());
+            return new AccountExpiredException("Could not authenticate expired account for " + principal.getId());
         }
         if (statusCode == HttpStatus.PRECONDITION_REQUIRED) {
-            return new AccountPasswordMustChangeException("Account password must change for " + p.getId());
+            return new AccountPasswordMustChangeException("Account password must change for " + principal.getId());
         }
         return new FailedLoginException("Rest endpoint returned an unknown status code " + statusCode);
     }
@@ -86,13 +88,15 @@ public class RestfulAuthenticationPolicy extends BaseAuthenticationPolicy {
         val principal = authentication.getPrincipal();
         try {
             val entity = MAPPER.writeValueAsString(principal);
+            val headers = CollectionUtils.<String, String>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+            headers.putAll(properties.getHeaders());
             val exec = HttpExecutionRequest.builder()
                 .url(properties.getUrl())
                 .basicAuthPassword(properties.getBasicAuthUsername())
                 .basicAuthUsername(properties.getBasicAuthPassword())
                 .method(HttpMethod.POST)
                 .entity(entity)
-                .headers(CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE))
+                .headers(headers)
                 .build();
             response = HttpUtils.execute(exec);
             val statusCode = HttpStatus.valueOf(response.getCode());

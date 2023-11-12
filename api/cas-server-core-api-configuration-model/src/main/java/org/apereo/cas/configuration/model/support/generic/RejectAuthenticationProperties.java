@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.generic;
 
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
@@ -30,6 +31,7 @@ public class RejectAuthenticationProperties implements Serializable {
     /**
      * Comma-separated list of users to reject for authentication.
      */
+    @RequiredProperty
     private String users;
 
     /**

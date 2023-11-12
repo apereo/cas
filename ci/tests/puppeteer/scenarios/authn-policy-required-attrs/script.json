@@ -1,0 +1,16 @@
+{
+  "dependencies": "generic,rest",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.authn.policy.required-attributes.enabled=true",
+    "--cas.authn.policy.required-attributes.name=MyPolicy",
+    "--cas.authn.policy.required-attributes.attributes.weblogin=true",
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.authn.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
+    "--cas.authn.accept.enabled=false",
+    "--cas.audit.slf4j.use-single-line=true"
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+}
