@@ -4,6 +4,7 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationManager;
+import org.apereo.cas.authentication.AuthenticationPolicy;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -97,6 +98,9 @@ class TicketGrantingTicketResourceTests {
 
     @BeforeEach
     public void initialize() throws Throwable {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+
         val httpRequestCredentialFactory = new UsernamePasswordRestHttpRequestCredentialFactory() {
             @Override
             public List<Credential> fromAuthentication(final HttpServletRequest request,
@@ -124,11 +128,12 @@ class TicketGrantingTicketResourceTests {
             new WebApplicationServiceFactory(),
             multifactorTriggerSelectionStrategy,
             servicesManager,
-            requestedContextValidator);
+            requestedContextValidator,
+            AuthenticationPolicy.alwaysSatisfied(),
+            applicationContext);
 
         val logoutManager = new DefaultLogoutManager(false, new DefaultLogoutExecutionPlan());
-        val applicationContext = new StaticApplicationContext();
-        applicationContext.refresh();
+
         val singleLogoutRequestExecutor = new DefaultSingleLogoutRequestExecutor(ticketRegistry, logoutManager, applicationContext);
         ticketGrantingTicketResourceUnderTest = new TicketGrantingTicketResource(api,
             casMock, new DefaultTicketGrantingTicketResourceEntityResponseFactory(),

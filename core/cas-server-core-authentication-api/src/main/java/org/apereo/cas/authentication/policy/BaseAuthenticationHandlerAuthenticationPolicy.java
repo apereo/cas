@@ -11,6 +11,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -36,6 +37,7 @@ import java.util.Set;
 @Setter
 @Getter
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
+@Accessors(chain = true)
 public abstract class BaseAuthenticationHandlerAuthenticationPolicy extends BaseAuthenticationPolicy {
 
     @Serial

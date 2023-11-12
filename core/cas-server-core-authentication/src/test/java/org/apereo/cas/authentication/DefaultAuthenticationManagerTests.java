@@ -12,6 +12,7 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
+import org.apereo.cas.util.spring.DirectObjectProvider;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
@@ -192,8 +193,7 @@ class DefaultAuthenticationManagerTests {
 
         map.put(newMockHandler(true), resolver);
         val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
-        val manager = new DefaultAuthenticationManager(authenticationExecutionPlan,
-            true, applicationContext);
+        val manager = getAuthenticationManager(authenticationExecutionPlan);
         assertThrows(UnresolvedPrincipalException.class, () -> manager.authenticate(transaction));
     }
 
@@ -202,8 +202,7 @@ class DefaultAuthenticationManagerTests {
         val map = new HashMap<AuthenticationHandler, PrincipalResolver>();
         map.put(newMockHandler(true), null);
         val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
-        val manager = new DefaultAuthenticationManager(authenticationExecutionPlan,
-            true, applicationContext);
+        val manager = getAuthenticationManager(authenticationExecutionPlan);
         assertThrows(AuthenticationException.class, () -> manager.authenticate(CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction()));
     }
 
@@ -365,6 +364,7 @@ class DefaultAuthenticationManagerTests {
 
     private AuthenticationManager getAuthenticationManager(final AuthenticationEventExecutionPlan authenticationExecutionPlan) {
         return new DefaultAuthenticationManager(authenticationExecutionPlan,
+            new DirectObjectProvider<>(CoreAuthenticationTestUtils.getAuthenticationSystemSupport()),
             false, applicationContext);
     }
 

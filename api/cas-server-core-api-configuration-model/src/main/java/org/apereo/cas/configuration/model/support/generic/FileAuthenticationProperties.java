@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.generic;
 
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
@@ -31,6 +32,7 @@ public class FileAuthenticationProperties implements Serializable {
     /**
      * File resource where user accounts are kept.
      */
+    @RequiredProperty
     private transient Resource filename;
 
     /**

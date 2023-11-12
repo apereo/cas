@@ -28,3 +28,34 @@ A successful response will produce a `200 OK` status code along with
 a JSON representation of the authentication result, which may include 
 the authentication object, authenticated principal along with 
 any captured attributes and/or metadata fetched for the authenticated user.
+   
+## Customizations
+
+If you wish to control the REST authentication policy to determine which attempts are allowed to proceed,
+you may define the following bean definition in your environment:
+
+```java
+@AutoConfiguration
+public class MyConfiguration {
+    @Bean
+    public AuthenticationPolicy restAuthenticationPolicy() {
+        return new MyAuthenticationPolicy();
+    }
+}
+```
+                                         
+A more comprehensive option would be to take full control of the REST 
+authentication attempt via the following bean definition:
+
+```java
+@AutoConfiguration
+public class MyConfiguration {
+    @Bean
+    public RestAuthenticationService restAuthenticationService() {
+        return new MyRestAuthenticationService();
+    }
+}
+```
+
+[See this guide](../configuration/Configuration-Management-Extensions.html) to learn
+more about how to register configurations into the CAS runtime.

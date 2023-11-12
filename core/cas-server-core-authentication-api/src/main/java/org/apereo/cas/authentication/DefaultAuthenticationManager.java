@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jooq.lambda.Unchecked;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ConfigurableApplicationContext;
 import java.security.GeneralSecurityException;
@@ -50,6 +51,8 @@ import java.util.stream.Collectors;
 public class DefaultAuthenticationManager implements AuthenticationManager {
 
     private final AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
+
+    private final ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
 
     private final boolean principalResolutionFailureFatal;
 
@@ -282,15 +285,13 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         resultBuilder.collect(transaction.getAuthentications());
         resultBuilder.collect(authentication);
 
-        val authenticationSystemSupport = applicationContext.getBean(AuthenticationSystemSupport.BEAN_NAME, AuthenticationSystemSupport.class);
-        val principalElectionStrategy = authenticationSystemSupport.getPrincipalElectionStrategy();
+        val principalElectionStrategy = authenticationSystemSupport.getObject().getPrincipalElectionStrategy();
         val resultAuthentication = resultBuilder.build(principalElectionStrategy).getAuthentication();
         LOGGER.trace("Final authentication used for authentication policy evaluation is [{}]", resultAuthentication);
 
         policies.forEach(policy -> {
             try {
-                val simpleName = policy.getClass().getSimpleName();
-                LOGGER.debug("Executing authentication policy [{}]", simpleName);
+                LOGGER.debug("Executing authentication policy [{}]", policy.getName());
                 val supportingHandlers = authenticationHandlers
                     .stream()
                     .filter(handler -> transaction.getCredentials().stream().anyMatch(handler::supports))
@@ -299,7 +300,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
                 executionResult.getResults().add(result);
                 if (!result.isSuccess()) {
                     executionResult.getFailures()
-                        .add(new AuthenticationException("Unable to satisfy authentication policy " + simpleName));
+                        .add(new AuthenticationException("Unable to satisfy authentication policy %s".formatted(policy.getName())));
                 }
             } catch (final GeneralSecurityException e) {
                 LOGGER.debug(e.getMessage(), e);

@@ -1,0 +1,20 @@
+{
+  "@class" : "java.util.LinkedHashMap",
+  "casweb" : {
+    "@class" : "org.apereo.cas.adaptors.generic.CasUserAccount",
+    "password" : "p@ssw0rd",
+    "attributes" : {
+      "@class" : "java.util.LinkedHashMap",
+      "name" : [ "java.util.List", ["ApereoCAS"] ],
+      "weblogin" : [ "java.util.List", ["true"] ]
+    }
+  },
+  "casrest" : {
+    "@class" : "org.apereo.cas.adaptors.generic.CasUserAccount",
+    "password" : "p@ssw0rd",
+    "attributes" : {
+      "@class" : "java.util.LinkedHashMap",
+      "restapi" : [ "java.util.List", ["true"] ]
+    }
+  }
+}

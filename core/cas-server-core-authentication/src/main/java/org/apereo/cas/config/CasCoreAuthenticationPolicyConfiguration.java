@@ -10,6 +10,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -27,6 +28,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Authentication)
 @AutoConfiguration
@@ -52,6 +54,7 @@ public class CasCoreAuthenticationPolicyConfiguration {
                 val policyProps = casProperties.getAuthn().getPolicy();
                 val authPolicy = CoreAuthenticationUtils.newAuthenticationPolicy(policyProps);
                 if (authPolicy != null) {
+                    LOGGER.debug("Activated authentication policies are [{}]", authPolicy);
                     plan.registerAuthenticationPolicies(authPolicy);
                 }
             };

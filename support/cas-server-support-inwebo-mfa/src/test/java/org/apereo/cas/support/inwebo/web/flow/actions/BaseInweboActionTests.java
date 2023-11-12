@@ -62,11 +62,10 @@ public abstract class BaseInweboActionTests {
     public void setUp() throws Exception {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
-        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
+        var authenticationSystemSupport = ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
             CoreAuthenticationTestUtils.getAuthenticationSystemSupport(), AuthenticationSystemSupport.BEAN_NAME);
 
         this.requestContext = MockRequestContext.create(applicationContext);
-
         service = mock(InweboService.class);
 
         val authenticationEventExecutionPlan = new DefaultAuthenticationEventExecutionPlan();
@@ -75,8 +74,9 @@ public abstract class BaseInweboActionTests {
             new DirectObjectProvider<>(mock(MultifactorAuthenticationProvider.class))));
         authenticationEventExecutionPlan.registerAuthenticationMetadataPopulator(new InweboAuthenticationDeviceMetadataPopulator());
 
-        val authenticationManager = new DefaultAuthenticationManager(authenticationEventExecutionPlan, true, applicationContext);
-        val authenticationSystemSupport = CoreAuthenticationTestUtils.getAuthenticationSystemSupport(authenticationManager, mock(ServicesManager.class));
+        val authenticationManager = new DefaultAuthenticationManager(authenticationEventExecutionPlan,
+            new DirectObjectProvider<>(authenticationSystemSupport), true, applicationContext);
+        authenticationSystemSupport = CoreAuthenticationTestUtils.getAuthenticationSystemSupport(authenticationManager, mock(ServicesManager.class));
         val configurationContext = CasWebflowEventResolutionConfigurationContext.builder().authenticationSystemSupport(authenticationSystemSupport).build();
         resolver = new FinalMultifactorAuthenticationTransactionWebflowEventResolver(configurationContext);
         setAuthenticationInContext(LOGIN);

@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderPro
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.support.RegularExpressionCapable;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -44,6 +45,7 @@ public class AcceptAuthenticationProperties implements Serializable {
     /**
      * Accepted users for authentication, in the syntax of {@code uid::password}.
      */
+    @RequiredProperty
     private String users = StringUtils.EMPTY;
 
     /**

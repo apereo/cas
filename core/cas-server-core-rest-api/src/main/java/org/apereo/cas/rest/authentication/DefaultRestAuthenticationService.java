@@ -1,6 +1,7 @@
 package org.apereo.cas.rest.authentication;
 
 import org.apereo.cas.authentication.AuthenticationException;
+import org.apereo.cas.authentication.AuthenticationPolicy;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.Credential;
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.util.MultiValueMap;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -43,6 +45,10 @@ public class DefaultRestAuthenticationService implements RestAuthenticationServi
 
     private final RequestedAuthenticationContextValidator requestedContextValidator;
 
+    private final AuthenticationPolicy restAuthenticationPolicy;
+
+    private final ConfigurableApplicationContext applicationContext;
+
     @Override
     public Optional<AuthenticationResult> authenticate(final MultiValueMap<String, String> requestBody,
                                                        final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
@@ -57,6 +63,7 @@ public class DefaultRestAuthenticationService implements RestAuthenticationServi
 
         return authResult
             .map(result -> result.getInitialAuthentication()
+                .filter(Unchecked.predicate(authn -> restAuthenticationPolicy.isSatisfiedBy(authn, applicationContext).isSuccess()))
                 .filter(Unchecked.predicate(authn -> {
                     val validationResult = requestedContextValidator.validateAuthenticationContext(request, response, registeredService, authn, service);
                     return !validationResult.isSuccess();

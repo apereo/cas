@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
 @EqualsAndHashCode(callSuper = true)
 @Setter
 @Getter
+@Accessors(chain = true)
 public class AllAuthenticationHandlersSucceededAuthenticationPolicy extends BaseAuthenticationPolicy {
     @Serial
     private static final long serialVersionUID = 8901190843828760737L;
