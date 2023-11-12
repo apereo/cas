@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -43,6 +44,15 @@ class CoreAuthenticationUtilsTests {
         MAPPER.writeValue(file, policy);
         val readPolicy = MAPPER.readValue(file, Collection.class);
         assertEquals(policy, readPolicy);
+    }
+
+    @Test
+    void verifyAuthnPolicyRequiredAttrs() throws Throwable {
+        val props = new AuthenticationPolicyProperties();
+        props.getRequiredAttributes().setEnabled(true);
+        props.getRequiredAttributes().setAttributes(Map.of("hello", "world"));
+        val policy = CoreAuthenticationUtils.newAuthenticationPolicy(props);
+        verifySerialization(policy);
     }
 
     @Test

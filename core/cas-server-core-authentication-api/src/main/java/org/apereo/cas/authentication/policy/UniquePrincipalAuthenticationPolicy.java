@@ -14,6 +14,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
@@ -39,6 +40,7 @@ import java.util.Set;
 @Setter
 @Getter
 @RequiredArgsConstructor
+@Accessors(chain = true)
 public class UniquePrincipalAuthenticationPolicy extends BaseAuthenticationPolicy {
     @Serial
     private static final long serialVersionUID = 3974114391376732470L;

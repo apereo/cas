@@ -7,8 +7,10 @@ import org.apereo.cas.authentication.adaptive.intel.RestfulIPAddressIntelligence
 import org.apereo.cas.authentication.policy.AllAuthenticationHandlersSucceededAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.AllCredentialsValidatedAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.AtLeastOneCredentialValidatedAuthenticationPolicy;
+import org.apereo.cas.authentication.policy.BaseAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.GroovyScriptAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.NotPreventedAuthenticationPolicy;
+import org.apereo.cas.authentication.policy.RequiredAttributesAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.RequiredAuthenticationHandlerAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.RestfulAuthenticationPolicy;
 import org.apereo.cas.authentication.support.password.DefaultPasswordPolicyHandlingStrategy;
@@ -19,6 +21,7 @@ import org.apereo.cas.configuration.model.core.authentication.AuthenticationPoli
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
+import org.apereo.cas.configuration.model.core.authentication.policy.BaseAuthenticationPolicyProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
@@ -288,50 +291,62 @@ public class CoreAuthenticationUtils {
      */
     public static Collection<AuthenticationPolicy> newAuthenticationPolicy(final AuthenticationPolicyProperties policyProps) {
         if (policyProps.getReq().isEnabled()) {
-            LOGGER.trace("Activating authentication policy [{}]", RequiredAuthenticationHandlerAuthenticationPolicy.class.getSimpleName());
             val requiredHandlerNames = org.springframework.util.StringUtils.commaDelimitedListToSet(policyProps.getReq().getHandlerName());
-            var policy = new RequiredAuthenticationHandlerAuthenticationPolicy(requiredHandlerNames, policyProps.getReq().isTryAll());
-            return CollectionUtils.wrapList(policy);
+            val policy = new RequiredAuthenticationHandlerAuthenticationPolicy(requiredHandlerNames, policyProps.getReq().isTryAll());
+            return CollectionUtils.wrapList(configureAuthenticationPolicy(policy, policyProps.getReq()));
+        }
+
+        if (policyProps.getRequiredAttributes().isEnabled()) {
+            val policy = new RequiredAttributesAuthenticationPolicy(policyProps.getRequiredAttributes().getAttributes());
+            return CollectionUtils.wrapList(configureAuthenticationPolicy(policy, policyProps.getRequiredAttributes()));
         }
 
         if (policyProps.getAllHandlers().isEnabled()) {
-            LOGGER.trace("Activating authentication policy [{}]", AllAuthenticationHandlersSucceededAuthenticationPolicy.class.getSimpleName());
-            return CollectionUtils.wrapList(new AllAuthenticationHandlersSucceededAuthenticationPolicy());
+            val policy = new AllAuthenticationHandlersSucceededAuthenticationPolicy();
+            return CollectionUtils.wrapList(configureAuthenticationPolicy(policy, policyProps.getAllHandlers()));
         }
 
         if (policyProps.getAll().isEnabled()) {
-            LOGGER.trace("Activating authentication policy [{}]", AllCredentialsValidatedAuthenticationPolicy.class.getSimpleName());
-            return CollectionUtils.wrapList(new AllCredentialsValidatedAuthenticationPolicy());
+            val policy = new AllCredentialsValidatedAuthenticationPolicy();
+            return CollectionUtils.wrapList(configureAuthenticationPolicy(policy, policyProps.getAll()));
         }
 
         if (policyProps.getNotPrevented().isEnabled()) {
-            LOGGER.trace("Activating authentication policy [{}]", NotPreventedAuthenticationPolicy.class.getSimpleName());
-            return CollectionUtils.wrapList(new NotPreventedAuthenticationPolicy());
+            val policy = new NotPreventedAuthenticationPolicy();
+            return CollectionUtils.wrapList(configureAuthenticationPolicy(policy, policyProps.getNotPrevented()));
         }
 
         if (!policyProps.getGroovy().isEmpty() && CasRuntimeHintsRegistrar.notInNativeImage()) {
-            LOGGER.trace("Activating authentication policy [{}]", GroovyScriptAuthenticationPolicy.class.getSimpleName());
-            return policyProps.getGroovy()
+            return policyProps
+                .getGroovy()
                 .stream()
-                .map(groovy -> new GroovyScriptAuthenticationPolicy(groovy.getScript()))
+                .map(groovy -> {
+                    val policy = new GroovyScriptAuthenticationPolicy(groovy.getScript());
+                    return configureAuthenticationPolicy(policy, groovy);
+                })
                 .collect(Collectors.toList());
         }
 
         if (!policyProps.getRest().isEmpty()) {
-            LOGGER.trace("Activating authentication policy [{}]", RestfulAuthenticationPolicy.class.getSimpleName());
-            return policyProps.getRest()
+            return policyProps
+                .getRest()
                 .stream()
                 .map(RestfulAuthenticationPolicy::new)
                 .collect(Collectors.toList());
         }
 
         if (policyProps.getAny().isEnabled()) {
-            LOGGER.trace("Activating authentication policy [{}]", AtLeastOneCredentialValidatedAuthenticationPolicy.class.getSimpleName());
-            return CollectionUtils.wrapList(new AtLeastOneCredentialValidatedAuthenticationPolicy(policyProps.getAny().isTryAll()));
+            val policy = new AtLeastOneCredentialValidatedAuthenticationPolicy(policyProps.getAny().isTryAll());
+            return CollectionUtils.wrapList(configureAuthenticationPolicy(policy, policyProps.getAny()));
         }
         return new ArrayList<>();
     }
 
+    private static AuthenticationPolicy configureAuthenticationPolicy(final BaseAuthenticationPolicy policy,
+                                                                      final BaseAuthenticationPolicyProperties properties) {
+        return policy.setName(properties.getName()).setOrder(properties.getOrder());
+    }
+    
     /**
      * New ip address intelligence service.
      *

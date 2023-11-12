@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.core.Ordered;
 
 import java.io.Serial;
@@ -20,6 +21,7 @@ import java.io.Serial;
 @EqualsAndHashCode
 @Setter
 @Getter
+@Accessors(chain = true)
 public abstract class BaseAuthenticationPolicy implements AuthenticationPolicy {
     @Serial
     private static final long serialVersionUID = -2825457764398118845L;

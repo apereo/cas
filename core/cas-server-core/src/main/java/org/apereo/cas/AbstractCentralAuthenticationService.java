@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.CasModelRegisteredService;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.RegisteredServiceAuthenticationPolicy;
 import org.apereo.cas.services.UnauthorizedProxyingException;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.TicketFactory;
@@ -22,7 +21,6 @@ import org.springframework.util.ObjectUtils;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * An abstract implementation of the {@link CentralAuthenticationService} that provides access to
@@ -57,10 +55,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
 
     protected Authentication getAuthenticationSatisfiedByPolicy(final Authentication authentication, final Service service,
                                                                 final RegisteredService registeredService) throws AbstractTicketException {
-        val policy = Optional.ofNullable(registeredService.getAuthenticationPolicy())
-            .map(RegisteredServiceAuthenticationPolicy::getCriteria)
-            .map(criteria -> criteria.toAuthenticationPolicy(registeredService))
-            .orElseGet(configurationContext::getAuthenticationPolicy);
+        val policy = configurationContext.getAuthenticationPolicy();
         try {
             val policyContext = Map.of(RegisteredService.class.getName(), registeredService, Service.class.getName(), service);
             val executionResult = policy.isSatisfiedBy(authentication, configurationContext.getApplicationContext(), policyContext);

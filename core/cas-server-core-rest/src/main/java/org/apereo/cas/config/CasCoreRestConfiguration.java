@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.AuthenticationPolicy;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorAuthenticationTriggerSelectionStrategy;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -23,6 +24,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -48,16 +50,32 @@ public class CasCoreRestConfiguration {
         @ConditionalOnMissingBean(name = RestAuthenticationService.DEFAULT_BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public RestAuthenticationService restAuthenticationService(
-            @Qualifier("restHttpRequestCredentialFactory") final RestHttpRequestCredentialFactory restHttpRequestCredentialFactory,
-            @Qualifier(MultifactorAuthenticationTriggerSelectionStrategy.BEAN_NAME) final MultifactorAuthenticationTriggerSelectionStrategy multifactorTriggerSelectionStrategy,
-            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY) final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-            @Qualifier(AuthenticationSystemSupport.BEAN_NAME) final AuthenticationSystemSupport authenticationSystemSupport,
-            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
-            @Qualifier("requestedContextValidator") final RequestedAuthenticationContextValidator requestedContextValidator) {
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier("restAuthenticationPolicy")
+            final AuthenticationPolicy restAuthenticationPolicy,
+            @Qualifier("restHttpRequestCredentialFactory")
+            final RestHttpRequestCredentialFactory restHttpRequestCredentialFactory,
+            @Qualifier(MultifactorAuthenticationTriggerSelectionStrategy.BEAN_NAME)
+            final MultifactorAuthenticationTriggerSelectionStrategy multifactorTriggerSelectionStrategy,
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
+            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+            @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
+            final AuthenticationSystemSupport authenticationSystemSupport,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            @Qualifier("requestedContextValidator")
+            final RequestedAuthenticationContextValidator requestedContextValidator) {
             return new DefaultRestAuthenticationService(
                 authenticationSystemSupport, restHttpRequestCredentialFactory,
                 webApplicationServiceFactory, multifactorTriggerSelectionStrategy,
-                servicesManager, requestedContextValidator);
+                servicesManager, requestedContextValidator, restAuthenticationPolicy, applicationContext);
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "restAuthenticationPolicy")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public AuthenticationPolicy restAuthenticationPolicy() {
+            return AuthenticationPolicy.alwaysSatisfied();
         }
     }
 

@@ -16,6 +16,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
@@ -44,6 +45,7 @@ import java.util.Set;
 @Getter
 @AllArgsConstructor
 @RequiredArgsConstructor
+@Accessors(chain = true)
 public class GroovyScriptAuthenticationPolicy extends BaseAuthenticationPolicy {
 
     @Serial

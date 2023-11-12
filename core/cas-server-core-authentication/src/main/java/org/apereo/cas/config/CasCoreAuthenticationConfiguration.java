@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationResultBuilderFactory;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.AuthenticationTransactionFactory;
 import org.apereo.cas.authentication.AuthenticationTransactionManager;
 import org.apereo.cas.authentication.DefaultAuthenticationAttributeReleasePolicy;
@@ -22,6 +23,7 @@ import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
@@ -103,9 +105,12 @@ public class CasCoreAuthenticationConfiguration {
         public AuthenticationManager casAuthenticationManager(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME) final AuthenticationEventExecutionPlan authenticationEventExecutionPlan) {
+            @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
+            final ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport,
+            @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
+            final AuthenticationEventExecutionPlan authenticationEventExecutionPlan) {
             val isFatal = casProperties.getPersonDirectory().getPrincipalResolutionFailureFatal() == TriStateBoolean.TRUE;
-            return new DefaultAuthenticationManager(authenticationEventExecutionPlan, isFatal, applicationContext);
+            return new DefaultAuthenticationManager(authenticationEventExecutionPlan, authenticationSystemSupport, isFatal, applicationContext);
         }
     }
 
