@@ -344,7 +344,8 @@ public class CoreAuthenticationUtils {
 
     private static AuthenticationPolicy configureAuthenticationPolicy(final BaseAuthenticationPolicy policy,
                                                                       final BaseAuthenticationPolicyProperties properties) {
-        return policy.setName(properties.getName()).setOrder(properties.getOrder());
+        return policy.setName(StringUtils.defaultIfBlank(properties.getName(), policy.getClass().getSimpleName()))
+            .setOrder(properties.getOrder());
     }
     
     /**
