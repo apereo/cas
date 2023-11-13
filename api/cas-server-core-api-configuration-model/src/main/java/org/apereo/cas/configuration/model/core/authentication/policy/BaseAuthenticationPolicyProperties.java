@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.core.authentication.policy;
 import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.core.Ordered;
 import java.io.Serial;
 import java.io.Serializable;
 
@@ -32,5 +33,5 @@ public abstract class BaseAuthenticationPolicyProperties implements Serializable
     /**
      * The execution order of this policy.
      */
-    private int order;
+    private int order = Ordered.LOWEST_PRECEDENCE;
 }
