@@ -84,15 +84,20 @@ public class CasFiltersConfiguration {
         @Bean
         public FilterRegistrationBean<RegisteredServiceResponseHeadersEnforcementFilter> responseHeadersSecurityFilter(
             final CasConfigurationProperties casProperties,
-            @Qualifier(ArgumentExtractor.BEAN_NAME) final ObjectProvider<ArgumentExtractor> argumentExtractor,
-            @Qualifier(ServicesManager.BEAN_NAME) final ObjectProvider<ServicesManager> servicesManager,
-            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS) final ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer,
-            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME) final ObjectProvider<AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies) {
+            @Qualifier(ArgumentExtractor.BEAN_NAME)
+            final ObjectProvider<ArgumentExtractor> argumentExtractor,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ObjectProvider<ServicesManager> servicesManager,
+            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
+            final ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer,
+            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
+            final ObjectProvider<AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies) {
             val header = casProperties.getHttpWebRequest().getHeader();
             val initParams = new HashMap<String, String>();
             initParams.put(ResponseHeadersEnforcementFilter.INIT_PARAM_ENABLE_CACHE_CONTROL, BooleanUtils.toStringTrueFalse(header.isCache()));
             initParams.put(ResponseHeadersEnforcementFilter.INIT_PARAM_ENABLE_XCONTENT_OPTIONS, BooleanUtils.toStringTrueFalse(header.isXcontent()));
             initParams.put(ResponseHeadersEnforcementFilter.INIT_PARAM_ENABLE_STRICT_TRANSPORT_SECURITY, BooleanUtils.toStringTrueFalse(header.isHsts()));
+            initParams.put(ResponseHeadersEnforcementFilter.INIT_PARAM_ENABLE_STRICT_TRANSPORT_SECURITY_OPTIONS, header.getHstsOptions());
             initParams.put(ResponseHeadersEnforcementFilter.INIT_PARAM_ENABLE_STRICT_XFRAME_OPTIONS, BooleanUtils.toStringTrueFalse(header.isXframe()));
             initParams.put(ResponseHeadersEnforcementFilter.INIT_PARAM_STRICT_XFRAME_OPTIONS, header.getXframeOptions());
             initParams.put(ResponseHeadersEnforcementFilter.INIT_PARAM_ENABLE_XSS_PROTECTION, BooleanUtils.toStringTrueFalse(header.isXss()));

@@ -150,13 +150,15 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
     @Test
     void verifyStrictTransport() throws Throwable {
         val filter = getFilterForProperty(RegisteredServiceProperties.HTTP_HEADER_ENABLE_STRICT_TRANSPORT_SECURITY);
+        filter.setStrictTransportSecurityHeader("max-age=1");
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, "service-0");
         request.setSecure(true);
         filter.doFilter(request, response, new MockFilterChain());
         filter.doFilter(request, response, new MockFilterChain());
-        assertNotNull(response.getHeader("Strict-Transport-Security"));
+        val header = response.getHeader("Strict-Transport-Security");
+        assertEquals("max-age=1", header);
     }
 
     @Test

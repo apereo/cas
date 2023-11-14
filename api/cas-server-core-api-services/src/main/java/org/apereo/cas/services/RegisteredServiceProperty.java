@@ -356,6 +356,12 @@ public interface RegisteredServiceProperty extends Serializable {
             RegisteredServicePropertyGroups.HTTP_HEADERS, RegisteredServicePropertyTypes.BOOLEAN,
             "Whether CAS should inject strict transport security headers into the response when this service is in process."),
         /**
+         * Control the header value CAS should use when injecting strict transport security headers into the response when this service is in process.
+         */
+        HTTP_HEADER_STRICT_TRANSPORT_SECURITY("httpHeaderStrictTransportSecurity", StringUtils.EMPTY,
+            RegisteredServicePropertyGroups.HTTP_HEADERS, RegisteredServicePropertyTypes.STRING,
+            "Control the header value CAS should use when injecting strict transport security headers into the response when this service is in process."),
+        /**
          * Whether CAS should inject xframe options headers into the response when this service is in process.
          */
         HTTP_HEADER_ENABLE_XFRAME_OPTIONS("httpHeaderEnableXFrameOptions", "true",
