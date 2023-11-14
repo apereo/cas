@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -103,7 +104,7 @@ class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Tests {
         val jwtBuilder = new JwtBuilder(new OAuth20JwtAccessTokenCipherExecutor(), servicesManager,
             new OAuth20RegisteredServiceJwtAccessTokenCipherExecutor(), casProperties);
         val expiringAccessTokenFactory = new OAuth20DefaultAccessTokenFactory(
-            alwaysExpiresExpirationPolicyBuilder(), jwtBuilder, servicesManager);
+            alwaysExpiresExpirationPolicyBuilder(), jwtBuilder, servicesManager, new CasConfigurationProperties());
 
         val code = addCode(principal, addRegisteredService());
         val accessToken = expiringAccessTokenFactory.create(RegisteredServiceTestUtils.getService(), authentication,

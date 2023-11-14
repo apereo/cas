@@ -3,6 +3,7 @@ package org.apereo.cas.support.oauth.validator.token;
 import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
@@ -252,7 +253,7 @@ class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
             };
 
             val oauthCode = new OAuth20DefaultOAuthCodeFactory(new DefaultUniqueTicketIdGenerator(), expirationPolicy,
-                mock(ServicesManager.class), CipherExecutor.noOpOfStringToString())
+                mock(ServicesManager.class), CipherExecutor.noOpOfStringToString(), new CasConfigurationProperties())
                 .create(oauthCasAuthenticationBuilderService, RegisteredServiceTestUtils.getAuthentication(),
                     new MockTicketGrantingTicket("casuser"), new HashSet<>(),
                     null, null, "clientid12345",

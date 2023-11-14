@@ -418,9 +418,10 @@ public class SamlIdPConfiguration {
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
             @Qualifier("samlIdPServiceFactory")
-            final ServiceFactory samlIdPServiceFactory) {
+            final ServiceFactory samlIdPServiceFactory,
+            final CasConfigurationProperties casProperties) {
             return new DefaultSamlArtifactTicketFactory(samlArtifactTicketExpirationPolicy,
-                openSamlConfigBean, samlIdPServiceFactory);
+                openSamlConfigBean, samlIdPServiceFactory, casProperties);
         }
 
         @Bean(initMethod = "initialize", destroyMethod = "destroy")

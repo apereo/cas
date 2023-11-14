@@ -101,7 +101,8 @@ class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
         val code = createOAuthCode();
         val jwtBuilder = new JwtBuilder(CipherExecutor.noOpOfSerializableToString(),
             servicesManager, RegisteredServiceCipherExecutor.noOp(), casProperties);
-        val token = new OAuth20DefaultAccessTokenFactory(neverExpiresExpirationPolicyBuilder(), jwtBuilder, servicesManager)
+        val token = new OAuth20DefaultAccessTokenFactory(neverExpiresExpirationPolicyBuilder(), jwtBuilder,
+                servicesManager, new CasConfigurationProperties())
             .create(RegisteredServiceTestUtils.getService(),
                 RegisteredServiceTestUtils.getAuthentication(), new MockTicketGrantingTicket("casuser"),
                 CollectionUtils.wrapSet("1", "2"), code.getId(), "clientId1234567", new HashMap<>(),
@@ -113,7 +114,8 @@ class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
 
     @RepeatedTest(2)
     void verifyRefreshTokenCanBeAdded() throws Throwable {
-        val token = new OAuth20DefaultRefreshTokenFactory(neverExpiresExpirationPolicyBuilder(), servicesManager)
+        val token = new OAuth20DefaultRefreshTokenFactory(neverExpiresExpirationPolicyBuilder(),
+                servicesManager, new CasConfigurationProperties())
             .create(RegisteredServiceTestUtils.getService(),
                 RegisteredServiceTestUtils.getAuthentication(), new MockTicketGrantingTicket("casuser"),
                 CollectionUtils.wrapSet("1", "2"),
@@ -144,7 +146,8 @@ class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
 
     private OAuth20Code createOAuthCode() throws Throwable {
         return new OAuth20DefaultOAuthCodeFactory(new DefaultUniqueTicketIdGenerator(),
-            neverExpiresExpirationPolicyBuilder(), servicesManager, CipherExecutor.noOpOfStringToString())
+            neverExpiresExpirationPolicyBuilder(), servicesManager, CipherExecutor.noOpOfStringToString(),
+                new CasConfigurationProperties())
             .create(RegisteredServiceTestUtils.getService(),
                 RegisteredServiceTestUtils.getAuthentication(), new MockTicketGrantingTicket("casuser"),
                 CollectionUtils.wrapSet("1", "2"), "code-challenge",

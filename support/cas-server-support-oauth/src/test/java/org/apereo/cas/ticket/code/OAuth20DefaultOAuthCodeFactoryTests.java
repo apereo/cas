@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.code;
 
 import org.apereo.cas.AbstractOAuth20Tests;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
@@ -8,8 +9,13 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthCodeExpirationPolicy;
 
 import lombok.val;
+import org.apereo.cas.ticket.ExpirationPolicyBuilder;
+import org.apereo.cas.ticket.UniqueTicketIdGenerator;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.Map;
 import java.util.Set;
@@ -25,6 +31,18 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("OAuthToken")
 class OAuth20DefaultOAuthCodeFactoryTests extends AbstractOAuth20Tests {
 
+    @Autowired
+    @Qualifier("protocolTicketCipherExecutor")
+    private CipherExecutor protocolTicketCipherExecutor;
+
+    @Autowired
+    @Qualifier("oAuthCodeIdGenerator")
+    private UniqueTicketIdGenerator oAuthCodeIdGenerator;
+
+    @Autowired
+    @Qualifier("oAuthCodeExpirationPolicy")
+    private ExpirationPolicyBuilder oAuthCodeExpirationPolicy;
+
     @Test
     void verifyOperationWithExpPolicy() throws Throwable {
         val registeredService = getRegisteredService("https://code.oauth.org", "clientid-code", "secret-at");
@@ -38,6 +56,27 @@ class OAuth20DefaultOAuthCodeFactoryTests extends AbstractOAuth20Tests {
             Set.of("Scope1", "Scope2"), "code-challenge", "plain",
             "clientid-code", Map.of(),
             OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
+        assertNotNull(token);
+        assertEquals(0, tgt.getDescendantTickets().size());
+    }
+
+    @Test
+    void verifyOperationWithExpPolicyRemoveDescendantTickets() throws Throwable {
+        val registeredService = getRegisteredService("https://code.oauth.org", "clientid-code", "secret-at");
+        registeredService.setCodeExpirationPolicy(
+                new DefaultRegisteredServiceOAuthCodeExpirationPolicy(10, "PT10S"));
+        servicesManager.save(registeredService);
+        val tgt = new MockTicketGrantingTicket("casuser");
+        val casProperties = new CasConfigurationProperties();
+        casProperties.getLogout().setRemoveDescendantTickets(true);
+        val newOAuthCodeFactory = new OAuth20DefaultOAuthCodeFactory(oAuthCodeIdGenerator, oAuthCodeExpirationPolicy,
+                servicesManager, protocolTicketCipherExecutor, casProperties);
+        val token = newOAuthCodeFactory.create(RegisteredServiceTestUtils.getService("https://code.oauth.org"),
+                RegisteredServiceTestUtils.getAuthentication(),
+                tgt,
+                Set.of("Scope1", "Scope2"), "code-challenge", "plain",
+                "clientid-code", Map.of(),
+                OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         assertNotNull(token);
         assertTrue(tgt.getDescendantTickets().stream().anyMatch(t -> t.equalsIgnoreCase(token.getId())));
     }
@@ -53,7 +92,7 @@ class OAuth20DefaultOAuthCodeFactoryTests extends AbstractOAuth20Tests {
             "clientid-code-noexp", Map.of(), OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         assertNotNull(token);
         assertNotNull(defaultAccessTokenFactory.get(OAuth20Code.class));
-        assertTrue(tgt.getDescendantTickets().stream().anyMatch(t -> t.equalsIgnoreCase(token.getId())));
+        assertEquals(0, tgt.getDescendantTickets().size());
     }
 
 }

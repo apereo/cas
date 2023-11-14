@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.artifact;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
@@ -37,6 +38,8 @@ public class DefaultSamlArtifactTicketFactory implements SamlArtifactTicketFacto
      */
     protected final ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
+    protected final CasConfigurationProperties casProperties;
+
     @Override
     public SamlArtifactTicket create(final String artifactId,
                                      final Authentication authentication,
@@ -49,7 +52,7 @@ public class DefaultSamlArtifactTicketFactory implements SamlArtifactTicketFacto
                 val service = this.webApplicationServiceFactory.createService(relyingParty);
                 val at = new SamlArtifactTicketImpl(codeId, service, authentication,
                     this.expirationPolicyBuilder.buildTicketExpirationPolicy(), ticketGrantingTicket, issuer, relyingParty, w.toString());
-                if (ticketGrantingTicket != null) {
+                if (casProperties.getLogout().isRemoveDescendantTickets() && ticketGrantingTicket != null) {
                     ticketGrantingTicket.getDescendantTickets().add(at.getId());
                 }
                 return at;

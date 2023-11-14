@@ -2,6 +2,7 @@ package org.apereo.cas.ticket.refreshtoken;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
@@ -44,9 +45,11 @@ public class OAuth20DefaultRefreshTokenFactory implements OAuth20RefreshTokenFac
      */
     protected final ServicesManager servicesManager;
 
+    protected final CasConfigurationProperties casProperties;
+
     public OAuth20DefaultRefreshTokenFactory(final ExpirationPolicyBuilder<OAuth20RefreshToken> expirationPolicyBuilder,
-                                             final ServicesManager servicesManager) {
-        this(new DefaultUniqueTicketIdGenerator(), expirationPolicyBuilder, servicesManager);
+                                             final ServicesManager servicesManager, final CasConfigurationProperties casProperties) {
+        this(new DefaultUniqueTicketIdGenerator(), expirationPolicyBuilder, servicesManager, casProperties);
     }
 
     @Override
@@ -65,7 +68,7 @@ public class OAuth20DefaultRefreshTokenFactory implements OAuth20RefreshTokenFac
             expirationPolicyToUse, ticketGrantingTicket,
             scopes, clientId, accessToken, requestClaims, responseType, grantType);
 
-        if (ticketGrantingTicket != null) {
+        if (casProperties.getLogout().isRemoveDescendantTickets() && ticketGrantingTicket != null) {
             ticketGrantingTicket.getDescendantTickets().add(rt.getId());
         }
         return rt;
