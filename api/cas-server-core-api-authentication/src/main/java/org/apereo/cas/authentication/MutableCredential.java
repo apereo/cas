@@ -12,12 +12,14 @@ public interface MutableCredential extends Credential {
      *
      * @param id the id
      */
-    default void setId(final String id) {}
+    default void setId(final String id) {
+    }
 
     /**
      * Sets credential metadata.
      *
      * @param credentialMetadata the credential metadata
      */
-    default void setCredentialMetadata(final CredentialMetadata credentialMetadata) {}
+    default void setCredentialMetadata(final CredentialMetadata credentialMetadata) {
+    }
 }

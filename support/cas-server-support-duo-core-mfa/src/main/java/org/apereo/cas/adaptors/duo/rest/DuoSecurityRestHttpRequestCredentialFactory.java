@@ -5,7 +5,6 @@ import org.apereo.cas.adaptors.duo.authn.DuoSecurityPasscodeCredential;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
-import org.apereo.cas.authentication.metadata.BasicCredentialMetadata;
 import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
 import org.apereo.cas.util.CollectionUtils;
@@ -57,8 +56,7 @@ public class DuoSecurityRestHttpRequestCredentialFactory implements RestHttpRequ
         val providerId = StringUtils.defaultIfBlank(requestBody.getFirst(PARAMETER_NAME_PROVIDER),
             DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
         val source = new DuoSecurityPasscodeCredential(username, token, providerId);
-        source.setCredentialMetadata(new BasicCredentialMetadata(source));
-        return CollectionUtils.wrap(source);
+        return CollectionUtils.wrap(prepareCredential(request, source));
     }
 
     @Override
@@ -68,7 +66,6 @@ public class DuoSecurityRestHttpRequestCredentialFactory implements RestHttpRequ
                                                final MultifactorAuthenticationProvider provider) {
         val principal = authentication.getPrincipal();
         val credential = new DuoSecurityDirectCredential(principal, provider.getId());
-        credential.setCredentialMetadata(new BasicCredentialMetadata(credential));
-        return List.of(credential);
+        return List.of(prepareCredential(request, credential));
     }
 }

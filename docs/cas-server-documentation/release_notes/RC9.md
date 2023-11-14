@@ -86,6 +86,17 @@ assigned to the relying party and registered service definition. The default aut
 and the endpoint will begin to enforce this for all requests. Furthermore, authentication methods will be deactivated and disabled
 if support for a method is not defined and declared in OpenID discovery metadata.
 
+### Authentication Policy & Credential Metadata
+
+The structure of the [Groovy Authentication Policy](../authentication/Configuring-Authentication-Policy-Groovy.html) is 
+now updated to allow it access to the full authentication attempt, etc. **This is a breaking change** and you will be
+expected to update your script definitions to match the input requirements and parameters.
+
+Furthermore, `CredentialMetadata` objects attached to authentication attempts may carry extra properties attached
+to the credential itself. This bit is not new, of course. In scenarios where authentication attempts are made 
+using the [CAS REST API](../protocol/REST-Protocol-CredentialAuthentication.html),
+the extracted credential will carry properties that are populated with request headers, etc.
+
 ## Other Stuff
 
 - When using [OpenID Connect](../protocol/OIDC-Protocol.html), requests that carry a `client_secret` as a query parameter are now rejected and/or ignored.
@@ -136,3 +147,4 @@ if support for a method is not defined and declared in OpenID discovery metadata
 - Azure Spring Cloud
 - MySQL Driver
 - MSSQL Driver
+- Micrometer

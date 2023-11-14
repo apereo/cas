@@ -38,6 +38,6 @@ public class YubiKeyRestHttpRequestCredentialFactory implements RestHttpRequestC
         if (StringUtils.isBlank(otp)) {
             return new ArrayList<>(0);
         }
-        return CollectionUtils.wrap(new YubiKeyCredential(otp));
+        return CollectionUtils.wrap(prepareCredential(request, new YubiKeyCredential(otp)));
     }
 }
