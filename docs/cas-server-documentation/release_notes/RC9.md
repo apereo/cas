@@ -61,7 +61,7 @@ half-baked, so approach with care and a pinch of curiosity. </p></div>
 ### Testing Strategy
 
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `446` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `450` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`. Furthermore, a large number of test categories that group internal unit tests
 are now configured to run with parallelism enabled.
 
@@ -99,6 +99,7 @@ if support for a method is not defined and declared in OpenID discovery metadata
 - Incremental improvements to [authentication webflow interrupts](../webflow/Webflow-Customization-Interrupt.html) to handle interrupt tracking better when payloads change dynamically.
 - Client TLS settings are now supported for [OpenID Connect](../authentication/OIDC-Authentication-AccessToken-AuthMethods.html) relying parties and applications. This capability is also extended to [Dynamic Client Registration](../authentication/OIDC-Authentication-Dynamic-Registration.html) requests.
 - CAS notifications can now be [sent to Slack](../notifications/Notifications-Configuration-Slack.html) too.
+- The header value for `Strict-Transport-Security` header [can now be defined](../services/Configuring-Service-Http-Security-Headers.html) both globally and per application.
 
 ## Library Upgrades
   
