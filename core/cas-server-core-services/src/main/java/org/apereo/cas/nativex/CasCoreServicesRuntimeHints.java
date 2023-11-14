@@ -66,6 +66,8 @@ import org.apereo.cas.services.ServiceRegistryInitializerEventListener;
 import org.apereo.cas.services.StaticRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.TimeBasedRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
+import org.apereo.cas.services.query.RegisteredServiceQuery;
+import org.apereo.cas.services.query.RegisteredServiceQueryIndex;
 import org.apereo.cas.services.support.RegisteredServiceChainingAttributeFilter;
 import org.apereo.cas.services.support.RegisteredServiceMappedRegexAttributeFilter;
 import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
@@ -173,7 +175,11 @@ public class CasCoreServicesRuntimeHints implements CasRuntimeHintsRegistrar {
             .registerType(NotPreventedRegisteredServiceAuthenticationPolicyCriteria.class)
             .registerType(RestfulRegisteredServiceAuthenticationPolicyCriteria.class);
 
-        List.of(CasRegisteredService.class).forEach(el ->
+        List.of(
+            RegisteredServiceQuery.class,
+            RegisteredServiceQueryIndex.class,
+            CasRegisteredService.class
+        ).forEach(el ->
             hints.reflection().registerType(TypeReference.of(el),
                 MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
                 MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
