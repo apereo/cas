@@ -1174,9 +1174,10 @@ public class CasOAuth20Configuration {
             @Qualifier("refreshTokenExpirationPolicy")
             final ExpirationPolicyBuilder refreshTokenExpirationPolicy,
             @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) {
+            final ServicesManager servicesManager,
+            final CasConfigurationProperties casProperties) {
             return new OAuth20DefaultRefreshTokenFactory(refreshTokenIdGenerator,
-                refreshTokenExpirationPolicy, servicesManager);
+                refreshTokenExpirationPolicy, servicesManager, casProperties);
         }
 
         @Bean
@@ -1190,9 +1191,10 @@ public class CasOAuth20Configuration {
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             @Qualifier("accessTokenJwtBuilder")
-            final JwtBuilder accessTokenJwtBuilder) {
+            final JwtBuilder accessTokenJwtBuilder,
+            final CasConfigurationProperties casProperties) {
             return new OAuth20DefaultAccessTokenFactory(accessTokenIdGenerator,
-                accessTokenExpirationPolicy, accessTokenJwtBuilder, servicesManager);
+                accessTokenExpirationPolicy, accessTokenJwtBuilder, servicesManager, casProperties);
         }
 
         @Bean
@@ -1236,9 +1238,10 @@ public class CasOAuth20Configuration {
             @Qualifier("oAuthCodeExpirationPolicy")
             final ExpirationPolicyBuilder oAuthCodeExpirationPolicy,
             @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) {
+            final ServicesManager servicesManager,
+            final CasConfigurationProperties casProperties) {
             return new OAuth20DefaultOAuthCodeFactory(oAuthCodeIdGenerator,
-                oAuthCodeExpirationPolicy, servicesManager, protocolTicketCipherExecutor);
+                oAuthCodeExpirationPolicy, servicesManager, protocolTicketCipherExecutor, casProperties);
         }
     }
 

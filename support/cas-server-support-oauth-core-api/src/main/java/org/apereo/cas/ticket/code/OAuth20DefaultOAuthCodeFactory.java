@@ -2,6 +2,7 @@ package org.apereo.cas.ticket.code;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
@@ -53,6 +54,8 @@ public class OAuth20DefaultOAuthCodeFactory implements OAuth20CodeFactory {
      */
     protected final CipherExecutor<String, String> cipherExecutor;
 
+    protected final CasConfigurationProperties casPoperties;
+
     @Override
     public OAuth20Code create(final Service service,
                               final Authentication authentication,
@@ -79,7 +82,7 @@ public class OAuth20DefaultOAuthCodeFactory implements OAuth20CodeFactory {
             expirationPolicyToUse, ticketGrantingTicket, scopes,
             codeChallenge, codeChallengeMethod, clientId,
             requestClaims, responseType, grantType);
-        if (ticketGrantingTicket != null) {
+        if (casPoperties.getLogout().isRemoveDescendantTickets() && ticketGrantingTicket != null) {
             ticketGrantingTicket.getDescendantTickets().add(oauthCode.getId());
         }
         return oauthCode;

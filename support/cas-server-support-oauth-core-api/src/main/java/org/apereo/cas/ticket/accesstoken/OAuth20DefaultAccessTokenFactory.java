@@ -2,6 +2,7 @@ package org.apereo.cas.ticket.accesstoken;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
@@ -54,10 +55,13 @@ public class OAuth20DefaultAccessTokenFactory implements OAuth20AccessTokenFacto
      */
     protected final ServicesManager servicesManager;
 
+    protected final CasConfigurationProperties casPoperties;
+
     public OAuth20DefaultAccessTokenFactory(final ExpirationPolicyBuilder<OAuth20AccessToken> expirationPolicy,
                                             final JwtBuilder jwtBuilder,
-                                            final ServicesManager servicesManager) {
-        this(new DefaultUniqueTicketIdGenerator(), expirationPolicy, jwtBuilder, servicesManager);
+                                            final ServicesManager servicesManager,
+                                            final CasConfigurationProperties casPoperties) {
+        this(new DefaultUniqueTicketIdGenerator(), expirationPolicy, jwtBuilder, servicesManager, casPoperties);
     }
 
     @Override
@@ -77,7 +81,7 @@ public class OAuth20DefaultAccessTokenFactory implements OAuth20AccessTokenFacto
         val at = new OAuth20DefaultAccessToken(accessTokenId, service, authentication,
             expirationPolicyToUse, ticketGrantingTicket, token, scopes,
             clientId, requestClaims, responseType, grantType);
-        if (ticketGrantingTicket != null) {
+        if (casPoperties.getLogout().isRemoveDescendantTickets() && ticketGrantingTicket != null) {
             ticketGrantingTicket.getDescendantTickets().add(at.getId());
         }
         return at;

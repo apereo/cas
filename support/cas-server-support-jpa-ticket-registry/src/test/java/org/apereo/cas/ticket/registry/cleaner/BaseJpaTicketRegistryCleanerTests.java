@@ -255,7 +255,7 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
         when(builder.buildTicketExpirationPolicy()).thenReturn(NeverExpiresExpirationPolicy.INSTANCE);
 
         return new OAuth20DefaultOAuthCodeFactory(new DefaultUniqueTicketIdGenerator(),
-            builder, servicesManager, CipherExecutor.noOpOfStringToString())
+            builder, servicesManager, CipherExecutor.noOpOfStringToString(), new CasConfigurationProperties())
             .create(RegisteredServiceTestUtils.getService(),
                 RegisteredServiceTestUtils.getAuthentication(), new MockTicketGrantingTicket("casuser"),
                 CollectionUtils.wrapSet("1", "2"), "code-challenge",
