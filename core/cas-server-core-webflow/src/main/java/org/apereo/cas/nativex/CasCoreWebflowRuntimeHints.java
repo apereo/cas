@@ -5,6 +5,7 @@ import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.authentication.CasWebflowExceptionHandler;
+import org.apereo.cas.web.flow.configurer.CasWebflowCustomizer;
 import org.apereo.cas.web.flow.decorator.WebflowDecorator;
 import org.apereo.cas.web.flow.executor.ClientFlowExecutionRepository;
 import lombok.val;
@@ -15,7 +16,10 @@ import org.springframework.binding.message.MessageContext;
 import org.springframework.binding.validation.ValidationContext;
 import org.springframework.webflow.core.AnnotatedObject;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
+import org.springframework.webflow.definition.StateDefinition;
+import org.springframework.webflow.definition.TransitionDefinition;
 import org.springframework.webflow.engine.FlowExecutionExceptionHandlerSet;
+import org.springframework.webflow.engine.TransitionSet;
 import org.springframework.webflow.engine.impl.FlowExecutionImpl;
 import org.springframework.webflow.execution.Action;
 import java.util.Collection;
@@ -32,7 +36,10 @@ public class CasCoreWebflowRuntimeHints implements CasRuntimeHintsRegistrar {
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
         hints.proxies()
             .registerJdkProxy(Action.class)
+            .registerJdkProxy(TransitionDefinition.class)
+            .registerJdkProxy(StateDefinition.class)
             .registerJdkProxy(CasWebflowConfigurer.class)
+            .registerJdkProxy(CasWebflowCustomizer.class)
             .registerJdkProxy(WebflowDecorator.class)
             .registerJdkProxy(CasWebflowExecutionPlanConfigurer.class)
             .registerJdkProxy(CasWebflowExceptionHandler.class);
@@ -49,6 +56,7 @@ public class CasCoreWebflowRuntimeHints implements CasRuntimeHintsRegistrar {
         registerReflectionHints(hints, List.of(
             TypeReference.of("org.springframework.webflow.engine.impl.RequestControlContextImpl"),
             TypeReference.of("org.springframework.webflow.engine.impl.FlowSessionImpl"),
+            TransitionSet.class,
             FlowExecutionImpl.class,
             FlowExecutionExceptionHandlerSet.class,
             WebflowConversationStateCipherExecutor.class
