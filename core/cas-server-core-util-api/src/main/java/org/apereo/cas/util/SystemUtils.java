@@ -65,7 +65,7 @@ public class SystemUtils {
         info.put("Spring Boot Version", SpringBootVersion.getVersion());
         info.put("Spring Version", SpringVersion.getVersion());
 
-        info.put("Java Home", properties.get("java.home"));
+        FunctionUtils.doIfNotNull(properties.get("java.home"), t -> info.put("Java Home", t));
         info.put("Java Vendor", properties.get("java.vendor"));
         info.put("Java Version", properties.get("java.version"));
         info.put("Servlet Version", HttpServlet.class.getPackage().getImplementationVersion());

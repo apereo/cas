@@ -150,7 +150,7 @@ graalvmNative {
             buildArgs.add("--initialize-at-run-time=org.bouncycastle.jcajce.provider.drbg.DRBG\$Default")
             buildArgs.add("--initialize-at-run-time=org.bouncycastle.jcajce.provider.drbg.DRBG\$NonceAndIV")
 
-            buildArgs.add('--features=org.apereo.cas.nativex.features.BouncyCastleProviderFeature')
+            buildArgs.add('--features=org.apereo.cas.nativex.features.DefaultNativeImageFeature')
 
             buildArgs.add('--enable-url-protocols=jar,file,resource,http,https')
         }

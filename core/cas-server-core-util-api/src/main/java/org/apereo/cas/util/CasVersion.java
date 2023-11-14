@@ -1,6 +1,7 @@
 package org.apereo.cas.util;
 
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -54,14 +55,15 @@ public class CasVersion {
     }
 
     static {
-        IMPLEMENTATION_DATE = FunctionUtils.doAndHandle(() -> {
-            val className = CasVersion.class.getSimpleName() + ".class";
-            val classPath = CasVersion.class.getResource(className).toString();
-            val manifestPath = classPath.substring(0, classPath.lastIndexOf('!') + 1) + "/META-INF/MANIFEST.MF";
-            val manifest = new Manifest(new URL(manifestPath).openStream());
-            val attributes = manifest.getMainAttributes();
-            return StringUtils.defaultIfBlank(attributes.getValue("Implementation-Date"),
-                ZonedDateTime.now(Clock.systemUTC()).toString());
-        });
+        IMPLEMENTATION_DATE = CasRuntimeHintsRegistrar.inNativeImage()
+            ? ZonedDateTime.now(Clock.systemUTC()).toString()
+            : FunctionUtils.doAndHandle(() -> {
+                val className = CasVersion.class.getSimpleName() + ".class";
+                val classPath = CasVersion.class.getResource(className).toString();
+                val manifestPath = classPath.substring(0, classPath.lastIndexOf('!') + 1) + "/META-INF/MANIFEST.MF";
+                val manifest = new Manifest(new URL(manifestPath).openStream());
+                val attributes = manifest.getMainAttributes();
+                return StringUtils.defaultIfBlank(attributes.getValue("Implementation-Date"), ZonedDateTime.now(Clock.systemUTC()).toString());
+            });
     }
 }
