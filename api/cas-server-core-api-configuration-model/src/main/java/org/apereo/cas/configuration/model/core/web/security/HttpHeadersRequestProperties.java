@@ -47,7 +47,7 @@ public class HttpHeadersRequestProperties implements Serializable {
 
     /**
      * When true, will inject the following headers into the response:
-     * {@code Strict-Transport-Security: max-age=15768000 ; includeSubDomains}.
+     * {@code Strict-Transport-Security: ...}.
      */
     private boolean hsts = true;
 
@@ -75,6 +75,11 @@ public class HttpHeadersRequestProperties implements Serializable {
      * Will inject values into the {@code X-XSS-Protection} header into the response.
      */
     private String xssOptions = "1; mode=block";
+
+    /**
+     * Control the value of the {@code Strict-Transport-Security} header.
+     */
+    private String hstsOptions = "max-age=15768000 ; includeSubDomains";
 
     /**
      * Helps you reduce XSS risks on modern browsers by declaring what dynamic

@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.FilterConfig;
@@ -54,6 +55,11 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
      * Enable STRICT_TRANSPORT_SECURITY.
      */
     public static final String INIT_PARAM_ENABLE_STRICT_TRANSPORT_SECURITY = "enableStrictTransportSecurity";
+
+    /**
+     * Control the header value CAS should use when injecting strict transport security headers into the response.
+     */
+    public static final String INIT_PARAM_ENABLE_STRICT_TRANSPORT_SECURITY_OPTIONS = "enableStrictTransportSecurityOptions";
 
     /**
      * Enable STRICT_XFRAME_OPTIONS.
@@ -123,6 +129,7 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
         recognizedParameterNames.add(INIT_PARAM_ENABLE_XSS_PROTECTION);
         recognizedParameterNames.add(INIT_PARAM_XSS_PROTECTION);
         recognizedParameterNames.add(INIT_PARAM_CACHE_CONTROL_STATIC_RESOURCES);
+        recognizedParameterNames.add(INIT_PARAM_ENABLE_STRICT_TRANSPORT_SECURITY_OPTIONS);
 
         while (initParamNames.hasMoreElements()) {
             val initParamName = (String) initParamNames.nextElement();
@@ -143,6 +150,7 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
         val xframeOpts = filterConfig.getInitParameter(INIT_PARAM_ENABLE_STRICT_XFRAME_OPTIONS);
         val xssOpts = filterConfig.getInitParameter(INIT_PARAM_ENABLE_XSS_PROTECTION);
         val cacheControlStaticResources = filterConfig.getInitParameter(INIT_PARAM_CACHE_CONTROL_STATIC_RESOURCES);
+        val hstsOptions = filterConfig.getInitParameter(INIT_PARAM_ENABLE_STRICT_TRANSPORT_SECURITY_OPTIONS);
 
         this.cacheControlStaticResourcesPattern = Pattern.compile("^.+\\.(" + cacheControlStaticResources + ")$", Pattern.CASE_INSENSITIVE);
         this.enableCacheControl = Boolean.parseBoolean(cacheControl);
@@ -155,10 +163,13 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
         }
         this.enableXSSProtection = Boolean.parseBoolean(xssOpts);
         this.xssProtection = filterConfig.getInitParameter(INIT_PARAM_XSS_PROTECTION);
-        if (this.xssProtection == null || this.xssProtection.isEmpty()) {
+        if (StringUtils.isBlank(this.xssProtection)) {
             this.xssProtection = "1; mode=block";
         }
         this.contentSecurityPolicy = filterConfig.getInitParameter(INIT_PARAM_CONTENT_SECURITY_POLICY);
+        if (StringUtils.isNotBlank(hstsOptions)) {
+            this.strictTransportSecurityHeader = hstsOptions;
+        }
     }
 
     @Override

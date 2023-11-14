@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import jakarta.servlet.http.HttpServletRequest;
@@ -182,7 +183,9 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
             RegisteredServiceProperties.HTTP_HEADER_ENABLE_STRICT_TRANSPORT_SECURITY);
         if (shouldInject.isPresent()) {
             if (shouldInject.get()) {
-                insertStrictTransportSecurityHeader(httpServletResponse, httpServletRequest);
+                val headerValue = StringUtils.defaultIfBlank(getStringProperty(result,
+                    RegisteredServiceProperties.HTTP_HEADER_STRICT_TRANSPORT_SECURITY), getStrictTransportSecurityHeader());
+                insertStrictTransportSecurityHeader(httpServletResponse, httpServletRequest, headerValue);
             } else {
                 LOGGER.trace("StrictTransportSecurity header disabled by service definition");
             }
