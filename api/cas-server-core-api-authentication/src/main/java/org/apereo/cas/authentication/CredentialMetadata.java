@@ -45,14 +45,14 @@ public interface CredentialMetadata extends Serializable {
      *
      * @param credentialTrait the credential trait
      */
-    void addTrait(CredentialTrait credentialTrait);
+    CredentialMetadata addTrait(CredentialTrait credentialTrait);
 
     /**
      * Remove trait.
      *
      * @param trait the trait
      */
-    void removeTrait(Class<? extends CredentialTrait> trait);
+    CredentialMetadata removeTrait(Class<? extends CredentialTrait> trait);
 
     /**
      * Gets trait.
@@ -75,5 +75,22 @@ public interface CredentialMetadata extends Serializable {
      *
      * @param properties the properties
      */
-    void putProperties(Map<String, Serializable> properties);
+    CredentialMetadata putProperties(Map<String, ? extends Serializable> properties);
+
+    /**
+     * Put property credential metadata.
+     *
+     * @param key   the key
+     * @param value the value
+     * @return the credential metadata
+     */
+    CredentialMetadata putProperty(String key, Serializable value);
+
+    /**
+     * Contains property?.
+     *
+     * @param key the key
+     * @return the boolean
+     */
+    boolean containsProperty(String key);
 }

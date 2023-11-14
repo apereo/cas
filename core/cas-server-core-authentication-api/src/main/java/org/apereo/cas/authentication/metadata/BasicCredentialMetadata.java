@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.CredentialMetadata;
 import org.apereo.cas.authentication.CredentialTrait;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -46,7 +47,7 @@ public class BasicCredentialMetadata implements CredentialMetadata {
 
     private final Map<String, Serializable> properties = new HashMap<>();
 
-    public BasicCredentialMetadata(final Credential credential, final Map<String, Serializable> properties) {
+    public BasicCredentialMetadata(final Credential credential, final Map<String, ? extends Serializable> properties) {
         this.id = credential.getId();
         this.credentialClass = credential.getClass();
         putProperties(properties);
@@ -57,18 +58,31 @@ public class BasicCredentialMetadata implements CredentialMetadata {
     }
 
     @Override
-    public void putProperties(final Map<String, Serializable> properties) {
+    @CanIgnoreReturnValue
+    public CredentialMetadata putProperties(final Map<String, ? extends Serializable> properties) {
         this.properties.putAll(properties);
+        return this;
     }
 
     @Override
-    public void addTrait(final CredentialTrait credentialTrait) {
+    @CanIgnoreReturnValue
+    public CredentialMetadata putProperty(final String key, final Serializable value) {
+        this.properties.put(key, value);
+        return this;
+    }
+
+    @Override
+    @CanIgnoreReturnValue
+    public CredentialMetadata addTrait(final CredentialTrait credentialTrait) {
         traits.add(credentialTrait);
+        return this;
     }
 
     @Override
-    public void removeTrait(final Class<? extends CredentialTrait> clazz) {
+    @CanIgnoreReturnValue
+    public CredentialMetadata removeTrait(final Class<? extends CredentialTrait> clazz) {
         traits.removeIf(current -> current.getClass().equals(clazz));
+        return this;
     }
 
     @Override
@@ -79,5 +93,11 @@ public class BasicCredentialMetadata implements CredentialMetadata {
             .filter(trait -> clazz.equals(trait.getClass()))
             .map(clazz::cast)
             .findFirst();
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean containsProperty(final String key) {
+        return properties.containsKey(key);
     }
 }

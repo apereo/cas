@@ -140,7 +140,7 @@ while (( "$#" )); do
             authnmetadata|authenticationmetadata)
                 task+="testAuthenticationMetadata "
                 ;;
-            authnpolicy|authenticationpolicy)
+            authnpolicy|authpolicy|authenticationpolicy)
                 task+="testAuthenticationPolicy "
                 ;;
             auth|authn|authentication)
@@ -153,7 +153,7 @@ while (( "$#" )); do
                 isDockerOnLinux && ./ci/tests/syncope/run-syncope-server.sh
                 task+="testSyncope "
                 ;;
-            native)
+            native|graal|graalvm)
                 task+="testNative "
                 ;;
             delegation)
@@ -188,7 +188,7 @@ while (( "$#" )); do
                 isDockerOnLinux && ./ci/tests/elastic/run-elastic-apm.sh
                 task+="testElastic "
                 ;;
-            gcp)
+            gcp|googlecloud|gcloud)
                 isDockerOnLinux && ./ci/tests/gcp/run-gcp-server.sh
                 task+="testGCP "
                 ;;
@@ -227,7 +227,7 @@ while (( "$#" )); do
             expiration-policy|exppolicy|expp|expirationpolicy)
                 task+="testExpirationPolicy "
                 ;;
-            password-ops|pswd|pswd-ops|psw|passwordops)
+            password-ops|pswd|pswd-ops|psw|passwordops|ppolicy)
                 task+="testPasswordOps "
                 ;;
             sms)
@@ -248,7 +248,7 @@ while (( "$#" )); do
             geolocation|geo)
                 task+="testGeoLocation "
                 ;;
-            git)
+            git|scm)
                 task+="testGit "
                 ;;
             groovy|script)
