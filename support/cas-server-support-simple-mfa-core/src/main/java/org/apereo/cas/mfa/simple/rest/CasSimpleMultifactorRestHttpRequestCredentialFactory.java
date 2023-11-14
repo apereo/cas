@@ -41,6 +41,6 @@ public class CasSimpleMultifactorRestHttpRequestCredentialFactory implements Res
             return new ArrayList<>(0);
         }
         val creds = new CasSimpleMultifactorTokenCredential(token);
-        return CollectionUtils.wrap(creds);
+        return CollectionUtils.wrap(prepareCredential(request, creds));
     }
 }

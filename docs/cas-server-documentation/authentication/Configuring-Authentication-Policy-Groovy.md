@@ -16,9 +16,8 @@ import java.util.*
 import org.apereo.cas.authentication.exceptions.*
 import javax.security.auth.login.*
 
-def run(final Object... args) {
-    def principal = args[0]
-    def logger = args[1]
+def run(Object... args) {
+    def (authentication, context, applicationContext, logger) = args
 
     if (conditionYouMayDesign() == true) {
         return new AccountDisabledException()
@@ -26,9 +25,8 @@ def run(final Object... args) {
     return null
 }
 
-def shouldResumeOnFailure(final Object... args) {
-    def failure = args[0]
-    def logger = args[1]
+def shouldResumeOnFailure(Object... args) {
+    def (failure, logger) = args
 
     if (failure instanceof AccountNotFoundException) {
         return true

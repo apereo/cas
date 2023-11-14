@@ -52,7 +52,7 @@ public class X509RestMultipartBodyCredentialFactory implements RestHttpRequestCr
             val certificate = CertUtils.readCertificate(iso);
             val credential = new X509CertificateCredential(new X509Certificate[]{certificate});
             credential.setCertificate(certificate);
-            return CollectionUtils.wrap(credential);
+            return CollectionUtils.wrap(prepareCredential(request, credential));
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }

@@ -64,10 +64,10 @@ public class SurrogateAuthenticationRestHttpRequestCredentialFactory extends Use
             throw new SurrogateAuthenticationException(
                 "Unable to authorize surrogate authentication request for " + surrogateUsername);
         }
-        return CollectionUtils.wrapList(credential);
+        return CollectionUtils.wrapList(prepareCredential(request, credential));
     }
 
-    protected Credential extractCredential(final HttpServletRequest request,
+    protected MutableCredential extractCredential(final HttpServletRequest request,
                                            final List<Credential> credentials) throws Exception {
         val credential = (MutableCredential) credentials.getFirst();
         if (credential != null) {
