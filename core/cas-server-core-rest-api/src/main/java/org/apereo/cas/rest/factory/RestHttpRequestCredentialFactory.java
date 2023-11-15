@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Strategy interface for enabling plug-in point for constructing {@link Credential}
@@ -74,8 +75,9 @@ public interface RestHttpRequestCredentialFactory extends Ordered {
      */
     default Credential prepareCredential(final HttpServletRequest request, final Credential credential) {
         if (credential instanceof final AbstractCredential ac) {
-            val credentialMetadata = new BasicCredentialMetadata(credential)
-                .putProperties(HttpRequestUtils.getRequestHeaders(request));
+            val credentialMetadata = Optional.ofNullable(ac.getCredentialMetadata())
+                .orElseGet(() -> new BasicCredentialMetadata(credential));
+            credentialMetadata.putProperties(HttpRequestUtils.getRequestHeaders(request));
             ac.setCredentialMetadata(credentialMetadata);
         }
         return credential;

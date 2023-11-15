@@ -108,12 +108,14 @@ public class HttpRequestUtils {
     @SuppressWarnings("JdkObsolete")
     public static Map<String, String> getRequestHeaders(final HttpServletRequest request) {
         val headers = new LinkedHashMap<String, Object>();
-        val headerNames = request.getHeaderNames();
-        if (headerNames != null) {
-            while (headerNames.hasMoreElements()) {
-                val headerName = headerNames.nextElement();
-                val headerValue = StringUtils.stripToEmpty(request.getHeader(headerName));
-                headers.put(headerName, headerValue);
+        if (request != null) {
+            val headerNames = request.getHeaderNames();
+            if (headerNames != null) {
+                while (headerNames.hasMoreElements()) {
+                    val headerName = headerNames.nextElement();
+                    val headerValue = StringUtils.stripToEmpty(request.getHeader(headerName));
+                    headers.put(headerName, headerValue);
+                }
             }
         }
         return (Map) headers;
