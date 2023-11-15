@@ -1,6 +1,6 @@
 import java.util.*
 
-def Object run(final Object... args) {
+def run(final Object... args) {
     def principal = args[0]
     def principalAttributes = args[1]
     def logger = args[2]

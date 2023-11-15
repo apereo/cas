@@ -25,10 +25,7 @@ import org.apereo.cas.web.support.*
 import org.springframework.webflow.execution.*
 
 def run(Object[] args) {
-    def requestContext = args[0]
-    def providers = (args[1] as Set<DelegatedClientIdentityProviderConfiguration>)
-    def logger = args[2]
-    
+    def (requestContext,providers,logger) = args
     def provider = providers[0]
     logger.info("Checking provider ${provider.name}...")
     def response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext)

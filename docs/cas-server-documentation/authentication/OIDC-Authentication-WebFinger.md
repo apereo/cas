@@ -65,14 +65,12 @@ using an external Groovy script whose outline would match the following:
 
 ```groovy
 def findByUsername(Object[] args) {
-    def username = args[0]
-    def logger = args[1]
+    def (username,logger) = args
     return [username: username]
 }
 
 def findByEmailAddress(Object[] args) {
-    def email = args[0]
-    def logger = args[1]
+    def (email,logger) = args
     return [email: email]
 }
 ```
