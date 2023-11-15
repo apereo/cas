@@ -14,21 +14,20 @@ import org.apereo.cas.oidc.jwks.*
 import org.jose4j.jwk.*
 
 def run(Object[] args) {
-    def logger = args[0]
+    def (logger) = args
     logger.info("Generating JWKS for CAS...")
     def jsonWebKeySet = "{ \"keys\": [...] }"
     return jsonWebKeySet
 }
 
 def store(Object[] args) {
-    def jwks = args[0] as JsonWebKeySet
-    def logger = args[1]
+    def (jwks,logger) = args
     logger.info("Storing JWKS for CAS...")
     return jwks
 }
 
 def find(Object[] args) {
-    def logger = args[0]
+    def (logger) = args
     logger.info("Looking up JWKS...")
     return new JsonWebKeySet(...)
 }

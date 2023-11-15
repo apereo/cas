@@ -167,9 +167,7 @@ import org.springframework.webflow.engine.*
 import org.springframework.webflow.execution.*
 
 Object run(final Object... args) {
-    def webflow = args[0]
-    def springApplicationContext = args[1]
-    def logger = args[2]
+    def (webflow,springApplicationContext,logger) = args
 
     logger.info("Configuring webflow context...")
 
@@ -227,11 +225,7 @@ import org.springframework.webflow.*
 import org.springframework.webflow.action.*
 
 def run(Object[] args) {
-    def requestContext = args[0]
-    def applicationContext = args[1]
-    def properties = args[2]
-    def logger = args[3]
-
+    def (requestContext,applicationContext,properties,logger) = args
     logger.info("Handling action...")
     return new EventFactorySupport().event(this, "success")
 }

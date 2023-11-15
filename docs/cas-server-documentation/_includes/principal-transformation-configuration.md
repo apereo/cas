@@ -12,8 +12,7 @@ Groovy script to transform the provided username. The outline of the script may 
 
 ```groovy
 String run(final Object... args) {
-    def providedUsername = args[0]
-    def logger = args[1]
+    def (providedUsername,logger) = args
     return providedUsername.concat("SomethingElse")
 }
 ```

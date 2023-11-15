@@ -8,7 +8,11 @@ category: Authentication
 
 # Delegated Authentication Request Customization
 
-Authentication (HTTP) requests that are sent from CAS to configured identity providers are can be customized at runtime. This customization phase of the authentication request happens right before the request is constructed and passed onto the client browser. Before the customizer proceeds, it also must declare its support for the given identity provider and/or request, and it also is given the chance to determine if the identity provider is authorized for the given request.
+Authentication (HTTP) requests that are sent from CAS to configured identity providers are can be 
+customized at runtime. This customization phase of the authentication request happens right before the request 
+is constructed and passed onto the client browser. Before the customizer proceeds, it also must declare its support 
+for the given identity provider and/or request, and it also is given the chance to determine if the identity provider 
+is authorized for the given request.
 
 ## Groovy Customization
 
@@ -27,29 +31,19 @@ import org.pac4j.core.context.*
 import org.springframework.context.*
 
 def run(Object[] args) {
-    def client = args[0] as IndirectClient
-    def webContext = args[1] as WebContext
-    def appContext = args[2] as ApplicationContext
-    def logger = args[3]
+    def (client,webContext,appContext,logger) = args
     logger.info("Checking ${client.name}...")
     webContext.setRequestAttribute("customAttribute", "value")
 }
 
 def supports(Object[] args) {
-    def client = args[0] as IndirectClient
-    def webContext = args[1] as WebContext
-    def appContext = args[2] as ApplicationContext
-    def logger = args[3]
+    def (client,webContext,appContext,logger) = args
     logger.info("Checking support for ${client.name}...")
     return true
 }
 
 def isAuthorized(Object[] args) {
-    def client = args[0] as IndirectClient
-    def webContext = args[1] as WebContext
-    def service = args[2] as WebApplicationService
-    def appContext = args[3] as ApplicationContext
-    def logger = args[4]
+    def (client,webContext,service,appContext,logger) = args
     logger.info("Checking authorization for ${client.name}...")
     return true
 }
@@ -64,7 +58,6 @@ The parameters passed are as follows:
 | `service`    | The `WebApplicationService` for the incoming application request.           |
 | `appContext` | The Spring `ApplicationContext`.                                            |
 | `logger`     | The object responsible for issuing log messages such as `logger.info(...)`. |
-
   
 ## Custom
 

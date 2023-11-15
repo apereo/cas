@@ -32,11 +32,9 @@ context by using an external Groovy script that may take on the following form:
 
 ```groovy
 def run(Object[] args) {
-     def requestContext = args[0]
-     def logger = args[1]
-     
-     logger.info("Decorating the webflow...")
-     requestContext.flowScope.put("decoration", ...)
+    def (requestContext,logger) = args
+    logger.info("Decorating the webflow...")
+    requestContext.flowScope.put("decoration", ...)
  }
 ``` 
 

@@ -14,8 +14,7 @@ of the script may be defined as such:
 import org.apereo.cas.api.*
 
 def run(Object[] args) {
-    def username = args[0]
-    def logger = args[1]
+    def (username,logger) = args
     
     logger.info("Locating user record for user $username")
     

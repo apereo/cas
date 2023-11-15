@@ -19,9 +19,7 @@ import org.apereo.cas.authentication.adaptive.geo.*
 import org.springframework.context.*
 
 GeoLocationResponse locateByAddress(Object... args) {
-    def address = args[0] as InetAddress
-    def appContext = args[1] as ApplicationContext
-    def logger = args[2]
+    def (address,appContext,logger) = args
     logger.info("Requesting info on ${address.hostAddress}")
     return GeoLocationResponse
             .builder()
@@ -32,10 +30,7 @@ GeoLocationResponse locateByAddress(Object... args) {
 }
 
 GeoLocationResponse locateByCoordinates(Object... args) {
-    def latitude = args[0]
-    def longitude = args[1]
-    def appContext = args[2] as ApplicationContext
-    def logger = args[3]
+    def (latitude,longitude,appContext,logger) = args
     return GeoLocationResponse
             .builder()
             .latitude(latitude)

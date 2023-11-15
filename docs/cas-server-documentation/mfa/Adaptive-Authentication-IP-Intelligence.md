@@ -45,9 +45,8 @@ import org.apereo.cas.util.*
 import org.apereo.cas.authentication.adaptive.intel.*
 
 def run(Object[] args) {
-    def requestContext = args[0]
-    def clientIpAddress = args[1]
-    def logger = args[2]
+    def (requestContext,clientIpAddress,logger) = args
+    
     logger.info("Client ip address provided is ${clientIpAddress}")
     
     if (ipAddressIsRejected())
