@@ -115,8 +115,7 @@ public class RedisTicketRegistryConfiguration {
             final CasConfigurationProperties casProperties) {
             val bean = new PublisherIdentifier();
             val redis = casProperties.getTicket().getRegistry().getRedis();
-
-            FunctionUtils.doIfNotBlank(redis.getQueueIdentifier(), __ -> bean.setId(redis.getQueueIdentifier()));
+            FunctionUtils.doIfNotBlank(redis.getQueueIdentifier(), bean::setId);
             return bean;
         }
 
