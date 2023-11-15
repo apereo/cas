@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.ticket.ServiceTicket;
@@ -36,8 +37,11 @@ import org.springframework.data.redis.core.convert.KeyspaceConfiguration;
 import org.springframework.data.redis.core.convert.MappingConfiguration;
 import org.springframework.data.redis.core.index.IndexConfiguration;
 import org.springframework.data.redis.core.mapping.RedisMappingContext;
+import org.springframework.util.Assert;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
+import java.time.Clock;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -75,6 +79,8 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
 
     private final RedisKeyGeneratorFactory redisKeyGeneratorFactory;
 
+    private final CasConfigurationProperties casProperties;
+
     public RedisTicketRegistry(final CipherExecutor cipherExecutor,
                                final TicketSerializationManager ticketSerializationManager,
                                final TicketCatalog ticketCatalog,
@@ -82,7 +88,8 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
                                final Cache<String, Ticket> ticketCache,
                                final RedisTicketRegistryMessagePublisher messagePublisher,
                                final Optional<RedisModulesCommands> redisModuleCommands,
-                               final RedisKeyGeneratorFactory redisKeyGeneratorFactory) {
+                               final RedisKeyGeneratorFactory redisKeyGeneratorFactory,
+                               final CasConfigurationProperties casProperties) {
         super(cipherExecutor, ticketSerializationManager, ticketCatalog);
 
         this.casRedisTemplates = casRedisTemplates;
@@ -90,7 +97,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
         this.messagePublisher = messagePublisher;
         this.redisModuleCommands = redisModuleCommands;
         this.redisKeyGeneratorFactory = redisKeyGeneratorFactory;
-
+        this.casProperties = casProperties;
         createIndexesIfNecessary();
     }
 
@@ -153,9 +160,11 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
 
     @Override
     public Ticket updateTicket(final Ticket ticket) {
-        LOGGER.debug("Updating ticket [{}]", ticket);
-        addOrUpdateTicket(ticket);
-        messagePublisher.update(ticket);
+        FunctionUtils.doIfNotNull(ticket, __ -> {
+            LOGGER.debug("Updating ticket [{}]", ticket);
+            addOrUpdateTicket(ticket);
+            messagePublisher.update(ticket);
+        });
         return ticket;
     }
 
@@ -226,6 +235,10 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
             .orElseGet(Stream::empty);
     }
 
+    @Override
+    public long countSessionsFor(final String principalId) {
+        return getSessionsFor(principalId).count();
+    }
 
     @Override
     public long sessionCount() {
@@ -336,7 +349,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
                 LOGGER.trace("Serialized ticket into a JSON document as\n [{}]",
                     JsonValue.readJSON(json).toString(Stringify.FORMATTED));
             }
-            
+
             val principal = getPrincipalIdFrom(ticket);
             val attributeMap = (Map<String, Object>) collectAndDigestTicketAttributes(ticket);
             val attributesEncoded = attributeMap
@@ -389,29 +402,32 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
 
 
     private void addOrUpdateTicket(final Ticket ticket) {
-        FunctionUtils.doAndHandle(__ -> {
-            val digestedId = digestIdentifier(ticket.getId());
-            val redisKeyGenerator = redisKeyGeneratorFactory.getRedisKeyGenerator(Ticket.class.getName()).orElseThrow();
-            val redisKeyPattern = redisKeyGenerator.forEntry(ticket.getPrefix(), digestedId);
+        val digestedId = digestIdentifier(ticket.getId());
+        val redisKeyGenerator = redisKeyGeneratorFactory.getRedisKeyGenerator(Ticket.class.getName()).orElseThrow();
+        val redisKeyPattern = redisKeyGenerator.forEntry(ticket.getPrefix(), digestedId);
 
-            val timeout = RedisCompositeKey.getTimeout(ticket);
-            val ticketDocument = buildTicketAsDocument(ticket);
+        val timeout = RedisCompositeKey.getTimeout(ticket);
+        val ticketDocument = buildTicketAsDocument(ticket);
 
-            casRedisTemplates.getTicketsRedisTemplate().boundValueOps(redisKeyPattern).set(ticketDocument, timeout, TimeUnit.SECONDS);
-            val adapter = buildRedisKeyValueAdapter(redisKeyPattern);
-            adapter.put(ticketDocument.getTicketId(), ticketDocument, redisKeyPattern);
-            casRedisTemplates.getTicketsRedisTemplate().expire(redisKeyPattern, timeout, TimeUnit.SECONDS);
-            ticketCache.put(redisKeyGenerator.rawKey(redisKeyPattern), ticket);
+        casRedisTemplates.getTicketsRedisTemplate().boundValueOps(redisKeyPattern).set(ticketDocument, timeout, TimeUnit.SECONDS);
+        val adapter = buildRedisKeyValueAdapter(redisKeyPattern);
+        adapter.put(ticketDocument.getTicketId(), ticketDocument, redisKeyPattern);
+        casRedisTemplates.getTicketsRedisTemplate().expire(redisKeyPattern, timeout, TimeUnit.SECONDS);
+        ticketCache.put(redisKeyGenerator.rawKey(redisKeyPattern), ticket);
 
-            redisKeyGeneratorFactory.getRedisKeyGenerator(Principal.class.getName()).ifPresent(generator -> {
-                val userId = digestIdentifier(getPrincipalIdFrom(ticket));
-                if (StringUtils.isNotBlank(userId) && ticket instanceof TicketGrantingTicket) {
-                    val redisPrincipalPattern = generator.forEntry(userId);
-                    val ops = casRedisTemplates.getSessionsRedisTemplate().boundSetOps(redisPrincipalPattern);
-                    ops.add(digestedId);
-                    ops.expire(timeout, TimeUnit.SECONDS);
+        redisKeyGeneratorFactory.getRedisKeyGenerator(Principal.class.getName()).ifPresent(generator -> {
+            val onlyTrackMostRecentSession = casProperties.getTicket().getTgt().getCore().isOnlyTrackMostRecentSession();
+            val userId = digestIdentifier(getPrincipalIdFrom(ticket));
+            if (StringUtils.isNotBlank(userId) && ticket instanceof TicketGrantingTicket) {
+                val redisPrincipalPattern = generator.forEntry(userId);
+                val ops = casRedisTemplates.getSessionsRedisTemplate().boundSetOps(redisPrincipalPattern);
+                if (onlyTrackMostRecentSession) {
+                    ops.expireAt(Instant.now(Clock.systemUTC()));
+                    Assert.isTrue(ops.members().isEmpty(), "Member count must be zero");
                 }
-            });
+                ops.add(digestedId);
+                ops.expire(timeout, TimeUnit.SECONDS);
+            }
         });
     }
 

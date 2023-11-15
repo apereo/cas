@@ -1,6 +1,8 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.config.RedisCoreConfiguration;
+import org.apereo.cas.config.RedisTicketRegistryConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
@@ -19,6 +21,10 @@ import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import java.util.Map;
 import java.util.UUID;
@@ -243,4 +249,36 @@ class RedisServerTicketRegistryTests {
         }
     }
 
+    @Nested
+    @SpringBootTest(
+        classes = {
+            RedisCoreConfiguration.class,
+            RedisTicketRegistryConfiguration.class,
+            BaseTicketRegistryTests.SharedTestConfiguration.class
+        }, properties = {
+            "cas.ticket.tgt.core.only-track-most-recent-session=true",
+            "cas.ticket.registry.redis.host=localhost",
+            "cas.ticket.registry.redis.port=6379",
+            "cas.ticket.registry.redis.pool.max-active=20",
+            "cas.ticket.registry.redis.pool.enabled=true",
+            "cas.ticket.registry.redis.crypto.enabled=true"
+        })
+    class RecentSessionsTests {
+        @Autowired
+        @Qualifier(TicketRegistry.BEAN_NAME)
+        private TicketRegistry ticketRegistry;
+
+        @Test
+        void verifyDifferentLoginSamePrincipal() throws Throwable {
+            val principalId = UUID.randomUUID().toString();
+            val authentication = CoreAuthenticationTestUtils.getAuthentication(principalId);
+            for (int i = 0; i < 20; i++) {
+                val tgtId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
+                    .getNewTicketId(TicketGrantingTicket.PREFIX);
+                val tgt1 = new TicketGrantingTicketImpl(tgtId, authentication, NeverExpiresExpirationPolicy.INSTANCE);
+                ticketRegistry.addTicket(tgt1);
+            }
+            assertEquals(1, ticketRegistry.countSessionsFor(principalId));
+        }
+    }
 }
