@@ -6,18 +6,19 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.DefaultServiceTicketSessionTrackingPolicy;
+import org.apereo.cas.ticket.AllServicesSessionTrackingPolicy;
 import org.apereo.cas.ticket.DefaultTicketCatalog;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
+import org.apereo.cas.ticket.MostRecentServiceSessionTrackingPolicy;
 import org.apereo.cas.ticket.ServiceTicketFactory;
 import org.apereo.cas.ticket.ServiceTicketGeneratorAuthority;
-import org.apereo.cas.ticket.ServiceTicketSessionTrackingPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketCatalogConfigurer;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketFactoryExecutionPlanConfigurer;
 import org.apereo.cas.ticket.TicketGrantingTicketFactory;
+import org.apereo.cas.ticket.TicketTrackingPolicy;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.expiration.builder.ProxyGrantingTicketExpirationPolicyBuilder;
@@ -57,7 +58,6 @@ import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
@@ -80,7 +80,6 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -103,14 +102,17 @@ public class CasCoreTicketsConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreTicketsBaseConfiguration {
 
-        @ConditionalOnMissingBean(name = ServiceTicketSessionTrackingPolicy.BEAN_NAME)
+        @ConditionalOnMissingBean(name = TicketTrackingPolicy.BEAN_NAME_SERVICE_TICKET_TRACKING)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public ServiceTicketSessionTrackingPolicy serviceTicketSessionTrackingPolicy(
+        public TicketTrackingPolicy serviceTicketSessionTrackingPolicy(
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             final CasConfigurationProperties casProperties) {
-            return new DefaultServiceTicketSessionTrackingPolicy(casProperties, ticketRegistry);
+            val onlyTrackMostRecentSession = casProperties.getTicket().getTgt().getCore().isOnlyTrackMostRecentSession();
+            return onlyTrackMostRecentSession
+                ? new MostRecentServiceSessionTrackingPolicy(ticketRegistry)
+                : new AllServicesSessionTrackingPolicy(ticketRegistry);
         }
 
         @ConditionalOnMissingBean(name = TicketRegistrySupport.BEAN_NAME)
@@ -374,8 +376,8 @@ public class CasCoreTicketsConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ServiceTicketFactory defaultServiceTicketFactory(
-            @Qualifier(ServiceTicketSessionTrackingPolicy.BEAN_NAME)
-            final ServiceTicketSessionTrackingPolicy serviceTicketSessionTrackingPolicy,
+            @Qualifier(TicketTrackingPolicy.BEAN_NAME_SERVICE_TICKET_TRACKING)
+            final TicketTrackingPolicy serviceTicketSessionTrackingPolicy,
             @Qualifier("protocolTicketCipherExecutor")
             final CipherExecutor protocolTicketCipherExecutor,
             @Qualifier(ExpirationPolicyBuilder.BEAN_NAME_SERVICE_TICKET_EXPIRATION_POLICY)
@@ -404,8 +406,8 @@ public class CasCoreTicketsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public ProxyTicketFactory defaultProxyTicketFactory(
-            @Qualifier(ServiceTicketSessionTrackingPolicy.BEAN_NAME)
-            final ServiceTicketSessionTrackingPolicy serviceTicketSessionTrackingPolicy,
+            @Qualifier(TicketTrackingPolicy.BEAN_NAME_SERVICE_TICKET_TRACKING)
+            final TicketTrackingPolicy serviceTicketSessionTrackingPolicy,
             @Qualifier("protocolTicketCipherExecutor")
             final CipherExecutor protocolTicketCipherExecutor,
             @Qualifier(ExpirationPolicyBuilder.BEAN_NAME_PROXY_TICKET_EXPIRATION_POLICY)

@@ -13,8 +13,8 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthAccessTokenExpirationPolicy;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.apereo.cas.ticket.ServiceTicketSessionTrackingPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.TicketTrackingPolicy;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.util.CollectionUtils;
@@ -148,7 +148,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
         val tgt = new MockTicketGrantingTicket(UUID.randomUUID().toString());
         ticketRegistry.addTicket(tgt);
 
-        val trackingPolicy = mock(ServiceTicketSessionTrackingPolicy.class);
+        val trackingPolicy = mock(TicketTrackingPolicy.class);
         val ticketService = RegisteredServiceTestUtils.getService(REDIRECT_URI);
         ticketService.getAttributes().put(OAuth20Constants.CLIENT_ID, List.of(service.getClientId()));
         val st1 = tgt.grantServiceTicket(ticketService, trackingPolicy);

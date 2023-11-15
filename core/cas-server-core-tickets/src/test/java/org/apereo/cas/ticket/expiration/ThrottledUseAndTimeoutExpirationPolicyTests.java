@@ -1,14 +1,9 @@
 package org.apereo.cas.ticket.expiration;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.ticket.DefaultServiceTicketSessionTrackingPolicy;
-import org.apereo.cas.ticket.DefaultTicketCatalog;
-import org.apereo.cas.ticket.ServiceTicketSessionTrackingPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
-import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
-import org.apereo.cas.ticket.serialization.TicketSerializationManager;
+import org.apereo.cas.ticket.factory.BaseTicketFactoryTests;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.serialization.SerializationUtils;
 
@@ -18,6 +13,7 @@ import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.context.TestPropertySource;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,7 +21,6 @@ import java.time.Clock;
 import java.time.ZoneOffset;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * Test cases for {@link ThrottledUseAndTimeoutExpirationPolicy}.
@@ -34,7 +29,8 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @Tag("ExpirationPolicy")
-class ThrottledUseAndTimeoutExpirationPolicyTests {
+@TestPropertySource(properties = "cas.ticket.tgt.core.only-track-most-recent-session=true")
+class ThrottledUseAndTimeoutExpirationPolicyTests extends BaseTicketFactoryTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "throttleUseAndTimeoutExpirationPolicy.json");
 
@@ -47,57 +43,51 @@ class ThrottledUseAndTimeoutExpirationPolicyTests {
 
     private TicketGrantingTicketImpl ticket;
 
-    private static ServiceTicketSessionTrackingPolicy getTrackingPolicy() {
-        val props = new CasConfigurationProperties();
-        props.getTicket().getTgt().getCore().setOnlyTrackMostRecentSession(true);
-        return new DefaultServiceTicketSessionTrackingPolicy(props, new DefaultTicketRegistry(mock(TicketSerializationManager.class), new DefaultTicketCatalog()));
-    }
-
     @BeforeEach
     public void initialize() {
-        this.expirationPolicy = new ThrottledUseAndTimeoutExpirationPolicy();
-        this.expirationPolicy.setTimeToKillInSeconds(TIMEOUT);
-        this.expirationPolicy.setTimeInBetweenUsesInSeconds(TIMEOUT / 5);
-        this.ticket = new TicketGrantingTicketImpl("test", CoreAuthenticationTestUtils
-            .getAuthentication(), this.expirationPolicy);
+        expirationPolicy = new ThrottledUseAndTimeoutExpirationPolicy();
+        expirationPolicy.setTimeToKillInSeconds(TIMEOUT);
+        expirationPolicy.setTimeInBetweenUsesInSeconds(TIMEOUT / 5);
+        ticket = new TicketGrantingTicketImpl("test", CoreAuthenticationTestUtils
+            .getAuthentication(), expirationPolicy);
     }
 
     @Test
     void verifyTicketIsNotExpired() throws Throwable {
-        assertFalse(this.ticket.isExpired());
+        assertFalse(ticket.isExpired());
     }
 
     @Test
     void verifyTicketIsExpired() throws Throwable {
         expirationPolicy.setTimeToKillInSeconds(-TIMEOUT);
-        assertTrue(this.ticket.isExpired());
+        assertTrue(ticket.isExpired());
     }
 
     @Test
     void verifyTicketUsedButWithTimeout() throws Throwable {
-        this.ticket.grantServiceTicket("test", RegisteredServiceTestUtils.getService(), this.expirationPolicy, false,
-            getTrackingPolicy());
+        ticket.grantServiceTicket("test", RegisteredServiceTestUtils.getService(), expirationPolicy, false,
+            serviceTicketSessionTrackingPolicy);
         expirationPolicy.setTimeToKillInSeconds(TIMEOUT);
         expirationPolicy.setTimeInBetweenUsesInSeconds(-10);
-        assertFalse(this.ticket.isExpired());
+        assertFalse(ticket.isExpired());
     }
 
     @Test
     void verifyThrottleNotTriggeredWithinOneSecond() throws Throwable {
-        this.ticket.grantServiceTicket("test", RegisteredServiceTestUtils.getService(), this.expirationPolicy, false,
-            getTrackingPolicy());
-        val clock = Clock.fixed(this.ticket.getLastTimeUsed().toInstant().plusMillis(999), ZoneOffset.UTC);
+        ticket.grantServiceTicket("test", RegisteredServiceTestUtils.getService(), expirationPolicy, false,
+            serviceTicketSessionTrackingPolicy);
+        val clock = Clock.fixed(ticket.getLastTimeUsed().toInstant().plusMillis(999), ZoneOffset.UTC);
         expirationPolicy.setClock(clock);
-        assertFalse(this.ticket.isExpired());
+        assertFalse(ticket.isExpired());
     }
 
     @Test
     void verifyNotWaitingEnoughTime() throws Throwable {
-        this.ticket.grantServiceTicket("test", RegisteredServiceTestUtils.getService(), this.expirationPolicy, false,
-            getTrackingPolicy());
-        val clock = Clock.fixed(this.ticket.getLastTimeUsed().toInstant().plusSeconds(1), ZoneOffset.UTC);
+        ticket.grantServiceTicket("test", RegisteredServiceTestUtils.getService(), expirationPolicy, false,
+            serviceTicketSessionTrackingPolicy);
+        val clock = Clock.fixed(ticket.getLastTimeUsed().toInstant().plusSeconds(1), ZoneOffset.UTC);
         expirationPolicy.setClock(clock);
-        assertTrue(this.ticket.isExpired());
+        assertTrue(ticket.isExpired());
     }
 
     @Test

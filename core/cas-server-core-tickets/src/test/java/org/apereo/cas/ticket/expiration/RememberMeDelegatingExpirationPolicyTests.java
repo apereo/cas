@@ -6,14 +6,9 @@ import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.principal.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.ticket.DefaultServiceTicketSessionTrackingPolicy;
-import org.apereo.cas.ticket.DefaultTicketCatalog;
-import org.apereo.cas.ticket.ServiceTicketSessionTrackingPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
-import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
-import org.apereo.cas.ticket.serialization.TicketSerializationManager;
+import org.apereo.cas.ticket.factory.BaseTicketFactoryTests;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.serialization.SerializationUtils;
@@ -24,6 +19,7 @@ import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.context.TestPropertySource;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,7 +27,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * Tests for RememberMeDelegatingExpirationPolicy.
@@ -40,7 +35,8 @@ import static org.mockito.Mockito.*;
  * @since 3.2.1
  */
 @Tag("ExpirationPolicy")
-class RememberMeDelegatingExpirationPolicyTests {
+@TestPropertySource(properties = "cas.ticket.tgt.core.only-track-most-recent-session=true")
+class RememberMeDelegatingExpirationPolicyTests extends BaseTicketFactoryTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "rememberMeDelegatingExpirationPolicy.json");
 
@@ -57,12 +53,6 @@ class RememberMeDelegatingExpirationPolicyTests {
     protected PrincipalFactory principalFactory = PrincipalFactoryUtils.newPrincipalFactory();
 
     private RememberMeDelegatingExpirationPolicy expirationPolicy;
-
-    private static ServiceTicketSessionTrackingPolicy getTrackingPolicy() {
-        val props = new CasConfigurationProperties();
-        props.getTicket().getTgt().getCore().setOnlyTrackMostRecentSession(true);
-        return new DefaultServiceTicketSessionTrackingPolicy(props, new DefaultTicketRegistry(mock(TicketSerializationManager.class), new DefaultTicketCatalog()));
-    }
 
     @BeforeEach
     public void initialize() {
@@ -81,7 +71,7 @@ class RememberMeDelegatingExpirationPolicyTests {
         val t = new TicketGrantingTicketImpl("111", authentication, this.expirationPolicy);
         assertFalse(t.isExpired());
         t.grantServiceTicket("55", RegisteredServiceTestUtils.getService(),
-            this.expirationPolicy, false, getTrackingPolicy());
+            this.expirationPolicy, false, serviceTicketSessionTrackingPolicy);
         assertTrue(t.isExpired());
     }
 
@@ -108,7 +98,7 @@ class RememberMeDelegatingExpirationPolicyTests {
         val t = new TicketGrantingTicketImpl("111", authentication, this.expirationPolicy);
         assertFalse(t.isExpired());
         t.grantServiceTicket("55", RegisteredServiceTestUtils.getService(),
-            this.expirationPolicy, false, getTrackingPolicy());
+            this.expirationPolicy, false, serviceTicketSessionTrackingPolicy);
         assertTrue(t.isExpired());
     }
 
@@ -118,7 +108,7 @@ class RememberMeDelegatingExpirationPolicyTests {
         val t = new TicketGrantingTicketImpl("111", authentication, this.expirationPolicy);
         assertFalse(t.isExpired());
         t.grantServiceTicket("55", RegisteredServiceTestUtils.getService(),
-            this.expirationPolicy, false, getTrackingPolicy());
+            this.expirationPolicy, false, serviceTicketSessionTrackingPolicy);
         assertFalse(t.isExpired());
     }
 
