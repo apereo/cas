@@ -6,18 +6,13 @@ import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.MockWebServer;
-
 import lombok.val;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
-
-import java.nio.charset.StandardCharsets;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -35,12 +30,10 @@ class RestEndpointMultifactorAuthenticationTriggerTests extends BaseMultifactorA
     @Order(0)
     @Tag("DisableProviderRegistration")
     void verifyNoProviders() throws Throwable {
-        val response = TestMultifactorAuthenticationProvider.ID.getBytes(StandardCharsets.UTF_8);
-        try (val webServer = new MockWebServer(9313,
-            new ByteArrayResource(response, "Output"), HttpStatus.OK)) {
+        try (val webServer = new MockWebServer(TestMultifactorAuthenticationProvider.ID, HttpStatus.OK)) {
             webServer.start();
             val props = new CasConfigurationProperties();
-            props.getAuthn().getMfa().getTriggers().getRest().setUrl("http://localhost:9313");
+            props.getAuthn().getMfa().getTriggers().getRest().setUrl("http://localhost:%s".formatted(webServer.getPort()));
             val trigger = new RestEndpointMultifactorAuthenticationTrigger(props,
                 new DefaultMultifactorAuthenticationProviderResolver(MultifactorAuthenticationPrincipalResolver.identical()),
                 applicationContext);
@@ -52,12 +45,10 @@ class RestEndpointMultifactorAuthenticationTriggerTests extends BaseMultifactorA
     @Test
     @Order(1)
     void verifyOperationByProvider() throws Throwable {
-        val response = TestMultifactorAuthenticationProvider.ID.getBytes(StandardCharsets.UTF_8);
-        try (val webServer = new MockWebServer(9313,
-            new ByteArrayResource(response, "Output"), HttpStatus.OK)) {
+        try (val webServer = new MockWebServer(TestMultifactorAuthenticationProvider.ID, HttpStatus.OK)) {
             webServer.start();
             val props = new CasConfigurationProperties();
-            props.getAuthn().getMfa().getTriggers().getRest().setUrl("http://localhost:9313");
+            props.getAuthn().getMfa().getTriggers().getRest().setUrl("http://localhost:%s".formatted(webServer.getPort()));
             val trigger = new RestEndpointMultifactorAuthenticationTrigger(props,
                 new DefaultMultifactorAuthenticationProviderResolver(MultifactorAuthenticationPrincipalResolver.identical()),
                 applicationContext);
@@ -69,12 +60,10 @@ class RestEndpointMultifactorAuthenticationTriggerTests extends BaseMultifactorA
     @Test
     @Order(2)
     void verifyFailProvider() throws Throwable {
-        val response = TestMultifactorAuthenticationProvider.ID.getBytes(StandardCharsets.UTF_8);
-        try (val webServer = new MockWebServer(9313,
-            new ByteArrayResource(response, "Output"), HttpStatus.UNAUTHORIZED)) {
+        try (val webServer = new MockWebServer(TestMultifactorAuthenticationProvider.ID, HttpStatus.UNAUTHORIZED)) {
             webServer.start();
             val props = new CasConfigurationProperties();
-            props.getAuthn().getMfa().getTriggers().getRest().setUrl("http://localhost:9313");
+            props.getAuthn().getMfa().getTriggers().getRest().setUrl("http://localhost:%s".formatted(webServer.getPort()));
             val trigger = new RestEndpointMultifactorAuthenticationTrigger(props,
                 new DefaultMultifactorAuthenticationProviderResolver(MultifactorAuthenticationPrincipalResolver.identical()),
                 applicationContext);
@@ -92,7 +81,7 @@ class RestEndpointMultifactorAuthenticationTriggerTests extends BaseMultifactorA
             applicationContext);
         var result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
         assertTrue(result.isEmpty());
-        props.getAuthn().getMfa().getTriggers().getRest().setUrl("http://localhost:9313");
+        props.getAuthn().getMfa().getTriggers().getRest().setUrl("http://localhost:%s".formatted(1234));
         result = trigger.isActivated(null, null, this.httpRequest, this.httpResponse, mock(Service.class));
         assertTrue(result.isEmpty());
     }

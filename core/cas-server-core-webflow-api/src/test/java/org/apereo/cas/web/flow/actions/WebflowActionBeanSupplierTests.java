@@ -2,8 +2,8 @@ package org.apereo.cas.web.flow.actions;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.MockRequestContext;
-
 import lombok.val;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,43 +20,54 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.6.0
  */
 @Tag("Webflow")
-@SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class WebflowActionBeanSupplierTests {
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
+    @Nested
+    @SpringBootTest(classes = RefreshAutoConfiguration.class,
+        properties = "cas.webflow.groovy.actions.customActionId=unknown")
+    class UnknownAction {
+        @Autowired
+        private ConfigurableApplicationContext applicationContext;
 
-    @Test
-    void verifyUnknownScript() throws Throwable {
-        val properties = new CasConfigurationProperties();
-        properties.getWebflow().getGroovy().getActions().put("customActionId", "unknown");
+        @Autowired
+        private CasConfigurationProperties casProperties;
 
-        val action = WebflowActionBeanSupplier.builder()
-            .withApplicationContext(applicationContext)
-            .withProperties(properties)
-            .withAction(() -> new StaticEventExecutionAction("pass"))
-            .withId("customActionId")
-            .build()
-            .get();
-
-        val context = MockRequestContext.create();
-        assertEquals("pass", action.execute(context).getId());
+        @Test
+        void verifyUnknownScript() throws Throwable {
+            val action = WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new StaticEventExecutionAction("pass"))
+                .withId("customActionId")
+                .build()
+                .get();
+            val context = MockRequestContext.create();
+            assertEquals("pass", action.execute(context).getId());
+        }
     }
 
-    @Test
-    void verifyScript() throws Throwable {
-        val properties = new CasConfigurationProperties();
-        properties.getWebflow().getGroovy().getActions().put("customActionId", "classpath:/GroovyWebflowAction.groovy");
+    @Nested
+    @SpringBootTest(classes = RefreshAutoConfiguration.class,
+        properties = "cas.webflow.groovy.actions.customActionId=classpath:/GroovyWebflowAction.groovy")
+    class GroovyAction {
+        @Autowired
+        private ConfigurableApplicationContext applicationContext;
 
-        val action = WebflowActionBeanSupplier.builder()
-            .withApplicationContext(applicationContext)
-            .withProperties(properties)
-            .withAction(() -> new StaticEventExecutionAction("pass"))
-            .withId("customActionId")
-            .build()
-            .get();
+        @Autowired
+        private CasConfigurationProperties casProperties;
 
-        val context = MockRequestContext.create();
-        assertEquals("result", action.execute(context).getId());
+        @Test
+        void verifyScript() throws Throwable {
+            val action = WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new StaticEventExecutionAction("pass"))
+                .withId("customActionId")
+                .build()
+                .get();
+
+            val context = MockRequestContext.create();
+            assertEquals("result", action.execute(context).getId());
+        }
     }
 }

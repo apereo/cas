@@ -32,7 +32,6 @@ class DefaultLogoutRedirectionStrategyTests {
 
     @Test
     void verifyNoRedirect() throws Throwable {
-        
         val context = getMockRequestContext();
         val props = new CasConfigurationProperties();
         props.getLogout().setFollowServiceRedirects(true);

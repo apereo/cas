@@ -11,6 +11,10 @@ import org.apereo.inspektr.audit.AuditTrailManager;
 import org.aspectj.lang.JoinPoint;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -23,14 +27,16 @@ import static org.mockito.Mockito.*;
  * @since 6.4.0
  */
 @Tag("Audits")
+@SpringBootTest(classes = RefreshAutoConfiguration.class, properties = "cas.audit.engine.include-validation-assertion=true")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 class ProtocolSpecificationValidationAuditResourceResolverTests {
+
+    @Autowired
+    private CasConfigurationProperties casProperties;
 
     @Test
     void verifyOperation() throws Throwable {
-        val props = new CasConfigurationProperties();
-        props.getAudit().getEngine().setIncludeValidationAssertion(true);
-
-        val resolver = new ProtocolSpecificationValidationAuditResourceResolver(props);
+        val resolver = new ProtocolSpecificationValidationAuditResourceResolver(casProperties);
         val assertion = mock(Assertion.class);
         when(assertion.getService()).thenReturn(RegisteredServiceTestUtils.getService());
         when(assertion.getPrimaryAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
@@ -43,10 +49,7 @@ class ProtocolSpecificationValidationAuditResourceResolverTests {
 
     @Test
     void verifyNoOp() throws Throwable {
-        val props = new CasConfigurationProperties();
-        props.getAudit().getEngine().setIncludeValidationAssertion(true);
-
-        val resolver = new ProtocolSpecificationValidationAuditResourceResolver(props);
+        val resolver = new ProtocolSpecificationValidationAuditResourceResolver(casProperties);
         val jp = mock(JoinPoint.class);
         when(jp.getArgs()).thenReturn(ArrayUtils.EMPTY_OBJECT_ARRAY);
         val results = resolver.resolveFrom(jp, new Object());

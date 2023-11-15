@@ -61,7 +61,6 @@ class TimedMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenti
             () -> trigger2.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class)));
     }
 
-
     @Test
     @Tag("DisableProviderRegistration")
     @Order(1)
