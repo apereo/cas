@@ -85,6 +85,10 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
      */
     public static final String INIT_PARAM_CACHE_CONTROL_STATIC_RESOURCES = "cacheControlStaticResources";
 
+    /**
+     * Control the header value CAS should use when injecting strict transport security headers into the response.
+     */
+    public static final String INIT_PARAM_ENABLE_STRICT_TRANSPORT_SECURITY_OPTIONS = "enableStrictTransportSecurityOptions";
 
     private final Object lock = new Object();
 
@@ -138,6 +142,7 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
         recognizedParameterNames.add(INIT_PARAM_ENABLE_XSS_PROTECTION);
         recognizedParameterNames.add(INIT_PARAM_XSS_PROTECTION);
         recognizedParameterNames.add(INIT_PARAM_CACHE_CONTROL_STATIC_RESOURCES);
+        recognizedParameterNames.add(INIT_PARAM_ENABLE_STRICT_TRANSPORT_SECURITY_OPTIONS);
         recognizedParameterNames.add(THROW_ON_ERROR);
 
         while (initParamNames.hasMoreElements()) {

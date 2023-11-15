@@ -63,6 +63,12 @@ public class HttpHeadersRequestProperties implements Serializable {
      */
     private boolean xss = true;
 
+
+    /**
+     * Control the value of the {@code Strict-Transport-Security} header.
+     */
+    private String hstsOptions = "max-age=15768000 ; includeSubDomains";
+
     /**
      * Will inject values into the {@code X-Frame-Options} header into the response.
      */
