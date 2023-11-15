@@ -13,10 +13,7 @@ import org.ldaptive.*
 import org.springframework.context.*
 
 def run(Object[] args) {
-    def filter = (FilterTemplate) args[0]
-    def parameters = (Map) args[1]
-    def applicationContext = (ApplicationContext) args[2]
-    def logger = args[3]
+    def (filter,parameters,applicationContext,logger) = args
 
     logger.info("Configuring LDAP filter")
     filter.setFilter("uid=something")

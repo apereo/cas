@@ -23,10 +23,7 @@ import org.apereo.cas.aup.*
 import org.springframework.webflow.execution.*
 
 def verify(Object[] args) {
-    def requestContext = args[0]
-    def applicationContext = args[1]
-    def principal = args[2]
-    def logger = args[3]
+    def (requestContext,applicationContext,principal,logger) = args
     ...
     if (policyAccepted()) {
         return AcceptableUsagePolicyStatus.accepted(principal)
@@ -35,10 +32,7 @@ def verify(Object[] args) {
 }
 
 def submit(Object[] args) {
-    def requestContext = args[0]
-    def applicationContext = args[1]
-    def principal = args[2]
-    def logger = args[3]
+    def (requestContext,applicationContext,principal,logger) = args
     ...
     return true
 }
@@ -50,13 +44,8 @@ def submit(Object[] args) {
     for acceptable usage policy flows.
 */
 def fetch(Object[] args) {
-    def requestContext = args[0]
-    def applicationContext = args[1]
-    def principal = args[2]
-    def logger = args[3]
-
-    ...    
-
+    def (requestContext,applicationContext,principal,logger) = args
+    ...
     return AcceptableUsagePolicyTerms.builder()
             .defaultText("Hello, World")
             .code(AcceptableUsagePolicyTerms.CODE)

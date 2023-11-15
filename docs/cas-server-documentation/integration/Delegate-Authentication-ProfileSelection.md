@@ -42,11 +42,7 @@ import org.springframework.webflow.execution.*
 import java.util.*
 
 def run(Object[] args) {
-    def requestContext = args[0] as RequestContext
-    def clientCredentials = args[1] as ClientCredential
-    def userProfile = (args[2] as Optional<UserProfile>).get()
-    def logger = args[3]
-    
+    def (requestContext,clientCredentials,userProfile,logger) = args
     def profile = DelegatedAuthenticationCandidateProfile
         .builder()
         // build the result... 

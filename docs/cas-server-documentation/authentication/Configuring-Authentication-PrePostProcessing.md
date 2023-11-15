@@ -17,19 +17,16 @@ The script itself may be designed as:
 
 ```groovy
 def run(Object[] args) {
-    def transaction = args[0]
-    def logger = args[1]
+    def (transaction,logger) = args
     true
 }
 
 def supports(Object[] args) {
-    def credential = args[0]
-    def logger = args[1]
+    def (credential,logger) = args
     true
 }
 ```
 
-                                   
 ## Authentication Post-Processing
 
 {% include_cached casproperties.html properties="cas.authn.core.engine.groovy-post-processor" %}
@@ -38,15 +35,12 @@ The script itself may be designed as:
 
 ```groovy
 def run(Object[] args) {
-    def builder = args[0]
-    def transaction = args[1]
-    def logger = args[2]
+    def (builder,transaction,logger) = args
     true
 }
 
 def supports(Object[] args) {
-    def credential = args[0]
-    def logger = args[1]
+    def (credential,logger) = args
     true
 }
 ```

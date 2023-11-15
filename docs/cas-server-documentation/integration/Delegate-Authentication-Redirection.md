@@ -20,7 +20,8 @@ authentication requests.
 ## Identity Provider Exclusivity
     
 Authentication requests from the following application will be auto-redirected to the identity provider that is identified 
-as `Twitter` in the CAS configuration, since the delegated authentication policy only allows the single exclusive use of this provider, removing selection menu and the ability to choose other alternative authentication methods.
+as `Twitter` in the CAS configuration, since the delegated authentication policy only allows the single exclusive use 
+of this provider, removing selection menu and the ability to choose other alternative authentication methods.
 
 ```json
 {
@@ -65,13 +66,7 @@ import java.util.*
 import org.apereo.cas.configuration.model.support.delegation.*
 
 def run(Object[] args) {
-    def requestContext = args[0]
-    def service = args[1]
-    def registeredService = args[2]
-    def providers = args[3] as Set<DelegatedClientIdentityProviderConfiguration>
-    def applicationContext = args[4]
-    def logger = args[5]
-
+    def (requestContext,service,registeredService,providers,applicationContext,logger) = args
     providers.forEach(provider -> {
         logger.info("Checking ${provider.name}...")
         if (provider.name.equals("Twitter")) {

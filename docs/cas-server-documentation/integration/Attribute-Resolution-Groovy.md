@@ -18,12 +18,7 @@ The Groovy script may be designed as:
 import java.util.*
 
 def run(final Object... args) {
-    def username = args[0]
-    def attributes = args[1]
-    def logger = args[2]
-    def properties = args[3]
-    def appContext = args[4]
-
+    def (username,attributes,logger,properties,appContext) = args
     logger.debug("[{}]: The received uid is [{}]", this.class.simpleName, username)
     
     // All attribute values must be defined as a collection wrapped in []

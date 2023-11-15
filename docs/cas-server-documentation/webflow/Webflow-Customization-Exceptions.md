@@ -9,7 +9,7 @@ category: Webflow Management
 # Webflow Errors Customization
 
 By default CAS is configured to recognize and handle a number of exceptions for web flow during authentication. Each exception 
-has the specific message bundle mapping in `messages.properties` So that a specific message could be presented to end users
+has the specific message bundle mapping in `messages.properties`. So that a specific message could be presented to end users
 on the login form. Any un-recognized or un-mapped exceptions results in the `UNKNOWN` mapping with a generic `Invalid credentials.` message.
 
 To map custom exceptions in the webflow, one would need map the exception in CAS 
@@ -37,21 +37,13 @@ import org.springframework.webflow.action.*
 import org.springframework.webflow.execution.*
 
 def run(Object[] args) {
-    def exception = args[0] as Exception
-    def requestContext = args[1] as RequestContext
-    def applicationContext = args[2] as ApplicationContext
-    def logger = args[3]
-
+    def (exception,requestContext,applicationContext,logger) = args
     logger.info("Handling {}", exception)
     new EventFactorySupport().event(this, "customEvent")
 }
 
 def supports(Object[] args) {
-    def exception = args[0] as Exception
-    def requestContext = args[1] as RequestContext
-    def applicationContext = args[2] as ApplicationContext
-    def logger = args[3]
-
+    def (exception,requestContext,applicationContext,logger) = args
     logger.info("Checking to support {}", exception)
     true
 }

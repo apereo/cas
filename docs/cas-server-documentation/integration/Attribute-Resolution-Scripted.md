@@ -29,9 +29,7 @@ The Groovy script may be defined as:
 import java.util.*
 
 Map<String, List<Object>> run(final Object... args) {
-    def uid = args[0]
-    def logger = args[1]
-
+    def (uid,logger) = args
     logger.debug("Groovy things are happening just fine with UID: {}",uid)
     return [username:[uid], likes:["cheese", "food"], id:[1234,2,3,4,5], another:"attribute"]
 }

@@ -115,8 +115,7 @@ The script itself may be designed as:
 import org.apereo.cas.services.*
 
 def run(Object[] args) {
-    def context = args[0] as RegisteredServiceAccessStrategyRequest
-    def logger = args[1]
+    def (context,logger) = args
     logger.info("Checking ${context.principalId} - ${context.registeredService.name}")
     return true
 }

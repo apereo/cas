@@ -52,8 +52,7 @@ The script itself may be designed as:
 import org.apereo.cas.support.saml.web.idp.profile.builders.*
 
 def run(final Object... args) {
-    def samlContext = args[0] as SamlProfileBuilderContext
-    def logger = args[1]
+    def (samlContext,logger) = args
     
     logger.info("Building context for entity {}", samlContext.adaptor.entityId)
     /**

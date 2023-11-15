@@ -14,11 +14,7 @@ import org.apereo.cas.authentication.*
 import org.apereo.cas.authentication.support.*
 
 List<MessageDescriptor> run(final Object... args) {
-    def response = args[0]
-    def configuration = args[1];
-    def logger = args[2]
-    def applicationContext = args[3]
-
+    def (response,configuration,logger,applicationContext) = args
     logger.info("Handling password policy [{}] via ${configuration.getAccountStateHandler()}", response)
 
     def accountStateHandler = configuration.getAccountStateHandler()
@@ -28,8 +24,9 @@ List<MessageDescriptor> run(final Object... args) {
 
 The parameters passed are as follows:
 
-| Parameter       | Description                                                                         |
-|-----------------|-------------------------------------------------------------------------------------|
-| `response`      | The LDAP authentication response of type `org.ldaptive.auth.AuthenticationResponse` |
-| `configuration` | The LDAP password policy configuration carrying the account state handler defined.  |
-| `logger`        | The object responsible for issuing log messages such as `logger.info(...)`.         |
+| Parameter            | Description                                                                         |
+|----------------------|-------------------------------------------------------------------------------------|
+| `response`           | The LDAP authentication response of type `org.ldaptive.auth.AuthenticationResponse` |
+| `configuration`      | The LDAP password policy configuration carrying the account state handler defined.  |
+| `logger`             | The object responsible for issuing log messages such as `logger.info(...)`.         |
+| `applicationContext` | The Spring `ApplicationContext` that allows one to interact with the runtime.       |

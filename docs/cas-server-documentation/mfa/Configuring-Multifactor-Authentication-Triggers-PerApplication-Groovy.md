@@ -45,13 +45,7 @@ The script itself may be designed as follows:
 
 ```groovy
 def run(final Object... args) {
-    def authentication = args[0]
-    def registeredService = args[1]
-    def httpRequest = args[2]
-    def service = args[3]
-    def applicationContext = args[4]
-    def logger = args[5]
-
+    def (authentication,registeredService,httpRequest,service,applicationContext,logger) = args
     logger.debug("Determine mfa provider for ${registeredService.name} and ${authentication.principal.id}")
     def memberOf = authentication.principal.attributes['memberOf'] as List
     return memberOf.contains('CN=NEED-MFA') ? 'mfa-duo' : null

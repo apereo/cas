@@ -67,10 +67,7 @@ syntax. The Groovy script itself may be designed as:
 import java.util.*
 
 def run(final Object... args) {
-    def principal = args[0]
-    def principalAttributes = args[1]
-    def logger = args[2]
-
+    def (principal,principalAttributes,logger) = args
     logger.info("Checking for impersonation authz for $principal...")
 
     // Decide if impersonation is allowed by returning true...

@@ -17,15 +17,9 @@ The outline of the Groovy script is shown below as a sample:
 import java.util.*
 
 class SampleGroovyEventResolver {
-    def String run(final Object... args) {
-        def service = args[0]
-        def registeredService = args[1]
-        def authentication = args[2]
-        def httpRequest = args[3]
-        def logger = args[4]
-
+    def run(final Object... args) {
+        def (service,registeredService,authentication,httpRequest,logger) = args
         ...
-
         return "mfa-duo"
     }
 }
@@ -50,12 +44,7 @@ import java.util.*
 
 class MyExampleScript {
     String run(final Object... args) {
-        def service = args[0]
-        def registeredService = args[1]
-        def authentication = args[2]
-        def httpRequest = args[3]
-        def logger = args[4]
-
+        def (service,registeredService,authentication,httpRequest,logger) = args
         if (service.id == "https://www.example.com") {
             logger.info("Evaluating principal attributes [{}]", authentication.principal.attributes)
 

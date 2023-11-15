@@ -14,44 +14,37 @@ Accounts and password may be determined and handled using a customized Groovy sc
 import org.apereo.cas.pm.*
 
 def change(Object[] args) {
-    def passwordChangeBean = args[0] as PasswordChangeRequest
-    def logger = args[1]
+    def (passwordChangeBean,logger) = args
     return true
 }
 
 def findEmail(Object[] args) {
-    def username = (args[0] as PasswordManagementQuery).username
-    def logger = args[1]
+    def (passwordMgmtQuery,logger) = args
     return "cas@example.org"
 }
 
 def findPhone(Object[] args) {
-    def username = (args[0] as PasswordManagementQuery).username
-    def logger = args[1]
+    def (passwordMgmtQuery,logger) = args
     return "1234567890"
 }
 
 def findUsername(Object[] args) {
-    def email = (args[0] as PasswordManagementQuery).email
-    def logger = args[1]
+    def (passwordMgmtQuery,logger) = args
     return "casuser"
 }
 
 def getSecurityQuestions(Object[] args) {
-    def username = (args[0] as PasswordManagementQuery).username
-    def logger = args[1]
+    def (passwordMgmtQuery,logger) = args
     return [securityQuestion1: "securityAnswer1"]
 }
 
 def updateSecurityQuestions(Object[] args) {
-    def query = args[0] as PasswordManagementQuery
-    def logger = args[1]
+    def (passwordMgmtQuery,logger) = args
     // Execute update...
 }
 
 def unlockAccount(Object[] args) {
-    def query = args[0] as Credential
-    def logger = args[1]
+    def (credential,logger) = args
     // Execute unlock...
     return true
 }

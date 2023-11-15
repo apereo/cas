@@ -26,35 +26,31 @@ Password history tracking, once enabled, can be handed off to an external Groovy
 
 ```groovy
 def exists(Object[] args) {
-    def request = args[0]
-    def logger = args[1]
+    def (request,logger) = args
     return false
 }
 
 def store(Object[] args) {
-    def request = args[0]
-    def logger = args[1]
+    def (request,logger) = args
     return true
 }
 
 def fetchAll(Object[] args) {
-    def logger = args[0]
+    def (logger) = args
     return []
 }
 
 def fetch(Object[] args) {
-    def username = args[0]
-    def logger = args[1]
+    def (username,logger) = args
     return []
 }   
 
 def remove(Object[] args) { 
-    def username = args[0]
-    def logger = args[1]
+    def (username,logger) = args
 }
 
 def removeAll(Object[] args) { 
-    def logger = args[0]
+    def (logger) = args
 }
 ```
 

@@ -26,13 +26,8 @@ using a script. The script may be defined as such:
 
 ```groovy
 def run(Object[] args) {
-    def passwordlessUser = args[0]
-    def clients = (Set) args[1]
-    def httpServletRequest = args[2]
-    def logger = args[3]
-    
+    def (passwordlessUser,clients,httpServletRequest,logger) = args
     logger.info("Testing username $passwordlessUser")
-
     clients[0]
 }
 ``` 

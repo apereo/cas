@@ -89,8 +89,7 @@ import java.util.*
 import org.apereo.cas.authentication.*
 
 Map run(final Object... args) {
-    def attributes = args[0]
-    def logger = args[1]
+    def (attributes,logger) = args
     logger.warn("Mutating attributes {}", attributes)
     return [upn: ["CASUser"]]
 }

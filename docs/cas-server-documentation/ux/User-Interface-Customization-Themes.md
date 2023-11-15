@@ -134,12 +134,8 @@ The script itself may be designed as:
 ```groovy
 import java.util.*
 
-def String run(final Object... args) {
-    def service = args[0]
-    def registeredService = args[1]
-    def queryStrings = args[2]
-    def headers = args[3]
-    def logger = args[4]
+def run(final Object... args) {
+    def (service,registeredService,queryStrings,headers,logger) = args
 
     // Determine theme ...
 

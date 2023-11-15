@@ -75,10 +75,7 @@ The outline of the script may be as follows:
 import org.apereo.cas.web.cookie.*
 
 def run(final Object... args) {
-    def request = args[0]
-    def response = args[1]
-    def context = args[2] as CookieGenerationContext
-    def logger = args[3]
+    def (request,response,context,logger) = args
     
     logger.info("Generating SameSite for ${context.name}")
     return "SameSite=Lax;"

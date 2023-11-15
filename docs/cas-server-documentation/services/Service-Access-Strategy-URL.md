@@ -67,12 +67,8 @@ import java.net.*
 import org.apereo.cas.authentication.*
 
 URI run(final Object... args) {
-    def registeredService = args[0]
-    def authentication = args[1]
-    def requestContext = args[2]
-    def applicationContext = args[3]
-    def logger = args[4]
-    
+    def (registeredService,authentication,requestContext,applicationContext,logger) = args 
+
     def username = authentication.principal.attributes["cn"][0] as String
     logger.info("Building URL for service {} and username {}", registeredService.name, username)
     

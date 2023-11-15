@@ -14,11 +14,7 @@ Send text messages using an external Groovy script.
 import java.util.*
 
 def run(Object[] args) {
-    def from = args[0]
-    def to = args[1]
-    def message = args[2]
-    def logger = args[3]
-
+    def (from,to,message,logger) = args
     logger.debug("Sending message ${message} to ${to} from ${from}")
     true
 }
