@@ -17,17 +17,20 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.actuate.autoconfigure.metrics.MetricsAutoConfiguration;
 import org.springframework.boot.actuate.autoconfigure.metrics.MetricsEndpointAutoConfiguration;
 import org.springframework.boot.actuate.autoconfigure.metrics.export.simple.SimpleMetricsExportAutoConfiguration;
 import org.springframework.boot.actuate.autoconfigure.observation.ObservationAutoConfiguration;
 import org.springframework.boot.actuate.health.HealthIndicator;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.autoconfigure.actuate.observability.AutoConfigureObservability;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.annotation.Import;
 import java.util.concurrent.atomic.AtomicBoolean;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -37,37 +40,19 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@SpringBootTest(classes = {
-    MetricsAutoConfiguration.class,
-    ObservationAutoConfiguration.class,
-    SimpleMetricsExportAutoConfiguration.class,
-    MetricsEndpointAutoConfiguration.class,
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
-    AopAutoConfiguration.class,
+@SpringBootTest(
+    classes = CasCoreMonitorConfigurationTests.SharedTestConfiguration.class,
+    properties = {
+        "management.metrics.export.simple.enabled=true",
 
-    CasCoreTicketCatalogConfiguration.class,
-    CasCoreTicketsSerializationConfiguration.class,
-    CasCoreTicketsConfiguration.class,
-    CasCoreTicketIdGeneratorsConfiguration.class,
-    CasCoreMonitorConfiguration.class,
-    CasCoreHttpConfiguration.class,
-    CasCoreServicesConfiguration.class,
-    CasCoreUtilConfiguration.class,
-    CasCoreNotificationsConfiguration.class,
-    CasCoreWebConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class
-}, properties = {
-    "management.metrics.export.simple.enabled=true",
+        "management.endpoint.metrics.enabled=true",
+        "management.endpoints.web.exposure.include=*",
+        "management.endpoint.health.enabled=true",
 
-    "management.endpoint.metrics.enabled=true",
-    "management.endpoints.web.exposure.include=*",
-    "management.endpoint.health.enabled=true",
-
-    "management.health.systemHealthIndicator.enabled=true",
-    "management.health.memoryHealthIndicator.enabled=true",
-    "management.health.sessionHealthIndicator.enabled=true"
-})
+        "management.health.systemHealthIndicator.enabled=true",
+        "management.health.memoryHealthIndicator.enabled=true",
+        "management.health.sessionHealthIndicator.enabled=true"
+    })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Metrics")
 @AutoConfigureObservability
@@ -106,5 +91,31 @@ class CasCoreMonitorConfigurationTests {
         val result = new AtomicBoolean(false);
         defaultExecutableObserver.run(new MonitorableTask("verifyObserabilityRunner"), () -> result.set(true));
         assertTrue(result.get());
+    }
+
+    @ImportAutoConfiguration({
+        MetricsAutoConfiguration.class,
+        ObservationAutoConfiguration.class,
+        SimpleMetricsExportAutoConfiguration.class,
+        MetricsEndpointAutoConfiguration.class,
+        RefreshAutoConfiguration.class,
+        WebMvcAutoConfiguration.class,
+        AopAutoConfiguration.class
+    })
+    @SpringBootConfiguration
+    @Import({
+        CasCoreTicketCatalogConfiguration.class,
+        CasCoreTicketsSerializationConfiguration.class,
+        CasCoreTicketsConfiguration.class,
+        CasCoreTicketIdGeneratorsConfiguration.class,
+        CasCoreMonitorConfiguration.class,
+        CasCoreHttpConfiguration.class,
+        CasCoreServicesConfiguration.class,
+        CasCoreUtilConfiguration.class,
+        CasCoreNotificationsConfiguration.class,
+        CasCoreWebConfiguration.class,
+        CasWebApplicationServiceFactoryConfiguration.class
+    })
+    public static class SharedTestConfiguration {
     }
 }

@@ -114,9 +114,9 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements Authenti
         final String id, final Service service,
         final ExpirationPolicy expirationPolicy,
         final boolean credentialProvided,
-        final ServiceTicketSessionTrackingPolicy trackingPolicy) {
+        final TicketTrackingPolicy trackingPolicy) {
         val serviceTicket = new ServiceTicketImpl(id, this, service, credentialProvided, expirationPolicy);
-        trackingPolicy.track(this, serviceTicket);
+        trackingPolicy.trackServiceTicket(this, serviceTicket);
         return serviceTicket;
     }
 
