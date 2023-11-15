@@ -244,7 +244,7 @@ public class RedisTicketRegistryConfiguration {
                     val searchCommands = redis.isEnableRedisSearch() ? RedisObjectFactory.newRedisModulesCommands(redis) : Optional.<RedisModulesCommands>empty();
                     return new RedisTicketRegistry(cipher, ticketSerializationManager, ticketCatalog,
                         casRedisTemplates, redisTicketRegistryCache, redisTicketRegistryMessagePublisher,
-                        searchCommands, redisKeyGeneratorFactory);
+                        searchCommands, redisKeyGeneratorFactory, casProperties);
                 })
                 .otherwise(() -> new DefaultTicketRegistry(ticketSerializationManager, ticketCatalog))
                 .get();
