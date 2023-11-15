@@ -2,9 +2,8 @@ package org.apereo.cas.ticket.proxy;
 
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.ExpirationPolicy;
-import org.apereo.cas.ticket.ServiceTicketSessionTrackingPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-
+import org.apereo.cas.ticket.TicketTrackingPolicy;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 /**
@@ -39,7 +38,7 @@ public interface ProxyGrantingTicket extends TicketGrantingTicket {
      */
     ProxyTicket grantProxyTicket(String id, Service service,
                                  ExpirationPolicy expirationPolicy,
-                                 ServiceTicketSessionTrackingPolicy trackingPolicy);
+                                 TicketTrackingPolicy trackingPolicy);
 
 }
 
