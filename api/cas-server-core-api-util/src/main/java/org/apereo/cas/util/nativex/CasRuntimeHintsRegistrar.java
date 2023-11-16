@@ -106,12 +106,12 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
     /**
      * Find subclasses in packages and exclude tests.
      *
-     * @param parentClass the parent class
+     * @param superClass the parent class
      * @param packages    the packages
      * @return the collection
      */
-    default Collection<Class> findSubclassesInPackage(final Class parentClass, final String... packages) {
-        val results = (Collection<Class>) ReflectionUtils.findSubclassesInPackage(parentClass, packages);
+    default Collection<Class> findSubclassesInPackage(final Class superClass, final String... packages) {
+        val results = (Collection<Class>) ReflectionUtils.findSubclassesInPackage(superClass, packages);
         val filteredResults = results
             .stream()
             .filter(clazz -> {
@@ -126,7 +126,7 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
                 return StringUtils.isNotBlank(host) && !host.endsWith("Tests");
             })
             .collect(Collectors.toList());
-        filteredResults.add(parentClass);
+        filteredResults.add(superClass);
         return filteredResults;
     }
 
