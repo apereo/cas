@@ -96,6 +96,13 @@ Furthermore, `CredentialMetadata` objects attached to authentication attempts ma
 to the credential itself. This bit is not new, of course. In scenarios where authentication attempts are made 
 using the [CAS REST API](../protocol/REST-Protocol-CredentialAuthentication.html),
 the extracted credential will carry properties that are populated with request headers, etc.
+ 
+### Access Strategy and Unauthorized Redirect URLs
+
+Access strategy configuration blocks assigned to service definitions have the ability to assign a URL to the definition
+to which [CAS would redirect](../services/Service-Access-Strategy-URL.html) when authorization and access is denied.
+While redirect has always been somewhat immediate and invisible, CAS should now inform the user that the redirect is
+taking place after a small delay window, `2~3` seconds, and the final redirect is then made via the browser. 
 
 ## Other Stuff
 
