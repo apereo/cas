@@ -59,8 +59,8 @@ We recommend reading the following documentation in order to plan and execute a 
 CAS development is powered by the following tools, projects and services.
 
 <div class="row">
-  <div class="col-sm-2 d-flex align-items-stretch">
-    <div class="card" style="width: 15rem;">
+  <div class="col-sm-3 d-flex align-items-stretch">
+    <div class="card border-0" style="width: 15rem;">
       <a href="https://www.jetbrains.com/idea/">
       <img src="https://github.com/apereo/cas/assets/1205228/11d83496-1abe-4f5a-b1e2-e313607cd595" class="card-img-top">
       </a>
@@ -69,8 +69,8 @@ CAS development is powered by the following tools, projects and services.
       </div>
     </div>
   </div>
-  <div class="col-sm-2 d-flex align-items-stretch">
-    <div class="card" style="width: 15rem;">
+  <div class="col-sm-3 d-flex align-items-stretch">
+    <div class="card border-0" style="width: 15rem;">
       <a href="https://github.com/spring-projects/spring-boot/">
       <img src="https://github.com/apereo/cas/assets/1205228/854849e9-1b02-4218-8cf7-a4fa4e2b9aa2" class="card-img-top mt-2 ms-2 pe-4">
       </a>
@@ -81,8 +81,8 @@ Spring applications.</p>
     </div>
   </div>
 
-  <div class="col-sm-2 d-flex align-items-stretch">
-    <div class="card" style="width: 16rem;">
+  <div class="col-sm-3 d-flex align-items-stretch">
+    <div class="card border-0" style="width: 16rem;">
       <a href="https://www.yourkit.com">
       <img src="https://github.com/apereo/cas/assets/1205228/81bf79a8-3771-4439-bcb4-34cfbb94467c" class="card-img-top mt-2 ms-2 pe-4">
       </a>
@@ -96,8 +96,8 @@ tools for profiling Java and .NET applications.
     </div>
   </div>
 
-<div class="col-sm-2 d-flex align-items-stretch">
-    <div class="card" style="width: 16rem;">
+<div class="col-sm-3 d-flex align-items-stretch">
+    <div class="card border-0" style="width: 16rem;">
       <a href="https://www.gradle.org">
       <img src="https://github.com/apereo/cas/assets/1205228/2774ecf6-c60c-4a66-9f5c-2fe8baaa7825"
            style="filter: brightness(300%)" class="card-img-top mt-2 ms-2 pe-4">
