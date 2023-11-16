@@ -307,7 +307,7 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
     }
 
     protected void createRedirectUnauthorizedServiceUrlEndState(final Flow flow) {
-        val state = createEndState(flow, CasWebflowConstants.STATE_ID_VIEW_REDIR_UNAUTHZ_URL, "flowScope.unauthorizedRedirectUrl", true);
+        val state = createEndState(flow, CasWebflowConstants.STATE_ID_VIEW_REDIR_UNAUTHZ_URL, "error/casUnauthorizedServiceRedirectView");
         state.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_REDIRECT_UNAUTHORIZED_SERVICE_URL));
     }
 

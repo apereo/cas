@@ -78,10 +78,12 @@ public class WebUtils {
      * Ticket-granting ticket id parameter used in various flow scopes.
      */
     public static final String PARAMETER_TICKET_GRANTING_TICKET_ID = "ticketGrantingTicketId";
+    /**
+     * Unauthorized redirect URL, typically the result of access strategy, used in various flow scopes.
+     */
+    public static final String PARAMETER_UNAUTHORIZED_REDIRECT_URL = "unauthorizedRedirectUrl";
 
     private static final String PARAMETER_CREDENTIAL = "credential";
-
-    private static final String PARAMETER_UNAUTHORIZED_REDIRECT_URL = "unauthorizedRedirectUrl";
 
     private static final String PARAMETER_SERVICE_TICKET_ID = "serviceTicketId";
 
