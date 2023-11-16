@@ -8,6 +8,8 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.AuthenticationHandlerResolver;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
+import org.apereo.cas.authentication.AuthenticationPostProcessor;
+import org.apereo.cas.authentication.AuthenticationPreProcessor;
 import org.apereo.cas.authentication.AuthenticationTransactionManager;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.CredentialMetadata;
@@ -46,37 +48,43 @@ public class CasCoreAuthenticationRuntimeHints implements CasRuntimeHintsRegistr
             .registerType(DefaultAuthenticationHandlerExecutionResult.class)
             .registerType(ValidationResponseType.class);
 
-        findSubclassesInPackage(Principal.class, CentralAuthenticationService.NAMESPACE)
-            .forEach(el -> hints.serialization().registerType(el));
-        findSubclassesInPackage(MessageDescriptor.class, CentralAuthenticationService.NAMESPACE)
-            .forEach(el -> hints.serialization().registerType(el));
-        findSubclassesInPackage(CredentialMetadata.class, CentralAuthenticationService.NAMESPACE)
-            .forEach(el -> hints.serialization().registerType(el));
-        findSubclassesInPackage(Authentication.class, CentralAuthenticationService.NAMESPACE)
-            .forEach(el -> hints.serialization().registerType(el));
-        findSubclassesInPackage(AuthenticationHandlerExecutionResult.class, CentralAuthenticationService.NAMESPACE)
-            .forEach(el -> hints.serialization().registerType(el));
+        val subclassesInPackage = findSubclassesInPackage(Principal.class, CentralAuthenticationService.NAMESPACE);
+        subclassesInPackage.addAll(findSubclassesInPackage(MessageDescriptor.class, CentralAuthenticationService.NAMESPACE));
+        subclassesInPackage.addAll(findSubclassesInPackage(CredentialMetadata.class, CentralAuthenticationService.NAMESPACE));
+        subclassesInPackage.addAll(findSubclassesInPackage(Authentication.class, CentralAuthenticationService.NAMESPACE));
+        subclassesInPackage.addAll(findSubclassesInPackage(AuthenticationHandlerExecutionResult.class, CentralAuthenticationService.NAMESPACE));
+        subclassesInPackage.addAll(findSubclassesInPackage(Credential.class, CentralAuthenticationService.NAMESPACE));
+        registerSerializationHints(hints, subclassesInPackage);
 
         val credentials = findSubclassesInPackage(Credential.class, CentralAuthenticationService.NAMESPACE);
-        credentials.forEach(el -> hints.serialization().registerType(el));
         registerReflectionHints(hints, credentials);
 
-        hints.proxies()
-            .registerJdkProxy(AuthenticationMetaDataPopulator.class)
-            .registerJdkProxy(AuthenticationAccountStateHandler.class)
-            .registerJdkProxy(AuthenticationEventExecutionPlanConfigurer.class)
-            .registerJdkProxy(PrincipalElectionStrategyConflictResolver.class)
-            .registerJdkProxy(PrincipalElectionStrategy.class)
-            .registerJdkProxy(CredentialMetadata.class)
-            .registerJdkProxy(AuthenticationHandler.class)
-            .registerJdkProxy(AuthenticationTransactionManager.class)
-            .registerJdkProxy(AuthenticationHandlerResolver.class);
-
+        registerProxyHints(hints, List.of(
+            AuthenticationMetaDataPopulator.class,
+            AuthenticationAccountStateHandler.class,
+            AuthenticationEventExecutionPlanConfigurer.class,
+            PrincipalElectionStrategyConflictResolver.class,
+            PrincipalElectionStrategy.class,
+            CredentialMetadata.class,
+            AuthenticationHandler.class,
+            AuthenticationPostProcessor.class,
+            AuthenticationPreProcessor.class,
+            AuthenticationTransactionManager.class,
+            AuthenticationHandlerResolver.class));
+        
         registerReflectionHints(hints,
             List.of(
                 CacheCredentialsCipherExecutor.class,
                 SimplePrincipal.class,
                 DefaultAuthentication.class));
+    }
+
+    private static void registerProxyHints(final RuntimeHints hints, final Collection<Class> subclassesInPackage) {
+        subclassesInPackage.forEach(clazz -> hints.proxies().registerJdkProxy(clazz));
+    }
+
+    private static void registerSerializationHints(final RuntimeHints hints, final Collection<Class> entries) {
+        entries.forEach(el -> hints.serialization().registerType(el));
     }
 
     private static void registerReflectionHints(final RuntimeHints hints, final Collection entries) {
