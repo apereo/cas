@@ -171,7 +171,7 @@ function resourceLoadedSuccessfully() {
 }
 
 function autoHideElement(id, timeout = 1500) {
-    var elementToFadeOut = document.getElementById(id);
+    let elementToFadeOut = document.getElementById(id);
     function hideElement() {
         $(elementToFadeOut).fadeOut(500);
     }
