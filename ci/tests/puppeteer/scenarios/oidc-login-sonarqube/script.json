@@ -3,7 +3,6 @@
   "conditions": {
     "docker": "true"
   },
-
   "properties": [
     "--cas.service-registry.core.init-from-json=false",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
@@ -16,14 +15,7 @@
     "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/keystore.jwks",
     
     "--cas.authn.attribute-repository.stub.attributes.email=casuser@apereo.org",
-    "--cas.authn.attribute-repository.stub.id=STUB",
-
-    "--logging.level.org.apereo.cas=DEBUG",
-    "--logging.level.org.apereo.services.persondir=INFO",
-    "--logging.level.org.apereo.cas.config=INFO",
-    "--logging.level.org.apereo.cas.oidc=INFO",
-    "--logging.level.org.apereo.cas.support.oauth=INFO",
-    "--logging.level.org.apereo.cas.services=INFO"
+    "--cas.authn.attribute-repository.stub.id=STUB"
   ],
   "bootstrapScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",
   "exitScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/exit.sh"
