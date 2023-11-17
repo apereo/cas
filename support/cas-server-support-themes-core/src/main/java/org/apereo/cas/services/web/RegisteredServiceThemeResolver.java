@@ -12,7 +12,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.util.http.HttpUtils;
-import org.apereo.cas.util.scripting.ScriptingUtils;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +24,7 @@ import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.HttpStatus;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpMethod;
@@ -98,16 +99,14 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
 
     protected String determineThemeNameToChoose(final HttpServletRequest request,
                                                 final Service service,
-                                                final WebBasedRegisteredService rService) {
+                                                final WebBasedRegisteredService registeredService) {
         HttpResponse response = null;
         try {
-            LOGGER.debug("Service [{}] is configured to use a custom theme [{}]", rService, rService.getTheme());
+            LOGGER.debug("Service [{}] is configured to use a custom theme [{}]", registeredService, registeredService.getTheme());
 
-            val resource = ResourceUtils.getRawResourceFrom(rService.getTheme());
-            if (resource instanceof FileSystemResource && resource.exists()) {
-                LOGGER.debug("Executing groovy script to determine theme for [{}]", service.getId());
-                val result = ScriptingUtils.executeGroovyScript(resource, new Object[]{service, rService,
-                    request.getQueryString(), HttpRequestUtils.getRequestHeaders(request), LOGGER}, String.class, true);
+            val resource = ResourceUtils.getRawResourceFrom(registeredService.getTheme());
+            if (resource.isFile() && resource.exists()) {
+                val result = determineThemeFromGroovyResource(request, service, registeredService, resource);
                 return StringUtils.defaultIfBlank(result, getDefaultThemeName());
             }
             if (resource instanceof UrlResource) {
@@ -124,19 +123,39 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
                     return StringUtils.defaultIfBlank(result, getDefaultThemeName());
                 }
             }
-            val theme = resolveThemeForService(rService, request);
+            val theme = resolveThemeForService(registeredService, request);
             if (theme != null) {
-                LOGGER.trace("Found custom theme [{}] for service [{}]", theme, rService);
+                LOGGER.trace("Found custom theme [{}] for service [{}]", theme, registeredService);
                 return theme;
             }
             LOGGER.warn("Custom theme [{}] for service [{}] cannot be located. Falling back to default theme...",
-                rService.getTheme(), rService.getName());
+                registeredService.getTheme(), registeredService.getName());
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
         }
         return getDefaultThemeName();
+    }
+
+    protected String determineThemeFromGroovyResource(final HttpServletRequest request,
+                                                      final Service service,
+                                                      final WebBasedRegisteredService registeredService,
+                                                      final AbstractResource resource) {
+        LOGGER.debug("Executing groovy script to determine theme for [{}]", service.getId());
+        return ApplicationContextProvider.getScriptResourceCacheManager()
+            .map(cacheManager -> FunctionUtils.doUnchecked(() -> {
+                val filePath = resource.getFile().getCanonicalPath();
+                val script = cacheManager.resolveScriptableResource(resource.getFile().toURI().toString(), filePath);
+                val args = CollectionUtils.<String, Object>wrap(
+                    "service", service,
+                    "registeredService", registeredService,
+                    "queryString", StringUtils.defaultString(request.getQueryString()),
+                    "headers", HttpRequestUtils.getRequestHeaders(request),
+                    "logger", LOGGER);
+                script.setBinding(args);
+                return script.execute(args.values().toArray(), String.class);
+            })).orElse(StringUtils.EMPTY);
     }
 
     protected String rememberThemeName(final HttpServletRequest request) {
