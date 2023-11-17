@@ -104,6 +104,18 @@ to which [CAS would redirect](../services/Service-Access-Strategy-URL.html) when
 While redirect has always been somewhat immediate and invisible, CAS should now inform the user that the redirect is
 taking place after a small delay window, `2~3` seconds, and the final redirect is then made via the browser. 
 
+### OpenID Connect Identity Assurance
+
+Modest enhancements are in place to support [OpenID Connect Identity Assurance](https://openid.net/specs/openid-connect-4-identity-assurance-1_0-12.html).
+Efforts in this area mainly include:
+
+- Auditing the generation of OpenID Connect ID tokens
+- Generating a `txn` claim for audit payloads to tie the record to the ID token transaction
+- ID token audit payload may include the authentication methods employed
+
+Furthermore, built-in support is now available for a special `assurance` scope that carries special additional claims
+about end-users such as `place_of_birth`, `salutation`, `birth_given_name`, etc.
+
 ## Other Stuff
 
 - When using [OpenID Connect](../protocol/OIDC-Protocol.html), requests that carry a `client_secret` as a query parameter are now rejected and/or ignored.
@@ -118,6 +130,7 @@ taking place after a small delay window, `2~3` seconds, and the final redirect i
 - Client TLS settings are now supported for [OpenID Connect](../authentication/OIDC-Authentication-AccessToken-AuthMethods.html) relying parties and applications. This capability is also extended to [Dynamic Client Registration](../authentication/OIDC-Authentication-Dynamic-Registration.html) requests.
 - CAS notifications can now be [sent to Slack](../notifications/Notifications-Configuration-Slack.html) too.
 - The header value for `Strict-Transport-Security` header [can now be defined](../services/Configuring-Service-Http-Security-Headers.html) both globally and per application.
+- Groovy scripts that determine user interface theme names may now be cached for subsequent executions.
 
 ## Library Upgrades
   
