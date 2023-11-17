@@ -1,4 +1,12 @@
-description = "Apereo CAS Discovery Core API Support"
+description = "Apereo CAS Discovery Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Reporting",
+            title: "Discovery Profile",
+            aliases: ["discovery"]
+    ]
+}
 dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-web-api")
