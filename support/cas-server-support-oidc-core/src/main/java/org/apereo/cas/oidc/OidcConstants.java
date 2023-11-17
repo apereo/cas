@@ -231,6 +231,11 @@ public interface OidcConstants {
          */
         PROFILE("profile"),
         /**
+         * assurance scope.
+         * An extension of OpenID Connect for providing Relying Parties with Verified Claims about End-Users.
+         */
+        ASSURANCE("assurance"),
+        /**
          * phone scope.
          */
         PHONE("phone"),

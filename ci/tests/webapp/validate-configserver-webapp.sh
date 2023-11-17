@@ -21,7 +21,7 @@ java -jar webapp/cas-server-webapp-config-server/build/libs/casconfigserver.war 
   --encrypt.key-store.location=file:${keystore} &
 pid=$!
 echo "Launched CAS config server with pid ${pid}. Waiting for CAS config server to come online..."
-sleep 30
+sleep 45
 cmd=`curl -L -k --user casuser:Mellon --connect-timeout 60 -s \
 -o /dev/null -I -w "%{http_code}" https://localhost:8888/casconfigserver/actuator/cas/default`
 kill -9 "${pid}"
