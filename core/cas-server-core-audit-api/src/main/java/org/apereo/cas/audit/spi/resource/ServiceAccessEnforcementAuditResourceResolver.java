@@ -1,8 +1,11 @@
 package org.apereo.cas.audit.spi.resource;
 
 import org.apereo.cas.audit.AuditableExecutionResult;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.core.audit.AuditEngineProperties;
 import org.apereo.cas.util.DigestUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -21,6 +24,7 @@ import java.util.Objects;
  */
 @RequiredArgsConstructor
 public class ServiceAccessEnforcementAuditResourceResolver extends ReturnValueAsStringResourceResolver {
+    private final AuthenticationServiceSelectionPlan serviceSelectionStrategy;
     private final AuditEngineProperties properties;
 
     @Override
@@ -31,13 +35,18 @@ public class ServiceAccessEnforcementAuditResourceResolver extends ReturnValueAs
             + BooleanUtils.toString(serviceAccessCheckResult.isExecutionFailure(), "Denied", "Granted");
         val values = new HashMap<>();
         values.put("result", accessCheckOutcome);
-        serviceAccessCheckResult.getService().ifPresent(service -> values.put("service",
-            DigestUtils.abbreviate(service.getId(), properties.getAbbreviationLength())));
+        serviceAccessCheckResult.getService().ifPresent(service -> values.put("service", getServiceId(service)));
 
         serviceAccessCheckResult.getAuthentication()
             .ifPresent(authn -> values.put("principal", authn.getPrincipal()));
         serviceAccessCheckResult.getRegisteredService()
             .ifPresent(regSvc -> values.put("requiredAttributes", regSvc.getAccessStrategy().getRequiredAttributes()));
         return new String[]{auditFormat.serialize(values)};
+    }
+
+
+    private String getServiceId(final Service service) {
+        val serviceId = FunctionUtils.doUnchecked(() -> serviceSelectionStrategy.resolveService(service).getId());
+        return DigestUtils.abbreviate(serviceId, properties.getAbbreviationLength());
     }
 }

@@ -19,6 +19,7 @@ import org.apereo.cas.audit.spi.resource.ServiceAccessEnforcementAuditResourceRe
 import org.apereo.cas.audit.spi.resource.ServiceAuditResourceResolver;
 import org.apereo.cas.audit.spi.resource.TicketAsFirstParameterResourceResolver;
 import org.apereo.cas.audit.spi.resource.TicketValidationResourceResolver;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
@@ -123,19 +124,22 @@ public class CasCoreAuditConfiguration {
         @ConditionalOnMissingBean(name = "ticketResourceResolver")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public AuditResourceResolver ticketResourceResolver() {
-            return new TicketAsFirstParameterResourceResolver();
+        public AuditResourceResolver ticketResourceResolver(@Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
+                                                            final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan) {
+            return new TicketAsFirstParameterResourceResolver(authenticationServiceSelectionPlan);
         }
 
         @ConditionalOnMissingBean(name = "ticketValidationResourceResolver")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuditResourceResolver ticketValidationResourceResolver(
+            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
+            final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
             @Qualifier("ticketResourceResolver")
             final AuditResourceResolver ticketResourceResolver,
             final CasConfigurationProperties casProperties) {
             if (casProperties.getAudit().getEngine().isIncludeValidationAssertion()) {
-                return new TicketValidationResourceResolver();
+                return new TicketValidationResourceResolver(authenticationServiceSelectionPlan);
             }
             return ticketResourceResolver;
         }
@@ -184,8 +188,12 @@ public class CasCoreAuditConfiguration {
         @ConditionalOnMissingBean(name = "serviceAccessEnforcementAuditResourceResolver")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public AuditResourceResolver serviceAccessEnforcementAuditResourceResolver(final CasConfigurationProperties properties) {
-            return new ServiceAccessEnforcementAuditResourceResolver(properties.getAudit().getEngine());
+        public AuditResourceResolver serviceAccessEnforcementAuditResourceResolver(
+            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
+            final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
+            final CasConfigurationProperties properties) {
+            return new ServiceAccessEnforcementAuditResourceResolver(authenticationServiceSelectionPlan,
+                properties.getAudit().getEngine());
         }
 
         @ConditionalOnMissingBean(name = "logoutRequestResourceResolver")

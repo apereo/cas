@@ -1,5 +1,6 @@
 package org.apereo.cas.audit.spi.resource;
 
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.util.AopUtils;
 import org.apereo.cas.validation.Assertion;
 
@@ -22,6 +23,10 @@ import java.util.LinkedHashMap;
 @Setter
 public class TicketValidationResourceResolver extends TicketAsFirstParameterResourceResolver {
     private AuditTrailManager.AuditFormats auditFormat = AuditTrailManager.AuditFormats.DEFAULT;
+
+    public TicketValidationResourceResolver(final AuthenticationServiceSelectionPlan serviceSelectionStrategy) {
+        super(serviceSelectionStrategy);
+    }
 
     @Override
     public String[] resolveFrom(final JoinPoint joinPoint, final Object object) {

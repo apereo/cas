@@ -1,9 +1,12 @@
 package org.apereo.cas.audit.spi.resource;
 
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.AopUtils;
 import org.apereo.cas.util.DigestUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
@@ -20,7 +23,9 @@ import java.util.HashMap;
  * @since 3.1.2
  */
 @Setter
+@RequiredArgsConstructor
 public class TicketAsFirstParameterResourceResolver implements AuditResourceResolver {
+    private final AuthenticationServiceSelectionPlan serviceSelectionStrategy;
     private AuditTrailManager.AuditFormats auditFormat = AuditTrailManager.AuditFormats.DEFAULT;
 
     @Override
@@ -39,12 +44,18 @@ public class TicketAsFirstParameterResourceResolver implements AuditResourceReso
                     val service = (Service) arguments[1];
                     val values = new HashMap<String, String>();
                     values.put("ticket", ticket.toString());
-                    values.put("service", DigestUtils.abbreviate(service.getId()));
+                    values.put("service", getServiceId(service));
                     return new String[]{auditFormat.serialize(values)};
                 }
                 return new String[]{auditFormat.serialize(ticket.toString())};
             }
         }
         return ArrayUtils.EMPTY_STRING_ARRAY;
+    }
+
+
+    private String getServiceId(final Service service) {
+        val serviceId = FunctionUtils.doUnchecked(() -> serviceSelectionStrategy.resolveService(service).getId());
+        return DigestUtils.abbreviate(serviceId);
     }
 }
