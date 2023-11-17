@@ -176,4 +176,8 @@ public interface AuditResourceResolvers {
      * Resource resolver id {@code LOGOUT_RESOURCE_RESOLVER}.
      */
     String LOGOUT_RESOURCE_RESOLVER = "LOGOUT_RESOURCE_RESOLVER";
+    /**
+     * Resource resolver id {@code OIDC_ID_TOKEN_RESOURCE_RESOLVER}.
+     */
+    String OIDC_ID_TOKEN_RESOURCE_RESOLVER = "OIDC_ID_TOKEN_RESOURCE_RESOLVER";
 }

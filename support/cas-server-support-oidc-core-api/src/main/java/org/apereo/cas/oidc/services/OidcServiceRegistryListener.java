@@ -118,7 +118,7 @@ public class OidcServiceRegistryListener implements ServiceRegistryListener {
             } else {
                 val scope = OidcConstants.StandardScopes.valueOf(givenScope.trim().toUpperCase(Locale.ENGLISH));
                 switch (scope) {
-                    case EMAIL, ADDRESS, PROFILE, PHONE -> {
+                    case EMAIL, ADDRESS, PROFILE, PHONE, ASSURANCE -> {
                         val policyToAdd = attributeReleasePolicyFactory.get(scope);
                         addAttributeReleasePolicy(policyChain, policyToAdd, givenScope, oidcService);
                     }

@@ -49,7 +49,7 @@ public class OidcImplicitIdTokenAndTokenAuthorizationResponseBuilder<T extends O
             holder.getUserProfile(), OAuth20ResponseTypes.IDTOKEN_TOKEN, holder.getGrantType(),
             holder.getRegisteredService());
         LOGGER.debug("Generated id token [{}]", idToken);
-        params.add(new BasicNameValuePair(OidcConstants.ID_TOKEN, idToken));
+        params.add(new BasicNameValuePair(OidcConstants.ID_TOKEN, idToken.token()));
         return super.buildCallbackUrlResponseType(holder, accessToken, params, refreshToken);
     }
 }

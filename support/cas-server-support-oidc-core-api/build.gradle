@@ -27,6 +27,7 @@ dependencies {
     implementation project(":core:cas-server-core-webflow-mfa-api")
     implementation project(":core:cas-server-core-cookie-api")
     implementation project(":core:cas-server-core-logout-api")
+    implementation project(":core:cas-server-core-audit-api")
 
     implementation libraries.cqengine
     implementation libraries.pac4jcore

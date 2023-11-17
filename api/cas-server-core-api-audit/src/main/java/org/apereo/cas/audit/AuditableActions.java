@@ -131,7 +131,11 @@ public interface AuditableActions {
      * Auditable action {@code OAUTH2_ACCESS_TOKEN_REQUEST}.
      */
     String OAUTH2_ACCESS_TOKEN_REQUEST = "OAUTH2_ACCESS_TOKEN_REQUEST";
-
+    /**
+     * Auditable action {@code OIDC_ID_TOKEN}.
+     */
+    String OIDC_ID_TOKEN = "OIDC_ID_TOKEN";
+    
     /**
      * Auditable action {@code AUP_VERIFY}.
      */

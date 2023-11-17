@@ -6,6 +6,7 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.BaseIdTokenGeneratorService;
+import org.apereo.cas.ticket.OidcIdToken;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.uma.UmaConfigurationContext;
 import org.apereo.cas.uma.ticket.permission.UmaPermissionTicket;
@@ -33,17 +34,17 @@ public class UmaIdTokenGeneratorService extends BaseIdTokenGeneratorService<UmaC
     }
 
     @Override
-    public String generate(final OAuth20AccessToken accessToken,
-                           final UserProfile userProfile,
-                           final OAuth20ResponseTypes responseType,
-                           final OAuth20GrantTypes grantType,
-                           final OAuthRegisteredService registeredService) throws Throwable {
+    public OidcIdToken generate(final OAuth20AccessToken accessToken,
+                                final UserProfile userProfile,
+                                final OAuth20ResponseTypes responseType,
+                                final OAuth20GrantTypes grantType,
+                                final OAuthRegisteredService registeredService) throws Throwable {
         val timeoutInSeconds = Beans.newDuration(getConfigurationContext().getCasProperties()
             .getAuthn().getOauth().getUma().getRequestingPartyToken().getMaxTimeToLiveInSeconds()).getSeconds();
         LOGGER.debug("Attempting to produce claims for the RPT access token [{}]", accessToken);
         val claims = buildJwtClaims(accessToken, timeoutInSeconds, userProfile, registeredService, responseType);
-
-        return encodeAndFinalizeToken(claims, registeredService, accessToken);
+        val finalToken = encodeAndFinalizeToken(claims, registeredService, accessToken);
+        return new OidcIdToken(finalToken, claims);
     }
 
     /**

@@ -4,7 +4,6 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
-
 import org.pac4j.core.profile.UserProfile;
 
 /**
@@ -26,9 +25,9 @@ public interface IdTokenGeneratorService {
      * @return the string
      * @throws Throwable the throwable
      */
-    String generate(OAuth20AccessToken accessToken,
-                    UserProfile userProfile,
-                    OAuth20ResponseTypes responseType,
-                    OAuth20GrantTypes grantType,
-                    OAuthRegisteredService registeredService) throws Throwable;
+    OidcIdToken generate(OAuth20AccessToken accessToken,
+                              UserProfile userProfile,
+                              OAuth20ResponseTypes responseType,
+                              OAuth20GrantTypes grantType,
+                              OAuthRegisteredService registeredService) throws Throwable;
 }

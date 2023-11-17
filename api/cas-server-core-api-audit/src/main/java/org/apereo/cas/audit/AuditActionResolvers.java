@@ -177,4 +177,8 @@ public interface AuditActionResolvers {
      * Action resolver id {@code LOGOUT_ACTION_RESOLVER}.
      */
     String LOGOUT_ACTION_RESOLVER = "LOGOUT_ACTION_RESOLVER";
+    /**
+     * Action resolver id {@code OIDC_ID_TOKEN_ACTION_RESOLVER}.
+     */
+    String OIDC_ID_TOKEN_ACTION_RESOLVER = "OIDC_ID_TOKEN_ACTION_RESOLVER";
 }

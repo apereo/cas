@@ -118,7 +118,7 @@ class OidcIdTokenGeneratorServiceTests {
                 OAuth20ResponseTypes.ID_TOKEN, OAuth20GrantTypes.NONE, registeredService);
             assertNotNull(idToken);
 
-            val claims = oidcTokenSigningAndEncryptionService.decode(idToken, Optional.of(registeredService));
+            val claims = oidcTokenSigningAndEncryptionService.decode(idToken.token(), Optional.of(registeredService));
             assertEquals("{apereo={cas={entity=[example, apereo]}}}", claims.getClaimValueAsString("org"));
         }
     }
@@ -166,7 +166,7 @@ class OidcIdTokenGeneratorServiceTests {
                 OAuth20ResponseTypes.CODE, OAuth20GrantTypes.NONE, registeredService);
             assertNotNull(idToken);
 
-            val claims = oidcTokenSigningAndEncryptionService.decode(idToken, Optional.of(registeredService));
+            val claims = oidcTokenSigningAndEncryptionService.decode(idToken.token(), Optional.of(registeredService));
             assertNotNull(claims);
             assertTrue(claims.hasClaim(OIDC_CLAIM_EMAIL));
             assertTrue(claims.hasClaim(OIDC_CLAIM_NAME));
@@ -220,7 +220,7 @@ class OidcIdTokenGeneratorServiceTests {
                 OAuth20ResponseTypes.ID_TOKEN, OAuth20GrantTypes.NONE, registeredService);
             assertNotNull(idToken);
 
-            val claims = oidcTokenSigningAndEncryptionService.decode(idToken, Optional.of(registeredService));
+            val claims = oidcTokenSigningAndEncryptionService.decode(idToken.token(), Optional.of(registeredService));
             assertNotNull(claims);
             assertTrue(claims.hasClaim(OIDC_CLAIM_EMAIL));
             assertEquals(authentication.getAuthenticationDate().toEpochSecond(), (long) claims.getClaimValue(OidcConstants.CLAIM_AUTH_TIME));
@@ -271,7 +271,7 @@ class OidcIdTokenGeneratorServiceTests {
                 OAuth20ResponseTypes.CODE, OAuth20GrantTypes.NONE, registeredService);
             assertNotNull(idToken);
 
-            val claims = oidcTokenSigningAndEncryptionService.decode(idToken, Optional.of(registeredService));
+            val claims = oidcTokenSigningAndEncryptionService.decode(idToken.token(), Optional.of(registeredService));
             assertNotNull(claims);
             assertFalse(claims.hasClaim(OIDC_CLAIM_EMAIL));
             assertFalse(claims.hasClaim(OIDC_CLAIM_NAME));
@@ -315,7 +315,7 @@ class OidcIdTokenGeneratorServiceTests {
             val idToken = oidcIdTokenGenerator.generate(accessToken, profile,
                 OAuth20ResponseTypes.ID_TOKEN, OAuth20GrantTypes.AUTHORIZATION_CODE, registeredService);
             assertNotNull(idToken);
-            val claims = oidcTokenSigningAndEncryptionService.decode(idToken, Optional.of(registeredService));
+            val claims = oidcTokenSigningAndEncryptionService.decode(idToken.token(), Optional.of(registeredService));
             assertNotNull(claims);
             assertFalse(claims.hasClaim(OIDC_CLAIM_EMAIL));
             assertFalse(claims.hasClaim(OIDC_CLAIM_NAME));
@@ -380,7 +380,7 @@ class OidcIdTokenGeneratorServiceTests {
             servicesManager.save(registeredService);
             val idToken = oidcIdTokenGenerator.generate(accessToken, profile, OAuth20ResponseTypes.CODE, OAuth20GrantTypes.NONE, registeredService);
             assertNotNull(idToken);
-            val claims = oidcTokenSigningAndEncryptionService.decode(idToken, Optional.of(registeredService));
+            val claims = oidcTokenSigningAndEncryptionService.decode(idToken.token(), Optional.of(registeredService));
             assertNotNull(claims);
             assertTrue(claims.hasClaim(OidcConstants.CLAIM_AT_HASH));
             assertTrue(claims.hasClaim(OidcConstants.CLAIM_AUTH_TIME));

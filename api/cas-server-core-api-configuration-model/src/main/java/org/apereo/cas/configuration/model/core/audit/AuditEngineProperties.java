@@ -117,7 +117,7 @@ public class AuditEngineProperties implements Serializable {
      * URLs that are captured in audit logs. Negative/Zero values
      * disable the abbreviation altogether.
      */
-    private int abbreviationLength = 125;
+    private int abbreviationLength = 100;
 
     /**
      * The audit format types.
