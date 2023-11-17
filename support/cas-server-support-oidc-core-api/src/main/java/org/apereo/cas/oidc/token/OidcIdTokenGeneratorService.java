@@ -1,5 +1,8 @@
 package org.apereo.cas.oidc.token;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.attribute.AttributeDefinition;
@@ -20,6 +23,7 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20AccessTokenA
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.AuthenticatedServicesAwareTicketGrantingTicket;
 import org.apereo.cas.ticket.BaseIdTokenGeneratorService;
+import org.apereo.cas.ticket.OidcIdToken;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.CollectionUtils;
@@ -31,6 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.inspektr.audit.annotation.Audit;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
 import org.pac4j.core.profile.UserProfile;
@@ -44,6 +49,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -65,19 +71,23 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         }
     }
 
+    @Audit(action = AuditableActions.OIDC_ID_TOKEN,
+        actionResolverName = AuditActionResolvers.OIDC_ID_TOKEN_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.OIDC_ID_TOKEN_RESOURCE_RESOLVER)
     @Override
-    public String generate(final OAuth20AccessToken accessToken,
-                           final UserProfile userProfile,
-                           final OAuth20ResponseTypes responseType,
-                           final OAuth20GrantTypes grantType,
-                           final OAuthRegisteredService registeredService) throws Throwable {
+    public OidcIdToken generate(final OAuth20AccessToken accessToken,
+                                final UserProfile userProfile,
+                                final OAuth20ResponseTypes responseType,
+                                final OAuth20GrantTypes grantType,
+                                final OAuthRegisteredService registeredService) throws Throwable {
         Assert.isAssignable(OidcRegisteredService.class, registeredService.getClass(),
             "Registered service instance is not an OIDC service");
 
         val oidcRegisteredService = (OidcRegisteredService) registeredService;
         LOGGER.trace("Attempting to produce claims for the id token [{}]", accessToken);
         val claims = buildJwtClaims(accessToken, oidcRegisteredService, responseType, grantType);
-        return encodeAndFinalizeToken(claims, oidcRegisteredService, accessToken);
+        val finalIdToken = encodeAndFinalizeToken(claims, oidcRegisteredService, accessToken);
+        return new OidcIdToken(finalIdToken, claims);
     }
 
     protected JwtClaims buildJwtClaims(final OAuth20AccessToken accessToken,
@@ -146,7 +156,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
                          + "such as profile, email, address, etc. are only put "
                          + "into the OpenID Connect ID token when the response type is set to id_token.");
         }
-
+        claims.setStringClaim(OidcConstants.TXN, UUID.randomUUID().toString());
         return claims;
     }
 

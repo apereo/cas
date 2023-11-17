@@ -45,6 +45,7 @@ import org.apereo.cas.config.CasThymeleafConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CasWebSecurityConfiguration;
 import org.apereo.cas.config.CasWebflowContextConfiguration;
+import org.apereo.cas.config.OidcAuditConfiguration;
 import org.apereo.cas.config.OidcComponentSerializationConfiguration;
 import org.apereo.cas.config.OidcConfiguration;
 import org.apereo.cas.config.OidcEndpointsConfiguration;
@@ -153,6 +154,8 @@ import static org.mockito.Mockito.*;
         "spring.main.allow-bean-definition-overriding=true",
         "spring.mvc.pathmatch.matching-strategy=ant-path-matcher",
 
+        "cas.audit.slf4j.use-single-line=true",
+        
         "cas.server.name=https://sso.example.org/",
         "cas.server.prefix=https://sso.example.org/cas",
         
@@ -560,6 +563,7 @@ public abstract class AbstractOidcTests {
         OidcLogoutConfiguration.class,
         OidcThrottleConfiguration.class,
         OidcComponentSerializationConfiguration.class,
+        OidcAuditConfiguration.class,
         CasOAuth20Configuration.class,
         CasOAuth20ProtocolTicketCatalogConfiguration.class,
         CasOAuth20EndpointsConfiguration.class,
