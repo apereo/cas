@@ -46,7 +46,8 @@ const assert = require('assert');
 
     await cas.log("Invoking SAML2 identity provider SLO...");
     await cas.goto(page, "http://localhost:9443/simplesaml/saml2/idp/SingleLogoutService.php?ReturnTo=https://apereo.github.io");
-    await page.waitForTimeout(6000);
+    await page.waitForTimeout(8000);
+    await cas.screenshot(page);
     url = await page.url();
     await cas.logPage(page);
     assert(url.startsWith("https://apereo.github.io"));
