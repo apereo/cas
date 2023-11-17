@@ -45,7 +45,7 @@ on:
 
 jobs:
   cancel-previous-runs:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     timeout-minutes: 1
     steps:
       - uses: styfle/cancel-workflow-action@0.12.0
@@ -54,7 +54,7 @@ jobs:
   ##########################################################################
   initialize:
     needs: [cancel-previous-runs]
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK
@@ -74,7 +74,7 @@ jobs:
             
   puppeteer-scenarios:
     needs: [initialize]
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     timeout-minutes: 10
     outputs:
       scenarios255: ${{ steps.get-scenarios255.outputs.scenarios255 }}
@@ -101,7 +101,7 @@ jobs:
 
   ##########################################################################
   puppeteer-tests-255:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     needs: [puppeteer-scenarios]
     continue-on-error: false
     strategy:
@@ -148,8 +148,8 @@ jobs:
           shell: bash
           command: |
             ./ci/tests/puppeteer/run.sh --nb --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
-      - uses: docker-practice/actions-setup-docker@v1
-        timeout-minutes: 15
+#      - uses: docker-practice/actions-setup-docker@v1
+#        timeout-minutes: 15
       - name: Run Native Tests
         uses: nick-fields/retry@v2
         if: ${{ env.NATIVE_RUN_ENABLED == 'true' }}
@@ -162,7 +162,7 @@ jobs:
             ./ci/tests/puppeteer/run.sh --nr --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
   ##########################################################################
   puppeteer-tests-511:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     needs: [puppeteer-scenarios]
     continue-on-error: false
     strategy:
@@ -209,8 +209,8 @@ jobs:
           command: |
             export RUNNER_OS=${{ runner.os }}
             ./ci/tests/puppeteer/run.sh --nb --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
-      - uses: docker-practice/actions-setup-docker@v1
-        timeout-minutes: 15
+#      - uses: docker-practice/actions-setup-docker@v1
+#        timeout-minutes: 15
       - name: Run Native Tests
         uses: nick-fields/retry@v2
         if: ${{ env.NATIVE_RUN_ENABLED == 'true' }}
