@@ -92,7 +92,7 @@ of [volunteers and contributors][githubcontributors]. Support options may be [fo
 If you (or your employer) benefit from this project, please consider becoming a [Friend of Apereo](https://www.apereo.org/friends) and contribute.
 
 [cascodecov]: https://codecov.io/gh/apereo/cas
-[devlocity]: https://codecov.io/gh/apereo/cas
+[devlocity]: https://develocity.apereo.org
 [maintenance]: https://apereo.github.io/cas/development/developer/Maintenance-Policy.html
 [releaseschedule]: https://github.com/apereo/cas/milestones
 [wiki]: https://apereo.github.io/cas
