@@ -655,7 +655,7 @@ if [[ "${RERUN}" != "true" && "${NATIVE_BUILD}" == "false" ]]; then
       casLogin="https://localhost:${serverPort}/cas/login"
 
       if [[ "${CI}" == "true" ]]; then
-        timeout=$(jq -j '.timeout // 80' "${config}")
+        timeout=$(jq -j '.timeout // 70' "${config}")
         sleepfor $timeout
 
         printcyan "Checking CAS server's status @ ${casLogin}"

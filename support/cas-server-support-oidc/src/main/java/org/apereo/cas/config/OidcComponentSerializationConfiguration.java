@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.principal.OidcPairwisePersistentIdGenerator
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.oidc.claims.OidcAddressScopeAttributeReleasePolicy;
+import org.apereo.cas.oidc.claims.OidcAssuranceScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcEmailScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcPhoneScopeAttributeReleasePolicy;
@@ -62,6 +63,7 @@ public class OidcComponentSerializationConfiguration {
             plan.registerSerializableClass(OidcCustomScopeAttributeReleasePolicy.class);
             plan.registerSerializableClass(OidcEmailScopeAttributeReleasePolicy.class);
             plan.registerSerializableClass(OidcPhoneScopeAttributeReleasePolicy.class);
+            plan.registerSerializableClass(OidcAssuranceScopeAttributeReleasePolicy.class);
             plan.registerSerializableClass(OidcProfileScopeAttributeReleasePolicy.class);
         };
     }

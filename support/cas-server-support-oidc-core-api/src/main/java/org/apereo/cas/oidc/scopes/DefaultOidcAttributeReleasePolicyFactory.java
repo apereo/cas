@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.claims.BaseOidcScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcAddressScopeAttributeReleasePolicy;
+import org.apereo.cas.oidc.claims.OidcAssuranceScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcEmailScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcOfflineAccessScopeAttributeReleasePolicy;
@@ -64,6 +65,7 @@ public class DefaultOidcAttributeReleasePolicyFactory implements OidcAttributeRe
             case OPENID -> new OidcOpenIdScopeAttributeReleasePolicy();
             case PHONE -> new OidcPhoneScopeAttributeReleasePolicy();
             case PROFILE -> new OidcProfileScopeAttributeReleasePolicy();
+            case ASSURANCE -> new OidcAssuranceScopeAttributeReleasePolicy();
             case OFFLINE_ACCESS -> new OidcOfflineAccessScopeAttributeReleasePolicy();
         };
     }
