@@ -7,7 +7,6 @@ import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.oidc.audit.OidcIdTokenAuditResourceResolver;
-import org.apereo.cas.support.oauth.web.audit.OAuth20UserProfileDataAuditResourceResolver;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
