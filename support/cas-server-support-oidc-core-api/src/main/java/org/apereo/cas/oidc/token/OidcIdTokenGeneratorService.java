@@ -40,6 +40,7 @@ import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
 import org.pac4j.core.profile.UserProfile;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.util.Assert;
 
 import java.util.ArrayList;
@@ -279,7 +280,10 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
                                               final Object defaultValue) {
         val mapper = getConfigurationContext().getAttributeToScopeClaimMapper();
         val collectionValues = mapper.mapClaim(claimName, registeredService, principal, defaultValue);
-        getConfigurationContext().getIdTokenClaimCollector().collect(claims, claimName, collectionValues);
+        val collectors = new ArrayList<>(getConfigurationContext().getIdTokenClaimCollectors());
+        AnnotationAwareOrderComparator.sortIfNecessary(collectors);
+        collectors.forEach(collector -> collector.collect(claims, claimName, collectionValues));
+
     }
 
     protected String getJwtId(final TicketGrantingTicket tgt) {
