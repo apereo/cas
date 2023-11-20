@@ -121,7 +121,7 @@ layout: null
         *   [X.509](/cas/{{ version }}/authentication/X509-Authentication.html)
         *   [RADIUS](/cas/{{ version }}/mfa/RADIUS-Authentication.html)
         *   [SPNEGO](/cas/{{ version }}/authentication/SPNEGO-Authentication.html)
-        *   [Remote Address](/cas/{{ version }}/authentication/Remote-Address-Authentication.html)
+        *   [Remote](/cas/{{ version }}/authentication/Remote-Authentication.html)
         *   [Trusted](/cas/{{ version }}/authentication/Trusted-Authentication.html)
         *   [Apache Cassandra](/cas/{{ version }}/authentication/Cassandra-Authentication.html)
         *   [Apache Syncope](/cas/{{ version }}/authentication/Syncope-Authentication.html)

@@ -21,13 +21,15 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class RemoteAddressAuthenticationProperties implements Serializable {
+public class RemoteAuthenticationProperties implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 573409035023089696L;
 
     /**
      * The authorized network address to allow for authentication.
+     * This approach allows for transparent authentication achieved within a large corporate
+     * network without the need to manage certificates, etc.
      */
     @RequiredProperty
     private String ipAddressRange = StringUtils.EMPTY;
