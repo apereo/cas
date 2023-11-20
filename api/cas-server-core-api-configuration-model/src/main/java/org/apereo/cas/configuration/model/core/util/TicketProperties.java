@@ -76,9 +76,14 @@ public class TicketProperties implements Serializable {
 
     /**
      * Indicates whether tickets issued and linked to a ticket-granting ticket
-     * should also be tracked (and removed as part of logout).
+     * may also be tracked, and then removed as part of logout ops. There are a number of tickets
+     * issued by CAS whose expiration policy is usually by default bound
+     * to the SSO expiration policy and the active TGT, yet such tickets may be
+     * allowed to live beyond the normal lifetime of a CAS SSO session
+     * with options to be renewed. Examples include OAuth access tokens, etc.
+     * Set this option to true if you want all linked tickets to be tracked and then removed.
      */
-    private boolean trackDescendantTickets;
+    private boolean trackDescendantTickets = true;
 
     public TicketProperties() {
         crypto.setEnabled(false);

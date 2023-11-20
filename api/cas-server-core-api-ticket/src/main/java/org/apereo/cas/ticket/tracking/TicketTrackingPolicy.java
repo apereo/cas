@@ -29,4 +29,13 @@ public interface TicketTrackingPolicy {
      * @param ticket      the tracked ticket
      */
     default void trackTicket(final TicketGrantingTicket ownerTicket, final Ticket ticket) {}
+
+    /**
+     * No op ticket tracking policy.
+     *
+     * @return the ticket tracking policy
+     */
+    static TicketTrackingPolicy noOp() {
+        return new TicketTrackingPolicy() {};
+    }
 }
