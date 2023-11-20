@@ -15,7 +15,7 @@ import org.springframework.webflow.engine.TransitionableState;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link RemoteAddressWebflowConfigurerTests}.
+ * This is {@link RemoteAuthenticationWebflowConfigurerTests}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
@@ -27,14 +27,14 @@ import static org.junit.jupiter.api.Assertions.*;
     CasRemoteAuthenticationConfiguration.class
 })
 @Tag("WebflowConfig")
-class RemoteAddressWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class RemoteAuthenticationWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     void verifyOperation() throws Throwable {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
         val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);
 
-        var state = (TransitionableState) flow.getState(RemoteAddressWebflowConfigurer.START_AUTHENTICATE);
+        var state = (TransitionableState) flow.getState(RemoteAuthenticationWebflowConfigurer.START_AUTHENTICATE);
         assertNotNull(state);
     }
 }

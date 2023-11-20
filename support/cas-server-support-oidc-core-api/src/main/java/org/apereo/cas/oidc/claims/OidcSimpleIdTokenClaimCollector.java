@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jose4j.jwt.JwtClaims;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import java.util.HashMap;
 import java.util.List;
 
@@ -18,6 +20,7 @@ import java.util.List;
  */
 @RequiredArgsConstructor
 @Slf4j
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class OidcSimpleIdTokenClaimCollector implements OidcIdTokenClaimCollector {
     protected final AttributeDefinitionStore attributeDefinitionStore;
 
