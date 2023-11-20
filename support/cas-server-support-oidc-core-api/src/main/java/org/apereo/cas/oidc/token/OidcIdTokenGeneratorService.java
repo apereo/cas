@@ -21,7 +21,6 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20AccessTokenAtHashGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
-import org.apereo.cas.ticket.AuthenticatedServicesAwareTicketGrantingTicket;
 import org.apereo.cas.ticket.BaseIdTokenGeneratorService;
 import org.apereo.cas.ticket.OidcIdToken;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -288,10 +287,8 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
                                + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
 
         val streamServices = new LinkedHashMap<String, Service>();
-        if (tgt instanceof final AuthenticatedServicesAwareTicketGrantingTicket ticket) {
-            val services = ticket.getServices();
-            streamServices.putAll(services);
-        }
+        val services = tgt.getServices();
+        streamServices.putAll(services);
         streamServices.putAll(tgt.getProxyGrantingTickets());
 
         val oAuthServiceTicket = streamServices.entrySet()

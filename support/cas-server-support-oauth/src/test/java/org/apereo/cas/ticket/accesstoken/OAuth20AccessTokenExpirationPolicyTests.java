@@ -31,7 +31,7 @@ class OAuth20AccessTokenExpirationPolicyTests extends BaseOAuth20ExpirationPolic
         val at = newAccessToken(tgt);
         assertFalse(at.isExpired(), "Access token should not be expired");
         tgt.markTicketExpired();
-        assertTrue(at.isExpired(), "Access token should not be expired when TGT is expired");
+        assertFalse(at.isExpired(), "Access token should not be expired when TGT is expired");
     }
 
     @Test

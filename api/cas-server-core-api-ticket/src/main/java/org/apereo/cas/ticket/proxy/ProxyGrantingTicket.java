@@ -3,7 +3,8 @@ package org.apereo.cas.ticket.proxy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.ticket.TicketTrackingPolicy;
+import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
+
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 /**
