@@ -18,6 +18,7 @@ import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.code.OAuth20DefaultOAuthCodeFactory;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.refreshtoken.OAuth20DefaultRefreshTokenFactory;
+import org.apereo.cas.ticket.tracking.NoOpTrackingPolicy;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
@@ -102,7 +103,7 @@ class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
         val jwtBuilder = new JwtBuilder(CipherExecutor.noOpOfSerializableToString(),
             servicesManager, RegisteredServiceCipherExecutor.noOp(), casProperties);
         val token = new OAuth20DefaultAccessTokenFactory(neverExpiresExpirationPolicyBuilder(), jwtBuilder,
-                servicesManager, new CasConfigurationProperties())
+                servicesManager, NoOpTrackingPolicy.INSTANCE)
             .create(RegisteredServiceTestUtils.getService(),
                 RegisteredServiceTestUtils.getAuthentication(), new MockTicketGrantingTicket("casuser"),
                 CollectionUtils.wrapSet("1", "2"), code.getId(), "clientId1234567", new HashMap<>(),
@@ -115,7 +116,7 @@ class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
     @RepeatedTest(2)
     void verifyRefreshTokenCanBeAdded() throws Throwable {
         val token = new OAuth20DefaultRefreshTokenFactory(neverExpiresExpirationPolicyBuilder(),
-                servicesManager, new CasConfigurationProperties())
+                servicesManager, NoOpTrackingPolicy.INSTANCE)
             .create(RegisteredServiceTestUtils.getService(),
                 RegisteredServiceTestUtils.getAuthentication(), new MockTicketGrantingTicket("casuser"),
                 CollectionUtils.wrapSet("1", "2"),
@@ -147,7 +148,7 @@ class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
     private OAuth20Code createOAuthCode() throws Throwable {
         return new OAuth20DefaultOAuthCodeFactory(new DefaultUniqueTicketIdGenerator(),
             neverExpiresExpirationPolicyBuilder(), servicesManager, CipherExecutor.noOpOfStringToString(),
-                new CasConfigurationProperties())
+                NoOpTrackingPolicy.INSTANCE)
             .create(RegisteredServiceTestUtils.getService(),
                 RegisteredServiceTestUtils.getAuthentication(), new MockTicketGrantingTicket("casuser"),
                 CollectionUtils.wrapSet("1", "2"), "code-challenge",

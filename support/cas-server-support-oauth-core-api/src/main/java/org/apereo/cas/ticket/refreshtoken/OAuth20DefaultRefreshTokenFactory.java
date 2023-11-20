@@ -2,7 +2,6 @@ package org.apereo.cas.ticket.refreshtoken;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
@@ -13,6 +12,7 @@ import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
+import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 
 import lombok.Getter;
@@ -45,11 +45,12 @@ public class OAuth20DefaultRefreshTokenFactory implements OAuth20RefreshTokenFac
      */
     protected final ServicesManager servicesManager;
 
-    protected final CasConfigurationProperties casProperties;
+    protected final TicketTrackingPolicy descendantTicketsTrackingPolicy;
 
     public OAuth20DefaultRefreshTokenFactory(final ExpirationPolicyBuilder<OAuth20RefreshToken> expirationPolicyBuilder,
-                                             final ServicesManager servicesManager, final CasConfigurationProperties casProperties) {
-        this(new DefaultUniqueTicketIdGenerator(), expirationPolicyBuilder, servicesManager, casProperties);
+                                             final ServicesManager servicesManager,
+                                             final TicketTrackingPolicy descendantTicketsTrackingPolicy) {
+        this(new DefaultUniqueTicketIdGenerator(), expirationPolicyBuilder, servicesManager, descendantTicketsTrackingPolicy);
     }
 
     @Override
@@ -68,9 +69,8 @@ public class OAuth20DefaultRefreshTokenFactory implements OAuth20RefreshTokenFac
             expirationPolicyToUse, ticketGrantingTicket,
             scopes, clientId, accessToken, requestClaims, responseType, grantType);
 
-        if (casProperties.getLogout().isRemoveDescendantTickets() && ticketGrantingTicket != null) {
-            ticketGrantingTicket.getDescendantTickets().add(rt.getId());
-        }
+        descendantTicketsTrackingPolicy.trackTicket(ticketGrantingTicket, rt);
+
         return rt;
     }
 

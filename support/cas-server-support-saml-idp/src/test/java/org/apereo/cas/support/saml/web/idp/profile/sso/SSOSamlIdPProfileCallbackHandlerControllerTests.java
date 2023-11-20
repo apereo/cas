@@ -11,7 +11,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.util.Saml20HexRandomIdGenerator;
 import org.apereo.cas.ticket.ServiceTicket;
-import org.apereo.cas.ticket.TicketTrackingPolicy;
+import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.BeforeEach;

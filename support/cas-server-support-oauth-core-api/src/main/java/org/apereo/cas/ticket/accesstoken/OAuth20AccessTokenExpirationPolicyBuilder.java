@@ -33,7 +33,7 @@ public record OAuth20AccessTokenExpirationPolicyBuilder(CasConfigurationProperti
      */
     public ExpirationPolicy toTicketExpirationPolicy() {
         val oauth = casProperties.getAuthn().getOauth().getAccessToken();
-        if (casProperties.getLogout().isRemoveDescendantTickets()) {
+        if (casProperties.getTicket().isTrackDescendantTickets()) {
             return new OAuth20AccessTokenExpirationPolicy(
                 Beans.newDuration(oauth.getMaxTimeToLiveInSeconds()).getSeconds(),
                 Beans.newDuration(oauth.getTimeToKillInSeconds()).getSeconds()

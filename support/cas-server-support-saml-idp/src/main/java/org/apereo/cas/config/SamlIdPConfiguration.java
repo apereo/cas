@@ -55,6 +55,7 @@ import org.apereo.cas.ticket.query.DefaultSamlAttributeQueryTicketFactory;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketExpirationPolicyBuilder;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.UrlValidator;
@@ -419,9 +420,10 @@ public class SamlIdPConfiguration {
             final OpenSamlConfigBean openSamlConfigBean,
             @Qualifier("samlIdPServiceFactory")
             final ServiceFactory samlIdPServiceFactory,
-            final CasConfigurationProperties casProperties) {
+            @Qualifier(TicketTrackingPolicy.BEAN_NAME_DESCENDANT_TICKET_TRACKING)
+            final TicketTrackingPolicy descendantTicketsTrackingPolicy) {
             return new DefaultSamlArtifactTicketFactory(samlArtifactTicketExpirationPolicy,
-                openSamlConfigBean, samlIdPServiceFactory, casProperties);
+                openSamlConfigBean, samlIdPServiceFactory, descendantTicketsTrackingPolicy);
         }
 
         @Bean(initMethod = "initialize", destroyMethod = "destroy")

@@ -74,6 +74,13 @@ public class TicketProperties implements Serializable {
     @NestedConfigurationProperty
     private TicketGrantingTicketProperties tgt = new TicketGrantingTicketProperties();
 
+
+    /**
+     * Indicates whether tickets issued and linked to a ticket-granting ticket
+     * should also be tracked and removed as part of logout.
+     */
+    private boolean trackDescendantTickets;
+
     public TicketProperties() {
         crypto.setEnabled(false);
         crypto.getEncryption().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);

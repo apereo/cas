@@ -5,7 +5,6 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.support.oauth.OAuth20ClientAuthenticationMethods;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -543,7 +542,7 @@ class OAuth20AccessTokenEndpointControllerTests {
             val authentication = getAuthentication(principal);
             val expiringOAuthCodeFactory = new OAuth20DefaultOAuthCodeFactory(new DefaultUniqueTicketIdGenerator(),
                 alwaysExpiresExpirationPolicyBuilder(), servicesManager, CipherExecutor.noOpOfStringToString(),
-                    new CasConfigurationProperties());
+                    descendantTicketsTrackingPolicy);
             val factory = new WebApplicationServiceFactory();
             val service = factory.createService(registeredService.getServiceId());
             val code = expiringOAuthCodeFactory.create(service, authentication,
@@ -791,7 +790,7 @@ class OAuth20AccessTokenEndpointControllerTests {
             val factory = new WebApplicationServiceFactory();
             val service = factory.createService(registeredService.getServiceId());
             val expiringRefreshTokenFactory = new OAuth20DefaultRefreshTokenFactory(alwaysExpiresExpirationPolicyBuilder(), servicesManager,
-                    new CasConfigurationProperties());
+                    descendantTicketsTrackingPolicy);
             val refreshToken = expiringRefreshTokenFactory.create(service, authentication,
                 new MockTicketGrantingTicket("casuser"), new ArrayList<>(), registeredService.getClientId(), StringUtils.EMPTY, new HashMap<>(),
                 OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);

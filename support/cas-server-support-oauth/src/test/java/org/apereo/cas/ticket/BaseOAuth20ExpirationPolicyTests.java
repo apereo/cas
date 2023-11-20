@@ -23,7 +23,6 @@ import org.apereo.cas.config.CasOAuth20Configuration;
 import org.apereo.cas.config.CasOAuth20EndpointsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
@@ -37,6 +36,7 @@ import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshTokenFactory;
+import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -104,6 +104,10 @@ public abstract class BaseOAuth20ExpirationPolicyTests {
     @Qualifier(ServicesManager.BEAN_NAME)
     protected ServicesManager servicesManager;
 
+    @Autowired
+    @Qualifier(TicketTrackingPolicy.BEAN_NAME_DESCENDANT_TICKET_TRACKING)
+    protected TicketTrackingPolicy descendantTicketsTrackingPolicy;
+
     protected static TicketGrantingTicket newTicketGrantingTicket() throws Throwable {
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser");
         return new TicketGrantingTicketImpl(
@@ -117,7 +121,7 @@ public abstract class BaseOAuth20ExpirationPolicyTests {
         when(builder.buildTicketExpirationPolicy()).thenReturn(NeverExpiresExpirationPolicy.INSTANCE);
 
         return new OAuth20DefaultOAuthCodeFactory(new DefaultUniqueTicketIdGenerator(), builder,
-            servicesManager, CipherExecutor.noOpOfStringToString(), new CasConfigurationProperties())
+            servicesManager, CipherExecutor.noOpOfStringToString(), descendantTicketsTrackingPolicy)
             .create(RegisteredServiceTestUtils.getService(),
                 RegisteredServiceTestUtils.getAuthentication(), new MockTicketGrantingTicket("casuser"),
                 CollectionUtils.wrapSet("1", "2"), "code-challenge",

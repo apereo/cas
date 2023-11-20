@@ -14,7 +14,6 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
-import org.apereo.cas.ticket.TicketTrackingPolicy;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
@@ -29,6 +28,8 @@ import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.registry.BaseJpaTicketRegistryTests;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
+import org.apereo.cas.ticket.tracking.NoOpTrackingPolicy;
+import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.RandomUtils;
@@ -252,7 +253,7 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
         when(builder.buildTicketExpirationPolicy()).thenReturn(NeverExpiresExpirationPolicy.INSTANCE);
 
         return new OAuth20DefaultOAuthCodeFactory(new DefaultUniqueTicketIdGenerator(),
-            builder, servicesManager, CipherExecutor.noOpOfStringToString(), new CasConfigurationProperties())
+            builder, servicesManager, CipherExecutor.noOpOfStringToString(), NoOpTrackingPolicy.INSTANCE)
             .create(RegisteredServiceTestUtils.getService(),
                 RegisteredServiceTestUtils.getAuthentication(), new MockTicketGrantingTicket("casuser"),
                 CollectionUtils.wrapSet("1", "2"), "code-challenge",

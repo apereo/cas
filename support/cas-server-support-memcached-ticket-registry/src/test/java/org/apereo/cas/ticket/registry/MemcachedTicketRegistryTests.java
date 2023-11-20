@@ -10,7 +10,6 @@ import org.apereo.cas.config.CasCoreTicketComponentSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilSerializationConfiguration;
 import org.apereo.cas.config.CasOAuth20ComponentSerializationConfiguration;
 import org.apereo.cas.config.MemcachedTicketRegistryConfiguration;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -20,6 +19,7 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.code.OAuth20DefaultOAuthCodeFactory;
+import org.apereo.cas.ticket.tracking.NoOpTrackingPolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -116,7 +116,7 @@ class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
     void verifyOAuthCodeIsAddedToMemcached() throws Throwable {
         val factory = new OAuth20DefaultOAuthCodeFactory(new DefaultUniqueTicketIdGenerator(),
             neverExpiresExpirationPolicyBuilder(), servicesManager, CipherExecutor.noOpOfStringToString(),
-                new CasConfigurationProperties());
+                NoOpTrackingPolicy.INSTANCE);
         val code = factory.create(RegisteredServiceTestUtils.getService(),
             CoreAuthenticationTestUtils.getAuthentication(),
             new MockTicketGrantingTicket("casuser"),

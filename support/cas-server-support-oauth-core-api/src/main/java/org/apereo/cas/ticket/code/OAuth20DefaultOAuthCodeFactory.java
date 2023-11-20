@@ -2,7 +2,6 @@ package org.apereo.cas.ticket.code;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
@@ -13,6 +12,7 @@ import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
+import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 
@@ -53,7 +53,7 @@ public class OAuth20DefaultOAuthCodeFactory implements OAuth20CodeFactory {
      */
     protected final CipherExecutor<String, String> cipherExecutor;
 
-    protected final CasConfigurationProperties casProperties;
+    protected final TicketTrackingPolicy descendantTicketsTrackingPolicy;
 
     @Override
     public OAuth20Code create(final Service service,
@@ -81,9 +81,9 @@ public class OAuth20DefaultOAuthCodeFactory implements OAuth20CodeFactory {
             expirationPolicyToUse, ticketGrantingTicket, scopes,
             codeChallenge, codeChallengeMethod, clientId,
             requestClaims, responseType, grantType);
-        if (casProperties.getLogout().isRemoveDescendantTickets() && ticketGrantingTicket != null) {
-            ticketGrantingTicket.getDescendantTickets().add(oauthCode.getId());
-        }
+
+        descendantTicketsTrackingPolicy.trackTicket(ticketGrantingTicket, oauthCode);
+
         return oauthCode;
     }
 

@@ -1,17 +1,17 @@
 package org.apereo.cas.ticket.code;
 
 import org.apereo.cas.AbstractOAuth20Tests;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthCodeExpirationPolicy;
-
-import lombok.val;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
+import org.apereo.cas.ticket.tracking.DefaultDescendantTicketsTrackingPolicy;
 import org.apereo.cas.util.crypto.CipherExecutor;
+
+import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,10 +67,8 @@ class OAuth20DefaultOAuthCodeFactoryTests extends AbstractOAuth20Tests {
                 new DefaultRegisteredServiceOAuthCodeExpirationPolicy(10, "PT10S"));
         servicesManager.save(registeredService);
         val tgt = new MockTicketGrantingTicket("casuser");
-        val casProperties = new CasConfigurationProperties();
-        casProperties.getLogout().setRemoveDescendantTickets(true);
         val newOAuthCodeFactory = new OAuth20DefaultOAuthCodeFactory(oAuthCodeIdGenerator, oAuthCodeExpirationPolicy,
-                servicesManager, protocolTicketCipherExecutor, casProperties);
+                servicesManager, protocolTicketCipherExecutor, new DefaultDescendantTicketsTrackingPolicy());
         val token = newOAuthCodeFactory.create(RegisteredServiceTestUtils.getService("https://code.oauth.org"),
                 RegisteredServiceTestUtils.getAuthentication(),
                 tgt,

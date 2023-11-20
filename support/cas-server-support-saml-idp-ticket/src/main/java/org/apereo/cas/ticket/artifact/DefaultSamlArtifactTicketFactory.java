@@ -3,12 +3,12 @@ package org.apereo.cas.ticket.artifact;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.Getter;
@@ -38,7 +38,7 @@ public class DefaultSamlArtifactTicketFactory implements SamlArtifactTicketFacto
      */
     protected final ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
-    protected final CasConfigurationProperties casProperties;
+    protected final TicketTrackingPolicy descendantTicketsTrackingPolicy;
 
     @Override
     public SamlArtifactTicket create(final String artifactId,
@@ -52,9 +52,9 @@ public class DefaultSamlArtifactTicketFactory implements SamlArtifactTicketFacto
                 val service = this.webApplicationServiceFactory.createService(relyingParty);
                 val at = new SamlArtifactTicketImpl(codeId, service, authentication,
                     this.expirationPolicyBuilder.buildTicketExpirationPolicy(), ticketGrantingTicket, issuer, relyingParty, w.toString());
-                if (casProperties.getLogout().isRemoveDescendantTickets() && ticketGrantingTicket != null) {
-                    ticketGrantingTicket.getDescendantTickets().add(at.getId());
-                }
+
+                descendantTicketsTrackingPolicy.trackTicket(ticketGrantingTicket, at);
+
                 return at;
             }
         });

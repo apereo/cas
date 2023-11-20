@@ -1,6 +1,8 @@
-package org.apereo.cas.ticket;
+package org.apereo.cas.ticket.tracking;
 
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.ticket.ServiceTicket;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -19,7 +21,7 @@ public class MostRecentServiceSessionTrackingPolicy extends AllServicesSessionTr
     }
 
     @Override
-    protected void beforeTrackingServiceTicket(final AuthenticatedServicesAwareTicketGrantingTicket ownerTicket,
+    protected void beforeTrackingServiceTicket(final TicketGrantingTicket ownerTicket,
                                                final ServiceTicket serviceTicket) {
         val path = normalizePath(serviceTicket.getService());
         val toRemove = ownerTicket.getServices()

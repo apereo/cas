@@ -2,7 +2,6 @@ package org.apereo.cas.ticket.accesstoken;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
@@ -14,6 +13,7 @@ import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
+import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 
@@ -55,13 +55,13 @@ public class OAuth20DefaultAccessTokenFactory implements OAuth20AccessTokenFacto
      */
     protected final ServicesManager servicesManager;
 
-    protected final CasConfigurationProperties casProperties;
+    protected final TicketTrackingPolicy descendantTicketsTrackingPolicy;
 
     public OAuth20DefaultAccessTokenFactory(final ExpirationPolicyBuilder<OAuth20AccessToken> expirationPolicyBuilder,
                                             final JwtBuilder jwtBuilder,
                                             final ServicesManager servicesManager,
-                                            final CasConfigurationProperties casProperties) {
-        this(new DefaultUniqueTicketIdGenerator(), expirationPolicyBuilder, jwtBuilder, servicesManager, casProperties);
+                                            final TicketTrackingPolicy descendantTicketsTrackingPolicy) {
+        this(new DefaultUniqueTicketIdGenerator(), expirationPolicyBuilder, jwtBuilder, servicesManager, descendantTicketsTrackingPolicy);
     }
 
     @Override
@@ -81,9 +81,9 @@ public class OAuth20DefaultAccessTokenFactory implements OAuth20AccessTokenFacto
         val at = new OAuth20DefaultAccessToken(accessTokenId, service, authentication,
             expirationPolicyToUse, ticketGrantingTicket, token, scopes,
             clientId, requestClaims, responseType, grantType);
-        if (casProperties.getLogout().isRemoveDescendantTickets() && ticketGrantingTicket != null) {
-            ticketGrantingTicket.getDescendantTickets().add(at.getId());
-        }
+
+        descendantTicketsTrackingPolicy.trackTicket(ticketGrantingTicket, at);
+
         return at;
     }
 

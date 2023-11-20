@@ -28,7 +28,6 @@ import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.AbstractTicket;
-import org.apereo.cas.ticket.AuthenticatedServicesAwareTicketGrantingTicket;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.InvalidTicketException;
@@ -39,7 +38,6 @@ import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
-import org.apereo.cas.ticket.TicketTrackingPolicy;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketImpl;
 import org.apereo.cas.ticket.expiration.AlwaysExpiresExpirationPolicy;
@@ -48,6 +46,7 @@ import org.apereo.cas.ticket.expiration.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.ticket.expiration.TimeoutExpirationPolicy;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
+import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
@@ -370,8 +369,8 @@ public abstract class BaseTicketRegistryTests {
         val found = ticketRegistry.getTicket(tgt.getId(), TicketGrantingTicket.class);
         assertNotNull(found, () -> "Ticket is null. useEncryption[" + useEncryption + ']');
 
-        assertInstanceOf(AuthenticatedServicesAwareTicketGrantingTicket.class, found);
-        var services = ((AuthenticatedServicesAwareTicketGrantingTicket) found).getServices();
+        assertInstanceOf(TicketGrantingTicket.class, found);
+        var services = ((TicketGrantingTicket) found).getServices();
         assertTrue(services.isEmpty(), () -> "Ticket services should be empty. useEncryption[" + useEncryption + ']');
 
         val service = RegisteredServiceTestUtils.getService("TGT_UPDATE_TEST");
@@ -379,8 +378,8 @@ public abstract class BaseTicketRegistryTests {
             NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy);
         ticketRegistry.updateTicket(tgt);
         val tgtResult = ticketRegistry.getTicket(tgt.getId(), TicketGrantingTicket.class);
-        assertInstanceOf(AuthenticatedServicesAwareTicketGrantingTicket.class, tgtResult);
-        services = ((AuthenticatedServicesAwareTicketGrantingTicket) tgtResult).getServices();
+        assertInstanceOf(TicketGrantingTicket.class, tgtResult);
+        services = ((TicketGrantingTicket) tgtResult).getServices();
         assertEquals(Collections.singleton("ST-1"), services.keySet());
     }
 
