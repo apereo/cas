@@ -44,7 +44,6 @@ import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.ticket.tracking.AllServicesSessionTrackingPolicy;
 import org.apereo.cas.ticket.tracking.DefaultDescendantTicketsTrackingPolicy;
 import org.apereo.cas.ticket.tracking.MostRecentServiceSessionTrackingPolicy;
-import org.apereo.cas.ticket.tracking.NoOpTrackingPolicy;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.ProxyGrantingTicketIdGenerator;
@@ -122,10 +121,8 @@ public class CasCoreTicketsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TicketTrackingPolicy descendantTicketsTrackingPolicy(
                 final CasConfigurationProperties casProperties) {
-            val trackDescendantTickets = casProperties.getTicket().isTrackDescendantTickets();
-            return trackDescendantTickets
-                    ? new DefaultDescendantTicketsTrackingPolicy()
-                    : NoOpTrackingPolicy.INSTANCE;
+            return FunctionUtils.doIf(casProperties.getTicket().isTrackDescendantTickets(),
+                DefaultDescendantTicketsTrackingPolicy::new, TicketTrackingPolicy::noOp).get();
         }
 
         @ConditionalOnMissingBean(name = TicketRegistrySupport.BEAN_NAME)
