@@ -2,6 +2,8 @@ package org.apereo.cas.ticket;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
+
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import java.util.Collection;
 import java.util.HashSet;
@@ -99,4 +101,11 @@ public interface TicketGrantingTicket extends TicketGrantingTicketAwareTicket {
     default Collection<String> getDescendantTickets() {
         return new HashSet<>(0);
     }
+
+    /**
+     * Keeps track of authenticated service per their session id.
+     *
+     * @return authenticated services.
+     */
+    Map<String, Service> getServices();
 }

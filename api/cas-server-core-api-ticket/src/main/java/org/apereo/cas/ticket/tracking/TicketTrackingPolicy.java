@@ -1,4 +1,7 @@
-package org.apereo.cas.ticket;
+package org.apereo.cas.ticket.tracking;
+
+import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 
 /**
  * This is {@link TicketTrackingPolicy}.
@@ -8,9 +11,14 @@ package org.apereo.cas.ticket;
  */
 public interface TicketTrackingPolicy {
     /**
-     * Default bean name.
+     * Tracking policy for service tickets.
      */
     String BEAN_NAME_SERVICE_TICKET_TRACKING = "serviceTicketSessionTrackingPolicy";
+
+    /**
+     * Tracking policy for descendant tickets.
+     */
+    String BEAN_NAME_DESCENDANT_TICKET_TRACKING = "descendantTicketsTrackingPolicy";
 
     /**
      * Track application attempt and access.

@@ -124,6 +124,7 @@ import org.apereo.cas.ticket.refreshtoken.OAuth20DefaultRefreshTokenFactory;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshTokenExpirationPolicyBuilder;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.InternalTicketValidator;
@@ -1156,11 +1157,13 @@ public class CasOAuth20Configuration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "defaultRefreshTokenFactory")
         public OAuth20RefreshTokenFactory defaultRefreshTokenFactory(
-            @Qualifier("refreshTokenIdGenerator") final UniqueTicketIdGenerator refreshTokenIdGenerator,
-            @Qualifier("refreshTokenExpirationPolicy") final ExpirationPolicyBuilder refreshTokenExpirationPolicy,
-            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
+                @Qualifier("refreshTokenIdGenerator") final UniqueTicketIdGenerator refreshTokenIdGenerator,
+                @Qualifier("refreshTokenExpirationPolicy") final ExpirationPolicyBuilder refreshTokenExpirationPolicy,
+                @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
+                @Qualifier(TicketTrackingPolicy.BEAN_NAME_DESCENDANT_TICKET_TRACKING)
+                final TicketTrackingPolicy descendantTicketsTrackingPolicy) {
             return new OAuth20DefaultRefreshTokenFactory(refreshTokenIdGenerator,
-                refreshTokenExpirationPolicy, servicesManager);
+                refreshTokenExpirationPolicy, servicesManager, descendantTicketsTrackingPolicy);
         }
 
         @Bean
@@ -1170,9 +1173,11 @@ public class CasOAuth20Configuration {
             @Qualifier("accessTokenIdGenerator") final UniqueTicketIdGenerator accessTokenIdGenerator,
             @Qualifier("accessTokenExpirationPolicy") final ExpirationPolicyBuilder accessTokenExpirationPolicy,
             @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
-            @Qualifier("accessTokenJwtBuilder") final JwtBuilder accessTokenJwtBuilder) {
+            @Qualifier("accessTokenJwtBuilder") final JwtBuilder accessTokenJwtBuilder,
+            @Qualifier(TicketTrackingPolicy.BEAN_NAME_DESCENDANT_TICKET_TRACKING)
+            final TicketTrackingPolicy descendantTicketsTrackingPolicy) {
             return new OAuth20DefaultAccessTokenFactory(accessTokenIdGenerator,
-                accessTokenExpirationPolicy, accessTokenJwtBuilder, servicesManager);
+                accessTokenExpirationPolicy, accessTokenJwtBuilder, servicesManager, descendantTicketsTrackingPolicy);
         }
 
         @Bean
@@ -1206,9 +1211,11 @@ public class CasOAuth20Configuration {
             @Qualifier("protocolTicketCipherExecutor") final CipherExecutor protocolTicketCipherExecutor,
             @Qualifier("oAuthCodeIdGenerator") final UniqueTicketIdGenerator oAuthCodeIdGenerator,
             @Qualifier("oAuthCodeExpirationPolicy") final ExpirationPolicyBuilder oAuthCodeExpirationPolicy,
-            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
+            @Qualifier(TicketTrackingPolicy.BEAN_NAME_DESCENDANT_TICKET_TRACKING)
+            final TicketTrackingPolicy descendantTicketsTrackingPolicy) {
             return new OAuth20DefaultOAuthCodeFactory(oAuthCodeIdGenerator,
-                oAuthCodeExpirationPolicy, servicesManager, protocolTicketCipherExecutor);
+                oAuthCodeExpirationPolicy, servicesManager, protocolTicketCipherExecutor, descendantTicketsTrackingPolicy);
         }
     }
 

@@ -3,7 +3,6 @@ package org.apereo.cas.web.report;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.slo.SingleLogoutRequestExecutor;
-import org.apereo.cas.ticket.AuthenticatedServicesAwareTicketGrantingTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -362,10 +361,8 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
             }
         }
 
-        if (tgt instanceof final AuthenticatedServicesAwareTicketGrantingTicket ticket) {
-            val services = ticket.getServices();
-            sso.put(SsoSessionAttributeKeys.AUTHENTICATED_SERVICES.getAttributeKey(), services);
-        }
+        val services = tgt.getServices();
+        sso.put(SsoSessionAttributeKeys.AUTHENTICATED_SERVICES.getAttributeKey(), services);
         return sso;
     }
 

@@ -12,6 +12,7 @@ import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
+import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 
 import lombok.Getter;
@@ -44,9 +45,12 @@ public class OAuth20DefaultRefreshTokenFactory implements OAuth20RefreshTokenFac
      */
     protected final ServicesManager servicesManager;
 
+    protected final TicketTrackingPolicy descendantTicketsTrackingPolicy;
+
     public OAuth20DefaultRefreshTokenFactory(final ExpirationPolicyBuilder<OAuth20RefreshToken> expirationPolicyBuilder,
-                                             final ServicesManager servicesManager) {
-        this(new DefaultUniqueTicketIdGenerator(), expirationPolicyBuilder, servicesManager);
+                                             final ServicesManager servicesManager,
+                                             final TicketTrackingPolicy descendantTicketsTrackingPolicy) {
+        this(new DefaultUniqueTicketIdGenerator(), expirationPolicyBuilder, servicesManager, descendantTicketsTrackingPolicy);
     }
 
     @Override
@@ -65,9 +69,8 @@ public class OAuth20DefaultRefreshTokenFactory implements OAuth20RefreshTokenFac
             expirationPolicyToUse, ticketGrantingTicket,
             scopes, clientId, accessToken, requestClaims, responseType, grantType);
 
-        if (ticketGrantingTicket != null) {
-            ticketGrantingTicket.getDescendantTickets().add(rt.getId());
-        }
+        descendantTicketsTrackingPolicy.trackTicket(ticketGrantingTicket, rt);
+
         return rt;
     }
 

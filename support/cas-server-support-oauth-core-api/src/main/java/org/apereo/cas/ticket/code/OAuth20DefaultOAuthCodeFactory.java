@@ -12,6 +12,7 @@ import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
+import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 
@@ -52,6 +53,8 @@ public class OAuth20DefaultOAuthCodeFactory implements OAuth20CodeFactory {
      */
     protected final CipherExecutor<String, String> cipherExecutor;
 
+    protected final TicketTrackingPolicy descendantTicketsTrackingPolicy;
+
     @Override
     public OAuth20Code create(final Service service,
                               final Authentication authentication,
@@ -78,9 +81,9 @@ public class OAuth20DefaultOAuthCodeFactory implements OAuth20CodeFactory {
             expirationPolicyToUse, ticketGrantingTicket, scopes,
             codeChallenge, codeChallengeMethod, clientId,
             requestClaims, responseType, grantType);
-        if (ticketGrantingTicket != null) {
-            ticketGrantingTicket.getDescendantTickets().add(oauthCode.getId());
-        }
+
+        descendantTicketsTrackingPolicy.trackTicket(ticketGrantingTicket, oauthCode);
+
         return oauthCode;
     }
 

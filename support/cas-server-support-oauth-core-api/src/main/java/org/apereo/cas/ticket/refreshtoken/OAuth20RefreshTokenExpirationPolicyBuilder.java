@@ -34,7 +34,7 @@ public record OAuth20RefreshTokenExpirationPolicyBuilder(CasConfigurationPropert
     public ExpirationPolicy toTicketExpirationPolicy() {
         val rtProps = casProperties.getAuthn().getOauth().getRefreshToken();
         val timeout = Beans.newDuration(rtProps.getTimeToKillInSeconds()).getSeconds();
-        if (casProperties.getLogout().isRemoveDescendantTickets()) {
+        if (casProperties.getTicket().isTrackDescendantTickets()) {
             return new OAuth20RefreshTokenExpirationPolicy(timeout);
         }
         return new OAuth20RefreshTokenExpirationPolicy.OAuthRefreshTokenStandaloneExpirationPolicy(timeout);

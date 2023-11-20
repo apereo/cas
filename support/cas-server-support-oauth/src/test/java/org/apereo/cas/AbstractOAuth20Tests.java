@@ -87,6 +87,7 @@ import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
@@ -352,6 +353,10 @@ public abstract class AbstractOAuth20Tests {
     @Autowired
     @Qualifier("deviceTokenExpirationPolicy")
     protected ExpirationPolicyBuilder deviceTokenExpirationPolicy;
+
+    @Autowired
+    @Qualifier(TicketTrackingPolicy.BEAN_NAME_DESCENDANT_TICKET_TRACKING)
+    protected TicketTrackingPolicy descendantTicketsTrackingPolicy;
 
     @Autowired
     protected CasConfigurationProperties casProperties;

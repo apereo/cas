@@ -57,7 +57,7 @@ public class CasOAuth20ProtocolTicketCatalogConfiguration extends BaseTicketCata
         metadata.getProperties().setStorageName(casProperties.getAuthn().getOauth().getAccessToken().getStorageName());
         val timeout = Beans.newDuration(casProperties.getAuthn().getOauth().getAccessToken().getMaxTimeToLiveInSeconds()).getSeconds();
         metadata.getProperties().setStorageTimeout(timeout);
-        metadata.getProperties().setExcludeFromCascade(casProperties.getLogout().isRemoveDescendantTickets());
+        metadata.getProperties().setExcludeFromCascade(casProperties.getTicket().isTrackDescendantTickets());
         registerTicketDefinition(plan, metadata);
     }
 
@@ -66,7 +66,7 @@ public class CasOAuth20ProtocolTicketCatalogConfiguration extends BaseTicketCata
         metadata.getProperties().setStorageName(casProperties.getAuthn().getOauth().getRefreshToken().getStorageName());
         val timeout = Beans.newDuration(casProperties.getAuthn().getOauth().getRefreshToken().getTimeToKillInSeconds()).getSeconds();
         metadata.getProperties().setStorageTimeout(timeout);
-        metadata.getProperties().setExcludeFromCascade(casProperties.getLogout().isRemoveDescendantTickets());
+        metadata.getProperties().setExcludeFromCascade(casProperties.getTicket().isTrackDescendantTickets());
         registerTicketDefinition(plan, metadata);
     }
 

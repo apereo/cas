@@ -186,8 +186,8 @@ public class CasCoreLogoutConfiguration {
                 plan.registerSingleLogoutServiceMessageHandler(defaultSingleLogoutServiceMessageHandler);
                 plan.registerLogoutRedirectionStrategy(defaultLogoutRedirectionStrategy);
 
-                if (casProperties.getLogout().isRemoveDescendantTickets()) {
-                    LOGGER.debug("CAS is configured to remove descendant tickets of the ticket-granting tickets");
+                if (casProperties.getTicket().isTrackDescendantTickets()) {
+                    LOGGER.debug("CAS is configured to track and remove descendant tickets of the ticket-granting tickets");
                     plan.registerLogoutPostProcessor(tgt -> tgt.getDescendantTickets().forEach(Unchecked.consumer(t -> {
                         LOGGER.debug("Deleting ticket [{}] from the registry as a descendant of [{}]", t, tgt.getId());
                         ticketRegistry.deleteTicket(t);
