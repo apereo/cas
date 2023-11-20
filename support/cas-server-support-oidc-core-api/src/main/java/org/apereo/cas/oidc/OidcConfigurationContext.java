@@ -14,6 +14,7 @@ import org.apereo.cas.token.JwtBuilder;
 
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
+import java.util.List;
 
 /**
  * This is {@link OidcConfigurationContext}.
@@ -37,7 +38,7 @@ public class OidcConfigurationContext extends OAuth20ConfigurationContext {
 
     private final OidcRequestSupport oidcRequestSupport;
 
-    private final OidcIdTokenClaimCollector idTokenClaimCollector;
+    private final List<OidcIdTokenClaimCollector> idTokenClaimCollectors;
 
     private final IdTokenGeneratorService idTokenGeneratorService;
     

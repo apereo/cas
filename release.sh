@@ -1,10 +1,9 @@
 #!/bin/bash
 
-GREEN=$(tput setaf 2)
-YELLOW=$(tput setaf 3)
 RED="\e[31m"
-NORMAL=$(tput sgr0)
-TIMEOUT=640000
+GREEN="\e[32m"
+YELLOW="\e[33m"
+ENDCOLOR="\e[0m"
 
 function printgreen() {
   printf "✅ ${GREEN}$1${ENDCOLOR}\n"
@@ -14,8 +13,11 @@ function printred() {
   printf "🔴 ${RED}$1${ENDCOLOR}\n"
 }
 
+function clean {
+  ./gradlew clean --parallel --no-configuration-cache
+}
+
 function build {
-    ./gradlew clean --parallel --no-configuration-cache
     printgreen "Building CAS. Please be patient as this might take a while..."
     ./gradlew assemble -x test -x check --parallel --no-watch-fs --no-configuration-cache \
         -DskipAot=true -DpublishReleases=true -DrepositoryUsername="$1" -DrepositoryPassword="$2"
@@ -29,18 +31,21 @@ function publish {
     printgreen "Publishing CAS. Please be patient as this might take a while..."
     ./gradlew publishToSonatype closeAndReleaseStagingRepository \
       --no-parallel --no-watch-fs --no-configuration-cache -DskipAot=true -DpublishReleases=true \
-      -DrepositoryUsername="$1" -DrepositoryPassword="$2" \
-      -DpublishReleases=true -DrepositoryUsername="$1" -DrepositoryPassword="$2" \
-      -Dorg.gradle.internal.http.socketTimeout="${TIMEOUT}" \
-      -Dorg.gradle.internal.http.connectionTimeout="${TIMEOUT}"  \
-      -Dorg.gradle.internal.publish.checksums.insecure=true
+      -DrepositoryUsername="$1" -DrepositoryPassword="$2" -DpublishReleases=true \
+      -Dorg.gradle.internal.http.socketTimeout=640000 \
+      -Dorg.gradle.internal.http.connectionTimeout=640000  \
+      -Dorg.gradle.internal.publish.checksums.insecure=true \
+      -Dorg.gradle.internal.remote.repository.deploy.max.attempts=5 \
+      -Dorg.gradle.internal.remote.repository.deploy.initial.backoff=5000 \
+      -Dorg.gradle.internal.repository.max.tentatives=10 \
+      -Dorg.gradle.internal.repository.initial.backoff=1000
     if [ $? -ne 0 ]; then
-        printred "Publishing CAS faild."
+        printred "Publishing CAS failed."
         exit 1
     fi
 }
 
-function instructions {
+function finished {
     printgreen "Done! The release is now automatically closed and published on Sonatype. Thank you!"
 }
 
@@ -83,7 +88,7 @@ if [[ -z $SONATYPE_USERNAME && -z $SONATYPE_PASSWORD ]]; then
   echo
   clear
 else
-  printgreen "Sonatype username and password are defined. Starting the CAS release process..."
+  printgreen "Sonatype username and password are predefined. Starting the CAS release process..."
   selection="1"
   username="$SONATYPE_USERNAME"
   password="$SONATYPE_PASSWORD"
@@ -92,13 +97,14 @@ fi
 
 case "$selection" in
     1)
+        clean
         build ${username} ${password}
         publish ${username} ${password}
-        instructions
+        finished
         ;;
     2)
         publish ${username} ${password}
-        instructions
+        finished
         ;;
     *)
         printred "Unable to recognize selection"
