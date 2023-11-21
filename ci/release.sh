@@ -37,7 +37,7 @@ function snapshot() {
   fi
   printgreen "Publishing CAS SNAPSHOT artifacts. Please be patient as this might take a while..."
   ./gradlew build publish -x test -x javadoc -x check --no-daemon --parallel \
-    -DpublishSnapshots=true --build-cache --no-configuration-cache --configure-on-demand \
+    -DskipAot=true -DpublishSnapshots=true --build-cache --no-configuration-cache --configure-on-demand \
     -Dorg.gradle.internal.http.socketTimeout=640000 \
     -Dorg.gradle.internal.http.connectionTimeout=640000 \
     -Dorg.gradle.internal.publish.checksums.insecure=true \
@@ -46,6 +46,10 @@ function snapshot() {
     -Dorg.gradle.internal.repository.max.tentatives=10 \
     -Dorg.gradle.internal.repository.initial.backoff=1000 \
     -DrepositoryUsername="$1" -DrepositoryPassword="$2"
+  if [ $? -ne 0 ]; then
+      printred "Publishing CAS SNAPSHOTs failed."
+      exit 1
+  fi
 }
 
 function publish {
