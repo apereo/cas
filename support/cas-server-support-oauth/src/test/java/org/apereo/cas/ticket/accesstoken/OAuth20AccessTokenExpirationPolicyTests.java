@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@TestPropertySource(properties = "cas.ticket.track-descendant-tickets=true")
+@TestPropertySource(properties = "cas.ticket.track-descendant-tickets=false")
 @Tag("OAuthToken")
 class OAuth20AccessTokenExpirationPolicyTests extends BaseOAuth20ExpirationPolicyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "oAuthTokenExpirationPolicy.json");
