@@ -47,10 +47,15 @@ public class OAuth20DefaultRefreshTokenFactory implements OAuth20RefreshTokenFac
 
     protected final TicketTrackingPolicy descendantTicketsTrackingPolicy;
 
+    /**
+     * Should the TGT expiration trigger the expiration of the Refresh Token.
+     */
+    protected final boolean shouldTGTExpirationTriggerRTExpiration;
+
     public OAuth20DefaultRefreshTokenFactory(final ExpirationPolicyBuilder<OAuth20RefreshToken> expirationPolicyBuilder,
                                              final ServicesManager servicesManager,
                                              final TicketTrackingPolicy descendantTicketsTrackingPolicy) {
-        this(new DefaultUniqueTicketIdGenerator(), expirationPolicyBuilder, servicesManager, descendantTicketsTrackingPolicy);
+        this(new DefaultUniqueTicketIdGenerator(), expirationPolicyBuilder, servicesManager, descendantTicketsTrackingPolicy, false);
     }
 
     @Override
@@ -80,7 +85,9 @@ public class OAuth20DefaultRefreshTokenFactory implements OAuth20RefreshTokenFac
             val policy = registeredService.getRefreshTokenExpirationPolicy();
             val timeToKill = policy.getTimeToKill();
             if (StringUtils.isNotBlank(timeToKill)) {
-                return new OAuth20RefreshTokenExpirationPolicy(Beans.newDuration(timeToKill).getSeconds());
+                val timeToKillInSeconds = Beans.newDuration(timeToKill).getSeconds();
+                return shouldTGTExpirationTriggerRTExpiration ? new OAuth20RefreshTokenExpirationPolicy(timeToKillInSeconds) :
+                        new OAuth20RefreshTokenExpirationPolicy.OAuthRefreshTokenStandaloneExpirationPolicy(timeToKillInSeconds);
             }
         }
         return this.expirationPolicyBuilder.buildTicketExpirationPolicy();

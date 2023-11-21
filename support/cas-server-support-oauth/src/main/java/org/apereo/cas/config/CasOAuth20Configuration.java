@@ -1161,9 +1161,11 @@ public class CasOAuth20Configuration {
                 @Qualifier("refreshTokenExpirationPolicy") final ExpirationPolicyBuilder refreshTokenExpirationPolicy,
                 @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
                 @Qualifier(TicketTrackingPolicy.BEAN_NAME_DESCENDANT_TICKET_TRACKING)
-                final TicketTrackingPolicy descendantTicketsTrackingPolicy) {
+                final TicketTrackingPolicy descendantTicketsTrackingPolicy,
+                final CasConfigurationProperties casProperties) {
             return new OAuth20DefaultRefreshTokenFactory(refreshTokenIdGenerator,
-                refreshTokenExpirationPolicy, servicesManager, descendantTicketsTrackingPolicy);
+                refreshTokenExpirationPolicy, servicesManager, descendantTicketsTrackingPolicy,
+                    casProperties.getTicket().isTrackDescendantTickets());
         }
 
         @Bean
