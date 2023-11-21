@@ -28,6 +28,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.context.TestPropertySource;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -43,6 +44,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.5.2
  */
 @Tag("OAuthWeb")
+@TestPropertySource(properties = "cas.ticket.track-descendant-tickets=false")
 class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Tests {
     @Autowired
     @Qualifier("oauth20ProtocolEndpointConfigurer")

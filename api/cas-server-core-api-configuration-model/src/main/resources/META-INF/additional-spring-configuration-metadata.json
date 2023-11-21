@@ -1,6 +1,24 @@
 {
   "properties": [
     {
+      "name": "cas.authn.pac4j.oidc[0].azure.principal-attribute-id",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.pac4j.oidc[0].azure.principal-id-attribute",
+        "reason": "This setting is renamed.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.logout.remove-descendant-tickets",
+      "type": "java.lang.Boolean",
+      "deprecation": {
+        "replacement": "cas.ticket.track-descendant-tickets",
+        "reason": "This setting is renamed and moved to the ticket namespace.",
+        "level": "error"
+      }
+    },
+    {
       "name": "cas.sso.allow-missing-service-parameter",
       "type": "java.lang.String",
       "deprecation": {
