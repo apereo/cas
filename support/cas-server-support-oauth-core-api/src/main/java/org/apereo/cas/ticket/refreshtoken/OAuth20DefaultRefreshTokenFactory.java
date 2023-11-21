@@ -86,8 +86,8 @@ public class OAuth20DefaultRefreshTokenFactory implements OAuth20RefreshTokenFac
             val timeToKill = policy.getTimeToKill();
             if (StringUtils.isNotBlank(timeToKill)) {
                 val timeToKillInSeconds = Beans.newDuration(timeToKill).getSeconds();
-                return shouldTGTExpirationTriggerRTExpiration ? new OAuth20RefreshTokenExpirationPolicy(timeToKillInSeconds) :
-                        new OAuth20RefreshTokenExpirationPolicy.OAuthRefreshTokenStandaloneExpirationPolicy(timeToKillInSeconds);
+                return shouldTGTExpirationTriggerRTExpiration ? new OAuth20RefreshTokenExpirationPolicy(timeToKillInSeconds)
+                        : new OAuth20RefreshTokenExpirationPolicy.OAuthRefreshTokenStandaloneExpirationPolicy(timeToKillInSeconds);
             }
         }
         return this.expirationPolicyBuilder.buildTicketExpirationPolicy();
