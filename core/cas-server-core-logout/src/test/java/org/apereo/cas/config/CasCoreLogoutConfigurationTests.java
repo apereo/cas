@@ -51,7 +51,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationSupportConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreLogoutConfiguration.class
-}, properties = "cas.logout.remove-descendant-tickets=true")
+}, properties = "cas.ticket.track-descendant-tickets=true")
 @Tag("CasConfiguration")
 class CasCoreLogoutConfigurationTests {
     @Autowired
