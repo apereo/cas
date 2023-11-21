@@ -5,6 +5,8 @@ GREEN="\e[32m"
 YELLOW="\e[33m"
 ENDCOLOR="\e[0m"
 
+casVersion=(`cat ./gradle.properties | grep "version" | cut -d= -f2`)
+
 function printgreen() {
   printf "✅ ${GREEN}$1${ENDCOLOR}\n"
 }
@@ -22,13 +24,37 @@ function build {
     ./gradlew assemble -x test -x check --parallel --no-watch-fs --no-configuration-cache \
         -DskipAot=true -DpublishReleases=true -DrepositoryUsername="$1" -DrepositoryPassword="$2"
     if [ $? -ne 0 ]; then
-        printred "Building CAS faild."
+        printred "Building CAS failed."
         exit 1
     fi
 }
 
+function snapshot() {
+  if [[ "${casVersion}" != *SNAPSHOT* ]] ;
+  then
+      printred "CAS version ${casVersion} MUST be a SNAPSHOT version"
+      exit 1
+  fi
+  printgreen "Publishing CAS SNAPSHOT artifacts. Please be patient as this might take a while..."
+  ./gradlew build publish -x test -x javadoc -x check --no-daemon --parallel \
+    -DpublishSnapshots=true --build-cache --no-configuration-cache --configure-on-demand \
+    -Dorg.gradle.internal.http.socketTimeout=640000 \
+    -Dorg.gradle.internal.http.connectionTimeout=640000 \
+    -Dorg.gradle.internal.publish.checksums.insecure=true \
+    -Dorg.gradle.internal.remote.repository.deploy.max.attempts=5 \
+    -Dorg.gradle.internal.remote.repository.deploy.initial.backoff=5000 \
+    -Dorg.gradle.internal.repository.max.tentatives=10 \
+    -Dorg.gradle.internal.repository.initial.backoff=1000 \
+    -DrepositoryUsername="$1" -DrepositoryPassword="$2"
+}
+
 function publish {
-    printgreen "Publishing CAS. Please be patient as this might take a while..."
+    if [[ "${casVersion}" == *SNAPSHOT* ]] ;
+    then
+        printred "CAS version ${casVersion} cannot be a SNAPSHOT version"
+        exit 1
+    fi
+    printgreen "Publishing CAS releases. Please be patient as this might take a while..."
     ./gradlew publishToSonatype closeAndReleaseStagingRepository \
       --no-parallel --no-watch-fs --no-configuration-cache -DskipAot=true -DpublishReleases=true \
       -DrepositoryUsername="$1" -DrepositoryPassword="$2" -DpublishReleases=true \
@@ -46,13 +72,12 @@ function publish {
 }
 
 function finished {
-    printgreen "Done! The release is now automatically closed and published on Sonatype. Thank you!"
+    printgreen "Done! The release is now automatically published on Sonatype. There is nothing more for you to do. Thank you!"
 }
 
 clear
 java -version
 
-casVersion=(`cat ./gradle.properties | grep "version" | cut -d= -f2`)
 if [[ "${casVersion}" == v* ]] ;
 then
     printred "CAS version ${casVersion} is incorrect and likely a tag."
@@ -64,7 +89,7 @@ echo "***************************************************************"
 echo "Welcome to the release process for Apereo CAS ${casVersion}"
 echo "***************************************************************"
 echo -e "\n"
-echo -e "Make sure the following criteria is met:\n"
+echo -e "Make sure the following criteria is met for non-SNAPSHOT versions:\n"
 echo -e "\t- Your Sonatype account (username/password) must be authorized to publish releases to 'org.apereo'."
 echo -e "\t- Your PGP signatures must be configured via '~/.gradle/gradle.properties' to sign the release artifacts:"
 echo -e "\t\tsigning.keyId=YOUR_KEY_ID"
@@ -75,24 +100,28 @@ echo -e "\t\torg.gradle.daemon=false"
 echo -e "\t\torg.gradle.parallel=false"
 echo -e "\nFor more information, please visit\n\thttps://apereo.github.io/cas/developer/Release-Process.html\n"
 
-if [[ -z $SONATYPE_USERNAME && -z $SONATYPE_PASSWORD ]]; then
+if [[ -z $REPOSITORY_USER && -z $REPOSITORY_PWD ]]; then
   read -s -p "If you are ready, press ENTER to continue..." anykey
   echo
-  read -s -p "Sonatype Username: " username
+  read -s -p "Repository Username: " username
   echo
-  read -s -p "Sonatype Password: " password
+  read -s -p "Repository Password: " password
   echo
   echo "1) Clean, Build and Publish"
   echo "2) Publish"
-  read -p "Choose (1, 2, etc): " selection
+  echo "3) Publish SNAPSHOTs"
+  read -p "Choose (1, 2, 3, etc): " selection
   echo
   clear
 else
-  printgreen "Sonatype username and password are predefined. Starting the CAS release process..."
-  selection="1"
-  username="$SONATYPE_USERNAME"
-  password="$SONATYPE_PASSWORD"
-  clear
+  printgreen "Repository username and password are predefined."
+  username="$REPOSITORY_USER"
+  password="$REPOSITORY_PWD"
+  if [[ "${casVersion}" == *SNAPSHOT* ]]; then
+    selection="3"
+  else
+    selection="1"
+  fi
 fi
 
 case "$selection" in
@@ -104,6 +133,10 @@ case "$selection" in
         ;;
     2)
         publish ${username} ${password}
+        finished
+        ;;
+    3)
+        snapshot ${username} ${password}
         finished
         ;;
     *)
