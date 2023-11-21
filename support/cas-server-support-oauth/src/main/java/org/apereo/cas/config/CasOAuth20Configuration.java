@@ -1174,9 +1174,10 @@ public class CasOAuth20Configuration {
             @Qualifier("refreshTokenExpirationPolicy")
             final ExpirationPolicyBuilder refreshTokenExpirationPolicy,
             @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) {
+            final ServicesManager servicesManager,
+            final CasConfigurationProperties casProperties) {
             return new OAuth20DefaultRefreshTokenFactory(refreshTokenIdGenerator,
-                refreshTokenExpirationPolicy, servicesManager);
+                refreshTokenExpirationPolicy, servicesManager, casProperties.getLogout().isRemoveDescendantTickets());
         }
 
         @Bean
