@@ -90,11 +90,18 @@ public class HttpRequestUtils {
         val loc = new GeoLocationRequest();
         if (StringUtils.isNotBlank(geoLocationParam) && !StringUtils.equalsIgnoreCase(geoLocationParam, "unknown")) {
             val geoLocation = Splitter.on(",").splitToList(geoLocationParam);
-            loc.setLatitude(geoLocation.getFirst());
-            loc.setLongitude(geoLocation.get(GEO_LOC_LONG_INDEX));
-            loc.setAccuracy(geoLocation.get(GEO_LOC_ACCURACY_INDEX));
-            loc.setTimestamp(geoLocation.get(GEO_LOC_TIME_INDEX));
-
+            if (!geoLocation.isEmpty()) {
+                loc.setLatitude(geoLocation.getFirst());
+            }
+            if (geoLocation.size() >= GEO_LOC_LONG_INDEX + 1) {
+                loc.setLongitude(geoLocation.get(GEO_LOC_LONG_INDEX));
+            }
+            if (geoLocation.size() >= GEO_LOC_ACCURACY_INDEX + 1) {
+                loc.setAccuracy(geoLocation.get(GEO_LOC_ACCURACY_INDEX));
+            }
+            if (geoLocation.size() >= GEO_LOC_TIME_INDEX + 1) {
+                loc.setTimestamp(geoLocation.get(GEO_LOC_TIME_INDEX));
+            }
         }
         return loc;
     }

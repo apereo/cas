@@ -7,6 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
     <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
 
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
     <link rel="stylesheet" type="text/css" th:href="@{#{webjars.highlight.css}}" />
     <script type="text/javascript" th:src="@{#{webjars.highlight.js}}"></script>
 </head>
@@ -17,7 +20,7 @@
         <script type="text/javascript">
             function jqueryReady() {
                 if (window.location.hash) {
-                    console.log(`Fragment ${window.location.hash}`)
+                    console.log(`Fragment ${window.location.hash}`);
                     showPanel(window.location.hash);
                 } else {
                     showPanel("#divOverview");
