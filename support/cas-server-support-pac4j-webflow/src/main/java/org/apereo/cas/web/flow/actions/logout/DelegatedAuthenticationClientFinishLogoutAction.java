@@ -6,7 +6,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.DelegationWebflowUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -16,11 +15,9 @@ import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.jee.context.JEEContext;
 import org.pac4j.jee.http.adapter.JEEHttpActionAdapter;
 import org.pac4j.saml.client.SAML2Client;
-import org.pac4j.saml.credentials.SAML2Credentials;
 import org.pac4j.saml.logout.processor.SAML2LogoutProcessor;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
 import java.util.Optional;
 
 /**
@@ -59,10 +56,10 @@ public class DelegatedAuthenticationClientFinishLogoutAction extends BaseCasWebf
                     .ifPresent(client -> FunctionUtils.doAndHandle(__ -> {
                         LOGGER.debug("Located client from relay-state: [{}]", client);
                         val callContext = new CallContext(context, sessionStore);
-                        val samlContext = client.getContextProvider().buildContext(callContext, client);
-                        val logoutCredentials = new SAML2Credentials(samlContext);
-                        val result = client.getLogoutProcessor().processLogout(callContext, logoutCredentials);
-                        JEEHttpActionAdapter.INSTANCE.adapt(result, context);
+                        client.getCredentialsExtractor().extract(callContext).ifPresent(logoutCredentials -> {
+                            val result = client.getLogoutProcessor().processLogout(callContext, logoutCredentials);
+                            JEEHttpActionAdapter.INSTANCE.adapt(result, context);
+                        });
                     }));
             }
         } else {
@@ -74,7 +71,7 @@ public class DelegatedAuthenticationClientFinishLogoutAction extends BaseCasWebf
                     val logoutRequest = DelegationWebflowUtils.getDelegatedAuthenticationLogoutRequest(requestContext,
                         DelegatedAuthenticationClientLogoutRequest.class);
                     Optional.ofNullable(logoutRequest)
-                        .filter(r -> StringUtils.isNotBlank(logoutRedirect))
+                        .filter(__ -> StringUtils.isNotBlank(logoutRedirect))
                         .ifPresent(__ -> {
                             LOGGER.debug("Located client from webflow state: [{}]", client);
                             val validator = (SAML2LogoutProcessor) client.getLogoutProcessor();
