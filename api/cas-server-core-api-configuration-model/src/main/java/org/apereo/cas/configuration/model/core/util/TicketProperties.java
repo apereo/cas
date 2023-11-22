@@ -83,7 +83,7 @@ public class TicketProperties implements Serializable {
      * with options to be renewed. Examples include OAuth access tokens, etc.
      * Set this option to true if you want all linked tickets to be tracked and then removed.
      */
-    private boolean trackDescendantTickets = true;
+    private boolean trackDescendantTickets;
 
     public TicketProperties() {
         crypto.setEnabled(false);
