@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.test.context.TestPropertySource;
 
 import java.util.Map;
 import java.util.Set;
@@ -29,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("OAuthToken")
+@TestPropertySource(properties = "cas.ticket.track-descendant-tickets=false")
 class OAuth20DefaultOAuthCodeFactoryTests extends AbstractOAuth20Tests {
 
     @Autowired
