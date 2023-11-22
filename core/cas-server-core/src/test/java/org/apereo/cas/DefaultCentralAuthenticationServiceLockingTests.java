@@ -2,7 +2,6 @@ package org.apereo.cas;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.ticket.AuthenticatedServicesAwareTicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.val;
@@ -66,8 +65,8 @@ class DefaultCentralAuthenticationServiceLockingTests {
                 }
             }
             val ticket = getTicketRegistry().getTicket(ticketGrantingTicket.getId(), TicketGrantingTicket.class);
-            assertInstanceOf(AuthenticatedServicesAwareTicketGrantingTicket.class, ticket);
-            val services = ((AuthenticatedServicesAwareTicketGrantingTicket) ticket).getServices();
+            assertInstanceOf(TicketGrantingTicket.class, ticket);
+            val services = ((TicketGrantingTicket) ticket).getServices();
             assertEquals(serviceTicketIds.size(), services.size());
         }
     }
@@ -111,8 +110,8 @@ class DefaultCentralAuthenticationServiceLockingTests {
                 }
             }
             val ticket = getTicketRegistry().getTicket(ticketGrantingTicket.getId(), TicketGrantingTicket.class);
-            assertInstanceOf(AuthenticatedServicesAwareTicketGrantingTicket.class, ticket);
-            val services = ((AuthenticatedServicesAwareTicketGrantingTicket) ticket).getServices();
+            assertInstanceOf(TicketGrantingTicket.class, ticket);
+            val services = ((TicketGrantingTicket) ticket).getServices();
             assertNotEquals(serviceTicketIds.size(), services.size());
         }
     }

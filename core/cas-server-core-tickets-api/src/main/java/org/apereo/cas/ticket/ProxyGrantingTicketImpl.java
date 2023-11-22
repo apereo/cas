@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
+import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -67,7 +68,7 @@ public class ProxyGrantingTicketImpl extends TicketGrantingTicketImpl implements
                                         final ExpirationPolicy expirationPolicy,
                                         final TicketTrackingPolicy trackingPolicy) {
         val serviceTicket = new ProxyTicketImpl(id, this, service, false, expirationPolicy);
-        trackingPolicy.trackServiceTicket(this, serviceTicket);
+        trackingPolicy.trackTicket(this, serviceTicket);
         return serviceTicket;
     }
 

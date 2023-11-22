@@ -5,13 +5,11 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
-import org.apereo.cas.ticket.AuthenticatedServicesAwareTicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -19,7 +17,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -82,13 +79,6 @@ public class VerifyRequiredServiceAction extends BaseCasWebflowAction {
         }
     }
 
-    /**
-     * Should skip required service check.
-     *
-     * @param context               the context
-     * @param initialServicePattern the initial service pattern
-     * @return true/false
-     */
     protected boolean shouldSkipRequiredServiceCheck(final RequestContext context,
                                                    final Pattern initialServicePattern) {
         val service = WebUtils.getService(context);
@@ -104,25 +94,11 @@ public class VerifyRequiredServiceAction extends BaseCasWebflowAction {
         return RegisteredServiceProperties.SKIP_REQUIRED_SERVICE_CHECK.isAssignedTo(registeredService);
     }
 
-    /**
-     * Collect services to match.
-     *
-     * @param context                the context
-     * @param ticketGrantingTicketId the ticket granting ticket id
-     * @return the list
-     */
     protected List<Service> collectServicesToMatch(final RequestContext context, final String ticketGrantingTicketId) {
-        val servicesToMatch = new ArrayList<Service>();
-
         val ticket = StringUtils.isNotBlank(ticketGrantingTicketId)
             ? ticketRegistrySupport.getTicketGrantingTicket(ticketGrantingTicketId)
             : null;
-
-        if (ticket instanceof AuthenticatedServicesAwareTicketGrantingTicket) {
-            val services = ((AuthenticatedServicesAwareTicketGrantingTicket) ticket).getServices();
-            servicesToMatch.addAll(services.values());
-        }
-        return servicesToMatch;
+        return ticket != null ? new ArrayList<>(ticket.getServices().values()) : new ArrayList<>();
     }
 
 }

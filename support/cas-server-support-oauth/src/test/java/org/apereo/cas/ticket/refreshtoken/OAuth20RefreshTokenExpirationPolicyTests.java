@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @since 5.3.0
  */
-@TestPropertySource(properties = "cas.logout.remove-descendant-tickets=true")
+@TestPropertySource(properties = "cas.ticket.track-descendant-tickets=true")
 @Tag("OAuthToken")
 class OAuth20RefreshTokenExpirationPolicyTests extends BaseOAuth20ExpirationPolicyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "OAuth20RefreshTokenExpirationPolicy.json");
@@ -29,7 +29,7 @@ class OAuth20RefreshTokenExpirationPolicyTests extends BaseOAuth20ExpirationPoli
 
         assertFalse(rt.isExpired(), "Refresh token should not be expired");
         tgt.markTicketExpired();
-        assertTrue(rt.isExpired(), "Refresh token should not be expired when TGT is expired");
+        assertFalse(rt.isExpired(), "Refresh token should not be expired when TGT is expired");
         assertEquals(0, rt.getExpirationPolicy().getTimeToIdle());
     }
 

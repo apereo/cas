@@ -85,12 +85,10 @@ jobs:
          with:
            path: ~/.gradle/caches
            key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-           restore-keys: |
-             ${{ runner.os }}-gradle-
+           restore-keys: ${{ runner.os }}-gradle-
        - name: Publish SNAPSHOTs
          if: ${{ env.REPOSITORY_USER != null && env.REPOSITORY_PWD != null }}
-         run: ./gradlew -DpublishSnapshots=true --build-cache --no-configuration-cache --configure-on-demand --no-daemon --parallel -Dorg.gradle.internal.http.socketTimeout=180000 -Dorg.gradle.internal.http.connectionTimeout=180000 build publish -x test -x javadoc -x check -DrepositoryUsername="${REPOSITORY_USER}" -DrepositoryPassword="${REPOSITORY_PWD}"
-         
+         run: ./ci/release.sh
   ##########################################################################
 
   publish-modules-metadata:

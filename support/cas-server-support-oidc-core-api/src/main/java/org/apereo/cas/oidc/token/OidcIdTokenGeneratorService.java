@@ -21,7 +21,6 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20AccessTokenAtHashGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
-import org.apereo.cas.ticket.AuthenticatedServicesAwareTicketGrantingTicket;
 import org.apereo.cas.ticket.BaseIdTokenGeneratorService;
 import org.apereo.cas.ticket.OidcIdToken;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -40,6 +39,7 @@ import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
 import org.pac4j.core.profile.UserProfile;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.util.Assert;
 
 import java.util.ArrayList;
@@ -279,7 +279,10 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
                                               final Object defaultValue) {
         val mapper = getConfigurationContext().getAttributeToScopeClaimMapper();
         val collectionValues = mapper.mapClaim(claimName, registeredService, principal, defaultValue);
-        getConfigurationContext().getIdTokenClaimCollector().collect(claims, claimName, collectionValues);
+        val collectors = new ArrayList<>(getConfigurationContext().getIdTokenClaimCollectors());
+        AnnotationAwareOrderComparator.sortIfNecessary(collectors);
+        collectors.forEach(collector -> collector.collect(claims, claimName, collectionValues));
+
     }
 
     protected String getJwtId(final TicketGrantingTicket tgt) {
@@ -288,10 +291,8 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
                                + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
 
         val streamServices = new LinkedHashMap<String, Service>();
-        if (tgt instanceof final AuthenticatedServicesAwareTicketGrantingTicket ticket) {
-            val services = ticket.getServices();
-            streamServices.putAll(services);
-        }
+        val services = tgt.getServices();
+        streamServices.putAll(services);
         streamServices.putAll(tgt.getProxyGrantingTickets());
 
         val oAuthServiceTicket = streamServices.entrySet()

@@ -702,8 +702,7 @@ public class OidcConfiguration {
             final ExpirationPolicyBuilder oidcIdTokenExpirationPolicy,
             @Qualifier("oidcUserProfileViewRenderer")
             final OAuth20UserProfileViewRenderer oidcUserProfileViewRenderer,
-            @Qualifier(OidcIdTokenClaimCollector.BEAN_NAME)
-            final OidcIdTokenClaimCollector oidcIdTokenClaimCollector,
+            final List<OidcIdTokenClaimCollector> oidcIdTokenClaimCollectors,
             @Qualifier("callbackAuthorizeViewResolver")
             final OAuth20CallbackAuthorizeViewResolver callbackAuthorizeViewResolver,
             @Qualifier("oauthInvalidAuthorizationBuilder")
@@ -783,7 +782,7 @@ public class OidcConfiguration {
                 .issuerService(oidcIssuerService)
                 .clientRegistrationRequestTranslator(oidcClientRegistrationRequestTranslator)
                 .ticketFactory(ticketFactory)
-                .idTokenClaimCollector(oidcIdTokenClaimCollector)
+                .idTokenClaimCollectors(oidcIdTokenClaimCollectors)
                 .idTokenGeneratorService(oidcIdTokenGenerator)
                 .idTokenExpirationPolicy(oidcIdTokenExpirationPolicy)
                 .oidcRequestSupport(oidcRequestSupport)
