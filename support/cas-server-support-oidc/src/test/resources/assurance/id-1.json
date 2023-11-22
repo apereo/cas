@@ -1,0 +1,226 @@
+[
+  {
+    "trust_framework": "eidas",
+    "assurance_level": "substantial"
+  },
+  {
+    "trust_framework": "de_aml2",
+    "time": "2012-04-23T18:25Z",
+    "verification_process": "f24c6f-6d3f-4ec5-973e-b0d8506f3bc7",
+    "evidence": [
+      {
+        "type": "document",
+        "method": "pipp",
+        "time": "2012-04-22T11:30Z",
+        "document": {
+          "type": "idcard"
+        }
+      }
+    ]
+  },
+  {
+    "trust_framework": "it_spid",
+    "time": "2019-04-20T20:16Z",
+    "verification_process": "b54c6f-6d3f-4ec5-973e-b0d8506f3bc7",
+    "evidence": [
+      {
+        "type": "document",
+        "validation_method": {
+          "type": "vcrypt"
+        },
+        "verification_method": {
+          "type": "bvr"
+        },
+        "time": "2019-04-20T20:11Z",
+        "document_details": {
+          "type": "passport",
+          "issuer": {
+            "name": "Ministro Affari Esteri",
+            "country": "ITA"
+          },
+          "document_number": "83774554",
+          "date_of_issuance": "2011-04-20",
+          "date_of_expiry": "2021-04-19"
+        }
+      }
+    ]
+  },
+  {
+    "trust_framework": "uk_tfida",
+    "assurance_level": "high",
+    "assurance_process": {
+      "policy": "gpg45",
+      "procedure": "h1b"
+    },
+    "time": "2020-09-23T14:12Z",
+    "verification_process": "99476DA2-ACDC-5N13-10WC-26B415B52",
+    "evidence": [
+      {
+        "type": "vouch",
+        "validation_method": {
+          "type": "vpip",
+          "policy": "gpg45",
+          "procedure": "score_3"
+        },
+        "verification_method": {
+          "type": "pvr",
+          "policy": "gpg45",
+          "procedure": "score_3"
+        },
+        "time": "2020-02-23T07:52Z",
+        "attestation": {
+          "type": "written_attestation",
+          "reference_number": "6485-1619-3976-6671",
+          "date_of_issuance": "2020-02-13",
+          "voucher": {
+            "given_name": "Peter",
+            "family_name": "Crowe",
+            "occupation": "Executive Principal",
+            "organization": "Kristin School"
+          }
+        },
+        "attachments": [
+          {
+            "desc": "scan of vouch",
+            "content_type": "application/pdf",
+            "content": "d16d2552e35582810e5a40e523716504525b6016ae96844ddc533163059b3067=="
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "trust_framework": "uk_tfida2",
+    "assurance_level": "very_high",
+    "assurance_process": {
+      "policy": "gpg45",
+      "procedure": "m1b"
+    },
+    "time": "2020-03-19T13:05Z",
+    "verification_process": "76755DA2-81E1-5N14-9543-26B415B77",
+    "evidence": [
+      {
+        "type": "vouch",
+        "validation_method": {
+          "type": "vcrypt"
+        },
+        "verification_method": {
+          "type": "bvr"
+        },
+        "time": "2020-03-19T12:42Z",
+        "attestation": {
+          "type": "digital_attestation",
+          "reference_number": "6485-1619-3976-6671",
+          "date_of_issuance": "2021-06-04",
+          "voucher": {
+            "organization": "HMP Dartmoor"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "trust_framework": "se_bankid",
+    "assurance_level": "al_2",
+    "time": "2021-03-03T09:42Z",
+    "verification_process": "4346D80F-57E0-4E26-9543-26B41FC22",
+    "evidence": [
+      {
+        "type": "electronic_record",
+        "validation_method": {
+          "type": "data"
+        },
+        "verification_method": {
+          "type": "token"
+        },
+        "time": "2021-02-15T16:51Z",
+        "record": {
+          "type": "population_register",
+          "source": {
+            "name": "Skatteverket",
+            "country": "Sverige",
+            "country_code": "SWE"
+          },
+          "personal_number": "4901224131",
+          "created_at": "1979-01-22"
+        }
+      }
+    ]
+  },
+  {
+    "trust_framework": "de_aml",
+    "time": "2012-04-23T18:25Z",
+    "verification_process": "513645-e44b-4951-942c-7091cf7d891d",
+    "evidence": [
+      {
+        "type": "document",
+        "method": "pipp",
+        "time": "2012-04-22T11:30Z",
+        "document": {
+          "type": "de_erp_replacement_idcard",
+          "issuer": {
+            "name": "Stadt Augsburg",
+            "country": "DE"
+          },
+          "number": "53554554",
+          "date_of_issuance": "2010-04-23",
+          "date_of_expiry": "2020-04-22"
+        }
+      },
+      {
+        "type": "utility_bill",
+        "provider": {
+          "name": "Stadtwerke Musterstadt",
+          "country": "DE",
+          "region": "Niedersachsen",
+          "street_address": "Energiestrasse 33"
+        },
+        "date": "2013-01-31"
+      }
+    ]
+  },
+  {
+    "trust_framework": "us_aml",
+    "time": "2012-04-23T18:25Z",
+    "verification_process": "513645-e44b-4951-942c-7091cf7d891d",
+    "evidence": [
+      {
+        "type": "document",
+        "validation_method": {
+          "type": "vpip"
+        },
+        "verification_method": {
+          "type": "pvp"
+        },
+        "time": "2012-04-22T11:30Z",
+        "document_details": {
+          "type": "de_erp_replacement_idcard",
+          "issuer": {
+            "name": "Stadt Augsburg",
+            "country": "DE"
+          },
+          "document_number": "53554554",
+          "date_of_issuance": "2010-04-23",
+          "date_of_expiry": "2020-04-22"
+        }
+      },
+      {
+        "type": "document",
+        "validation_method": {
+          "type": "vpip"
+        },
+        "time": "2012-04-22T11:30Z",
+        "document_details": {
+          "type": "utility_statement",
+          "issuer": {
+            "name": "Stadtwerke Musterstadt",
+            "country": "DE",
+            "region": "Niedersachsen",
+            "street_address": "Energiestrasse 33"
+          },
+          "date_of_issuance": "2013-01-31"
+        }
+      }
+    ]
+  }
+]

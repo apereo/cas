@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.claims;
 
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
+import org.apereo.cas.oidc.assurance.AssuranceVerificationSource;
 import org.apereo.cas.util.CollectionUtils;
 import com.google.common.base.Splitter;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ import java.util.List;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class OidcSimpleIdTokenClaimCollector implements OidcIdTokenClaimCollector {
     protected final AttributeDefinitionStore attributeDefinitionStore;
+    protected final AssuranceVerificationSource assuranceVerificationSource;
 
     @Override
     public void collect(final JwtClaims claims, final String name, final List<Object> values) {

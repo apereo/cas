@@ -18,6 +18,19 @@ import static org.junit.jupiter.api.Assertions.*;
 class HttpRequestUtilsTests {
 
     @Test
+    void verifyBadGeoLocation() throws Throwable {
+        val request = new MockHttpServletRequest();
+        request.setParameter("geolocation", "34,45,1,12345");
+        assertNotNull(HttpRequestUtils.getHttpServletRequestGeoLocation(request));
+
+        request.setParameter("geolocation", "34,4");
+        assertNotNull(HttpRequestUtils.getHttpServletRequestGeoLocation(request));
+
+        request.setParameter("geolocation", "34,4,,1");
+        assertNotNull(HttpRequestUtils.getHttpServletRequestGeoLocation(request));
+    }
+
+    @Test
     void verifyNoRequest() throws Throwable {
         assertNull(HttpRequestUtils.getHttpServletRequestFromRequestAttributes());
     }

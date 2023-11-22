@@ -93,4 +93,10 @@ public class OidcProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private OidcClientRegistrationProperties registration = new OidcClientRegistrationProperties();
+
+    /**
+     * OIDC ID assurance settings.
+     */
+    @NestedConfigurationProperty
+    private OidcIdentityAssuranceProperties identityAssurance = new OidcIdentityAssuranceProperties();
 }

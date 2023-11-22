@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @since 5.3.0
  */
-@TestPropertySource(properties = "cas.ticket.track-descendant-tickets=true")
+@TestPropertySource(properties = "cas.ticket.track-descendant-tickets=false")
 @Tag("OAuthToken")
 class OAuth20RefreshTokenExpirationPolicyTests extends BaseOAuth20ExpirationPolicyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "OAuth20RefreshTokenExpirationPolicy.json");

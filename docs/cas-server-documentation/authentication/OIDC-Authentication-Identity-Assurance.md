@@ -13,6 +13,8 @@ about the verification status of these claims (what, how, when, according to wha
 This specification is aimed at enabling use cases requiring strong assurance, for example, to comply with regulatory 
 requirements such as Anti-Money Laundering laws or access to health data, risk mitigation, or fraud prevention.
 
+{% include_cached casproperties.html properties="cas.authn.oidc.identity-assurance" %}
+
 ## Identity Assurance Claims
 
 CAS provides a special pre-defined built-in scope, `assurance` that carries special identity assurance claims. In order 
@@ -49,3 +51,80 @@ tied to the `txn` claim which at least consists of the following details:
 <div class="alert alert-info"><strong>ID Token</strong><p>The generated ID token that shows up in the
 CAS audit logs is NOT unpacked to display and/or log claims in plain-text mode. The ID token is displayed as-is,
 and may be signed and or encrypted depending on the relying party configuration.</p></div>
+
+## Identity Assurance Verifications
+
+Identity assurance verification records are by default loaded from a JSON file whose path is taught to CAS
+via configuration properties. The file may contain multiple verification records:
+
+```json
+[
+    {
+        "trust_framework": "eidas",
+        "assurance_level": "substantial"
+    },
+    {
+        "trust_framework": "it_spid",
+        "time": "2019-04-20T20:16Z",
+        "verification_process": "b54c6f-6d3f-4ec5-973e-b0d8506f3bc7",
+        "evidence": [
+            {
+              "type": "document",
+              "validation_method": {
+                "type": "vcrypt"
+              },
+              "verification_method": {
+                  "type": "bvr"
+              },
+              "time": "2019-04-20T20:11Z",
+              "document_details": {
+                "type": "passport",
+                "issuer": {
+                  "name": "Ministro Affari Esteri",
+                  "country": "ITA"
+                },
+                "document_number": "83774554",
+                "date_of_issuance": "2011-04-20",
+                "date_of_expiry": "2021-04-19"
+              }
+            }
+        ]
+    }
+]
+```
+
+[Claim or attribute definitions](OIDC-Attribute-Definitions.html) that are marked as *verifiable* and are assigned a trust framework will receive special
+treatment when ID tokens or user profile payloads are generated. A rough outline of the verified claims in the final
+payload might be:
+
+```json
+{
+  "verified_claims": {
+    "verification": {
+      "trust_framework": "eidas",
+      "assurance_level": "substantial"
+    },
+    "claims": {
+      "given_name": "Max",
+      "family_name": "Meier",
+      "birthdate": "1956-01-28"
+    }
+  }
+}
+```
+  
+### Custom
+
+If you wish to design your own source of identity assurance verifications, you
+may plug in a custom implementation of the `AssuranceVerificationSource` that
+allows you to handle this on on your own:
+
+```java
+@Bean
+public AssuranceVerificationSource assuranceVerificationSource() {
+    return new MyAssuranceVerificationSource();
+}
+```
+
+[See this guide](../configuration/Configuration-Management-Extensions.html) to learn 
+more about how to register configurations into the CAS runtime.
