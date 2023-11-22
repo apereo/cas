@@ -113,16 +113,17 @@ Efforts in this area mainly include:
 - Generating a `txn` claim for audit payloads to tie the record to the ID token transaction
 - ID token audit payload may include the authentication methods employed
 
-Furthermore, built-in support is now available for a special `assurance` scope that carries special additional claims
+Furthermore, [built-in support](../authentication/OIDC-Authentication-Identity-Assurance.html) is now available 
+for a special `assurance` scope that carries special additional claims
 about end-users such as `place_of_birth`, `salutation`, `birth_given_name`, etc.
 
 ### Ticket Tracking, OAuth & OpenID Connect
 
 A ticket-granting ticket often carries a number of child or descendent tickets for whom it acts as the parent entity.
-These child tickets are often those that are backed and supported by alternative protocols, such as OAuth's access tokens, 
+These child tickets are often those that are backed and supported by alternative protocols, such as OAuth access tokens, 
 refresh tokens, etc. Typically and by default, when a parent ticket-granting ticket is removed from CAS either explicitly
-or during logout operations, all such descendent tickets are also removed. Depending on the use case, this or may not be
-immediately desirable, specially in scenarios where you wish for these descendent tickets such as OAuth refresh tokens
+or during logout operations, all such descendent tickets are not removed. Depending on the use case, this may be
+desirable specially in scenarios where you wish for these descendent tickets such as OAuth refresh tokens
 to last a super long time well beyond the lifetime of the ticket-granting ticket that sponsored their existence. Starting
 in this release candidate, CAS begins to provide options to allow the deployer to control the ticket tracking mechanism, 
 to determine whether such child tickets should be tracked. The decision in favor of tracking such tickets will of course 
