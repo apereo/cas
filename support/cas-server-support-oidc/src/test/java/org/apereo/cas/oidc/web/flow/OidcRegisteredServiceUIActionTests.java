@@ -1,7 +1,6 @@
 package org.apereo.cas.oidc.web.flow;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
-import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasWebflowConstants;

@@ -33,10 +33,10 @@ public class Evidence implements Serializable {
     private DocumentDetails documentDetails;
 
     @JsonProperty("validation_method")
-    private ValidationMethod validation_method;
+    private ValidationMethod validationMethod;
 
     @JsonProperty("verification_method")
-    private VerificationMethod verification_method;
+    private VerificationMethod verificationMethod;
 
     private Verifier verifier;
 

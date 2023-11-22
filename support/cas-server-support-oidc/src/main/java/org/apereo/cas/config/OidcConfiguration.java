@@ -152,7 +152,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
-import org.springframework.core.io.Resource;
 import org.springframework.web.servlet.HandlerInterceptor;
 import java.io.Serializable;
 import java.util.List;

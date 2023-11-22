@@ -1,7 +1,6 @@
 package org.apereo.cas.configuration.model.support.oidc;
 
 import org.apereo.cas.configuration.model.SpringResourceProperties;
-import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
@@ -27,6 +26,9 @@ public class OidcIdentityAssuranceProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = 223128625694269276L;
 
+    /**
+     * Assurance verification properties.
+     */
     @NestedConfigurationProperty
     private SpringResourceProperties verificationSource = new SpringResourceProperties();
 }

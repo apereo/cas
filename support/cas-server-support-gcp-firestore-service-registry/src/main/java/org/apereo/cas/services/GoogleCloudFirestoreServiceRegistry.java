@@ -42,7 +42,7 @@ public class GoogleCloudFirestoreServiceRegistry extends AbstractServiceRegistry
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
         return FunctionUtils.doUnchecked(() -> {
-            if (registeredService.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE) {
+            if (registeredService.getId() == RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE) {
                 registeredService.setId(registeredService.hashCode());
             }
             invokeServiceRegistryListenerPreSave(registeredService);

@@ -139,7 +139,7 @@ class GitServiceRegistryTests extends AbstractServiceRegistryTests {
         gitRepositoryInstance.commitAll("Malformed json file");
 
         val svc = buildRegisteredServiceInstance(RandomUtils.nextLong(), CasRegisteredService.class);
-        svc.setId(RegisteredService.INITIAL_IDENTIFIER_VALUE);
+        svc.setId(RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE);
         newServiceRegistry.save(svc);
 
         val size = newServiceRegistry.load().size();
@@ -154,7 +154,7 @@ class GitServiceRegistryTests extends AbstractServiceRegistryTests {
         when(gitRepository.getRepositoryDirectory()).thenReturn(gitRepositoryInstance.getRepositoryDirectory());
 
         val svc = buildRegisteredServiceInstance(RandomUtils.nextLong(), CasRegisteredService.class);
-        svc.setId(RegisteredService.INITIAL_IDENTIFIER_VALUE);
+        svc.setId(RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE);
         newServiceRegistry.save(svc);
         val size = newServiceRegistry.load().size();
 
@@ -174,8 +174,8 @@ class GitServiceRegistryTests extends AbstractServiceRegistryTests {
     void verifyLoadWithRootDirectory() throws IOException {
         val svc = buildRegisteredServiceInstance(RandomUtils.nextLong(), CasRegisteredService.class);
         val svc2 = buildRegisteredServiceInstance(RandomUtils.nextLong(), CasRegisteredService.class);
-        svc.setId(RegisteredService.INITIAL_IDENTIFIER_VALUE);
-        svc2.setId(RegisteredService.INITIAL_IDENTIFIER_VALUE);
+        svc.setId(RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE);
+        svc2.setId(RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE);
         newServiceRegistry.save(svc);
         newServiceRegistry.save(svc2);
         val size = newServiceRegistry.load().size();
