@@ -98,30 +98,4 @@ public class OAuth20RefreshTokenExpirationPolicy extends AbstractCasExpirationPo
         return creationTime.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
     }
 
-    /**
-     * An expiration policy that is independent from the parent ticket-granting ticket.
-     * Activated when refresh tokens are expected to live beyond the normal expiration policy
-     * of the TGT that lent a hand in issuing them. If the refresh token is considered expired
-     * by this policy, the parent ticket's expiration policy is not consulted, making the RT independent.
-     */
-    @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-    @NoArgsConstructor
-    @EqualsAndHashCode(callSuper = true)
-    @ToString(callSuper = true)
-    public static class OAuthRefreshTokenStandaloneExpirationPolicy extends OAuth20RefreshTokenExpirationPolicy {
-        @Serial
-        private static final long serialVersionUID = -7768661082888351104L;
-
-        @JsonCreator
-        public OAuthRefreshTokenStandaloneExpirationPolicy(
-            @JsonProperty("timeToLive")
-            final long timeToKillInSeconds) {
-            super(timeToKillInSeconds);
-        }
-
-        @Override
-        public boolean isExpired(final TicketGrantingTicketAwareTicket ticketState) {
-            return isRefreshTokenExpired(ticketState);
-        }
-    }
 }

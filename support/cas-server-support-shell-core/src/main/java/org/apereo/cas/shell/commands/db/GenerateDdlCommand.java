@@ -7,7 +7,8 @@ import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
-import org.hibernate.cfg.AvailableSettings;
+import org.hibernate.cfg.JdbcSettings;
+import org.hibernate.cfg.SchemaToolingSettings;
 import org.hibernate.dialect.HSQLDialect;
 import org.hibernate.dialect.MariaDBDialect;
 import org.hibernate.dialect.MySQLDialect;
@@ -124,10 +125,10 @@ public class GenerateDdlCommand {
         val svcRegistry = new StandardServiceRegistryBuilder();
 
         val settings = new HashMap<String, Object>();
-        settings.put(AvailableSettings.DIALECT, dialectName);
-        settings.put(AvailableSettings.URL, jdbcUrl);
-        settings.put(AvailableSettings.HBM2DDL_AUTO, "none");
-        settings.put(AvailableSettings.SHOW_SQL, "true");
+        settings.put(JdbcSettings.DIALECT, dialectName);
+        settings.put(JdbcSettings.URL, jdbcUrl);
+        settings.put(SchemaToolingSettings.HBM2DDL_AUTO, "none");
+        settings.put(JdbcSettings.SHOW_SQL, "true");
         svcRegistry.applySettings(settings);
 
         LOGGER.info("Collecting entity metadata sources...");

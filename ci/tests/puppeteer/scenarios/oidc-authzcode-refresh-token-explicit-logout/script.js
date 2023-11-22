@@ -54,7 +54,7 @@ async function exchangeToken(refreshToken, clientId, successHandler, errorHandle
     accessTokenParams += `&grant_type=refresh_token&refresh_token=${refreshToken}`;
 
     let accessTokenUrl = `https://localhost:8443/cas/oidc/token?${accessTokenParams}`;
-    cas.log(`Calling endpoint: ${accessTokenUrl}`);
+    await cas.log(`Calling endpoint: ${accessTokenUrl}`);
 
     let value = `${clientId}:secret`;
     let buff = Buffer.alloc(value.length, value);
@@ -84,9 +84,9 @@ async function exchangeToken(refreshToken, clientId, successHandler, errorHandle
     await cas.logg(`Refresh Token 1: ${refreshToken1}`);
     await cas.logg(`Refresh Token 2: ${refreshToken2}`);
 
-    await cas.goto(page, 'https://localhost:8443/cas/logout');
+    await cas.gotoLogout(page);
     await page.waitForTimeout(1000);
-    await cas.goto(page, "https://localhost:8443/cas/login?locale=en");
+    await cas.gotoLogin(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Login");
 
     await exchangeToken(refreshToken1, "client",

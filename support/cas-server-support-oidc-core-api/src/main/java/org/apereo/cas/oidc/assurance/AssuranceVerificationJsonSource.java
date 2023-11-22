@@ -1,7 +1,6 @@
 package org.apereo.cas.oidc.assurance;
 
 import org.apereo.cas.oidc.assurance.entity.Verification;
-import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.io.FileWatcherService;
@@ -11,9 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.hjson.JsonValue;
-import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.DisposableBean;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;

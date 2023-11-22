@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.expiration.builder;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.RegisteredServiceDefinition;
 import org.apereo.cas.ticket.expiration.AlwaysExpiresExpirationPolicy;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
@@ -8,12 +9,11 @@ import org.apereo.cas.ticket.expiration.RememberMeDelegatingExpirationPolicy;
 import org.apereo.cas.ticket.expiration.ThrottledUseAndTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.expiration.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.ticket.expiration.TimeoutExpirationPolicy;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link TicketGrantingTicketExpirationPolicyBuilderTests}.
@@ -32,6 +32,7 @@ class TicketGrantingTicketExpirationPolicyBuilderTests {
         assertInstanceOf(RememberMeDelegatingExpirationPolicy.class, builder.buildTicketExpirationPolicy());
         assertNotNull(builder.toString());
         assertNotNull(builder.casProperties());
+        assertInstanceOf(RememberMeDelegatingExpirationPolicy.class, builder.buildTicketExpirationPolicyFor(mock(RegisteredServiceDefinition.class)));
     }
 
     @Test

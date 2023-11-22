@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.ldap.services;
 
 import org.apereo.cas.configuration.model.support.ldap.serviceregistry.LdapServiceRegistryProperties;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceDefinition;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.StringSerializer;
@@ -35,7 +36,7 @@ public class DefaultLdapRegisteredServiceMapper implements LdapRegisteredService
 
     @Override
     public LdapEntry mapFromRegisteredService(final String dn, final RegisteredService svc) {
-        if (svc.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE) {
+        if (svc.getId() == RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE) {
             val id = System.currentTimeMillis();
             svc.setId(id);
         }

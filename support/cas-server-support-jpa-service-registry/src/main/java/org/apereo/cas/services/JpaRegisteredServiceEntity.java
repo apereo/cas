@@ -47,7 +47,7 @@ public class JpaRegisteredServiceEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "service_sequence")
     @SequenceGenerator(name = "service_sequence", allocationSize = 100)
     @Builder.Default
-    private long id = RegisteredService.INITIAL_IDENTIFIER_VALUE;
+    private long id = RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE;
 
     @Column(nullable = false)
     private String serviceId;

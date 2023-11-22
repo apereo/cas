@@ -7,7 +7,7 @@ async function startAuthFlow(page, username) {
     await cas.gotoLogout(page);
     
     await cas.log(`Starting authentication flow for ${username}`);
-    await cas.goto(page, "https://localhost:8443/cas/login?locale=en");
+    await cas.gotoLogin(page);
     let pswd = await page.$('#password');
     assert(pswd == null);
     await cas.screenshot(page);

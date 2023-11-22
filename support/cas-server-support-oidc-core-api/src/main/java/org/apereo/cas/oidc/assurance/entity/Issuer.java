@@ -20,8 +20,8 @@ public class Issuer implements Serializable {
     
     private String name;
 
-    private String country
-        ;
+    private String country;
+    
     private String region;
 
     @JsonProperty("country_code")

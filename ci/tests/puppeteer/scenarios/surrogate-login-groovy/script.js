@@ -10,26 +10,27 @@ const cas = require('../../cas.js');
     await impersonate(page, "casuser2");
 
     await cas.log("Checking empty list of authorized accounts for user...");
-    await cas.goto(page, "https://localhost:8443/cas/login?locale=en&service=https://apereo.github.io");
+    
+    await cas.gotoLogin(page, "https://apereo.github.io");
     await cas.loginWith(page, `+casuser3`, "Mellon");
     await page.waitForTimeout(1000);
     await cas.assertTicketParameter(page);
     await cas.goto(page, `https://localhost:8443/cas/logout`);
 
     await cas.log("Checking auto selection for unauthorized user...");
-    await cas.goto(page, "https://localhost:8443/cas/login?locale=en&service=https://apereo.github.io");
+    await cas.gotoLogin(page, "https://apereo.github.io");
     await cas.loginWith(page, `anotheruser+casuser3`, "Mellon");
     await page.waitForTimeout(1000);
     await cas.assertInnerTextStartsWith(page, "#loginErrorsPanel p", "You are not authorized to impersonate");
 
     await cas.log("Checking wildcard access for authorized user...");
-    await cas.goto(page, "https://localhost:8443/cas/login?locale=en&service=https://apereo.github.io");
+    await cas.gotoLogin(page, "https://apereo.github.io");
     await cas.loginWith(page, `+casuser4`, "Mellon");
     await page.waitForTimeout(1000);
     await cas.assertInnerTextContains(page, '#content p', "you may directly proceed to login");
     await cas.assertInnerTextContains(page, '#content p', "impersonation account selection is not allowed");
 
-    await cas.goto(page, "https://localhost:8443/cas/login?locale=en&service=https://apereo.github.io");
+    await cas.gotoLogin(page, "https://apereo.github.io");
     await cas.loginWith(page, `anybody+casuser4`, "Mellon");
     await page.waitForTimeout(1000);
     await cas.assertTicketParameter(page);
@@ -39,7 +40,7 @@ const cas = require('../../cas.js');
 })();
 
 async function impersonate(page, username) {
-    await cas.goto(page, "https://localhost:8443/cas/login?locale=en&service=https://apereo.github.io");
+    await cas.gotoLogin(page, "https://apereo.github.io");
     await cas.loginWith(page, `+${username}`, "Mellon");
     await page.waitForTimeout(1000);
     await cas.assertTextContent(page, "#titlePanel h2", "Choose Account");

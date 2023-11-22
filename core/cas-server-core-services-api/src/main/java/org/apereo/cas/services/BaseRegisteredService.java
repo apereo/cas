@@ -59,7 +59,7 @@ public abstract class BaseRegisteredService implements RegisteredService {
     private String templateName;
 
     @Id
-    private long id = RegisteredService.INITIAL_IDENTIFIER_VALUE;
+    private long id = RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE;
 
     private String description;
 

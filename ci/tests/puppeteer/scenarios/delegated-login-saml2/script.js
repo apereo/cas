@@ -7,7 +7,7 @@ const assert = require('assert');
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
 
-    await cas.goto(page, "https://localhost:8443/cas/login?locale=en");
+    await cas.gotoLogin(page);
     await page.waitForTimeout(2000);
 
     await cas.assertVisibility(page, '#loginProviders');

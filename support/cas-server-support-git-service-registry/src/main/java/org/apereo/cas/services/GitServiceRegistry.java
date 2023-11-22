@@ -69,7 +69,7 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
         return Unchecked.supplier(() -> {
-            if (registeredService.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE) {
+            if (registeredService.getId() == RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE) {
                 LOGGER.trace("Service id not set. Calculating id based on system time...");
                 registeredService.setId(System.currentTimeMillis());
             }

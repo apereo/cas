@@ -16,6 +16,7 @@ import org.apereo.cas.ticket.device.OAuth20DefaultDeviceToken;
 import org.apereo.cas.ticket.device.OAuth20DefaultDeviceUserCode;
 import org.apereo.cas.ticket.refreshtoken.OAuth20DefaultRefreshToken;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshTokenExpirationPolicy;
+import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshTokenStandaloneExpirationPolicy;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
@@ -44,7 +45,7 @@ public class CasOAuth20ComponentSerializationConfiguration {
         return plan -> {
             plan.registerSerializableClass(OAuth20AccessTokenExpirationPolicy.class);
             plan.registerSerializableClass(OAuth20RefreshTokenExpirationPolicy.class);
-            plan.registerSerializableClass(OAuth20RefreshTokenExpirationPolicy.OAuthRefreshTokenStandaloneExpirationPolicy.class);
+            plan.registerSerializableClass(OAuth20RefreshTokenStandaloneExpirationPolicy.class);
             plan.registerSerializableClass(OAuth20CodeExpirationPolicy.class);
 
             plan.registerSerializableClass(OAuthRegisteredService.class);

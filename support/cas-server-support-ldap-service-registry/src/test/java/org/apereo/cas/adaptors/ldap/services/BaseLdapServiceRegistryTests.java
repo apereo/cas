@@ -8,7 +8,7 @@ import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.LdapServiceRegistryConfiguration;
 import org.apereo.cas.services.AbstractServiceRegistryTests;
 import org.apereo.cas.services.CasRegisteredService;
-import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceDefinition;
 import org.apereo.cas.services.ServiceRegistry;
 
 import lombok.Getter;
@@ -79,7 +79,7 @@ public abstract class BaseLdapServiceRegistryTests extends AbstractServiceRegist
     @Test
     void verifyServiceInserted() {
         val registeredService = buildRegisteredServiceInstance(998877, CasRegisteredService.class);
-        registeredService.setId(RegisteredService.INITIAL_IDENTIFIER_VALUE);
+        registeredService.setId(RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE);
         getServiceRegistry().save(registeredService);
         val services = getServiceRegistry().load();
         assertFalse(services.isEmpty());

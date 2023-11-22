@@ -175,7 +175,7 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
     }
 
     private RegisteredService saveInternal(final RegisteredService registeredService) {
-        val isNew = registeredService.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE;
+        val isNew = registeredService.getId() == RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE;
         invokeServiceRegistryListenerPreSave(registeredService);
 
         val entity = fromRegisteredService(registeredService);

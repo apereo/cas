@@ -18,7 +18,6 @@ const assert = require('assert');
     await cas.goto(page, "https://localhost:8444/protected");
     await cas.logPage(page);
 
-    // await cas.goto(page, "https://localhost:8443/cas/login?locale=en");
     await page.waitForTimeout(2000);
     await cas.screenshot(page);
 
@@ -40,7 +39,7 @@ const assert = require('assert');
     await cas.assertInnerTextContains(page, "div.starter-template h2 span", "user1@example.com");
 
     await cas.log("Checking CAS SSO session...");
-    await cas.goto(page, "https://localhost:8443/cas/login?locale=en");
+    await cas.gotoLogin(page);
     await cas.screenshot(page);
     await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
@@ -84,7 +83,7 @@ const assert = require('assert');
     assert(url.startsWith("https://apereo.github.io"));
 
     await cas.log("Going to CAS login page to check for session termination");
-    await cas.goto(page, "https://localhost:8443/cas/login?locale=en");
+    await cas.gotoLogin(page);
     await page.waitForTimeout(2000);
     await cas.screenshot(page);
 
