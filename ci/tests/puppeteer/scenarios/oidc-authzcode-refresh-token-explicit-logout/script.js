@@ -91,7 +91,8 @@ async function exchangeToken(refreshToken, clientId, successHandler, errorHandle
 
     await exchangeToken(refreshToken1, "client",
         res => {
-            cas.log(res.data);
+            assert(res.data.access_token !== null);
+            assert(res.data.refresh_token === undefined);
             assert(res.status === 200);
         }, error => {
             throw `Operation should not fail`;
@@ -99,7 +100,8 @@ async function exchangeToken(refreshToken, clientId, successHandler, errorHandle
 
     await exchangeToken(refreshToken2, "client2",
         res => {
-            cas.log(res.data);
+            assert(res.data.access_token !== null);
+            assert(res.data.refresh_token !== null);
             assert(res.status === 200);
         }, error => {
             throw `Operation should not fail`;
