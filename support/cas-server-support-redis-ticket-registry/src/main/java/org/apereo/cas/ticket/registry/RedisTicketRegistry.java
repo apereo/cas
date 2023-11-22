@@ -69,18 +69,29 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     @Override
     public long deleteSingleTicket(final String ticketId) {
         val redisKey = getTicketRedisKey(encodeTicketId(ticketId));
-        val ticket = getSingleTicketFromRedisKey(ticketId)
-            .map(this::decodeInternal)
-            .filter(Objects::nonNull)
-            .findFirst()
-            .orElse(null);
+        val encodeTicket = getSingleTicketFromRedisKey(redisKey)
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(null);
+        if(encodeTicket == null){
+            LOGGER.trace("Ticket [{}] not found from redis.", ticketId);
+            return 0;
+        }
+        val ticket = decodeInternal(encodeTicket);
 
         if (ticket instanceof TicketGrantingTicket) {
             val userId = getPrincipalIdFrom(ticket);
             if (StringUtils.isNotBlank(userId)) {
                 val redisPrincipalPattern = getPrincipalRedisKey(encodeTicketId(userId));
                 val ops = client.boundSetOps(redisPrincipalPattern);
-                ops.remove(ticket);
+
+                if(encodeTicket != null && Boolean.TRUE.equals(ops.isMember(encodeTicket))) {
+                    ops.remove(encodeTicket);
+                    LOGGER.debug("Remove ticket from principal set.");
+                }else {
+                    LOGGER.debug("No ticket found from principal set. ticket is{}, principal is {}", ticket.getId(), userId);
+                }
+
             }
         }
         return Optional.of(redisKey).stream().mapToInt(id -> BooleanUtils.toBoolean(client.delete(id)) ? 1 : 0).sum();
