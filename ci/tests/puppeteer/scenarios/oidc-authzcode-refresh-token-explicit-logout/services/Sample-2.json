@@ -8,5 +8,6 @@
   "description": "Sample Service",
   "evaluationOrder": 10000,
   "scopes" : [ "java.util.HashSet", [ "openid", "profile", "email", "offline_access"] ],
-  "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ]
+  "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ],
+  "renewRefreshToken": true
 }
