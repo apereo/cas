@@ -1,5 +1,5 @@
 {
-  "dependencies": "audit-jdbc,pm-webflow,gauth,trusted-mfa",
+  "dependencies": "webauthn,audit-jdbc,pm-webflow,gauth,trusted-mfa",
   "properties": [
     "--CasFeatureModule.AccountManagement.enabled=true",
     
@@ -23,6 +23,11 @@
     "--cas.authn.mfa.gauth.crypto.enabled=false",
     "--cas.authn.mfa.gauth.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/gauth.json",
     "--cas.authn.mfa.gauth.core.multiple-device-registration-enabled=true",
-    "--cas.authn.mfa.gauth.core.trusted-device-enabled=true"
+    "--cas.authn.mfa.gauth.core.trusted-device-enabled=true",
+
+    "--cas.authn.mfa.web-authn.core.allowed-origins=https://localhost:8443",
+    "--cas.authn.mfa.web-authn.core.application-id=https://localhost:8443",
+    "--cas.authn.mfa.web-authn.core.relying-party-name=CAS WebAuthn Demo",
+    "--cas.authn.mfa.web-authn.core.relying-party-id=cas.example.org"
   ]
 }
