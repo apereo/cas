@@ -22,7 +22,6 @@ import lombok.extern.jackson.Jacksonized;
 import net.minidev.json.annotate.JsonIgnore;
 import org.pac4j.core.profile.UserProfile;
 
-import jakarta.annotation.Nonnull;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
@@ -49,7 +48,6 @@ public class AccessTokenRequestContext implements Serializable {
 
     private final Service service;
 
-    @Nonnull
     private final Authentication authentication;
 
     private final OAuth20Token token;

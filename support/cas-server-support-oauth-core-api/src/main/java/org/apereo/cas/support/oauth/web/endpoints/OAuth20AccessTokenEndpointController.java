@@ -109,13 +109,17 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
 
         try {
             val requestHolder = examineAndExtractAccessTokenGrantRequest(request, response);
+            var authn = requestHolder.getAuthentication();
+            if (authn == null) {
+                authn = requestHolder.getTicketGrantingTicket().getAuthentication();
+            }
             LoggingUtils.protocolMessage("OAuth/OpenID Connect Token Request",
                 Map.of("Token", Optional.ofNullable(requestHolder.getToken()).map(OAuth20Token::getId).orElse("none"),
                     "Device Code", StringUtils.defaultString(requestHolder.getDeviceCode()),
                     "Scopes", String.join(",", requestHolder.getScopes()),
                     "Registered Service", requestHolder.getRegisteredService().getName(),
                     "Service", requestHolder.getService().getId(),
-                    "Principal", requestHolder.getAuthentication().getPrincipal().getId(),
+                    "Principal", authn.getPrincipal().getId(),
                     "Grant Type", requestHolder.getGrantType().getType(),
                     "Response Type", requestHolder.getResponseType().getType()));
             LOGGER.debug("Creating access token for [{}]", requestHolder);
