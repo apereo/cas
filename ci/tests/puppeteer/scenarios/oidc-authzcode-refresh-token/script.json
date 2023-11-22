@@ -7,6 +7,9 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
 
+    "--cas.ticket.tgt.primary.max-time-to-live-in-seconds=8",
+    "--cas.ticket.tgt.primary.time-to-kill-in-seconds=7",
+
     "--cas.authn.attribute-repository.stub.attributes.email=casuser@apereo.org",
     "--cas.authn.attribute-repository.stub.attributes.name=CAS",
     "--cas.authn.attribute-repository.stub.attributes.gender=female",
