@@ -896,6 +896,20 @@ class OAuth20AccessTokenEndpointControllerTests {
         }
 
         @Test
+        void verifyRefreshTokenOKCustomizedWithNullAuthentication() throws Throwable {
+            val registeredService = addRegisteredService(CollectionUtils.wrapSet(OAuth20GrantTypes.REFRESH_TOKEN));
+            val principal = createPrincipal();
+            val factory = new WebApplicationServiceFactory();
+            val service = factory.createService(registeredService.getServiceId());
+            val refreshToken = oAuthRefreshTokenFactory.create(service, null,
+                    new MockTicketGrantingTicket("casuser"),
+                    new ArrayList<>(), registeredService.getClientId(), StringUtils.EMPTY, new HashMap<>(),
+                    OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
+            this.ticketRegistry.addTicket(refreshToken);
+            assertRefreshTokenOk(registeredService, refreshToken, principal);
+        }
+
+        @Test
         void verifyRefreshTokenOKWithRefreshToken() throws Throwable {
             val service = addRegisteredService(CollectionUtils.wrapSet(OAuth20GrantTypes.REFRESH_TOKEN));
             service.setGenerateRefreshToken(true);

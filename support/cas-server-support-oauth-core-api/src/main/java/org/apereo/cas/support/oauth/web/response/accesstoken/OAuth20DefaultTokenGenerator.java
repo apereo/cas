@@ -151,8 +151,13 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
     protected Pair<OAuth20AccessToken, OAuth20RefreshToken> generateAccessTokenOAuthGrantTypes(
         final AccessTokenRequestContext holder) throws Throwable {
         LOGGER.debug("Creating access token for [{}]", holder.getService());
+        val ticketGrantingTicket = holder.getTicketGrantingTicket();
+        var existingAuthn = holder.getAuthentication();
+        if (existingAuthn == null) {
+            existingAuthn = ticketGrantingTicket.getAuthentication();
+        }
         val authnBuilder = DefaultAuthenticationBuilder
-            .newInstance(holder.getAuthentication())
+            .newInstance(existingAuthn)
             .setAuthenticationDate(ZonedDateTime.now(ZoneOffset.UTC))
             .addAttribute(OAuth20Constants.GRANT_TYPE, holder.getGrantType().getType())
             .addAttribute(OAuth20Constants.SCOPE, holder.getScopes());
@@ -169,7 +174,6 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         
         val authentication = authnBuilder.build();
         LOGGER.debug("Creating access token for [{}]", holder);
-        val ticketGrantingTicket = holder.getTicketGrantingTicket();
         val accessToken = accessTokenFactory.create(holder.getService(),
             authentication, ticketGrantingTicket, holder.getScopes(),
             Optional.ofNullable(holder.getToken()).map(Ticket::getId).orElse(null),
