@@ -147,7 +147,9 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
         LoggingUtils.warn(LOGGER, exception);
         val attributes = new LocalAttributeMap<>();
         attributes.put(CasWebflowConstants.TRANSITION_ID_ERROR, event.getSource());
-        attributes.put(Credential.class.getName(), credential.getFirst());
+        if (!credential.isEmpty()) {
+            attributes.put(Credential.class.getName(), credential.getFirst());
+        }
         attributes.put(WebApplicationService.class.getName(), service);
         attributes.putAll(event.getAttributes());
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
