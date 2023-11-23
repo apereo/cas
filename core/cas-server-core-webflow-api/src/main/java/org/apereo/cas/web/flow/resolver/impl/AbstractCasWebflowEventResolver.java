@@ -22,6 +22,7 @@ import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import java.io.Serializable;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -97,14 +98,8 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
         return new Event(this, id, attributes);
     }
 
-    /**
-     * Gets credential from context.
-     *
-     * @param context the context
-     * @return the credential from context
-     */
-    protected Credential getCredentialFromContext(final RequestContext context) {
-        return WebUtils.getCredential(context);
+    protected List<Credential> getCredentialFromContext(final RequestContext context) {
+        return CollectionUtils.wrapList(WebUtils.getCredential(context));
     }
 
     /**
@@ -135,13 +130,13 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
     protected Set<Event> handleAuthenticationTransactionAndGrantTicketGrantingTicket(final RequestContext context) throws Throwable {
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
         try {
-            val credential = getCredentialFromContext(context);
+            val credentials = getCredentialFromContext(context);
             val builderResult = WebUtils.getAuthenticationResultBuilder(context);
 
-            LOGGER.debug("Handling authentication transaction for credential [{}]", credential);
+            LOGGER.debug("Handling authentication transaction for credentials [{}]", credentials);
             val service = WebUtils.getService(context);
             val builder = configurationContext.getAuthenticationSystemSupport()
-                .handleAuthenticationTransaction(service, builderResult, credential);
+                .handleAuthenticationTransaction(service, builderResult, credentials.toArray(new Credential[]{}));
 
             LOGGER.debug("Issuing ticket-granting tickets for service [{}]", service);
             return CollectionUtils.wrapSet(grantTicketGrantingTicketToAuthenticationResult(context, builder, service));
