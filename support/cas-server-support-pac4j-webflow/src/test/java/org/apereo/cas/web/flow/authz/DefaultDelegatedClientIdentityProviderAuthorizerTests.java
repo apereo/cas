@@ -38,7 +38,7 @@ class DefaultDelegatedClientIdentityProviderAuthorizerTests {
     private DelegatedClientIdentityProviderAuthorizer delegatedClientIdentityProviderAuthorizer;
 
     @Autowired
-    @Qualifier("delegatedIdentityProviders")
+    @Qualifier(DelegatedIdentityProviders.BEAN_NAME)
     private DelegatedIdentityProviders identityProviders;
 
     @Autowired

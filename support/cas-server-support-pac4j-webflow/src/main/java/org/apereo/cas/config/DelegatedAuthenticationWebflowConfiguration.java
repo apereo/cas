@@ -465,7 +465,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
         public Action delegatedAuthenticationClientLogoutAction(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("delegatedIdentityProviders") final DelegatedIdentityProviders identityProviders,
+            @Qualifier(DelegatedIdentityProviders.BEAN_NAME) final DelegatedIdentityProviders identityProviders,
             @Qualifier("delegatedClientDistributedSessionStore") final SessionStore delegatedClientDistributedSessionStore) {
             return BeanSupplier.of(Action.class)
                 .when(BeanCondition.on("cas.slo.disabled").isFalse().evenIfMissing()
@@ -487,7 +487,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
         public Action delegatedAuthenticationClientFinishLogoutAction(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("delegatedIdentityProviders") final DelegatedIdentityProviders identityProviders,
+            @Qualifier(DelegatedIdentityProviders.BEAN_NAME) final DelegatedIdentityProviders identityProviders,
             @Qualifier("delegatedClientDistributedSessionStore") final SessionStore delegatedClientDistributedSessionStore) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
@@ -506,7 +506,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(DelegatedClientIdentityProviderConfigurationProducer.BEAN_NAME)
             final DelegatedClientIdentityProviderConfigurationProducer delegatedClientIdentityProviderConfigurationProducer,
-            @Qualifier("delegatedIdentityProviders") final DelegatedIdentityProviders identityProviders) {
+            @Qualifier(DelegatedIdentityProviders.BEAN_NAME) final DelegatedIdentityProviders identityProviders) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
@@ -570,7 +570,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
             @Qualifier("adaptiveAuthenticationPolicy") final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
             final CasConfigurationProperties casProperties,
             @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
-            @Qualifier("delegatedIdentityProviders") final DelegatedIdentityProviders identityProviders,
+            @Qualifier(DelegatedIdentityProviders.BEAN_NAME) final DelegatedIdentityProviders identityProviders,
             @Qualifier(DelegatedClientIdentityProviderConfigurationProducer.BEAN_NAME)
             final DelegatedClientIdentityProviderConfigurationProducer delegatedClientIdentityProviderConfigurationProducer,
             @Qualifier("delegatedClientIdentityProviderConfigurationPostProcessor")
@@ -677,7 +677,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public DelegatedSaml2ClientMetadataController delegatedSaml2ClientMetadataController(
-            @Qualifier("delegatedIdentityProviders") final DelegatedIdentityProviders identityProviders,
+            @Qualifier(DelegatedIdentityProviders.BEAN_NAME) final DelegatedIdentityProviders identityProviders,
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME) final OpenSamlConfigBean configBean) {
             return new DelegatedSaml2ClientMetadataController(identityProviders, configBean);
         }

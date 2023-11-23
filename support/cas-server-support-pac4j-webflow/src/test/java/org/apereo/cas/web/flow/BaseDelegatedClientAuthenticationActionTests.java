@@ -71,7 +71,7 @@ public abstract class BaseDelegatedClientAuthenticationActionTests {
     protected Action delegatedAuthenticationCreateClientsAction;
 
     @Autowired
-    @Qualifier("delegatedIdentityProviders")
+    @Qualifier(DelegatedIdentityProviders.BEAN_NAME)
     protected DelegatedIdentityProviders identityProviders;
 
     protected String getLogoutResponse() {
