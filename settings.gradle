@@ -26,18 +26,16 @@ buildCache {
     }
 }
 
-if (isCiServer && gradleEnterpriseAccessKey != null) {
-    gradleEnterprise {
-        server = 'https://develocity.apereo.org/'
-        allowUntrustedServer = false
-        // accessKey = gradleEnterpriseAccessKey
-        buildScan {
-            publishAlways()
-            capture {
-                taskInputFiles = true
-            }
-            uploadInBackground = false
+gradleEnterprise {
+    server = 'https://develocity.apereo.org/'
+    allowUntrustedServer = false
+    // accessKey = gradleEnterpriseAccessKey
+    buildScan {
+        publishIfAuthenticated()
+        capture {
+            taskInputFiles = true
         }
+        uploadInBackground = !isCiServer
     }
 }
 

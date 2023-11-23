@@ -131,7 +131,7 @@ jobs:
           retry_wait_seconds: 10
           timeout_minutes: ${{ env.RETRY_MINUTES }}
           shell: bash
-          command: ./testcas.sh --no-retry --no-watch --with-coverage --category ${{ matrix.category }}
+          command: ./testcas.sh --no-watch --with-coverage --category ${{ matrix.category }}
       - name: "Upload to Codecov"
         uses: "codecov/codecov-action@v3"
         continue-on-error: true
