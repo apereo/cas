@@ -1,6 +1,12 @@
+plugins {
+    id 'com.gradle.enterprise' version "${gradleEnterprisePluginVersion}"
+    id 'com.gradle.common-custom-user-data-gradle-plugin' version "${gradleCommonUserDataPluginVersion}"
+}
+
 ext.isCiServer = System.getenv().containsKey("CI")
 ext.buildCacheUser = System.getenv("GRADLE_BUILDCACHE_USER")
 ext.buildCachePsw = System.getenv("GRADLE_BUILDCACHE_PSW")
+ext.gradleEnterpriseAccessKey = System.getenv("GRADLE_ENTERPRISE_ACCESS_KEY")
 ext.githubPackageRegistryUser = System.getenv("GH_PACKAGE_REGISTRY_USER")
 ext.githubPackageRegistryPassword = System.getenv("GH_PACKAGE_REGISTRY_TOKEN")
 
@@ -16,6 +22,21 @@ buildCache {
         credentials {
             username = buildCacheUser
             password = buildCachePsw
+        }
+    }
+}
+
+if (isCiServer && gradleEnterpriseAccessKey != null) {
+    gradleEnterprise {
+        server = 'https://develocity.apereo.org/'
+        allowUntrustedServer = false
+        // accessKey = gradleEnterpriseAccessKey
+        buildScan {
+            publishAlways()
+            capture {
+                taskInputFiles = true
+            }
+            uploadInBackground = false
         }
     }
 }
