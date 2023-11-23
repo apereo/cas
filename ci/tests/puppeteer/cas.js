@@ -818,15 +818,17 @@ exports.goto = async (page, url, retryCount = 5) => {
     return response;
 };
 
-exports.gotoLogin = async(page, service = undefined, port = 8443) => {
-    const url = `https://localhost:${port}/cas/login` + (service === undefined ? "" : `?service=${service}`);
+exports.gotoLogin = async(page, service = undefined, port = 8443, renew = undefined) => {
+    let queryString = (service === undefined ? "" : `service=${service}&`);
+    queryString += (renew === undefined ? "" : `renew=true&`);
+    let url = `https://localhost:${port}/cas/login?${queryString}`;
     return await this.goto(page, url);
 };
 
 exports.gotoLogout = async(page, service = undefined, port = 8443) => {
     const url = `https://localhost:${port}/cas/logout` + (service === undefined ? "" : `?service=${service}`);
     return await this.goto(page, url);
-}
+};
 
 exports.parseXML = async(xml, options = {}) => {
     let parsedXML = undefined;

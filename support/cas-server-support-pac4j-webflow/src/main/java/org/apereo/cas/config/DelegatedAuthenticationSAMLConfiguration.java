@@ -53,7 +53,7 @@ public class DelegatedAuthenticationSAMLConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "delegatedSaml2IdPResponseCustomizer")
         public SamlIdPResponseCustomizer delegatedSaml2IdPResponseCustomizer(
-            @Qualifier("delegatedIdentityProviders")
+            @Qualifier(DelegatedIdentityProviders.BEAN_NAME)
             final DelegatedIdentityProviders identityProviders) {
             return new DelegatedAuthenticationSamlIdPResponseCustomizer(identityProviders);
         }

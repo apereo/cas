@@ -93,7 +93,7 @@ public class SamlIdentityProviderDiscoveryConfiguration {
         @Qualifier("samlIdentityProviderEntityParser")
         final BeanContainer<SamlIdentityProviderEntityParser> samlIdentityProviderEntityParser,
         final CasConfigurationProperties casProperties,
-        @Qualifier("delegatedIdentityProviders")
+        @Qualifier(DelegatedIdentityProviders.BEAN_NAME)
         final DelegatedIdentityProviders identityProviders,
         @Qualifier(ArgumentExtractor.BEAN_NAME)
         final ArgumentExtractor argumentExtractor) {
@@ -122,7 +122,7 @@ public class SamlIdentityProviderDiscoveryConfiguration {
     @ConditionalOnMissingBean(name = "samlIdentityProviderEntityParser")
     public BeanContainer<SamlIdentityProviderEntityParser> samlIdentityProviderEntityParser(
         final CasConfigurationProperties casProperties,
-        @Qualifier("delegatedIdentityProviders")
+        @Qualifier(DelegatedIdentityProviders.BEAN_NAME)
         final DelegatedIdentityProviders identityProviders) {
         val parsers = new ArrayList<SamlIdentityProviderEntityParser>();
         val resource = casProperties.getAuthn().getPac4j().getSamlDiscovery().getResource();

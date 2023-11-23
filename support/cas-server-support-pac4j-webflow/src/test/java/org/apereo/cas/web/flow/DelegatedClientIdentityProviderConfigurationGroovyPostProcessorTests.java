@@ -33,7 +33,7 @@ class DelegatedClientIdentityProviderConfigurationGroovyPostProcessorTests {
     private DelegatedClientIdentityProviderConfigurationPostProcessor delegatedClientIdentityProviderConfigurationPostProcessor;
 
     @Autowired
-    @Qualifier("delegatedIdentityProviders")
+    @Qualifier(DelegatedIdentityProviders.BEAN_NAME)
     private DelegatedIdentityProviders identityProviders;
 
     @Test

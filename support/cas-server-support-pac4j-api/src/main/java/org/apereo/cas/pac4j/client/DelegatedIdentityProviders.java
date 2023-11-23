@@ -11,6 +11,12 @@ import java.util.Optional;
  * @since 7.0.0
  */
 public interface DelegatedIdentityProviders {
+
+    /**
+     * Default bean name.
+     */
+    String BEAN_NAME = "delegatedIdentityProviders";
+
     /**
      * Find all clients list.
      *
