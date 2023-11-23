@@ -26,8 +26,9 @@ public interface TokenTicketBuilder {
      * @param serviceTicketId the ticket id
      * @param service         the service
      * @return the token identifier
+     * @throws Exception the exception
      */
-    String build(String serviceTicketId, WebApplicationService service);
+    String build(String serviceTicketId, WebApplicationService service) throws Exception;
 
     /**
      * Build token for a ticket-granting ticket.
@@ -35,8 +36,9 @@ public interface TokenTicketBuilder {
      * @param ticketGrantingTicket the ticket granting ticket
      * @param claims               the claims
      * @return the string
+     * @throws Exception the exception
      */
-    default String build(final TicketGrantingTicket ticketGrantingTicket, final Map<String, List<Object>> claims) {
+    default String build(final TicketGrantingTicket ticketGrantingTicket, final Map<String, List<Object>> claims) throws Exception {
         return build(ticketGrantingTicket.getAuthentication(), null, ticketGrantingTicket.getId(), claims);
     }
 
@@ -46,8 +48,9 @@ public interface TokenTicketBuilder {
      *
      * @param authentication the authentication
      * @return the string
+     * @throws Exception the exception
      */
-    default String build(final Authentication authentication) {
+    default String build(final Authentication authentication) throws Exception {
         return build(authentication, null);
     }
 
@@ -57,8 +60,9 @@ public interface TokenTicketBuilder {
      * @param authentication    the authentication
      * @param registeredService the registered service
      * @return the string
+     * @throws Exception the exception
      */
-    default String build(final Authentication authentication, final RegisteredService registeredService) {
+    default String build(final Authentication authentication, final RegisteredService registeredService) throws Exception {
         return build(authentication, registeredService, UUID.randomUUID().toString(), Map.of());
     }
 
@@ -71,9 +75,10 @@ public interface TokenTicketBuilder {
      * @param jwtIdentifier     the jwt identifier
      * @param claims            the claims
      * @return the token
+     * @throws Exception the exception
      */
     String build(Authentication authentication,
                  RegisteredService registeredService,
                  String jwtIdentifier,
-                 Map<String, List<Object>> claims);
+                 Map<String, List<Object>> claims) throws Exception;
 }

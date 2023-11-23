@@ -3,16 +3,12 @@ package org.apereo.cas.token;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.token.cipher.RegisteredServiceJwtTicketCipherExecutor;
 import org.apereo.cas.util.EncodingUtils;
-
 import com.nimbusds.jwt.JWTClaimsSet;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
-
-import java.text.ParseException;
 import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -26,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class JwtTokenTicketBuilderWithoutEncryptionTests extends BaseJwtTokenTicketBuilderTests {
 
     @Test
-    void verifyJwtForServiceTicket() throws ParseException {
+    void verifyJwtForServiceTicket() throws Throwable {
         val jwt = tokenTicketBuilder.build("ST-123456", CoreAuthenticationTestUtils.getWebApplicationService());
         assertNotNull(jwt);
         val result = tokenCipherExecutor.decode(jwt);

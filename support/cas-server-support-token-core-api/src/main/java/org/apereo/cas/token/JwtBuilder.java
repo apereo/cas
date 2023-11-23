@@ -149,8 +149,9 @@ public class JwtBuilder {
      *
      * @param payload the payload
      * @return the jwt
+     * @throws Exception the exception
      */
-    public String build(final JwtRequest payload) {
+    public String build(final JwtRequest payload) throws Exception {
         val serviceAudience = payload.getServiceAudience();
         Objects.requireNonNull(payload.getIssuer(), "Issuer cannot be undefined");
         val claims = new JWTClaimsSet.Builder()
@@ -173,8 +174,8 @@ public class JwtBuilder {
                 claims.claim(entry.getKey(), claimValue);
             });
         claims.expirationTime(payload.getValidUntilDate());
-        val claimsSet = claims.build();
-
+        val claimsSet = finalizeClaims(claims.build(), payload);
+        
         LOGGER.trace("Locating service [{}] in service registry", serviceAudience);
         val registeredService = payload.getRegisteredService()
             .orElseGet(() -> serviceAudience.stream()
@@ -220,6 +221,10 @@ public class JwtBuilder {
         return servicesManager.findServiceBy(service);
     }
 
+    protected JWTClaimsSet finalizeClaims(final JWTClaimsSet claimsSet, final JwtRequest payload) throws Exception {
+        return claimsSet;
+    }
+    
     /**
      * The type Jwt request that allows the builder to create JWTs.
      */

@@ -73,7 +73,7 @@ public abstract class BaseAuthenticationRiskNotifier implements AuthenticationRi
     }
 
     @Override
-    public String createRiskToken() {
+    public String createRiskToken() throws Exception {
         val jwtBuilder = new JwtBuilder(riskVerificationCipherExecutor, servicesManager, casProperties);
         val expiration = Beans.newDuration(casProperties.getAuthn().getAdaptive()
             .getRisk().getResponse().getRiskVerificationTokenExpiration());
