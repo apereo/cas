@@ -62,6 +62,7 @@ public class X509CertificateCredentialsNonInteractiveAction extends AbstractNonI
             return null;
         }
         LOGGER.debug("[{}] Certificate(s) found in request: [{}]", certificates.length, Arrays.toString(certificates));
+        context.getFlowScope().put(X509Certificate.class.getName(), certificates);
         return new X509CertificateCredential(certificates);
     }
 

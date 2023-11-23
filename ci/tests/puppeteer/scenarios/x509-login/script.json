@@ -10,7 +10,7 @@
     "--server.ssl.key-store-type=PKCS12",
     "--server.ssl.client-auth=want",
 
-    "--logging.level.org.apereo.cas=debug",
+    "--logging.level.org.apereo.cas=info",
 
     "--cas.authn.attribute-repository.stub.attributes.uid=casuser",
     "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
