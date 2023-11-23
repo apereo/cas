@@ -83,6 +83,12 @@ report contains enough diagnostics data to expedite reviews and feedback:
 - Include an overlay project that can duplicate the issue in practice.
 - If possible, prepare and share unit/integration tests to recreate the issue.
 
+<div class="alert alert-warning">:warning: <strong>Remember</strong><p>Make sure your reports present
+automated, isolated and reproducible tests that demonstrate the security issue. This is a <b>MUST</b>. Anecdotal descriptive
+evidence that asks for manual verification steps, i.e. <i>"go here, click this, type that, watch this, run that"</i>, etc are often
+less than ideal and make it very difficult and sluggish for the project to justify time and resource to chase after fairy tales. If you are 
+unable to reproduce the issue in an automated and isolated way, chances are the issue is either environment specific or a PEBCAK.</p></div>
+
 Before posting a possible security issue, please make sure the affected CAS release line
 is still [under maintenance](/cas/developer/Maintenance-Policy.html). Releases that are
 considered EOL will not receive further updates and/or attention from designated project members.
