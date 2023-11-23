@@ -18,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -82,7 +83,7 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
      */
     protected Event grantServiceTicket(final RequestContext context) throws Throwable {
         val ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
-        val credential = getCredentialFromContext(context);
+        val credentials = getCredentialFromContext(context);
 
         try {
             val service = WebUtils.getService(context);
@@ -103,7 +104,7 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
                 accessResult.throwExceptionIfNeeded();
             }
 
-            val principal = getActivePrincipal(credential, service, existingAuthn);
+            val principal = getActivePrincipal(credentials, service, existingAuthn);
             LOGGER.debug("Primary principal for this authentication session to receive a service ticket is [{}]", principal);
 
             if (existingAuthn != null && !existingAuthn.getPrincipal().equals(principal)) {
@@ -142,7 +143,7 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
         return false;
     }
 
-    private Principal getActivePrincipal(final Credential credential,
+    private Principal getActivePrincipal(final List<Credential> credential,
                                          final WebApplicationService service,
                                          final Authentication authentication) throws Throwable {
         if (credential != null) {
