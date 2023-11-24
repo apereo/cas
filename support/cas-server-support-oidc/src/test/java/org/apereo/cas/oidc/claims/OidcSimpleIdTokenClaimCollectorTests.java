@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,7 +22,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("OIDC")
-@TestPropertySource(properties = "cas.authn.attribute-repository.attribute-definition-store.json.location=classpath:/oidc-definitions.json")
+@TestPropertySource(properties = {
+    "cas.authn.attribute-repository.attribute-definition-store.json.location=classpath:/oidc-definitions.json",
+    "cas.authn.oidc.identity-assurance.verification-source.location=classpath:assurance/id-1.json"
+})
 class OidcSimpleIdTokenClaimCollectorTests extends AbstractOidcTests {
     @Autowired
     @Qualifier(OidcIdTokenClaimCollector.BEAN_NAME)
@@ -87,4 +91,25 @@ class OidcSimpleIdTokenClaimCollectorTests extends AbstractOidcTests {
         assertEquals("casuser", claims.getStringClaimValue("cn"));
     }
 
+    @Test
+    void verifyAssurance() throws Throwable {
+        val originalClaims = new JwtClaims();
+        oidcIdTokenClaimCollector.collect(originalClaims, "assurance", List.of("value1", "value2"));
+        oidcIdTokenClaimCollector.collect(originalClaims, "homeCountry", List.of("USA", "UK"));
+        oidcIdTokenClaimCollector.collect(originalClaims, "mail", List.of("cas@apereo.org"));
+
+        assertFalse(originalClaims.hasClaim("assurance"));
+        assertFalse(originalClaims.hasClaim("home-country"));
+        assertFalse(originalClaims.hasClaim("homeCountry"));
+        assertTrue(originalClaims.hasClaim("mail"));
+
+        val verifiedClaims = originalClaims.getClaimValue("verified_claims", Map.class);
+        assertTrue(verifiedClaims.containsKey("verification"));
+        assertTrue(verifiedClaims.containsKey("claims"));
+
+        val claims = (Map) verifiedClaims.get("claims");
+        assertTrue(claims.containsKey("assurance"));
+        assertTrue(claims.containsKey("home-country"));
+        assertFalse(claims.containsKey("mail"));
+    }
 }

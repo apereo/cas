@@ -15,5 +15,17 @@
     "key": "organization",
     "name": "org.apereo.cas.entity",
     "structured": true
+  },
+  "assurance": {
+    "@class": "org.apereo.cas.oidc.claims.OidcAttributeDefinition",
+    "key": "assurance",
+    "name": "assurance",
+    "trustFramework": "de_aml2"
+  },
+  "homeCountry": {
+    "@class": "org.apereo.cas.oidc.claims.OidcAttributeDefinition",
+    "key": "homeCountry",
+    "name": "home-country",
+    "trustFramework": "de_aml2"
   }
 }

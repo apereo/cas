@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.assurance;
 
 import org.apereo.cas.oidc.assurance.entity.Verification;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * This is {@link AssuranceVerificationSource}.
@@ -23,6 +24,16 @@ public interface AssuranceVerificationSource {
      * @return the list
      */
     List<Verification> load();
+
+    /**
+     * Find verification by trust framework.
+     *
+     * @param trustFramework the trust framework
+     * @return the verification
+     */
+    default Optional<Verification> findByTrustFramework(final String trustFramework) {
+        return Optional.empty();
+    }
 
     /**
      * Empty assurance verification source.

@@ -9,6 +9,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.hjson.JsonValue;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.Resource;
@@ -16,6 +17,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * This is {@link AssuranceVerificationJsonSource}.
@@ -45,6 +47,13 @@ public class AssuranceVerificationJsonSource implements AssuranceVerificationSou
     @Override
     public List<Verification> load() {
         return List.copyOf(verifications);
+    }
+
+    @Override
+    public Optional<Verification> findByTrustFramework(final String trustFramework) {
+        return verifications.stream()
+            .filter(verification -> StringUtils.equalsIgnoreCase(trustFramework, verification.getTrustFramework()))
+            .findFirst();
     }
 
     @Override
