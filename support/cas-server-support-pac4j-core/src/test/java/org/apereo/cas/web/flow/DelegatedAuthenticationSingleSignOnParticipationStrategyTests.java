@@ -25,7 +25,6 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.support.WebUtils;
-
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -35,11 +34,9 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -56,7 +53,7 @@ class DelegatedAuthenticationSingleSignOnParticipationStrategyTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
-    private  SingleSignOnParticipationStrategy getSingleSignOnStrategy(
+    private SingleSignOnParticipationStrategy getSingleSignOnStrategy(
         final RegisteredService svc,
         final TicketRegistry ticketRegistry) {
 
@@ -171,36 +168,21 @@ class DelegatedAuthenticationSingleSignOnParticipationStrategyTests {
 
     @Test
     public void verifyTgtIsExpired() throws Exception {
-        val appCtx = new StaticApplicationContext();
-        appCtx.refresh();
-
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-
+        val context = MockRequestContext.create(applicationContext);
         val svc = RegisteredServiceTestUtils.getRegisteredService("serviceid1", Map.of());
-        val policy = new DefaultRegisteredServiceAccessStrategy();
-        policy.setDelegatedAuthenticationPolicy(
-            new DefaultRegisteredServiceDelegatedAuthenticationPolicy()
-                .setExclusive(true)
-                .setAllowedProviders(List.of("CAS")));
-        svc.setAccessStrategy(policy);
-
-        val ticketRegistry = new DefaultTicketRegistry();
+        val ticketRegistry = buildTicketRegistryInstance();
         val strategy = getSingleSignOnStrategy(svc, ticketRegistry);
 
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService("serviceid1"));
         val authentication = CoreAuthenticationTestUtils.getAuthentication(Map.of());
-
         val tgt = new MockTicketGrantingTicket(authentication);
         tgt.markTicketExpired();
         ticketRegistry.addTicketInternal(tgt);
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
 
         val ssoRequest = SingleSignOnParticipationRequest.builder()
-            .httpServletRequest(request)
-            .httpServletResponse(response)
+            .httpServletRequest(context.getHttpServletRequest())
+            .httpServletResponse(context.getHttpServletResponse())
             .requestContext(context)
             .build();
         assertTrue(strategy.supports(ssoRequest));
