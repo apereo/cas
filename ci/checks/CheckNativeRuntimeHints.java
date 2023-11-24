@@ -90,6 +90,26 @@ public class CheckNativeRuntimeHints {
                 }
             });
 
+        Files.walk(Paths.get(arg))
+            .filter(Files::isRegularFile)
+            .filter(file -> file.toFile().getAbsolutePath().matches(".*src/main/java/.+RuntimeHints\\.java"))
+            .forEach(file -> {
+                var projectPath = file.getParent().getParent().getParent().getParent().getParent().getParent().toFile().getPath();
+                var factoriesFile = new File(projectPath, "resources/META-INF/spring/aot.factories");
+                var runtimeHint = file.toFile().getName().replace(".java", "");
+                if (!factoriesFile.exists()) {
+                    print("aot.factories file %s does not exist. It must contain the following:", factoriesFile);
+                    print("org.springframework.aot.hint.RuntimeHintsRegistrar=org.apereo.cas.nativex.%s"
+                        .formatted(runtimeHint));
+                    count.incrementAndGet();
+                }
+                var factories = readFile(factoriesFile.toPath());
+                if (!factories.contains(runtimeHint)) {
+                    print("aot.factories file %s does not reference %s", factoriesFile, runtimeHint);
+                    count.incrementAndGet();
+                }
+            });
+            
         if (count.intValue() > 0) {
             System.exit(1);
         }

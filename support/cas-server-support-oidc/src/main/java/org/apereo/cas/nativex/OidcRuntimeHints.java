@@ -2,6 +2,7 @@ package org.apereo.cas.nativex;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.oidc.claims.OidcRegisteredServiceAttributeReleasePolicy;
+import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.oidc.ticket.OidcDefaultPushedAuthorizationRequest;
 import org.apereo.cas.oidc.token.OidcJwtAccessTokenCipherExecutor;
 import org.apereo.cas.oidc.web.response.OidcJwtResponseModeCipherExecutor;
@@ -24,6 +25,7 @@ public class OidcRuntimeHints implements CasRuntimeHintsRegistrar {
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
         registerSerializationHints(hints, List.of(OidcRegisteredService.class, OidcDefaultPushedAuthorizationRequest.class));
         registerReflectionHints(hints, List.of(
+            OidcJsonWebKeystoreGeneratorService.class,
             OidcRegisteredService.class,
             OidcJwtAccessTokenCipherExecutor.class,
             OidcJwtResponseModeCipherExecutor.class
