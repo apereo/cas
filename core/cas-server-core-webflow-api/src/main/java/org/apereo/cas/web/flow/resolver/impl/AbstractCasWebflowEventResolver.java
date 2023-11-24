@@ -7,6 +7,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.CasWebflowCredentialProvider;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.AccessLevel;
@@ -87,29 +88,16 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
         return newEvent(id, new LocalAttributeMap<>());
     }
 
-    /**
-     * New event based on the given id.
-     *
-     * @param id         the id
-     * @param attributes the attributes
-     * @return the event
-     */
     protected Event newEvent(final String id, final AttributeMap attributes) {
         return new Event(this, id, attributes);
     }
 
     protected List<Credential> getCredentialFromContext(final RequestContext context) {
-        return CollectionUtils.wrapList(WebUtils.getCredential(context));
+        val applicationContext = context.getActiveFlow().getApplicationContext();
+        val credentialProvider = applicationContext.getBean(CasWebflowCredentialProvider.BEAN_NAME, CasWebflowCredentialProvider.class);
+        return credentialProvider.extract(context);
     }
 
-    /**
-     * Grant ticket granting ticket.
-     *
-     * @param context                     the context
-     * @param authenticationResultBuilder the authentication result builder
-     * @param service                     the service
-     * @return the event
-     */
     protected Event grantTicketGrantingTicketToAuthenticationResult(final RequestContext context,
                                                                     final AuthenticationResultBuilder authenticationResultBuilder,
                                                                     final Service service) {

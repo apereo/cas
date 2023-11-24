@@ -61,7 +61,7 @@ public interface AuthenticationSystemSupport {
      * @return authentication result builder used to accumulate authentication transactions in this authentication event.
      * @since 5.0.0
      */
-    AuthenticationResultBuilder establishAuthenticationContextFromInitial(Authentication authentication, Credential credential);
+    AuthenticationResultBuilder establishAuthenticationContextFromInitial(Authentication authentication, Credential... credential);
 
     /**
      * Establish authentication context from initial authentication result builder.

@@ -103,6 +103,10 @@ while (( "$#" )); do
         tests="--tests \"$2\" "
         shift 2
         ;;
+    --no-retry)
+        flags+=" -DskipTestRetry=true "
+        shift
+        ;;
     --ignore-failures)
         flags+=" -DignoreTestFailures=true "
         shift

@@ -26,6 +26,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.FlowExecutionExceptionResolver;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.CasWebflowCredentialProvider;
 import org.apereo.cas.web.flow.GatewayServicesManagementCheckAction;
 import org.apereo.cas.web.flow.GenerateServiceTicketAction;
 import org.apereo.cas.web.flow.PopulateSpringSecurityContextAction;
@@ -455,13 +456,15 @@ public class CasSupportActionsConfiguration {
             final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
             @Qualifier(PrincipalElectionStrategy.BEAN_NAME)
             final PrincipalElectionStrategy principalElectionStrategy,
-            final List<ServiceTicketGeneratorAuthority> serviceTicketAuthorities) {
+            final List<ServiceTicketGeneratorAuthority> serviceTicketAuthorities,
+            @Qualifier(CasWebflowCredentialProvider.BEAN_NAME)
+            final CasWebflowCredentialProvider casWebflowCredentialProvider) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
                 .withAction(() -> new GenerateServiceTicketAction(authenticationSystemSupport, centralAuthenticationService,
                     ticketRegistrySupport, authenticationRequestServiceSelectionStrategies,
-                    servicesManager, principalElectionStrategy, serviceTicketAuthorities))
+                    servicesManager, principalElectionStrategy, serviceTicketAuthorities, casWebflowCredentialProvider))
                 .withId(CasWebflowConstants.ACTION_ID_GENERATE_SERVICE_TICKET)
                 .build()
                 .get();
@@ -630,12 +633,15 @@ public class CasSupportActionsConfiguration {
             final TicketRegistrySupport ticketRegistrySupport,
             @Qualifier(PrincipalElectionStrategy.BEAN_NAME)
             final PrincipalElectionStrategy principalElectionStrategy,
-            final List<ServiceTicketGeneratorAuthority> serviceTicketAuthorities) {
+            final List<ServiceTicketGeneratorAuthority> serviceTicketAuthorities,
+            @Qualifier(CasWebflowCredentialProvider.BEAN_NAME)
+            final CasWebflowCredentialProvider casWebflowCredentialProvider) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
                 .withAction(() -> new ServiceWarningAction(centralAuthenticationService, authenticationSystemSupport,
-                    ticketRegistrySupport, warnCookieGenerator, principalElectionStrategy, serviceTicketAuthorities))
+                    ticketRegistrySupport, warnCookieGenerator, principalElectionStrategy, serviceTicketAuthorities,
+                    casWebflowCredentialProvider))
                 .withId(CasWebflowConstants.ACTION_ID_SERVICE_WARNING)
                 .build()
                 .get();

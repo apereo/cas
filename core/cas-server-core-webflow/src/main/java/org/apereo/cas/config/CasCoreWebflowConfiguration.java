@@ -36,6 +36,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.util.spring.boot.ConditionalOnMissingGraalVMNativeImage;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.CasWebflowCredentialProvider;
 import org.apereo.cas.web.flow.ChainingSingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.DefaultSingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
@@ -52,6 +53,7 @@ import org.apereo.cas.web.flow.authentication.CasWebflowExceptionConfigurer;
 import org.apereo.cas.web.flow.authentication.CasWebflowExceptionHandler;
 import org.apereo.cas.web.flow.authentication.DefaultCasWebflowAbstractTicketExceptionHandler;
 import org.apereo.cas.web.flow.authentication.DefaultCasWebflowAuthenticationExceptionHandler;
+import org.apereo.cas.web.flow.authentication.DefaultCasWebflowCredentialProvider;
 import org.apereo.cas.web.flow.authentication.DefaultCasWebflowExceptionCatalog;
 import org.apereo.cas.web.flow.authentication.GenericCasWebflowExceptionHandler;
 import org.apereo.cas.web.flow.authentication.GroovyCasWebflowAuthenticationExceptionHandler;
@@ -172,8 +174,11 @@ public class CasCoreWebflowConfiguration {
             @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
             @Qualifier(ArgumentExtractor.BEAN_NAME)
-            final ArgumentExtractor argumentExtractor) {
+            final ArgumentExtractor argumentExtractor,
+            @Qualifier(CasWebflowCredentialProvider.BEAN_NAME)
+            final CasWebflowCredentialProvider casWebflowCredentialProvider) {
             return CasWebflowEventResolutionConfigurationContext.builder()
+                .casWebflowCredentialProvider(casWebflowCredentialProvider)
                 .authenticationContextValidator(authenticationContextValidator)
                 .authenticationSystemSupport(authenticationSystemSupport)
                 .argumentExtractors(CollectionUtils.wrap(argumentExtractor))
@@ -463,6 +468,17 @@ public class CasCoreWebflowConfiguration {
             @Qualifier("requiredAuthenticationHandlersSingleSignOnParticipationStrategy")
             final SingleSignOnParticipationStrategy requiredAuthenticationHandlersSingleSignOnParticipationStrategy) {
             return chain -> chain.addStrategy(requiredAuthenticationHandlersSingleSignOnParticipationStrategy);
+        }
+    }
+
+    @Configuration(value = "CasCoreWebflowAuthenticationConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasCoreWebflowAuthenticationConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = CasWebflowCredentialProvider.BEAN_NAME)
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public CasWebflowCredentialProvider casWebflowCredentialProvider() {
+            return new DefaultCasWebflowCredentialProvider();
         }
     }
 

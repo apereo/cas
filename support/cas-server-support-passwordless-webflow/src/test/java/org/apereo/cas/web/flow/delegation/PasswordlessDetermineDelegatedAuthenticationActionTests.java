@@ -49,7 +49,9 @@ class PasswordlessDetermineDelegatedAuthenticationActionTests {
 
         @Test
         void verifyNoClients() throws Throwable {
-            val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
+            val flow = new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN);
+            flow.setApplicationContext(applicationContext);
+            val exec = new MockFlowExecutionContext(new MockFlowSession(flow));
             val context = MockRequestContext.create(applicationContext);
             context.setFlowExecutionContext(exec);
             val account = PasswordlessUserAccount.builder()
@@ -79,7 +81,9 @@ class PasswordlessDetermineDelegatedAuthenticationActionTests {
 
         @Test
         void verifyNoAcct() throws Throwable {
-            val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
+            val flow = new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN);
+            flow.setApplicationContext(applicationContext);
+            val exec = new MockFlowExecutionContext(new MockFlowSession(flow));
             val context = MockRequestContext.create(applicationContext);
             context.setFlowExecutionContext(exec);
             assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, determineDelegatedAuthenticationAction.execute(context).getId());
@@ -87,7 +91,9 @@ class PasswordlessDetermineDelegatedAuthenticationActionTests {
 
         @Test
         void verifyAction() throws Throwable {
-            val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
+            val flow = new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN);
+            flow.setApplicationContext(applicationContext);
+            val exec = new MockFlowExecutionContext(new MockFlowSession(flow));
             val context = MockRequestContext.create(applicationContext);
             context.setFlowExecutionContext(exec);
             val account = PasswordlessUserAccount.builder()
@@ -102,7 +108,9 @@ class PasswordlessDetermineDelegatedAuthenticationActionTests {
 
         @Test
         void verifyCantDetermineIdP() throws Throwable {
-            val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
+            val flow = new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN);
+            flow.setApplicationContext(applicationContext);
+            val exec = new MockFlowExecutionContext(new MockFlowSession(flow));
             val context = MockRequestContext.create(applicationContext);
             context.setFlowExecutionContext(exec);
             val account = PasswordlessUserAccount.builder()
@@ -118,7 +126,9 @@ class PasswordlessDetermineDelegatedAuthenticationActionTests {
 
         @Test
         void verifyActionByUser() throws Throwable {
-            val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
+            val flow = new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN);
+            flow.setApplicationContext(applicationContext);
+            val exec = new MockFlowExecutionContext(new MockFlowSession(flow));
             val context = MockRequestContext.create(applicationContext);
             context.setFlowExecutionContext(exec);
             val account = PasswordlessUserAccount.builder()
@@ -135,7 +145,9 @@ class PasswordlessDetermineDelegatedAuthenticationActionTests {
 
         @Test
         void verifyActionByUserDisallowed() throws Throwable {
-            val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
+            val flow = new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN);
+            flow.setApplicationContext(applicationContext);
+            val exec = new MockFlowExecutionContext(new MockFlowSession(flow));
             val context = MockRequestContext.create(applicationContext);
             context.setFlowExecutionContext(exec);
             val account = PasswordlessUserAccount.builder()
@@ -152,7 +164,9 @@ class PasswordlessDetermineDelegatedAuthenticationActionTests {
 
         @Test
         void verifyAuthInactive() throws Throwable {
-            val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
+            val flow = new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN);
+            flow.setApplicationContext(applicationContext);
+            val exec = new MockFlowExecutionContext(new MockFlowSession(flow));
             val context = MockRequestContext.create(applicationContext);
             context.setFlowExecutionContext(exec);
             val account = PasswordlessUserAccount.builder()
