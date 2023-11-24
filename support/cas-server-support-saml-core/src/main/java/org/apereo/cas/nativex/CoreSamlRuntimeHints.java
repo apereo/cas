@@ -6,6 +6,7 @@ import net.shibboleth.shared.component.DestructableComponent;
 import net.shibboleth.shared.component.InitializableComponent;
 import net.shibboleth.shared.resolver.Criterion;
 import net.shibboleth.shared.xml.impl.BasicParserPool;
+import org.apache.velocity.runtime.resource.ResourceManager;
 import org.apache.xerces.impl.dv.dtd.DTDDVFactoryImpl;
 import org.apache.xerces.impl.dv.xs.ExtendedSchemaDVFactoryImpl;
 import org.apache.xerces.impl.dv.xs.SchemaDVFactoryImpl;
@@ -57,6 +58,9 @@ public class CoreSamlRuntimeHints implements CasRuntimeHintsRegistrar {
             findSubclassesInPackage(Unmarshaller.class, "org.opensaml"));
         registerReflectionHint(hints,
             findSubclassesInPackage(Criterion.class, "org.opensaml"));
+        registerReflectionHint(hints,
+            findSubclassesInPackage(ResourceManager.class, "org.apache.velocity.runtime"));
+
         val list = List.of(
             DestructableComponent.class,
             InitializableComponent.class,

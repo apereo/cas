@@ -40,7 +40,7 @@ class ServiceAuthorizationCheckActionTests extends AbstractWebflowActionsTests {
 
     @Test
     void verifyNoServiceFound() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService("invalid-service-123"));
         assertThrows(UnauthorizedServiceException.class, () -> this.action.execute(context));
     }
@@ -54,7 +54,7 @@ class ServiceAuthorizationCheckActionTests extends AbstractWebflowActionsTests {
         svc22.setAccessStrategy(strategy);
         servicesManager.save(svc22);
 
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService("cas-access-disabled"));
         assertThrows(UnauthorizedServiceException.class, () -> this.action.execute(context));
         assertNotNull(WebUtils.getUnauthorizedRedirectUrlFromFlowScope(context));
@@ -71,7 +71,7 @@ class ServiceAuthorizationCheckActionTests extends AbstractWebflowActionsTests {
         svc23.setAccessStrategy(strategy23);
         servicesManager.save(svc23);
 
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService("cas-access-delegation"));
         assertDoesNotThrow(() -> this.action.execute(context));
         assertFalse(WebUtils.isCasLoginFormViewable(context));

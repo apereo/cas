@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.execution.RequestContextHolder;
 
@@ -29,11 +30,14 @@ class DelegatedClientIdentityProviderConfigurationPostProcessorTests {
     @Qualifier("delegatedClientIdentityProviderConfigurationPostProcessor")
     private DelegatedClientIdentityProviderConfigurationPostProcessor delegatedClientIdentityProviderConfigurationPostProcessor;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @Test
     void verifyOperation() throws Throwable {
         assertNotNull(delegatedClientIdentityProviderConfigurationPostProcessor);
         assertDoesNotThrow(() -> {
-            val context = MockRequestContext.create();
+            val context = MockRequestContext.create(applicationContext);
             RequestContextHolder.setRequestContext(context);
             ExternalContextHolder.setExternalContext(context.getExternalContext());
             delegatedClientIdentityProviderConfigurationPostProcessor.process(context, Set.of());

@@ -76,7 +76,7 @@ class DelegatedClientAuthenticationActionTests {
 
         @Test
         void verifyCredentialSelectionStart() throws Throwable {
-            val context = MockRequestContext.create();
+            val context = MockRequestContext.create(applicationContext);
             context.getHttpServletRequest().addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome");
             context.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "FacebookClient");
 
@@ -94,8 +94,7 @@ class DelegatedClientAuthenticationActionTests {
 
         @Test
         void verifyCredentialSelectionFinish() throws Throwable {
-
-            val context = MockRequestContext.create();
+            val context = MockRequestContext.create(applicationContext);
             context.getHttpServletRequest().addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome");
             context.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "FacebookClient");
 

@@ -48,13 +48,13 @@ class RiskAwareAuthenticationWebflowEventResolverTests extends BaseWebflowConfig
     @Test
     void verifyNoResolution() throws Throwable {
         assertNotNull(riskAwareAuthenticationWebflowEventResolver);
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         assertNull(riskAwareAuthenticationWebflowEventResolver.resolve(context));
     }
 
     @Test
     void verifyResolution() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
 
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), context);

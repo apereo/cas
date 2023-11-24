@@ -67,8 +67,8 @@ class VerifyPasswordlessAccountAuthenticationActionTests extends BasePasswordles
         assertEquals(CasWebflowConstants.TRANSITION_ID_PROMPT, verifyPasswordlessAccountAuthenticationAction.execute(context).getId());
     }
 
-    private static RequestContext getRequestContext(final String username) throws Exception {
-        val context = MockRequestContext.create();
+    private RequestContext getRequestContext(final String username) throws Exception {
+        val context = MockRequestContext.create(applicationContext);
         context.setParameter(PasswordlessRequestParser.PARAMETER_USERNAME, username);
         return context;
     }

@@ -111,6 +111,7 @@ import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
+import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.serialization.JacksonObjectMapperCustomizer;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.apereo.cas.util.spring.beans.BeanCondition;
@@ -248,7 +249,7 @@ public class OidcConfiguration {
                 .when(CONDITION_WEBFINGER.given(applicationContext.getEnvironment()))
                 .supply(() -> {
                     val userInfo = casProperties.getAuthn().getOidc().getWebfinger().getUserInfo();
-                    if (userInfo.getGroovy().getLocation() != null) {
+                    if (userInfo.getGroovy().getLocation() != null && CasRuntimeHintsRegistrar.notInNativeImage()) {
                         return new OidcGroovyWebFingerUserInfoRepository(userInfo.getGroovy().getLocation());
                     }
                     if (StringUtils.isNotBlank(userInfo.getRest().getUrl())) {

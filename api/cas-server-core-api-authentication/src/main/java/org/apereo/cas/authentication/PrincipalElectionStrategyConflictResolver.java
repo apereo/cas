@@ -17,6 +17,11 @@ import java.util.Map;
 public interface PrincipalElectionStrategyConflictResolver {
 
     /**
+     * Default bean name.
+     */
+    String BEAN_NAME = "defaultPrincipalElectionStrategyConflictResolver";
+
+    /**
      * Pick the last principal in the chain of principals resolved.
      *
      * @return the principal election strategy conflict resolver

@@ -6,8 +6,10 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowCredentialProvider;
+import org.apereo.cas.web.flow.authentication.DefaultCasWebflowCredentialProvider;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.AccessLevel;
@@ -94,7 +96,8 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
 
     protected List<Credential> getCredentialFromContext(final RequestContext context) {
         val applicationContext = context.getActiveFlow().getApplicationContext();
-        val credentialProvider = applicationContext.getBean(CasWebflowCredentialProvider.BEAN_NAME, CasWebflowCredentialProvider.class);
+        val credentialProvider = ApplicationContextProvider.getBean(applicationContext, CasWebflowCredentialProvider.BEAN_NAME, CasWebflowCredentialProvider.class)
+            .orElseGet(DefaultCasWebflowCredentialProvider::new);
         return credentialProvider.extract(context);
     }
 

@@ -39,7 +39,7 @@ class CheckConsentRequiredActionTests extends BaseConsentActionTests {
 
     @Test
     void verifyNoConsentWithoutServiceOrAuthn() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
 
         assertNull(checkConsentRequiredAction.execute(context));
 
@@ -53,7 +53,7 @@ class CheckConsentRequiredActionTests extends BaseConsentActionTests {
 
     @Test
     void verifyOperationGlobalConsentActive() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
 
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
 
@@ -77,7 +77,7 @@ class CheckConsentRequiredActionTests extends BaseConsentActionTests {
 
     @Test
     void verifyOperationServiceEnabled() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
         val registeredService = getRegisteredServiceWithConsentStatus(TriStateBoolean.TRUE);
         WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService(registeredService.getServiceId()));

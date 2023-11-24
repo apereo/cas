@@ -113,10 +113,11 @@ public class CasCoreAuthenticationPrincipalConfiguration {
             return CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
         }
 
-        @ConditionalOnMissingBean(name = "defaultPrincipalElectionStrategyConflictResolver")
+        @ConditionalOnMissingBean(name = PrincipalElectionStrategyConflictResolver.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public PrincipalElectionStrategyConflictResolver defaultPrincipalElectionStrategyConflictResolver(final CasConfigurationProperties casProperties) {
+        public PrincipalElectionStrategyConflictResolver defaultPrincipalElectionStrategyConflictResolver(
+            final CasConfigurationProperties casProperties) {
             return CoreAuthenticationUtils.newPrincipalElectionStrategyConflictResolver(casProperties.getPersonDirectory());
         }
 
@@ -124,7 +125,7 @@ public class CasCoreAuthenticationPrincipalConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PrincipalElectionStrategyConfigurer defaultPrincipalElectionStrategyConfigurer(
-            @Qualifier("defaultPrincipalElectionStrategyConflictResolver")
+            @Qualifier(PrincipalElectionStrategyConflictResolver.BEAN_NAME)
             final PrincipalElectionStrategyConflictResolver defaultPrincipalElectionStrategyConflictResolver,
             @Qualifier("principalElectionAttributeMerger") final IAttributeMerger attributeMerger,
             final CasConfigurationProperties casProperties,

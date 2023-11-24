@@ -114,8 +114,8 @@ class MultifactorAuthenticationSetTrustActionTests extends AbstractMultifactorAu
             casProperties.getAuthn().getMfa().getTrusted().getCore().getAuthenticationContextAttribute()));
     }
 
-    private static MockRequestContext getMockRequestContext() throws Throwable {
-        val context = MockRequestContext.create();
+    private MockRequestContext getMockRequestContext() throws Throwable {
+        val context = MockRequestContext.create(applicationContext);
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
         val registeredService = RegisteredServiceTestUtils.getRegisteredService("sample-service", Collections.emptyMap());
         WebUtils.putRegisteredService(context, registeredService);
