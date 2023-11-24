@@ -44,7 +44,7 @@ class RankedMultifactorAuthenticationProviderWebflowEventResolverTests extends B
 
     @Test
     void verifyWithNoTicketOrService() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, resolver.resolve(context).iterator().next().getId());
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
@@ -61,7 +61,7 @@ class RankedMultifactorAuthenticationProviderWebflowEventResolverTests extends B
 
     @Test
     void verifyAuthnHandledWithRenew() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         context.setParameter(CasProtocolConstants.PARAMETER_RENEW, "true");
 
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
@@ -80,7 +80,7 @@ class RankedMultifactorAuthenticationProviderWebflowEventResolverTests extends B
 
     @Test
     void verifyAuthnResolvesEvent() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
 
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
 
@@ -98,7 +98,7 @@ class RankedMultifactorAuthenticationProviderWebflowEventResolverTests extends B
 
     @Test
     void verifyAuthnResolvesMfaEvent() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         context.setParameter(casProperties.getAuthn().getMfa().getTriggers().getHttp().getRequestParameter(), TestMultifactorAuthenticationProvider.ID);
 
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
@@ -123,7 +123,7 @@ class RankedMultifactorAuthenticationProviderWebflowEventResolverTests extends B
 
     @Test
     void verifyAuthnResolvesMfaContextValidatedNoForceExecution() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         context.setParameter(casProperties.getAuthn().getMfa().getTriggers().getHttp().getRequestParameter(), TestMultifactorAuthenticationProvider.ID);
 
         val tgt = new MockTicketGrantingTicket("casuser", Map.of(),
@@ -146,7 +146,7 @@ class RankedMultifactorAuthenticationProviderWebflowEventResolverTests extends B
 
     @Test
     void verifyAuthnResolvesMfaContextValidated() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         context.setParameter(casProperties.getAuthn().getMfa().getTriggers().getHttp().getRequestParameter(), TestMultifactorAuthenticationProvider.ID);
 
         val tgt = new MockTicketGrantingTicket("casuser", Map.of(),

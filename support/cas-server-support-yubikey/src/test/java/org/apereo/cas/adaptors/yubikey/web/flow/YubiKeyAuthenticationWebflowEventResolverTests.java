@@ -41,9 +41,9 @@ class YubiKeyAuthenticationWebflowEventResolverTests extends BaseCasWebflowMulti
 
     @Test
     void verifyOperationFails() throws Throwable {
-        val context = MockRequestContext.create();
-        WebUtils.putCredential(context,
-            RegisteredServiceTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "123456"));
+        val context = MockRequestContext.create(applicationContext);
+        val credential = RegisteredServiceTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "123456");
+        WebUtils.putCredential(context, credential);
         val event = yubikeyAuthenticationWebflowEventResolver.resolveSingle(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
         assertEquals(HttpStatus.UNAUTHORIZED.value(), context.getHttpServletResponse().getStatus());

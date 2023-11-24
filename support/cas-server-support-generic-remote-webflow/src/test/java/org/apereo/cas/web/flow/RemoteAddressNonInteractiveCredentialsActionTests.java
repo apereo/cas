@@ -33,7 +33,7 @@ class RemoteAddressNonInteractiveCredentialsActionTests {
 
     @Test
     void verifyOperation() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         assertNotNull(remoteAddressCheck.execute(context));
     }
 

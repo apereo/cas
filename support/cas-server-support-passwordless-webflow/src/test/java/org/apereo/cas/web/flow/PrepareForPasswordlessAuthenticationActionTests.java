@@ -27,7 +27,9 @@ class PrepareForPasswordlessAuthenticationActionTests extends BasePasswordlessAu
 
     @Test
     void verifyAction() throws Throwable {
-        val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
+        val flow = new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN);
+        flow.setApplicationContext(applicationContext);
+        val exec = new MockFlowExecutionContext(new MockFlowSession(flow));
         val context = MockRequestContext.create(applicationContext);
         context.setFlowExecutionContext(exec);
         assertEquals(CasWebflowConstants.TRANSITION_ID_PASSWORDLESS_GET_USERID, prepareLoginAction.execute(context).getId());

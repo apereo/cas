@@ -32,14 +32,14 @@ class DefaultCasDelegatingWebflowEventResolverTests extends BaseCasWebflowMultif
 
     @Test
     void verifyOperationNoCredential() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         val event = initialAuthenticationAttemptWebflowEventResolver.resolveSingle(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, event.getId());
     }
 
     @Test
     void verifyAuthFails() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
 
         val id = UUID.randomUUID().toString();
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService(id));
@@ -55,7 +55,7 @@ class DefaultCasDelegatingWebflowEventResolverTests extends BaseCasWebflowMultif
 
     @Test
     void verifyServiceDisallowed() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         val id = UUID.randomUUID().toString();
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(id);
         registeredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy().setEnabled(false));
@@ -68,7 +68,7 @@ class DefaultCasDelegatingWebflowEventResolverTests extends BaseCasWebflowMultif
 
     @Test
     void verifyNoAuthn() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         val id = UUID.randomUUID().toString();
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(id);
         servicesManager.save(registeredService);

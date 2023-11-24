@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
@@ -51,6 +52,8 @@ public class GenerateServiceTicketAction extends BaseCasWebflowAction {
 
     private final List<ServiceTicketGeneratorAuthority> serviceTicketAuthorities;
 
+    private final CasWebflowCredentialProvider casWebflowCredentialProvider;
+
     /**
      * {@inheritDoc}
      * <p>
@@ -95,8 +98,8 @@ public class GenerateServiceTicketAction extends BaseCasWebflowAction {
                 return result(CasWebflowConstants.STATE_ID_WARN);
             }
 
-            val credential = WebUtils.getCredential(context);
-            val builder = authenticationSystemSupport.establishAuthenticationContextFromInitial(authentication, credential);
+            val credentials = casWebflowCredentialProvider.extract(context);
+            val builder = authenticationSystemSupport.establishAuthenticationContextFromInitial(authentication, credentials.toArray(new Credential[]{}));
             val authenticationResult = builder.build(principalElectionStrategy, service);
 
             LOGGER.trace("Built the final authentication result [{}] to grant service ticket to [{}]", authenticationResult, service);
