@@ -50,7 +50,12 @@ public class RegisteredAuthenticationHandlersEndpoint extends BaseCasActuatorEnd
     public Collection<AuthenticationHandlerDetails> handle() {
         return this.authenticationEventExecutionPlan.getObject().getAuthenticationHandlers()
             .stream()
-            .map(handler -> AuthenticationHandlerDetails.builder().name(handler.getName()).order(handler.getOrder()).build())
+            .map(handler -> AuthenticationHandlerDetails.builder()
+                    .name(handler.getName())
+                    .type(handler.getClass().getName())
+                    .order(handler.getOrder())
+                    .state(handler.getState().name())
+                    .build())
             .sorted(Comparator.comparing(AuthenticationHandlerDetails::getOrder))
             .collect(Collectors.toList());
     }
@@ -69,20 +74,29 @@ public class RegisteredAuthenticationHandlersEndpoint extends BaseCasActuatorEnd
             .stream()
             .filter(authnHandler -> authnHandler.getName().equalsIgnoreCase(name))
             .findFirst()
-            .map(handler -> AuthenticationHandlerDetails.builder().name(handler.getName()).order(handler.getOrder()).build())
+            .map(handler -> AuthenticationHandlerDetails.builder()
+                    .name(handler.getName())
+                    .type(handler.getClass().getName())
+                    .order(handler.getOrder())
+                    .state(handler.getState().name())
+                    .build())
             .orElse(null);
     }
 
     @SuperBuilder
     @Getter
     @SuppressWarnings("UnusedMethod")
-    private static final class AuthenticationHandlerDetails implements Serializable {
+    protected static final class AuthenticationHandlerDetails implements Serializable {
         @Serial
         private static final long serialVersionUID = 6755362844006190415L;
 
         private final String name;
 
+        private final String type;
+
         private final Integer order;
+
+        private final String state;
     }
 
 }
