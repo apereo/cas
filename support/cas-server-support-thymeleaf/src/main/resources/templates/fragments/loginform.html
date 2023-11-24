@@ -34,7 +34,7 @@
 
             <form method="post" id="fm1" th:object="${credential}" action="login">
                 <div id="login-form-controls" th:unless="${loginFormViewable or loginFormEnabled}">
-                    <div id="loginErrorsPanel" class="alert alert-danger banner banner-danger banner-dismissible text-justify"
+                    <div id="loginErrorsPanel" class="alert alert-danger banner banner-danger banner-dismissible"
                          th:if="${#fields.hasErrors('*')}">
                         <p th:each="err : ${#fields.errors('*')}" th:utext="${err + ' '}">Example error</p>
                         <!--<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>-->
@@ -54,8 +54,8 @@
                         <span th:utext="#{screen.welcome.instructions}">Enter your Username and Password:</span>
                     </h2>
 
-                    <div id="loginErrorsPanel" class="banner banner-danger alert alert-danger banner-dismissible text-justify"
-                         th:if="${#fields.hasErrors('*')}">
+                    <div id="loginErrorsPanel" class="banner banner-danger alert alert-danger banner-dismissible"
+                         role="alert" th:if="${#fields.hasErrors('*')}">
                         <p th:each="err : ${#fields.errors('*')}" th:utext="${err + ' '}">Example error</p>
                         <!--<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>-->
                     </div>

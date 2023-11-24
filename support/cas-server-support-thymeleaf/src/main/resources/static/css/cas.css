@@ -11,7 +11,8 @@
     --cas-theme-primary-light: #006d85;
     --cas-theme-secondary: #74C163;
     --cas-theme-success: var(--cas-theme-secondary);
-    --cas-theme-danger: var(--mdc-theme-error);
+    --cas-theme-danger: #58151c;
+    --cas-theme-danger-bg: #f8d7da;
     --cas-theme-warning: #e6a210;
     --cas-theme-border-light: 1px solid rgba(0, 0, 0, .2);
     --mdc-theme-primary: var(--cas-theme-primary, #153e50);
@@ -75,8 +76,7 @@ div#content {
     position: absolute;
     top: 8px;
     right: 4px;
-    background-color: #b00020;
-    background-color: var(--cas-theme-danger);
+    background-color: var(--mdc-theme-error, #b00020);
     color: #fff;
     border-radius: 50%;
     padding: 1px 3px;
@@ -200,8 +200,8 @@ button.close {
 .banner-danger {
     border-color: #b00020;
     border-color: var(--cas-theme-danger, #b00020);
-    color: #D8000C;
-    background-color: #FFD2D2;
+    color: var(--cas-theme-danger, #58151c);
+    background-color: var(--cas-theme-danger-bg, #f8d7da);
 }
 
 .banner-danger .mdi {
