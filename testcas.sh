@@ -21,7 +21,7 @@ function isDockerOnLinux() {
   if [[ $dockerPlatform =~ "linux" ]]; then
     return 0
   fi
-  printf "${RED}Docker engine is not available for the linux platform.${ENDCOLOR}"
+  printf "${RED}Docker engine is not available for the linux platform.%n${ENDCOLOR}"
   return 1
 }
 
@@ -29,7 +29,7 @@ function isDockerOnWindows() {
   if [[ $dockerPlatform =~ "windows" ]]; then
     return 0
   fi
-  printf "${RED}Docker engine is not available for the windows platform.${ENDCOLOR}"
+  printf "${RED}Docker engine is not available for the windows platform.%n${ENDCOLOR}"
   return 1
 }
 

@@ -39,7 +39,7 @@ class GatewayServicesManagementCheckActionTests extends AbstractWebflowActionsTe
 
     @Test
     void verifyNoServiceFound() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService("invalid-service-123"));
         assertThrows(UnauthorizedServiceException.class, () -> this.action.execute(context));
     }
@@ -53,7 +53,7 @@ class GatewayServicesManagementCheckActionTests extends AbstractWebflowActionsTe
         svc22.setAccessStrategy(strategy);
         servicesManager.save(svc22);
 
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService("cas-access-disabled"));
         assertThrows(UnauthorizedServiceException.class, () -> this.action.execute(context));
         assertNotNull(WebUtils.getUnauthorizedRedirectUrlFromFlowScope(context));

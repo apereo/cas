@@ -137,7 +137,7 @@ public class ApplicationContextProvider implements ApplicationContextAware {
      * @return the script resource cache manager
      */
     public static Optional<ScriptResourceCacheManager<String, ExecutableCompiledGroovyScript>> getScriptResourceCacheManager() {
-        return (Optional) getBeanOrDefault(ScriptResourceCacheManager.BEAN_NAME, ScriptResourceCacheManager.class);
+        return (Optional) getBean(ScriptResourceCacheManager.BEAN_NAME, ScriptResourceCacheManager.class);
     }
 
     /**
@@ -146,16 +146,28 @@ public class ApplicationContextProvider implements ApplicationContextAware {
      * @return the message sanitizer
      */
     public static Optional<MessageSanitizer> getMessageSanitizer() {
-        return getBeanOrDefault(MessageSanitizer.BEAN_NAME, MessageSanitizer.class);
+        return getBean(MessageSanitizer.BEAN_NAME, MessageSanitizer.class);
     }
 
-    private static <T> Optional<T> getBeanOrDefault(final String name, final Class<T> clazz) {
+    private static <T> Optional<T> getBean(final String name, final Class<T> clazz) {
+        return getBean(APPLICATION_CONTEXT, name, clazz);
+    }
+
+    /**
+     * Gets bean.
+     *
+     * @param <T>                the type parameter
+     * @param applicationContext the application context
+     * @param name               the name
+     * @param clazz              the clazz
+     * @return the bean
+     */
+    public static <T> Optional<T> getBean(final ApplicationContext applicationContext, final String name, final Class<T> clazz) {
         return FunctionUtils.doAndHandle(() -> {
-            if (APPLICATION_CONTEXT != null && APPLICATION_CONTEXT.containsBean(name)) {
-                return Optional.of(APPLICATION_CONTEXT.getBean(name, clazz));
+            if (applicationContext != null && applicationContext.containsBean(name)) {
+                return Optional.of(applicationContext.getBean(name, clazz));
             }
             return Optional.<T>empty();
         }, e -> Optional.<T>empty()).get();
     }
-
 }

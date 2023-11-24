@@ -32,7 +32,7 @@ class DelegatedClientAuthenticationCredentialResolverTests {
 
     @Test
     void verifyOperation() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(configurationContext.getApplicationContext());
 
         val resolver = new TestBaseDelegatedClientAuthenticationCredentialResolver(configurationContext);
         val credentials = new TokenCredentials(UUID.randomUUID().toString());

@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.execution.Action;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,9 +26,12 @@ class QRAuthenticationGenerateCodeActionTests {
     @Qualifier(CasWebflowConstants.ACTION_ID_QR_AUTHENTICATION_GENERATE_CODE)
     private Action qrAuthenticationGenerateCodeAction;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @Test
     void verifyOperation() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         val result = qrAuthenticationGenerateCodeAction.execute(context);
         assertNull(result);
 

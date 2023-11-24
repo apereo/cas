@@ -31,7 +31,7 @@ class SingleSignOnSessionCreatedActionTests {
 
         @Test
         void verifyOperation() throws Throwable {
-            val context = MockRequestContext.create();
+            val context = MockRequestContext.create(applicationContext);
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
             assertEquals(1, context.getHttpServletResponse().getCookies().length);
         }
@@ -48,7 +48,7 @@ class SingleSignOnSessionCreatedActionTests {
 
         @Test
         void verifyOperation() throws Throwable {
-            val context = MockRequestContext.create();
+            val context = MockRequestContext.create(applicationContext);
             assertNull(action.execute(context));
         }
     }

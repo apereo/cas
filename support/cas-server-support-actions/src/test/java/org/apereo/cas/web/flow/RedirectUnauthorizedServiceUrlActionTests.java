@@ -47,7 +47,7 @@ class RedirectUnauthorizedServiceUrlActionTests extends AbstractWebflowActionsTe
     }
 
     private MockRequestContext getMockRequestContext() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         context.setCurrentEvent(new EventFactorySupport().success(this));
         return context;
     }

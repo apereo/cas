@@ -75,6 +75,11 @@ public class MockRequestContext extends MockRequestControlContext {
         return Objects.requireNonNull((ConfigurableApplicationContext) getActiveFlow().getApplicationContext());
     }
 
+    public MockRequestContext setApplicationContext(final ApplicationContext applicationContext) {
+        Objects.requireNonNull((Flow) getActiveFlow()).setApplicationContext(applicationContext);
+        return this;
+    }
+
     public MockRequestContext setContextPath(final String constContextPath) {
         getHttpServletRequest().setContextPath(constContextPath);
         getMockExternalContext().setContextPath(constContextPath);

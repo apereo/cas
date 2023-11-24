@@ -1,16 +1,23 @@
 package org.apereo.cas.audit.spi;
 
+import org.apereo.cas.config.CasCookieConfiguration;
 import org.apereo.cas.config.CasCoreAuditConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.config.CasWebflowContextConfiguration;
 import org.apereo.cas.util.RandomUtils;
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
@@ -43,6 +50,34 @@ public abstract class BaseAuditConfigurationTests {
 
     protected AuditActionContext auditActionContext;
 
+    @ImportAutoConfiguration({
+        RefreshAutoConfiguration.class,
+        WebMvcAutoConfiguration.class
+    })
+    @SpringBootConfiguration
+    @Import({
+        CasCoreConfiguration.class,
+        CasCoreTicketsConfiguration.class,
+        CasCoreTicketsSerializationConfiguration.class,
+        CasCoreAuthenticationConfiguration.class,
+        CasCoreAuthenticationSupportConfiguration.class,
+        CasCoreAuthenticationPrincipalConfiguration.class,
+        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+        CasCoreServicesConfiguration.class,
+        CasWebApplicationServiceFactoryConfiguration.class,
+        CasCoreWebConfiguration.class,
+        CasCoreNotificationsConfiguration.class,
+        CasCoreUtilConfiguration.class,
+        CasCoreAuditConfiguration.class,
+        CasCoreWebflowConfiguration.class,
+        CasWebflowContextConfiguration.class,
+        CasCookieConfiguration.class,
+        CasMultifactorAuthenticationWebflowConfiguration.class,
+        CasCoreMultifactorAuthenticationConfiguration.class
+    })
+    public static class SharedTestConfiguration {
+    }
+
     public abstract AuditTrailManager getAuditTrailManager();
 
     @BeforeEach
@@ -70,28 +105,6 @@ public abstract class BaseAuditConfigurationTests {
             AuditTrailManager.WhereClauseFields.PRINCIPAL, USER);
         val results = getAuditTrailManager().getAuditRecords(criteria);
         assertFalse(results.isEmpty());
-    }
-
-    @ImportAutoConfiguration({
-        RefreshAutoConfiguration.class,
-        WebMvcAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
-
-        CasCoreConfiguration.class,
-        CasCoreTicketsConfiguration.class,
-        CasCoreTicketsSerializationConfiguration.class,
-        CasCoreAuthenticationPrincipalConfiguration.class,
-        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-        CasCoreServicesConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
-        CasCoreWebConfiguration.class,
-        CasCoreNotificationsConfiguration.class,
-        CasCoreUtilConfiguration.class,
-        CasCoreAuditConfiguration.class
-    })
-    public static class SharedTestConfiguration {
     }
 
 }

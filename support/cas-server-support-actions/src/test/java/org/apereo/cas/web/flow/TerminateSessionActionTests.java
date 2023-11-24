@@ -83,7 +83,7 @@ class TerminateSessionActionTests {
 
         @Test
         void verifyTerminateActionConfirming() throws Throwable {
-            val context = MockRequestContext.create();
+            val context = MockRequestContext.create(applicationContext);
             WebUtils.putTicketGrantingTicketInScopes(context, "TGT-123456-something");
             assertEquals(CasWebflowConstants.STATE_ID_WARN, action.execute(context).getId());
         }

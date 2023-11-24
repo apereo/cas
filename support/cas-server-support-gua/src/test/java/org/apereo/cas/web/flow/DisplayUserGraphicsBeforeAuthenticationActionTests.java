@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class DisplayUserGraphicsBeforeAuthenticationActionTests extends AbstractGraphicalAuthenticationTests {
     @Test
     void verifyAction() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         context.setParameter("username", "casuser");
         val event = displayUserGraphicsBeforeAuthenticationAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
@@ -29,7 +29,7 @@ class DisplayUserGraphicsBeforeAuthenticationActionTests extends AbstractGraphic
 
     @Test
     void verifyMissingUser() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         assertThrows(UnauthorizedServiceException.class, () -> displayUserGraphicsBeforeAuthenticationAction.execute(context));
     }
 

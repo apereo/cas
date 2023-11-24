@@ -70,7 +70,7 @@ class DuoSecurityMultifactorAccountProfileWebflowConfigurerTests extends BaseWeb
 
     @Test
     void verifyOperation() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
 
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), context);
         val result = duoMultifactorAuthenticationDeviceProviderAction.execute(context);

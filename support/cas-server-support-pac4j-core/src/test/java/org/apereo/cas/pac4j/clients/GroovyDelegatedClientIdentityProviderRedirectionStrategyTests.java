@@ -54,10 +54,10 @@ class GroovyDelegatedClientIdentityProviderRedirectionStrategyTests {
 
     @Test
     void verifyOperation() throws Throwable {
-        val context = MockRequestContext.create();
 
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
+        val context = MockRequestContext.create(appCtx);
 
         val provider = DelegatedClientIdentityProviderConfiguration.builder()
             .name("SomeClient")

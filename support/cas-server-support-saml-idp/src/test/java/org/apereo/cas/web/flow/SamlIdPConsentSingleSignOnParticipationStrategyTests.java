@@ -39,7 +39,7 @@ class SamlIdPConsentSingleSignOnParticipationStrategyTests extends BaseSamlIdPWe
 
     @Test
     void verifyIdPNeedsConsentOperation() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
 
         val principal = RegisteredServiceTestUtils.getPrincipal("casuser", CollectionUtils.wrap("uid", "CAS-System"));
         val authn = RegisteredServiceTestUtils.getAuthentication(principal);

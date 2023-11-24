@@ -44,7 +44,7 @@ class PopulateSpringSecurityContextActionTests extends AbstractWebflowActionsTes
     void verifyOperation() throws Throwable {
         ApplicationContextProvider.holdApplicationContext(applicationContext);
 
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
 
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
         val result = populateSpringSecurityContextAction.execute(context);

@@ -39,7 +39,7 @@ class SamlIdPSingleSignOnParticipationStrategyTests {
 
         @Test
         void verifyParticipation() throws Throwable {
-            val context = MockRequestContext.create();
+            val context = MockRequestContext.create(applicationContext);
             RequestContextHolder.setRequestContext(context);
             ExternalContextHolder.setExternalContext(context.getExternalContext());
 
@@ -59,7 +59,7 @@ class SamlIdPSingleSignOnParticipationStrategyTests {
 
         @Test
         void verifyForcedAuthn() throws Throwable {
-            val context = MockRequestContext.create();
+            val context = MockRequestContext.create(applicationContext);
             RequestContextHolder.setRequestContext(context);
             ExternalContextHolder.setExternalContext(context.getExternalContext());
 
@@ -87,7 +87,7 @@ class SamlIdPSingleSignOnParticipationStrategyTests {
 
         @Test
         void verifyMfaProviderFailsContext() throws Throwable {
-            val context = MockRequestContext.create();
+            val context = MockRequestContext.create(applicationContext);
             RequestContextHolder.setRequestContext(context);
             ExternalContextHolder.setExternalContext(context.getExternalContext());
 

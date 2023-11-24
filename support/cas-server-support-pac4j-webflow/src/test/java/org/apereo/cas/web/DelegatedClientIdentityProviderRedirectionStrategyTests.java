@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.Set;
 
@@ -28,9 +29,12 @@ class DelegatedClientIdentityProviderRedirectionStrategyTests {
     @Qualifier("delegatedClientIdentityProviderRedirectionStrategy")
     private DelegatedClientIdentityProviderRedirectionStrategy delegatedClientIdentityProviderRedirectionStrategy;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @Test
     void verifyOperation() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         val provider = DelegatedClientIdentityProviderConfiguration.builder()
             .name("SomeClient")
             .type("CasClient")

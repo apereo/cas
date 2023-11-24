@@ -44,7 +44,7 @@ class GenericSuccessViewActionTests {
             registeredService2.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(false, false));
             getServicesManager().save(registeredService2);
 
-            val context = MockRequestContext.create();
+            val context = MockRequestContext.create(applicationContext);
             val tgt = new MockTicketGrantingTicket("casuser");
             WebUtils.putTicketGrantingTicketInScopes(context, tgt);
             getTicketRegistry().addTicket(tgt);
@@ -61,7 +61,7 @@ class GenericSuccessViewActionTests {
         void verifyAuthn() throws Throwable {
             val registeredService = RegisteredServiceTestUtils.getRegisteredService("https://github.com/apereo/cas");
             getServicesManager().save(registeredService);
-            val context = MockRequestContext.create();
+            val context = MockRequestContext.create(applicationContext);
 
             val tgt = new MockTicketGrantingTicket(CoreAuthenticationTestUtils.getAuthentication());
             getTicketRegistry().addTicket(tgt);
@@ -87,7 +87,7 @@ class GenericSuccessViewActionTests {
         void verifyRedirect() throws Throwable {
             val registeredService = RegisteredServiceTestUtils.getRegisteredService("https://github.com/apereo/cas");
             getServicesManager().save(registeredService);
-            val context = MockRequestContext.create();
+            val context = MockRequestContext.create(applicationContext);
             val result = genericSuccessViewAction.execute(context);
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());
             assertTrue(context.getMockExternalContext().getExternalRedirectRequested());

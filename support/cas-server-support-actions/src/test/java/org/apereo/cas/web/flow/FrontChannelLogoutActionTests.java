@@ -41,7 +41,7 @@ class FrontChannelLogoutActionTests {
 
         @Test
         void verifyNoSlo() throws Throwable {
-            val context = MockRequestContext.create();
+            val context = MockRequestContext.create(applicationContext);
             RequestContextHolder.setRequestContext(context);
             ExternalContextHolder.setExternalContext(context.getExternalContext());
 
@@ -74,9 +74,7 @@ class FrontChannelLogoutActionTests {
 
         @Test
         void verifyLogoutNone() throws Throwable {
-            val context = MockRequestContext.create();
-            RequestContextHolder.setRequestContext(context);
-            ExternalContextHolder.setExternalContext(context.getExternalContext());
+            val context = MockRequestContext.create(applicationContext);
 
             val id = UUID.randomUUID().toString();
             val sloReq = DefaultSingleLogoutRequestContext.builder()
@@ -98,9 +96,7 @@ class FrontChannelLogoutActionTests {
 
         @Test
         void verifyLogout() throws Throwable {
-            val context = MockRequestContext.create();
-            RequestContextHolder.setRequestContext(context);
-            ExternalContextHolder.setExternalContext(context.getExternalContext());
+            val context = MockRequestContext.create(applicationContext);
 
             val id = UUID.randomUUID().toString();
             val sloReq = DefaultSingleLogoutRequestContext.builder()
@@ -123,9 +119,8 @@ class FrontChannelLogoutActionTests {
 
         @Test
         void verifyNoRequests() throws Throwable {
-            val context = MockRequestContext.create();
-            RequestContextHolder.setRequestContext(context);
-            ExternalContextHolder.setExternalContext(context.getExternalContext());
+            val context = MockRequestContext.create(applicationContext);
+
 
             WebUtils.putLogoutRequests(context, new ArrayList<>(0));
             val event = frontChannelLogoutAction.execute(context);

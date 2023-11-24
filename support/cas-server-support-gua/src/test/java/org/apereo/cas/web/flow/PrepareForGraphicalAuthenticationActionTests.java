@@ -18,14 +18,14 @@ import static org.junit.jupiter.api.Assertions.*;
 class PrepareForGraphicalAuthenticationActionTests extends AbstractGraphicalAuthenticationTests {
     @Test
     void verifyAction() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         val event = prepareLoginAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_GUA_GET_USERID, event.getId());
     }
 
     @Test
     void verifyMissingAction() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         WebUtils.putGraphicalUserAuthenticationUsername(context, "casuser");
         val event = prepareLoginAction.execute(context);
         assertNull(event);
