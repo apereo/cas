@@ -11,7 +11,7 @@
 </head>
 
 <body>
-<main role="main" class="container mt-3 mb-3">
+<main class="container mt-3 mb-3">
 
     <div th:fragment="loginform" class="d-flex flex-column justify-content-between m-auto"
          th:with="loginFormEnabled=${#strings.defaultString(#themes.code('cas.login-form.enabled'), 'true') == 'true'},
@@ -43,16 +43,16 @@
 
                 <div id="login-form-controls" th:if="${loginFormViewable and loginFormEnabled}">
                     <div th:if="${existingSingleSignOnSessionAvailable}">
-                        <i class="mdi mdi-alert-decagram fas fa-exclamation-triangle"></i>&nbsp;
+                        <i class="mdi mdi-alert-decagram fas fa-exclamation-triangle" aria-hidden="true"></i>&nbsp;
                         <span id="existingSsoMsg" th:if="${registeredService}" class="mdc-button__label"
                               th:utext="#{screen.welcome.forcedsso(${existingSingleSignOnSessionPrincipal?.id},${registeredService.name})}"/>
                         <span id="existingSsoMsg" th:unless="${registeredService}" class="mdc-button__label"
                               th:utext="#{screen.welcome.forcedsso(${existingSingleSignOnSessionPrincipal?.id}, 'CAS')}"/>
                     </div>
-                    <h3 th:unless="${existingSingleSignOnSessionAvailable}" class="text-center">
-                        <i class="mdi mdi-security fas fa-shield-alt"></i>
+                    <h2 th:unless="${existingSingleSignOnSessionAvailable}" class="text-center">
+                        <i class="mdi mdi-security fas fa-shield-alt" aria-hidden="true"></i>
                         <span th:utext="#{screen.welcome.instructions}">Enter your Username and Password:</span>
-                    </h3>
+                    </h2>
 
                     <div id="loginErrorsPanel" class="banner banner-danger alert alert-danger banner-dismissible text-justify"
                          th:if="${#fields.hasErrors('*')}">
@@ -79,14 +79,14 @@
                                    autocapitalize="none"
                                    spellcheck="false"
                                    autocomplete="username" required/>
-                            <div class="mdc-text-field-helper-line invalid-feedback">
-                                <div class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg" aria-hidden="true">
+                            <span class="mdc-text-field-helper-line invalid-feedback">
+                                <span class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg" aria-hidden="true">
                                     <span id="usernameValidationMessage" th:utext="#{username.required}"></span>
-                                </div>
-                            </div>
+                                </span>
+                            </span>
                         </label>
 
-                        
+
 
                         <script type="text/javascript" th:inline="javascript">
                             /*<![CDATA[*/
@@ -122,20 +122,20 @@
                                            th:accesskey="#{screen.welcome.label.password.accesskey}"
                                            th:field="*{password}"
                                            autocomplete="off"/>
-                                    <div class="mdc-text-field-helper-line invalid-feedback">
-                                        <div class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg" aria-hidden="true">
+                                    <span class="mdc-text-field-helper-line invalid-feedback">
+                                        <span class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg" aria-hidden="true">
                                             <span id="passwordValidationMessage" th:utext="#{password.required}"></span>
-                                        </div>
-                                    </div>
+                                        </span>
+                                    </span>
                                 </label>
                                 <button
                                     class="reveal-password mdc-button mdc-button--unelevated mdc-input-group-append mdc-icon-button btn btn-primary"
                                     tabindex="-1" type="button">
-                                    <i class="mdi mdi-eye reveal-password-icon fas fa-eye"></i>
+                                    <i class="mdi mdi-eye reveal-password-icon fas fa-eye" aria-hidden="true"></i>
                                     <span class="visually-hidden">Toggle Password</span>
                                 </button>
                             </div>
-                            
+
                             <div class="mdc-text-field-helper-line caps-warn">
                                 <div
                                     class="mdc-text-field-helper-text mdc-text-field-helper-text--persistent mdc-text-field-helper-text--validation-msg text-danger">
@@ -220,7 +220,7 @@
                             </label>
                         </div>
                     </section>
-                    
+
                     <section class="cas-field form-check"
                              th:if="${'true' == #strings.defaultString(#themes.code('cas.warn-on-redirect.enabled'), 'true')}">
                         <div class="mdc-form-field ">
@@ -245,7 +245,7 @@
                         </div>
                         <p/>
                     </section>
-                    
+
                     <section class="cas-field form-check"
                              th:if="${'true' == #strings.defaultString(#themes.code('cas.public-workstation.enabled'), 'true')}">
                         <div class="mdc-form-field ">
@@ -270,7 +270,7 @@
                         </div>
                         <p/>
                     </section>
-                    
+
                     <section class="cas-field form-check" th:if="${rememberMeAuthenticationEnabled}">
                         <div class="mdc-form-field ">
                             <div class="mdc-checkbox">
@@ -365,12 +365,12 @@
             </span>
 
 
-            <span th:if="${loginFormViewable and loginFormEnabled}">
+            <div th:if="${loginFormViewable and loginFormEnabled}">
                 <span th:remove="tag"
                       th:if="${'true' == #strings.defaultString(#themes.code('cas.pm-links.enabled'), 'true')}">
                     <div th:replace="~{fragments/pmlinks :: pmlinks}"/>
                 </span>
-            </span>
+            </div>
 
             <script type="text/javascript" th:inline="javascript">
                 /*<![CDATA[*/
@@ -391,9 +391,9 @@
             </script>
         </div>
 
-        <span th:if="${loginFormViewable and loginFormEnabled}">
+        <div th:if="${loginFormViewable and loginFormEnabled}">
             <div th:replace="~{fragments/loginsidebar :: loginsidebar}"/>
-        </span>
+        </div>
     </div>
 </main>
 </body>

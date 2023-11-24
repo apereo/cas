@@ -357,7 +357,7 @@
         </module>
         <module name="MultipleStringLiterals">
             <property name="severity" value="info"/>
-            <property name="ignoreStringsRegexp" 
+            <property name="ignoreStringsRegexp"
                       value="(^&quot;&quot;$)|(^&quot;(no|false|\/|true|//|yes|default|\.|,|=|&amp;|\?|UTF-8|\*|\\|//)&quot;$)" />
         </module>
          -->
