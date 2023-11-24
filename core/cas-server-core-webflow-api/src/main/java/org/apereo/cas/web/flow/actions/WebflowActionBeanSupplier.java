@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow.actions;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
@@ -41,6 +42,7 @@ public class WebflowActionBeanSupplier implements Supplier<Action> {
     public Action get() {
         return BeanSupplier.of(Action.class)
             .ifExists(properties.getWebflow().getGroovy().getActions().get(id))
+            .when(CasRuntimeHintsRegistrar.notInNativeImage())
             .and(condition.given(applicationContext.getEnvironment()))
             .supply(Unchecked.supplier(() -> {
                 val script = properties.getWebflow().getGroovy().getActions().get(id);
