@@ -35,6 +35,8 @@ public class OidcAttributeDefinition extends DefaultAttributeDefinition {
 
     private boolean structured;
 
+    private String trustFramework;
+
     /**
      * To attribute value.
      *
