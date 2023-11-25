@@ -21,7 +21,6 @@ buildscript {
     dependencies {
 //        classpath "gradle.plugin.com.ewerk.gradle.plugins:jaxb2-plugin:1.0.10"
         classpath "com.github.node-gradle:gradle-node-plugin:$gradleNodeVersion"
-        classpath "org.gradle:test-retry-gradle-plugin:$gradleRetryVersion"
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
         classpath "com.gorylenko.gradle-git-properties:gradle-git-properties:$gradleGitVersion"
         classpath "io.freefair.gradle:lombok-plugin:$gradleLombokVersion"
@@ -62,6 +61,7 @@ ext {
 
     excludedFilesFromTestCoverage = [
         '**/docs/**',
+        '**/org/springframework/**',
         '**/soap/generated/**',
         '**/com/duosecurity/**',
         '**/org/apereo/inspektr/**',
@@ -139,11 +139,6 @@ allprojects {
 
     if (gradle.startParameter.taskNames.any { task -> task.contains("publishToMavenLocal") }) {
         apply plugin: "maven-publish"
-    }
-
-    def skipRetry = providers.systemProperty('skipTestRetry').present
-    if (!skipRetry) {
-        apply plugin: "org.gradle.test-retry"
     }
 
     apply from: rootProject.file("gradle/tasks.gradle")
@@ -396,7 +391,7 @@ subprojects {
                     "Implementation-Vendor": projectGroup,
                     "Created-By": projectGroup)
             if (generateTimestamps) {
-                attributes("Implementation-Date": java.time.ZonedDateTime.now(ZoneId.systemDefault()))
+                attributes("Implementation-Date": java.time.ZonedDateTime.now(java.time.ZoneOffset.UTC))
             }
             attributes(
                     "Specification-Version": projectSpecVersion,
@@ -598,6 +593,5 @@ boolean projectShouldBePublished(Project project) {
 }
 
 boolean projectRequiresLombok(Project project) {
-    return !["api", "core", "docs", "support", "webapp"].contains(project.name)
-            && !project.getPath().contains("cas-server-documentation")
+    return !["api", "core", "docs", "support", "webapp"].contains(project.name) && project.name != "cas-server-documentation"
 }

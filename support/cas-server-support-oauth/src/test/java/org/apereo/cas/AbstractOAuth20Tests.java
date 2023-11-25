@@ -87,6 +87,7 @@ import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
@@ -94,7 +95,6 @@ import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.serialization.ComponentSerializationPlan;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.extern.slf4j.Slf4j;
@@ -102,7 +102,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.hc.core5.http.HttpStatus;
-import org.junit.jupiter.api.BeforeEach;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.HttpConstants;
@@ -122,15 +121,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.context.ConfigurableWebApplicationContext;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
@@ -309,7 +307,8 @@ public abstract class AbstractOAuth20Tests {
     @Qualifier("requiresAuthenticationAccessTokenInterceptor")
     protected HandlerInterceptor requiresAuthenticationInterceptor;
 
-    protected ConfigurableApplicationContext applicationContext;
+    @Autowired
+    protected ConfigurableWebApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("defaultOAuthCodeFactory")
@@ -356,6 +355,10 @@ public abstract class AbstractOAuth20Tests {
     protected ExpirationPolicyBuilder deviceTokenExpirationPolicy;
 
     @Autowired
+    @Qualifier(TicketTrackingPolicy.BEAN_NAME_DESCENDANT_TICKET_TRACKING)
+    protected TicketTrackingPolicy descendantTicketsTrackingPolicy;
+
+    @Autowired
     protected CasConfigurationProperties casProperties;
 
     public static ExpirationPolicyBuilder alwaysExpiresExpirationPolicyBuilder() {
@@ -383,6 +386,11 @@ public abstract class AbstractOAuth20Tests {
         when(accessToken.getExpirationPolicy()).thenReturn(NeverExpiresExpirationPolicy.INSTANCE);
         when(accessToken.getCreationTime()).thenReturn(ZonedDateTime.now(Clock.systemUTC()));
         return accessToken;
+    }
+
+    protected static OAuthRegisteredService getRegisteredService(final OAuth20GrantTypes... grantTypes) {
+        return getRegisteredService("https://oauth-%s.example.org".formatted(RandomUtils.randomAlphabetic(6)),
+            UUID.randomUUID().toString(), UUID.randomUUID().toString(), Set.of(grantTypes));
     }
 
     protected static OAuthRegisteredService getRegisteredService(final String clientId,
@@ -437,15 +445,6 @@ public abstract class AbstractOAuth20Tests {
             .addCredential(metadata)
             .addSuccess(principal.getClass().getCanonicalName(), handlerResult)
             .build();
-    }
-
-    @BeforeEach
-    public void setup() {
-        this.applicationContext = new StaticApplicationContext();
-        applicationContext.refresh();
-        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, CasConfigurationProperties.class,
-            CasConfigurationProperties.class.getSimpleName());
-        ApplicationContextProvider.holdApplicationContext(applicationContext);
     }
 
     protected OAuthRegisteredService addRegisteredService(final Set<OAuth20GrantTypes> grantTypes) {
@@ -763,9 +762,8 @@ public abstract class AbstractOAuth20Tests {
 
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
-        SecurityAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
+        SecurityAutoConfiguration.class,
         AopAutoConfiguration.class
     })
     @SpringBootConfiguration

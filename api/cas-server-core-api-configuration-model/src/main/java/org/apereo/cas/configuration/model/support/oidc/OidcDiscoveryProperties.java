@@ -49,6 +49,11 @@ public class OidcDiscoveryProperties implements Serializable {
     private boolean authorizationResponseIssuerParameterSupported;
 
     /**
+     * Boolean value indicating server support for mutual-TLS client certificate-bound access tokens. 
+     */
+    private boolean tlsClientCertificateBoundAccessTokens;
+
+    /**
      * Boolean parameter indicating
      * whether the authorization server (CAS) accepts authorization request
      * data only via the pushed authorization request method.
@@ -193,7 +198,7 @@ public class OidcDiscoveryProperties implements Serializable {
      * List of client authentication methods supported by token endpoint.
      */
     private List<String> tokenEndpointAuthMethodsSupported =
-        Stream.of("client_secret_basic", "client_secret_post", "client_secret_jwt", "private_key_jwt").toList();
+        Stream.of("client_secret_basic", "client_secret_post", "client_secret_jwt", "private_key_jwt", "tls_client_auth").toList();
 
     /**
      * List of PKCE code challenge methods supported.
@@ -203,6 +208,10 @@ public class OidcDiscoveryProperties implements Serializable {
     /**
      * List of ACR values supported.
      * This discovery element contains a list of the supported acr values supported by this server.
+     * Support for authentication context class references is implemented in form of {@code acr_values} as part of the original
+     * authorization request, which is mostly taken into account by
+     * the multifactor authentication features of CAS.
+     * Once successful, {@code acr} and {@code amr} values are passed back to the relying party as part of the id token.
      */
     private List<String> acrValuesSupported = new ArrayList<>();
 

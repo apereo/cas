@@ -44,7 +44,7 @@ class SurrogateDelegatedAuthenticationPreProcessorTests {
         credential.getCredentialMetadata().addTrait(new SurrogateCredentialTrait("cassurrogate"));
         val surrogatePrincipal = surrogateDelegatedAuthenticationPreProcessor.process(RegisteredServiceTestUtils.getPrincipal("casuser"),
             mock(BaseClient.class), credential, RegisteredServiceTestUtils.getService());
-        assertTrue(surrogatePrincipal instanceof SurrogatePrincipal);
+        assertInstanceOf(SurrogatePrincipal.class, surrogatePrincipal);
     }
 
     @Test

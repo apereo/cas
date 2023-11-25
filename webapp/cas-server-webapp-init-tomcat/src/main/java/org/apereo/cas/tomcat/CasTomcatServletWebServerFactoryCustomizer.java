@@ -5,15 +5,19 @@ import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomca
 import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatHttpProxyProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.catalina.authenticator.BasicAuthenticator;
 import org.apache.catalina.connector.Connector;
+import org.apache.catalina.connector.Request;
+import org.apache.catalina.connector.Response;
+import org.apache.catalina.realm.GenericPrincipal;
 import org.apache.catalina.valves.ExtendedAccessLogValve;
 import org.apache.catalina.valves.SSLValve;
+import org.apache.catalina.valves.ValveBase;
 import org.apache.catalina.valves.rewrite.RewriteValve;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.coyote.ajp.AbstractAjpProtocol;
@@ -30,8 +34,9 @@ import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactor
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
 import org.springframework.util.ReflectionUtils;
-
+import jakarta.servlet.ServletException;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
@@ -96,6 +101,7 @@ public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServer
             configureRewriteValve(tomcat);
             configureSSLValve(tomcat);
             configureBasicAuthn(tomcat);
+            configureRemoteUserValve(tomcat);
             finalizeConnectors(tomcat);
         }
     }
@@ -303,6 +309,28 @@ public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServer
 
             LOGGER.debug("Creating rewrite valve configuration for the embedded tomcat container...");
             tomcat.addContextValves(valve);
+        }
+    }
+
+    private void configureRemoteUserValve(final TomcatServletWebServerFactory tomcat) {
+        val valve = casProperties.getServer().getTomcat().getRemoteUserValve();
+        if (StringUtils.isNotBlank(valve.getRemoteUserHeader())) {
+            tomcat.addContextValves(new RemoteUserValve());
+        }
+    }
+
+    private final class RemoteUserValve extends ValveBase {
+        @Override
+        public void invoke(final Request request, final Response response) throws IOException, ServletException {
+            val valve = casProperties.getServer().getTomcat().getRemoteUserValve();
+            val username = request.getHeader(valve.getRemoteUserHeader());
+            LOGGER.debug("Received remote user [{}] from [{}]", username, request.getRemoteAddr());
+            if (StringUtils.isNotBlank(username) && RegexUtils.matchesIpAddress(valve.getAllowedIpAddressRegex(), request.getRemoteAddr())) {
+                val principal = new GenericPrincipal(username);
+                request.setUserPrincipal(principal);
+                response.setHeader("X-Remote-User", username);
+            }
+            getNext().invoke(request, response);
         }
     }
 

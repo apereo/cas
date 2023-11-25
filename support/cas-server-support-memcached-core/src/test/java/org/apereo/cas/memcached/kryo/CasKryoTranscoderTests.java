@@ -3,6 +3,8 @@ package org.apereo.cas.memcached.kryo;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
@@ -23,11 +25,11 @@ import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.ticket.ProxyGrantingTicketIssuerTicket;
-import org.apereo.cas.ticket.ServiceTicketSessionTrackingPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.expiration.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
+import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.util.serialization.ComponentSerializationPlan;
@@ -104,8 +106,9 @@ class CasKryoTranscoderTests {
     private Map<String, List<Object>> principalAttributes;
 
     @Autowired
-    @Qualifier(ServiceTicketSessionTrackingPolicy.BEAN_NAME)
-    private ServiceTicketSessionTrackingPolicy serviceTicketSessionTrackingPolicy;
+    @Qualifier(TicketTrackingPolicy.BEAN_NAME_SERVICE_TICKET_TRACKING)
+    private TicketTrackingPolicy serviceTicketSessionTrackingPolicy;
+
     @Autowired
     @Qualifier("componentSerializationPlan")
     private ComponentSerializationPlan componentSerializationPlan;
@@ -121,6 +124,8 @@ class CasKryoTranscoderTests {
         this.transcoder = MemcachedUtils.newTranscoder(props, classesToRegister);
         this.principalAttributes = new HashMap<>();
         this.principalAttributes.put(NICKNAME_KEY, List.of(NICKNAME_VALUE));
+        this.principalAttributes.put("geoLocationRequest", List.of(new GeoLocationRequest(1, 1)));
+        this.principalAttributes.put("geoLocationResponse", List.of(new GeoLocationResponse().addAddress("England")));
     }
 
     @Test
@@ -239,8 +244,7 @@ class CasKryoTranscoderTests {
     @Test
     void verifyEncodeDecodeTGTWithLinkedHashMap() throws Throwable {
         val userPassCredential = new UsernamePasswordCredential(USERNAME, PASSWORD);
-        val expectedTGT =
-            new MockTicketGrantingTicket(TGT_ID, userPassCredential, new LinkedHashMap<>(this.principalAttributes));
+        val expectedTGT = new MockTicketGrantingTicket(TGT_ID, userPassCredential, new LinkedHashMap<>(this.principalAttributes));
         expectedTGT.grantServiceTicket(ST_ID, RegisteredServiceTestUtils.getService(), null,
             false, serviceTicketSessionTrackingPolicy);
         val result = transcoder.encode(expectedTGT);

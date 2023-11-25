@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -31,9 +32,12 @@ class OneTimeTokenAuthenticationWebflowEventResolverTests {
     @Qualifier("oneTimeTokenAuthenticationWebflowEventResolver")
     private CasWebflowEventResolver resolver;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @Test
     void verifyResolver() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
 
         val authn = RegisteredServiceTestUtils.getAuthentication("casuser");
         val builder = mock(AuthenticationResultBuilder.class);

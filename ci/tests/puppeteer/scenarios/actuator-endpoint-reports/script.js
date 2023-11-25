@@ -8,7 +8,6 @@ const cas = require('../../cas.js');
     await cas.gotoLogin(page);
     await cas.loginWith(page);
     let tgc = await cas.assertCookie(page);
-    await browser.close();
 
     const endpoints = [
         "info",
@@ -98,5 +97,21 @@ const cas = require('../../cas.js');
             'Content-Type': 'application/json'
         }, 200);
     }
+
+    await cas.gotoLogout(page);
+
+    const webflowMetrics = [
+        "login",
+        "logout"
+    ];
+    for (let i = 0; i < webflowMetrics.length; i++) {
+        let url = `${baseUrl}metrics/org.springframework.webflow.executor.FlowExecutor.${webflowMetrics[i]}`;
+        await cas.log(`Trying ${url}`);
+        await cas.doRequest(url, "GET", {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }, 200);
+    }
+    await browser.close();
 })();
 

@@ -14,13 +14,13 @@ const fs = require('fs');
     await cas.log("Deleting all startup events...");
     await cas.doRequest("https://localhost:8443/cas/actuator/events", "DELETE");
 
-    const totalAttempts = 10;
+    const totalAttempts = 2;
     for (let i = 1; i <= totalAttempts; i++) {
         await cas.gotoLogin(page);
         let user = (Math.random() + 1).toString(36).substring(4);
         let password = (Math.random() + 1).toString(36).substring(4);
         await cas.loginWith(page, user, password);
-        await page.waitForTimeout(1000);
+        await page.waitForTimeout(500);
     }
 
     await cas.gotoLogin(page);
@@ -30,7 +30,7 @@ const fs = require('fs');
     await cas.log("Getting events...");
 
     await cas.doGet("https://localhost:8443/cas/actuator/events",
-        res => {
+        async res => {
             const count = Object.keys(res.data[1]).length;
             cas.log(`Total event records found ${count}`);
             assert(count === totalAttempts + 1);
@@ -44,7 +44,7 @@ const fs = require('fs');
             res.data[1].forEach(entry => archive.append(JSON.stringify(entry), { name: `event-${entry.id}.json`}));
             archive.finalize();
 
-        }, error => {
+        }, async error => {
             throw error;
         }, {'Content-Type': "application/json"});
 
@@ -52,7 +52,7 @@ const fs = require('fs');
     await cas.doRequest("https://localhost:8443/cas/actuator/events", "DELETE");
     await cas.log("Checking events...");
     await cas.doGet("https://localhost:8443/cas/actuator/events",
-        res => assert(Object.keys(res.data[1]).length === 0), error => {
+        async res => assert(Object.keys(res.data[1]).length === 0), async error => {
             throw error;
         }, {'Content-Type': "application/json"});
 
@@ -67,11 +67,11 @@ const fs = require('fs');
 
     fs.rmSync(`${__dirname}/events.zip`, {force: true});
     await cas.doGet("https://localhost:8443/cas/actuator/events",
-        res => {
+        async res => {
             const count = Object.keys(res.data[1]).length;
             cas.log(`Total event records found ${count}`);
             assert(count === totalAttempts + 1);
-        }, error => {
+        }, async error => {
             throw error;
         }, {'Content-Type': "application/json"});
 

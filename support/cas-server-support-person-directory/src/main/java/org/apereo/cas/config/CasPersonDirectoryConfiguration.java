@@ -2,21 +2,21 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
-import org.apereo.cas.authentication.attribute.AttributeDefinitionStoreConfigurer;
-import org.apereo.cas.authentication.attribute.DefaultAttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolutionExecutionPlanConfigurer;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.persondir.AttributeRepositoryResolver;
+import org.apereo.cas.persondir.DefaultAttributeRepositoryResolver;
 import org.apereo.cas.persondir.DefaultPersonDirectoryAttributeRepositoryPlan;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryCustomizer;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlan;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
@@ -61,28 +61,6 @@ import java.util.stream.Collectors;
 @AutoConfiguration
 public class CasPersonDirectoryConfiguration {
 
-    @Configuration(value = "CasPersonDirectoryAttributeDefinitionConfiguration", proxyBeanMethods = false)
-    @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasPersonDirectoryAttributeDefinitionConfiguration {
-
-        @ConditionalOnMissingBean(name = AttributeDefinitionStore.BEAN_NAME)
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public AttributeDefinitionStore attributeDefinitionStore(
-            final ConfigurableApplicationContext applicationContext,
-            final CasConfigurationProperties casProperties) throws Exception {
-            val resource = casProperties.getAuthn().getAttributeRepository().getAttributeDefinitionStore().getJson().getLocation();
-            val store = new DefaultAttributeDefinitionStore(resource);
-            store.setScope(casProperties.getServer().getScope());
-            val builders = applicationContext.getBeansOfType(AttributeDefinitionStoreConfigurer.class).values();
-            builders
-                .stream()
-                .filter(BeanSupplier::isNotProxy)
-                .sorted(AnnotationAwareOrderComparator.INSTANCE)
-                .forEach(cfg -> cfg.configure(store));
-            return store;
-        }
-    }
     @Configuration(value = "CasPersonDirectoryPrincipalResolutionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasPersonDirectoryPrincipalResolutionConfiguration {
@@ -97,6 +75,7 @@ public class CasPersonDirectoryConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "personDirectoryAttributeRepositoryPrincipalResolver")
         public PrincipalResolver personDirectoryAttributeRepositoryPrincipalResolver(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier(AttributeDefinitionStore.BEAN_NAME)
             final AttributeDefinitionStore attributeDefinitionStore,
             @Qualifier(ServicesManager.BEAN_NAME)
@@ -109,10 +88,10 @@ public class CasPersonDirectoryConfiguration {
             @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
             final IPersonAttributeDao attributeRepository) {
             val personDirectory = casProperties.getPersonDirectory();
-            return CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(personDirectoryPrincipalFactory,
+            return PersonDirectoryPrincipalResolver.newPersonDirectoryPrincipalResolver(
+                applicationContext, personDirectoryPrincipalFactory,
                 attributeRepository, attributeRepositoryAttributeMerger,
-                servicesManager, attributeDefinitionStore,
-                personDirectory);
+                servicesManager, attributeDefinitionStore, personDirectory);
         }
 
         @ConditionalOnMissingBean(name = "principalResolutionExecutionPlanConfigurer")
@@ -171,6 +150,13 @@ public class CasPersonDirectoryConfiguration {
             }
         }
 
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = AttributeRepositoryResolver.BEAN_NAME)
+        public AttributeRepositoryResolver attributeRepositoryResolver(@Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
+            return new DefaultAttributeRepositoryResolver(servicesManager);
+        }
 
         @Bean(name = {"cachingAttributeRepository", PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY})
         @ConditionalOnMissingBean(name = {"cachingAttributeRepository", PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY})

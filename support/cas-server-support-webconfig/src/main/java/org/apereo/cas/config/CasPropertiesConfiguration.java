@@ -34,7 +34,6 @@ public class CasPropertiesConfiguration {
             val sysProps = System.getProperties();
             val properties = new Properties();
             FunctionUtils.doIfNotNull(CasVersion.getVersion(), value -> properties.put("info.cas.version", value));
-            properties.put("info.cas.date", CasVersion.getDateTime());
             FunctionUtils.doIfNotNull(sysProps.get("java.home"), value -> properties.put("info.cas.java.home", value));
             properties.put("info.cas.java.vendor", sysProps.get("java.vendor"));
             properties.put("info.cas.java.version", sysProps.get("java.version"));

@@ -37,7 +37,7 @@ You will also find the above endpoints in the SAML2 identity provider metadata g
 
 SAML2 logout response bindings are decided based on the following rules:
 
-1. The binding can be explicitly defined and overridden for a service provider:
+- The binding can be explicitly defined and overridden for a service provider:
 
 ```json
 {
@@ -49,9 +49,8 @@ SAML2 logout response bindings are decided based on the following rules:
   "logoutResponseBinding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
 }
 ```
-
-2. The service provider metadata is consulted and CAS may pick the `SingleLogoutService` defined in the metadata. Order of `SingleLogoutService` elements in the metadata is important and CAS typically will choose the first entry.
-3. A global binding value can then be chosen and defined in CAS configuration properties.
+- The service provider metadata is consulted and CAS may pick the `SingleLogoutService` defined in the metadata. Order of `SingleLogoutService` elements in the metadata is important and CAS typically will choose the first entry.
+- A global binding value can then be chosen and defined in CAS configuration properties.
 
 ```xml
 <md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" 
@@ -60,4 +59,4 @@ SAML2 logout response bindings are decided based on the following rules:
     Location="http://sp.example.org/slo/post"/>
 ```
 
-4. CAS may choose `urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect` as the fallback binding.
+- CAS may choose `urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect` as the fallback binding.

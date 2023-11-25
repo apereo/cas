@@ -229,7 +229,6 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
 
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
         MailSenderAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         AopAutoConfiguration.class
@@ -264,8 +263,6 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
         CasCoreConfiguration.class,
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
         CasCoreUtilConfiguration.class,
-        RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
         CasCoreWebConfiguration.class
     })
     static class SharedTestConfiguration {

@@ -40,6 +40,6 @@ class AmazonDynamoDbClientFactoryTests {
         properties.setRegion(Region.US_EAST_1.id());
         properties.getDax().setUrl("dax://example.fake.us-east-1.amazonaws.com");
         val client = factory.createAmazonDynamoDb(properties);
-        assertTrue(client instanceof ClusterDaxClient);
+        assertInstanceOf(ClusterDaxClient.class, client);
     }
 }

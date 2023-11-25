@@ -7,6 +7,7 @@ import org.springframework.binding.message.MessageContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.StaticApplicationContext;
+import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.util.ReflectionUtils;
@@ -74,11 +75,47 @@ public class MockRequestContext extends MockRequestControlContext {
         return Objects.requireNonNull((ConfigurableApplicationContext) getActiveFlow().getApplicationContext());
     }
 
+    public MockRequestContext setApplicationContext(final ApplicationContext applicationContext) {
+        Objects.requireNonNull((Flow) getActiveFlow()).setApplicationContext(applicationContext);
+        return this;
+    }
+
     public MockRequestContext setContextPath(final String constContextPath) {
         getHttpServletRequest().setContextPath(constContextPath);
         getMockExternalContext().setContextPath(constContextPath);
         return this;
     }
+
+    public MockRequestContext addHeader(final String name, final Object value) {
+        getHttpServletRequest().addHeader(name, value);
+        return this;
+    }
+
+    public MockRequestContext setSessionAttribute(final String name, final String value) {
+        Objects.requireNonNull(getHttpServletRequest().getSession(true)).setAttribute(name, value);
+        return this;
+    }
+
+    public Object getSessionAttribute(final String name) {
+        return Objects.requireNonNull(getHttpServletRequest().getSession(true)).getAttribute(name);
+    }
+
+
+    public MockRequestContext setContentType(final String type) {
+        getHttpServletRequest().setContentType(type);
+        return this;
+    }
+
+    public MockRequestContext setMethod(final HttpMethod method) {
+        getHttpServletRequest().setMethod(method.name());
+        return this;
+    }
+
+    public MockRequestContext setRequestCookiesFromResponse() {
+        getHttpServletRequest().setCookies(getHttpServletResponse().getCookies());
+        return this;
+    }
+
 
     public static MockRequestContext create() throws Exception {
         val staticContext = new StaticApplicationContext();

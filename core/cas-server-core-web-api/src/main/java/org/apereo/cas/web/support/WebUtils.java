@@ -78,10 +78,12 @@ public class WebUtils {
      * Ticket-granting ticket id parameter used in various flow scopes.
      */
     public static final String PARAMETER_TICKET_GRANTING_TICKET_ID = "ticketGrantingTicketId";
+    /**
+     * Unauthorized redirect URL, typically the result of access strategy, used in various flow scopes.
+     */
+    public static final String PARAMETER_UNAUTHORIZED_REDIRECT_URL = "unauthorizedRedirectUrl";
 
     private static final String PARAMETER_CREDENTIAL = "credential";
-
-    private static final String PARAMETER_UNAUTHORIZED_REDIRECT_URL = "unauthorizedRedirectUrl";
 
     private static final String PARAMETER_SERVICE_TICKET_ID = "serviceTicketId";
 
@@ -1813,6 +1815,26 @@ public class WebUtils {
         val list = ObjectUtils.defaultIfNull(getMultifactorAuthenticationRegisteredDevices(requestContext), new ArrayList<>());
         list.addAll(accounts);
         requestContext.getFlowScope().put("multifactorRegisteredAccounts", list);
+    }
+
+    /**
+     * Put multifactor authentication trusted devices.
+     *
+     * @param requestContext the request context
+     * @param accounts       the accounts
+     */
+    public static void putMultifactorAuthenticationTrustedDevices(final RequestContext requestContext, final List accounts) {
+        requestContext.getFlowScope().put("multifactorTrustedDevices", accounts);
+    }
+
+    /**
+     * Gets multifactor authentication trusted devices.
+     *
+     * @param requestContext the request context
+     * @return the multifactor authentication trusted devices
+     */
+    public List getMultifactorAuthenticationTrustedDevices(final RequestContext requestContext) {
+        return requestContext.getFlowScope().get("multifactorTrustedDevices", List.class);
     }
 
     /**

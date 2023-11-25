@@ -10,7 +10,6 @@ import org.apereo.cas.util.spring.ApplicationContextProvider;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.collect.Maps;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -129,7 +128,7 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
         val resolvedAttributes = new TreeMap<String, List<Object>>(String.CASE_INSENSITIVE_ORDER);
         resolvedAttributes.putAll(attributes);
 
-        val attributesToRelease = Maps.<String, List<Object>>newHashMapWithExpectedSize(attributes.size());
+        val attributesToRelease = new HashMap<String, List<Object>>(attributes.size());
         LOGGER.debug("Attempting to map and filter claims based on resolved attributes [{}]", resolvedAttributes);
 
         val properties = applicationContext.getBean(CasConfigurationProperties.class);

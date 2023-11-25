@@ -9,12 +9,13 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Optional;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -29,6 +30,7 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 @Setter
 @Getter
+@Accessors(chain = true)
 public class AllCredentialsValidatedAuthenticationPolicy extends BaseAuthenticationPolicy {
     @Serial
     private static final long serialVersionUID = 6112280265093249844L;
@@ -37,7 +39,7 @@ public class AllCredentialsValidatedAuthenticationPolicy extends BaseAuthenticat
     public AuthenticationPolicyExecutionResult isSatisfiedBy(final Authentication authn,
                                                              final Set<AuthenticationHandler> authenticationHandlers,
                                                              final ConfigurableApplicationContext applicationContext,
-                                                             final Optional<Serializable> assertion) {
+                                                             final Map<String, ? extends Serializable> context) {
         LOGGER.debug("Successful authentications: [{}], credentials: [{}]",
             authn.getSuccesses().keySet(), authn.getCredentials());
         if (authn.getSuccesses().size() != authn.getCredentials().size()) {

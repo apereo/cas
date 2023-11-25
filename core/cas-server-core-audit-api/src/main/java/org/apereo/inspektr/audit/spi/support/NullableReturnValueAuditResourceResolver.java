@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.util.DateTimeUtils;
 import org.aspectj.lang.JoinPoint;
 import org.springframework.webflow.execution.Event;
@@ -40,7 +41,9 @@ public class NullableReturnValueAuditResourceResolver implements AuditResourceRe
             values.put("timestamp", DateTimeUtils.localDateTimeOf(event.getTimestamp()).toString());
             values.put("source", sourceName);
             if (event.getAttributes() != null && !event.getAttributes().isEmpty()) {
-                event.getAttributes().asMap().forEach((key, value) -> {
+                val attributes = new HashMap<>(event.getAttributes().asMap());
+                attributes.entrySet().removeIf(entry -> entry.getKey().startsWith(CentralAuthenticationService.NAMESPACE));
+                attributes.forEach((key, value) -> {
                     if (value != null) {
                         values.put(key, value.toString());
                     }

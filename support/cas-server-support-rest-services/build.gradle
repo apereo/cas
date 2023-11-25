@@ -10,7 +10,7 @@ dependencies {
     api project(":api:cas-server-core-api")
     api project(":api:cas-server-core-api-authentication")
 
-    implementation libraries.pac4jcore
+    implementation libraries.springsecurityweb
     
     implementation project(":support:cas-server-support-rest-core")
     implementation project(":support:cas-server-support-rest")
@@ -41,4 +41,5 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-person-directory-core", configuration: "tests")
 }

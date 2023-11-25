@@ -46,7 +46,7 @@ public class JsonConsentRepository extends BaseConsentRepository implements Disp
         setConsentDecisions(readDecisionsFromJsonResource());
         if (ResourceUtils.isFile(this.jsonResource)) {
             this.watcherService = new FileWatcherService(resource.getFile(),
-                Unchecked.consumer(file -> setConsentDecisions(readDecisionsFromJsonResource())));
+                Unchecked.consumer(__ -> setConsentDecisions(readDecisionsFromJsonResource())));
             this.watcherService.start(getClass().getSimpleName());
         }
     }

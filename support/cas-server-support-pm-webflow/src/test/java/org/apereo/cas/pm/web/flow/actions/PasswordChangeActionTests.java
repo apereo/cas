@@ -33,7 +33,7 @@ class PasswordChangeActionTests extends BasePasswordManagementActionTests {
 
     @Test
     void verifyFailNoCreds() throws Throwable {
-        val context = org.apereo.cas.util.MockRequestContext.create();
+        val context = MockRequestContext.create();
         val changeReq = new PasswordChangeRequest();
         changeReq.setUsername("casuser");
         changeReq.setPassword("123456".toCharArray());
@@ -43,7 +43,7 @@ class PasswordChangeActionTests extends BasePasswordManagementActionTests {
 
     @Test
     void verifyFailsValidation() throws Throwable {
-        val context = org.apereo.cas.util.MockRequestContext.create();
+        val context = MockRequestContext.create();
 
         WebUtils.putCredential(context, RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
 
@@ -56,7 +56,7 @@ class PasswordChangeActionTests extends BasePasswordManagementActionTests {
 
     @Test
     void verifyChange() throws Throwable {
-        val context = org.apereo.cas.util.MockRequestContext.create();
+        val context = MockRequestContext.create();
 
         WebUtils.putCredential(context,
             RegisteredServiceTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Th!$isT3$t"));
@@ -72,7 +72,7 @@ class PasswordChangeActionTests extends BasePasswordManagementActionTests {
 
     @Test
     void verifyChangeFails() throws Throwable {
-        val context = org.apereo.cas.util.MockRequestContext.create();
+        val context = MockRequestContext.create();
 
         WebUtils.putCredential(context,
             RegisteredServiceTestUtils.getCredentialsWithDifferentUsernameAndPassword("bad-credential", "P@ssword"));

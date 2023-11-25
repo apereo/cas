@@ -16,6 +16,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import javax.sql.DataSource;
 
@@ -32,6 +33,9 @@ public abstract class BaseJdbcAttributeRepositoryTests {
     @Autowired
     @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
     protected IPersonAttributeDao attributeRepository;
+
+    @Autowired
+    protected ConfigurableApplicationContext applicationContext;
 
     protected DataSource dataSource;
 

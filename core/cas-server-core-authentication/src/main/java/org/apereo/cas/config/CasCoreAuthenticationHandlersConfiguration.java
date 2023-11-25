@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.ProxyingPrincipalResolver;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
@@ -205,6 +206,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
         @ConditionalOnMissingBean(name = "jaasPersonDirectoryPrincipalResolvers")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public BeanContainer<PrincipalResolver> jaasPersonDirectoryPrincipalResolvers(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier(AttributeDefinitionStore.BEAN_NAME)
             final AttributeDefinitionStore attributeDefinitionStore,
             @Qualifier(ServicesManager.BEAN_NAME)
@@ -219,7 +221,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
                 .map(jaas -> {
                     val jaasPrincipal = jaas.getPrincipal();
                     var attributeMerger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
-                    return CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(jaasPrincipalFactory,
+                    return PersonDirectoryPrincipalResolver.newPersonDirectoryPrincipalResolver(applicationContext, jaasPrincipalFactory,
                         attributeRepository, attributeMerger, servicesManager, attributeDefinitionStore, jaasPrincipal, personDirectory);
                 })
                 .collect(Collectors.toList()));

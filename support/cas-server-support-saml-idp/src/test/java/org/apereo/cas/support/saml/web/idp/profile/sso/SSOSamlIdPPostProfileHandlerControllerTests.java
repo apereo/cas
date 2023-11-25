@@ -215,7 +215,7 @@ class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurati
         val mv = controller.handleSaml2ProfileSsoPostRequest(response, request);
         assertNotNull(mv);
         val ex = mv.getModel().get(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION);
-        assertTrue(ex instanceof PrincipalException);
+        assertInstanceOf(PrincipalException.class, ex);
         assertEquals(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, mv.getViewName());
         assertEquals(HttpStatus.BAD_REQUEST, mv.getStatus());
     }

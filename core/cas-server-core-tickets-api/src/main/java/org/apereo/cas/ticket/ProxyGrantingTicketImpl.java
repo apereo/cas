@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
+import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -65,9 +66,9 @@ public class ProxyGrantingTicketImpl extends TicketGrantingTicketImpl implements
     @Override
     public ProxyTicket grantProxyTicket(final String id, final Service service,
                                         final ExpirationPolicy expirationPolicy,
-                                        final ServiceTicketSessionTrackingPolicy trackingPolicy) {
+                                        final TicketTrackingPolicy trackingPolicy) {
         val serviceTicket = new ProxyTicketImpl(id, this, service, false, expirationPolicy);
-        trackingPolicy.track(this, serviceTicket);
+        trackingPolicy.trackTicket(this, serviceTicket);
         return serviceTicket;
     }
 

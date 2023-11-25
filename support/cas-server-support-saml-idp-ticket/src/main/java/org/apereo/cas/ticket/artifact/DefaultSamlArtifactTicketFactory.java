@@ -8,8 +8,10 @@ import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.util.function.FunctionUtils;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.opensaml.saml.common.SAMLObject;
@@ -23,10 +25,8 @@ import org.opensaml.saml.common.SAMLObject;
 @RequiredArgsConstructor
 public class DefaultSamlArtifactTicketFactory implements SamlArtifactTicketFactory {
 
-    /**
-     * ExpirationPolicy for tokens.
-     */
-    protected final ExpirationPolicyBuilder<SamlArtifactTicket> expirationPolicy;
+    @Getter
+    protected final ExpirationPolicyBuilder<SamlArtifactTicket> expirationPolicyBuilder;
 
     /**
      * The opensaml config bean.
@@ -37,6 +37,8 @@ public class DefaultSamlArtifactTicketFactory implements SamlArtifactTicketFacto
      * The Web application service factory.
      */
     protected final ServiceFactory<WebApplicationService> webApplicationServiceFactory;
+
+    protected final TicketTrackingPolicy descendantTicketsTrackingPolicy;
 
     @Override
     public SamlArtifactTicket create(final String artifactId,
@@ -49,10 +51,10 @@ public class DefaultSamlArtifactTicketFactory implements SamlArtifactTicketFacto
 
                 val service = this.webApplicationServiceFactory.createService(relyingParty);
                 val at = new SamlArtifactTicketImpl(codeId, service, authentication,
-                    this.expirationPolicy.buildTicketExpirationPolicy(), ticketGrantingTicket, issuer, relyingParty, w.toString());
-                if (ticketGrantingTicket != null) {
-                    ticketGrantingTicket.getDescendantTickets().add(at.getId());
-                }
+                    this.expirationPolicyBuilder.buildTicketExpirationPolicy(), ticketGrantingTicket, issuer, relyingParty, w.toString());
+
+                descendantTicketsTrackingPolicy.trackTicket(ticketGrantingTicket, at);
+
                 return at;
             }
         });

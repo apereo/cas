@@ -29,7 +29,7 @@ class PrincipalFromRemoteRequestHeaderNonInteractiveCredentialsActionTests exten
 
     @Test
     void verifyRemoteUserExists() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         context.getHttpServletRequest().addHeader("cas-header-name", "casuser");
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, this.action.execute(context).getId());
         val credential = WebUtils.getCredential(context);

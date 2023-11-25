@@ -128,11 +128,11 @@ class OidcServicesManagerRegisteredServiceLocatorTests extends AbstractOidcTests
         var svc = webApplicationServiceFactory.createService(
             String.format("https://app.example.org/whatever?%s=%s", OAuth20Constants.CLIENT_ID, oidcClientId));
         var result = servicesManager.findServiceBy(svc);
-        assertTrue(result instanceof OidcRegisteredService);
+        assertInstanceOf(OidcRegisteredService.class, result);
 
         svc = webApplicationServiceFactory.createService("https://app.example.org/whatever?hello=world");
         result = servicesManager.findServiceBy(svc);
-        assertTrue(result instanceof CasRegisteredService);
+        assertInstanceOf(CasRegisteredService.class, result);
     }
 
 }

@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProviderResolver;
 import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.discovery.CasServerProfileCustomizer;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
@@ -54,7 +55,6 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.apereo.cas.web.flow.resolver.impl.mfa.DefaultMultifactorAuthenticationProviderWebflowEventResolver;
 import org.apereo.cas.web.support.ArgumentExtractor;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -69,6 +69,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -85,9 +86,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
-
 import javax.annotation.Nonnull;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -275,6 +274,7 @@ public class OidcEndpointsConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
     public static class OidcControllerEndpointsConfiguration {
+
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcWellKnownController")
         @Bean
@@ -486,6 +486,22 @@ public class OidcEndpointsConfiguration {
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
             return new OidcRegisteredServiceUIAction(servicesManager, oauth20AuthenticationServiceSelectionStrategy);
+        }
+    }
+
+    @Configuration(value = "OidcCasDiscoveryProfileConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @ConditionalOnClass(CasServerProfileCustomizer.class)
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Discovery)
+    public static class OidcCasDiscoveryProfileConfiguration {
+        
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "oidcCasServerProfileCustomizer")
+        @Bean
+        public CasServerProfileCustomizer oidcCasServerProfileCustomizer(
+            final CasConfigurationProperties casProperties) {
+            return profile -> profile.getDetails().put("userDefinedScopes",
+                casProperties.getAuthn().getOidc().getCore().getUserDefinedScopes());
         }
     }
 }

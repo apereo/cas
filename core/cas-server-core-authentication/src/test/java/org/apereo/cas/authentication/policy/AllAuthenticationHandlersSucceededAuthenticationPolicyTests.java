@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,14 +21,14 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("AuthenticationHandler")
+@Tag("AuthenticationPolicy")
 class AllAuthenticationHandlersSucceededAuthenticationPolicyTests {
     @Test
     void verifyOperationPrevented() throws Throwable {
         val input = new AllAuthenticationHandlersSucceededAuthenticationPolicy();
         val builder = new DefaultAuthenticationBuilder(CoreAuthenticationTestUtils.getPrincipal());
         val authn = builder.addFailure("Prevented", new PreventedException("error")).build();
-        assertFalse(input.isSatisfiedBy(authn, Set.of(), mock(ConfigurableApplicationContext.class), Optional.empty()).isSuccess());
+        assertFalse(input.isSatisfiedBy(authn, mock(ConfigurableApplicationContext.class)).isSuccess());
     }
 
     @Test
@@ -37,6 +36,6 @@ class AllAuthenticationHandlersSucceededAuthenticationPolicyTests {
         val input = new AllAuthenticationHandlersSucceededAuthenticationPolicy();
         val authn = new DefaultAuthenticationBuilder(CoreAuthenticationTestUtils.getPrincipal()).build();
         assertFalse(input.isSatisfiedBy(authn, Set.of(new SimpleTestUsernamePasswordAuthenticationHandler()),
-            mock(ConfigurableApplicationContext.class), Optional.empty()).isSuccess());
+            mock(ConfigurableApplicationContext.class)).isSuccess());
     }
 }

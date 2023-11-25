@@ -1,0 +1,11 @@
+{
+  "dependencies": "trusted-webflow",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.tomcat.remote-user-valve.remote-user-header=REMOTE_USER",
+    "--cas.server.tomcat.remote-user-valve.allowed-ip-address-regex=.+"
+  ],
+  "initScript": "${PWD}/ci/tests/nginx/run-nginx-server.sh"
+}

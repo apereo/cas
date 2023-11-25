@@ -2,8 +2,6 @@ package org.apereo.cas.audit.spi;
 
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
-import org.apereo.cas.config.CasCoreAuditConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
@@ -13,11 +11,9 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -32,10 +28,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("Audits")
 @SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
-    CasCoreUtilConfiguration.class,
-    CasCoreAuditConfiguration.class,
+    BaseAuditConfigurationTests.SharedTestConfiguration.class,
     GroovyAuditTrailManagerTests.GroovyAuditTrailManagerTestConfiguration.class
 },
     properties = {

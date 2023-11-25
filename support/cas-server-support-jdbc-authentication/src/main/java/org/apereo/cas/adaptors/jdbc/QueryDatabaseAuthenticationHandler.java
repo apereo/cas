@@ -10,8 +10,8 @@ import org.apereo.cas.configuration.model.support.jdbc.authn.QueryJdbcAuthentica
 import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
-import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
@@ -25,6 +25,7 @@ import javax.security.auth.login.FailedLoginException;
 import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,7 +68,7 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
         final UsernamePasswordCredential credential, final String originalPassword) throws Throwable {
-        val attributes = Maps.<String, List<Object>>newHashMapWithExpectedSize(this.principalAttributeMap.size());
+        val attributes = new HashMap<String, List<Object>>(this.principalAttributeMap.size());
         val username = credential.getUsername();
         val password = credential.toPassword();
         try {
@@ -124,13 +125,14 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
     }
 
     private Map<String, Object> query(final UsernamePasswordCredential credential) {
-        if (properties.getSql().contains("?")) {
-            return getJdbcTemplate().queryForMap(properties.getSql(), credential.getUsername());
+        val sql = SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getSql());
+        if (sql.contains("?")) {
+            return getJdbcTemplate().queryForMap(sql, credential.getUsername());
         }
         val parameters = new LinkedHashMap<String, Object>();
         parameters.put("username", credential.getUsername());
         parameters.put("password", credential.toPassword());
-        return getNamedParameterJdbcTemplate().queryForMap(properties.getSql(), parameters);
+        return getNamedParameterJdbcTemplate().queryForMap(sql, parameters);
     }
 
     private void collectPrincipalAttributes(final Map<String, List<Object>> attributes, final Map<String, Object> dbFields) {

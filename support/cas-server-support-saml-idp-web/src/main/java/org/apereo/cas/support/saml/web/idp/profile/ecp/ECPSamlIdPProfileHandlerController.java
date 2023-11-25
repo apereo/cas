@@ -12,7 +12,7 @@ import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurati
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
-
+import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
@@ -20,13 +20,9 @@ import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.soap.messaging.context.SOAP11Context;
-import org.pac4j.core.context.CallContext;
-import org.pac4j.core.credentials.UsernamePasswordCredentials;
-import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.MediaType;
+import org.springframework.security.web.authentication.www.BasicAuthenticationConverter;
 import org.springframework.web.bind.annotation.PostMapping;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.LinkedHashMap;
@@ -59,7 +55,7 @@ public class ECPSamlIdPProfileHandlerController extends AbstractSamlIdPProfileHa
     public void handleEcpRequest(final HttpServletResponse response,
                                  final HttpServletRequest request) throws Exception {
         val soapContext = decodeSoapRequest(request);
-        val credential = extractBasicAuthenticationCredential(request, response);
+        val credential = extractBasicAuthenticationCredential(request);
 
         if (credential == null) {
             LOGGER.error("Credentials could not be extracted from the SAML ECP request");
@@ -70,7 +66,6 @@ public class ECPSamlIdPProfileHandlerController extends AbstractSamlIdPProfileHa
             LOGGER.error("SAML ECP request could not be determined from the authentication request");
             return;
         }
-
         val buildContext = SamlProfileBuilderContext.builder()
             .httpRequest(request)
             .httpResponse(response)
@@ -80,13 +75,6 @@ public class ECPSamlIdPProfileHandlerController extends AbstractSamlIdPProfileHa
         handleEcpRequest(buildContext, credential);
     }
 
-    /**
-     * Handle ecp request.
-     *
-     * @param context    the context
-     * @param credential the credential
-     * @throws Exception the exception
-     */
     protected void handleEcpRequest(final SamlProfileBuilderContext context, final Credential credential) throws Exception {
         LOGGER.debug("Handling ECP request for SOAP context [{}]", context.getMessageContext());
 
@@ -126,13 +114,6 @@ public class ECPSamlIdPProfileHandlerController extends AbstractSamlIdPProfileHa
         }
     }
 
-    /**
-     * Build ecp fault response.
-     *
-     * @param context the context
-     * @param error   the error
-     * @throws Exception the exception
-     */
     protected void buildEcpFaultResponse(final SamlProfileBuilderContext context, final String error) throws Exception {
         context.getHttpRequest().setAttribute(SamlIdPConstants.REQUEST_ATTRIBUTE_ERROR, error);
         getConfigurationContext().getSamlFaultResponseBuilder().build(context);
@@ -151,18 +132,12 @@ public class ECPSamlIdPProfileHandlerController extends AbstractSamlIdPProfileHa
         return authenticationResult.getAuthentication();
     }
 
-    private Credential extractBasicAuthenticationCredential(final HttpServletRequest request,
-                                                            final HttpServletResponse response) {
-        val extractor = new BasicAuthExtractor();
-        val webContext = new JEEContext(request, response);
-
-        val callContext = new CallContext(webContext, configurationContext.getSessionStore());
-        val credentialsResult = extractor.extract(callContext);
-        if (credentialsResult.isPresent()) {
-            val credentials = (UsernamePasswordCredentials) credentialsResult.get();
-            LOGGER.debug("Received basic authentication ECP request from credentials [{}]", credentials);
-            return new UsernamePasswordCredential(credentials.getUsername(), credentials.getPassword());
-        }
-        return null;
+    private static Credential extractBasicAuthenticationCredential(final HttpServletRequest request) {
+        val converter = new BasicAuthenticationConverter();
+        val token = converter.convert(request);
+        return FunctionUtils.doIfNotNull(token, () -> {
+            LOGGER.debug("Received basic authentication ECP request from credentials [{}]", token.getPrincipal());
+            return new UsernamePasswordCredential(token.getPrincipal().toString(), token.getCredentials().toString());
+        });
     }
 }

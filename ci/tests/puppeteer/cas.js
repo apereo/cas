@@ -7,6 +7,7 @@ const waitOn = require('wait-on');
 const JwtOps = require('jsonwebtoken');
 const colors = require('colors');
 const fs = require("fs");
+const util = require("util");
 const {ImgurClient} = require('imgur');
 const path = require("path");
 const mockServer = require('mock-json-server');
@@ -49,24 +50,39 @@ exports.browserOptions = (opt) => ({
     ...opt
 });
 
+function inspect(text) {
+    let result;
+    try {
+        result = JSON.parse(text);
+    } catch {
+        result = text;
+    }
+    return util.inspect(result, {colors: true, depth: null})
+}
+
 exports.log = async(text, ...args) => {
-    await LOGGER.debug(`👉 ${text}`, args);
+    const toLog = inspect(text);
+    await LOGGER.debug(`👉 ${toLog}`, args);
 };
 
 exports.logy = async (text) => {
-    await LOGGER.warn(`🔥 ${colors.yellow(text)}`);
+    const toLog = inspect(text);
+    await LOGGER.warn(`🔥 ${toLog}`);
 };
 
 exports.logb = async (text) => {
-    await LOGGER.debug(`ℹ️ ${colors.blue(text)}`);
+    const toLog = inspect(text);
+    await LOGGER.debug(`ℹ️ ${toLog}`);
 };
 
 exports.logg = async (text) => {
-    await LOGGER.info(`✅ ${colors.green(text)}`);
+    const toLog = inspect(text);
+    await LOGGER.info(`✅ ${toLog}`);
 };
 
 exports.logr = async (text) => {
-    await LOGGER.error(`🔴 ${colors.red(text)}`);
+    const toLog = inspect(text);
+    await LOGGER.error(`🔴 ${toLog}`);
 };
 
 exports.logPage = async(page) => {
@@ -74,12 +90,12 @@ exports.logPage = async(page) => {
     await this.log(`Page URL: ${url}`);
 };
 
-exports.removeDirectory = async (directory) => {
-    this.logg(`Removing directory ${colors.green(directory)}`);
+exports.removeDirectoryOrFile = async (directory) => {
+    this.logg(`Removing directory ${directory}`);
     if (fs.existsSync(directory)) {
         await fs.rmSync(directory, {recursive: true});
     }
-    this.logg(`Removed directory ${colors.green(directory)}`);
+    this.logg(`Removed directory ${directory}`);
     if (fs.existsSync(directory)) {
         await this.logr(`Removed directory still present at: ${directory}`);
     }
@@ -156,13 +172,13 @@ exports.uploadImage = async (imagePath) => {
     let clientId = process.env.IMGUR_CLIENT_ID;
     if (clientId !== null && clientId !== undefined) {
         const client = new ImgurClient({clientId: clientId});
-        await this.logg(`Uploading image ${colors.green(imagePath)}`);
+        await this.logg(`Uploading image ${imagePath}`);
         client.on('uploadProgress', (progress) => this.log(progress));
         const response = await client.upload({
             image: fs.createReadStream(imagePath),
             type: 'stream',
         });
-        await this.logg(`Uploaded image is at ${colors.green(response.data.link)}`);
+        await this.logg(`Uploaded image is at ${response.data.link}`);
     }
 };
 
@@ -220,7 +236,8 @@ exports.assertCookie = async (page, cookieMustBePresent = true, cookieName = "TG
     if (cookieMustBePresent) {
         await this.log(`Checking for cookie ${cookieName}, which MUST be present`);
         assert(cookies.length !== 0);
-        await this.logg(`Asserting cookie:\n${colors.green(JSON.stringify(cookies, undefined, 2))}`);
+        await this.logg(`Asserting cookies:`);
+        await this.logg(`${JSON.stringify(cookies, undefined, 2)}`);
         return cookies[0];
     }
     await this.log(`Checking for cookie ${cookieName}, which MUST NOT be present`);
@@ -235,11 +252,19 @@ exports.assertCookie = async (page, cookieMustBePresent = true, cookieName = "TG
     }
 };
 
-exports.submitForm = async (page, selector, predicate = undefined) => {
+exports.submitForm = async (page, selector, predicate = undefined, statusCode = 0) => {
     await this.log(`Submitting form ${selector}`);
     if (predicate === undefined) {
-        await this.log("Waiting for page to produce a valid response status code");
-        predicate = async response => response.status() > 0;
+        predicate = async response => {
+            const responseStatus = response.status();
+            await this.log(`Page response status: ${responseStatus}`);
+            if (statusCode <= 0) {
+                await this.log("Waiting for page to produce a valid response status code");
+                return responseStatus > statusCode;
+            }
+            await this.log(`Waiting for page response status code ${statusCode}`);
+            return responseStatus === statusCode;
+        };
     }
     return await Promise.all([
         page.waitForResponse(predicate),
@@ -310,13 +335,38 @@ exports.assertParameter = async (page, param) => {
     await this.log(`Asserting parameter ${param} in URL: ${page.url()}`);
     let result = new URL(page.url());
     let value = result.searchParams.get(param);
-    await this.logg(`Parameter ${colors.green(param)} with value ${colors.green(value)}`);
+    await this.logg(`Parameter ${param} with value ${value}`);
     assert(value != null);
     return value;
 };
 
+exports.assertPageUrl = async(page, url) => {
+    let result = await page.url();
+    assert(result === url);
+};
+
+exports.assertPageUrlStartsWith = async(page, url) => {
+    let result = await page.url();
+    assert(result.startsWith(url));
+};
+
+exports.assertPageUrlProtocol = async(page, protocol) => {
+    let result = new URL(await page.url());
+    assert(result.protocol === protocol);
+};
+
+exports.assertPageUrlHost = async(page, host) => {
+    let result = new URL(await page.url());
+    assert(result.host === host);
+};
+
+exports.assertPageUrlPort = async(page, port) => {
+    let result = new URL(await page.url());
+    assert(result.port === port);
+};
+
 exports.assertMissingParameter = async (page, param) => {
-    let result = new URL(page.url());
+    let result = new URL(await page.url());
     assert(result.searchParams.has(param) === false);
 };
 
@@ -353,10 +403,9 @@ exports.doRequest = async (url, method = "GET",
         };
         options.agent = new https.Agent(options);
 
-        this.logg(`Contacting ${colors.green(url)} via ${colors.green(method)}`);
+        this.logg(`Contacting ${url} via ${method}`);
         const handler = async (res) => {
-            this.logg(`Response status code: ${colors.green(res.statusCode)}`);
-            // this.logg(`Response headers: ${colors.green(res.headers)}`)
+            await this.logg(`Response status code: ${res.statusCode}`);
             if (statusCode > 0) {
                 assert(res.statusCode === statusCode);
             }
@@ -379,7 +428,7 @@ exports.doRequest = async (url, method = "GET",
 
 exports.doGet = async (url, successHandler, failureHandler, headers = {}, responseType = undefined) => {
     const instance = axios.create({
-        timeout: 10000,
+        timeout: 8000,
         httpsAgent: new https.Agent({
             rejectUnauthorized: false
         })
@@ -406,13 +455,13 @@ exports.doGet = async (url, successHandler, failureHandler, headers = {}, respon
 
 exports.doPost = async (url, params = "", headers = {}, successHandler, failureHandler) => {
     const instance = axios.create({
-        timeout: 10000,
+        timeout: 12000,
         httpsAgent: new https.Agent({
             rejectUnauthorized: false
         })
     });
     let urlParams = params instanceof URLSearchParams ? params : new URLSearchParams(params);
-    await this.logg(`Posting to URL ${colors.green(url)}`);
+    await this.logg(`Posting to URL ${url}`);
     return await instance
         .post(url, urlParams, {headers: headers})
         .then(res => {
@@ -524,6 +573,12 @@ exports.assertPageTitleContains = async (page, value) => {
     assert(title.includes(value))
 };
 
+exports.substring = async (text, word1, word2) => {
+    const regex = new RegExp(`${word1}(.*?)${word2}`);
+    const match = regex.exec(text);
+    return match ? match[1].trim() : null;
+};
+
 exports.recordScreen = async (page) => {
     let index = Math.floor(Math.random() * 10000);
     let filePath = path.join(__dirname, `/recording-${index}.mp4`);
@@ -545,7 +600,7 @@ exports.recordScreen = async (page) => {
 exports.createJwt = async (payload, key, alg = "RS256", options = {}) => {
     let allOptions = {...{algorithm: alg}, ...options};
     const token = JwtOps.sign(payload, key, allOptions, undefined);
-    await this.logg(`Created JWT:\n${colors.green(token)}\n`);
+    await this.logg(`Created JWT:\n${token}\n`);
     return token;
 };
 
@@ -553,7 +608,7 @@ exports.verifyJwt = async (token, secret, options) => {
     await this.log(`Decoding token ${token}`);
     let decoded = JwtOps.verify(token, secret, options, undefined);
     if (options.complete) {
-        await this.logg(`Decoded token header: ${colors.green(decoded.header)}`);
+        await this.logg(`Decoded token header: ${decoded.header}`);
         await this.log("Decoded token payload:");
         await this.logg(decoded.payload);
     } else {
@@ -611,7 +666,7 @@ exports.decodeJwt = async (token, complete = false) => {
 
     let decoded = JwtOps.decode(token, {complete: complete});
     if (complete) {
-        await this.logg(`Decoded token header: ${colors.green(decoded.header)}`);
+        await this.logg(`Decoded token header: ${decoded.header}`);
         await this.log("Decoded token payload:");
         await this.logg(decoded.payload);
     } else {
@@ -646,10 +701,10 @@ exports.screenshot = async (page) => {
             await this.log(`Attempting to take a screenshot and save at ${filePath}`);
             await page.setViewport({width: 1920, height: 1080});
             await page.screenshot({path: filePath, captureBeyondViewport: true, fullPage: true});
-            this.logg(`Screenshot saved at ${colors.green(filePath)}`);
+            this.logg(`Screenshot saved at ${filePath}`);
             await this.uploadImage(filePath);
         } catch (e) {
-            this.logr(colors.red(`Unable to capture screenshot ${filePath}: ${e}`));
+            this.logr(`Unable to capture screenshot ${filePath}: ${e}`);
         }
     } else {
         await this.log("Capturing screenshots is disabled in non-CI environments");
@@ -748,30 +803,32 @@ exports.goto = async (page, url, retryCount = 5) => {
     while (response === null && attempts < retryCount) {
         attempts += 1;
         try {
-            await this.logg(`Navigating to: ${colors.green(url)}`);
+            await this.logg(`Navigating to: ${url}`);
             response = await page.goto(url);
             assert(await page.evaluate(() => document.title) !== null);
         } catch (err) {
-            this.logr(colors.red(`#${attempts}: Failed to goto to ${url}.`));
-            this.logr(colors.red(err.message));
+            this.logr(`#${attempts}: Failed to goto to ${url}.`);
+            this.logr(err.message);
             await this.sleep(timeout);
         }
     }
     if (response != null) {
-        this.logg(`Response status: ${colors.green(await response.status())}`);
+        this.logg(`Response status: ${await response.status()}`);
     }
     return response;
 };
 
-exports.gotoLogin = async(page, service = undefined, port = 8443) => {
-    const url = `https://localhost:${port}/cas/login` + (service === undefined ? "" : `?service=${service}`);
+exports.gotoLogin = async(page, service = undefined, port = 8443, renew = undefined) => {
+    let queryString = (service === undefined ? "" : `service=${service}&`);
+    queryString += (renew === undefined ? "" : `renew=true&`);
+    let url = `https://localhost:${port}/cas/login?${queryString}`;
     return await this.goto(page, url);
 };
 
 exports.gotoLogout = async(page, service = undefined, port = 8443) => {
     const url = `https://localhost:${port}/cas/logout` + (service === undefined ? "" : `?service=${service}`);
     return await this.goto(page, url);
-}
+};
 
 exports.parseXML = async(xml, options = {}) => {
     let parsedXML = undefined;

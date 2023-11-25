@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -53,6 +55,9 @@ class PersonDirectoryPrincipalResolverConcurrencyTests {
     private static final int NUM_USERS = 100;
 
     private static final int EXECUTIONS_PER_USER = 1000;
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
@@ -101,7 +106,7 @@ class PersonDirectoryPrincipalResolverConcurrencyTests {
                     }
                 });
             }
-            assertTrue(allExecutorThreadsReady.await(runnables.size() * 10, TimeUnit.MILLISECONDS),
+            assertTrue(allExecutorThreadsReady.await(runnables.size() * 10L, TimeUnit.MILLISECONDS),
                 "Timeout initializing threads! Perform long lasting initializations before passing runnables to assertConcurrent");
             afterInitBlocker.countDown();
             assertTrue(allDone.await(maxTimeoutSeconds, TimeUnit.SECONDS), () -> message + " timeout! More than " + maxTimeoutSeconds + " seconds");
@@ -112,10 +117,10 @@ class PersonDirectoryPrincipalResolverConcurrencyTests {
 
     @BeforeEach
     protected void setUp() {
-        this.personDirectoryResolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(
-            PrincipalFactoryUtils.newPrincipalFactory(),
-            attributeRepository,
-            CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
+        val attributeMerger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
+        personDirectoryResolver = PersonDirectoryPrincipalResolver.newPersonDirectoryPrincipalResolver(
+            applicationContext, PrincipalFactoryUtils.newPrincipalFactory(),
+            attributeRepository, attributeMerger,
             servicesManager, attributeDefinitionStore,
             casProperties.getPersonDirectory()
         );

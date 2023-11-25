@@ -1,7 +1,7 @@
 package org.apereo.cas.nativex;
 
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.support.pac4j.authentication.clients.DelegatedClientFactory;
+import org.apereo.cas.pac4j.client.DelegatedIdentityProviderFactory;
 import org.apereo.cas.support.pac4j.authentication.clients.DelegatedClientFactoryCustomizer;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import lombok.val;
@@ -23,10 +23,10 @@ public class DelegatedClientsRuntimeHints implements CasRuntimeHintsRegistrar {
         
         hints.proxies()
             .registerJdkProxy(DelegatedClientFactoryCustomizer.class)
-            .registerJdkProxy(DelegatedClientFactory.class);
+            .registerJdkProxy(DelegatedIdentityProviderFactory.class);
 
         registerReflectionHints(hints,
-            findSubclassesInPackage(DelegatedClientFactory.class, CentralAuthenticationService.NAMESPACE));
+            findSubclassesInPackage(DelegatedIdentityProviderFactory.class, CentralAuthenticationService.NAMESPACE));
     }
 
     private static void registerReflectionHints(final RuntimeHints hints, final Collection clazzes) {

@@ -40,6 +40,6 @@ class MultifactorAuthenticationProviderMetadataPopulatorTests {
         populator.populateAttributes(builder, CoreAuthenticationTestUtils.getAuthenticationTransactionFactory()
             .newTransaction(new UsernamePasswordCredential()));
         val authn = builder.build();
-        assertTrue(authn.getAttributes().containsKey("contextClass"));
+        assertTrue(authn.containsAttribute("contextClass"));
     }
 }

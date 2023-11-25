@@ -20,8 +20,7 @@ class X509CertificateCredentialsNonInteractiveActionTests extends BaseCertificat
     @Test
     void verifyNoCredentialsResultsInError() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
-        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR,
-            action.execute(context).getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, action.execute(context).getId());
     }
 
     @Test
@@ -29,9 +28,7 @@ class X509CertificateCredentialsNonInteractiveActionTests extends BaseCertificat
         val context = MockRequestContext.create(applicationContext);
         context.getHttpServletRequest().setAttribute(X509CertificateCredentialsNonInteractiveAction.REQUEST_ATTRIBUTE_X509_CERTIFICATE,
             new X509Certificate[]{new CasX509Certificate(false)});
-
-        assertEquals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE,
-            action.execute(context).getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, action.execute(context).getId());
     }
 
     @Test
@@ -39,6 +36,7 @@ class X509CertificateCredentialsNonInteractiveActionTests extends BaseCertificat
         val context = MockRequestContext.create(applicationContext);
         context.getHttpServletRequest().setAttribute(X509CertificateCredentialsNonInteractiveAction.REQUEST_ATTRIBUTE_X509_CERTIFICATE, new X509Certificate[]{VALID_CERTIFICATE});
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
+        assertTrue(context.getFlowScope().contains(X509Certificate.class.getName()));
     }
 
     @Test

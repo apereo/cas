@@ -1,7 +1,6 @@
 package org.apereo.cas.logout.slo;
 
 import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.logout.SingleLogoutExecutionRequest;
 
 import org.springframework.core.Ordered;
 

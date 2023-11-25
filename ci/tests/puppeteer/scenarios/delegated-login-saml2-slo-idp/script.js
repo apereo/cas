@@ -14,7 +14,6 @@ const assert = require('assert');
     await cas.goto(page, "https://localhost:8444/protected");
     await cas.logPage(page);
 
-    // await cas.goto(page, "https://localhost:8443/cas/login?locale=en");
     await page.waitForTimeout(2000);
     await cas.screenshot(page);
 
@@ -26,17 +25,17 @@ const assert = require('assert');
     await page.waitForNavigation();
 
     await cas.loginWith(page, "user1", "password");
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(4000);
 
     await cas.log("Checking CAS application access...");
-    url = await page.url();
+    let url = await page.url();
     await cas.logPage(page);
     await cas.screenshot(page);
     assert(url.startsWith("https://localhost:8444/protected"));
     await cas.assertInnerTextContains(page, "div.starter-template h2 span", "user1@example.com");
 
     await cas.log("Checking CAS SSO session...");
-    await cas.goto(page, "https://localhost:8443/cas/login?locale=en");
+    await cas.gotoLogin(page);
     await cas.screenshot(page);
     await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
@@ -46,12 +45,18 @@ const assert = require('assert');
 
     await cas.log("Invoking SAML2 identity provider SLO...");
     await cas.goto(page, "http://localhost:9443/simplesaml/saml2/idp/SingleLogoutService.php?ReturnTo=https://apereo.github.io");
-    await page.waitForTimeout(6000);
-    url = await page.url();
+    await page.waitForTimeout(5000);
     await cas.logPage(page);
+    await cas.screenshot(page);
+    url = await page.url();
+    assert(url.startsWith("https://localhost:8443/cas/logout"));
+
+    await page.waitForTimeout(2000);
+    await cas.goto(page, "http://localhost:9443/simplesaml/saml2/idp/SingleLogoutService.php?ReturnTo=https://apereo.github.io");
+    url = await page.url();
     assert(url.startsWith("https://apereo.github.io"));
-    
-    await cas.goto(page, "https://localhost:8443/cas/login?locale=en");
+
+    await cas.gotoLogin(page);
     await cas.assertCookie(page, false);
 
     await cas.log("Accessing protected CAS application");
@@ -67,7 +72,7 @@ const assert = require('assert');
     const title = await page.title();
     await cas.log(title);
     assert(title === "Enter your username and password");
-    await cas.removeDirectory(path.join(__dirname, '/saml-md'));
+    await cas.removeDirectoryOrFile(path.join(__dirname, '/saml-md'));
     await browser.close();
 })();
 

@@ -1,18 +1,18 @@
 #!/bin/bash
 
-if [[ -z "${CAS_KEYSTORE}" ]] ; then
-  keystore="$PWD"/ci/tests/cas/thekeystore.ignore
-  echo -e "Generating keystore for CAS Server at ${keystore}"
-  dname="${dname:-CN=localhost,OU=Example,OU=Org,C=US}"
-  subjectAltName="${subjectAltName:-dns:example.org,dns:localhost,ip:127.0.0.1}"
-  [ -f "${keystore}" ] && rm "${keystore}"
-  keytool -genkey -noprompt -alias cas -keyalg RSA \
-    -keypass changeit -storepass changeit \
-    -keystore "${keystore}" -dname "${dname}"
-  [ -f "${keystore}" ] && echo "Created ${keystore}"
-  export CAS_KEYSTORE="${keystore}"
-else
+if [[ -f "${CAS_KEYSTORE}" ]] ; then
   echo -e "Found existing CAS keystore at ${CAS_KEYSTORE}"
+else
+  keystore="$PWD"/ci/tests/cas/thekeystore.ignore
+    echo -e "Generating keystore for CAS Server at ${keystore}"
+    dname="${dname:-CN=localhost,OU=Example,OU=Org,C=US}"
+    subjectAltName="${subjectAltName:-dns:example.org,dns:localhost,ip:127.0.0.1}"
+    [ -f "${keystore}" ] && rm "${keystore}"
+    keytool -genkey -noprompt -alias cas -keyalg RSA \
+      -keypass changeit -storepass changeit \
+      -keystore "${keystore}" -dname "${dname}"
+    [ -f "${keystore}" ] && echo "Created ${keystore}"
+    export CAS_KEYSTORE="${keystore}"
 fi
 
 # We need to rename the TGC cookie so it does not conflict with

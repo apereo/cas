@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.entity.SamlIdentityProviderEntity;
 import org.apereo.cas.entity.SamlIdentityProviderEntityParser;
+import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.services.DefaultSamlIdentityProviderDiscoveryFeedService;
 import org.apereo.cas.services.SamlIdentityProviderDiscoveryFeedService;
 import org.apereo.cas.util.spring.beans.BeanContainer;
@@ -21,7 +22,6 @@ import org.apereo.cas.web.support.ArgumentExtractor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
-import org.pac4j.core.client.Clients;
 import org.pac4j.saml.client.SAML2Client;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -93,8 +93,8 @@ public class SamlIdentityProviderDiscoveryConfiguration {
         @Qualifier("samlIdentityProviderEntityParser")
         final BeanContainer<SamlIdentityProviderEntityParser> samlIdentityProviderEntityParser,
         final CasConfigurationProperties casProperties,
-        @Qualifier("builtClients")
-        final Clients builtClients,
+        @Qualifier(DelegatedIdentityProviders.BEAN_NAME)
+        final DelegatedIdentityProviders identityProviders,
         @Qualifier(ArgumentExtractor.BEAN_NAME)
         final ArgumentExtractor argumentExtractor) {
 
@@ -105,7 +105,7 @@ public class SamlIdentityProviderDiscoveryConfiguration {
             .collect(Collectors.toList());
         return new DefaultSamlIdentityProviderDiscoveryFeedService(casProperties,
             samlIdentityProviderEntityParser.toList(),
-            builtClients, argumentExtractor, authorizers);
+            identityProviders, argumentExtractor, authorizers);
     }
 
     @Bean
@@ -122,15 +122,15 @@ public class SamlIdentityProviderDiscoveryConfiguration {
     @ConditionalOnMissingBean(name = "samlIdentityProviderEntityParser")
     public BeanContainer<SamlIdentityProviderEntityParser> samlIdentityProviderEntityParser(
         final CasConfigurationProperties casProperties,
-        @Qualifier("builtClients")
-        final Clients builtClients) {
+        @Qualifier(DelegatedIdentityProviders.BEAN_NAME)
+        final DelegatedIdentityProviders identityProviders) {
         val parsers = new ArrayList<SamlIdentityProviderEntityParser>();
         val resource = casProperties.getAuthn().getPac4j().getSamlDiscovery().getResource();
         resource
             .stream()
             .filter(res -> res.getLocation() != null)
             .forEach(Unchecked.consumer(res -> parsers.add(new SamlIdentityProviderEntityParser(res.getLocation()))));
-        builtClients.findAllClients()
+        identityProviders.findAllClients()
             .stream()
             .filter(SAML2Client.class::isInstance)
             .map(SAML2Client.class::cast)

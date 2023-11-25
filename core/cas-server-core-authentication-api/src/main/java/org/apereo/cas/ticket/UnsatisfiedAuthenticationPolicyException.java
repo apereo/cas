@@ -1,10 +1,8 @@
 package org.apereo.cas.ticket;
 
-import org.apereo.cas.authentication.ContextualAuthenticationPolicy;
-
+import org.apereo.cas.authentication.AuthenticationPolicy;
 import lombok.Getter;
 import lombok.NonNull;
-
 import java.io.Serial;
 
 /**
@@ -28,15 +26,10 @@ public class UnsatisfiedAuthenticationPolicyException extends AbstractTicketExce
     /**
      * Unfulfilled policy that caused this exception.
      */
-    private final ContextualAuthenticationPolicy<?> policy;
+    private final AuthenticationPolicy policy;
 
-    /**
-     * Creates a new instance with no cause.
-     *
-     * @param policy Non-null unfulfilled security policy that caused exception.
-     */
-    public UnsatisfiedAuthenticationPolicyException(final @NonNull ContextualAuthenticationPolicy<?> policy) {
-        super(policy.getCode().orElse(CODE));
+    public UnsatisfiedAuthenticationPolicyException(final @NonNull AuthenticationPolicy policy) {
+        super(CODE);
         this.policy = policy;
     }
 

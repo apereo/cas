@@ -33,7 +33,7 @@ const assert = require("assert");
 
     } finally {
         await cas.screenshot(page);
-        await cas.removeDirectory(path.join(__dirname, '/saml-md'));
+        await cas.removeDirectoryOrFile(path.join(__dirname, '/saml-md'));
     }
     await browser.close();
 

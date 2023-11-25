@@ -90,11 +90,18 @@ public class HttpRequestUtils {
         val loc = new GeoLocationRequest();
         if (StringUtils.isNotBlank(geoLocationParam) && !StringUtils.equalsIgnoreCase(geoLocationParam, "unknown")) {
             val geoLocation = Splitter.on(",").splitToList(geoLocationParam);
-            loc.setLatitude(geoLocation.getFirst());
-            loc.setLongitude(geoLocation.get(GEO_LOC_LONG_INDEX));
-            loc.setAccuracy(geoLocation.get(GEO_LOC_ACCURACY_INDEX));
-            loc.setTimestamp(geoLocation.get(GEO_LOC_TIME_INDEX));
-
+            if (!geoLocation.isEmpty()) {
+                loc.setLatitude(geoLocation.getFirst());
+            }
+            if (geoLocation.size() >= GEO_LOC_LONG_INDEX + 1) {
+                loc.setLongitude(geoLocation.get(GEO_LOC_LONG_INDEX));
+            }
+            if (geoLocation.size() >= GEO_LOC_ACCURACY_INDEX + 1) {
+                loc.setAccuracy(geoLocation.get(GEO_LOC_ACCURACY_INDEX));
+            }
+            if (geoLocation.size() >= GEO_LOC_TIME_INDEX + 1) {
+                loc.setTimestamp(geoLocation.get(GEO_LOC_TIME_INDEX));
+            }
         }
         return loc;
     }
@@ -108,12 +115,14 @@ public class HttpRequestUtils {
     @SuppressWarnings("JdkObsolete")
     public static Map<String, String> getRequestHeaders(final HttpServletRequest request) {
         val headers = new LinkedHashMap<String, Object>();
-        val headerNames = request.getHeaderNames();
-        if (headerNames != null) {
-            while (headerNames.hasMoreElements()) {
-                val headerName = headerNames.nextElement();
-                val headerValue = StringUtils.stripToEmpty(request.getHeader(headerName));
-                headers.put(headerName, headerValue);
+        if (request != null) {
+            val headerNames = request.getHeaderNames();
+            if (headerNames != null) {
+                while (headerNames.hasMoreElements()) {
+                    val headerName = headerNames.nextElement();
+                    val headerValue = StringUtils.stripToEmpty(request.getHeader(headerName));
+                    headers.put(headerName, headerValue);
+                }
             }
         }
         return (Map) headers;
@@ -184,5 +193,15 @@ public class HttpRequestUtils {
         }
         return HttpStatus.SERVICE_UNAVAILABLE;
 
+    }
+
+    /**
+     * Gets full request url.
+     *
+     * @param request the request
+     * @return the full request url
+     */
+    public static String getFullRequestUrl(final HttpServletRequest request) {
+        return request.getRequestURI() + (request.getQueryString() != null ? '?' + request.getQueryString() : StringUtils.EMPTY);
     }
 }

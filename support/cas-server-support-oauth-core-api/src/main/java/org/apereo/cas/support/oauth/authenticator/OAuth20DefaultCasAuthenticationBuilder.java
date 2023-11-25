@@ -113,10 +113,13 @@ public class OAuth20DefaultCasAuthenticationBuilder implements OAuth20CasAuthent
             val authenticationAttributes = basicUserProfile.getAuthenticationAttributes();
             builder.addAttributes(authenticationAttributes);
         }
-
+        if (!profile.getRoles().isEmpty()) {
+            builder.addAttribute("roles", new LinkedHashSet<>(profile.getRoles()));
+        }
+        if (!scopes.isEmpty()) {
+            builder.addAttribute(OAuth20Constants.SCOPE, scopes);
+        }
         builder
-            .addAttribute("roles", new LinkedHashSet<>(profile.getRoles()))
-            .addAttribute(OAuth20Constants.SCOPE, scopes)
             .addAttribute(OAuth20Constants.STATE, state)
             .addAttribute(OAuth20Constants.NONCE, nonce)
             .addAttribute(OAuth20Constants.CLIENT_ID, registeredService.getClientId())

@@ -626,8 +626,9 @@ if [[ "${RERUN}" != "true" && "${NATIVE_BUILD}" == "false" ]]; then
         printcyan "Launching CAS instance #${c} under port ${serverPort} from ${targetArtifact}"
         ${targetArtifact} -Dcom.sun.net.ssl.checkRevocation=false \
           -Dlog.console.stacktraces=true -DaotSpringActiveProfiles=none \
-          --server.port=${serverPort} --spring.profiles.active=none --server.ssl.key-store="$keystore" \
-          ${properties} &
+          --spring.main.lazy-initialization=false \
+          --server.port=${serverPort} --spring.profiles.active=none  \
+          --server.ssl.key-store="$keystore" ${properties} &
       elif [[ "${buildDockerImage}" == "true" ]]; then
         printcyan "Launching Docker image cas-${scenarioName}:latest"
         docker run -d --rm \
@@ -645,6 +646,7 @@ if [[ "${RERUN}" != "true" && "${NATIVE_BUILD}" == "false" ]]; then
         printcyan "Launching CAS instance #${c} under port ${serverPort} from "$PWD"/cas.${projectType}"
         java ${runArgs} -Dlog.console.stacktraces=true -jar "$PWD"/cas.${projectType} \
            -Dcom.sun.net.ssl.checkRevocation=false --server.port=${serverPort} \
+           --spring.main.lazy-initialization=false \
            --spring.profiles.active=none --server.ssl.key-store="$keystore" \
            ${properties} &
       fi
@@ -653,7 +655,7 @@ if [[ "${RERUN}" != "true" && "${NATIVE_BUILD}" == "false" ]]; then
       casLogin="https://localhost:${serverPort}/cas/login"
 
       if [[ "${CI}" == "true" ]]; then
-        timeout=$(jq -j '.timeout // 80' "${config}")
+        timeout=$(jq -j '.timeout // 70' "${config}")
         sleepfor $timeout
 
         printcyan "Checking CAS server's status @ ${casLogin}"
@@ -669,7 +671,7 @@ if [[ "${RERUN}" != "true" && "${NATIVE_BUILD}" == "false" ]]; then
       fi
 
       if [[ $RC -ne 0 ]]; then
-        printred "\nUnable to launch CAS instance #${c} under process id ${pid}."
+        printred "Unable to launch CAS instance #${c} under process id ${pid}."
         printred "Killing process id $pid and exiting"
         kill -9 "$pid"
         exit 3

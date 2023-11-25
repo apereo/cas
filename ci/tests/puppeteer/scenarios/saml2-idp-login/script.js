@@ -53,7 +53,7 @@ async function staleAuthenticationFlow(context) {
     const page2 = await cas.newPage(context);
     await cas.goto(page2, url);
     await page2.waitForTimeout(2000);
-    await cas.loginWith(page2, "casuser", "Mellon");
+    await cas.loginWith(page2);
     await page2.waitForTimeout(3000);
     await page2.waitForSelector('#table_with_attributes', {visible: true});
     await cas.assertInnerTextContains(page2, "#content p", "status page of SimpleSAMLphp");
@@ -99,7 +99,7 @@ async function staleAuthenticationFlow(context) {
         }, 200);
     }
     
-    await cas.removeDirectory(path.join(__dirname, '/saml-md'));
+    await cas.removeDirectoryOrFile(path.join(__dirname, '/saml-md'));
     await browser.close();
 })();
 

@@ -4,23 +4,16 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.InvalidTicketException;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.login.ServiceWarningAction;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.test.MockRequestContext;
-
 import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -37,16 +30,14 @@ class ServiceWarningActionTests extends AbstractWebflowActionsTests {
 
     @Test
     void verifyAction() throws Throwable {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        request.addParameter(ServiceWarningAction.PARAMETER_NAME_IGNORE_WARNING, "true");
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        val context = MockRequestContext.create(applicationContext);
+        context.setParameter(ServiceWarningAction.PARAMETER_NAME_IGNORE_WARNING, "true");
 
-        assertThrows(InvalidTicketException.class, () -> action.execute(context).getId());
+        assertThrows(InvalidTicketException.class, () -> action.execute(context));
 
         val tgt = new MockTicketGrantingTicket("casuser");
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
-        assertThrows(InvalidTicketException.class, () -> action.execute(context).getId());
+        assertThrows(InvalidTicketException.class, () -> action.execute(context));
 
         val service = RegisteredServiceTestUtils.getService("https://google.com");
         getServicesManager().save(RegisteredServiceTestUtils.getRegisteredService(service.getId(), Map.of()));

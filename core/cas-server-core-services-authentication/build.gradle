@@ -1,7 +1,6 @@
 description = "Apereo CAS Core Services/Authentication API"
 dependencies {
     implementation libraries.bouncycastle
-    implementation libraries.hibernate
 
     api project(":api:cas-server-core-api-services")
     api project(":api:cas-server-core-api-events")

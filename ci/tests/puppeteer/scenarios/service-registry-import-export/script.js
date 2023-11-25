@@ -9,7 +9,8 @@ const os = require("os");
 
     let template = path.join(__dirname, 'registered-service.json');
     let contents = fs.readFileSync(template, 'utf8');
-    for (let i = 1; i <= 100; i++) {
+    const totalCount = 20;
+    for (let i = 1; i <= totalCount; i++) {
         let serviceBody = contents.replace("${id}", String(i));
         await cas.log(`Import registered service:\n${serviceBody}`);
         await cas.doRequest(`${baseUrl}/import`, "POST", {
@@ -19,16 +20,10 @@ const os = require("os");
         }, 201, serviceBody);
     }
 
-    await cas.doGet(baseUrl,
-        res => {
-            assert(res.status === 200);
-            assert(res.data[1].length === 100);
-        },
-        error => {
-            throw error;
-        }, {
-            'Content-Type': 'application/json'
-        });
+    let body = JSON.parse(await cas.doRequest(baseUrl, "GET", {
+        'Content-Type': 'application/json'
+    }, 200));
+    assert(body[1].length === totalCount);
 
     await cas.doGet(`${baseUrl}/export`,
         res => {

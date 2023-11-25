@@ -28,6 +28,7 @@ import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CasWebflowContextConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
@@ -39,12 +40,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.test.MockRequestContext;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -90,12 +87,12 @@ class BasicAuthenticationActionTests {
     @Qualifier(CasWebflowConstants.ACTION_ID_BASIC_AUTHENTICATION)
     private Action basicAuthenticationAction;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
     @Test
     void verifyOperation() throws Throwable {
-        val request = new MockHttpServletRequest();
-        HttpUtils.createBasicAuthHeaders("casuser", StringUtils.reverse("casuser")).forEach(request::addHeader);
-        val context = new MockRequestContext();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        val context = MockRequestContext.create(applicationContext);
+        HttpUtils.createBasicAuthHeaders("casuser", StringUtils.reverse("casuser")).forEach(context::addHeader);
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService("https://google.com"));
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, this.basicAuthenticationAction.execute(context).getId());
     }

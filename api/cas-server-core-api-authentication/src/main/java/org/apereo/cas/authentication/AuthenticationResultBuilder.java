@@ -61,7 +61,7 @@ public interface AuthenticationResultBuilder extends Serializable {
      * @param credential the credential
      * @return the authentication context builder
      */
-    AuthenticationResultBuilder collect(Credential credential);
+    AuthenticationResultBuilder collect(Credential... credential);
 
     /**
      * Build authentication result.

@@ -63,7 +63,7 @@ public class Cas10ResponseView extends AbstractCasView {
                 writer.write("no\n\n");
             }
             val message = writer.toString();
-            LoggingUtils.protocolMessage("CAS Response", Map.of(), message);
+            LoggingUtils.protocolMessage("CAS v1 Response", Map.of(), message);
             response.setContentType(MediaType.TEXT_PLAIN_VALUE);
             response.getWriter().write(message);
         }

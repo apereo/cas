@@ -38,7 +38,7 @@ class PasswordlessDelegatedClientAuthenticationWebflowStateContributorTests exte
     @Test
     void verifyStore() throws Throwable {
         val client = new CasClient();
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         val account = PasswordlessUserAccount.builder().username("casuser").build();
         PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(context, account);
 
@@ -54,7 +54,7 @@ class PasswordlessDelegatedClientAuthenticationWebflowStateContributorTests exte
     @Test
     void verifyRestore() throws Throwable {
         val client = new CasClient();
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         val account = PasswordlessUserAccount.builder().username("casuser").build();
         val sessionTicket = mock(TransientSessionTicket.class);
         val service = RegisteredServiceTestUtils.getService();
@@ -73,7 +73,7 @@ class PasswordlessDelegatedClientAuthenticationWebflowStateContributorTests exte
     @Test
     void verifyRestoreWithoutSessionTicket() throws Throwable {
         val client = new CasClient();
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         val webContext = new JEEContext(context.getHttpServletRequest(), context.getHttpServletResponse());
         val stored = contributor.restore(context, webContext, Optional.empty(), client);
         assertNull(stored);

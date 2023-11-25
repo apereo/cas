@@ -23,10 +23,7 @@ Provisioning tasks can be carried out using an external Groovy script with the f
 
 ```groovy
 def run(Object[] args) {
-    def principal = args[0]
-    def userProfile = args[1]
-    def client = args[2]
-    def logger = args[3]
+    def (principal,userProfile,client,logger) = args
     ...
 }
 ```

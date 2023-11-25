@@ -53,7 +53,7 @@ class MultifactorAuthenticationSetTrustActionTests extends AbstractMultifactorAu
         WebUtils.putMultifactorAuthenticationTrustRecord(context, bean);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, mfaSetTrustAction.execute(context).getId());
         val authn = WebUtils.getAuthentication(context);
-        assertTrue(authn.getAttributes().containsKey(
+        assertTrue(authn.containsAttribute(
             casProperties.getAuthn().getMfa().getTrusted().getCore().getAuthenticationContextAttribute()));
     }
 
@@ -67,7 +67,7 @@ class MultifactorAuthenticationSetTrustActionTests extends AbstractMultifactorAu
         WebUtils.putMultifactorAuthenticationTrustRecord(context, bean);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, mfaSetTrustAction.execute(context).getId());
         val authn = WebUtils.getAuthentication(context);
-        assertTrue(authn.getAttributes().containsKey(
+        assertTrue(authn.containsAttribute(
             casProperties.getAuthn().getMfa().getTrusted().getCore().getAuthenticationContextAttribute()));
     }
 
@@ -110,12 +110,12 @@ class MultifactorAuthenticationSetTrustActionTests extends AbstractMultifactorAu
         val record = mfaTrustEngine.get("casuser-setdevice");
         assertTrue(record.isEmpty());
         val authn = WebUtils.getAuthentication(context);
-        assertTrue(authn.getAttributes().containsKey(
+        assertTrue(authn.containsAttribute(
             casProperties.getAuthn().getMfa().getTrusted().getCore().getAuthenticationContextAttribute()));
     }
 
-    private static MockRequestContext getMockRequestContext() throws Throwable {
-        val context = MockRequestContext.create();
+    private MockRequestContext getMockRequestContext() throws Throwable {
+        val context = MockRequestContext.create(applicationContext);
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
         val registeredService = RegisteredServiceTestUtils.getRegisteredService("sample-service", Collections.emptyMap());
         WebUtils.putRegisteredService(context, registeredService);

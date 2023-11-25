@@ -55,7 +55,6 @@ import org.springframework.context.annotation.ScopedProxyMode;
 public abstract class BaseYubiKeyTests {
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
         MailSenderAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         AopAutoConfiguration.class

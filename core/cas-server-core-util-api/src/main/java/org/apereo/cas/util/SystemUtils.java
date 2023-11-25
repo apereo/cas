@@ -1,7 +1,6 @@
 package org.apereo.cas.util;
 
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -11,9 +10,7 @@ import org.springframework.boot.info.GitProperties;
 import org.springframework.core.SpringVersion;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
-
 import jakarta.servlet.http.HttpServlet;
-
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.LinkedHashMap;
@@ -28,8 +25,6 @@ import java.util.Properties;
  */
 @UtilityClass
 public class SystemUtils {
-    private static final int SYSTEM_INFO_DEFAULT_SIZE = 20;
-
     private static final GitProperties GIT_PROPERTIES;
 
     static {
@@ -60,16 +55,17 @@ public class SystemUtils {
     public static Map<String, Object> getSystemInfo() {
         val properties = System.getProperties();
 
-        val info = new LinkedHashMap<String, Object>(SYSTEM_INFO_DEFAULT_SIZE);
+        val info = new LinkedHashMap<String, Object>();
 
-        info.put("CAS Version", StringUtils.defaultIfBlank(CasVersion.getVersion(), "Not Available"));
+        FunctionUtils.doIfNotNull(CasVersion.getVersion(), t -> info.put("CAS Version", t));
         info.put("CAS Branch", StringUtils.defaultIfBlank(GIT_PROPERTIES.getBranch(), "master"));
-        info.put("CAS Commit Id", StringUtils.defaultIfBlank(GIT_PROPERTIES.getCommitId(), "Not Available"));
-        info.put("CAS Build Date/Time", CasVersion.getDateTime());
+        FunctionUtils.doIfNotNull(GIT_PROPERTIES.getCommitId(), t -> info.put("CAS Commit Id", t));
+        FunctionUtils.doIfNotNull(CasVersion.getDateTime(), t -> info.put("CAS Build Date/Time", t));
+
         info.put("Spring Boot Version", SpringBootVersion.getVersion());
         info.put("Spring Version", SpringVersion.getVersion());
 
-        info.put("Java Home", properties.get("java.home"));
+        FunctionUtils.doIfNotNull(properties.get("java.home"), t -> info.put("Java Home", t));
         info.put("Java Vendor", properties.get("java.vendor"));
         info.put("Java Version", properties.get("java.version"));
         info.put("Servlet Version", HttpServlet.class.getPackage().getImplementationVersion());

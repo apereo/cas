@@ -45,9 +45,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("OIDC")
-@TestPropertySource(properties =
-    "cas.authn.oauth.code.time-to-kill-in-seconds=60"
-)
+@TestPropertySource(properties = "cas.authn.oauth.code.time-to-kill-in-seconds=60")
 class OidcJwtAuthenticatorHMacTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("oidcJwtClientProvider")
@@ -62,10 +60,11 @@ class OidcJwtAuthenticatorHMacTests extends AbstractOidcTests {
         val context = new JEEContext(request, response);
 
         val registeredService = getOidcRegisteredService();
+        servicesManager.save(registeredService);
+
         val claims = getClaims(registeredService.getClientId(),
             oidcIssuerService.determineIssuer(Optional.of(registeredService)),
             registeredService.getClientId(), registeredService.getClientId());
-
         val keyGen = KeyPairGenerator.getInstance("RSA");
         val pair = keyGen.generateKeyPair();
         val privateKey = pair.getPrivate();
@@ -117,7 +116,7 @@ class OidcJwtAuthenticatorHMacTests extends AbstractOidcTests {
         val context = new JEEContext(request, response);
 
         val audience = casProperties.getServer().getPrefix().concat('/'
-                                                                    + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.ACCESS_TOKEN_URL);
+            + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.ACCESS_TOKEN_URL);
         val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
         registeredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy().setEnabled(false));
         servicesManager.save(registeredService);

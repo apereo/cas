@@ -1,7 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
-import org.apereo.cas.ticket.AuthenticatedServicesAwareTicketGrantingTicket;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.EncodedTicket;
 import org.apereo.cas.ticket.InvalidTicketException;
@@ -271,23 +270,21 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
      */
     protected int deleteChildren(final TicketGrantingTicket ticket) {
         val count = new AtomicLong(0);
-        if (ticket instanceof final AuthenticatedServicesAwareTicketGrantingTicket authTicket) {
-            val services = authTicket.getServices();
-            if (services != null && !services.isEmpty()) {
-                services.keySet()
-                    .stream()
-                    .map(this::getTicket)
-                    .filter(Objects::nonNull)
-                    .forEach(serviceTicket -> {
-                        val deleteCount = deleteSingleTicket(serviceTicket);
-                        if (deleteCount > 0) {
-                            LOGGER.debug("Removed ticket [{}]", serviceTicket.getId());
-                            count.getAndAdd(deleteCount);
-                        } else {
-                            LOGGER.debug("Unable to remove ticket [{}]", serviceTicket.getId());
-                        }
-                    });
-            }
+        val services = ticket.getServices();
+        if (services != null && !services.isEmpty()) {
+            services.keySet()
+                .stream()
+                .map(this::getTicket)
+                .filter(Objects::nonNull)
+                .forEach(serviceTicket -> {
+                    val deleteCount = deleteSingleTicket(serviceTicket);
+                    if (deleteCount > 0) {
+                        LOGGER.debug("Removed ticket [{}]", serviceTicket.getId());
+                        count.getAndAdd(deleteCount);
+                    } else {
+                        LOGGER.debug("Unable to remove ticket [{}]", serviceTicket.getId());
+                    }
+                });
         }
         return count.intValue();
     }
@@ -322,7 +319,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
             return null;
         }
         if (!(ticketToProcess instanceof final EncodedTicket encodedTicket)) {
-            LOGGER.warn("Ticket passed is not an encoded ticket: [{}], no decoding is necessary.",
+            LOGGER.debug("Ticket passed is not an encoded ticket: [{}], no decoding is necessary.",
                 ticketToProcess.getClass().getSimpleName());
             return ticketToProcess;
         }

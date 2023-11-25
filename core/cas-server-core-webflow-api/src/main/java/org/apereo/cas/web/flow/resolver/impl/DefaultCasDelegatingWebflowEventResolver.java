@@ -11,6 +11,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
@@ -57,21 +58,21 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
 
     @Override
     public Set<Event> resolveInternal(final RequestContext context) throws Throwable {
-        val credential = getCredentialFromContext(context);
+        val credentials = getCredentialFromContext(context);
 
         val service = locateServiceForRequest(context);
         LOGGER.trace("Resolved service [{}]", service);
 
         try {
-            if (credential != null) {
+            if (credentials != null && !credentials.isEmpty()) {
                 val agent = WebUtils.getHttpServletRequestUserAgentFromRequestContext(context);
                 val geoLocation = WebUtils.getHttpServletRequestGeoLocationFromRequestContext(context);
                 val properties = CollectionUtils.<String, Serializable>wrap(CredentialMetadata.PROPERTY_USER_AGENT, agent,
                     CredentialMetadata.PROPERTY_GEO_LOCATION, geoLocation);
-                credential.getCredentialMetadata().putProperties(properties);
+                credentials.forEach(cred -> cred.getCredentialMetadata().putProperties(properties));
                 val builder = getConfigurationContext().getAuthenticationSystemSupport()
-                    .handleInitialAuthenticationTransaction(service, credential);
-                builder.collect(credential);
+                    .handleInitialAuthenticationTransaction(service, credentials.toArray(new Credential[]{}));
+                builder.collect(credentials.toArray(new Credential[]{}));
 
                 builder.getInitialAuthentication().ifPresent(authn -> {
                     WebUtils.putAuthenticationResultBuilder(builder, context);
@@ -101,7 +102,7 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
             }
             return CollectionUtils.wrapSet(grantTicketGrantingTicketToAuthenticationResult(context, builder, service));
         } catch (final Throwable exception) {
-            val event = buildEventFromException(exception, context, credential, service);
+            val event = buildEventFromException(exception, context, credentials, service);
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             LOGGER.debug("Authentication request failed with [{}], resulting in event [{}]", response.getStatus(), event);
@@ -140,15 +141,19 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
 
     protected Event buildEventFromException(final Throwable exception,
                                             final RequestContext requestContext,
-                                            final Credential credential,
-                                            final WebApplicationService service) {
+                                            final List<Credential> credential,
+                                            final Service service) {
         val event = WebflowExceptionTranslator.from(exception, requestContext);
         LoggingUtils.warn(LOGGER, exception);
         val attributes = new LocalAttributeMap<>();
         attributes.put(CasWebflowConstants.TRANSITION_ID_ERROR, event.getSource());
-        attributes.put(Credential.class.getName(), credential);
+        if (!credential.isEmpty()) {
+            attributes.put(Credential.class.getName(), credential.getFirst());
+        }
         attributes.put(WebApplicationService.class.getName(), service);
         attributes.putAll(event.getAttributes());
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        attributes.put("url", HttpRequestUtils.getFullRequestUrl(request));
         return newEvent(event.getId(), attributes);
     }
 
@@ -195,9 +200,10 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
         return registeredService;
     }
 
-    protected WebApplicationService locateServiceForRequest(final RequestContext context) {
+    protected Service locateServiceForRequest(final RequestContext context) throws Throwable {
         val serviceFromRequest = WebUtils.getService(getConfigurationContext().getArgumentExtractors(), context);
         val serviceFromFlow = WebUtils.getService(context);
-        return ObjectUtils.defaultIfNull(serviceFromRequest, serviceFromFlow);
+        val finalService = ObjectUtils.defaultIfNull(serviceFromRequest, serviceFromFlow);
+        return getConfigurationContext().getAuthenticationRequestServiceSelectionStrategies().resolveService(finalService);
     }
 }

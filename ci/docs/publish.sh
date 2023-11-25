@@ -49,6 +49,7 @@ clone=true
 buildFeatures=true
 shellCommands=true
 dependencyVersions=true
+userinterface=true
 
 serve=false
 
@@ -76,6 +77,7 @@ while (("$#")); do
     buildFeatures=false
     shellCommands=false
     dependencyVersions=false
+    userinterface=true
     ;;
   --branch)
     branchVersion=$2
@@ -133,6 +135,10 @@ while (("$#")); do
     dependencyVersions=$2
     shift 2
     ;;
+  --ui|--themes|--userinterface)
+    userinterface=$2
+    shift 2
+    ;;
   --features|--feat|--ft)
     buildFeatures=$2
     shift 2
@@ -174,6 +180,7 @@ printgreen "Service Properties: \t${serviceProps}"
 printgreen "Features: \t\t${buildFeatures}"
 printgreen "Shell: \t\t\t${shellCommands}"
 printgreen "Audit: \t\t\t${audit}"
+printgreen "UI: \t\t\t${userinterface}"
 printgreen "Ruby Version: \t\t$(ruby -v)"
 echo "-------------------------------------------------------"
 
@@ -266,7 +273,7 @@ if [[ $generateData == "true" ]]; then
   ${docgen} -d "$PWD/gh-pages/_data" -v "$dataDir" -r "$PWD" \
     -f "$propFilter" -a "$actuators" -tp "$thirdParty" \
     -sp "$serviceProps" -ft "$buildFeatures" -csh "$shellCommands" \
-    -aud "$audit" -ver "$dependencyVersions"
+    -aud "$audit" -ver "$dependencyVersions" -ui "$userinterface"
   if [ $? -eq 1 ]; then
     printred "Unable to generate documentation data. Aborting..."
     exit 1

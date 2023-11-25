@@ -15,8 +15,9 @@ public interface TicketCatalogConfigurer {
      *
      * @param plan          the plan
      * @param casProperties the cas properties
+     * @throws Throwable the throwable
      */
-    void configureTicketCatalog(TicketCatalog plan, CasConfigurationProperties casProperties);
+    void configureTicketCatalog(TicketCatalog plan, CasConfigurationProperties casProperties) throws Throwable;
 
     /**
      * Gets name.

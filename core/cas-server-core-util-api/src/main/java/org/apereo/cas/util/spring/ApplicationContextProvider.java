@@ -25,15 +25,15 @@ import java.util.Optional;
  * @since 3.0.0.
  */
 public class ApplicationContextProvider implements ApplicationContextAware {
-    private static ApplicationContext CONTEXT;
+    private static ApplicationContext APPLICATION_CONTEXT;
 
     public static ApplicationContext getApplicationContext() {
-        return CONTEXT;
+        return APPLICATION_CONTEXT;
     }
 
     @Override
     public void setApplicationContext(@Nonnull final ApplicationContext context) {
-        CONTEXT = context;
+        APPLICATION_CONTEXT = context;
     }
 
     /**
@@ -56,7 +56,7 @@ public class ApplicationContextProvider implements ApplicationContextAware {
      * @return the multifactor authentication principal resolvers
      */
     public static List<MultifactorAuthenticationPrincipalResolver> getMultifactorAuthenticationPrincipalResolvers() {
-        val resolvers = new ArrayList<>(CONTEXT.getBeansOfType(MultifactorAuthenticationPrincipalResolver.class).values());
+        val resolvers = new ArrayList<>(APPLICATION_CONTEXT.getBeansOfType(MultifactorAuthenticationPrincipalResolver.class).values());
         AnnotationAwareOrderComparator.sort(resolvers);
         return resolvers;
     }
@@ -67,7 +67,7 @@ public class ApplicationContextProvider implements ApplicationContextAware {
      * @param ctx the ctx
      */
     public static void holdApplicationContext(final ApplicationContext ctx) {
-        CONTEXT = ctx;
+        APPLICATION_CONTEXT = ctx;
     }
 
     /**
@@ -116,8 +116,8 @@ public class ApplicationContextProvider implements ApplicationContextAware {
      * @return the cas properties
      */
     public static Optional<CasConfigurationProperties> getCasConfigurationProperties() {
-        if (CONTEXT != null) {
-            return Optional.of(CONTEXT.getBean(CasConfigurationProperties.class));
+        if (APPLICATION_CONTEXT != null) {
+            return Optional.of(APPLICATION_CONTEXT.getBean(CasConfigurationProperties.class));
         }
         return Optional.empty();
     }
@@ -128,7 +128,7 @@ public class ApplicationContextProvider implements ApplicationContextAware {
      * @return the configurable application context
      */
     public static ConfigurableApplicationContext getConfigurableApplicationContext() {
-        return (ConfigurableApplicationContext) CONTEXT;
+        return (ConfigurableApplicationContext) APPLICATION_CONTEXT;
     }
 
     /**
@@ -137,10 +137,7 @@ public class ApplicationContextProvider implements ApplicationContextAware {
      * @return the script resource cache manager
      */
     public static Optional<ScriptResourceCacheManager<String, ExecutableCompiledGroovyScript>> getScriptResourceCacheManager() {
-        if (CONTEXT != null && CONTEXT.containsBean(ScriptResourceCacheManager.BEAN_NAME)) {
-            return Optional.of(CONTEXT.getBean(ScriptResourceCacheManager.BEAN_NAME, ScriptResourceCacheManager.class));
-        }
-        return Optional.empty();
+        return (Optional) getBean(ScriptResourceCacheManager.BEAN_NAME, ScriptResourceCacheManager.class);
     }
 
     /**
@@ -149,11 +146,28 @@ public class ApplicationContextProvider implements ApplicationContextAware {
      * @return the message sanitizer
      */
     public static Optional<MessageSanitizer> getMessageSanitizer() {
+        return getBean(MessageSanitizer.BEAN_NAME, MessageSanitizer.class);
+    }
+
+    private static <T> Optional<T> getBean(final String name, final Class<T> clazz) {
+        return getBean(APPLICATION_CONTEXT, name, clazz);
+    }
+
+    /**
+     * Gets bean.
+     *
+     * @param <T>                the type parameter
+     * @param applicationContext the application context
+     * @param name               the name
+     * @param clazz              the clazz
+     * @return the bean
+     */
+    public static <T> Optional<T> getBean(final ApplicationContext applicationContext, final String name, final Class<T> clazz) {
         return FunctionUtils.doAndHandle(() -> {
-            if (CONTEXT != null && CONTEXT.containsBean(MessageSanitizer.BEAN_NAME)) {
-                return Optional.of(CONTEXT.getBean(MessageSanitizer.BEAN_NAME, MessageSanitizer.class));
+            if (applicationContext != null && applicationContext.containsBean(name)) {
+                return Optional.of(applicationContext.getBean(name, clazz));
             }
-            return Optional.<MessageSanitizer>empty();
-        }, e -> Optional.<MessageSanitizer>empty()).get();
+            return Optional.<T>empty();
+        }, e -> Optional.<T>empty()).get();
     }
 }

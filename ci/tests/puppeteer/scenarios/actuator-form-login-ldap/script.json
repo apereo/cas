@@ -1,5 +1,5 @@
 {
-  "dependencies": "reports",
+  "dependencies": "reports,ldap-core",
   "conditions": {
     "docker": "true"
   },
@@ -7,7 +7,7 @@
     "CAS_LDAP_BIND_DN=cn=Directory Manager"
   ],
   "properties": [
-    "--spring.main.lazy-initialization=false",
+    "--logging.level.org.springframework.security=info",
     
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",

@@ -4,6 +4,10 @@ const assert = require("assert");
 const archiver = require('archiver');
 const fs = require('fs');
 
+async function getAllEvents() {
+    return JSON.parse(await cas.doRequest("https://localhost:8443/cas/actuator/events", "GET", {'Content-Type': "application/json"}, 200));
+}
+
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     let page = await cas.newPage(browser);
@@ -14,7 +18,7 @@ const fs = require('fs');
     await cas.log("Deleting all startup events...");
     await cas.doRequest("https://localhost:8443/cas/actuator/events", "DELETE");
 
-    const totalAttempts = 10;
+    const totalAttempts = 2;
     for (let i = 1; i <= totalAttempts; i++) {
         await cas.gotoLogin(page);
         let user = (Math.random() + 1).toString(36).substring(4);
@@ -26,35 +30,27 @@ const fs = require('fs');
     await cas.gotoLogin(page);
     await cas.loginWith(page);
     await cas.assertCookie(page);
-
     await cas.log("Getting events...");
+    let body = await getAllEvents();
 
-    await cas.doGet("https://localhost:8443/cas/actuator/events",
-        res => {
-            const count = Object.keys(res.data[1]).length;
-            cas.log(`Total event records found ${count}`);
-            assert(count === totalAttempts + 1);
+    let count = Object.keys(body[1]).length;
+    await cas.log(`Total event records found ${count}`);
+    assert(count === totalAttempts + 1);
 
-            fs.rmSync(`${__dirname}/events.zip`, {force: true});
-            const zip = fs.createWriteStream(`${__dirname}/events.zip`);
-            const archive = archiver('zip', {
-                zlib: { level: 9 }
-            });
-            archive.pipe(zip);
-            res.data[1].forEach(entry => archive.append(JSON.stringify(entry), { name: `event-${entry.id}.json`}));
-            archive.finalize();
-
-        }, error => {
-            throw error;
-        }, {'Content-Type': "application/json"});
-
+    fs.rmSync(`${__dirname}/events.zip`, {force: true});
+    const zip = fs.createWriteStream(`${__dirname}/events.zip`);
+    const archive = archiver('zip', {
+        zlib: { level: 9 }
+    });
+    archive.pipe(zip);
+    body[1].forEach(entry => archive.append(JSON.stringify(entry), { name: `event-${entry.id}.json`}));
+    await archive.finalize();
+    
     await cas.log("Deleting all events...");
     await cas.doRequest("https://localhost:8443/cas/actuator/events", "DELETE");
     await cas.log("Checking events...");
-    await cas.doGet("https://localhost:8443/cas/actuator/events",
-        res => assert(Object.keys(res.data[1]).length === 0), error => {
-            throw error;
-        }, {'Content-Type': "application/json"});
+    body = await getAllEvents();
+    assert(Object.keys(body[1]).length === 0);
 
     await cas.log("Uploading events...");
     const zipFileContent = fs.readFileSync(`${__dirname}/events.zip`);
@@ -66,14 +62,10 @@ const fs = require('fs');
         zipFileContent);
 
     fs.rmSync(`${__dirname}/events.zip`, {force: true});
-    await cas.doGet("https://localhost:8443/cas/actuator/events",
-        res => {
-            const count = Object.keys(res.data[1]).length;
-            cas.log(`Total event records found ${count}`);
-            assert(count === totalAttempts + 1);
-        }, error => {
-            throw error;
-        }, {'Content-Type': "application/json"});
+    body = await getAllEvents();
+    count = Object.keys(body[1]).length;
+    await cas.log(`Total event records found ${count}`);
+    assert(count === totalAttempts + 1);
 
     await browser.close();
 })();

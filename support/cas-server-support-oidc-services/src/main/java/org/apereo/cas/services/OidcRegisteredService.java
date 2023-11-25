@@ -39,12 +39,11 @@ public class OidcRegisteredService extends OAuthRegisteredService {
     @ExpressionLanguageCapable
     private String jwks;
 
+    @JacksonInject("jwksKeyId")
     private String jwksKeyId;
 
     @DurationCapable
     private String jwksCacheDuration;
-
-    private String tokenEndpointAuthenticationMethod = "client_secret_basic";
 
     @JacksonInject("signIdToken")
     private boolean signIdToken = true;
@@ -52,10 +51,16 @@ public class OidcRegisteredService extends OAuthRegisteredService {
     @JacksonInject("encryptIdToken")
     private boolean encryptIdToken;
 
+    @JacksonInject("idTokenEncryptionOptional")
+    private boolean idTokenEncryptionOptional;
+
+    @JacksonInject("idTokenEncryptionAlg")
     private String idTokenEncryptionAlg;
 
+    @JacksonInject("idTokenSigningAlg")
     private String idTokenSigningAlg;
 
+    @JacksonInject("userInfoSigningAlg")
     private String userInfoSigningAlg;
 
     private String userInfoEncryptedResponseAlg;
@@ -82,10 +87,7 @@ public class OidcRegisteredService extends OAuthRegisteredService {
      * @return the subject type
      */
     public String getSubjectType() {
-        if (StringUtils.isBlank(this.subjectType)) {
-            return OidcSubjectTypes.PUBLIC.getType();
-        }
-        return subjectType;
+        return StringUtils.defaultIfBlank(subjectType, OidcSubjectTypes.PUBLIC.getType());
     }
 
     @JsonIgnore

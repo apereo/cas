@@ -3,12 +3,12 @@
   "conditions": {
     "docker": "true"
   },
-
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
     "--cas.events.core.track-geolocation=true",
     "--cas.audit.engine.enabled=true",
+    "--cas.audit.slf4j.use-single-line=true",
 
     "--cas.events.mongo.user-id=root",
     "--cas.events.mongo.password=secret",

@@ -1,6 +1,8 @@
 package org.apereo.cas.pm;
 
 import org.apereo.cas.config.CasCoreAuditConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
+import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
@@ -28,6 +30,8 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     WebMvcAutoConfiguration.class,
     LdapPasswordManagementConfiguration.class,
     PasswordManagementConfiguration.class,
+    CasCoreConfiguration.class,
+    CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreTicketsSerializationConfiguration.class,

@@ -2,7 +2,7 @@
   "dependencies": "reports,token-webflow",
 
   "properties": [
-    "--spring.main.lazy-initialization=false",
+
     
     "--cas.audit.engine.enabled=true",
 

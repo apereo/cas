@@ -215,7 +215,7 @@ class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSamlIdPCon
 
         val result = servicesManager.findServiceBy(service);
         assertNotNull(result);
-        assertTrue(result instanceof SamlRegisteredService);
+        assertInstanceOf(SamlRegisteredService.class, result);
     }
 
     /**

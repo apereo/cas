@@ -42,6 +42,7 @@ import org.apereo.cas.web.report.SingleSignOnSessionsEndpoint;
 import org.apereo.cas.web.report.SpringWebflowEndpoint;
 import org.apereo.cas.web.report.StatisticsEndpoint;
 import org.apereo.cas.web.report.TicketExpirationPoliciesEndpoint;
+import org.apereo.cas.web.report.TicketRegistryEndpoint;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.ObjectProvider;
@@ -303,6 +304,18 @@ public class CasReportsConfiguration {
             final List<ExpirationPolicyBuilder> builders) {
             return new TicketExpirationPoliciesEndpoint(casProperties, builders,
                 servicesManager, webApplicationServiceFactory);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnAvailableEndpoint
+        public TicketRegistryEndpoint ticketRegistryEndpoint(
+            final CasConfigurationProperties casProperties,
+            @Qualifier(TicketRegistrySupport.BEAN_NAME)
+            final ObjectProvider<TicketRegistrySupport> ticketRegistrySupport,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final ObjectProvider<TicketRegistry> ticketRegistry) {
+            return new TicketRegistryEndpoint(casProperties, ticketRegistry, ticketRegistrySupport);
         }
 
         @Bean

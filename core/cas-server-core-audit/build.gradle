@@ -4,8 +4,6 @@ dependencies {
     api project(":api:cas-server-core-api-events")
     api project(":api:cas-server-core-api-audit")
 
-    implementation libraries.nimbus
-
     compileOnly project(":core:cas-server-core-services")
     
     implementation project(":core:cas-server-core-web-api")
@@ -21,6 +19,8 @@ dependencies {
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-cookie-api")
     testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":core:cas-server-core-authentication-mfa")
+    testImplementation project(":core:cas-server-core-webflow-mfa")
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-webflow")
     testImplementation project(":core:cas-server-core-logout")
@@ -31,7 +31,8 @@ dependencies {
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(":core:cas-server-core-services-registry")
-
+    testImplementation project(":core:cas-server-core-notifications")
+    
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")

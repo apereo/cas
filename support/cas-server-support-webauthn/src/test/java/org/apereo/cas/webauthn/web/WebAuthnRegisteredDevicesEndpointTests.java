@@ -46,7 +46,7 @@ class WebAuthnRegisteredDevicesEndpointTests {
     private WebAuthnRegisteredDevicesEndpoint webAuthnRegisteredDevicesEndpoint;
 
     @Autowired
-    @Qualifier("webAuthnCredentialRepository")
+    @Qualifier(WebAuthnCredentialRepository.BEAN_NAME)
     private WebAuthnCredentialRepository webAuthnCredentialRepository;
     private static CredentialRegistration getCredentialRegistration(final Authentication authn) throws Exception {
         return CredentialRegistration.builder()

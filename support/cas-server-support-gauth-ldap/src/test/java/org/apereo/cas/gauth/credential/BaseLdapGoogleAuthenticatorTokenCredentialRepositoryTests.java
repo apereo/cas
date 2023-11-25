@@ -66,7 +66,6 @@ public abstract class BaseLdapGoogleAuthenticatorTokenCredentialRepositoryTests 
 
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         AopAutoConfiguration.class
     })

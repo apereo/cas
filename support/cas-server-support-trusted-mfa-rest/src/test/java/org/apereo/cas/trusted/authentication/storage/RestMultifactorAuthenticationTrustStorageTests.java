@@ -1,7 +1,14 @@
 package org.apereo.cas.trusted.authentication.storage;
 
 import org.apereo.cas.config.CasCoreAuditConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
+import org.apereo.cas.config.CasCoreConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration;
 import org.apereo.cas.config.RestMultifactorAuthenticationTrustConfiguration;
@@ -24,6 +31,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
@@ -51,6 +59,14 @@ import static org.junit.jupiter.api.Assertions.*;
     MultifactorAuthnTrustConfiguration.class,
     CasCoreAuditConfiguration.class,
     CasCoreUtilConfiguration.class,
+    CasCoreConfiguration.class,
+    CasCoreServicesConfiguration.class,
+    CasCoreTicketsConfiguration.class,
+    CasCoreTicketsSerializationConfiguration.class,
+    CasCoreAuthenticationPrincipalConfiguration.class,
+    CasCoreWebConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
+    WebMvcAutoConfiguration.class,
     RefreshAutoConfiguration.class
 },
     properties = {

@@ -86,6 +86,11 @@ public class YubiKeyMultifactorAuthenticationProperties extends BaseMultifactorA
     private boolean trustedDeviceEnabled;
 
     /**
+     * Define the strategy that controls how devices should be validated.
+     */
+    private YubiKeyDeviceValidationOptions validator = YubiKeyDeviceValidationOptions.VERIFY;
+
+    /**
      * Keep device registration records inside a JDBC resource.
      */
     @NestedConfigurationProperty
@@ -128,4 +133,21 @@ public class YubiKeyMultifactorAuthenticationProperties extends BaseMultifactorA
         crypto.getSigning().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
     }
 
+    /**
+     * Device validation options.
+     */
+    public enum YubiKeyDeviceValidationOptions {
+        /**
+         * Verify yubikey devices via YubiKey APIs.
+         */
+        VERIFY,
+        /**
+         * Skip all validations checks and accept all devices.
+         */
+        SKIP,
+        /**
+         * Reject all devices.
+         */
+        REJECT
+    }
 }

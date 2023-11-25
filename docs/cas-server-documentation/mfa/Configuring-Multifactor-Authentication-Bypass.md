@@ -121,13 +121,8 @@ The outline of the script may be as follows:
 import java.util.*
 
 boolean run(final Object... args) {
-    def authentication = args[0]
-    def principal = args[1]
-    def registeredService = args[2]
-    def provider = args[3]
-    def logger = args[4]
-    def httpRequest = args[5]
-
+    def (authentication,principal,registeredService,provider,logger,httpRequest) = args
+    
     // Stuff happens...
 
     return false;
@@ -152,13 +147,7 @@ an attribute named `mustBypassMfa` whose values contains `true`.
 
 ```groovy
 boolean run(final Object... args) {
-    def authentication = args[0]
-    def principal = args[1]
-    def service = args[2]
-    def provider = args[3]
-    def logger = args[4]
-    def httpRequest = args[5]
-
+    def (authentication,principal,service,provider,logger,httpRequest) = args
     if (service.name == "MyApplication") {
         logger.info("Evaluating principal attributes ${principal.attributes}")
 

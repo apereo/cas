@@ -11,7 +11,8 @@ dependencies {
     implementation project(":core:cas-server-core-webflow-api")
     implementation project(":core:cas-server-core-logout-api")
     implementation project(":core:cas-server-core-services-authentication")
-
+    
+    implementation project(":support:cas-server-support-pac4j-core-clients")
     implementation project(":support:cas-server-support-saml-core-api")
     implementation project(":support:cas-server-support-pac4j-api")
 
@@ -25,10 +26,10 @@ dependencies {
     implementation libraries.opensaml
     implementation libraries.shibutiljavasupport
     implementation libraries.nimbus
-    implementation libraries.ldaptive
 
     testImplementation libraries.casclient
-    
+    testImplementation libraries.ldaptive
+
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")

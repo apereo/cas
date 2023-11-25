@@ -38,6 +38,7 @@ dependencies {
 
     testImplementation project(path: ":support:cas-server-support-yubikey-core", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-yubikey", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-person-directory-core", configuration: "tests")
 
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")

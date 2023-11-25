@@ -18,6 +18,7 @@ import org.pac4j.core.credentials.TokenCredentials;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -43,9 +44,12 @@ class SurrogateDelegatedAuthenticationCredentialExtractorTests {
     @Qualifier("delegatedAuthenticationCredentialExtractor")
     private DelegatedAuthenticationCredentialExtractor delegatedAuthenticationCredentialExtractor;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @Test
     void verifyClientCredentialExtracted() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         val client = mock(BaseClient.class);
 
         val uid = UUID.randomUUID().toString();

@@ -1,6 +1,12 @@
+plugins {
+    id 'com.gradle.enterprise' version "${gradleEnterprisePluginVersion}"
+    id 'com.gradle.common-custom-user-data-gradle-plugin' version "${gradleCommonUserDataPluginVersion}"
+}
+
 ext.isCiServer = System.getenv().containsKey("CI")
 ext.buildCacheUser = System.getenv("GRADLE_BUILDCACHE_USER")
 ext.buildCachePsw = System.getenv("GRADLE_BUILDCACHE_PSW")
+ext.gradleEnterpriseAccessKey = System.getenv("GRADLE_ENTERPRISE_ACCESS_KEY")
 ext.githubPackageRegistryUser = System.getenv("GH_PACKAGE_REGISTRY_USER")
 ext.githubPackageRegistryPassword = System.getenv("GH_PACKAGE_REGISTRY_TOKEN")
 
@@ -17,6 +23,19 @@ buildCache {
             username = buildCacheUser
             password = buildCachePsw
         }
+    }
+}
+
+gradleEnterprise {
+    server = 'https://develocity.apereo.org/'
+    allowUntrustedServer = false
+    // accessKey = gradleEnterpriseAccessKey
+    buildScan {
+        publishIfAuthenticated()
+        capture {
+            taskInputFiles = true
+        }
+        uploadInBackground = !isCiServer
     }
 }
 
@@ -250,6 +269,7 @@ include "support:cas-server-support-consul-client"
 include "support:cas-server-support-cosmosdb-core"
 include "support:cas-server-support-cosmosdb-service-registry"
 include "support:cas-server-support-cosmosdb-ticket-registry"
+include "support:cas-server-support-discovery-profile-core"
 include "support:cas-server-support-discovery-profile"
 include "support:cas-server-support-duo"
 include "support:cas-server-support-duo-core"
@@ -344,6 +364,7 @@ include "support:cas-server-support-mongo-service-registry"
 include "support:cas-server-support-mongo-ticket-registry"
 include "support:cas-server-support-native"
 include "support:cas-server-support-notifications-fcm"
+include "support:cas-server-support-notifications-slack"
 include "support:cas-server-support-oauth"
 include "support:cas-server-support-oauth-api"
 include "support:cas-server-support-oauth-core-api"
@@ -362,7 +383,6 @@ include "support:cas-server-support-oidc-services"
 include "support:cas-server-support-okta-authentication"
 include "support:cas-server-support-otp-mfa"
 include "support:cas-server-support-otp-mfa-core"
-include "support:cas-server-support-pac4j"
 include "support:cas-server-support-pac4j-api"
 include "support:cas-server-support-pac4j-core"
 include "support:cas-server-support-pac4j-core-clients"
@@ -472,6 +492,8 @@ include "support:cas-server-support-token-core-api"
 include "support:cas-server-support-token-core"
 include "support:cas-server-support-token-tickets"
 include "support:cas-server-support-token-webflow"
+include "support:cas-server-support-tracing-otel"
+include "support:cas-server-support-tracing-zipkin"
 include "support:cas-server-support-trusted"
 include "support:cas-server-support-trusted-mfa"
 include "support:cas-server-support-trusted-mfa-core"

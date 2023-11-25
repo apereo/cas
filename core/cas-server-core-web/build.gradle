@@ -20,10 +20,9 @@ dependencies {
     testImplementation project(":core:cas-server-core-services-authentication")
     
     testRuntimeOnly libraries.webjars
+    testRuntimeOnly libraries.webjarsbootstrap
     testRuntimeOnly libraries.websockets
-
-    implementation libraries.pac4jcore
-    implementation libraries.nimbus
+    
     implementation libraries.snakeyaml
 }
 

@@ -3,7 +3,11 @@ package org.apereo.cas.rest.factory;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.credential.AbstractCredential;
+import org.apereo.cas.authentication.metadata.BasicCredentialMetadata;
+import org.apereo.cas.util.http.HttpRequestUtils;
 
+import lombok.val;
 import org.springframework.core.Ordered;
 import org.springframework.util.MultiValueMap;
 
@@ -11,6 +15,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Strategy interface for enabling plug-in point for constructing {@link Credential}
@@ -59,5 +64,22 @@ public interface RestHttpRequestCredentialFactory extends Ordered {
                                                 final Authentication authentication,
                                                 final MultifactorAuthenticationProvider provider) {
         return new ArrayList<>(0);
+    }
+
+    /**
+     * Prepare credential.
+     *
+     * @param request    the request
+     * @param credential the credential
+     * @return the credential
+     */
+    default Credential prepareCredential(final HttpServletRequest request, final Credential credential) {
+        if (credential instanceof final AbstractCredential ac) {
+            val credentialMetadata = Optional.ofNullable(ac.getCredentialMetadata())
+                .orElseGet(() -> new BasicCredentialMetadata(credential));
+            credentialMetadata.putProperties(HttpRequestUtils.getRequestHeaders(request));
+            ac.setCredentialMetadata(credentialMetadata);
+        }
+        return credential;
     }
 }

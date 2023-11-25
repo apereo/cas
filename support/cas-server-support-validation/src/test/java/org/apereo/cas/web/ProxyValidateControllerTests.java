@@ -6,6 +6,7 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasThemesConfiguration;
 import org.apereo.cas.config.CasThymeleafConfiguration;
 import org.apereo.cas.config.CasValidationConfiguration;
@@ -34,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     BaseCasCoreTests.SharedTestConfiguration.class,
+    CasPersonDirectoryTestConfiguration.class,
     CasThemesConfiguration.class,
     CasThymeleafConfiguration.class,
     CasValidationConfiguration.class

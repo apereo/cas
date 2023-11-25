@@ -28,13 +28,11 @@ import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.AbstractTicket;
-import org.apereo.cas.ticket.AuthenticatedServicesAwareTicketGrantingTicket;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.ProxyGrantingTicketIssuerTicket;
 import org.apereo.cas.ticket.ServiceTicket;
-import org.apereo.cas.ticket.ServiceTicketSessionTrackingPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketFactory;
@@ -48,6 +46,7 @@ import org.apereo.cas.ticket.expiration.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.ticket.expiration.TimeoutExpirationPolicy;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
+import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
@@ -56,7 +55,6 @@ import org.apereo.cas.util.ServiceTicketIdGenerator;
 import org.apereo.cas.util.TicketGrantingTicketIdGenerator;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -77,7 +75,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.util.AopTestUtils;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.io.Serial;
 import java.time.Clock;
 import java.time.ZoneOffset;
@@ -89,7 +86,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-
 import static org.awaitility.Awaitility.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.*;
@@ -120,8 +116,8 @@ public abstract class BaseTicketRegistryTests {
     protected TicketFactory ticketFactory;
 
     @Autowired
-    @Qualifier(ServiceTicketSessionTrackingPolicy.BEAN_NAME)
-    protected ServiceTicketSessionTrackingPolicy serviceTicketSessionTrackingPolicy;
+    @Qualifier(TicketTrackingPolicy.BEAN_NAME_SERVICE_TICKET_TRACKING)
+    protected TicketTrackingPolicy serviceTicketSessionTrackingPolicy;
 
     @Autowired
     @Qualifier(TicketCatalog.BEAN_NAME)
@@ -373,16 +369,17 @@ public abstract class BaseTicketRegistryTests {
         val found = ticketRegistry.getTicket(tgt.getId(), TicketGrantingTicket.class);
         assertNotNull(found, () -> "Ticket is null. useEncryption[" + useEncryption + ']');
 
-        assertTrue(found instanceof AuthenticatedServicesAwareTicketGrantingTicket);
-        var services = ((AuthenticatedServicesAwareTicketGrantingTicket) found).getServices();
+        assertInstanceOf(TicketGrantingTicket.class, found);
+        var services = ((TicketGrantingTicket) found).getServices();
         assertTrue(services.isEmpty(), () -> "Ticket services should be empty. useEncryption[" + useEncryption + ']');
 
-        tgt.grantServiceTicket("ST-1", RegisteredServiceTestUtils.getService("TGT_UPDATE_TEST"),
+        val service = RegisteredServiceTestUtils.getService("TGT_UPDATE_TEST");
+        tgt.grantServiceTicket("ST-1", service,
             NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy);
         ticketRegistry.updateTicket(tgt);
         val tgtResult = ticketRegistry.getTicket(tgt.getId(), TicketGrantingTicket.class);
-        assertTrue(tgtResult instanceof AuthenticatedServicesAwareTicketGrantingTicket);
-        services = ((AuthenticatedServicesAwareTicketGrantingTicket) tgtResult).getServices();
+        assertInstanceOf(TicketGrantingTicket.class, tgtResult);
+        services = ((TicketGrantingTicket) tgtResult).getServices();
         assertEquals(Collections.singleton("ST-1"), services.keySet());
     }
 

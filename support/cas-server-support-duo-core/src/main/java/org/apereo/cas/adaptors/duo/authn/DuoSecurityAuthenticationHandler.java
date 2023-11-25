@@ -84,7 +84,7 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
             LOGGER.debug("Attempting to directly authenticate credential against Duo");
             return authenticateDuoApiCredential(credential);
         }
-        return authenticateDuoCredential(credential);
+        throw new FailedLoginException("Unknown Duo authentication attempt");
     }
 
     /**
@@ -144,34 +144,5 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
             LoggingUtils.error(LOGGER, e);
         }
         throw new FailedLoginException("Duo authentication has failed");
-    }
-
-    private AuthenticationHandlerExecutionResult authenticateDuoCredential(final Credential credential) throws FailedLoginException {
-        try {
-            val duoCredential = (DuoSecurityCredential) credential;
-            if (!duoCredential.isValid()) {
-                throw new GeneralSecurityException("Duo credential validation failed. Ensure a username "
-                                                   + " and the signed Duo response is configured and passed. Credential received: " + duoCredential);
-            }
-
-            val duoAuthenticationService = multifactorAuthenticationProvider.getObject().getDuoAuthenticationService();
-            val userId = duoAuthenticationService.authenticate(duoCredential).getUsername();
-            LOGGER.debug("Verified Duo authentication for user [{}]", userId);
-            val primaryCredentialsUsername = duoCredential.getUsername();
-
-            val isGoodAuthentication = userId.equals(primaryCredentialsUsername);
-
-            if (isGoodAuthentication) {
-                LOGGER.info("Successful Duo authentication for [{}]", primaryCredentialsUsername);
-                val principal = this.principalFactory.createPrincipal(userId);
-                return createHandlerResult(credential, principal, new ArrayList<>(0));
-            }
-            throw new FailedLoginException("Duo authentication username "
-                                           + primaryCredentialsUsername + " does not match Duo response: " + userId);
-
-        } catch (final Throwable e) {
-            LoggingUtils.error(LOGGER, e);
-            throw new FailedLoginException(e.getMessage());
-        }
     }
 }

@@ -55,6 +55,7 @@ import org.apereo.cas.ticket.query.DefaultSamlAttributeQueryTicketFactory;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketExpirationPolicyBuilder;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.UrlValidator;
@@ -418,9 +419,11 @@ public class SamlIdPConfiguration {
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
             @Qualifier("samlIdPServiceFactory")
-            final ServiceFactory samlIdPServiceFactory) {
+            final ServiceFactory samlIdPServiceFactory,
+            @Qualifier(TicketTrackingPolicy.BEAN_NAME_DESCENDANT_TICKET_TRACKING)
+            final TicketTrackingPolicy descendantTicketsTrackingPolicy) {
             return new DefaultSamlArtifactTicketFactory(samlArtifactTicketExpirationPolicy,
-                openSamlConfigBean, samlIdPServiceFactory);
+                openSamlConfigBean, samlIdPServiceFactory, descendantTicketsTrackingPolicy);
         }
 
         @Bean(initMethod = "initialize", destroyMethod = "destroy")
@@ -588,9 +591,11 @@ public class SamlIdPConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "samlIdPAttributeDefinitionStoreConfigurer")
-        public AttributeDefinitionStoreConfigurer samlIdPAttributeDefinitionStoreConfigurer() {
+        public AttributeDefinitionStoreConfigurer samlIdPAttributeDefinitionStoreConfigurer(
+            final CasConfigurationProperties casProperties) {
             return store -> FunctionUtils.doUnchecked(__ -> {
                 try (val samlStore = new DefaultAttributeDefinitionStore(new ClassPathResource("samlidp-attribute-definitions.json"))) {
+                    samlStore.setScope(casProperties.getServer().getScope());
                     store.importStore(samlStore);
                 }
             });

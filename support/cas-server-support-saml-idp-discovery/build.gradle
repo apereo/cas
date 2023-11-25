@@ -53,7 +53,6 @@ dependencies {
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":support:cas-server-support-pac4j-webflow")
     testImplementation project(":support:cas-server-support-thymeleaf")
-    testImplementation project(":support:cas-server-support-pac4j")
 
     testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
@@ -62,6 +61,8 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+
+    testImplementation project(path: ":support:cas-server-support-person-directory-core", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-pac4j-webflow", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-pac4j-core-clients", configuration: "tests")
 }

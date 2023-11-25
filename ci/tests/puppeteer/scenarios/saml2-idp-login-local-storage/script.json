@@ -6,8 +6,6 @@
   },
 
   "properties": [
-    "--spring.main.lazy-initialization=false",
-
     "--cas.audit.slf4j.use-single-line=true",
 
     "--cas.authn.mfa.triggers.global.global-provider-id=mfa-duo",

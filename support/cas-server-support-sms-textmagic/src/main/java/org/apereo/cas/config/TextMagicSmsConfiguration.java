@@ -31,7 +31,7 @@ public class TextMagicSmsConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public SmsSender smsSender(final CasConfigurationProperties casProperties,
-                               @Qualifier("httpClient")
+                               @Qualifier(HttpClient.BEAN_NAME_HTTPCLIENT)
                                final HttpClient httpClient) {
         val textMagic = casProperties.getSmsProvider().getTextMagic();
         return new TextMagicSmsSender(textMagic, Optional.of(httpClient));

@@ -59,7 +59,7 @@ import static org.mockito.Mockito.*;
 class LdapUtilsTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
-
+    
     @Test
     void verifyGetBoolean() throws Throwable {
         val entry = new LdapEntry();
@@ -191,7 +191,31 @@ class LdapUtilsTests {
         assertNotNull(responseHandler.getWarningPeriod());
     }
 
-
+    @Test
+    void verifyActiveDirectoryPasswordPolicyWithoutExpiration() throws Throwable {
+        val ldap = new Ldap();
+        ldap.setLdapUrl("ldap://localhost:10389");
+        ldap.setBindDn("cn=Directory Manager");
+        ldap.setBindCredential("password");
+        ldap.setBaseDn("ou=people,dc=example,dc=org");
+        ldap.setSearchFilter("cn=user");
+        ldap.setType(AbstractLdapAuthenticationProperties.AuthenticationTypes.AD);
+        ldap.setDnFormat("cn=%s,dc=example,dc=org");
+        val authenticator = LdapUtils.newLdaptiveAuthenticator(ldap);
+        assertNotNull(authenticator);
+        val passwordPolicy = new LdapPasswordPolicyProperties()
+            .setType(AbstractLdapProperties.LdapType.AD)
+            .setPasswordExpirationNumberOfDays(-1);
+        val configuration = LdapUtils.createLdapPasswordPolicyConfiguration(
+            passwordPolicy, authenticator, ArrayListMultimap.create());
+        assertNotNull(configuration);
+        val responseHandler = Arrays.stream(authenticator.getResponseHandlers()).findFirst()
+            .map(ActiveDirectoryAuthenticationResponseHandler.class::cast)
+            .orElseThrow();
+        assertNull(responseHandler.getExpirationPeriod());
+        assertNotNull(responseHandler.getWarningPeriod());
+    }
+    
     @Test
     void verifyLdapAuthnActiveDirectory() throws Throwable {
         val ldap = new Ldap();

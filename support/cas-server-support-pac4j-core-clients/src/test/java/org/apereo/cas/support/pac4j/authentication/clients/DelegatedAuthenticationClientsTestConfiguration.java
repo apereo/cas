@@ -2,6 +2,8 @@ package org.apereo.cas.support.pac4j.authentication.clients;
 
 import org.apereo.cas.authentication.principal.ClientCustomPropertyConstants;
 import org.apereo.cas.configuration.model.support.delegation.DelegationAutoRedirectTypes;
+import org.apereo.cas.pac4j.client.DelegatedIdentityProviderFactory;
+import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.util.RandomUtils;
 
 import lombok.val;
@@ -10,11 +12,11 @@ import org.opensaml.saml.common.xml.SAMLConstants;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.core.client.BaseClient;
-import org.pac4j.core.client.Clients;
 import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.credentials.SessionKeyCredentials;
+import org.pac4j.core.exception.http.AutomaticFormPostAction;
 import org.pac4j.core.exception.http.OkAction;
 import org.pac4j.core.logout.LogoutType;
 import org.pac4j.core.profile.CommonProfile;
@@ -32,6 +34,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -46,7 +49,7 @@ import static org.mockito.Mockito.*;
 @TestConfiguration(value = "DelegatedAuthenticationClientsTestConfiguration", proxyBeanMethods = false)
 public class DelegatedAuthenticationClientsTestConfiguration {
     @Bean
-    public Clients builtClients(final Collection<DelegatedClientFactoryCustomizer> customizers) throws Exception {
+    public DelegatedIdentityProviders delegatedIdentityProviders(final Collection<DelegatedClientFactoryCustomizer> customizers) throws Exception {
         val saml2Config = getSAML2Configuration();
         val saml2Client = new SAML2Client(saml2Config);
         saml2Client.getCustomProperties().put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT_TYPE, DelegationAutoRedirectTypes.CLIENT);
@@ -116,13 +119,23 @@ public class DelegatedAuthenticationClientsTestConfiguration {
         when(logoutClient.isInitialized()).thenReturn(true);
         when(logoutClient.processLogout(any(), any())).thenReturn(new OkAction("Hello!"));
 
+        val logoutPostClient = mock(BaseClient.class);
+        when(logoutPostClient.getName()).thenReturn("AutomaticPostLogoutClient");
+        when(logoutPostClient.getCredentialsExtractor()).thenReturn(callContext -> Optional.of(sessionKeyCredentials));
+        when(logoutPostClient.validateCredentials(any(), any())).thenReturn(Optional.of(sessionKeyCredentials));
+        when(logoutPostClient.getCredentials(any())).thenReturn(Optional.of(sessionKeyCredentials));
+        when(logoutPostClient.isInitialized()).thenReturn(true);
+        when(logoutPostClient.processLogout(any(), any()))
+            .thenReturn(new AutomaticFormPostAction("http://localhost/logout", Map.of("key", "value"), null));
+
         val failingClient = mock(IndirectClient.class);
         when(failingClient.getName()).thenReturn("FailingIndirectClient");
         doThrow(new IllegalArgumentException("Unable to init")).when(failingClient).init();
         customizers.forEach(customizer -> customizer.customize(failingClient));
 
-        return new Clients("https://cas.login.com", List.of(saml2Client, casClient,
-            facebookClient, oidcClient, logoutClient, failingClient, saml2PostClient));
+        val clients = List.of(saml2Client, casClient, facebookClient,
+            oidcClient, logoutClient, logoutPostClient, failingClient, saml2PostClient);
+        return new RefreshableDelegatedIdentityProviders("https://cas.login.com", DelegatedIdentityProviderFactory.withClients(clients));
     }
 
     private static SAML2Configuration getSAML2Configuration() throws IOException {

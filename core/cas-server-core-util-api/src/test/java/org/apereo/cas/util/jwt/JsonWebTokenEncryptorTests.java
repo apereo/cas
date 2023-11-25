@@ -50,7 +50,7 @@ class JsonWebTokenEncryptorTests {
             .encryptionMethod("A128GCM")
             .build()
             .encrypt("ThisIsATest");
-        assertTrue(JWTParser.parse(result) instanceof EncryptedJWT);
+        assertInstanceOf(EncryptedJWT.class, JWTParser.parse(result));
     }
 
     @Test
@@ -64,7 +64,7 @@ class JsonWebTokenEncryptorTests {
             .encryptionMethod("A256GCM")
             .build()
             .encrypt("ThisIsATest");
-        assertTrue(JWTParser.parse(result) instanceof EncryptedJWT);
+        assertInstanceOf(EncryptedJWT.class, JWTParser.parse(result));
     }
 
     @Test
@@ -78,7 +78,7 @@ class JsonWebTokenEncryptorTests {
             .encryptionMethod("A256GCM")
             .build()
             .encrypt("ThisIsATest");
-        assertTrue(JWTParser.parse(result) instanceof EncryptedJWT);
+        assertInstanceOf(EncryptedJWT.class, JWTParser.parse(result));
     }
 }
 

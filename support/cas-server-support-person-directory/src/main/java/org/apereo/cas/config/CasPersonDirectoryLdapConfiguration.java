@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.core.authentication.AttributeRepositoryStates;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
+import org.apereo.cas.util.LdapConnectionFactory;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanCondition;
@@ -21,6 +22,7 @@ import org.ldaptive.handler.LdapEntryHandler;
 import org.ldaptive.handler.SearchResultHandler;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -40,6 +42,7 @@ import java.util.stream.Collectors;
  * @since 6.4.0
  */
 @Slf4j
+@ConditionalOnClass(LdapConnectionFactory.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.PersonDirectory)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfiguration
@@ -70,7 +73,7 @@ public class CasPersonDirectoryLdapConfiguration {
                         .filter(ldap -> StringUtils.isNotBlank(ldap.getBaseDn()) && StringUtils.isNotBlank(ldap.getLdapUrl()))
                         .forEach(ldap -> {
                             val dao = new LdaptivePersonAttributeDao();
-                            FunctionUtils.doIfNotNull(ldap.getId(), dao::setId);
+                            FunctionUtils.doIfNotNull(ldap.getId(), id -> dao.setId(id));
                             LOGGER.debug("Configured LDAP attribute source for [{}] and baseDn [{}]", ldap.getLdapUrl(), ldap.getBaseDn());
                             dao.setConnectionFactory(LdapUtils.newLdaptiveConnectionFactory(ldap));
                             dao.setBaseDN(ldap.getBaseDn());

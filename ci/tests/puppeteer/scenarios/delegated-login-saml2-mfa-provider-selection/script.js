@@ -18,7 +18,7 @@ const path = require('path');
     await cas.assertVisibility(page, '#mfa-gauth');
     await cas.assertVisibility(page, '#mfa-yubikey');
 
-    await cas.removeDirectory(path.join(__dirname, '/saml-md'));
+    await cas.removeDirectoryOrFile(path.join(__dirname, '/saml-md'));
     await browser.close();
 })();
 

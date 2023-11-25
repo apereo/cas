@@ -1,20 +1,22 @@
 package org.apereo.cas.authorization;
 
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.SearchOperation;
-import org.pac4j.core.authorization.generator.AuthorizationGenerator;
-import org.pac4j.core.profile.UserProfile;
-
-import java.util.Optional;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
- * Provides a simple {@link AuthorizationGenerator} implementation that obtains user roles from an LDAP search.
+ * Provides a simple generator implementation that obtains user roles from an LDAP search.
  * Two searches are performed by this component for every user details lookup:
  * <ol>
  * <li>Search for an entry to resolve the username. In most cases the search should return exactly one result,
@@ -49,20 +51,25 @@ public class LdapUserGroupsToRolesAuthorizationGenerator extends BaseUseAttribut
     }
 
     @Override
-    protected Optional<UserProfile> generateAuthorizationForLdapEntry(final UserProfile profile, final LdapEntry userEntry) {
+    protected List<SimpleGrantedAuthority> generateAuthorizationForLdapEntry(final Principal profile, final LdapEntry userEntry) {
         LOGGER.debug("Attempting to get roles for user [{}].", userEntry.getDn());
         val response = FunctionUtils.doUnchecked(() -> groupSearchOperation.execute(
             LdapUtils.newLdaptiveSearchFilter(groupSearchOperation.getTemplate().getFilter(),
                 LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, CollectionUtils.wrap(userEntry.getDn()))));
         LOGGER.debug("LDAP role search response: [{}]", response);
-        for (val entry : response.getEntries()) {
-            val groupAttribute = entry.getAttribute(this.groupAttributeName);
-            if (groupAttribute == null) {
-                LOGGER.warn("Role attribute not found on entry [{}]", entry);
-                continue;
-            }
-            addProfileRolesFromAttributes(profile, groupAttribute, this.groupPrefix);
-        }
-        return Optional.ofNullable(profile);
+        return response
+            .getEntries()
+            .stream()
+            .map(entry -> entry.getAttribute(groupAttributeName))
+            .filter(Objects::nonNull)
+            .map(attribute -> attribute
+                .getStringValues()
+                .stream()
+                .map(entry -> entry.toUpperCase(Locale.ENGLISH))
+                .map(role -> StringUtils.prependIfMissing(role, groupPrefix))
+                .collect(Collectors.toList()))
+            .flatMap(List::stream)
+            .map(SimpleGrantedAuthority::new)
+            .collect(Collectors.toList());
     }
 }

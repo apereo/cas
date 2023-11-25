@@ -1,0 +1,69 @@
+{
+  "dependencies": "jdbc,jdbc-drivers,reports",
+  "conditions": {
+    "docker": "true"
+  },
+  "environmentVariables": [
+    "SQL_QUERY_AUTHN=SELECT * FROM USERS WHERE uid=?",
+    "SQL_QUERY_ATTRS=SELECT * FROM USERATTRS WHERE {0}"
+  ],
+  "properties": [
+    "--cas.jdbc.show-sql=false",
+    "--logging.level.org.apereo.cas=info",
+    "--logging.level.org.hibernate=info",
+    "--logging.level.org.springframework.orm=info",
+
+    "--cas.authn.accept.enabled=false",
+    
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    "--cas.audit.engine.enabled=true",
+    "--cas.audit.slf4j.use-single-line=true",
+    
+    "--cas.webflow.crypto.signing.key=Q4tQGAuJSmuJ5WA0zByB9P6hYr5dpTd2JJifyy6Tm_CJ35pkbdhFvcgG-3igDjA4CTjau6Z0yMft-dhVUbRnPQ",
+    "--cas.webflow.crypto.encryption.key=g-Rk2ZvexS6tdooIiDh0IQ",
+
+    "--spring.datasource.url=jdbc:mysql://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
+    "--spring.datasource.username=root",
+    "--spring.datasource.password=password",
+    "--spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver",
+
+    "--spring.integration.jdbc.initialize-schema=always",
+    "--spring.sql.init.platform=mysql",
+    "--spring.sql.init.mode=always",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
+    "--cas.authn.jdbc.encode[0].sql=${SQL_QUERY_AUTHN}",
+    "--cas.authn.jdbc.encode[0].user=root",
+    "--cas.authn.jdbc.encode[0].password=password",
+    "--cas.authn.jdbc.encode[0].password-field-name=psw",
+    "--cas.authn.jdbc.encode[0].algorithm-name=SHA-256",
+    "--cas.authn.jdbc.encode[0].number-of-iterations=1000",
+    "--cas.authn.jdbc.encode[0].static-salt=43b182d75a7f46ac9824734ae96bb78e",
+    "--cas.authn.jdbc.encode[0].url=jdbc:mysql://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
+    "--cas.authn.jdbc.encode[0].dialect=org.hibernate.dialect.MySQLDialect",
+    "--cas.authn.jdbc.encode[0].driver-class=com.mysql.cj.jdbc.Driver",
+
+    "--cas.authn.attribute-repository.jdbc[0].single-row=false",
+    "--cas.authn.attribute-repository.jdbc[0].user=root",
+    "--cas.authn.attribute-repository.jdbc[0].password=password",
+    "--cas.authn.attribute-repository.jdbc[0].sql=${SQL_QUERY_ATTRS}",
+    "--cas.authn.attribute-repository.jdbc[0].username=uid",
+    "--cas.authn.attribute-repository.jdbc[0].url=jdbc:mysql://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
+    "--cas.authn.attribute-repository.jdbc[0].dialect=org.hibernate.dialect.MySQLDialect",
+    "--cas.authn.attribute-repository.jdbc[0].driver-class=com.mysql.cj.jdbc.Driver",
+    "--cas.authn.attribute-repository.jdbc[0].column-mappings.attrname=attrvalue",
+
+    "--cas.authn.attribute-repository.jdbc[0].attributes.firstname=first-name",
+    "--cas.authn.attribute-repository.jdbc[0].attributes.lastname=last-name",
+    "--cas.authn.attribute-repository.jdbc[0].attributes.phone=phonenumber",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.enabled-by-default=true"
+  ],
+  "buildScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/include.gradle",
+  "initScript": "${PWD}/ci/tests/mysql/run-mysql-server.sh"
+}

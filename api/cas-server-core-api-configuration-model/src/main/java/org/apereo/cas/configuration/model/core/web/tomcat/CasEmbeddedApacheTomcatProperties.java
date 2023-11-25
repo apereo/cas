@@ -79,6 +79,12 @@ public class CasEmbeddedApacheTomcatProperties implements Serializable {
     private CasEmbeddedApacheTomcatRewriteValveProperties rewriteValve = new CasEmbeddedApacheTomcatRewriteValveProperties();
 
     /**
+     * Embedded container's remote-user valve setting.
+     */
+    @NestedConfigurationProperty
+    private CasEmbeddedApacheTomcatRemoteUserValveProperties remoteUserValve = new CasEmbeddedApacheTomcatRemoteUserValveProperties();
+
+    /**
      * Configuration properties for access logging beyond defaults.
      */
     @NestedConfigurationProperty

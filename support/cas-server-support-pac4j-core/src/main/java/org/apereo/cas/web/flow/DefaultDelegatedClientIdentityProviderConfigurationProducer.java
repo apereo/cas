@@ -49,7 +49,7 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
 
         LOGGER.debug("Initialized context with request parameters [{}]", webContext.getRequestParameters());
 
-        val clients = configurationContext.getObject().getClients();
+        val clients = configurationContext.getObject().getIdentityProviders();
         val allClients = clients.findAllClients();
         val providers = allClients
             .stream()

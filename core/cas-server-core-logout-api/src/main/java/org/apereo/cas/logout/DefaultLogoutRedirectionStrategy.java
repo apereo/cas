@@ -12,8 +12,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.webflow.execution.RequestContext;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
 /**
@@ -34,27 +35,20 @@ public class DefaultLogoutRedirectionStrategy implements LogoutRedirectionStrate
     private final ServiceFactory<WebApplicationService> serviceFactory;
 
     @Override
-    public boolean supports(final RequestContext context) {
-        return context != null;
-    }
-
-    @Override
-    public void handle(final RequestContext requestContext) {
-        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
+    public LogoutRedirectionResponse handle(final HttpServletRequest request, final HttpServletResponse response) {
+        val logoutResponse = LogoutRedirectionResponse.builder();
         Optional.ofNullable(argumentExtractor.extractService(request))
             .or(() -> {
                 val redirectUrl = casProperties.getView().getDefaultRedirectUrl();
                 return FunctionUtils.doIf(StringUtils.isNotBlank(redirectUrl),
                     () -> Optional.of(serviceFactory.createService(redirectUrl)), Optional::<WebApplicationService>empty).get();
             })
-            .filter(service -> singleLogoutServiceLogoutUrlBuilder.isServiceAuthorized(service,
-                Optional.of(request), Optional.of(response)))
+            .filter(service -> singleLogoutServiceLogoutUrlBuilder.isServiceAuthorized(service, Optional.of(request), Optional.of(response)))
             .ifPresentOrElse(service -> {
-                WebUtils.putServiceIntoFlowScope(requestContext, service);
+                logoutResponse.service(Optional.of(service));
                 if (casProperties.getLogout().isFollowServiceRedirects()) {
                     LOGGER.debug("Redirecting to logout URL identified by service [{}]", service);
-                    WebUtils.putLogoutRedirectUrl(requestContext, service.getOriginalUrl());
+                    logoutResponse.logoutRedirectUrl(Optional.of(service.getOriginalUrl()));
                 } else {
                     LOGGER.debug("Cannot redirect to [{}] given the service is unauthorized to use CAS, "
                                  + "or following logout redirects is disabled in CAS settings. "
@@ -63,8 +57,9 @@ public class DefaultLogoutRedirectionStrategy implements LogoutRedirectionStrate
             }, () -> {
                 val authorizedRedirectUrlFromRequest = WebUtils.getLogoutRedirectUrl(request, String.class);
                 if (StringUtils.isNotBlank(authorizedRedirectUrlFromRequest)) {
-                    WebUtils.putLogoutRedirectUrl(requestContext, authorizedRedirectUrlFromRequest);
+                    logoutResponse.logoutRedirectUrl(Optional.of(authorizedRedirectUrlFromRequest));
                 }
             });
+        return logoutResponse.build();
     }
 }

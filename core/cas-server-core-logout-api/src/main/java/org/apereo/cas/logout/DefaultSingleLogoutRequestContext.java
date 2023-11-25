@@ -1,6 +1,7 @@
 package org.apereo.cas.logout;
 
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.logout.slo.SingleLogoutExecutionRequest;
 import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
@@ -34,14 +35,8 @@ public class DefaultSingleLogoutRequestContext implements SingleLogoutRequestCon
     @Serial
     private static final long serialVersionUID = -6411421298859045022L;
 
-    /**
-     * The service ticket id.
-     */
     private final String ticketId;
 
-    /**
-     * The service.
-     */
     private final WebApplicationService service;
 
     private final URL logoutUrl;

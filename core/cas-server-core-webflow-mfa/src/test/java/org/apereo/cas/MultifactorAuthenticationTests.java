@@ -7,12 +7,10 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.credential.OneTimePasswordCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
-import org.apereo.cas.authentication.policy.RequiredHandlerAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.CasMultifactorTestAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -20,13 +18,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * High-level MFA functionality tests that leverage registered service metadata
- * ala {@link RequiredHandlerAuthenticationPolicyFactory} to drive
- * authentication policy.
+ * to drive authentication policy.
  *
  * @author Marvin S. Addison
  * @since 4.0.0
@@ -134,7 +130,7 @@ class MultifactorAuthenticationTests extends BaseCasWebflowMultifactorAuthentica
         assertEquals(2, authn.getSuccesses().size());
         assertTrue(authn.getSuccesses().containsKey(AcceptUsersAuthenticationHandler.class.getSimpleName()));
         assertTrue(authn.getSuccesses().containsKey(TestOneTimePasswordAuthenticationHandler.class.getSimpleName()));
-        assertTrue(authn.getAttributes().containsKey(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS));
+        assertTrue(authn.containsAttribute(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS));
     }
 
     private AuthenticationResult processAuthenticationAttempt(final Service service, final Credential... credential) throws Throwable {

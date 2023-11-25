@@ -7,9 +7,10 @@ import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.logout.SingleLogoutExecutionRequest;
+import org.apereo.cas.logout.slo.SingleLogoutExecutionRequest;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.validation.Assertion;
+import org.apereo.cas.web.flow.CasWebflowCredentialProvider;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -133,8 +134,13 @@ public class DefaultAuditPrincipalResolver implements PrincipalResolver {
 
     protected String getPrincipalFromRequestContext(final JoinPoint auditTarget, final Object returnValue,
                                                     final Exception exception, final RequestContext requestContext) {
+
+        val applicationContext = requestContext.getActiveFlow().getApplicationContext();
+        val credentialProvider = applicationContext.getBean(CasWebflowCredentialProvider.BEAN_NAME, CasWebflowCredentialProvider.class);
+        val credentials = credentialProvider.extract(requestContext);
+        val credentialId = credentials.stream().map(Credential::getId).findFirst().orElse(UNKNOWN_USER);
+
         val authentication = WebUtils.getAuthentication(requestContext);
-        val credentialId = Optional.ofNullable(WebUtils.getCredential(requestContext)).map(Credential::getId).orElse(UNKNOWN_USER);
         val principalId = auditPrincipalIdProvider.getPrincipalIdFrom(auditTarget, authentication, returnValue, exception);
         val id = Optional.ofNullable(principalId)
             .or(() -> Optional.ofNullable(authentication).map(Authentication::getPrincipal).map(Principal::getId))

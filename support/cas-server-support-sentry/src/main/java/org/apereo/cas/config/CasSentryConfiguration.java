@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.sentry.SentryMonitoringAspect;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
+import org.springframework.boot.actuate.autoconfigure.tracing.ConditionalOnEnabledTracing;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -26,6 +27,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Monitoring, module = "sentry")
 @AutoConfiguration
 @EnableAspectJAutoProxy
+@ConditionalOnEnabledTracing
 public class CasSentryConfiguration {
 
     @Configuration(value = "SentryTracerConfiguration", proxyBeanMethods = false)

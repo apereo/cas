@@ -191,7 +191,7 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
         val skey = resolver.resolve(duoProperties.getDuoAdminSecretKey());
         request.signRequest(ikey, skey);
         Optional.ofNullable(factory.getProxy()).ifPresent(proxy -> request.setProxy(proxy.getHostName(), proxy.getPort()));
-        val httpClientField = ReflectionUtils.findField(request.getClass(), "httpClient");
+        val httpClientField = ReflectionUtils.findField(request.getClass(), HttpClient.BEAN_NAME_HTTPCLIENT);
         ReflectionUtils.makeAccessible(Objects.requireNonNull(httpClientField));
         ReflectionUtils.setField(httpClientField, request, okHttpClient);
 

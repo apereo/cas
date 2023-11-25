@@ -14,6 +14,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.actuate.autoconfigure.tracing.ConditionalOnEnabledTracing;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -21,6 +22,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.Ordered;
 
 /**
@@ -38,6 +40,8 @@ import org.springframework.core.Ordered;
 @ConditionalOnBean(name = ExecutableObserver.BEAN_NAME)
 @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
 @EnableAspectJAutoProxy
+@Lazy(false)
+@ConditionalOnEnabledTracing
 public class SamlIdPMonitoringConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "samlIdPMonitoringAspect")

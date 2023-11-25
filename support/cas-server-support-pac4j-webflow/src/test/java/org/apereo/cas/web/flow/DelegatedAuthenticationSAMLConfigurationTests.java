@@ -5,9 +5,8 @@ import org.apereo.cas.config.DelegatedAuthenticationSAMLConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.BaseHazelcastProperties;
 import org.apereo.cas.hz.HazelcastConfigurationFactory;
+import org.apereo.cas.pac4j.client.DelegatedIdentityProviderFactory;
 import org.apereo.cas.support.pac4j.authentication.clients.DelegatedAuthenticationClientsTestConfiguration;
-import org.apereo.cas.support.pac4j.authentication.clients.DelegatedClientFactory;
-
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.instance.impl.HazelcastInstanceFactory;
 import lombok.val;
@@ -22,9 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
-
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -45,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class DelegatedAuthenticationSAMLConfigurationTests {
     @Autowired
-    @Qualifier(DelegatedClientFactory.BEAN_NAME_SAML2_CLIENT_MESSAGE_FACTORY)
+    @Qualifier(DelegatedIdentityProviderFactory.BEAN_NAME_SAML2_CLIENT_MESSAGE_FACTORY)
     private SAMLMessageStoreFactory hazelcastSAMLMessageStoreFactory;
 
     @Test

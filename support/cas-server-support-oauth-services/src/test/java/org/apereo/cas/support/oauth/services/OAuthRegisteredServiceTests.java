@@ -58,10 +58,10 @@ class OAuthRegisteredServiceTests {
         registeredService.setServiceId("secret");
         registeredService.setBypassApprovalPrompt(true);
         val r2 = this.dao.save(registeredService);
-        assertTrue(r2 instanceof OAuthRegisteredService);
+        assertInstanceOf(OAuthRegisteredService.class, r2);
         this.dao.load();
         val r3 = this.dao.findServiceById(r2.getId());
-        assertTrue(r3 instanceof OAuthRegisteredService);
+        assertInstanceOf(OAuthRegisteredService.class, r3);
         assertEquals(registeredService, r2);
         assertEquals(r2, r3);
     }

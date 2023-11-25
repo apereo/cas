@@ -1,7 +1,11 @@
 package org.apereo.cas.web.flow.actions;
 
 import org.apereo.cas.authentication.principal.ClientCredential;
+import org.apereo.cas.logout.slo.SingleLogoutContinuation;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.util.MockRequestContext;
+import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -21,15 +25,10 @@ import org.pac4j.saml.credentials.SAML2Credentials;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpMethod;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.ExternalContextHolder;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
+import org.springframework.http.HttpStatus;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.execution.RequestContextHolder;
-import org.springframework.webflow.test.MockRequestContext;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -50,53 +49,69 @@ class DelegatedAuthenticationIdentityProviderLogoutActionTests {
     private Action action;
 
     @Autowired
-    @Qualifier("delegatedClientAuthenticationConfigurationContext")
+    @Qualifier(DelegatedClientAuthenticationConfigurationContext.BEAN_NAME)
     private DelegatedClientAuthenticationConfigurationContext configurationContext;
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @Test
     void verifyOperation() throws Throwable {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        request.addParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "SAML2Client");
-        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
+        val context = MockRequestContext.create(applicationContext);
+        context.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "SAML2Client");
+        context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
         assertEquals(CasWebflowConstants.TRANSITION_ID_PROCEED, action.execute(context).getId());
     }
 
     @Test
-    void verifyPostBackchannelSaml2LogoutOperation() throws Throwable {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        request.setMethod(HttpMethod.POST.name());
-        request.addParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "SAML2Client");
-        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
+    void verifyPostLogout() throws Throwable {
+        val context = MockRequestContext.create(applicationContext);
+        context.setMethod(HttpMethod.POST);
+        val tgt = prepCredential(context, UUID.randomUUID().toString(), "AutomaticPostLogoutClient");
+        context.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "AutomaticPostLogoutClient");
+        context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
+        try (val webServer = new MockWebServer(HttpStatus.OK)) {
+            webServer.start();
+            val continuation = SingleLogoutContinuation.builder().url("http://localhost:%s".formatted(webServer.getPort()));
+            context.getHttpServletRequest().setAttribute(SingleLogoutContinuation.class.getName(), continuation.build());
+            assertEquals(CasWebflowConstants.TRANSITION_ID_DONE, action.execute(context).getId());
+            assertNull(configurationContext.getTicketRegistry().getTicket(tgt.getId()));
+            assertNull(context.getHttpServletRequest().getAttribute(SingleLogoutContinuation.class.getName()));
+        }
+    }
 
-        val saml2MessageContext = new SAML2MessageContext(new CallContext(new JEEContext(request, response),
-            configurationContext.getSessionStore()));
+    @Test
+    void verifyPostBackChannelSaml2LogoutOperation() throws Throwable {
+        val context = MockRequestContext.create(applicationContext);
+        context.setMethod(HttpMethod.POST);
+        context.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "SAML2Client");
+        context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
+
+        val tgt = prepCredential(context, UUID.randomUUID().toString(), "SAML2Client");
+        assertEquals(CasWebflowConstants.TRANSITION_ID_DONE, action.execute(context).getId());
+        assertNull(configurationContext.getTicketRegistry().getTicket(tgt.getId()));
+    }
+
+    private Ticket prepCredential(final MockRequestContext context, final String principal, final String clientName) throws Exception {
+        val sessionIdx = UUID.randomUUID().toString();
+        val clientCredentials = getClientCredential(context, sessionIdx, clientName);
+        val tgt = new MockTicketGrantingTicket(principal, clientCredentials, Map.of("sessionindex", List.of(sessionIdx)));
+        configurationContext.getTicketRegistry().addTicket(tgt);
+        WebUtils.putCredential(context, clientCredentials);
+        return tgt;
+    }
+
+    private ClientCredential getClientCredential(final MockRequestContext context, final String sessionIdx,
+                                                 final String clientName) {
+        val webContext = new JEEContext(context.getHttpServletRequest(), context.getHttpServletResponse());
+        val saml2MessageContext = new SAML2MessageContext(new CallContext(webContext, configurationContext.getSessionStore()));
         val messageContext = new MessageContext();
-
         val logoutRequest = mock(LogoutRequest.class);
         val sessionIndex = mock(SessionIndex.class);
-        val sessionIdx = UUID.randomUUID().toString();
         when(sessionIndex.getValue()).thenReturn(sessionIdx);
         when(logoutRequest.getSessionIndexes()).thenReturn(List.of(sessionIndex));
         messageContext.setMessage(logoutRequest);
         saml2MessageContext.setMessageContext(messageContext);
-        val clientCredentials = new ClientCredential(new SAML2Credentials(saml2MessageContext), "SAML2Client");
-        WebUtils.putCredential(context, clientCredentials);
-
-        val tgt = new MockTicketGrantingTicket("casuser",
-            clientCredentials, Map.of("sessionindex", List.of(sessionIdx)));
-        configurationContext.getTicketRegistry().addTicket(tgt);
-
-        assertEquals(CasWebflowConstants.TRANSITION_ID_DONE, action.execute(context).getId());
-        assertNull(configurationContext.getTicketRegistry().getTicket(tgt.getId()));
+        return new ClientCredential(new SAML2Credentials(saml2MessageContext), clientName);
     }
 }

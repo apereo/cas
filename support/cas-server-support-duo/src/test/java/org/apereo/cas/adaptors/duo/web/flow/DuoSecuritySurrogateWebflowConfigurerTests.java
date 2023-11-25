@@ -10,7 +10,6 @@ import org.apereo.cas.config.SurrogateAuthenticationConfiguration;
 import org.apereo.cas.config.SurrogateAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
@@ -56,9 +55,9 @@ class DuoSecuritySurrogateWebflowConfigurerTests {
             assertNotNull(flow);
             var state = (TransitionableState) flow.getState(STATE_ID_LOAD_SURROGATES_ACTION);
             assertNotNull(state);
-            state = (TransitionableState) flow.getState(CasWebflowConstants.STATE_ID_SELECT_SURROGATE);
+            state = (TransitionableState) flow.getState(STATE_ID_SELECT_SURROGATE);
             assertNotNull(state);
-            state = (TransitionableState) flow.getState(CasWebflowConstants.STATE_ID_SURROGATE_VIEW);
+            state = (TransitionableState) flow.getState(STATE_ID_SURROGATE_VIEW);
             assertNotNull(state);
         }
     }
@@ -90,7 +89,7 @@ class DuoSecuritySurrogateWebflowConfigurerTests {
             assertNotNull(surrogateDuoSecurityMultifactorWebflowCustomizer);
             val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
             assertNotNull(flow);
-            var state = (TransitionableState) flow.getState(CasWebflowConstants.STATE_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN);
+            var state = (TransitionableState) flow.getState(STATE_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN);
             assertEquals(STATE_ID_LOAD_SURROGATES_ACTION, state.getTransition(TRANSITION_ID_SUCCESS).getTargetStateId());
 
             val mappings = surrogateDuoSecurityMultifactorWebflowCustomizer.getWebflowAttributeMappings();

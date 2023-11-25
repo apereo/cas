@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationDelegatedCookieProperties;
@@ -23,6 +24,7 @@ import org.apereo.cas.support.wsfederation.web.WsFederationCookieGenerator;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -62,10 +64,9 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
     public static class WsFedAuthenticationProvidersConfiguration {
         private static WsFederationAttributeMutator getAttributeMutatorForWsFederationConfig(final WsFederationDelegationProperties wsfed) {
             val location = wsfed.getAttributeMutatorScript().getLocation();
-            if (location != null) {
-                return new GroovyWsFederationAttributeMutator(location);
-            }
-            return WsFederationAttributeMutator.noOp();
+            return location != null
+                ? new GroovyWsFederationAttributeMutator(new WatchableGroovyScriptResource(location))
+                : WsFederationAttributeMutator.noOp();
         }
 
         private static WsFederationConfiguration getWsFederationConfiguration(
@@ -157,6 +158,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlanConfigurer wsfedAuthenticationEventExecutionPlanConfigurer(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier(AttributeDefinitionStore.BEAN_NAME)
             final AttributeDefinitionStore attributeDefinitionStore,
             final CasConfigurationProperties casProperties,
@@ -186,7 +188,8 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
                             .orElseThrow(() ->
                                 new RuntimeException("Unable to find configuration for identity provider " + wsfed.getIdentityProviderUrl()));
                         val principal = wsfed.getPrincipal();
-                        val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(wsfedPrincipalFactory, attributeRepository,
+                        val resolver = PersonDirectoryPrincipalResolver.newPersonDirectoryPrincipalResolver(
+                            applicationContext, wsfedPrincipalFactory, attributeRepository,
                             CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
                             WsFederationCredentialsToPrincipalResolver.class, servicesManager, attributeDefinitionStore,
                             principal, personDirectory);

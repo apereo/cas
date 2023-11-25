@@ -69,12 +69,12 @@ class TicketEncryptionDecryptionTests {
         }
 
         @Override
-        protected String getEncryptionKeySetting() {
+        public String getEncryptionKeySetting() {
             return "undefined";
         }
 
         @Override
-        protected String getSigningKeySetting() {
+        public String getSigningKeySetting() {
             return "undefined";
         }
     }

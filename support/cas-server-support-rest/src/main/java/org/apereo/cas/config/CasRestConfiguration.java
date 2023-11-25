@@ -132,7 +132,8 @@ public class CasRestConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "restAuthenticationThrottle")
         public WebMvcConfigurer casRestThrottlingWebMvcConfigurer(
-            @Qualifier(AuthenticationThrottlingExecutionPlan.BEAN_NAME) final ObjectProvider<AuthenticationThrottlingExecutionPlan> authenticationThrottlingExecutionPlan) {
+            @Qualifier(AuthenticationThrottlingExecutionPlan.BEAN_NAME)
+            final ObjectProvider<AuthenticationThrottlingExecutionPlan> authenticationThrottlingExecutionPlan) {
             return new WebMvcConfigurer() {
                 @Override
                 public void addInterceptors(
@@ -163,24 +164,33 @@ public class CasRestConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ServiceTicketResource serviceTicketResource(
-            @Qualifier("serviceTicketResourceEntityResponseFactory") final ServiceTicketResourceEntityResponseFactory serviceTicketResourceEntityResponseFactory,
-            @Qualifier("restHttpRequestCredentialFactory") final RestHttpRequestCredentialFactory restHttpRequestCredentialFactory,
-            @Qualifier(TicketRegistrySupport.BEAN_NAME) final TicketRegistrySupport ticketRegistrySupport,
-            @Qualifier(AuthenticationSystemSupport.BEAN_NAME) final AuthenticationSystemSupport authenticationSystemSupport,
+            @Qualifier("serviceTicketResourceEntityResponseFactory")
+            final ServiceTicketResourceEntityResponseFactory serviceTicketResourceEntityResponseFactory,
+            @Qualifier("restHttpRequestCredentialFactory")
+            final RestHttpRequestCredentialFactory restHttpRequestCredentialFactory,
+            @Qualifier(TicketRegistrySupport.BEAN_NAME)
+            final TicketRegistrySupport ticketRegistrySupport,
+            @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
+            final AuthenticationSystemSupport authenticationSystemSupport,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(ArgumentExtractor.BEAN_NAME) final ArgumentExtractor argumentExtractor) {
             return new ServiceTicketResource(authenticationSystemSupport, ticketRegistrySupport,
-                argumentExtractor, serviceTicketResourceEntityResponseFactory, restHttpRequestCredentialFactory, applicationContext);
+                argumentExtractor, serviceTicketResourceEntityResponseFactory,
+                restHttpRequestCredentialFactory, applicationContext);
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TicketGrantingTicketResource ticketGrantingTicketResource(
-            @Qualifier("ticketGrantingTicketResourceEntityResponseFactory") final TicketGrantingTicketResourceEntityResponseFactory ticketGrantingTicketResourceEntityResponseFactory,
+            @Qualifier("ticketGrantingTicketResourceEntityResponseFactory")
+            final TicketGrantingTicketResourceEntityResponseFactory ticketGrantingTicketResourceEntityResponseFactory,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME) final CentralAuthenticationService centralAuthenticationService,
-            @Qualifier(RestAuthenticationService.DEFAULT_BEAN_NAME) final RestAuthenticationService restAuthenticationService,
-            @Qualifier(SingleLogoutRequestExecutor.BEAN_NAME) final SingleLogoutRequestExecutor defaultSingleLogoutRequestExecutor) {
+            @Qualifier(CentralAuthenticationService.BEAN_NAME)
+            final CentralAuthenticationService centralAuthenticationService,
+            @Qualifier(RestAuthenticationService.DEFAULT_BEAN_NAME)
+            final RestAuthenticationService restAuthenticationService,
+            @Qualifier(SingleLogoutRequestExecutor.BEAN_NAME)
+            final SingleLogoutRequestExecutor defaultSingleLogoutRequestExecutor) {
             return new TicketGrantingTicketResource(restAuthenticationService,
                 centralAuthenticationService, ticketGrantingTicketResourceEntityResponseFactory,
                 applicationContext, defaultSingleLogoutRequestExecutor);
@@ -189,10 +199,13 @@ public class CasRestConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public UserAuthenticationResource userAuthenticationRestController(
-            @Qualifier("userAuthenticationResourceEntityResponseFactory") final UserAuthenticationResourceEntityResponseFactory userAuthenticationResourceEntityResponseFactory,
+            @Qualifier("userAuthenticationResourceEntityResponseFactory")
+            final UserAuthenticationResourceEntityResponseFactory userAuthenticationResourceEntityResponseFactory,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(RestAuthenticationService.DEFAULT_BEAN_NAME) final RestAuthenticationService restAuthenticationService) {
-            return new UserAuthenticationResource(restAuthenticationService, userAuthenticationResourceEntityResponseFactory, applicationContext);
+            @Qualifier(RestAuthenticationService.DEFAULT_BEAN_NAME)
+            final RestAuthenticationService restAuthenticationService) {
+            return new UserAuthenticationResource(restAuthenticationService,
+                userAuthenticationResourceEntityResponseFactory, applicationContext);
         }
     }
 

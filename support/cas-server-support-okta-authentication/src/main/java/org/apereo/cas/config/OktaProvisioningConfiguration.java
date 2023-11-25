@@ -29,7 +29,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
 /**
- * This is {@link org.apereo.cas.config.OktaProvisioningConfiguration}.
+ * This is {@link OktaProvisioningConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 7.0.0

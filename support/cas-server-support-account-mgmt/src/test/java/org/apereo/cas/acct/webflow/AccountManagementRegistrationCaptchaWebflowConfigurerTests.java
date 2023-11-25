@@ -5,7 +5,6 @@ import org.apereo.cas.config.CasAccountManagementWebflowConfiguration;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -38,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebflowConfig")
 class AccountManagementRegistrationCaptchaWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Autowired
-    @Qualifier(CasWebflowConstants.ACTION_ID_ACCOUNT_REGISTRATION_INIT_CAPTCHA)
+    @Qualifier(ACTION_ID_ACCOUNT_REGISTRATION_INIT_CAPTCHA)
     private Action initCaptchaAction;
 
     @Test
@@ -51,8 +50,8 @@ class AccountManagementRegistrationCaptchaWebflowConfigurerTests extends BaseWeb
     @Test
     void verifyOperation() throws Throwable {
         val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
-        val state = (TransitionableState) flow.getState(CasWebflowConstants.STATE_ID_SUBMIT_ACCOUNT_REGISTRATION);
-        assertEquals(CasWebflowConstants.STATE_ID_VIEW_ACCOUNT_SIGNUP,
+        val state = (TransitionableState) flow.getState(STATE_ID_SUBMIT_ACCOUNT_REGISTRATION);
+        assertEquals(STATE_ID_VIEW_ACCOUNT_SIGNUP,
             state.getTransition(TRANSITION_ID_CAPTCHA_ERROR).getTargetStateId());
     }
 }

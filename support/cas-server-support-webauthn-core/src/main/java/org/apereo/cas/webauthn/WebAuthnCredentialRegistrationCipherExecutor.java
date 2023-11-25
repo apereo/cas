@@ -23,12 +23,12 @@ public class WebAuthnCredentialRegistrationCipherExecutor extends BaseStringCiph
     }
 
     @Override
-    protected String getEncryptionKeySetting() {
+    public String getEncryptionKeySetting() {
         return "cas.authn.mfa.web-authn.crypto.encryption.key";
     }
 
     @Override
-    protected String getSigningKeySetting() {
+    public String getSigningKeySetting() {
         return "cas.authn.mfa.web-authn.crypto.signing.key";
     }
 }

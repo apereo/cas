@@ -53,10 +53,7 @@ import java.util.*
 
 class SampleGroovyProviderSelection {
     String run(final Object... args) {
-        def service = args[0]
-        def principal = args[1]
-        def providersCollection = args[2]
-        def logger = args[3]
+        def (service,principal,providersCollection,logger) = args
         ...
         return "mfa-duo"
     }

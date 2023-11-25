@@ -54,7 +54,7 @@ org.gradle.parallel=false
 ```
 
 - Checkout the CAS project: `git clone git@github.com:apereo/cas.git cas-server`
-- Make sure you have the [latest version of JDK 17](https://openjdk.java.net/projects/jdk/17/) installed via `java -version`. 
+- Make sure you have the [latest version of JDK 21](https://openjdk.java.net/projects/jdk/21/) installed via `java -version`. 
 
 ## Preparing the Release
 
@@ -80,13 +80,13 @@ releases, when new branches are created.</p></div>
  
 Change GitHub Actions workflows to trigger and *only* build the newly-created release branch:
 
-* Modify the `analysis.yml` workflow to run on the newly-created branch. 
-  * Disable `checkLicense` tasks.
+* Modify the `analysis.yml` workflow to run on the newly-created branch.
 * Modify the `validation.yml` workflow to run on the newly-created branch.
 * Modify the `publish.yml` workflow to run on the newly-created branch.
 * Modify the `publish-docs.yml` to point to the newly-created branch.
-* Modify the `puppeteer.yml` to point to the newly-created branch.
-* Disable the following workflows: `build.yml`, `dependencies.yml`, `publish-[aws|azure|gpr].yml`, `test-[macos|windows].yml`. These can be disabled in the YAML configuration via:
+* Modify the `functional-tests.yml` to point to the newly-created branch.
+* Modify the `native-tests.yml` to point to the newly-created branch.
+* Disable the following workflows: `build.yml`, `dependencies.yml`, `native-tests`, `tests`. These can be disabled in the YAML configuration via:
 
 ```yaml
 on:
@@ -94,6 +94,7 @@ on:
     branches-ignore:
       - '**'
 ```
+
 Do not forget to commit all changes and push changes upstream, creating a new remote branch to track the release.
 
 ## Performing the Release 
@@ -104,6 +105,19 @@ Do not forget to commit all changes and push changes upstream, creating a new re
 ```bash
 ./release.sh
 ```
+
+The script will prompt for the appropriate Sonatype username and password (or user token). You can also run the script in non-interactive
+mode by specifying the credentials beforehand as environment variables:
+
+```json
+export REPOSITORY_USERNAME="..."
+export REPOSITORY_PASSWORD="..."
+```
+
+Do not use your actual password and instead create a a user token. This is a form of credential for the user 
+it belongs to and is  completely different and separate from the original password. User tokens can be easily 
+created and deleted, which is useful should security policies require credential updates, or 
+if credentials are lost accidentally or otherwise.
 
 ## Finalizing the Release
 

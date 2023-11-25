@@ -40,8 +40,6 @@ dependencies {
     implementation project(":core:cas-server-core-logout-api")
 
     implementation libraries.mongo
-    implementation libraries.pac4jcore
-    implementation libraries.pac4jcas
     implementation libraries.jose4j
     implementation libraries.nimbus
 
@@ -64,9 +62,11 @@ dependencies {
     testImplementation project(":support:cas-server-support-thymeleaf")
     testImplementation project(":support:cas-server-support-themes")
     testImplementation project(":support:cas-server-support-throttle")
+    testImplementation project(":support:cas-server-support-webconfig")
 
     testImplementation project(path: ":support:cas-server-support-oidc", configuration: "tests")
-    
+    testImplementation project(path: ":support:cas-server-support-person-directory-core", configuration: "tests")
+
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
@@ -74,4 +74,5 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-authentication-mfa-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+    
 }

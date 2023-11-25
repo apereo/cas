@@ -52,15 +52,15 @@ public abstract class AbstractCacheHealthIndicator extends AbstractHealthIndicat
                 bldr.up();
             }
 
-            Arrays.stream(statistics).forEach(s -> {
+            Arrays.stream(statistics).forEach(cacheStatistics -> {
                 val map = new HashMap<String, Object>();
-                map.put("size", s.getSize());
-                map.put("capacity", s.getCapacity());
-                map.put("evictions", s.getEvictions());
-                map.put("percentFree", s.getPercentFree());
-                map.put("state", s.toString(new StringBuilder()));
+                map.put("size", cacheStatistics.getSize());
+                map.put("capacity", cacheStatistics.getCapacity());
+                map.put("evictions", cacheStatistics.getEvictions());
+                map.put("percentFree", cacheStatistics.getPercentFree());
+                map.put("state", cacheStatistics.toString(new StringBuilder()));
 
-                bldr.withDetail(s.getName(), map);
+                bldr.withDetail(cacheStatistics.getName(), map);
             });
         }, throwable -> {
             builder.down(throwable);

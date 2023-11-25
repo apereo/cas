@@ -24,14 +24,14 @@
 
 package com.yubico.core;
 
-import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.google.common.cache.Cache;
+import com.github.benmanes.caffeine.cache.Cache;
 import com.yubico.data.AssertionRequestWrapper;
 import com.yubico.data.AssertionResponse;
 import com.yubico.data.CredentialRegistration;
@@ -65,7 +65,6 @@ import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import java.io.IOException;
-import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.time.Clock;
@@ -81,23 +80,15 @@ import java.util.concurrent.ExecutionException;
 @Slf4j
 @RequiredArgsConstructor
 public class WebAuthnServer {
-    private static final SecureRandom random = RandomUtils.getNativeInstance();
-
-    private final Clock clock = Clock.systemUTC();
-
-    private final ObjectMapper jsonMapper = JacksonCodecs.json();
+    private static final int IDENTIFIER_LENGTH = 32;
+    private static final ObjectMapper OBJECT_MAPPER = JacksonCodecs.json();
 
     private final RegistrationStorage userStorage;
     private final Cache<ByteArray, RegistrationRequest> registerRequestStorage;
     private final Cache<ByteArray, AssertionRequestWrapper> assertRequestStorage;
-    private final RelyingParty rp;
-    private final SessionManager sessions;
-
-    private static ByteArray generateRandom() {
-        var bytes = new byte[32];
-        random.nextBytes(bytes);
-        return new ByteArray(bytes);
-    }
+    private final RelyingParty relyingParty;
+    private final SessionManager sessionManager;
+    private final CasConfigurationProperties casProperties;
 
     public Either<String, RegistrationRequest> startRegistration(
         @NonNull final String username,
@@ -105,29 +96,27 @@ public class WebAuthnServer {
         final Optional<String> credentialNickname,
         final ResidentKeyRequirement residentKeyRequirement,
         final Optional<ByteArray> sessionToken) throws ExecutionException {
-        LOGGER.trace("startRegistration username: {}, credentialNickname: {}", username, credentialNickname);
 
-        var registrations = userStorage.getRegistrationsByUsername(username);
-        var existingUser = registrations.stream().findAny().map(CredentialRegistration::getUserIdentity);
-        val permissionGranted = existingUser
-            .map(userIdentity ->
-                sessions.isSessionForUser(userIdentity.getId(), sessionToken))
-            .orElse(true);
+        LOGGER.trace("Starting registration operation for username: [{}], credentialNickname: [{}]", username, credentialNickname);
+        val registrations = userStorage.getRegistrationsByUsername(username);
+        val existingUser = registrations.stream().findAny().map(CredentialRegistration::getUserIdentity);
+        val permissionGranted = casProperties.getAuthn().getMfa().getWebAuthn().getCore().isMultipleDeviceRegistrationEnabled()
+            || existingUser.map(userIdentity -> sessionManager.isSessionForUser(userIdentity.getId(), sessionToken)).orElse(true);
 
         if (permissionGranted) {
-            var registrationUserId = existingUser.orElseGet(() ->
+            val registrationUserId = existingUser.orElseGet(() ->
                 UserIdentity.builder()
                     .name(username)
-                    .displayName(displayName.get())
-                    .id(generateRandom())
+                    .displayName(displayName.orElseThrow())
+                    .id(SessionManager.generateRandom(IDENTIFIER_LENGTH))
                     .build()
             );
 
             val request = new RegistrationRequest(
                 username,
                 credentialNickname,
-                generateRandom(),
-                rp.startRegistration(
+                SessionManager.generateRandom(IDENTIFIER_LENGTH),
+                relyingParty.startRegistration(
                     StartRegistrationOptions.builder()
                         .user(registrationUserId)
                         .authenticatorSelection(AuthenticatorSelectionCriteria.builder()
@@ -136,34 +125,33 @@ public class WebAuthnServer {
                         )
                         .build()
                 ),
-                Optional.of(sessions.createSession(registrationUserId.getId()))
+                Optional.of(sessionManager.createSession(registrationUserId.getId()))
             );
             registerRequestStorage.put(request.requestId(), request);
             return Either.right(request);
-        } else {
-            return Either.left("The username \"" + username + "\" is already registered.");
         }
+        return Either.left("The username %s is already registered and/or has an active session.".formatted(username));
     }
 
     public Either<List<String>, SuccessfulRegistrationResult> finishRegistration(final String responseJson) {
-        LOGGER.trace("finishRegistration responseJson: {}", responseJson);
+        LOGGER.trace("Finishing registration with response: [{}]", responseJson);
         RegistrationResponse response;
         try {
-            response = jsonMapper.readValue(responseJson, RegistrationResponse.class);
+            response = OBJECT_MAPPER.readValue(responseJson, RegistrationResponse.class);
         } catch (final IOException e) {
-            LOGGER.error("JSON error in finishRegistration; responseJson: {}", responseJson, e);
-            return Either.left(Arrays.asList("Registration failed!", "Failed to decode response object.", e.getMessage()));
+            LOGGER.error("Registration failed; response: [{}]", responseJson, e);
+            return Either.left(Arrays.asList("Registration failed", "Failed to decode response object.", e.getMessage()));
         }
 
         val request = registerRequestStorage.getIfPresent(response.requestId());
         registerRequestStorage.invalidate(response.requestId());
 
         if (request == null) {
-            LOGGER.debug("fail finishRegistration responseJson: {}", responseJson);
-            return Either.left(List.of("Registration failed!", "No such registration in progress."));
+            LOGGER.debug("Finishing registration failed with: [{}]", responseJson);
+            return Either.left(List.of("Registration failed", "No such registration in progress."));
         } else {
             try {
-                val registration = rp.finishRegistration(
+                val registration = relyingParty.finishRegistration(
                     FinishRegistrationOptions.builder()
                         .request(request.publicKeyCredentialCreationOptions())
                         .response(response.credential())
@@ -174,24 +162,20 @@ public class WebAuthnServer {
                     var permissionGranted = false;
 
                     val isValidSession = request.sessionToken().map(token ->
-                        sessions.isSessionForUser(request.publicKeyCredentialCreationOptions().getUser().getId(), token)
+                        sessionManager.isSessionForUser(request.publicKeyCredentialCreationOptions().getUser().getId(), token)
                     ).orElse(false);
 
-                    LOGGER.debug("Session token: {}", request.sessionToken());
-                    LOGGER.debug("Valid session: {}", isValidSession);
+                    LOGGER.debug("Session token: [{}], valid session [{}]", request.sessionToken(), isValidSession);
 
                     if (isValidSession) {
                         permissionGranted = true;
-                        LOGGER.info("Session token accepted for user {}", request.publicKeyCredentialCreationOptions().getUser().getId());
+                        LOGGER.info("Session token accepted for user [{}]", request.publicKeyCredentialCreationOptions().getUser().getId());
                     }
 
-                    LOGGER.debug("permissionGranted: {}", permissionGranted);
+                    LOGGER.debug("Permission granted to finish registration: [{}]", permissionGranted);
 
                     if (!permissionGranted) {
-                        throw new RegistrationFailedException(new IllegalArgumentException(String.format(
-                            "User %s already exists",
-                            request.username()
-                        )));
+                        throw new RegistrationFailedException(new IllegalArgumentException("User %s already exists".formatted(request.username())));
                     }
                 }
 
@@ -204,15 +188,15 @@ public class WebAuthnServer {
                             request.credentialNickname(),
                             registration
                         ),
-                        registration.isAttestationTrusted() || rp.isAllowUntrustedAttestation(),
-                        sessions.createSession(request.publicKeyCredentialCreationOptions().getUser().getId())
+                        registration.isAttestationTrusted() || relyingParty.isAllowUntrustedAttestation(),
+                        sessionManager.createSession(request.publicKeyCredentialCreationOptions().getUser().getId())
                     )
                 );
             } catch (final RegistrationFailedException e) {
-                LOGGER.debug("fail finishRegistration responseJson: {}", responseJson, e);
+                LOGGER.debug("Finishing registration failed with: [{}]", responseJson, e);
                 return Either.left(List.of("Registration failed", e.getMessage()));
             } catch (final Exception e) {
-                LOGGER.error("fail finishRegistration responseJson: {}", responseJson, e);
+                LOGGER.error("Finishing registration failed with: [{}]", responseJson, e);
                 return Either.left(List.of("Registration failed unexpectedly; this is likely a bug.", e.getMessage()));
             }
         }
@@ -220,21 +204,20 @@ public class WebAuthnServer {
 
     public Either<List<String>, AssertionRequestWrapper> startAuthentication(final Optional<String> username) {
         if (username.isPresent() && !userStorage.userExists(username.get())) {
-            return Either.left(List.of("The username " + username.get() + " is not registered."));
-        } else {
-            var request = new AssertionRequestWrapper(
-                generateRandom(),
-                rp.startAssertion(StartAssertionOptions.builder().username(username).build())
-            );
-            assertRequestStorage.put(request.getRequestId(), request);
-            return Either.right(request);
+            return Either.left(List.of("The username %s is not registered.".formatted(username.get())));
         }
+        val request = new AssertionRequestWrapper(
+            SessionManager.generateRandom(IDENTIFIER_LENGTH),
+            relyingParty.startAssertion(StartAssertionOptions.builder().username(username).build())
+        );
+        assertRequestStorage.put(request.getRequestId(), request);
+        return Either.right(request);
     }
 
     public Either<List<String>, SuccessfulAuthenticationResult> finishAuthentication(final String responseJson) {
         final AssertionResponse response;
         try {
-            response = jsonMapper.readValue(responseJson, AssertionResponse.class);
+            response = OBJECT_MAPPER.readValue(responseJson, AssertionResponse.class);
         } catch (final IOException e) {
             LOGGER.debug("Failed to decode response object", e);
             return Either.left(List.of("Assertion failed!", "Failed to decode response object.", e.getMessage()));
@@ -247,7 +230,7 @@ public class WebAuthnServer {
             return Either.left(List.of("Assertion failed!", "No such assertion in progress."));
         } else {
             try {
-                val assertionResult = rp.finishAssertion(
+                val assertionResult = relyingParty.finishAssertion(
                     FinishAssertionOptions.builder()
                         .request(request.getRequest())
                         .response(response.credential())
@@ -266,7 +249,7 @@ public class WebAuthnServer {
                         );
                     }
 
-                    val session = sessions.createSession(assertionResult.getCredential().getUserHandle());
+                    val session = sessionManager.createSession(assertionResult.getCredential().getUserHandle());
                     return Either.right(
                         new SuccessfulAuthenticationResult(
                             request,
@@ -442,8 +425,8 @@ public class WebAuthnServer {
                 .getAttestationTrustPath()
                 .flatMap(x5c -> x5c.stream().findFirst())
                 .flatMap(cert -> {
-                    if (rp.getAttestationTrustSource().isPresent() &&
-                        rp.getAttestationTrustSource().get() instanceof final AttestationMetadataSource source) {
+                    if (relyingParty.getAttestationTrustSource().isPresent() &&
+                        relyingParty.getAttestationTrustSource().get() instanceof final AttestationMetadataSource source) {
                         return source.findMetadata(cert);
                     }
                     return Optional.empty();
@@ -460,12 +443,12 @@ public class WebAuthnServer {
         val reg = CredentialRegistration.builder()
             .userIdentity(userIdentity)
             .credentialNickname(nickname.orElse(null))
-            .registrationTime(clock.instant())
+            .registrationTime(Clock.systemUTC().instant())
             .credential(credential)
             .transports(transports)
             .attestationMetadata(attestationMetadata.orElse(null))
             .build();
-        LOGGER.debug("Adding registration: user: {}, nickname: {}, credential: {}", userIdentity, nickname, credential);
+        LOGGER.debug("Adding registration: user: [{}], nickname: [{}], credential: [{}]", userIdentity, nickname, credential);
         userStorage.addRegistrationByUsername(userIdentity.getName(), reg);
         return reg;
     }

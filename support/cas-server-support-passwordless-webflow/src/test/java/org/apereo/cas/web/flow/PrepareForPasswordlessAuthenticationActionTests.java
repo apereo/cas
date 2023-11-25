@@ -1,22 +1,16 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.api.PasswordlessUserAccount;
-
+import org.apereo.cas.util.MockRequestContext;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockFlowExecutionContext;
 import org.springframework.webflow.test.MockFlowSession;
-import org.springframework.webflow.test.MockRequestContext;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -33,11 +27,11 @@ class PrepareForPasswordlessAuthenticationActionTests extends BasePasswordlessAu
 
     @Test
     void verifyAction() throws Throwable {
-        val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
-        val context = new MockRequestContext(exec);
-
-        val request = new MockHttpServletRequest();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        val flow = new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN);
+        flow.setApplicationContext(applicationContext);
+        val exec = new MockFlowExecutionContext(new MockFlowSession(flow));
+        val context = MockRequestContext.create(applicationContext);
+        context.setFlowExecutionContext(exec);
         assertEquals(CasWebflowConstants.TRANSITION_ID_PASSWORDLESS_GET_USERID, prepareLoginAction.execute(context).getId());
 
         val account = PasswordlessUserAccount.builder()

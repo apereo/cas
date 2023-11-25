@@ -115,6 +115,9 @@ public class OidcServerDiscoverySettings {
     @JsonProperty("frontchannel_logout_supported")
     private boolean frontchannelLogoutSupported;
 
+    @JsonProperty("tls_client_certificate_bound_access_tokens")
+    private boolean tlsClientCertificateBoundAccessTokens;
+
     @JsonProperty("introspection_signing_alg_values_supported")
     private Set<String> introspectionSignedResponseAlgValuesSupported;
 

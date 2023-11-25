@@ -35,7 +35,7 @@ class WsFederationNavigationControllerTests extends AbstractWsFederationTests {
 
     @Test
     void verifyOperation() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
 
         context.getHttpServletRequest().setRemoteAddr("185.86.151.11");
         context.getHttpServletRequest().setLocalAddr("185.88.151.11");
@@ -53,12 +53,12 @@ class WsFederationNavigationControllerTests extends AbstractWsFederationTests {
         val id = config.getId();
         context.setParameter(WsFederationNavigationController.PARAMETER_NAME, id);
         val view = wsFederationNavigationController.redirectToProvider(context.getHttpServletRequest(), context.getHttpServletResponse());
-        assertTrue(view instanceof RedirectView);
+        assertInstanceOf(RedirectView.class, view);
     }
 
     @Test
     void verifyMissingId() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
 
         context.setParameter(WsFederationNavigationController.PARAMETER_NAME, UUID.randomUUID().toString());
         assertThrows(UnauthorizedServiceException.class,

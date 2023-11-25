@@ -9,13 +9,14 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Optional;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -31,6 +32,7 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 @Setter
 @Getter
+@Accessors(chain = true)
 public class NotPreventedAuthenticationPolicy extends AtLeastOneCredentialValidatedAuthenticationPolicy {
 
     @Serial
@@ -44,7 +46,7 @@ public class NotPreventedAuthenticationPolicy extends AtLeastOneCredentialValida
     public AuthenticationPolicyExecutionResult isSatisfiedBy(final Authentication authentication,
                                                              final Set<AuthenticationHandler> authenticationHandlers,
                                                              final ConfigurableApplicationContext applicationContext,
-                                                             final Optional<Serializable> assertion) throws Exception {
+                                                             final Map<String, ? extends Serializable> context) throws Exception {
         val fail = authentication.getFailures().values()
             .stream()
             .anyMatch(failure -> failure.getClass().isAssignableFrom(PreventedException.class));
@@ -52,6 +54,6 @@ public class NotPreventedAuthenticationPolicy extends AtLeastOneCredentialValida
             LOGGER.warn("Authentication policy has failed given at least one authentication failure is found to prevent authentication");
             return AuthenticationPolicyExecutionResult.failure();
         }
-        return super.isSatisfiedBy(authentication, authenticationHandlers, applicationContext, assertion);
+        return super.isSatisfiedBy(authentication, authenticationHandlers, applicationContext, context);
     }
 }

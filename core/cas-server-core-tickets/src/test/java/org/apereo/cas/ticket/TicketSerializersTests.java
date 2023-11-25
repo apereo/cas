@@ -1,19 +1,7 @@
 package org.apereo.cas.ticket;
 
-import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
-import org.apereo.cas.config.CasCoreHttpConfiguration;
-import org.apereo.cas.config.CasCoreNotificationsConfiguration;
-import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
-import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
-import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
-import org.apereo.cas.config.CasCoreTicketsConfiguration;
-import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasCoreWebConfiguration;
-import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
-import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.ticket.factory.BaseTicketFactoryTests;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicketFactory;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
@@ -25,9 +13,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -36,23 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
-    CasCoreUtilConfiguration.class,
-    CasCoreTicketsConfiguration.class,
-    CasCoreWebConfiguration.class,
-    CasCoreTicketIdGeneratorsConfiguration.class,
-    CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-    CasCoreHttpConfiguration.class,
-    CasCoreNotificationsConfiguration.class,
-    CasCoreAuthenticationMetadataConfiguration.class,
-    CasCoreTicketCatalogConfiguration.class,
-    CasCoreTicketsSerializationConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
-    CasCoreServicesConfiguration.class,
-    CasCoreServicesAuthenticationConfiguration.class
-})
+@SpringBootTest(classes = BaseTicketFactoryTests.SharedTestConfiguration.class)
 @Tag("Tickets")
 class TicketSerializersTests {
 

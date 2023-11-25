@@ -57,7 +57,7 @@ class JpaServiceRegistryTests extends AbstractServiceRegistryTests {
         newServiceRegistry.save(
             () -> {
                 val svc = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), true);
-                svc.setId(RegisteredService.INITIAL_IDENTIFIER_VALUE);
+                svc.setId(RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE);
                 return svc;
             },
             result -> {
@@ -97,7 +97,7 @@ class JpaServiceRegistryTests extends AbstractServiceRegistryTests {
         var servicesToImport = Stream.<RegisteredService>empty();
         for (int i = 0; i < 1000; i++) {
             val registeredService = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), true);
-            registeredService.setId(RegisteredService.INITIAL_IDENTIFIER_VALUE);
+            registeredService.setId(RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE);
             servicesToImport = Stream.concat(servicesToImport, Stream.of(registeredService));
         }
         var stopwatch = new StopWatch();

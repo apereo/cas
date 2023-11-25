@@ -2,8 +2,11 @@ package org.apereo.cas.monitor;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.apache.commons.io.FileUtils;
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health;
+import org.springframework.boot.actuate.health.Status;
+import java.text.NumberFormat;
 
 /**
  * Monitors JVM memory usage.
@@ -19,25 +22,25 @@ public class MemoryMonitorHealthIndicator extends AbstractHealthIndicator {
     /**
      * Percent free memory below which a warning is reported.
      */
-    private final long freeMemoryWarnThreshold;
-
-    private static void buildHealthCheckStatus(final Health.Builder builder,
-                                               final long freeMemory, final long totalMemory) {
-        builder
-            .withDetail("freeMemory", freeMemory)
-            .withDetail("totalMemory", totalMemory);
-    }
+    private final double freeMemoryWarnThreshold;
 
     @Override
     protected void doHealthCheck(final Health.Builder builder) {
         val runtime = Runtime.getRuntime();
-        val used = runtime.totalMemory() - runtime.freeMemory();
-        val total = runtime.maxMemory();
-        val free = total - used;
-        if (free * PERCENTAGE_VALUE / total < this.freeMemoryWarnThreshold) {
-            buildHealthCheckStatus(builder.down(), free, total);
-        } else {
-            buildHealthCheckStatus(builder.up(), free, total);
-        }
+        val totalMemory = runtime.totalMemory();
+        val freeMemory = runtime.freeMemory();
+        val usedMemory = totalMemory - freeMemory;
+        val maxMemory = runtime.maxMemory();
+        val availableMemory = maxMemory - usedMemory;
+        val availableMemoryPercentage = (double) availableMemory * PERCENTAGE_VALUE / maxMemory;
+        val percentFormat = NumberFormat.getPercentInstance();
+        builder
+            .withDetail("availableMemory", FileUtils.byteCountToDisplaySize(availableMemory))
+            .withDetail("maxMemory", FileUtils.byteCountToDisplaySize(maxMemory))
+            .withDetail("usedMemory", FileUtils.byteCountToDisplaySize(usedMemory))
+            .withDetail("totalMemory", FileUtils.byteCountToDisplaySize(totalMemory))
+            .withDetail("freeMemory", FileUtils.byteCountToDisplaySize(freeMemory))
+            .withDetail("freeMemoryPercentage", percentFormat.format(availableMemoryPercentage))
+            .status(availableMemoryPercentage < freeMemoryWarnThreshold ? Status.DOWN : Status.UP);
     }
 }

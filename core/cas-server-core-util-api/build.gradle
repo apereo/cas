@@ -12,11 +12,12 @@ dependencies {
 
     implementation libraries.jasypt
     implementation libraries.jose4j
-    implementation libraries.pac4jcore
-    implementation libraries.nimbus
     implementation libraries.bouncycastle
     implementation libraries.semver
     implementation libraries.oshi
     implementation libraries.apachevelocity
+    implementation libraries.springsecurityweb
+
+    testImplementation libraries.nimbus
 }
 

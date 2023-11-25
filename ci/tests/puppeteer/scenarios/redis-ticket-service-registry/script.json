@@ -1,10 +1,15 @@
 {
-  "dependencies": "reports,redis-ticket-registry,redis-service-registry,gauth,gauth-redis,audit-redis",
+  "dependencies": "reports,redis-ticket-registry,redis-service-registry,gauth,gauth-redis,audit-redis,rest",
   "conditions": {
     "docker": "true"
   },
-
   "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.audit.engine.enabled=false",
+    "--cas.audit.slf4j.use-single-line=true",
+
     "--cas.service-registry.core.init-from-json=true",
 
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
@@ -12,7 +17,7 @@
     "--management.health.redis.enabled=true",
     "--management.health.redisHealthIndicator.enabled=true",
 
-    "--management.endpoints.web.exposure.include=health",
+    "--management.endpoints.web.exposure.include=health,ssoSessions,ticketRegistry",
     "--management.endpoint.health.show-details=always",
     "--management.endpoints.enabled-by-default=true",
     

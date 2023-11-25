@@ -3,8 +3,6 @@ package org.apereo.cas.support.saml.web.idp.profile.sso.request;
 import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
-import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,9 +13,7 @@ import org.apereo.inspektr.audit.annotation.Audit;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
 import org.opensaml.saml.common.SignableSAMLObject;
-
 import jakarta.servlet.http.HttpServletRequest;
-
 import java.util.Optional;
 
 /**
@@ -39,16 +35,15 @@ public class DefaultSSOSamlHttpRequestExtractor implements SSOSamlHttpRequestExt
         actionResolverName = AuditActionResolvers.SAML2_REQUEST_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.SAML2_REQUEST_RESOURCE_RESOLVER)
     @Override
-    public Optional<Pair<? extends SignableSAMLObject, MessageContext>> extract(final HttpServletRequest request,
-                                                                                final BaseHttpServletRequestXMLMessageDecoder decoder,
-                                                                                final Class<? extends SignableSAMLObject> clazz) {
-        FunctionUtils.doUnchecked(__ -> {
-            LOGGER.trace("Received SAML profile request [{}]", request.getRequestURI());
-            decoder.setHttpServletRequestSupplier(() -> request);
-            decoder.setParserPool(this.parserPool);
-            decoder.initialize();
-            decoder.decode();
-        });
+    public Optional<Pair<? extends SignableSAMLObject, MessageContext>> extract(
+        final HttpServletRequest request,
+        final BaseHttpServletRequestXMLMessageDecoder decoder,
+        final Class<? extends SignableSAMLObject> clazz) throws Exception {
+        LOGGER.trace("Received SAML profile request [{}]", request.getRequestURI());
+        decoder.setHttpServletRequestSupplier(() -> request);
+        decoder.setParserPool(this.parserPool);
+        decoder.initialize();
+        decoder.decode();
 
         val messageContext = decoder.getMessageContext();
         LOGGER.trace("Locating SAML object from message context...");

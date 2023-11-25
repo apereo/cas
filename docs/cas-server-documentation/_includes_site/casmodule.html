@@ -41,24 +41,23 @@
 <div style="display: {{ displayClass }}">
 
     <ul class='nav nav-pills'>
-        <li class='nav-item'><a class='nav-link' onclick="javascript:tabClicked(0)" data-bs-toggle='tab' href='#maven{{ casModuleRandomNumber }}'>Maven</a></li>
-        <li class='nav-item'><a class='nav-link active' onclick="javascript:tabClicked(1)" data-bs-toggle='tab' href='#gradle{{ casModuleRandomNumber }}'>Gradle</a></li>
+        <li class='nav-item cas-module'><a class='nav-link' onclick="javascript:tabClicked(0)" data-bs-toggle='tab' href='#maven{{ casModuleRandomNumber }}'>Apache Maven</a></li>
+        <li class='nav-item cas-module'><a class='nav-link' onclick="javascript:tabClicked(1)" data-bs-toggle='tab' href='#gradle{{ casModuleRandomNumber }}'>Gradle</a></li>
 
         {%- unless include.ignoreBOM == "true" -%}
-        <li class='nav-item'><a class='nav-link' onclick="javascript:tabClicked(2)" data-bs-toggle='tab' 
+        <li class='nav-item cas-module'><a class='nav-link' onclick="javascript:tabClicked(2)" data-bs-toggle='tab' 
             href='#bom{{ casModuleRandomNumber }}'>BOM - Spring</a></li>
 
-        <li class='nav-item'><a class='nav-link' onclick="javascript:tabClicked(2)" data-bs-toggle='tab' 
+        <li class='nav-item cas-module'><a class='nav-link active' onclick="javascript:tabClicked(2)" data-bs-toggle='tab'
             href='#bomGradle{{ casModuleRandomNumber }}'>BOM - Gradle</a></li>
         {%- endunless -%}
 
-        <li role='presentation' class='nav-item dropdown'>
+        <li role='presentation' class='nav-item dropdown cas-module'>
             <a class='nav-link dropdown-toggle' onclick="javascript:tabClicked(3)" data-bs-toggle='dropdown' href='#' role='button'>Resources
                 <span class='caret'></span>
             </a>
             <div class='dropdown-menu'>
                 <a class='dropdown-item' href="javascript:generateOverlay('{{include.module}}', 'cas-overlay');">Generate CAS Server WAR Overlay</a>
-                <a class='dropdown-item' href="javascript:generateOverlay('{{include.module}}', 'cas-mgmt-overlay');">Generate CAS Management Server WAR Overlay</a>
                 <a class='dropdown-item' href="javascript:generateOverlay('{{include.module}}', 'cas-config-server-overlay');">Generate CAS Configuration Server WAR Overlay</a>
             </div>
         </li>

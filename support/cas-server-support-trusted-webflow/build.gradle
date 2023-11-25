@@ -12,12 +12,18 @@ dependencies {
     api project(":api:cas-server-core-api-web")
     api project(":api:cas-server-core-api-util")
 
+    implementation libraries.springsecurityconfig
+    implementation libraries.springsecurityweb
+    
     implementation project(":core:cas-server-core-webflow")
     implementation project(":core:cas-server-core-webflow-api")
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-authentication-mfa-api")
     implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-webflow-mfa-api")
+
+    implementation project(":support:cas-server-support-person-directory-core")
     implementation project(":support:cas-server-support-trusted")
 
     testImplementation project(":core:cas-server-core")

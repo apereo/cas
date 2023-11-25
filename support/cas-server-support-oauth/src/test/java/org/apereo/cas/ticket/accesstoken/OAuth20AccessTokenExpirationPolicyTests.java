@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@TestPropertySource(properties = "cas.logout.remove-descendant-tickets=true")
+@TestPropertySource(properties = "cas.ticket.track-descendant-tickets=false")
 @Tag("OAuthToken")
 class OAuth20AccessTokenExpirationPolicyTests extends BaseOAuth20ExpirationPolicyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "oAuthTokenExpirationPolicy.json");
@@ -31,7 +31,7 @@ class OAuth20AccessTokenExpirationPolicyTests extends BaseOAuth20ExpirationPolic
         val at = newAccessToken(tgt);
         assertFalse(at.isExpired(), "Access token should not be expired");
         tgt.markTicketExpired();
-        assertTrue(at.isExpired(), "Access token should not be expired when TGT is expired");
+        assertFalse(at.isExpired(), "Access token should not be expired when TGT is expired");
     }
 
     @Test

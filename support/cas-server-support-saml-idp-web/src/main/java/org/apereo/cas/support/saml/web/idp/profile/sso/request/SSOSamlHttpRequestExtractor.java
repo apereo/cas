@@ -23,8 +23,9 @@ public interface SSOSamlHttpRequestExtractor {
      * @param decoder the decoder
      * @param clazz   the clazz
      * @return the pair
+     * @throws Exception the exception
      */
     Optional<Pair<? extends SignableSAMLObject, MessageContext>> extract(HttpServletRequest request,
                                                                          BaseHttpServletRequestXMLMessageDecoder decoder,
-                                                                         Class<? extends SignableSAMLObject> clazz);
+                                                                         Class<? extends SignableSAMLObject> clazz) throws Exception;
 }

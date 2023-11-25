@@ -43,7 +43,7 @@ class MultifactorAuthenticationVerifyTrustActionTests extends AbstractMultifacto
         record.setRecordDate(ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(5));
         getMfaTrustEngine().save(record);
 
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
         WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService("sample-service", Collections.emptyMap()));
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(record.getPrincipal()), context);
@@ -52,7 +52,7 @@ class MultifactorAuthenticationVerifyTrustActionTests extends AbstractMultifacto
 
     @Test
     void verifyDeviceTrusted() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
         WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService("sample-service", Collections.emptyMap()));
 
@@ -70,14 +70,14 @@ class MultifactorAuthenticationVerifyTrustActionTests extends AbstractMultifacto
 
         assertNotNull(context.getHttpServletResponse().getCookies());
         assertEquals(1, context.getHttpServletResponse().getCookies().length);
-        context.getHttpServletRequest().setCookies(context.getHttpServletResponse().getCookies());
+        context.setRequestCookiesFromResponse();
 
         val authn = RegisteredServiceTestUtils.getAuthentication(record.getPrincipal());
         WebUtils.putAuthentication(authn, context);
         assertEquals("yes", mfaVerifyTrustAction.execute(context).getId());
 
         assertTrue(MultifactorAuthenticationTrustUtils.isMultifactorAuthenticationTrustedInScope(context));
-        assertTrue(authn.getAttributes().containsKey(casProperties.getAuthn().getMfa().getTrusted().getCore().getAuthenticationContextAttribute()));
+        assertTrue(authn.containsAttribute(casProperties.getAuthn().getMfa().getTrusted().getCore().getAuthenticationContextAttribute()));
     }
 
     @Test
@@ -85,7 +85,7 @@ class MultifactorAuthenticationVerifyTrustActionTests extends AbstractMultifacto
         val record = getMultifactorAuthenticationTrustRecord();
         record.setRecordDate(ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(5));
 
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
 
         assertEquals(CasWebflowConstants.TRANSITION_ID_NO, mfaVerifyTrustAction.execute(context).getId());

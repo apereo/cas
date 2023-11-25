@@ -10,6 +10,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredServiceUsernameProviderContext;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.OAuth20ClientAuthenticationMethods;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
@@ -29,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.CallContext;
+import org.pac4j.core.credentials.CredentialSource;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
@@ -74,7 +76,7 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
             LOGGER.debug("Authenticating credential [{}]", credentials);
             val upc = (UsernamePasswordCredentials) credentials;
             val id = upc.getUsername();
-            val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, id);
+            val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, id);
             val audit = AuditableContext.builder()
                 .registeredService(registeredService)
                 .build();
@@ -85,6 +87,15 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
                 LOGGER.debug("Skipping authenticator [{}]; service access is rejected for [{}] or the authentication request is not supported", name, registeredService);
                 return Optional.empty();
             }
+
+            val requiredAuthnMethod = CredentialSource.FORM.name().equalsIgnoreCase(upc.getSource())
+                ? OAuth20ClientAuthenticationMethods.CLIENT_SECRET_POST
+                : OAuth20ClientAuthenticationMethods.CLIENT_SECRET_BASIC;
+            if (!isAuthenticationMethodSupported(callContext, registeredService, requiredAuthnMethod)) {
+                LOGGER.warn("Client authentication method [{}] is not supported for service [{}]", requiredAuthnMethod, registeredService.getName());
+                return Optional.empty();
+            }
+
             val service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
             validateCredentials(upc, registeredService, callContext);
 
@@ -115,6 +126,11 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
             credentials.setUserProfile(profile);
             return Optional.of(credentials);
         });
+    }
+
+    protected boolean isAuthenticationMethodSupported(final CallContext callContext, final OAuthRegisteredService registeredService,
+                                                      final OAuth20ClientAuthenticationMethods requiredAuthnMethod) {
+        return OAuth20Utils.isTokenAuthenticationMethodSupportedFor(callContext, registeredService, requiredAuthnMethod);
     }
 
     protected Principal buildAuthenticatedPrincipal(final Principal resolvedPrincipal, final OAuthRegisteredService registeredService,

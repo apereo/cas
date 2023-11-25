@@ -22,6 +22,11 @@ public interface HttpClient {
     String BEAN_NAME_HTTPCLIENT_NO_REDIRECT = "noRedirectHttpClient";
 
     /**
+     * Bean name for the default client implementation.
+     */
+    String BEAN_NAME_HTTPCLIENT = "httpClient";
+
+    /**
      * Sends a message to a particular endpoint.  Option of sending it without
      * waiting to ensure a response was returned.
      * This is useful when it doesn't matter about the response as you'll perform no action based on the response.

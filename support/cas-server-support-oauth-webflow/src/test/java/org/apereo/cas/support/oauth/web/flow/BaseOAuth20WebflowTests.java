@@ -27,7 +27,6 @@ public abstract class BaseOAuth20WebflowTests {
     
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
         MailSenderAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         AopAutoConfiguration.class

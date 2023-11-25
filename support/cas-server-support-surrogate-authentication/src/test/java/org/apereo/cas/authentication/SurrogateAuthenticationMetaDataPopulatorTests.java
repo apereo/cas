@@ -34,9 +34,9 @@ class SurrogateAuthenticationMetaDataPopulatorTests {
             () -> populator.populateAttributes(builder, mock(AuthenticationTransaction.class)));
         populator.populateAttributes(builder, CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(credential));
         val auth = builder.build();
-        assertTrue(auth.getAttributes().containsKey(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED));
-        assertTrue(auth.getAttributes().containsKey(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_PRINCIPAL));
-        assertTrue(auth.getAttributes().containsKey(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_USER));
+        assertTrue(auth.containsAttribute(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED));
+        assertTrue(auth.containsAttribute(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_PRINCIPAL));
+        assertTrue(auth.containsAttribute(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_USER));
 
     }
 }

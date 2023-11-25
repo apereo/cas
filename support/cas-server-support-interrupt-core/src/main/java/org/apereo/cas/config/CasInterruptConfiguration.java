@@ -1,23 +1,36 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.interrupt.DefaultInterruptInquiryExecutionPlan;
 import org.apereo.cas.interrupt.GroovyScriptInterruptInquirer;
 import org.apereo.cas.interrupt.InterruptInquiryExecutionPlan;
 import org.apereo.cas.interrupt.InterruptInquiryExecutionPlanConfigurer;
+import org.apereo.cas.interrupt.InterruptTrackingCookieCipherExecutor;
+import org.apereo.cas.interrupt.InterruptTrackingEngine;
 import org.apereo.cas.interrupt.JsonResourceInterruptInquirer;
 import org.apereo.cas.interrupt.RegexAttributeInterruptInquirer;
 import org.apereo.cas.interrupt.RestEndpointInterruptInquirer;
+import org.apereo.cas.interrupt.SimpleInterruptTrackingEngine;
+import org.apereo.cas.util.cipher.CipherExecutorUtils;
+import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.util.spring.boot.ConditionalOnMissingGraalVMNativeImage;
 import org.apereo.cas.web.InterruptCookieRetrievingCookieGenerator;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.web.cookie.CookieValueManager;
 import org.apereo.cas.web.support.CookieUtils;
+import org.apereo.cas.web.support.mgmr.DefaultCasCookieValueManager;
+import org.apereo.cas.web.support.mgmr.DefaultCookieSameSitePolicy;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -41,13 +54,67 @@ import java.util.ArrayList;
 @AutoConfiguration
 public class CasInterruptConfiguration {
 
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "interruptCookieGenerator")
-    public CasCookieBuilder interruptCookieGenerator(final CasConfigurationProperties casProperties) {
-        val props = casProperties.getInterrupt().getCookie();
-        return new InterruptCookieRetrievingCookieGenerator(CookieUtils.buildCookieGenerationContext(props));
+    @Configuration(value = "CasInterruptTrackingConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasInterruptTrackingConfiguration {
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "interruptCookieCipherExecutor")
+        public CipherExecutor interruptCookieCipherExecutor(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties) {
+            val props = casProperties.getInterrupt().getCookie();
+            var enabled = props.getCrypto().isEnabled();
+            if (!enabled && StringUtils.isNotBlank(props.getCrypto().getEncryption().getKey())
+                && StringUtils.isNotBlank(props.getCrypto().getSigning().getKey())) {
+                LOGGER.warn("Interrupt webflow cookie encryption/signing is not enabled explicitly in the configuration for cookie [{}], yet signing/encryption keys "
+                    + "are defined for operations. CAS will proceed to enable the cookie encryption/signing functionality.", props.getName());
+                enabled = true;
+            }
+
+            if (enabled) {
+                return CipherExecutorUtils.newStringCipherExecutor(props.getCrypto(), InterruptTrackingCookieCipherExecutor.class);
+            }
+            LOGGER.info("Interrupt webflow cookie encryption/signing is turned off and MAY NOT be safe in a production environment. "
+                + "Consider using other choices to handle encryption, signing and verification of metadata artifacts");
+            return CipherExecutor.noOp();
+        }
+
+        @ConditionalOnMissingBean(name = "interruptCookieValueManager")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public CookieValueManager interruptCookieValueManager(
+            @Qualifier(GeoLocationService.BEAN_NAME)
+            final ObjectProvider<GeoLocationService> geoLocationService,
+            final CasConfigurationProperties casProperties,
+            @Qualifier("interruptCookieCipherExecutor") final CipherExecutor cookieCipherExecutor) {
+
+            val props = casProperties.getInterrupt().getCookie();
+            return FunctionUtils.doIf(props.getCrypto().isEnabled(),
+                () -> new DefaultCasCookieValueManager(cookieCipherExecutor, geoLocationService,
+                    DefaultCookieSameSitePolicy.INSTANCE, props),
+                CookieValueManager::noOp).get();
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "interruptCookieGenerator")
+        public CasCookieBuilder interruptCookieGenerator(final CasConfigurationProperties casProperties) {
+            val props = casProperties.getInterrupt().getCookie();
+            return new InterruptCookieRetrievingCookieGenerator(CookieUtils.buildCookieGenerationContext(props));
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = InterruptTrackingEngine.BEAN_NAME)
+        public InterruptTrackingEngine interruptTrackingEngine(
+            @Qualifier("interruptCookieGenerator")
+            final CasCookieBuilder interruptCookieGenerator,
+            final CasConfigurationProperties casProperties) {
+            return new SimpleInterruptTrackingEngine(interruptCookieGenerator, casProperties);
+        }
     }
+
 
     @Configuration(value = "CasInterruptInquiryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)

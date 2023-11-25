@@ -15,6 +15,15 @@ import java.util.Map;
 @FunctionalInterface
 public interface NotificationSender extends Ordered {
     /**
+     * Attribute name in the payload that indicates the message title.
+     */
+    String ATTRIBUTE_NOTIFICATION_TITLE = "title";
+    /**
+     * Attribute name in the payload that indicates the message body.
+     */
+    String ATTRIBUTE_NOTIFICATION_MESSAGE = "message";
+
+    /**
      * No op notification sender.
      *
      * @return the notification sender

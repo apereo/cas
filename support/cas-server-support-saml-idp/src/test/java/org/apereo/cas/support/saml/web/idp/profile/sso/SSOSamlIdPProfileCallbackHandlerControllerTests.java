@@ -11,7 +11,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.util.Saml20HexRandomIdGenerator;
 import org.apereo.cas.ticket.ServiceTicket;
-import org.apereo.cas.ticket.ServiceTicketSessionTrackingPolicy;
+import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.BeforeEach;
@@ -161,7 +161,7 @@ class SSOSamlIdPProfileCallbackHandlerControllerTests extends BaseSamlIdPConfigu
     private ServiceTicket getServiceTicket() throws Throwable {
         val tgt = new MockTicketGrantingTicket(UUID.randomUUID().toString());
         ticketRegistry.addTicket(tgt);
-        val trackingPolicy = mock(ServiceTicketSessionTrackingPolicy.class);
+        val trackingPolicy = mock(TicketTrackingPolicy.class);
         val ticketService = RegisteredServiceTestUtils.getService(samlRegisteredService.getServiceId());
         ticketService.getAttributes().put(SamlProtocolConstants.PARAMETER_ENTITY_ID, List.of(samlRegisteredService.getServiceId()));
         val st1 = tgt.grantServiceTicket(ticketService, trackingPolicy);

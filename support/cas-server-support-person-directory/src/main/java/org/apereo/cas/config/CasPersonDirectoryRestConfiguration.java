@@ -67,7 +67,7 @@ public class CasPersonDirectoryRestConfiguration {
                             val dao = new RestfulPersonAttributeDao();
                             dao.setCaseInsensitiveUsername(rest.isCaseInsensitive());
                             dao.setOrder(rest.getOrder());
-                            FunctionUtils.doIfNotNull(rest.getId(), dao::setId);
+                            FunctionUtils.doIfNotNull(rest.getId(), id -> dao.setId(id));
                             dao.setUrl(rest.getUrl());
                             dao.setMethod(Objects.requireNonNull(HttpMethod.valueOf(rest.getMethod())).name());
                             dao.setEnabled(rest.getState() != AttributeRepositoryStates.DISABLED);

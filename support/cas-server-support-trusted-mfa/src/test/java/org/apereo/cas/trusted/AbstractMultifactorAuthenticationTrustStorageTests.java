@@ -6,9 +6,14 @@ import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.config.CasCoreAuditConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
+import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
@@ -25,6 +30,7 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
@@ -109,6 +115,10 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
         getMfaTrustEngine().remove(DateTimeUtils.zonedDateTimeOf(record.getExpirationDate()).plusDays(1));
         getMfaTrustEngine().remove(record.getRecordKey());
         assertNull(getMfaTrustEngine().get(record.getId()));
+
+        if (mfaTrustEngine instanceof final DisposableBean disposableBean) {
+            disposableBean.destroy();
+        }
     }
 
     @ImportAutoConfiguration({
@@ -119,6 +129,8 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
     })
     @SpringBootConfiguration
     @Import({
+        CasCoreConfiguration.class,
+        CasCoreAuthenticationPrincipalConfiguration.class,
         CasCoreUtilConfiguration.class,
         CasCoreNotificationsConfiguration.class,
         CasCoreServicesConfiguration.class,
@@ -127,7 +139,10 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
         CasCoreHttpConfiguration.class,
         CasCoreWebConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,
+        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
         GeoLocationServiceTestConfiguration.class,
+        CasCoreTicketsConfiguration.class,
+        CasCoreTicketsSerializationConfiguration.class,
         MultifactorAuthnTrustWebflowConfiguration.class,
         MultifactorAuthnTrustConfiguration.class,
         MultifactorAuthnTrustedDeviceFingerprintConfiguration.class

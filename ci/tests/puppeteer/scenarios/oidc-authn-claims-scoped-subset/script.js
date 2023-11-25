@@ -60,11 +60,12 @@ async function getPayload(page, redirectUri, clientId, clientSecret, scopes) {
     await cas.log(`Current code is ${code}`);
     const accessTokenUrl = `https://localhost:8443/cas/oidc/token?grant_type=authorization_code`
         + `&client_id=${clientId}&client_secret=${clientSecret}&redirect_uri=${redirectUri}&code=${code}`;
-    await cas.goto(page, accessTokenUrl);
-    await cas.log(`Token URL: ${page.url()}`);
-    await page.waitForTimeout(1000);
-    let content = await cas.textContent(page, "body");
-    const payload = JSON.parse(content);
-    await cas.log(payload);
-    return payload;
+
+    return await cas.doPost(accessTokenUrl, "", {
+        'Content-Type': "application/json"
+    }, res => {
+        return res.data;
+    }, error => {
+        throw `Operation failed to obtain access token: ${error}`;
+    });
 }

@@ -20,6 +20,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolutionExecutionPlanConfigurer;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.authentication.surrogate.GroovySurrogateAuthenticationService;
 import org.apereo.cas.authentication.surrogate.JsonResourceSurrogateAuthenticationService;
 import org.apereo.cas.authentication.surrogate.SimpleSurrogateAuthenticationService;
@@ -31,7 +32,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.expiration.builder.TicketGrantingTicketExpirationPolicyBuilder;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
@@ -47,7 +47,6 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.util.StringUtils;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -213,6 +212,7 @@ public class SurrogateAuthenticationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PrincipalResolver surrogatePrincipalResolver(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier(AttributeDefinitionStore.BEAN_NAME)
             final AttributeDefinitionStore attributeDefinitionStore,
             @Qualifier(ServicesManager.BEAN_NAME)
@@ -227,7 +227,8 @@ public class SurrogateAuthenticationConfiguration {
             val principal = casProperties.getAuthn().getSurrogate().getPrincipal();
             val personDirectory = casProperties.getPersonDirectory();
             val attributeMerger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
-            val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(surrogatePrincipalFactory,
+            val resolver = PersonDirectoryPrincipalResolver.newPersonDirectoryPrincipalResolver(
+                applicationContext, surrogatePrincipalFactory,
                 attributeRepository, attributeMerger, SurrogatePrincipalResolver.class,
                 servicesManager, attributeDefinitionStore,
                 principal, personDirectory);

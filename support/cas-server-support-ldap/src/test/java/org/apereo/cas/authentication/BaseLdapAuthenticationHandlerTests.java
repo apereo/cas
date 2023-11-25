@@ -34,6 +34,7 @@ import org.jooq.lambda.UncheckedException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -57,6 +58,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
+    SecurityAutoConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreAuthenticationPolicyConfiguration.class,
     CasCoreAuthenticationMetadataConfiguration.class,
@@ -96,20 +98,20 @@ public abstract class BaseLdapAuthenticationHandlerTests {
         assertNotEquals(0, ldapAuthenticationHandlers.size());
         assertThrowsWithRootCause(UncheckedException.class, FailedLoginException.class,
             () -> ldapAuthenticationHandlers.toList()
-                .forEach(Unchecked.consumer(h -> h.authenticate(new UsernamePasswordCredential(getUsername(), getFailurePassword()), mock(Service.class)))));
+                .forEach(Unchecked.consumer(handler -> handler.authenticate(new UsernamePasswordCredential(getUsername(), getFailurePassword()), mock(Service.class)))));
     }
 
     @Test
     void verifyAuthenticateSuccess() throws Throwable {
         assertNotEquals(0, ldapAuthenticationHandlers.size());
-        ldapAuthenticationHandlers.toList().forEach(Unchecked.consumer(h -> {
+        for (val handler : ldapAuthenticationHandlers.toList()) {
             val credential = new UsernamePasswordCredential(getUsername(), getSuccessPassword());
-            val result = h.authenticate(credential, mock(Service.class));
+            val result = handler.authenticate(credential, mock(Service.class));
             assertNotNull(result.getPrincipal());
             assertEquals(credential.getUsername(), result.getPrincipal().getId());
             val attributes = result.getPrincipal().getAttributes();
             Arrays.stream(getPrincipalAttributes()).forEach(s -> assertTrue(attributes.containsKey(s)));
-        }));
+        }
     }
 
     String[] getPrincipalAttributes() {

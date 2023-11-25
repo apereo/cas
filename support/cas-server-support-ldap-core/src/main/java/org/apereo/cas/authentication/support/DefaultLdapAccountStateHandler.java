@@ -178,9 +178,8 @@ public class DefaultLdapAccountStateHandler implements AuthenticationAccountStat
             val expDate = DateTimeUtils.zonedDateTimeOf(warning.getExpiration());
             val ttl = ZonedDateTime.now(ZoneOffset.UTC).until(expDate, ChronoUnit.DAYS);
             LOGGER.debug("Password expires in [{}] days. Expiration warning threshold is [{}] days.",
-                ttl,
-                configuration.getPasswordWarningNumberOfDays());
-            if (configuration.isAlwaysDisplayPasswordExpirationWarning() || ttl < configuration.getPasswordWarningNumberOfDays()) {
+                ttl, configuration.getPasswordWarningNumberOfDays());
+            if (configuration.isAlwaysDisplayPasswordExpirationWarning() || (ttl >= 0 && ttl < configuration.getPasswordWarningNumberOfDays())) {
                 messages.add(new PasswordExpiringWarningMessageDescriptor("Password expires in {0} days.", ttl));
             }
         } else {

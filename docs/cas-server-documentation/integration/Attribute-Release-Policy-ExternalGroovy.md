@@ -33,8 +33,7 @@ The `sample.groovy` script itself may have the following outline:
 import java.util.*
 
 def run(final Object... args) {
-    def attributes = args[0]
-    def logger = args[1]
+    def (attributes,logger) = args
     logger.debug("Current attributes are {}", attributes)
     return []
 }

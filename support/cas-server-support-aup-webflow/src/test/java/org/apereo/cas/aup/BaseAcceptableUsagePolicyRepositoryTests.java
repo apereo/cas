@@ -125,7 +125,6 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
 
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         AopAutoConfiguration.class
     })
@@ -148,7 +147,6 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
         CasCoreAuthenticationSupportConfiguration.class,
         CasCoreAuthenticationPrincipalConfiguration.class,
         CasAcceptableUsagePolicyWebflowConfiguration.class,
-        CasPersonDirectoryTestConfiguration.class,
         CasCoreUtilConfiguration.class,
         CasCoreHttpConfiguration.class,
         CasWebflowContextConfiguration.class,
@@ -157,6 +155,7 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
         CasCoreNotificationsConfiguration.class,
         CasCoreLogoutConfiguration.class,
         CasCoreServicesConfiguration.class,
+        CasPersonDirectoryTestConfiguration.class,
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
     })
     public static class SharedTestConfiguration {

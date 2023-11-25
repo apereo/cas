@@ -66,12 +66,12 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
     public ResponseEntity handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         val webContext = new JEEContext(request, response);
         if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, OidcConstants.INTROSPECTION_URL)) {
-            val body = OAuth20Utils.toJson(OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer"));
+            val body = OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer");
             return new ResponseEntity(body, HttpStatus.BAD_REQUEST);
         }
         return super.handleRequest(request, response);
     }
-    
+
     @PostMapping(consumes = {
         OAuth20Constants.INTROSPECTION_JWT_HEADER_CONTENT_TYPE,
         MediaType.APPLICATION_JSON_VALUE,
@@ -94,14 +94,13 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
         final String accessTokenId, final OAuth20Token ticket) {
         val response = super.createIntrospectionValidResponse(accessTokenId, ticket);
         if (ticket != null) {
-            Optional.ofNullable(ticket.getService())
-                .ifPresent(service -> {
-                    val registeredService = getConfigurationContext().getServicesManager().findServiceBy(service, OidcRegisteredService.class);
-                    response.setIss(getConfigurationContext().getIssuerService().determineIssuer(Optional.ofNullable(registeredService)));
-                });
+            Optional.ofNullable(ticket.getService()).ifPresent(service -> {
+                val registeredService = getConfigurationContext().getServicesManager().findServiceBy(service, OidcRegisteredService.class);
+                response.setIss(getConfigurationContext().getIssuerService().determineIssuer(Optional.ofNullable(registeredService)));
+            });
             FunctionUtils.doIf(response.isActive(), __ -> response.setScope(String.join(" ", ticket.getScopes()))).accept(response);
             CollectionUtils.firstElement(ticket.getAuthentication().getAttributes().get(OAuth20Constants.DPOP_CONFIRMATION))
-                .ifPresent(dpop -> response.setDPopConfirmation(new OAuth20IntrospectionAccessTokenSuccessResponse.DPopConfirmation(dpop.toString())));
+                .ifPresent(dpop -> response.getConfirmation().setJkt(dpop.toString()));
         }
         return response;
     }

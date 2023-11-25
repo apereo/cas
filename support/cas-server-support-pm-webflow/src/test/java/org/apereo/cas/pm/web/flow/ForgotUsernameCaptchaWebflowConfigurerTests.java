@@ -7,7 +7,6 @@ import org.apereo.cas.config.PasswordManagementWebflowConfiguration;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -45,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebflowConfig")
 class ForgotUsernameCaptchaWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Autowired
-    @Qualifier(CasWebflowConstants.ACTION_ID_FORGOT_USERNAME_INIT_CAPTCHA)
+    @Qualifier(ACTION_ID_FORGOT_USERNAME_INIT_CAPTCHA)
     private Action initCaptchaAction;
     
     @Test

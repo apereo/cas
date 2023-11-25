@@ -4,8 +4,8 @@ const cas = require('../../cas.js');
 const assert = require("assert");
 
 async function cleanUp() {
-    await cas.removeDirectory(path.join(__dirname, '/saml-md'));
-    await cas.removeDirectory(path.join(__dirname, '/saml-sp'));
+    await cas.removeDirectoryOrFile(path.join(__dirname, '/saml-md'));
+    await cas.removeDirectoryOrFile(path.join(__dirname, '/saml-sp'));
 }
 
 (async () => {

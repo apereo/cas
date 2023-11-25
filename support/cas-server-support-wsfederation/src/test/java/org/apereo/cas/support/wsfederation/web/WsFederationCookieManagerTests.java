@@ -39,7 +39,7 @@ class WsFederationCookieManagerTests extends AbstractWsFederationTests {
         wsFederationCookieManager.store(context.getHttpServletRequest(), context.getHttpServletResponse(), wctx, original, config);
 
         context.setParameter(WsFederationCookieManager.WCTX, wctx);
-        context.getHttpServletRequest().setCookies(context.getHttpServletResponse().getCookies());
+        context.setRequestCookiesFromResponse();
         val service = wsFederationCookieManager.retrieve(context);
         assertNotNull(service);
         assertEquals(original.getId(), service.getId());

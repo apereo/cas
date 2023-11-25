@@ -1,7 +1,5 @@
 {
   "dependencies": "session-hazelcast,reports",
-  "timeout": 60,
-
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
@@ -20,8 +18,6 @@
     "--cas.webflow.session.server.hazelcast.cluster.network.port-auto-increment=false",
     "--cas.webflow.session.server.hazelcast.cluster.network.port=5703",
 
-    "--cas.webflow.session.storage=true",
-
-    "--spring.main.lazy-initialization=false"
+    "--cas.webflow.session.storage=true"
   ]
 }

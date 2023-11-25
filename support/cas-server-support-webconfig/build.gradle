@@ -10,11 +10,9 @@ dependencies {
     api project(":api:cas-server-core-api-webflow")
     api project(":api:cas-server-core-api-audit")
     
-    implementation libraries.pac4jcore
     implementation libraries.springsecurityweb
     implementation libraries.springsecurityconfig
-    implementation libraries.ldaptive
-    
+
     implementation project(":core:cas-server-core-webflow")
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-authentication")
@@ -26,11 +24,10 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-api")
 
     compileOnly project(":support:cas-server-support-jpa-util")
-    
+    compileOnly project(":support:cas-server-support-ldap-core")
+
     implementation project(":support:cas-server-support-actions")
     implementation project(":support:cas-server-support-actions-core")
-    implementation project(":support:cas-server-support-pac4j-core")
-    implementation project(":support:cas-server-support-ldap-core")
 
     testImplementation libraries.springboottomcat
     
@@ -39,6 +36,7 @@ dependencies {
     testImplementation project(":support:cas-server-support-thymeleaf")
     testImplementation project(":support:cas-server-support-validation")
     testImplementation project(":support:cas-server-support-jpa-util")
+    testImplementation project(":support:cas-server-support-ldap-core")
 
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-audit")

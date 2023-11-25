@@ -34,30 +34,31 @@ try to <i>OR</i> them together or you may be able to construct the pattern that 
 
 The following fields are specifically available for OpenID connect services:
 
-| Field                               | Description                                                                                                                                                                                                                   |     |
+| Version                             | Reference                                                                                                                                                                                                                     |
 |-------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `clientId`                          | Required. The identifier for this client application.                                                                                                                                                                         |     |
-| `clientSecret`                      | Required. The secret for this client application. The client secret received from the service will be URL decoded before being compared to the secret in the CAS service definition.                                          |     |
-| `clientSecretExpiration`            | Optional. Time, measured in UTC epoch, at which the `client_secret` will expire or 0 if it will not expire.                                                                                                                   |     |
-| `serviceId`                         | Required. The authorized redirect URI for this OIDC client.                                                                                                                                                                   |     |
-| `supportedGrantTypes`               | Optional. Collection of supported grant types for this service.                                                                                                                                                               |     |
-| `supportedResponseTypes`            | Optional. Collection of supported response types for this service.                                                                                                                                                            |     |
-| `signIdToken`                       | Optional. Whether ID tokens should be signed. Default is `true`.                                                                                                                                                              |     |
-| `jwks`                              | Optional. Resource path to the keystore location that holds the keys for this application.                                                                                                                                    |     |
-| `jwksKeyId`                         | Optional. JSON web key id to find in the keystore.                                                                                                                                                                            |     |
-| `jwksCacheDuration`                 | Optional. The expiration policy duration, i.e. `PT1S`, applied to loaded/cached keys for this application.<br/>                                                                                                               ||
-| `encryptIdToken`                    | Optional. Whether ID tokens should be encrypted. Default is `false`.                                                                                                                                                          |     |
-| `idTokenIssuer`                     | Optional. Override the `iss` claim in the ID Token, which should only be used in special circumstances. Do **NOT** use this setting carelessly as the ID token's issuer **MUST ALWAYS** match the identity provider's issuer. |     |
-| `idTokenSigningAlg`                 | Optional. The algorithm header value used to sign the id token.                                                                                                                                                               |     |
-| `idTokenEncryptionAlg`              | Optional. The algorithm header value used to encrypt the id token.                                                                                                                                                            |     |
-| `idTokenEncryptionEncoding`         | Optional. The algorithm method header value used to encrypt the id token.                                                                                                                                                     |     |
-| `userInfoSigningAlg`                | Optional. The algorithm header value used to sign user profile responses.                                                                                                                                                     |     |
-| `userInfoEncryptedResponseAlg`      | Optional. The algorithm header value used to encrypt user profile responses.                                                                                                                                                  |     |
-| `userInfoEncryptedResponseEncoding` | Optional. The algorithm method header value used to encrypt the user profile response.                                                                                                                                        |     ||     |
-| `tokenEndpointAuthenticationMethod` | Optional. The requested client authentication method to the token endpoint. Default is `client_secret_basic`.                                                                                                                 |     |
-| `applicationType`                   | Optional. `web`, `native`, or blank. Defined the kind of the application. The default, if omitted, is `web`.                                                                                                                  |     |
-| `subjectType`                       | Optional value chosen from `public` or `pairwise`. Type to use when generating principal identifiers. Default is `public`.                                                                                                    |     |
-| `sectorIdentifierUri`               | Optional. Host value of this URL is used as the sector identifier for the pairwise identifier calculation. If left undefined, the host value of the `serviceId` will be used instead.                                         |     |
+| `clientId`                          | Required. The identifier for this client application.                                                                                                                                                                         |     
+| `clientSecret`                      | Required. The secret for this client application. The client secret received from the service will be URL decoded before being compared to the secret in the CAS service definition.                                          |     
+| `clientSecretExpiration`            | Optional. Time, measured in UTC epoch, at which the `client_secret` will expire or 0 if it will not expire.                                                                                                                   |     
+| `serviceId`                         | Required. The authorized redirect URI for this OIDC client.                                                                                                                                                                   |     
+| `supportedGrantTypes`               | Optional. Collection of [supported grant types](OAuth-Authentication-Clients-ResponsesGrants.html) for this service.                                                                                                          |
+| `supportedResponseTypes`            | Optional. Collection of [supported response types](OAuth-Authentication-Clients-ResponsesGrants.html) for this service.                                                                                                       |
+| `signIdToken`                       | Optional. Whether ID tokens should be signed. Default is `true`.                                                                                                                                                              |     
+| `jwks`                              | Optional. Resource path to the keystore location that holds the keys for this application.                                                                                                                                    |     
+| `jwksKeyId`                         | Optional. JSON web key id to find in the keystore.                                                                                                                                                                            |     
+| `jwksCacheDuration`                 | Optional. The expiration policy duration, i.e. `PT1S`, applied to loaded/cached keys for this application.<br/>                                                                                                               |
+| `encryptIdToken`                    | Optional. Whether ID tokens should be encrypted. Default is `false`.                                                                                                                                                          |     
+| `idTokenEncryptionOptional`         | Optional. Whether ID tokens encryption should be skipped if no keystore or encryption key is available. Default is `false`.                                                                                                   |
+| `idTokenIssuer`                     | Optional. Override the `iss` claim in the ID Token, which should only be used in special circumstances. Do **NOT** use this setting carelessly as the ID token's issuer **MUST ALWAYS** match the identity provider's issuer. |     
+| `idTokenSigningAlg`                 | Optional. The algorithm header value used to sign the id token.                                                                                                                                                               |     
+| `idTokenEncryptionAlg`              | Optional. The algorithm header value used to encrypt the id token.                                                                                                                                                            |     
+| `idTokenEncryptionEncoding`         | Optional. The algorithm method header value used to encrypt the id token.                                                                                                                                                     |     
+| `userInfoSigningAlg`                | Optional. The algorithm header value used to sign user profile responses.                                                                                                                                                     |     
+| `userInfoEncryptedResponseAlg`      | Optional. The algorithm header value used to encrypt user profile responses.                                                                                                                                                  |     
+| `userInfoEncryptedResponseEncoding` | Optional. The algorithm method header value used to encrypt the user profile response.                                                                                                                                        |     
+| `tokenEndpointAuthenticationMethod` | Optional. The requested [client authentication method](OIDC-Authentication-AccessToken-AuthMethods.html) to the token endpoint.                                                                                               |
+| `applicationType`                   | Optional. `web`, `native`, or blank. Defined the kind of the application. The default, if omitted, is `web`.                                                                                                                  |     
+| `subjectType`                       | Optional value chosen from `public` or `pairwise`. Type to use when generating principal identifiers. Default is `public`.                                                                                                    |     
+| `sectorIdentifierUri`               | Optional. Host value of this URL is used as the sector identifier for the pairwise identifier calculation. If left undefined, the host value of the `serviceId` will be used instead.                                         |     
 
 <div class="alert alert-info">:information_source: <strong>Keep What You Need!</strong><p>You are encouraged to 
 only keep and maintain properties and settings needed for a particular integration. It is UNNECESSARY to grab a copy of all service fields and try to 
@@ -65,11 +66,8 @@ configure them yet again based on their default. While you may wish to keep a co
 upgrades increasing chances of breaking changes and a messy deployment at that.</p></div>
 
 Service definitions are typically managed and registered with CAS by the [service management](../services/Service-Management.html) facility.
-          
-## Response/Grant Types
- 
-Supported responses and grant types can be authorized on a per-service basis.
-[See this guide](OAuth-Authentication-Clients-ResponsesGrants.html) for more info.
+
+{% include_cached casproperties.html properties="cas.authn.oidc.services" %}
 
 ## Example
 
@@ -94,5 +92,5 @@ approval/consent screen and to assume access to requested scopes and claims shou
 
 ## Dynamic Registration
 
-Client applications may dynamically be registered with CAS
-for authentication. [See this guide](OIDC-Authentication-Dynamic-Registration.html) for more info.
+Client applications may dynamically be registered with CAS for authentication. 
+[See this guide](OIDC-Authentication-Dynamic-Registration.html) for more info.

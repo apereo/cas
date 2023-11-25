@@ -2,6 +2,7 @@ package org.apereo.cas.ticket;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -36,7 +37,7 @@ import java.util.Set;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Getter
 @NoArgsConstructor
-public class TicketGrantingTicketImpl extends AbstractTicket implements AuthenticatedServicesAwareTicketGrantingTicket {
+public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGrantingTicket {
 
     @Serial
     private static final long serialVersionUID = -8608149809180911599L;
@@ -114,9 +115,9 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements Authenti
         final String id, final Service service,
         final ExpirationPolicy expirationPolicy,
         final boolean credentialProvided,
-        final ServiceTicketSessionTrackingPolicy trackingPolicy) {
+        final TicketTrackingPolicy trackingPolicy) {
         val serviceTicket = new ServiceTicketImpl(id, this, service, credentialProvided, expirationPolicy);
-        trackingPolicy.track(this, serviceTicket);
+        trackingPolicy.trackTicket(this, serviceTicket);
         return serviceTicket;
     }
 

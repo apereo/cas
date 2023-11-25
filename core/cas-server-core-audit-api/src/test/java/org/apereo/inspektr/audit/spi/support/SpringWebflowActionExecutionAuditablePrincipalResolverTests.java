@@ -33,6 +33,7 @@ public class SpringWebflowActionExecutionAuditablePrincipalResolverTests {
     void verifyOperation(final Supplier<MockRequestContext> contextSupplier) {
         val context = contextSupplier.get();
         val resolver = new SpringWebflowActionExecutionAuditablePrincipalResolver("name");
+        
         val request = new MockHttpServletRequest();
         request.addParameter("name", UUID.randomUUID().toString());
         val response = new MockHttpServletResponse();

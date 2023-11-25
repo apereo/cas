@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.execution.Action;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -31,9 +32,12 @@ class DelegatedClientAuthenticationDynamicDiscoveryExecutionActionTests {
     @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_DYNAMIC_DISCOVERY_EXECUTION)
     private Action delegatedAuthenticationDiscoveryAction;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @Test
     void verifyOperationWithClient() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
 
         context.getHttpServletRequest().addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
         context.setParameter("username", "cas@example.org");
@@ -47,7 +51,7 @@ class DelegatedClientAuthenticationDynamicDiscoveryExecutionActionTests {
 
     @Test
     void verifyOperationWithoutClient() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         context.setParameter("username", "cas@test.org");
         context.getHttpServletRequest().addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
         val result = delegatedAuthenticationDiscoveryAction.execute(context);

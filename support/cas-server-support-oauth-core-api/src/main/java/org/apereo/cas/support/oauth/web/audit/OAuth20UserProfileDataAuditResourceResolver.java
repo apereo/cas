@@ -37,7 +37,7 @@ public class OAuth20UserProfileDataAuditResourceResolver extends ReturnValueAsSt
 
         val values = new HashMap<>();
         values.put("id", profileMap.get(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ID));
-        values.put("client_id", clientId);
+        values.put(OAuth20Constants.CLIENT_ID, clientId);
         values.put("service", service);
         values.put(OAuth20Constants.SCOPE, accessToken.getScopes());
         values.put("attributes", profileMap.get(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ATTRIBUTES));

@@ -6,12 +6,10 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.DefaultServiceTicketSessionTrackingPolicy;
 import org.apereo.cas.ticket.DefaultTicketCatalog;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.ServiceTicketFactory;
 import org.apereo.cas.ticket.ServiceTicketGeneratorAuthority;
-import org.apereo.cas.ticket.ServiceTicketSessionTrackingPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketCatalogConfigurer;
@@ -43,6 +41,10 @@ import org.apereo.cas.ticket.registry.pubsub.QueueableTicketRegistry;
 import org.apereo.cas.ticket.registry.pubsub.queue.QueueableTicketRegistryMessagePublisher;
 import org.apereo.cas.ticket.registry.pubsub.queue.QueueableTicketRegistryMessageReceiver;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
+import org.apereo.cas.ticket.tracking.AllServicesSessionTrackingPolicy;
+import org.apereo.cas.ticket.tracking.DefaultDescendantTicketsTrackingPolicy;
+import org.apereo.cas.ticket.tracking.MostRecentServiceSessionTrackingPolicy;
+import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.ProxyGrantingTicketIdGenerator;
 import org.apereo.cas.util.ProxyTicketIdGenerator;
@@ -56,9 +58,10 @@ import org.apereo.cas.util.lock.LockRepository;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
+import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -78,7 +81,6 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -101,14 +103,26 @@ public class CasCoreTicketsConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreTicketsBaseConfiguration {
 
-        @ConditionalOnMissingBean(name = ServiceTicketSessionTrackingPolicy.BEAN_NAME)
+        @ConditionalOnMissingBean(name = TicketTrackingPolicy.BEAN_NAME_SERVICE_TICKET_TRACKING)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public ServiceTicketSessionTrackingPolicy serviceTicketSessionTrackingPolicy(
+        public TicketTrackingPolicy serviceTicketSessionTrackingPolicy(
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             final CasConfigurationProperties casProperties) {
-            return new DefaultServiceTicketSessionTrackingPolicy(casProperties, ticketRegistry);
+            val onlyTrackMostRecentSession = casProperties.getTicket().getTgt().getCore().isOnlyTrackMostRecentSession();
+            return onlyTrackMostRecentSession
+                ? new MostRecentServiceSessionTrackingPolicy(ticketRegistry)
+                : new AllServicesSessionTrackingPolicy(ticketRegistry);
+        }
+
+        @ConditionalOnMissingBean(name = TicketTrackingPolicy.BEAN_NAME_DESCENDANT_TICKET_TRACKING)
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public TicketTrackingPolicy descendantTicketsTrackingPolicy(
+                final CasConfigurationProperties casProperties) {
+            return FunctionUtils.doIf(casProperties.getTicket().isTrackDescendantTickets(),
+                DefaultDescendantTicketsTrackingPolicy::new, TicketTrackingPolicy::noOp).get();
         }
 
         @ConditionalOnMissingBean(name = TicketRegistrySupport.BEAN_NAME)
@@ -124,20 +138,24 @@ public class CasCoreTicketsConfiguration {
     @Configuration(value = "CasCoreTicketsAuthenticationPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreTicketsAuthenticationPlanConfiguration {
+        private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.policy.unique-principal.enabled").isTrue();
+        
         @ConditionalOnMissingBean(name = "ticketAuthenticationPolicyExecutionPlanConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlanConfigurer ticketAuthenticationPolicyExecutionPlanConfigurer(
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier(SingleSignOnParticipationStrategy.BEAN_NAME)
+            final ObjectProvider<SingleSignOnParticipationStrategy> singleSignOnParticipationStrategy,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             final CasConfigurationProperties casProperties) {
-            return plan -> {
-                val policyProps = casProperties.getAuthn().getPolicy();
-                if (policyProps.getUniquePrincipal().isEnabled()) {
-                    LOGGER.trace("Activating authentication policy [{}]", UniquePrincipalAuthenticationPolicy.class.getSimpleName());
-                    plan.registerAuthenticationPolicy(new UniquePrincipalAuthenticationPolicy(ticketRegistry));
-                }
-            };
+            return BeanSupplier.of(AuthenticationEventExecutionPlanConfigurer.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> plan -> plan.registerAuthenticationPolicy(
+                    new UniquePrincipalAuthenticationPolicy(ticketRegistry, singleSignOnParticipationStrategy)))
+                .otherwiseProxy()
+                .get();
         }
     }
 
@@ -233,10 +251,10 @@ public class CasCoreTicketsConfiguration {
             final CasConfigurationProperties casProperties,
             final List<TicketCatalogConfigurer> configurers) {
             val plan = new DefaultTicketCatalog();
-            configurers.forEach(c -> {
-                LOGGER.trace("Configuring ticket metadata registration plan [{}]", c.getName());
-                c.configureTicketCatalog(plan, casProperties);
-            });
+            configurers.forEach(Unchecked.consumer(cfg -> {
+                LOGGER.trace("Configuring ticket metadata registration plan [{}]", cfg.getName());
+                cfg.configureTicketCatalog(plan, casProperties);
+            }));
             return plan;
         }
     }
@@ -368,8 +386,8 @@ public class CasCoreTicketsConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ServiceTicketFactory defaultServiceTicketFactory(
-            @Qualifier(ServiceTicketSessionTrackingPolicy.BEAN_NAME)
-            final ServiceTicketSessionTrackingPolicy serviceTicketSessionTrackingPolicy,
+            @Qualifier(TicketTrackingPolicy.BEAN_NAME_SERVICE_TICKET_TRACKING)
+            final TicketTrackingPolicy serviceTicketSessionTrackingPolicy,
             @Qualifier("protocolTicketCipherExecutor")
             final CipherExecutor protocolTicketCipherExecutor,
             @Qualifier(ExpirationPolicyBuilder.BEAN_NAME_SERVICE_TICKET_EXPIRATION_POLICY)
@@ -398,8 +416,8 @@ public class CasCoreTicketsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public ProxyTicketFactory defaultProxyTicketFactory(
-            @Qualifier(ServiceTicketSessionTrackingPolicy.BEAN_NAME)
-            final ServiceTicketSessionTrackingPolicy serviceTicketSessionTrackingPolicy,
+            @Qualifier(TicketTrackingPolicy.BEAN_NAME_SERVICE_TICKET_TRACKING)
+            final TicketTrackingPolicy serviceTicketSessionTrackingPolicy,
             @Qualifier("protocolTicketCipherExecutor")
             final CipherExecutor protocolTicketCipherExecutor,
             @Qualifier(ExpirationPolicyBuilder.BEAN_NAME_PROXY_TICKET_EXPIRATION_POLICY)

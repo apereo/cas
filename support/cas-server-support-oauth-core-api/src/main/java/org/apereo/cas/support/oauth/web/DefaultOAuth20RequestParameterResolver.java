@@ -24,6 +24,7 @@ import org.hjson.JsonValue;
 import org.jooq.lambda.Unchecked;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
+import org.pac4j.core.context.WebContextHelper;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
 
@@ -117,7 +118,6 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
         val service = OAuth20Utils.getRegisteredOAuthServiceByClientId(jwtBuilder.getServicesManager(), id);
         return FunctionUtils.doUnchecked(() -> resolveJwtRequestParameter(jwtRequest, service, name, clazz));
     }
-
     @Override
     public Map<String, Object> resolveRequestParameters(final Collection<String> attributes,
                                                         final WebContext context) {
@@ -132,13 +132,11 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
             })
             .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
     }
-
     @Override
     public Optional<String> resolveRequestParameter(final WebContext context,
                                                     final String name) {
         return resolveRequestParameter(context, name, String.class);
     }
-
     @Override
     public <T> Optional<T> resolveRequestParameter(final WebContext context,
                                                    final String name,
@@ -162,7 +160,6 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
                 return Optional.empty();
             });
     }
-
     @Override
     public Collection<String> resolveRequestedScopes(final WebContext context) {
         val map = resolveRequestParameters(CollectionUtils.wrap(OAuth20Constants.SCOPE), context);
@@ -174,7 +171,6 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
         results.retainAll(supported);
         return results;
     }
-
     @Override
     public boolean isAuthorizedGrantTypeForService(final WebContext context,
                                                    final OAuthRegisteredService registeredService) {
@@ -182,7 +178,6 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
             .map(String::valueOf).orElse(StringUtils.EMPTY);
         return OAuth20RequestParameterResolver.isAuthorizedGrantTypeForService(grantType, registeredService);
     }
-
     @Override
     public boolean isAuthorizedResponseTypeForService(final WebContext context,
                                                       final OAuthRegisteredService registeredService) {
@@ -228,8 +223,6 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
         results.retainAll(supported);
         return results;
     }
-
-
     @Override
     public Map<String, Map<String, Object>> resolveRequestClaims(final WebContext context) throws Exception {
         val supported = jwtBuilder.getCasProperties().getAuthn().getOidc().getDiscovery().isClaimsParameterSupported();
@@ -271,5 +264,10 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
             .flatMap(Arrays::stream)
             .filter(supported::contains)
             .collect(Collectors.toSet()));
+    }
+
+    @Override
+    public boolean isParameterOnQueryString(final WebContext context, final String name) {
+        return WebContextHelper.isQueryStringParameter(context, name);
     }
 }

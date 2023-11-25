@@ -9,8 +9,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.Ordered;
 
-import java.util.Set;
-
 import static java.util.Set.*;
 import static org.apereo.cas.authentication.AuthenticationHandlerResolver.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -39,7 +37,7 @@ class DefaultAuthenticationHandlerResolverTests {
 
     @Test
     void verifyNoOp() throws Throwable {
-        assertFalse(noOp().supports(Set.of(), mock(AuthenticationTransaction.class)));
-        assertTrue(noOp().resolve(Set.of(), mock(AuthenticationTransaction.class)).isEmpty());
+        assertFalse(noOp().supports(of(), mock(AuthenticationTransaction.class)));
+        assertTrue(noOp().resolve(of(), mock(AuthenticationTransaction.class)).isEmpty());
     }
 }

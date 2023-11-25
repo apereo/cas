@@ -2,7 +2,7 @@ package org.apereo.cas.oidc.slo;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.logout.DefaultSingleLogoutRequestContext;
-import org.apereo.cas.logout.SingleLogoutExecutionRequest;
+import org.apereo.cas.logout.slo.SingleLogoutExecutionRequest;
 import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;

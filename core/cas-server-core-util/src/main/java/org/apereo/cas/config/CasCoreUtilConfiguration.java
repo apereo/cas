@@ -75,8 +75,8 @@ public class CasCoreUtilConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Lazy(false)
         public InitializingBean casCoreUtilInitialization(
-                final ConfigurableApplicationContext applicationContext,
-                final List<Converter> allConverters) {
+            final ConfigurableApplicationContext applicationContext,
+            final List<Converter> allConverters) {
             return () -> {
                 val registry = (ConverterRegistry) DefaultConversionService.getSharedInstance();
                 allConverters.forEach(converter -> {
@@ -152,7 +152,7 @@ public class CasCoreUtilConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "ticketCatalogMessageSanitationContributor")
         public MessageSanitationContributor defaultMessageSanitationContributor(
-                @Qualifier(TicketCatalog.BEAN_NAME) final ObjectProvider<TicketCatalog> ticketCatalog) {
+            @Qualifier(TicketCatalog.BEAN_NAME) final ObjectProvider<TicketCatalog> ticketCatalog) {
             return new TicketCatalogMessageSanitationContributor(ticketCatalog);
         }
 
@@ -168,11 +168,11 @@ public class CasCoreUtilConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public MessageSanitizer messageSanitizer(final List<MessageSanitationContributor> contributors) {
             val prefixes = contributors
-                    .stream()
-                    .map(MessageSanitationContributor::getTicketIdentifierPrefixes)
-                    .filter(Objects::nonNull)
-                    .flatMap(List::stream)
-                    .collect(Collectors.joining("|"));
+                .stream()
+                .map(MessageSanitationContributor::getTicketIdentifierPrefixes)
+                .filter(Objects::nonNull)
+                .flatMap(List::stream)
+                .collect(Collectors.joining("|"));
             val pattern = Pattern.compile("(?:(?:" + prefixes + ")-\\d+-)([\\w.-]+)");
             return new DefaultMessageSanitizer(pattern);
         }

@@ -4,6 +4,7 @@ import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.authentication.DefaultMultifactorAuthenticationTriggerSelectionStrategy;
 import org.apereo.cas.authentication.MultifactorAuthenticationTriggerSelectionStrategy;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.model.TriStateBoolean;
 import lombok.val;
 import org.junit.jupiter.api.MethodOrderer;
@@ -18,16 +19,11 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.support.StaticApplicationContext;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockFlowExecutionContext;
 import org.springframework.webflow.test.MockFlowSession;
-import org.springframework.webflow.test.MockRequestContext;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -39,7 +35,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("WebflowMfaActions")
 class DetermineMultifactorPasswordlessAuthenticationActionTests {
-
     @TestConfiguration(value = "MultifactorAuthenticationTestConfiguration", proxyBeanMethods = false)
     static class MultifactorAuthenticationTestConfiguration {
         @Bean
@@ -47,7 +42,6 @@ class DetermineMultifactorPasswordlessAuthenticationActionTests {
             return new DefaultMultifactorAuthenticationTriggerSelectionStrategy(List.of());
         }
     }
-
     @Import({
         DetermineMultifactorPasswordlessAuthenticationActionTests.MultifactorAuthenticationTestConfiguration.class,
         BaseWebflowConfigurerTests.SharedTestConfiguration.class
@@ -67,9 +61,12 @@ class DetermineMultifactorPasswordlessAuthenticationActionTests {
 
         @Test
         void verifyAction() throws Throwable {
-            val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
-            val context = new MockRequestContext(exec);
-            val request = new MockHttpServletRequest();
+            val flow = new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN);
+            flow.setApplicationContext(applicationContext);
+            val exec = new MockFlowExecutionContext(new MockFlowSession(flow));
+            val context = MockRequestContext.create(applicationContext);
+            context.setFlowExecutionContext(exec);
+
             val account = PasswordlessUserAccount.builder()
                 .email("email")
                 .phone("phone")
@@ -77,7 +74,6 @@ class DetermineMultifactorPasswordlessAuthenticationActionTests {
                 .name("casuser")
                 .build();
             PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(context, account);
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, determineMultifactorPasswordlessAuthenticationAction.execute(context).getId());
         }
     }
@@ -102,9 +98,12 @@ class DetermineMultifactorPasswordlessAuthenticationActionTests {
             ctx.refresh();
             TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(ctx);
 
-            val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
-            val context = new MockRequestContext(exec);
-            val request = new MockHttpServletRequest();
+            val flow = new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN);
+            flow.setApplicationContext(applicationContext);
+            val exec = new MockFlowExecutionContext(new MockFlowSession(flow));
+            val context = MockRequestContext.create(ctx);
+            context.setFlowExecutionContext(exec);
+            
             val account = PasswordlessUserAccount.builder()
                 .email("email")
                 .phone("phone")
@@ -113,16 +112,18 @@ class DetermineMultifactorPasswordlessAuthenticationActionTests {
                 .multifactorAuthenticationEligible(TriStateBoolean.FALSE)
                 .build();
             PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(context, account);
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, determineMultifactorPasswordlessAuthenticationAction.execute(context).getId());
         }
 
         @Test
         @Order(2)
         void verifyUserMfaActionNoProvider() throws Throwable {
-            val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
-            val context = new MockRequestContext(exec);
-            val request = new MockHttpServletRequest();
+            val flow = new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN);
+            flow.setApplicationContext(applicationContext);
+            val exec = new MockFlowExecutionContext(new MockFlowSession(flow));
+            val context = MockRequestContext.create(applicationContext);
+            context.setFlowExecutionContext(exec);
+
             val account = PasswordlessUserAccount.builder()
                 .email("email")
                 .phone("phone")
@@ -131,24 +132,24 @@ class DetermineMultifactorPasswordlessAuthenticationActionTests {
                 .multifactorAuthenticationEligible(TriStateBoolean.TRUE)
                 .build();
             PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(context, account);
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, determineMultifactorPasswordlessAuthenticationAction.execute(context).getId());
         }
 
         @Test
         @Order(3)
         void verifyUserMissing() throws Throwable {
-            val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
-            val context = new MockRequestContext(exec);
-            val request = new MockHttpServletRequest();
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+            val flow = new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN);
+            flow.setApplicationContext(applicationContext);
+            val exec = new MockFlowExecutionContext(new MockFlowSession(flow));
+            val context = MockRequestContext.create(applicationContext);
+            context.setFlowExecutionContext(exec);
             assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, determineMultifactorPasswordlessAuthenticationAction.execute(context).getId());
         }
 
         @Test
         @Order(4)
         void verifyUserHasNoContactInfo() throws Throwable {
-            val context = org.apereo.cas.util.MockRequestContext.create();
+            val context = MockRequestContext.create(applicationContext);
 
             val account = PasswordlessUserAccount.builder()
                 .username("casuser")
@@ -161,10 +162,11 @@ class DetermineMultifactorPasswordlessAuthenticationActionTests {
         @Order(100)
         void verifyAction() throws Throwable {
             TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
-
-            val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
-            val context = new MockRequestContext(exec);
-            val request = new MockHttpServletRequest();
+            val flow = new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN);
+            flow.setApplicationContext(applicationContext);
+            val exec = new MockFlowExecutionContext(new MockFlowSession(flow));
+            val context = MockRequestContext.create(applicationContext);
+            context.setFlowExecutionContext(exec);
             val account = PasswordlessUserAccount.builder()
                 .email("email")
                 .phone("phone")
@@ -172,7 +174,6 @@ class DetermineMultifactorPasswordlessAuthenticationActionTests {
                 .name("casuser")
                 .build();
             PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(context, account);
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
             assertEquals(TestMultifactorAuthenticationProvider.ID, determineMultifactorPasswordlessAuthenticationAction.execute(context).getId());
         }
     }

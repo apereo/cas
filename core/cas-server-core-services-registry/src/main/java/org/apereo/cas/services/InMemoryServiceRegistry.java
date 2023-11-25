@@ -38,7 +38,7 @@ public class InMemoryServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
-        if (registeredService.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE) {
+        if (registeredService.getId() == RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE) {
             registeredService.setId(findHighestId() + 1);
         }
         invokeServiceRegistryListenerPreSave(registeredService);

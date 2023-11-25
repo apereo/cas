@@ -1,7 +1,6 @@
 package org.apereo.cas.logout.slo;
 
 import org.apereo.cas.logout.LogoutManager;
-import org.apereo.cas.logout.SingleLogoutExecutionRequest;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketDestroyedEvent;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;

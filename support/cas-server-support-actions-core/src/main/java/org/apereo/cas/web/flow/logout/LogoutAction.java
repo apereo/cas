@@ -10,14 +10,11 @@ import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.util.Objects;
 
 /**
@@ -42,11 +39,8 @@ public class LogoutAction extends AbstractLogoutAction {
     }
 
     @Override
-    protected Event doInternalExecute(final HttpServletRequest request,
-                                      final HttpServletResponse response,
-                                      final RequestContext context) {
-
-        val logoutRequests = WebUtils.getLogoutRequests(context);
+    protected Event doInternalExecute(final RequestContext requestContext) {
+        val logoutRequests = WebUtils.getLogoutRequests(requestContext);
         val needFrontSlo = FunctionUtils.doIf(logoutRequests != null,
                 () -> Objects.requireNonNull(logoutRequests)
                     .stream()
@@ -54,10 +48,20 @@ public class LogoutAction extends AbstractLogoutAction {
                 () -> Boolean.FALSE)
             .get();
 
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         logoutExecutionPlan.getLogoutRedirectionStrategies()
             .stream()
-            .filter(strategy -> strategy.supports(context))
-            .forEach(strategy -> strategy.handle(context));
+            .filter(strategy -> strategy.supports(request, response))
+            .map(Unchecked.function(strategy -> strategy.handle(request, response)))
+            .filter(Objects::nonNull)
+            .forEach(logoutResponse -> {
+                logoutResponse.getService().ifPresent(service -> WebUtils.putServiceIntoFlowScope(requestContext, service));
+                logoutResponse.getLogoutRedirectUrl().ifPresent(url -> WebUtils.putLogoutRedirectUrl(requestContext, url));
+                logoutResponse.getLogoutPostUrl().ifPresent(url -> WebUtils.putLogoutPostUrl(requestContext, url));
+                WebUtils.putLogoutPostData(requestContext, logoutResponse.getLogoutPostData());
+
+            });
 
         if (needFrontSlo) {
             LOGGER.trace("Proceeding forward with front-channel single logout");

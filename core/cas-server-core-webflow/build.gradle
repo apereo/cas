@@ -35,6 +35,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-services-registry")
     testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(":core:cas-server-core-cookie")
+    testImplementation project(":core:cas-server-core-monitor")
     testImplementation project(":core:cas-server-core")
 
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")

@@ -32,12 +32,13 @@
 <main role="main" class="container mt-3 mb-3">
     <div id="content" layout:fragment="content" class="mdc-card card p-4 m-auto w-lg-66">
         <h1 th:text="#{screen.interrupt.title}">Authentication Interrupt</h1>
-        <p th:utext="#{screen.interrupt.message(${principal.id})}">The authentication flow has been interrupted. CAS has
-            not yet established a single sign-on session for <strong>{0}</strong>.</p>
+        <p th:utext="#{screen.interrupt.message(${principal.id})}">The authentication flow has been interrupted.</p>
 
-        <div th:if="${interrupt.message}">
+        <div th:if="${not #strings.isEmpty(interrupt.message) || not #strings.isEmpty(interrupt.messageCode) }">
             <div class="alert alert-info">
-                <p id="interruptMessage" th:utext="${interrupt.message}">interrupt.message</p>
+                <p id="interruptMessage" th:if="${interrupt.message}" th:utext="${interrupt.message}"> Interrupt message</p>
+                <p id="interruptMessage" th:unless="${interrupt.message}" th:utext="#{${interrupt.messageCode}}"> Interrupt message</p>
+
                 <div id="interruptLinks" th:if="${interrupt.links}">
                     <form method="post" id="formlinks">
                         <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
@@ -101,12 +102,6 @@
                         accesskey="l">
                     <span class="mdc-button__label" th:text="#{screen.interrupt.btn.proceed}">Proceed</span>
                 </button>
-
-                <span th:if="${interruptTriggerMode == 'AFTER_AUTHENTICATION'}">
-                    <a class="mdc-button mdc-button--raised me-2" id="login" name="login" th:href="${service?.id} ?: @{/login}">
-                        <span class="mdc-button__label" th:text="#{screen.error.page.loginagain}">Login Again</span>
-                    </a>
-                </span>
             </div>
         </form>
 

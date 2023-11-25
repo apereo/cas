@@ -2,7 +2,13 @@ package org.apereo.cas.audit;
 
 import org.apereo.cas.audit.spi.BaseAuditConfigurationTests;
 import org.apereo.cas.config.CasCoreAuditConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
+import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasSupportRedisAuditConfiguration;
@@ -26,8 +32,14 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
  */
 @SpringBootTest(classes = {
     CasCoreAuditConfiguration.class,
+    CasCoreConfiguration.class,
+    CasCoreTicketsConfiguration.class,
+    CasCoreTicketsSerializationConfiguration.class,
+    CasCoreAuthenticationPrincipalConfiguration.class,
+    CasCoreServicesConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreHttpConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasSupportRedisAuditConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     RefreshAutoConfiguration.class,

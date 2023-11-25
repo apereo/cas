@@ -1,15 +1,12 @@
 package org.apereo.cas.services.web;
 
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
-import org.apereo.cas.web.flow.DelegationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.thymeleaf.context.WebEngineContext;
-
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -53,10 +50,11 @@ public class CasThymeleafTemplatesDirector {
      * @return true/false
      */
     public boolean isLoginFormViewable(final WebEngineContext vars) {
-        val context = RequestContextHolder.getRequestContext();
-        return context != null
-               && DelegationWebflowUtils.getDelegatedAuthenticationProviderPrimary(context) == null
-               && WebUtils.isCasLoginFormViewable(context);
+        val requestContext = RequestContextHolder.getRequestContext();
+        val providers = webflowExecutionPlan.getWebflowLoginContextProviders();
+        return requestContext != null
+            && (WebUtils.isCasLoginFormViewable(requestContext) || providers.isEmpty()
+            || providers.stream().noneMatch(provider -> provider.isLoginFormViewable(requestContext)));
     }
 
     /**

@@ -11,7 +11,6 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Maps;
 import com.microsoft.aad.msal4j.ClientCredentialFactory;
 import com.microsoft.aad.msal4j.ClientCredentialParameters;
 import com.microsoft.aad.msal4j.ConfidentialClientApplication;
@@ -30,6 +29,7 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -113,7 +113,7 @@ public class AzureActiveDirectoryAuthenticationHandler extends AbstractUsernameP
             val userInfo = getUserInfoFromGraph(result, username);
             LOGGER.trace("Retrieved user info [{}]", userInfo);
             val userInfoMap = (Map<String, ?>) MAPPER.readValue(JsonValue.readHjson(userInfo).toString(), Map.class);
-            val attributeMap = Maps.<String, List<Object>>newHashMapWithExpectedSize(userInfoMap.size());
+            val attributeMap = new HashMap<String, List<Object>>(userInfoMap.size());
             userInfoMap.forEach((key, value) -> {
                 val values = CollectionUtils.toCollection(value, ArrayList.class);
                 if (!values.isEmpty()) {

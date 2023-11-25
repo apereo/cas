@@ -27,11 +27,7 @@ import org.apereo.cas.authentication.metadata.*
 import javax.security.auth.login.*
 
 def authenticate(final Object... args) {
-    def authenticationHandler = args[0]
-    def credential = args[1]
-    def servicesManager = args[2]
-    def principalFactory = args[3]
-    def logger = args[4]              
+    def (authenticationHandler,credential,servicesManager,principalFactory,logger) = args
 
     /*
      * Figure out how to verify credentials...
@@ -45,14 +41,12 @@ def authenticate(final Object... args) {
 }
 
 def supportsCredential(final Object... args) {
-    def credential = args[0]
-    def logger = args[1]
+    def (credential,logger) = args
     return credential != null
 }
 
 def supportsCredentialClass(final Object... args) {
-    def credentialClazz = args[0]
-    def logger = args[1]
+    def (credentialClazz,logger) = args
     return credentialClazz == UsernamePasswordCredential.class
 }
 ```

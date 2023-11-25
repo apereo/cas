@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.token;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
@@ -40,6 +41,8 @@ public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends
     protected final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> serviceJsonWebKeystoreCache;
 
     protected final OidcIssuerService issuerService;
+
+    protected final CasConfigurationProperties casProperties;
 
     @Override
     public String encode(final OAuthRegisteredService registeredService, final JwtClaims claims) {
@@ -120,20 +123,18 @@ public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends
         return finalKey.orElseGet(() -> (PublicJsonWebKey) jsonWebKeys.getFirst());
     }
 
-    /**
-     * Gets json web key for encryption.
-     *
-     * @param svc the svc
-     * @return the json web key for encryption
-     */
-    protected PublicJsonWebKey getJsonWebKeyForEncryption(final OAuthRegisteredService svc) {
-        LOGGER.debug("Service [{}] is set to encrypt tokens", svc);
-        val jwks = serviceJsonWebKeystoreCache.get(new OidcJsonWebKeyCacheKey(svc, OidcJsonWebKeyUsage.ENCRYPTION));
-        if (Objects.requireNonNull(jwks).isEmpty()) {
-            throw new IllegalArgumentException(
-                "Service " + svc.getServiceId()
-                    + " with client id " + svc.getClientId()
-                    + " is configured to encrypt tokens, yet no JSON web key is available to handle encryption");
+    protected PublicJsonWebKey getJsonWebKeyForEncryption(final OAuthRegisteredService registeredService) {
+        LOGGER.debug("Service [{}] is set to encrypt tokens", registeredService);
+        val oidcService = (OidcRegisteredService) registeredService;
+        val jwks = serviceJsonWebKeystoreCache.get(new OidcJsonWebKeyCacheKey(registeredService, OidcJsonWebKeyUsage.ENCRYPTION));
+        if (jwks.isEmpty()) {
+            val message = "Service %s with client id %s is configured to encrypt tokens, yet no JSON web key is available to handle encryption"
+                .formatted(registeredService.getServiceId(), registeredService.getClientId());
+            if (oidcService.isIdTokenEncryptionOptional()) {
+                LOGGER.info(message);
+                return null;
+            }
+            throw new IllegalArgumentException(message);
         }
         val jsonWebKey = jwks.get()
             .getJsonWebKeys()

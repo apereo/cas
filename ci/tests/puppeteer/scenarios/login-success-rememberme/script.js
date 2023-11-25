@@ -17,11 +17,10 @@ async function loginAndVerify(browser) {
     await cas.logg(`Current date: ${now}`);
     now.setDate(now.getDate() + 1);
     assert(now.getDate() === date.getDate());
-    await page.close();
-
-    page = await cas.newPage(browser);
-    await cas.gotoLogin(page);
-    tgc = await cas.assertCookie(page);
+    
+    let page2 = await cas.newPage(browser);
+    await cas.gotoLogin(page2);
+    tgc = await cas.assertCookie(page2);
     date = new Date(tgc.expires * 1000);
     await cas.logg(`TGC expiration date: ${date}`);
 

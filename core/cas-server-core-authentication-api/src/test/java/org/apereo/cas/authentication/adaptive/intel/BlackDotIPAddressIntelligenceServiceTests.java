@@ -2,6 +2,7 @@ package org.apereo.cas.authentication.adaptive.intel;
 
 import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthenticationProperties;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,7 +11,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
-import org.springframework.webflow.test.MockRequestContext;
 import java.util.Collections;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -33,7 +33,7 @@ class BlackDotIPAddressIntelligenceServiceTests {
             props.getIpIntel().getBlackDot().setUrl("http://localhost:" + webServer.getPort() + "?ip=%s");
             props.getIpIntel().getBlackDot().setEmailAddress("cas@apereo.org");
             val service = new BlackDotIPAddressIntelligenceService(props);
-            val response = service.examine(new MockRequestContext(), "37.58.59.181");
+            val response = service.examine(MockRequestContext.create(), "37.58.59.181");
             assertTrue(response.isBanned());
         }
 
@@ -48,7 +48,7 @@ class BlackDotIPAddressIntelligenceServiceTests {
             props.getIpIntel().getBlackDot().setUrl("http://localhost:" + webServer.getPort() + "?ip=%s");
             props.getIpIntel().getBlackDot().setEmailAddress("cas@apereo.org");
             val service = new BlackDotIPAddressIntelligenceService(props);
-            val response = service.examine(new MockRequestContext(), "37.58.59.181");
+            val response = service.examine(MockRequestContext.create(), "37.58.59.181");
             assertTrue(response.isBanned());
         }
     }
@@ -62,7 +62,7 @@ class BlackDotIPAddressIntelligenceServiceTests {
             props.getIpIntel().getBlackDot().setUrl("http://localhost:" + webServer.getPort() + "?ip=%s");
             props.getIpIntel().getBlackDot().setEmailAddress("cas@apereo.org");
             val service = new BlackDotIPAddressIntelligenceService(props);
-            val response = service.examine(new MockRequestContext(), "37.58.59.181");
+            val response = service.examine(MockRequestContext.create(), "37.58.59.181");
             assertTrue(response.isBanned());
         }
     }
@@ -76,7 +76,7 @@ class BlackDotIPAddressIntelligenceServiceTests {
             props.getIpIntel().getBlackDot().setUrl("http://localhost:" + webServer.getPort() + "?ip=%s");
             props.getIpIntel().getBlackDot().setEmailAddress("cas@apereo.org");
             val service = new BlackDotIPAddressIntelligenceService(props);
-            val response = service.examine(new MockRequestContext(), "37.58.59.181");
+            val response = service.examine(MockRequestContext.create(), "37.58.59.181");
             assertFalse(response.isBanned());
         }
     }
@@ -90,11 +90,13 @@ class BlackDotIPAddressIntelligenceServiceTests {
             props.getIpIntel().getBlackDot().setUrl("http://localhost:" + webServer.getPort() + "?ip=%s");
             props.getIpIntel().getBlackDot().setEmailAddress("cas@apereo.org");
             val service = new BlackDotIPAddressIntelligenceService(props);
-            val response = service.examine(new MockRequestContext(), "37.58.59.181");
+            val response = service.examine(MockRequestContext.create(), "37.58.59.181");
             assertFalse(response.isBanned());
             assertEquals(0.4351, response.getScore());
         }
     }
+    
+    
 
     @Test
     void verifyBadResponse() throws Throwable {
@@ -105,7 +107,7 @@ class BlackDotIPAddressIntelligenceServiceTests {
             props.getIpIntel().getBlackDot().setMode("DYNA_CHECK");
             props.getIpIntel().getBlackDot().setEmailAddress("cas@apereo.org");
             val service = new BlackDotIPAddressIntelligenceService(props);
-            val response = service.examine(new MockRequestContext(), "37.58.59.181");
+            val response = service.examine(MockRequestContext.create(), "37.58.59.181");
             assertTrue(response.isBanned());
         }
     }

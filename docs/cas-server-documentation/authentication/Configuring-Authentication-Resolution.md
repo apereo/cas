@@ -32,19 +32,12 @@ to narrow down the list of candidates for the current transaction. The outline o
 
 ```groovy
 def run(Object[] args) {
-    def handlers = args[0]
-    def transaction = args[1]
-    def servicesManager = args[2]
-    def logger = args[3]
-
+    def (handlers,transaction,servicesManager,logger) = args
     return handlers
 }
 
 def supports(Object[] args) {
-    def handlers = args[0]
-    def transaction = args[1]
-    def servicesManager = args[2]
-    def logger = args[3]
+    def (handlers,transaction,servicesManager,logger) = args
     true
 }
 ```

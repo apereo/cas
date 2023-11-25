@@ -1,11 +1,11 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.logout.LogoutManager;
-import org.apereo.cas.logout.SingleLogoutExecutionRequest;
+import org.apereo.cas.logout.slo.SingleLogoutExecutionRequest;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.ServiceTicketSessionTrackingPolicy;
+import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
 
 import lombok.val;
@@ -47,17 +47,16 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCookieConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreNotificationsConfiguration.class,
-    CasPersonDirectoryTestConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreLogoutConfiguration.class
-}, properties = "cas.logout.remove-descendant-tickets=true")
+}, properties = "cas.ticket.track-descendant-tickets=true")
 @Tag("CasConfiguration")
 class CasCoreLogoutConfigurationTests {
     @Autowired
-    @Qualifier(ServiceTicketSessionTrackingPolicy.BEAN_NAME)
-    private ServiceTicketSessionTrackingPolicy serviceTicketSessionTrackingPolicy;
+    @Qualifier(TicketTrackingPolicy.BEAN_NAME_SERVICE_TICKET_TRACKING)
+    private TicketTrackingPolicy serviceTicketSessionTrackingPolicy;
 
     @Autowired
     @Qualifier(LogoutManager.DEFAULT_BEAN_NAME)

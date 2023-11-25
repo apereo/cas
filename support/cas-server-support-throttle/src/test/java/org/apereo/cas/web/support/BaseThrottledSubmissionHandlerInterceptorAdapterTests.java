@@ -29,6 +29,7 @@ import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasThrottlingConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.util.MockRequestContext;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.http.HttpStatus;
@@ -47,10 +48,10 @@ import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.test.MockRequestContext;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.stream.IntStream;
 import static org.junit.jupiter.api.Assertions.*;
@@ -121,23 +122,23 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
     protected MockHttpServletResponse login(final String username,
                                             final String password,
                                             final String fromAddress) throws Exception {
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        request.setMethod("POST");
-        request.setParameter(CasProtocolConstants.PARAMETER_USERNAME, username);
-        request.setParameter(CasProtocolConstants.PARAMETER_PASSWORD, password);
+        val context = MockRequestContext.create();
+        val request = context.getHttpServletRequest();
+        val response = context.getHttpServletResponse();
+
+        context.setMethod(HttpMethod.POST);
+        context.setParameter(CasProtocolConstants.PARAMETER_USERNAME, username);
+        context.setParameter(CasProtocolConstants.PARAMETER_PASSWORD, password);
         request.setRemoteAddr(fromAddress);
-        request.setRequestURI("/cas/login");
-        val context = new MockRequestContext();
-        context.setCurrentEvent(new Event(StringUtils.EMPTY, "error"));
         request.setAttribute("flowRequestContext", context);
+        request.setRequestURI("/cas/login");
+        context.setCurrentEvent(new Event(StringUtils.EMPTY, "error"));
         ClientInfoHolder.setClientInfo(ClientInfo.from(request));
         getThrottle().preHandle(request, response, getThrottle());
 
         try {
             val transaction = CoreAuthenticationTestUtils.getAuthenticationTransactionFactory()
-                .newTransaction(CoreAuthenticationTestUtils.getService(),
-                    credentials(username, password));
+                .newTransaction(CoreAuthenticationTestUtils.getService(), credentials(username, password));
             response.setStatus(HttpServletResponse.SC_OK);
             authenticationManager.authenticate(transaction);
         } catch (final Throwable e) {

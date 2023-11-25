@@ -1,10 +1,13 @@
 package org.apereo.cas.trusted.authentication.api;
 
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -38,6 +41,10 @@ import java.util.Date;
 @EqualsAndHashCode
 public class MultifactorAuthenticationTrustRecord implements Comparable<MultifactorAuthenticationTrustRecord>, Serializable {
     private static final int YEARS_TO_KEEP_RECORD_AS_FOREVER = 100;
+
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
+    
     @Serial
     private static final long serialVersionUID = -5263885151448276769L;
 
@@ -140,5 +147,15 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
         val expDate = getRecordDate().plusYears(YEARS_TO_KEEP_RECORD_AS_FOREVER).truncatedTo(ChronoUnit.SECONDS);
         val zonedExpDate = DateTimeUtils.dateOf(expDate);
         setExpirationDate(zonedExpDate);
+    }
+
+    /**
+     * Convert this record into JSON.
+     *
+     * @return the string
+     */
+    @JsonIgnore
+    public String toJson() {
+        return FunctionUtils.doUnchecked(() -> MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this));
     }
 }

@@ -7,17 +7,16 @@ import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.jpa.JpaBeanFactory;
 import org.apereo.cas.mongo.CasMongoOperations;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
-import org.apereo.cas.support.pac4j.authentication.clients.DelegatedClientFactory;
+import org.apereo.cas.pac4j.client.DelegatedIdentityProviderFactory;
+import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.support.pac4j.authentication.clients.DelegatedClientFactoryCustomizer;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlIdPResponseCustomizer;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.saml2.DelegatedAuthenticationSamlIdPResponseCustomizer;
-
 import com.hazelcast.core.HazelcastInstance;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.client.Clients;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.metadata.jdbc.SAML2JdbcMetadataGenerator;
 import org.pac4j.saml.metadata.mongo.SAML2MongoMetadataGenerator;
@@ -54,9 +53,9 @@ public class DelegatedAuthenticationSAMLConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "delegatedSaml2IdPResponseCustomizer")
         public SamlIdPResponseCustomizer delegatedSaml2IdPResponseCustomizer(
-            @Qualifier("builtClients")
-            final Clients builtClients) {
-            return new DelegatedAuthenticationSamlIdPResponseCustomizer(builtClients);
+            @Qualifier(DelegatedIdentityProviders.BEAN_NAME)
+            final DelegatedIdentityProviders identityProviders) {
+            return new DelegatedAuthenticationSamlIdPResponseCustomizer(identityProviders);
         }
     }
 
@@ -66,7 +65,7 @@ public class DelegatedAuthenticationSAMLConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnBean(name = "casTicketRegistryHazelcastInstance")
-        @ConditionalOnMissingBean(name = DelegatedClientFactory.BEAN_NAME_SAML2_CLIENT_MESSAGE_FACTORY)
+        @ConditionalOnMissingBean(name = DelegatedIdentityProviderFactory.BEAN_NAME_SAML2_CLIENT_MESSAGE_FACTORY)
         public SAMLMessageStoreFactory delegatedSaml2ClientSAMLMessageStoreFactory(
             @Qualifier("casTicketRegistryHazelcastInstance")
             final ObjectProvider<HazelcastInstance> casTicketRegistryHazelcastInstance) {

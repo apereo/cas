@@ -1,6 +1,8 @@
 package org.apereo.cas.pm.impl;
 
 import org.apereo.cas.config.CasCoreAuditConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
+import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
@@ -41,7 +43,9 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreWebConfiguration.class,
     CasCoreNotificationsConfiguration.class,
     CasCoreAuditConfiguration.class,
-    CasCoreUtilConfiguration.class
+    CasCoreUtilConfiguration.class,
+    CasCoreConfiguration.class,
+    CasCoreAuthenticationPrincipalConfiguration.class
 }, properties = {
     "cas.authn.pm.core.enabled=true",
     "cas.authn.pm.groovy.location=classpath:/GroovyPasswordMgmt.groovy"

@@ -6,8 +6,6 @@ dependencies {
 
     implementation project(":support:cas-server-support-jpa-util")
 
-    implementation libraries.shiro
-    
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
     
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")

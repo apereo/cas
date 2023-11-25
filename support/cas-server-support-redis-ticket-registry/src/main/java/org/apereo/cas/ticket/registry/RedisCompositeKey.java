@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.With;
 import lombok.experimental.SuperBuilder;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * This is {@link RedisCompositeKey}.
@@ -89,7 +90,7 @@ public class RedisCompositeKey {
      * @return the redis composite key
      */
     public RedisCompositeKey withIdPattern(final String id) {
-        return new RedisCompositeKey(id + '*', prefix);
+        return new RedisCompositeKey(StringUtils.defaultString(id) + '*', prefix);
     }
 
     /**
@@ -101,5 +102,15 @@ public class RedisCompositeKey {
      */
     public RedisCompositeKey withTicketId(final String ticketPrefix, final String encodedId) {
         return RedisCompositeKey.forTickets().withQuery(ticketPrefix + ':' + encodedId);
+    }
+
+    /**
+     * Remove the starting prefix from the key.
+     *
+     * @param key the key
+     * @return the string
+     */
+    public String withoutPrefix(final String key) {
+        return StringUtils.removeStart(key, this.prefix + ':');
     }
 }

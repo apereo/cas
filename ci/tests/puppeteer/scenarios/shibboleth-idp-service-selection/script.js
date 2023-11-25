@@ -1,0 +1,26 @@
+const puppeteer = require('puppeteer');
+const cas = require('../../cas.js');
+
+function getShibbolethUrlForEntityId(entityId) {
+    return `https://localhost:8443/cas/login?service=https%3A%2F%2Fsso.shibboleth.org%2Fidp%2FAuthn%2FExternal%3Fconversation%3De1s1&entityId=${entityId}`;
+}
+
+(async () => {
+    const browser = await puppeteer.launch(cas.browserOptions());
+    const page = await cas.newPage(browser);
+    await cas.goto(page, getShibbolethUrlForEntityId("google.com"));
+    await cas.loginWith(page);
+    await page.waitForTimeout(1000);
+    await cas.assertInnerTextStartsWith(page, "#login h4", "Your account is not registered");
+    await cas.assertVisibility(page, '#login table img');
+    await cas.assertVisibility(page, '#scratchcodes');
+
+    await cas.goto(page, getShibbolethUrlForEntityId("github.com"));
+    await cas.loginWith(page);
+    await page.waitForTimeout(1000);
+    await cas.assertVisibility(page, '#token');
+    await cas.assertVisibility(page, "#resendButton");
+    await cas.assertVisibility(page, "#loginButton");
+
+    await browser.close();
+})();

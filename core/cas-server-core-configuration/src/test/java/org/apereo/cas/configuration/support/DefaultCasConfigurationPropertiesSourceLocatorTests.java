@@ -70,7 +70,7 @@ class DefaultCasConfigurationPropertiesSourceLocatorTests {
     @Test
     void verifyLocator() throws Throwable {
         val source = casCoreBootstrapPropertySourceLocator.locate(environment);
-        assertTrue(source instanceof CompositePropertySource);
+        assertInstanceOf(CompositePropertySource.class, source);
 
         assertNotNull(casConfigurationWatchService);
 
@@ -82,7 +82,7 @@ class DefaultCasConfigurationPropertiesSourceLocatorTests {
     @Test
     void verifyPriority() throws Throwable {
         val source = casCoreBootstrapPropertySourceLocator.locate(environment);
-        assertTrue(source instanceof CompositePropertySource);
+        assertInstanceOf(CompositePropertySource.class, source);
         val composite = (CompositePropertySource) source;
         assertEquals("file", composite.getProperty("test.file"));
         assertEquals("dirAppYml", composite.getProperty("test.dir.app"));
@@ -104,7 +104,7 @@ class DefaultCasConfigurationPropertiesSourceLocatorTests {
     @Test
     void verifyGroovySlurper() throws Throwable {
         val source = casCoreBootstrapPropertySourceLocator.locate(environment);
-        assertTrue(source instanceof CompositePropertySource);
+        assertInstanceOf(CompositePropertySource.class, source);
         val composite = (CompositePropertySource) source;
         assertEquals("Static", composite.getProperty("cas.authn.accept.name"));
         assertEquals("test::dev", composite.getProperty("cas.authn.accept.users"));
@@ -120,7 +120,7 @@ class DefaultCasConfigurationPropertiesSourceLocatorTests {
     @Test
     void verifySystemPropertiesOverrideCasConfiguration() throws Throwable {
         val source = casCoreBootstrapPropertySourceLocator.locate(environment);
-        assertTrue(source instanceof CompositePropertySource);
+        assertInstanceOf(CompositePropertySource.class, source);
 
         val composite = (CompositePropertySource) source;
         assertEquals("from-system-properties", composite.getProperty("test.overridden-by-system-property"));

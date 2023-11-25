@@ -3,7 +3,7 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.logout.DefaultSingleLogoutRequestContext;
 import org.apereo.cas.logout.LogoutRequestStatus;
-import org.apereo.cas.logout.SingleLogoutExecutionRequest;
+import org.apereo.cas.logout.slo.SingleLogoutExecutionRequest;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -41,7 +41,7 @@ class LogoutActionTests {
         @Test
         void verifyLogoutForServiceWithFollowRedirectsAndMatchingService() throws Throwable {
             val testServiceId = UUID.randomUUID().toString();
-            val requestContext = MockRequestContext.create();
+            val requestContext = MockRequestContext.create(applicationContext);
             requestContext.getHttpServletRequest().addParameter(CasProtocolConstants.PARAMETER_SERVICE, testServiceId);
             val service = new CasRegisteredService();
             service.setServiceId(testServiceId);
@@ -55,7 +55,7 @@ class LogoutActionTests {
         @Test
         void verifyLogoutForServiceWithFollowRedirectsAndInternalService() throws Throwable {
             val testServiceId = UUID.randomUUID().toString();
-            val requestContext = MockRequestContext.create();
+            val requestContext = MockRequestContext.create(applicationContext);
             val service = new CasRegisteredService();
             service.setServiceId(testServiceId);
             service.setName(testServiceId);
@@ -77,7 +77,7 @@ class LogoutActionTests {
 
         @Test
         void verifyLogoutNoCookie() throws Throwable {
-            val requestContext = MockRequestContext.create();
+            val requestContext = MockRequestContext.create(applicationContext);
             val event = logoutAction.execute(requestContext);
             assertEquals(CasWebflowConstants.TRANSITION_ID_FINISH, event.getId());
         }
@@ -85,7 +85,7 @@ class LogoutActionTests {
         @Test
         void logoutForServiceWithNoFollowRedirects() throws Exception {
             val testServiceId = UUID.randomUUID().toString();
-            val requestContext = MockRequestContext.create();
+            val requestContext = MockRequestContext.create(applicationContext);
             requestContext.getHttpServletRequest().addParameter(CasProtocolConstants.PARAMETER_SERVICE, testServiceId);
             val event = logoutAction.execute(requestContext);
             assertEquals(CasWebflowConstants.TRANSITION_ID_FINISH, event.getId());
@@ -94,7 +94,7 @@ class LogoutActionTests {
 
         @Test
         void logoutForServiceWithFollowRedirectsNoAllowedService() throws Exception {
-            val requestContext = MockRequestContext.create();
+            val requestContext = MockRequestContext.create(applicationContext);
             requestContext.getHttpServletRequest().addParameter(CasProtocolConstants.PARAMETER_SERVICE, UUID.randomUUID().toString());
             val event = logoutAction.execute(requestContext);
             assertEquals(CasWebflowConstants.TRANSITION_ID_FINISH, event.getId());
@@ -103,7 +103,7 @@ class LogoutActionTests {
 
         @Test
         void verifyLogoutCookie() throws Throwable {
-            val requestContext = MockRequestContext.create();
+            val requestContext = MockRequestContext.create(applicationContext);
             val cookie = new Cookie(COOKIE_TGC_ID, "test");
             requestContext.getHttpServletRequest().setCookies(cookie);
             val event = logoutAction.execute(requestContext);
@@ -112,7 +112,7 @@ class LogoutActionTests {
 
         @Test
         void verifyLogoutRequestBack() throws Throwable {
-            val requestContext = MockRequestContext.create();
+            val requestContext = MockRequestContext.create(applicationContext);
             val cookie = new Cookie(COOKIE_TGC_ID, "test");
             requestContext.getHttpServletRequest().setCookies(cookie);
             val logoutRequest = DefaultSingleLogoutRequestContext.builder()
@@ -129,7 +129,7 @@ class LogoutActionTests {
 
         @Test
         void verifyLogoutRequestFront() throws Throwable {
-            val requestContext = MockRequestContext.create();
+            val requestContext = MockRequestContext.create(applicationContext);
             val cookie = new Cookie(COOKIE_TGC_ID, "test");
             requestContext.getHttpServletRequest().setCookies(cookie);
             val logoutRequest = DefaultSingleLogoutRequestContext.builder()

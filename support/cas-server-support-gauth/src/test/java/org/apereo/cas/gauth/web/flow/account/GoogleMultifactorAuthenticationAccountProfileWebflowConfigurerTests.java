@@ -40,7 +40,7 @@ public class GoogleMultifactorAuthenticationAccountProfileWebflowConfigurerTests
     void verifyOperation() throws Throwable {
         val flow = (Flow) accountFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_ACCOUNT);
         val accountView = (ViewState) flow.getState(CasWebflowConstants.STATE_ID_MY_ACCOUNT_PROFILE_VIEW);
-        assertEquals(3, accountView.getRenderActionList().size());
+        assertEquals(4, accountView.getRenderActionList().size());
         assertTrue(accountView.getRenderActionList().get(0).toString().contains(CasWebflowConstants.ACTION_ID_PREPARE_ACCOUNT_PROFILE));
         assertNotNull(flow.getState(CasWebflowConstants.STATE_ID_VIEW_REGISTRATION));
         assertNotNull(flow.getState(CasWebflowConstants.STATE_ID_SAVE_REGISTRATION));

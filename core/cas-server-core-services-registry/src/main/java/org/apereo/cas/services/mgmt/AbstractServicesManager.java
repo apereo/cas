@@ -387,41 +387,17 @@ public abstract class AbstractServicesManager implements ServicesManager {
         }
     }
 
-    /**
-     * Gets candidate services to match the service id.
-     *
-     * @param serviceId the service id
-     * @return the candidate services to match
-     */
     protected abstract Collection<RegisteredService> getCandidateServicesToMatch(String serviceId);
 
-    /**
-     * Delete internal.
-     *
-     * @param service the service
-     */
     protected void deleteInternal(final RegisteredService service) {
     }
 
-    /**
-     * Save internal.
-     *
-     * @param service the service
-     */
     protected void saveInternal(final RegisteredService service) {
     }
 
-    /**
-     * Load internal.
-     */
     protected void loadInternal() {
     }
 
-    /**
-     * Load internal.
-     *
-     * @param service the service
-     */
     protected void loadInternal(final RegisteredService service) {
     }
 
@@ -429,11 +405,6 @@ public abstract class AbstractServicesManager implements ServicesManager {
         return this.configurationContext.getRegisteredServicesTemplatesManager().apply(service);
     }
 
-    /**
-     * Gets cacheable services stream.
-     *
-     * @return the cacheable services stream
-     */
     protected Supplier<Stream<RegisteredService>> getCacheableServicesStream() {
         configurationContext.getServicesCache().cleanUp();
         val size = configurationContext.getServicesCache().estimatedSize();

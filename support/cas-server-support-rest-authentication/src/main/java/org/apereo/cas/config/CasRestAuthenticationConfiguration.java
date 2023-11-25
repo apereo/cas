@@ -47,7 +47,7 @@ public class CasRestAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "restAuthenticationHandler")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public BeanContainer<AuthenticationHandler> restAuthenticationHandler(
-        @Qualifier("httpClient")
+        @Qualifier(HttpClient.BEAN_NAME_HTTPCLIENT)
         final HttpClient httpClient,
         final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext,

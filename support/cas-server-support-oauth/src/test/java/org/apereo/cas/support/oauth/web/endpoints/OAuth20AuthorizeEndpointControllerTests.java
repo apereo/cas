@@ -13,10 +13,10 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthAccessTokenExpirationPolicy;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.apereo.cas.ticket.ServiceTicketSessionTrackingPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.code.OAuth20Code;
+import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -105,7 +105,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
         val mockResponse = new MockHttpServletResponse();
 
         val modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
-        assertTrue(modelAndView.getView() instanceof RedirectView);
+        assertInstanceOf(RedirectView.class, modelAndView.getView());
         val modelView = (RedirectView) modelAndView.getView();
         assertEquals(REDIRECT_URI, modelView.getUrl());
 
@@ -148,7 +148,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
         val tgt = new MockTicketGrantingTicket(UUID.randomUUID().toString());
         ticketRegistry.addTicket(tgt);
 
-        val trackingPolicy = mock(ServiceTicketSessionTrackingPolicy.class);
+        val trackingPolicy = mock(TicketTrackingPolicy.class);
         val ticketService = RegisteredServiceTestUtils.getService(REDIRECT_URI);
         ticketService.getAttributes().put(OAuth20Constants.CLIENT_ID, List.of(service.getClientId()));
         val st1 = tgt.grantServiceTicket(ticketService, trackingPolicy);
@@ -306,7 +306,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
 
         val modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
         val view = modelAndView.getView();
-        assertTrue(view instanceof RedirectView);
+        assertInstanceOf(RedirectView.class, view);
         val redirectView = (RedirectView) view;
         val redirectUrl = redirectView.getUrl();
         assertNotNull(redirectUrl);
@@ -355,7 +355,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
 
         val modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
         val view = modelAndView.getView();
-        assertTrue(view instanceof RedirectView);
+        assertInstanceOf(RedirectView.class, view);
         val redirectView = (RedirectView) view;
         val redirectUrl = redirectView.getUrl();
         assertNotNull(redirectUrl);
@@ -407,7 +407,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
 
         val modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
         val view = modelAndView.getView();
-        assertTrue(view instanceof RedirectView);
+        assertInstanceOf(RedirectView.class, view);
         val redirectView = (RedirectView) view;
         val redirectUrl = redirectView.getUrl();
         assertNotNull(redirectUrl);
@@ -458,7 +458,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
 
         val modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
         val view = modelAndView.getView();
-        assertTrue(view instanceof RedirectView);
+        assertInstanceOf(RedirectView.class, view);
         val redirectView = (RedirectView) view;
         val redirectUrl = redirectView.getUrl();
         assertNotNull(redirectUrl);
@@ -504,7 +504,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
 
         val modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
         val view = modelAndView.getView();
-        assertTrue(view instanceof RedirectView);
+        assertInstanceOf(RedirectView.class, view);
         val redirectView = (RedirectView) view;
         var redirectUrl = redirectView.getUrl();
         assertNotNull(redirectUrl);
@@ -551,7 +551,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
 
         val modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
         val view = modelAndView.getView();
-        assertTrue(view instanceof RedirectView);
+        assertInstanceOf(RedirectView.class, view);
         val redirectView = (RedirectView) view;
         val redirectUrl = redirectView.getUrl();
         assertNotNull(redirectUrl);
@@ -597,7 +597,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
 
         val modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
         val view = modelAndView.getView();
-        assertTrue(view instanceof RedirectView);
+        assertInstanceOf(RedirectView.class, view);
         val redirectView = (RedirectView) view;
         val redirectUrl = redirectView.getUrl();
         assertNotNull(redirectUrl);
@@ -680,7 +680,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
 
         val modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
         val view = modelAndView.getView();
-        assertTrue(view instanceof RedirectView);
+        assertInstanceOf(RedirectView.class, view);
         val redirectView = (RedirectView) view;
         val redirectUrl = redirectView.getUrl();
         assertNotNull(redirectUrl);

@@ -60,10 +60,10 @@ class OidcRegisteredServiceTests {
         r.setSignIdToken(true);
         r.setBypassApprovalPrompt(true);
         val r2 = this.dao.save(r);
-        assertTrue(r2 instanceof OidcRegisteredService);
+        assertInstanceOf(OidcRegisteredService.class, r2);
         this.dao.load();
         val r3 = this.dao.findServiceById(r2.getId());
-        assertTrue(r3 instanceof OidcRegisteredService);
+        assertInstanceOf(OidcRegisteredService.class, r3);
         assertEquals(r, r2);
         assertEquals(r2, r3);
         assertNotNull(r.getFriendlyName());
@@ -82,4 +82,6 @@ class OidcRegisteredServiceTests {
         val serviceRead = MAPPER.readValue(JSON_FILE, OidcRegisteredService.class);
         assertEquals(serviceWritten, serviceRead);
     }
+
+
 }

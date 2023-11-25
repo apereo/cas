@@ -73,10 +73,6 @@ class HazelcastTicketRegistryTests {
         private TicketRegistry newTicketRegistry;
 
         @Autowired
-        @Qualifier(TicketCatalog.BEAN_NAME)
-        private TicketCatalog ticketCatlog;
-
-        @Autowired
         private CasConfigurationProperties casProperties;
 
         @RepeatedTest(1)
@@ -86,7 +82,7 @@ class HazelcastTicketRegistryTests {
             val instance = mock(HazelcastInstance.class);
             val myMap = mock(IMap.class);
             when(instance.getMap(anyString())).thenReturn(myMap);
-            try (val registry = new HazelcastTicketRegistry(CipherExecutor.noOp(), ticketSerializationManager, ticketCatlog,
+            try (val registry = new HazelcastTicketRegistry(CipherExecutor.noOp(), ticketSerializationManager, ticketCatalog,
                 instance, casProperties.getTicket().getRegistry().getHazelcast())) {
                 ticket.setExpirationPolicy(new HardTimeoutExpirationPolicy(-1));
                 assertDoesNotThrow(() -> registry.addTicket(ticket));

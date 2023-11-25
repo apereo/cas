@@ -45,7 +45,7 @@ public class RenderLoginAction extends BaseCasWebflowAction {
             .stream()
             .filter(BeanSupplier::isNotProxy)
             .sorted(AnnotationAwareOrderComparator.INSTANCE)
-            .forEach(Unchecked.consumer(decorator -> decorator.decorate(requestContext, applicationContext)));
+            .forEach(Unchecked.consumer(decorator -> decorator.decorate(requestContext)));
         return null;
     }
 }

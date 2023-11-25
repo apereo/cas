@@ -27,7 +27,7 @@ const cas = require('../../cas.js');
     await cas.goto(page, url);
     await page.waitForTimeout(1000);
     await cas.assertInnerText(page, "#content h2", "Application Not Authorized to Use CAS");
-    await cas.removeDirectory(path.join(__dirname, '/saml-md'));
+    await cas.removeDirectoryOrFile(path.join(__dirname, '/saml-md'));
     await browser.close();
 })();
 

@@ -15,7 +15,6 @@ import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.spring.beans.BeanContainer;
@@ -60,7 +59,6 @@ import static org.mockito.Mockito.*;
     CasCoreWebConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasCoreUtilConfiguration.class,
-    CasPersonDirectoryTestConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreTicketsSerializationConfiguration.class,
     CasCoreTicketsConfiguration.class,

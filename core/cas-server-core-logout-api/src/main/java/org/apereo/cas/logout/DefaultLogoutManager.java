@@ -5,9 +5,9 @@ import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.logout.slo.SingleLogoutExecutionRequest;
 import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
 import org.apereo.cas.logout.slo.SingleLogoutServiceMessageHandler;
-import org.apereo.cas.ticket.AuthenticatedServicesAwareTicketGrantingTicket;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -69,10 +69,8 @@ public class DefaultLogoutManager implements LogoutManager {
     private List<SingleLogoutRequestContext> performLogoutForTicket(final SingleLogoutExecutionRequest context) {
         val ticketToBeLoggedOut = context.getTicketGrantingTicket();
         val streamServices = new LinkedHashMap<String, Service>();
-        if (ticketToBeLoggedOut instanceof AuthenticatedServicesAwareTicketGrantingTicket) {
-            val services = ((AuthenticatedServicesAwareTicketGrantingTicket) ticketToBeLoggedOut).getServices();
-            streamServices.putAll(services);
-        }
+        val services = ticketToBeLoggedOut.getServices();
+        streamServices.putAll(services);
         streamServices.putAll(ticketToBeLoggedOut.getProxyGrantingTickets());
         val logoutServices = streamServices
             .entrySet()

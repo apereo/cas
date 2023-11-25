@@ -134,11 +134,21 @@ public class OidcDefaultClientRegistrationRequestTranslator implements OidcClien
         processIdTokenSigningAndEncryption(registrationRequest, registeredService);
         processIntrospectionSigningAndEncryption(registrationRequest, registeredService);
         processContacts(registrationRequest, registeredService);
+        processTlsClientAuthentication(registrationRequest, registeredService);
         processClientSecretExpiration(context, registeredService);
 
         registeredService.setDescription("Registered service ".concat(registeredService.getName()));
         validate(registrationRequest, registeredService);
         return registeredService;
+    }
+
+    private static void processTlsClientAuthentication(final OidcClientRegistrationRequest registrationRequest,
+                                                       final OidcRegisteredService registeredService) {
+        FunctionUtils.doIfNotNull(registrationRequest.getTlsClientAuthSanDns(), registeredService::setTlsClientAuthSanDns);
+        FunctionUtils.doIfNotNull(registrationRequest.getTlsClientAuthSanEmail(), registeredService::setTlsClientAuthSanEmail);
+        FunctionUtils.doIfNotNull(registrationRequest.getTlsClientAuthSanIp(), registeredService::setTlsClientAuthSanIp);
+        FunctionUtils.doIfNotNull(registrationRequest.getTlsClientAuthSanUri(), registeredService::setTlsClientAuthSanUri);
+        FunctionUtils.doIfNotNull(registrationRequest.getTlsClientAuthSubjectDn(), registeredService::setTlsClientAuthSubjectDn);
     }
 
     private void processScopesAndResponsesAndGrants(final OidcClientRegistrationRequest registrationRequest,

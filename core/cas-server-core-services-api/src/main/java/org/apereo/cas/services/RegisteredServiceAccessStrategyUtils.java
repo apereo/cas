@@ -3,12 +3,10 @@ package org.apereo.cas.services;
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
-
+import jakarta.annotation.Nullable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,8 +32,9 @@ public class RegisteredServiceAccessStrategyUtils {
      * @param registeredService the registered service
      */
     public static void ensureServiceAccessIsAllowed(final RegisteredService registeredService) {
-        ensureServiceAccessIsAllowed(registeredService != null ? registeredService.getName() : StringUtils.EMPTY, registeredService);
+        ensureServiceAccessIsAllowed(null, registeredService);
     }
+
 
     /**
      * Ensure service access is allowed.
@@ -43,30 +42,22 @@ public class RegisteredServiceAccessStrategyUtils {
      * @param service           the service
      * @param registeredService the registered service
      */
-    public static void ensureServiceAccessIsAllowed(final String service, final RegisteredService registeredService) {
+    public static void ensureServiceAccessIsAllowed(@Nullable final Service service, @Nullable final RegisteredService registeredService) {
+        val id = service != null ? service.getId() : "unknown";
         if (registeredService == null) {
-            LOGGER.warn("Unauthorized Service Access. Service [{}] is not registered in the service registry.", service);
-            throw UnauthorizedServiceException.denied("Service " + StringUtils.defaultIfBlank(service, "unknown") + " is not found in the service registry.");
+            LOGGER.warn("Unauthorized Service Access. Service [{}] is not registered in the service registry. "
+                + "Review the service access strategy to evaluate policies required for service access", id);
+            throw UnauthorizedServiceException.denied("Service " + id + " is not found or is disabled in the service registry.");
         }
-        if (!registeredService.getAccessStrategy().isServiceAccessAllowed(registeredService, null)) {
+        if (!registeredService.getAccessStrategy().isServiceAccessAllowed(registeredService, service)) {
             val msg = String.format("Unauthorized Service Access. Service [%s] is not enabled in service registry. You should "
-                                    + "review the service access strategy to evaluate the conditions and policies required for service access.", service);
+                + "review the service access strategy to evaluate the conditions and policies required for service access.", id);
             throw UnauthorizedServiceException.denied(msg);
         }
         if (!ensureServiceIsNotExpired(registeredService)) {
-            val msg = String.format("Expired service access is denied. Service [%s] has been expired", service);
+            val msg = String.format("Expired service access is denied. Service [%s] has been expired", id);
             throw UnauthorizedServiceException.expired(msg);
         }
-    }
-
-    /**
-     * Ensure service access is allowed.
-     *
-     * @param service           the service
-     * @param registeredService the registered service
-     */
-    public static void ensureServiceAccessIsAllowed(final Service service, final RegisteredService registeredService) {
-        ensureServiceAccessIsAllowed(service != null ? service.getId() : "unknown", registeredService);
     }
 
     /**
@@ -112,7 +103,7 @@ public class RegisteredServiceAccessStrategyUtils {
             if (ticketGrantingTicket.getCountOfUses() > 0 && !credentialsProvided) {
                 LOGGER.warn(
                     "Service [{}] is not allowed to use SSO. The ticket-granting ticket [{}] is not proxied and it's been used at least once. "
-                    + "The authentication request must provide credentials before access can be granted", ticketGrantingTicket.getId(), service.getId());
+                        + "The authentication request must provide credentials before access can be granted", ticketGrantingTicket.getId(), service.getId());
             }
             throw new UnauthorizedSsoServiceException();
         }

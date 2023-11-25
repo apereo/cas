@@ -2,7 +2,7 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.logout.DefaultSingleLogoutRequestContext;
 import org.apereo.cas.logout.LogoutRequestStatus;
-import org.apereo.cas.logout.SingleLogoutExecutionRequest;
+import org.apereo.cas.logout.slo.SingleLogoutExecutionRequest;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -41,7 +41,7 @@ class FrontChannelLogoutActionTests {
 
         @Test
         void verifyNoSlo() throws Throwable {
-            val context = MockRequestContext.create();
+            val context = MockRequestContext.create(applicationContext);
             RequestContextHolder.setRequestContext(context);
             ExternalContextHolder.setExternalContext(context.getExternalContext());
 
@@ -74,9 +74,7 @@ class FrontChannelLogoutActionTests {
 
         @Test
         void verifyLogoutNone() throws Throwable {
-            val context = MockRequestContext.create();
-            RequestContextHolder.setRequestContext(context);
-            ExternalContextHolder.setExternalContext(context.getExternalContext());
+            val context = MockRequestContext.create(applicationContext);
 
             val id = UUID.randomUUID().toString();
             val sloReq = DefaultSingleLogoutRequestContext.builder()
@@ -98,9 +96,7 @@ class FrontChannelLogoutActionTests {
 
         @Test
         void verifyLogout() throws Throwable {
-            val context = MockRequestContext.create();
-            RequestContextHolder.setRequestContext(context);
-            ExternalContextHolder.setExternalContext(context.getExternalContext());
+            val context = MockRequestContext.create(applicationContext);
 
             val id = UUID.randomUUID().toString();
             val sloReq = DefaultSingleLogoutRequestContext.builder()
@@ -118,13 +114,13 @@ class FrontChannelLogoutActionTests {
             WebUtils.putLogoutRequests(context, List.of(sloReq));
             val event = frontChannelLogoutAction.execute(context);
             assertEquals(CasWebflowConstants.TRANSITION_ID_PROPAGATE, event.getId());
+            assertTrue(context.getFlowScope().contains("logoutPropagationType"));
         }
 
         @Test
         void verifyNoRequests() throws Throwable {
-            val context = MockRequestContext.create();
-            RequestContextHolder.setRequestContext(context);
-            ExternalContextHolder.setExternalContext(context.getExternalContext());
+            val context = MockRequestContext.create(applicationContext);
+
 
             WebUtils.putLogoutRequests(context, new ArrayList<>(0));
             val event = frontChannelLogoutAction.execute(context);

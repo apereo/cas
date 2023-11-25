@@ -76,6 +76,14 @@ public interface OidcConstants {
      * The issuer parameter.
      */
     String ISS = "iss";
+
+    /**
+     * The txn claim.
+     * The txn Claim is used to build audit trails across the
+     * parties involved in an OpenID Connect transaction.
+     */
+    String TXN = "txn";
+
     /**
      * The max age.
      */
@@ -230,6 +238,11 @@ public interface OidcConstants {
          * profile scope.
          */
         PROFILE("profile"),
+        /**
+         * assurance scope.
+         * An extension of OpenID Connect for providing Relying Parties with Verified Claims about End-Users.
+         */
+        ASSURANCE("assurance"),
         /**
          * phone scope.
          */

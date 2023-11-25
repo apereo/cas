@@ -7,7 +7,7 @@ const assert = require('assert');
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
 
-    await cas.goto(page, "https://localhost:8443/cas/login?locale=en");
+    await cas.gotoLogin(page);
     await page.waitForTimeout(2000);
 
     await cas.assertVisibility(page, '#loginProviders');
@@ -17,9 +17,9 @@ const assert = require('assert');
     await page.waitForNavigation();
 
     await cas.loginWith(page, "user1", "password");
-    await page.waitForTimeout(7000);
+    await page.waitForTimeout(8000);
+    await cas.screenshot(page);
     await cas.logPage(page);
-
     await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
@@ -40,11 +40,11 @@ const assert = require('assert');
     await page.waitForTimeout(3000);
     await cas.gotoLogin(page);
     await page.waitForTimeout(2000);
-    url = await page.url();
+    let url = await page.url();
     await cas.logPage(page);
     await page.waitForTimeout(3000);
     assert(url.startsWith("http://localhost:9443/simplesaml/"));
-    await cas.removeDirectory(path.join(__dirname, '/saml-md'));
+    await cas.removeDirectoryOrFile(path.join(__dirname, '/saml-md'));
     await browser.close();
 })();
 

@@ -2,7 +2,13 @@ package org.apereo.cas.audit;
 
 import org.apereo.cas.audit.spi.BaseAuditConfigurationTests;
 import org.apereo.cas.config.CasCoreAuditConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
+import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasSupportMongoDbAuditConfiguration;
@@ -25,11 +31,17 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
  * @since 5.2.0
  */
 @SpringBootTest(classes = {
+    CasCoreConfiguration.class,
+    CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreAuditConfiguration.class,
     CasSupportMongoDbAuditConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
+    CasCoreTicketsConfiguration.class,
+    CasCoreTicketsSerializationConfiguration.class,
+    CasCoreServicesConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
     CasCoreWebConfiguration.class

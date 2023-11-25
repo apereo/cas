@@ -9,6 +9,11 @@ package org.apereo.cas.support.oauth;
 public interface OAuth20Constants {
 
     /**
+     * Internal attribute to indicate whether the incoming request is an access token request.
+     */
+    String REQUEST_ATTRIBUTE_ACCESS_TOKEN_REQUEST = "oauth.request.access-token";
+    
+    /**
      * The prompt parameter.
      */
     String PROMPT = "prompt";
@@ -408,4 +413,9 @@ public interface OAuth20Constants {
      * DPoP confirmation that is put inside access token as an attribute.
      */
     String DPOP_CONFIRMATION = "DPoPConfirmation";
+
+    /**
+     * X509 certificate hash used and collected during TLS authentication.
+     */
+    String X509_CERTIFICATE_DIGEST = "x509_digest";
 }

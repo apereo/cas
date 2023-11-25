@@ -245,7 +245,7 @@ a i.expand:before {
     padding: 5px;
 
     h1 {
-      font-size: 1.5rem;
+      font-size: 1.85rem;
     }
 
     img {
@@ -436,7 +436,7 @@ ul.tab-content {
   padding: 10px;
 }
 
-ul.tab-content li:not(.property-name):not(.property-tab) {
+ul.tab-content li:not(.property-name):not(.property-tab):not(.cas-module) {
   display: none;
 }
 

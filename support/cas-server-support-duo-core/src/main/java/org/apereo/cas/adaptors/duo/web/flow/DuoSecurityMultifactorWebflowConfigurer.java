@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.duo.web.flow;
 
-import org.apereo.cas.adaptors.duo.authn.DuoSecurityCredential;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.trusted.web.flow.AbstractMultifactorTrustedDeviceWebflowConfigurer;
@@ -25,7 +24,6 @@ import org.springframework.webflow.engine.model.EndStateModel;
 import org.springframework.webflow.engine.model.EvaluateModel;
 import org.springframework.webflow.engine.model.SetModel;
 import org.springframework.webflow.engine.model.TransitionModel;
-import org.springframework.webflow.engine.model.VarModel;
 import org.springframework.webflow.engine.model.ViewStateModel;
 import org.springframework.webflow.engine.model.builder.DefaultFlowModelHolder;
 import java.util.ArrayList;
@@ -85,8 +83,6 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
 
     private FlowDefinitionRegistry buildDuoFlowRegistry(final DuoSecurityMultifactorAuthenticationProperties properties) {
         val modelBuilder = new DynamicFlowModelBuilder();
-
-        createDuoFlowVariables(modelBuilder);
         createDuoFlowStartActions(modelBuilder);
         createDuoFlowStates(modelBuilder);
         createDuoFlowUniversalPromptActions(getLoginFlow());
@@ -331,11 +327,5 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
         val starts = new ArrayList<AbstractActionModel>(1);
         starts.add(new EvaluateModel(CasWebflowConstants.ACTION_ID_INITIAL_FLOW_SETUP));
         modelBuilder.setOnStartActions(starts);
-    }
-
-    private static void createDuoFlowVariables(final DynamicFlowModelBuilder modelBuilder) {
-        val vars = new ArrayList<VarModel>(1);
-        vars.add(new VarModel(CasWebflowConstants.VAR_ID_CREDENTIAL, DuoSecurityCredential.class.getName()));
-        modelBuilder.setVars(vars);
     }
 }

@@ -45,7 +45,6 @@ public abstract class BaseRemoteAddressTests {
 
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         AopAutoConfiguration.class
     })

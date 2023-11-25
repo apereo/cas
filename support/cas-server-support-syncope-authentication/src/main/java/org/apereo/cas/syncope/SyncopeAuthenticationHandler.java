@@ -14,6 +14,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -77,7 +78,7 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
     protected Optional<JsonNode> authenticateSyncopeUser(final UsernamePasswordCredential credential) {
         HttpResponse response = null;
         try {
-            val syncopeRestUrl = StringUtils.appendIfMissing(properties.getUrl(), "/rest/users/self");
+            val syncopeRestUrl = StringUtils.appendIfMissing(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()), "/rest/users/self");
             val exec = HttpExecutionRequest.builder()
                 .method(HttpMethod.GET)
                 .url(syncopeRestUrl)

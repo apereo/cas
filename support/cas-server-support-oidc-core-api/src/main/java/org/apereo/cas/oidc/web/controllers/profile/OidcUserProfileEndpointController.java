@@ -50,11 +50,11 @@ public class OidcUserProfileEndpointController extends OAuth20UserProfileEndpoin
         "/**/" + OidcConstants.PROFILE_URL
     }, produces = {MediaType.APPLICATION_JSON_VALUE, OidcConstants.CONTENT_TYPE_JWT})
     @Override
-    public ResponseEntity<String> handleGetRequest(final HttpServletRequest request,
+    public ResponseEntity handleGetRequest(final HttpServletRequest request,
                                                    final HttpServletResponse response) throws Exception {
         val webContext = new JEEContext(request, response);
         if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, OidcConstants.PROFILE_URL)) {
-            val body = OAuth20Utils.toJson(OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer"));
+            val body = OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer");
             return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
         }
         return super.handleGetRequest(request, response);

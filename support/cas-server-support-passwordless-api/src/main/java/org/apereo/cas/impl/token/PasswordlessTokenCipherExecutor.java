@@ -18,12 +18,12 @@ public class PasswordlessTokenCipherExecutor extends BaseStringCipherExecutor {
     }
 
     @Override
-    protected String getEncryptionKeySetting() {
+    public String getEncryptionKeySetting() {
         return "cas.authn.passwordless.tokens.crypto.encryption.key";
     }
 
     @Override
-    protected String getSigningKeySetting() {
+    public String getSigningKeySetting() {
         return "cas.authn.passwordless.tokens.crypto.signing.key";
     }
 

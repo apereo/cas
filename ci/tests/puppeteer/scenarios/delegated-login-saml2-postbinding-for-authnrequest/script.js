@@ -7,7 +7,7 @@ const assert = require('assert');
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
 
-    await cas.goto(page, "https://localhost:8443/cas/login?locale=en");
+    await cas.gotoLogin(page);
     await page.waitForTimeout(2000);
 
     await cas.assertVisibility(page, '#loginProviders');
@@ -24,6 +24,6 @@ const assert = require('assert');
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
     await cas.assertCookie(page, true, "Pac4jCookie");
 
-    await cas.removeDirectory(path.join(__dirname, '/saml-md'));
+    await cas.removeDirectoryOrFile(path.join(__dirname, '/saml-md'));
     await browser.close();
 })();

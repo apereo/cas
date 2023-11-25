@@ -11,6 +11,7 @@ ext {
 dependencies {
     api project(":api:cas-server-core-api-webflow")
 
+    implementation project(":core:cas-server-core-audit-api")
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-authentication-api")
@@ -22,10 +23,10 @@ dependencies {
     implementation project(":core:cas-server-core-tickets-api")
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-cookie-api")
+    implementation project(":core:cas-server-core-logout-api")
     implementation project(":core:cas-server-core-services-authentication")
 
     implementation project(":support:cas-server-support-pac4j-api")
-    implementation project(":support:cas-server-support-pac4j")
     implementation project(":support:cas-server-support-saml-core")
     implementation project(":support:cas-server-support-saml-core-api")
     implementation project(":support:cas-server-support-pac4j-core-clients")
@@ -50,11 +51,14 @@ dependencies {
     testImplementation libraries.hazelcast
     testImplementation libraries.casclient
     testImplementation libraries.mongo
+    testImplementation libraries.ldaptive
 
+    compileOnly project(":support:cas-server-support-discovery-profile-core")
     compileOnly project(":support:cas-server-support-jpa-util")
     compileOnly project(":support:cas-server-support-ldap-core")
     compileOnly project(":support:cas-server-support-mongo-core")
     compileOnly project(":support:cas-server-support-saml-idp-web")
+    compileOnly project(":support:cas-server-support-scim-core")
 
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-services")
@@ -78,6 +82,10 @@ dependencies {
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-jdbc-drivers")
     testImplementation project(":support:cas-server-support-saml-idp-web")
+    testImplementation project(":support:cas-server-support-scim-core")
+    testImplementation project(":support:cas-server-support-scim")
+    testImplementation project(":support:cas-server-support-discovery-profile-core")
+    testImplementation project(":support:cas-server-support-ldap-core")
 
     testImplementation project(path: ":support:cas-server-support-pac4j-core-clients", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-reports", configuration: "tests")
@@ -90,4 +98,5 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-ldap-core", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-person-directory-core", configuration: "tests")
 }

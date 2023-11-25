@@ -3,18 +3,14 @@ package org.apereo.cas.support.oauth.web.views;
 import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.CollectionUtils;
-
 import lombok.val;
-import org.hjson.JsonValue;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
-
 import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -29,7 +25,7 @@ import static org.mockito.Mockito.*;
 class OAuth20DefaultUserProfileViewRendererNestedTests extends AbstractOAuth20Tests {
 
     @Autowired
-    @Qualifier("oauthUserProfileViewRenderer")
+    @Qualifier(OAuth20UserProfileViewRenderer.BEAN_NAME)
     private OAuth20UserProfileViewRenderer oauthUserProfileViewRenderer;
 
     @Test
@@ -39,7 +35,7 @@ class OAuth20DefaultUserProfileViewRendererNestedTests extends AbstractOAuth20Te
             "something", CollectionUtils.wrapList("something"));
         val json = oauthUserProfileViewRenderer.render((Map) map, mock(OAuth20AccessToken.class), new MockHttpServletResponse());
         assertNotNull(json.getBody());
-        val value = JsonValue.readJSON(json.getBody().toString()).asObject();
+        val value = (Map) json.getBody();
         assertNotNull(value.get(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ID));
         assertNotNull(value.get(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ATTRIBUTES));
     }

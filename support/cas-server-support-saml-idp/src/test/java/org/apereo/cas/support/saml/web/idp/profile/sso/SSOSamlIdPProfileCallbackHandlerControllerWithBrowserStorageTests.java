@@ -10,7 +10,7 @@ import org.apereo.cas.support.saml.idp.SamlIdPSessionManager;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.util.Saml20HexRandomIdGenerator;
 import org.apereo.cas.ticket.ServiceTicket;
-import org.apereo.cas.ticket.ServiceTicketSessionTrackingPolicy;
+import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.web.BrowserSessionStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import lombok.val;
@@ -124,7 +124,7 @@ class SSOSamlIdPProfileCallbackHandlerControllerWithBrowserStorageTests extends 
     private ServiceTicket getServiceTicket() throws Throwable {
         val tgt = new MockTicketGrantingTicket(UUID.randomUUID().toString());
         ticketRegistry.addTicket(tgt);
-        val trackingPolicy = mock(ServiceTicketSessionTrackingPolicy.class);
+        val trackingPolicy = mock(TicketTrackingPolicy.class);
         val ticketService = RegisteredServiceTestUtils.getService(samlRegisteredService.getServiceId());
         ticketService.getAttributes().put(SamlProtocolConstants.PARAMETER_ENTITY_ID, List.of(samlRegisteredService.getServiceId()));
         val st1 = tgt.grantServiceTicket(ticketService, trackingPolicy);

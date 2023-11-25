@@ -64,7 +64,7 @@ The following features are supported by the CAS project:
 * OAuth v2 Protocol
 * OpenID Connect Protocol
 * WS-Federation Passive Requestor Protocol
-* Authentication via JAAS, LDAP, RDBMS, X.509, Radius, SPNEGO, JWT, Remote, Apache Cassandra, Trusted, BASIC, Apache Shiro, MongoDB, Pac4J and more.
+* Authentication via JAAS, LDAP, RDBMS, X.509, Radius, SPNEGO, JWT, Remote, Apache Cassandra, Trusted, BASIC, MongoDB, Pac4J and more.
 * Delegated authentication to WS-FED, Facebook, Twitter, SAML IdP, OpenID Connect, CAS and more.
 * Authorization via ABAC, Time/Date, REST, Internet2's Grouper and more.
 * HA clustered deployments via Hazelcast, JPA, Apache Cassandra, Memcached, Apache Ignite, MongoDB, Redis, DynamoDb, and more.
@@ -76,9 +76,9 @@ The following features are supported by the CAS project:
 * Deployment options using Apache Tomcat, Jetty, Undertow, packaged and running as Docker containers.
 
 The foundations of CAS are built upon: [Spring Boot](https://projects.spring.io/spring-boot) and
-[Spring Cloud](http://projects.spring.io/spring-cloud/).
+[Spring Cloud](https://projects.spring.io/spring-cloud/).
 
-## Development [![codecov](https://codecov.io/gh/apereo/cas/branch/master/graph/badge.svg?style=for-the-badge)][cascodecov]
+## Development [![devlocity](https://img.shields.io/badge/Revved%20up%20by-Gradle%20Devlocity-06A0CE?logo=Gradle&labelColor=02303A)][devlocity] [![codecov](https://codecov.io/gh/apereo/cas/branch/master/graph/badge.svg?style=for-the-badge)][cascodecov]
 
 - To build the project locally, please follow [this guide][casbuildprocess].
 - The release schedule is [available here][releaseschedule].
@@ -92,13 +92,14 @@ of [volunteers and contributors][githubcontributors]. Support options may be [fo
 If you (or your employer) benefit from this project, please consider becoming a [Friend of Apereo](https://www.apereo.org/friends) and contribute.
 
 [cascodecov]: https://codecov.io/gh/apereo/cas
+[devlocity]: https://develocity.apereo.org
 [maintenance]: https://apereo.github.io/cas/development/developer/Maintenance-Policy.html
 [releaseschedule]: https://github.com/apereo/cas/milestones
 [wiki]: https://apereo.github.io/cas
 [githubreleases]: https://github.com/apereo/cas/releases
 [gettingstarted]: https://apereo.github.io/cas/development/planning/Getting-Started.html
 [overlay]: https://apereo.github.io/cas/development/installation/WAR-Overlay-Installation.html
-[contribute]: https://apereo.github.io/cas/development/developer/Contributor-Guidelines.html
+[contribute]: https://apereo.github.io/cas/developer/Contributor-Guidelines.html
 [cassonatype]: https://oss.sonatype.org/content/repositories/snapshots/org/apereo/cas/
 [casmavencentral]: https://search.maven.org/search?q=g:org.apereo.cas
 [releasenotes]: https://github.com/apereo/cas/releases

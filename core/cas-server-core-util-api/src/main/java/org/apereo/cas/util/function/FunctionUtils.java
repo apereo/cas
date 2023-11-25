@@ -176,6 +176,19 @@ public class FunctionUtils {
     }
 
     /**
+     * Do if not null supplier.
+     *
+     * @param <R>          the type parameter
+     * @param input        the input
+     * @param trueFunction the true function
+     * @return the value from the supplier or null
+     */
+    public static <R> R doIfNotNull(final Object input,
+                                    final CheckedSupplier<R> trueFunction) {
+        return doIfNotNull(input, trueFunction, () -> null).get();
+    }
+
+    /**
      * Supply if not null supplier.
      *
      * @param <R>           the type parameter

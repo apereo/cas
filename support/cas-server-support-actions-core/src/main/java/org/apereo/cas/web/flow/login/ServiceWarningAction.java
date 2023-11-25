@@ -4,6 +4,7 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.InvalidTicketException;
@@ -12,6 +13,7 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.CasWebflowCredentialProvider;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -54,6 +56,8 @@ public class ServiceWarningAction extends BaseCasWebflowAction {
 
     private final List<ServiceTicketGeneratorAuthority> serviceTicketAuthorities;
 
+    private final CasWebflowCredentialProvider casWebflowCredentialProvider;
+
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
@@ -64,8 +68,9 @@ public class ServiceWarningAction extends BaseCasWebflowAction {
         val authentication = ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicket);
         FunctionUtils.throwIfNull(authentication,
             () -> new InvalidTicketException(new AuthenticationException("No authentication found for ticket " + ticketGrantingTicket), ticketGrantingTicket));
-        val credential = WebUtils.getCredential(requestContext);
-        val authenticationResultBuilder = authenticationSystemSupport.establishAuthenticationContextFromInitial(authentication, credential);
+        val credentials = casWebflowCredentialProvider.extract(requestContext);
+        val authenticationResultBuilder = authenticationSystemSupport.establishAuthenticationContextFromInitial(
+            authentication, credentials.toArray(credentials.toArray(new Credential[0])));
         val authenticationResult = FunctionUtils.doUnchecked(() -> authenticationResultBuilder.build(principalElectionStrategy, service));
         grantServiceTicket(authenticationResult, service, requestContext);
 

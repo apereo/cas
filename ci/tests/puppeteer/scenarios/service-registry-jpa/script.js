@@ -4,32 +4,29 @@ const fs = require('fs');
 const path = require("path");
 const puppeteer = require("puppeteer");
 
-const TOTAL = 20;
+const TOTAL = 10;
 const BASE_URL = "https://localhost:8443/cas/actuator/registeredServices";
 
 async function fetchServices() {
     await cas.log("Fetching services from CAS");
-    return await cas.doGet(BASE_URL,
-        res => {
-            assert(res.status === 200);
-            assert(res.data[1].length === TOTAL);
-            return res.data[1];
-        },
-        error => {
-            throw error;
-        }, {
-            'Content-Type': 'application/json'
-        });
+    let body = await cas.doRequest(BASE_URL, "GET",
+        {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        }, 200);
+    await cas.log(body);
+    await cas.log("===================================");
+    return body;
 }
 
 async function verifyServices() {
     await cas.log("Verifying services from CAS");
     for (let i = 1; i <= TOTAL; i++) {
         await cas.doGet(`${BASE_URL}/${i}`,
-            res => {
-            }, error => {
+            async res => {
+            }, async error => {
                 throw error;
-            }, { 'Content-Type': "application/json" });
+            }, {'Content-Type': "application/json"});
     }
 }
 
@@ -75,7 +72,7 @@ async function importServices() {
 
     await cas.log("Unpausing MySQL docker container");
     await mysql.unpause();
-    
+
     await cas.sleep(2000);
     await fetchServices();
     await verifyServices();

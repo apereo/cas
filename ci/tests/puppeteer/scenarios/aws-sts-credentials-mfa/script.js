@@ -2,20 +2,22 @@ const assert = require('assert');
 const cas = require('../../cas.js');
 
 (async () => {
-    const params = new URLSearchParams();
-    params.append('username', 'casuser');
-    params.append('password', 'Mellon');
-    params.append('passcode', '352410');
+    let bypassCodes = await cas.fetchDuoSecurityBypassCodes("casuser");
+    await cas.log(`Duo Security: Retrieved bypass codes ${bypassCodes}`);
+    let bypassCode = `${String(bypassCodes[0])}`;
 
-    await cas.doPost("https://localhost:8443/cas/actuator/awsSts?duration=PT15S",
-        params, {
+    await cas.doPost("https://localhost:8443/cas/actuator/awsSts",
+        `username=casuser&password=Mellon&duration=PT15S&passcode=${bypassCode}`, {
             'Content-Type': "application/x-www-form-urlencoded"
         }, res => {
-            cas.log(res.data);
-            throw 'Operation must fail to fetch credentials without mfa';
+            assert(res.status === 200);
+
+            let data = res.data.toString();
+            assert(data.includes("aws_access_key_id"));
+            assert(data.includes("aws_secret_access_key"));
+            assert(data.includes("aws_session_token"));
         }, error => {
-            assert(error.response.status === 401);
-            assert(error.response.data.toString().includes("Authentication failed"));
+            throw `Unable to fetch credentials: ${error}`;
         });
 
 })();

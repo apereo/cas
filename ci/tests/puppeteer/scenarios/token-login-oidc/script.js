@@ -23,11 +23,13 @@ const assert = require('assert');
     await cas.log(`Current code is ${code}`);
     const accessTokenUrl = `https://localhost:8443/cas/oidc/token?grant_type=authorization_code`
         + `&client_id=client1&client_secret=secret1&redirect_uri=${service}&code=${code}`;
-    await cas.goto(page, accessTokenUrl);
-    await page.waitForTimeout(1000);
-    let content = await cas.textContent(page, "body");
-    const payload = JSON.parse(content);
-    await cas.log(payload);
+    let payload = await cas.doPost(accessTokenUrl, "", {
+        'Content-Type': "application/json"
+    }, res => {
+        return res.data;
+    }, error => {
+        throw `Operation failed to obtain access token: ${error}`;
+    });
     assert(payload.access_token != null);
     let decoded = await cas.decodeJwt(payload.id_token);
     assert(decoded["family_name"] !== undefined);

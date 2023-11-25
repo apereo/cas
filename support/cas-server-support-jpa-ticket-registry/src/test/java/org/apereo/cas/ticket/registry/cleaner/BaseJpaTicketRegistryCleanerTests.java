@@ -10,7 +10,6 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.ServiceTicketFactory;
-import org.apereo.cas.ticket.ServiceTicketSessionTrackingPolicy;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketFactory;
@@ -29,12 +28,12 @@ import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.registry.BaseJpaTicketRegistryTests;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
+import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
@@ -45,13 +44,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.integration.IntegrationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -70,8 +67,8 @@ import static org.mockito.Mockito.*;
 public abstract class BaseJpaTicketRegistryCleanerTests {
 
     @Autowired
-    @Qualifier(ServiceTicketSessionTrackingPolicy.BEAN_NAME)
-    protected ServiceTicketSessionTrackingPolicy serviceTicketSessionTrackingPolicy;
+    @Qualifier(TicketTrackingPolicy.BEAN_NAME_SERVICE_TICKET_TRACKING)
+    protected TicketTrackingPolicy serviceTicketSessionTrackingPolicy;
 
     @Autowired
     @Qualifier(TicketFactory.BEAN_NAME)
@@ -255,7 +252,7 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
         when(builder.buildTicketExpirationPolicy()).thenReturn(NeverExpiresExpirationPolicy.INSTANCE);
 
         return new OAuth20DefaultOAuthCodeFactory(new DefaultUniqueTicketIdGenerator(),
-            builder, servicesManager, CipherExecutor.noOpOfStringToString())
+            builder, servicesManager, CipherExecutor.noOpOfStringToString(), TicketTrackingPolicy.noOp())
             .create(RegisteredServiceTestUtils.getService(),
                 RegisteredServiceTestUtils.getAuthentication(), new MockTicketGrantingTicket("casuser"),
                 CollectionUtils.wrapSet("1", "2"), "code-challenge",

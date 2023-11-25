@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ConfigurableApplicationContext;
+import javax.sql.DataSource;
 
 /**
  * A JDBC utility class.
@@ -89,8 +90,30 @@ public class JdbcAuthenticationUtils {
                                                                  final PrincipalFactory jdbcPrincipalFactory,
                                                                  final ServicesManager servicesManager,
                                                                  final PasswordPolicyContext queryAndEncodePasswordPolicyConfiguration) {
+        return newAuthenticationHandler(properties, applicationContext, jdbcPrincipalFactory,
+            servicesManager, queryAndEncodePasswordPolicyConfiguration, JpaBeans.newDataSource(properties));
+    }
+
+    /**
+     * New authentication handler.
+     *
+     * @param properties                                the properties
+     * @param applicationContext                        the application context
+     * @param jdbcPrincipalFactory                      the jdbc principal factory
+     * @param servicesManager                           the services manager
+     * @param queryAndEncodePasswordPolicyConfiguration the query and encode password policy configuration
+     * @param dataSource                                the data source
+     * @return the authentication handler
+     */
+    public static AuthenticationHandler newAuthenticationHandler(final QueryEncodeJdbcAuthenticationProperties properties,
+                                                                 final ConfigurableApplicationContext applicationContext,
+                                                                 final PrincipalFactory jdbcPrincipalFactory,
+                                                                 final ServicesManager servicesManager,
+                                                                 final PasswordPolicyContext queryAndEncodePasswordPolicyConfiguration,
+                                                                 final DataSource dataSource) {
+        val databasePasswordEncoder = new QueryAndEncodeDatabasePasswordEncoder(properties);
         val handler = new QueryAndEncodeDatabaseAuthenticationHandler(properties, servicesManager,
-            jdbcPrincipalFactory, JpaBeans.newDataSource(properties));
+            jdbcPrincipalFactory, dataSource, databasePasswordEncoder);
         configureJdbcAuthenticationHandler(handler, queryAndEncodePasswordPolicyConfiguration, properties, applicationContext);
         return handler;
     }

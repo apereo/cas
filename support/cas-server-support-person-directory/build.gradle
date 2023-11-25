@@ -4,24 +4,47 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-services-api")
+    implementation project(":core:cas-server-core-services-authentication")
 
-    implementation project(":support:cas-server-support-ldap-core")
     implementation project(":support:cas-server-support-person-directory-core")
 
+    compileOnly project(":support:cas-server-support-ldap-core")
     compileOnly project(":support:cas-server-support-jpa-util")
 
-    implementation libraries.ldaptive
 
     testImplementation project(":support:cas-server-support-jdbc-drivers")
 
+    testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-authentication-attributes")
     testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-audit")
+    testImplementation project(":core:cas-server-core-monitor")
+    testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-notifications")
+    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core-cookie")
+    testImplementation project(":core:cas-server-core-authentication-mfa")
+    testImplementation project(":core:cas-server-core-webflow")
+    testImplementation project(":core:cas-server-core-webflow-mfa")
+    testImplementation project(":core:cas-server-core-webflow-api")
+    testImplementation project(":core:cas-server-core-configuration")
+    testImplementation project(":core:cas-server-core")
+
+    testImplementation libraries.ldaptive
+
     testImplementation project(":support:cas-server-support-jpa-util")
-    
+    testImplementation project(":support:cas-server-support-ldap-core")
+
+    testImplementation project(path: ":support:cas-server-support-ldap-core", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-person-directory-core", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
-    testImplementation project(path: ":support:cas-server-support-ldap-core", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-notifications", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
+
 }

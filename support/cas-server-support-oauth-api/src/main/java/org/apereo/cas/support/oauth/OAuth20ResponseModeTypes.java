@@ -1,6 +1,7 @@
 package org.apereo.cas.support.oauth;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 /**
  * The OAuth response mode types (on the authorize request).
@@ -9,6 +10,7 @@ import lombok.Getter;
  * @since 6.1.0
  */
 @Getter
+@RequiredArgsConstructor
 public enum OAuth20ResponseModeTypes {
     /**
      * No response mode.
@@ -47,8 +49,4 @@ public enum OAuth20ResponseModeTypes {
     FORM_POST("form_post");
 
     private final String type;
-
-    OAuth20ResponseModeTypes(final String type) {
-        this.type = type;
-    }
 }

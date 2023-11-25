@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.token;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
@@ -31,8 +32,9 @@ public class OidcIdTokenSigningAndEncryptionService extends BaseOidcJsonWebKeyTo
         final LoadingCache<OidcJsonWebKeyCacheKey, JsonWebKeySet> defaultJsonWebKeystoreCache,
         final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> serviceJsonWebKeystoreCache,
         final OidcIssuerService issuerService,
-        final OidcServerDiscoverySettings discoverySettings) {
-        super(defaultJsonWebKeystoreCache, serviceJsonWebKeystoreCache, issuerService);
+        final OidcServerDiscoverySettings discoverySettings,
+        final CasConfigurationProperties casProperties) {
+        super(defaultJsonWebKeystoreCache, serviceJsonWebKeystoreCache, issuerService, casProperties);
         this.discoverySettings = discoverySettings;
     }
 
@@ -98,14 +100,17 @@ public class OidcIdTokenSigningAndEncryptionService extends BaseOidcJsonWebKeyTo
 
     @Override
     protected String encryptToken(final OAuthRegisteredService service, final String innerJwt) {
-        if (service instanceof final OidcRegisteredService svc) {
-            val jsonWebKey = getJsonWebKeyForEncryption(svc);
+        if (service instanceof final OidcRegisteredService registeredService) {
+            val jsonWebKey = getJsonWebKeyForEncryption(registeredService);
+            if (jsonWebKey == null && registeredService.isIdTokenEncryptionOptional()) {
+                return innerJwt;
+            }
 
             return JsonWebTokenEncryptor.builder()
                 .key(jsonWebKey.getPublicKey())
                 .keyId(jsonWebKey.getKeyId())
-                .algorithm(svc.getIdTokenEncryptionAlg())
-                .encryptionMethod(svc.getIdTokenEncryptionEncoding())
+                .algorithm(registeredService.getIdTokenEncryptionAlg())
+                .encryptionMethod(registeredService.getIdTokenEncryptionEncoding())
                 .allowedAlgorithms(discoverySettings.getIdTokenEncryptionAlgValuesSupported())
                 .allowedContentEncryptionAlgorithms(discoverySettings.getIdTokenEncryptionEncodingValuesSupported())
                 .build()

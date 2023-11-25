@@ -16,7 +16,7 @@ import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
 import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
 import org.apereo.cas.configuration.model.core.rest.RestProperties;
 import org.apereo.cas.configuration.model.core.services.ServiceRegistryProperties;
-import org.apereo.cas.configuration.model.core.slo.SingleLogOutProperties;
+import org.apereo.cas.configuration.model.core.slo.SingleLogoutProperties;
 import org.apereo.cas.configuration.model.core.sso.SingleSignOnProperties;
 import org.apereo.cas.configuration.model.core.util.TicketProperties;
 import org.apereo.cas.configuration.model.core.web.LocaleProperties;
@@ -44,6 +44,7 @@ import org.apereo.cas.configuration.model.support.saml.googleapps.GoogleAppsProp
 import org.apereo.cas.configuration.model.support.saml.mdui.SamlMetadataUIProperties;
 import org.apereo.cas.configuration.model.support.saml.sps.SamlServiceProviderProperties;
 import org.apereo.cas.configuration.model.support.scim.ScimProperties;
+import org.apereo.cas.configuration.model.support.slack.SlackMessagingProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProvidersProperties;
 import org.apereo.cas.configuration.model.support.themes.ThemeProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -194,7 +195,7 @@ public class CasConfigurationProperties implements Serializable {
      * SLO functionality.
      */
     @NestedConfigurationProperty
-    private SingleLogOutProperties slo = new SingleLogOutProperties();
+    private SingleLogoutProperties slo = new SingleLogoutProperties();
 
     /**
      * SSO functionality.
@@ -237,6 +238,12 @@ public class CasConfigurationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private GoogleFirebaseCloudMessagingProperties googleFirebaseMessaging = new GoogleFirebaseCloudMessagingProperties();
+
+    /**
+     * Slack Messaging functionality.
+     */
+    @NestedConfigurationProperty
+    private SlackMessagingProperties slackMessaging = new SlackMessagingProperties();
 
     /**
      * Google reCAPTCHA settings.

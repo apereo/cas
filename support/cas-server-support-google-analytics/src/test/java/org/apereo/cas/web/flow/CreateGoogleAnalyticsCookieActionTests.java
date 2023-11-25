@@ -4,8 +4,8 @@ import org.apereo.cas.BaseCasGoogleAnalyticsTests;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -13,15 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.test.MockRequestContext;
-
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -45,18 +39,16 @@ class CreateGoogleAnalyticsCookieActionTests {
     @Qualifier(CasWebflowConstants.ACTION_ID_GOOGLE_ANALYTICS_CREATE_COOKIE)
     private Action createGoogleAnalyticsCookieAction;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
     @Test
     void verifyOperation() throws Throwable {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-
+        val context = MockRequestContext.create(applicationContext);
         val attributes = CollectionUtils.<String, List<Object>>wrap("membership", List.of("faculty", "staff", "student"));
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication("casuser", attributes), context);
         val event = createGoogleAnalyticsCookieAction.execute(context);
         assertNull(event);
-        val cookie = response.getCookie(casProperties.getGoogleAnalytics().getCookie().getName());
+        val cookie = context.getHttpServletResponse().getCookie(casProperties.getGoogleAnalytics().getCookie().getName());
         assertNotNull(cookie);
         assertEquals("faculty,staff", cookie.getValue());
     }

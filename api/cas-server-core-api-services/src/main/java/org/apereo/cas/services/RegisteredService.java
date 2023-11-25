@@ -4,10 +4,8 @@ import org.apereo.cas.authentication.principal.Service;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.Ordered;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -20,12 +18,9 @@ import java.util.Set;
  * @since 3.1
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-public interface RegisteredService extends Serializable, Comparable<RegisteredService> {
+public interface RegisteredService extends RegisteredServiceDefinition, Comparable<RegisteredService> {
 
-    /**
-     * Initial ID value of newly created (but not persisted) registered service.
-     */
-    long INITIAL_IDENTIFIER_VALUE = -1;
+
 
     /**
      * Get the expiration policy rules for this service.
@@ -67,38 +62,6 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
      * @return the unique identifier for this service.
      */
     String getServiceId();
-
-    /**
-     * The numeric identifier for this service. Implementations
-     * are expected to initialize the id with the value of {@link #INITIAL_IDENTIFIER_VALUE}.
-     *
-     * @return the numeric identifier for this service.
-     */
-    long getId();
-
-    /**
-     * Sets the identifier for this service. Use {@link #INITIAL_IDENTIFIER_VALUE} to
-     * indicate a branch new service definition.
-     *
-     * @param id the numeric identifier for the service.
-     */
-    void setId(long id);
-
-    /**
-     * Returns the name of the service.
-     *
-     * @return the name of the service.
-     */
-    String getName();
-
-    /**
-     * Returns the description of the service.
-     *
-     * @return the description of the service.
-     */
-    default String getDescription() {
-        return StringUtils.EMPTY;
-    }
 
     /**
      * Gets template name that acts

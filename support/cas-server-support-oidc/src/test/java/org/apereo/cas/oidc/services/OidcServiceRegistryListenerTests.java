@@ -46,7 +46,7 @@ class OidcServiceRegistryListenerTests extends AbstractOidcTests {
         scopes.add(OidcConstants.StandardScopes.PROFILE.getScope());
         service = (OidcRegisteredService) oidcServiceRegistryListener.postLoad(service);
         val policy = service.getAttributeReleasePolicy();
-        assertTrue(policy instanceof RegisteredServiceChainingAttributeReleasePolicy);
+        assertInstanceOf(RegisteredServiceChainingAttributeReleasePolicy.class, policy);
         val chain = (RegisteredServiceChainingAttributeReleasePolicy) policy;
         assertEquals(3, chain.size());
     }
@@ -62,7 +62,7 @@ class OidcServiceRegistryListenerTests extends AbstractOidcTests {
         scopes.add(OidcConstants.StandardScopes.PROFILE.getScope());
         service = (OidcRegisteredService) oidcServiceRegistryListener.postLoad(service);
         val policy = service.getAttributeReleasePolicy();
-        assertTrue(policy instanceof RegisteredServiceChainingAttributeReleasePolicy);
+        assertInstanceOf(RegisteredServiceChainingAttributeReleasePolicy.class, policy);
         val chain = (RegisteredServiceChainingAttributeReleasePolicy) policy;
         assertEquals(3, chain.size());
     }
@@ -80,7 +80,7 @@ class OidcServiceRegistryListenerTests extends AbstractOidcTests {
         scopes.add("SomeCustomScope");
         service = (OidcRegisteredService) oidcServiceRegistryListener.postLoad(service);
         val policy = service.getAttributeReleasePolicy();
-        assertTrue(policy instanceof RegisteredServiceChainingAttributeReleasePolicy);
+        assertInstanceOf(RegisteredServiceChainingAttributeReleasePolicy.class, policy);
         val chain = (RegisteredServiceChainingAttributeReleasePolicy) policy;
         assertEquals(5, chain.size());
     }
@@ -93,7 +93,7 @@ class OidcServiceRegistryListenerTests extends AbstractOidcTests {
         scopes.addAll(List.of("cn", "mail"));
         service = (OidcRegisteredService) oidcServiceRegistryListener.postLoad(service);
         val policy = service.getAttributeReleasePolicy();
-        assertTrue(policy instanceof OidcCustomScopeAttributeReleasePolicy);
+        assertInstanceOf(OidcCustomScopeAttributeReleasePolicy.class, policy);
         val custom = (OidcCustomScopeAttributeReleasePolicy) policy;
         assertTrue(scopes.containsAll(custom.getAllowedAttributes()));
     }
@@ -110,7 +110,7 @@ class OidcServiceRegistryListenerTests extends AbstractOidcTests {
         service = (OidcRegisteredService) oidcServiceRegistryListener.postLoad(service);
         val policy = service.getAttributeReleasePolicy();
         assertFalse(policy instanceof RegisteredServiceChainingAttributeReleasePolicy);
-        assertTrue(policy instanceof ReturnAllAttributeReleasePolicy);
+        assertInstanceOf(ReturnAllAttributeReleasePolicy.class, policy);
     }
 
     @Test
@@ -131,7 +131,7 @@ class OidcServiceRegistryListenerTests extends AbstractOidcTests {
         service = (OidcRegisteredService) oidcServiceRegistryListener.postLoad(service);
         val policy = service.getAttributeReleasePolicy();
         assertFalse(policy instanceof RegisteredServiceChainingAttributeReleasePolicy);
-        assertTrue(policy instanceof ReturnAllowedAttributeReleasePolicy);
+        assertInstanceOf(ReturnAllowedAttributeReleasePolicy.class, policy);
     }
 
     @Test
@@ -147,7 +147,7 @@ class OidcServiceRegistryListenerTests extends AbstractOidcTests {
         service = (OidcRegisteredService) oidcServiceRegistryListener.postLoad(service);
         val policy = service.getAttributeReleasePolicy();
         assertFalse(policy instanceof RegisteredServiceChainingAttributeReleasePolicy);
-        assertTrue(policy instanceof ReturnAllowedAttributeReleasePolicy);
+        assertInstanceOf(ReturnAllowedAttributeReleasePolicy.class, policy);
     }
 
 }

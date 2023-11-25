@@ -192,7 +192,7 @@ public class SamlIdPMetadataConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
-            @Qualifier("httpClient")
+            @Qualifier(HttpClient.BEAN_NAME_HTTPCLIENT)
             final HttpClient httpClient) {
             return new MetadataQueryProtocolMetadataResolver(httpClient, casProperties.getAuthn().getSamlIdp(), openSamlConfigBean);
         }
@@ -227,7 +227,7 @@ public class SamlIdPMetadataConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
-            @Qualifier("httpClient")
+            @Qualifier(HttpClient.BEAN_NAME_HTTPCLIENT)
             final HttpClient httpClient) {
             return new UrlResourceMetadataResolver(httpClient, casProperties.getAuthn().getSamlIdp(), openSamlConfigBean);
         }
@@ -376,7 +376,7 @@ public class SamlIdPMetadataConfiguration {
         public CacheLoader<SamlRegisteredServiceCacheKey, CachedMetadataResolverResult> chainingMetadataResolverCacheLoader(
             @Qualifier("samlRegisteredServiceMetadataResolvers")
             final SamlRegisteredServiceMetadataResolutionPlan samlRegisteredServiceMetadataResolvers,
-            @Qualifier("httpClient")
+            @Qualifier(HttpClient.BEAN_NAME_HTTPCLIENT)
             final HttpClient httpClient,
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean) {

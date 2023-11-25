@@ -10,23 +10,20 @@ import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordA
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.ticket.AuthenticatedServicesAwareTicketGrantingTicket;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ServiceTicket;
-import org.apereo.cas.ticket.ServiceTicketSessionTrackingPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.expiration.TicketGrantingTicketExpirationPolicy;
+import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
-
 import java.io.Serial;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -47,7 +44,7 @@ import java.util.Set;
 @Getter
 @EqualsAndHashCode(of = "id")
 @SuppressWarnings("JdkObsolete")
-public class MockTicketGrantingTicket implements AuthenticatedServicesAwareTicketGrantingTicket {
+public class MockTicketGrantingTicket implements TicketGrantingTicket {
 
     public static final UniqueTicketIdGenerator ID_GENERATOR = new DefaultUniqueTicketIdGenerator();
 
@@ -123,7 +120,7 @@ public class MockTicketGrantingTicket implements AuthenticatedServicesAwareTicke
     }
 
     public ServiceTicket grantServiceTicket(final Service service,
-                                            final ServiceTicketSessionTrackingPolicy trackingPolicy) throws Throwable {
+                                            final TicketTrackingPolicy trackingPolicy) throws Throwable {
         return grantServiceTicket(ID_GENERATOR.getNewTicketId("ST"), service, null,
             false, trackingPolicy);
     }
@@ -131,9 +128,9 @@ public class MockTicketGrantingTicket implements AuthenticatedServicesAwareTicke
     @Override
     public ServiceTicket grantServiceTicket(final String id, final Service service, final ExpirationPolicy expirationPolicy,
                                             final boolean credentialProvided,
-                                            final ServiceTicketSessionTrackingPolicy trackingPolicy) {
+                                            final TicketTrackingPolicy trackingPolicy) {
         val st = new MockServiceTicket(id, service, this, expirationPolicy);
-        trackingPolicy.track(this, st);
+        trackingPolicy.trackTicket(this, st);
         return st;
     }
 

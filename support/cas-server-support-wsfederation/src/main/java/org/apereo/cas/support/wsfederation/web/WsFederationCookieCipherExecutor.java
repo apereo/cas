@@ -23,12 +23,12 @@ public class WsFederationCookieCipherExecutor extends BaseStringCipherExecutor {
     }
 
     @Override
-    protected String getEncryptionKeySetting() {
+    public String getEncryptionKeySetting() {
         return "cas.authn.wsfed[0].cookie.crypto.encryption.key";
     }
 
     @Override
-    protected String getSigningKeySetting() {
+    public String getSigningKeySetting() {
         return "cas.authn.wsfed[0].cookie.crypto.signing.key";
     }
 }

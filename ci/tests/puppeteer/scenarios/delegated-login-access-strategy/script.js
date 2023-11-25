@@ -17,9 +17,8 @@ const cas = require('../../cas.js');
 
     await cas.assertVisibility(page, 'li #CASServerOne');
     await cas.assertVisibility(page, 'li #CASServerTwo');
-    assert(await page.$('#username') == null);
-    assert(await page.$('#password') == null);
-
+    await cas.assertInvisibility(page, "#username");
+    await cas.assertInvisibility(page, "#password");
 
     const baseUrl = "https://localhost:8443/cas/actuator/registeredServices";
     await cas.doGet(baseUrl, res => {

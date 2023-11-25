@@ -17,7 +17,6 @@ import org.apereo.cas.ticket.device.OAuth20DeviceUserCode;
 import org.apereo.cas.ticket.refreshtoken.OAuth20DefaultRefreshToken;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -38,17 +37,17 @@ public class CasOAuth20ProtocolTicketCatalogConfiguration extends BaseTicketCata
 
     @Override
     public void configureTicketCatalog(final TicketCatalog plan,
-                                       final CasConfigurationProperties casProperties) {
-        LOGGER.trace("Registering core OAuth protocol ticket definitions...");
+                                       final CasConfigurationProperties casProperties) throws Throwable {
+        LOGGER.trace("Registering OAuth protocol ticket definitions...");
         buildAndRegisterOAuthCodeDefinition(plan, buildTicketDefinition(plan, OAuth20Code.PREFIX,
             OAuth20Code.class, OAuth20DefaultCode.class, Ordered.HIGHEST_PRECEDENCE), casProperties);
         buildAndRegisterAccessTokenDefinition(plan, buildTicketDefinition(plan,
-                OAuth20AccessToken.PREFIX, OAuth20AccessToken.class, OAuth20DefaultAccessToken.class,
-                Ordered.HIGHEST_PRECEDENCE), casProperties);
+            OAuth20AccessToken.PREFIX, OAuth20AccessToken.class, OAuth20DefaultAccessToken.class,
+            Ordered.HIGHEST_PRECEDENCE), casProperties);
         buildAndRegisterRefreshTokenDefinition(plan, buildTicketDefinition(plan, OAuth20RefreshToken.PREFIX,
             OAuth20RefreshToken.class, OAuth20DefaultRefreshToken.class, Ordered.HIGHEST_PRECEDENCE), casProperties);
         buildAndRegisterDeviceTokenDefinition(plan, buildTicketDefinition(plan, OAuth20DeviceToken.PREFIX,
-            OAuth20DeviceToken.class, OAuth20DefaultDeviceToken.class), casProperties);
+            OAuth20DefaultDeviceToken.class, OAuth20DeviceToken.class), casProperties);
         buildAndRegisterDeviceUserCodeDefinition(plan, buildTicketDefinition(plan, OAuth20DeviceUserCode.PREFIX,
             OAuth20DefaultDeviceUserCode.class, OAuth20DeviceUserCode.class), casProperties);
     }
@@ -58,7 +57,7 @@ public class CasOAuth20ProtocolTicketCatalogConfiguration extends BaseTicketCata
         metadata.getProperties().setStorageName(casProperties.getAuthn().getOauth().getAccessToken().getStorageName());
         val timeout = Beans.newDuration(casProperties.getAuthn().getOauth().getAccessToken().getMaxTimeToLiveInSeconds()).getSeconds();
         metadata.getProperties().setStorageTimeout(timeout);
-        metadata.getProperties().setExcludeFromCascade(casProperties.getLogout().isRemoveDescendantTickets());
+        metadata.getProperties().setExcludeFromCascade(casProperties.getTicket().isTrackDescendantTickets());
         registerTicketDefinition(plan, metadata);
     }
 
@@ -67,7 +66,7 @@ public class CasOAuth20ProtocolTicketCatalogConfiguration extends BaseTicketCata
         metadata.getProperties().setStorageName(casProperties.getAuthn().getOauth().getRefreshToken().getStorageName());
         val timeout = Beans.newDuration(casProperties.getAuthn().getOauth().getRefreshToken().getTimeToKillInSeconds()).getSeconds();
         metadata.getProperties().setStorageTimeout(timeout);
-        metadata.getProperties().setExcludeFromCascade(casProperties.getLogout().isRemoveDescendantTickets());
+        metadata.getProperties().setExcludeFromCascade(casProperties.getTicket().isTrackDescendantTickets());
         registerTicketDefinition(plan, metadata);
     }
 

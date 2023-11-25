@@ -36,6 +36,7 @@ public class MultifactorAuthenticationProviderBypassProperties implements Serial
     /**
      * Optionally, skip multifactor authentication based on designated principal attribute values.
      */
+    @RegularExpressionCapable
     private String principalAttributeValue;
 
     /**
@@ -45,21 +46,27 @@ public class MultifactorAuthenticationProviderBypassProperties implements Serial
 
     /**
      * Optionally, skip multifactor authentication based on designated authentication attribute values.
+     * Multiple values may be separated by a comma.
      */
+    @RegularExpressionCapable
     private String authenticationAttributeValue;
 
     /**
      * Skip multifactor authentication depending on form of primary authentication execution.
      * Specifically, skip multifactor if the a particular authentication handler noted by its name
      * successfully is able to authenticate credentials in the primary factor.
+     * Multiple values may be separated by a comma.
      */
+    @RegularExpressionCapable
     private String authenticationHandlerName;
 
     /**
      * Skip multifactor authentication depending on method/form of primary authentication execution.
      * Specifically, skip multifactor if the authentication method attribute collected as part of
      * authentication metadata matches a certain value.
+     * Multiple values may be separated by a comma.
      */
+    @RegularExpressionCapable
     private String authenticationMethodName;
 
     /**

@@ -128,8 +128,11 @@ public class RedisObjectFactory {
             .withHost(redis.getHost())
             .withPort(redis.getPort())
             .withDatabase(redis.getDatabase());
-        if (StringUtils.hasText(redis.getPassword())) {
+        
+        if (StringUtils.hasText(redis.getUsername()) && StringUtils.hasText(redis.getPassword())) {
             uriBuilder.withAuthentication(redis.getUsername(), redis.getPassword());
+        } else if (StringUtils.hasText(redis.getPassword())) {
+            uriBuilder.withPassword(redis.getPassword().toCharArray());
         }
         val result = RedisModulesClient.create(uriBuilder.build()).connect().sync();
         try {

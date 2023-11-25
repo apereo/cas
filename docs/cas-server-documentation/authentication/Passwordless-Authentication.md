@@ -64,29 +64,17 @@ The following strategies define how issued tokens may be managed by CAS.
 
 {% include_cached casproperties.html properties="cas.authn.passwordless.tokens" includes=".core,.crypto" %}
 
-### Memory
-
-This is the default option where tokens are kept in memory using a cache 
-with a configurable expiration period. Needless to say, this option 
-is not appropriate in clustered CAS deployments inside there is not a way 
-to synchronize and replicate tokens across CAS nodes.
-
-### Others
-
-| Option  | Description                                                               |
-|---------|---------------------------------------------------------------------------|
-| MongoDb | Please [see this guide](Passwordless-Authentication-Tokens-MongoDb.html). |
-| JPA     | Please [see this guide](Passwordless-Authentication-Tokens-JPA.html).     |
-| REST    | Please [see this guide](Passwordless-Authentication-Tokens-Rest.html).    |
-| Custom  | Please [see this guide](Passwordless-Authentication-Tokens-Custom.html).  |
+| Option  | Description                                                                                                     |
+|---------|-----------------------------------------------------------------------------------------------------------------|
+| Memory  | This is the default option where tokens are kept in memory using a cache with a configurable expiration period. |
+| MongoDb | Please [see this guide](Passwordless-Authentication-Tokens-MongoDb.html).                                       |
+| JPA     | Please [see this guide](Passwordless-Authentication-Tokens-JPA.html).                                           |
+| REST    | Please [see this guide](Passwordless-Authentication-Tokens-Rest.html).                                          |
+| Custom  | Please [see this guide](Passwordless-Authentication-Tokens-Custom.html).                                        |
 
 ### Messaging & Notifications
-                                     
-{% include_cached casproperties.html properties="cas.authn.passwordless.tokens" includes=".mail,.sms" %}
 
-Users may be notified of tokens via text messages, mail, etc.
-To learn more about available options, please [see this guide](../notifications/SMS-Messaging-Configuration.html)
-or [this guide](../notifications/Sending-Email-Configuration.html).
+Please [see this](Passwordless-Authentication-Notifications.html) for details.
 
 ## Disabling Passwordless Authentication Flow
 
@@ -98,65 +86,10 @@ be disabled and skipped in favor of the more usual CAS authentication flow,
 challenging the user for a password. Support for this behavior may depend
 on each individual account store implementation.
 
-## Multifactor Authentication Integration
+## Multifactor Authentication
 
-Passwordless authentication can be integrated 
-with [CAS multifactor authentication providers](../mfa/Configuring-Multifactor-Authentication.html). In this scenario,
-once CAS configuration is enabled to support this behavior via settings 
-or the located passwordless user account is considered *eligible* for multifactor authentication,
-CAS will allow passwordless authentication to skip its 
-own *intended normal* flow (i.e. as described above with token generation, etc) in favor of 
-multifactor authentication providers that may be available and defined in CAS.
+Please [see this](Passwordless-Authentication-MFA.html) for details.
 
-This means that if [multifactor authentication providers](../mfa/Configuring-Multifactor-Authentication.html) are 
-defined and activated, and defined 
-[multifactor triggers](../mfa/Configuring-Multifactor-Authentication-Triggers.html) in CAS 
-signal availability and eligibility of an multifactor flow for the given passwordless user, CAS will skip 
-its normal passwordless authentication flow in favor of the requested multifactor 
-authentication provider and its flow. If no multifactor providers 
-are available, or if no triggers require the use of multifactor authentication 
-for the verified passwordless user, passwordless authentication flow will commence as usual.
+## Delegated Authentication
 
-## Delegated Authentication Integration
-
-Passwordless authentication can be integrated 
-with [CAS delegated authentication](../integration/Delegate-Authentication.html). In this scenario,
-once CAS configuration is enabled to support this behavior via settings or 
-the located passwordless user account is considered *eligible* for delegated authentication,
-CAS will allow passwordless authentication to skip its own *intended normal* 
-flow (i.e. as described above with token generation, etc) in favor of 
-delegated authentication that may be available and defined in CAS.
-
-This means that if [delegated authentication providers](../integration/Delegate-Authentication.html) 
-are defined and activated, CAS will skip 
-its normal passwordless authentication flow in favor of the requested multifactor authentication 
-provider and its flow. If no delegated identity providers 
-are available, passwordless authentication flow will commence as usual.
-
-The selection of a delegated authentication identity provider for a passwordless user is handled 
-using a script. The script may be defined as such:
-
-```groovy
-def run(Object[] args) {
-    def passwordlessUser = args[0]
-    def clients = (Set) args[1]
-    def httpServletRequest = args[2]
-    def logger = args[3]
-    
-    logger.info("Testing username $passwordlessUser")
-
-    clients[0]
-}
-``` 
-
-The parameters passed are as follows:
-
-| Parameter            | Description                                                                 |
-|----------------------|-----------------------------------------------------------------------------|
-| `passwordlessUser`   | The object representing the `PasswordlessUserAccount`.                      |
-| `clients`            | The object representing the collection of identity provider configurations. |
-| `httpServletRequest` | The object representing the http request.                                   |
-| `logger`             | The object responsible for issuing log messages such as `logger.info(...)`. |
-
-The outcome of the script can be `null` to skip delegated authentication for 
-the user, or it could a selection from the available identity providers passed into the script.
+Please [see this](Passwordless-Authentication-Delegation.html) for details.

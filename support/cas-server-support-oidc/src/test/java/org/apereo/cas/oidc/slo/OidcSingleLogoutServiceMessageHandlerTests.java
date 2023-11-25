@@ -1,7 +1,7 @@
 package org.apereo.cas.oidc.slo;
 
 import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.logout.SingleLogoutExecutionRequest;
+import org.apereo.cas.logout.slo.SingleLogoutExecutionRequest;
 import org.apereo.cas.logout.slo.SingleLogoutServiceMessageHandler;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.oidc.AbstractOidcTests;

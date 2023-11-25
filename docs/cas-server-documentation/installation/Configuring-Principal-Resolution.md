@@ -8,7 +8,8 @@ category: Configuration
 # Principal Resolution
 
 Principal resolution converts information in the authentication credential into a security principal
-that commonly contains additional attributes (i.e. user details such as affiliations, group membership, email, display name). A CAS principal contains a unique identifier by which the authenticated user will be known to all requesting
+that commonly contains additional attributes (i.e. user details such as affiliations, group membership, email, display name). 
+A CAS principal contains a unique identifier by which the authenticated user will be known to all requesting
 services. A principal also contains optional [attributes that may be released](../integration/Attribute-Release.html)
 to services to support authorization and personalization. Principal resolution is a requisite part of the
 authentication process that happens after credential authentication.

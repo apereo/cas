@@ -6,10 +6,10 @@ import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.radius.RadiusClientProperties;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import net.jradius.dictionary.Attr_ReplyMessage;
 import net.jradius.dictionary.Attr_State;
@@ -23,17 +23,10 @@ import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguratio
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.DefaultTransitionCriteria;
-import org.springframework.webflow.test.MockRequestContext;
-
 import java.nio.charset.StandardCharsets;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -125,10 +118,7 @@ class RadiusConfigurationTests {
 
     @Test
     void verifyAccessChallengedWebflowEventResolver() throws Throwable {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        val context = MockRequestContext.create(applicationContext);
 
         var result = radiusAccessChallengedAuthenticationWebflowEventResolver.getObject().resolve(context);
         assertNull(result);
