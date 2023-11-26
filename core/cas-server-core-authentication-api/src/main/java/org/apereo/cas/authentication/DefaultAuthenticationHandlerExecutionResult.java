@@ -61,8 +61,8 @@ public class DefaultAuthenticationHandlerExecutionResult implements Authenticati
 
 
     public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final Credential credential,
-                                                       final Principal p) {
-        this(source, credential, p, new ArrayList<>(0));
+                                                       final Principal principal) {
+        this(source, credential, principal, new ArrayList<>(0));
     }
 
 
@@ -72,8 +72,8 @@ public class DefaultAuthenticationHandlerExecutionResult implements Authenticati
     }
 
     public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final Credential credential,
-                                                       final Principal p, final @NonNull List<MessageDescriptor> warnings) {
-        this(StringUtils.isBlank(source.getName()) ? source.getClass().getSimpleName() : source.getName(), credential, p, warnings);
+                                                       final Principal principal, final @NonNull List<MessageDescriptor> warnings) {
+        this(StringUtils.isBlank(source.getName()) ? source.getClass().getSimpleName() : source.getName(), credential, principal, warnings);
     }
 
     @Override

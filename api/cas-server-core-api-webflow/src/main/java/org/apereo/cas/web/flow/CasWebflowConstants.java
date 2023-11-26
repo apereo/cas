@@ -1947,9 +1947,9 @@ public interface CasWebflowConstants {
     String ACTION_ID_PASSWORD_RESET_VALIDATE_TOKEN = "validatePasswordResetTokenAction";
 
     /**
-     * Action id 'remoteAddressCheck'.
+     * Action id 'remoteAuthenticationCheck'.
      */
-    String ACTION_ID_REMOTE_AUTHENTICATION_ADDRESS_CHECK = "remoteAddressCheck";
+    String ACTION_ID_REMOTE_AUTHENTICATION_ADDRESS_CHECK = "remoteAuthenticationCheck";
 
     /**
      * Action id 'basicAuthenticationAction'.
