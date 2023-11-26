@@ -76,8 +76,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
      */
     @Getter
     protected Path serviceRegistryDirectory;
-
-
+    
     @Getter
     protected Map<Long, RegisteredService> services = new ConcurrentHashMap<>();
 
@@ -184,12 +183,12 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
      * Enable default watcher service.
      */
     public void enableDefaultWatcherService() {
-        LOGGER.info("Watching service registry directory at [{}]", this.serviceRegistryDirectory);
+        LOGGER.info("Watching service registry directory at [{}]", serviceRegistryDirectory);
         serviceRegistryWatcherService.close();
         val onCreate = new CreateResourceBasedRegisteredServiceWatcher(this);
         val onDelete = new DeleteResourceBasedRegisteredServiceWatcher(this);
         val onModify = new ModifyResourceBasedRegisteredServiceWatcher(this);
-        serviceRegistryWatcherService = new PathWatcherService(this.serviceRegistryDirectory, onCreate, onModify, onDelete);
+        serviceRegistryWatcherService = new PathWatcherService(serviceRegistryDirectory, onCreate, onModify, onDelete);
         serviceRegistryWatcherService.start(getClass().getSimpleName());
     }
 

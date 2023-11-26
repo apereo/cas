@@ -79,7 +79,7 @@ public class CasConfigurationWatchService implements Closeable, InitializingBean
         val configDirectory = CasConfigurationPropertiesSourceLocator.getStandaloneProfileConfigurationDirectory(environment);
         if (configDirectory != null && configDirectory.exists()) {
             LOGGER.debug("Starting to watch configuration directory [{}]", configDirectory);
-            this.configurationDirectoryWatch = new PathWatcherService(configDirectory.toPath(),
+            configurationDirectoryWatch = new PathWatcherService(configDirectory.toPath(),
                 createConfigurationCreatedEvent.andNext(applicationContext::publishEvent),
                 createConfigurationModifiedEvent.andNext(applicationContext::publishEvent),
                 createConfigurationDeletedEvent.andNext(applicationContext::publishEvent));
