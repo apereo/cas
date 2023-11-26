@@ -1,0 +1,15 @@
+{
+  "@class": "java.util.TreeMap",
+  "given_name": {
+    "@class": "org.apereo.cas.oidc.claims.OidcAttributeDefinition",
+    "key": "given_name",
+    "trustFramework": "spid",
+    "singleValue": true
+  },
+  "family_name": {
+    "@class": "org.apereo.cas.oidc.claims.OidcAttributeDefinition",
+    "key": "family_name",
+    "trustFramework": "spid",
+    "singleValue": true
+  }
+}

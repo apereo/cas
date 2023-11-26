@@ -1,21 +1,20 @@
 package org.apereo.cas.oidc.claims;
 
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
-import org.apereo.cas.oidc.assurance.AssuranceVerificationSource;
+import org.apereo.cas.authentication.attribute.DefaultAttributeDefinition;
+import org.apereo.cas.oidc.assurance.AssuranceVerifiedClaimsProducer;
 import org.apereo.cas.util.CollectionUtils;
 import com.google.common.base.Splitter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.jooq.lambda.Unchecked;
 import org.jose4j.jwt.JwtClaims;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.Set;
 
 /**
  * This is {@link OidcSimpleIdTokenClaimCollector}.
@@ -28,7 +27,19 @@ import java.util.Objects;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class OidcSimpleIdTokenClaimCollector implements OidcIdTokenClaimCollector {
     protected final AttributeDefinitionStore attributeDefinitionStore;
-    protected final AssuranceVerificationSource assuranceVerificationSource;
+    protected final AssuranceVerifiedClaimsProducer assuranceVerifiedClaimsProducer;
+
+    @Override
+    public void conclude(final JwtClaims claims) {
+        val claimNames = Set.copyOf(claims.getClaimNames());
+        claimNames.forEach(claimName ->
+            attributeDefinitionStore.locateAttributeDefinition(claimName, OidcAttributeDefinition.class)
+                .or(() -> attributeDefinitionStore.locateAttributeDefinitionByName(claimName, OidcAttributeDefinition.class))
+                .stream()
+                .filter(definition -> StringUtils.isNotBlank(definition.getTrustFramework()))
+                .findFirst()
+                .ifPresent(definition -> assuranceVerifiedClaimsProducer.produce(claims, claimName, definition.getTrustFramework())));
+    }
 
     @Override
     public void collect(final JwtClaims jwtClaims, final String name, final List<Object> values) {
@@ -44,26 +55,10 @@ public class OidcSimpleIdTokenClaimCollector implements OidcIdTokenClaimCollecto
                 .filter(definition -> definition.getName().contains("."))
                 .findFirst()
                 .ifPresentOrElse(definition -> collectStructuredClaim(jwtClaims, definition, finalValue),
-                    () -> collectClaim(jwtClaims, name, finalValue));
-
-            attributeDefinition
-                .stream()
-                .filter(definition -> StringUtils.isNotBlank(definition.getTrustFramework()))
-                .findFirst()
-                .ifPresent(definition -> {
-                    assuranceVerificationSource.findByTrustFramework(definition.getTrustFramework())
-                        .ifPresent(Unchecked.consumer(verification -> {
-                            val verifiedClaims = (Map) Objects.requireNonNullElseGet(jwtClaims.getClaimValue("verified_claims"), HashMap::new);
-                            verifiedClaims.put("verification", JwtClaims.parse(verification.toJson()).getClaimsMap());
-                            val claimName = StringUtils.defaultIfBlank(definition.getName(), name);
-                            val currentClaimValue = jwtClaims.getClaimValue(claimName);
-                            jwtClaims.unsetClaim(name);
-                            val claims = (Map) Objects.requireNonNullElseGet(verifiedClaims.get("claims"), HashMap::new);
-                            claims.put(claimName, currentClaimValue);
-                            verifiedClaims.put("claims", claims);
-                            collectClaim(jwtClaims, "verified_claims", verifiedClaims);
-                        }));
-                });
+                    () -> {
+                        val claimName = attributeDefinition.map(DefaultAttributeDefinition::getName).orElse(name);
+                        collectClaim(jwtClaims, claimName, finalValue);
+                    });
         }
     }
 

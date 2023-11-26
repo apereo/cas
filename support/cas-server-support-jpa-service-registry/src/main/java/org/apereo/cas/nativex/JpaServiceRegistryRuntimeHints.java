@@ -4,7 +4,6 @@ import org.apereo.cas.services.JpaRegisteredServiceEntity;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
-import org.springframework.webflow.core.collection.LocalAttributeMap;
 import java.util.Collection;
 import java.util.List;
 

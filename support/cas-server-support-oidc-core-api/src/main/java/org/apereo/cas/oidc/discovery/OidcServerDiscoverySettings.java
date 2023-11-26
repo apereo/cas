@@ -103,6 +103,30 @@ public class OidcServerDiscoverySettings {
     @JsonProperty("request_parameter_supported")
     private boolean requestParameterSupported = true;
 
+    @JsonProperty("verified_claims_supported")
+    private boolean verifiedClaimsSupported = true;
+
+    @JsonProperty("trust_frameworks_supported")
+    private Set<String> trustFrameworksSupported;
+
+    @JsonProperty("evidence_supported")
+    private Set<String> evidenceSupported;
+
+    @JsonProperty("documents_supported")
+    private Set<String> documentsSupported;
+
+    @JsonProperty("documents_validation_methods_supported")
+    private Set<String> documentsValidationMethodsSupported;
+
+    @JsonProperty("documents_verification_methods_supported")
+    private Set<String> documentsVerificationMethodsSupported;
+
+    @JsonProperty("electronic_records_supported")
+    private Set<String> electronicRecordsSupported;
+
+    @JsonProperty("claims_in_verified_claims_supported")
+    private Set<String> claimsInVerifiedClaimsSupported;
+    
     @JsonProperty("require_pushed_authorization_requests")
     private boolean requirePushedAuthorizationRequests;
 

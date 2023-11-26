@@ -249,6 +249,10 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
             handleMappedClaimOrDefault(OidcConstants.CLAIM_PREFERRED_USERNAME,
                 registeredService, principal, claims, principal.getId());
         }
+        
+        val collectors = new ArrayList<>(getConfigurationContext().getIdTokenClaimCollectors());
+        AnnotationAwareOrderComparator.sortIfNecessary(collectors);
+        collectors.forEach(collector -> collector.conclude(claims));
     }
 
     private boolean isClaimSupportedForRelease(final String claimName, final RegisteredService registeredService) {

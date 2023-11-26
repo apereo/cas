@@ -16,6 +16,8 @@ import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.assurance.AssuranceVerificationJsonSource;
 import org.apereo.cas.oidc.assurance.AssuranceVerificationSource;
+import org.apereo.cas.oidc.assurance.AssuranceVerifiedClaimsProducer;
+import org.apereo.cas.oidc.assurance.DefaultAssuranceVerifiedClaimsProducer;
 import org.apereo.cas.oidc.authn.OidcAccessTokenAuthenticator;
 import org.apereo.cas.oidc.authn.OidcCasCallbackUrlResolver;
 import org.apereo.cas.oidc.authn.OidcClientConfigurationAccessTokenAuthenticator;
@@ -844,13 +846,24 @@ public class OidcConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = AssuranceVerifiedClaimsProducer.BEAN_NAME)
+        public AssuranceVerifiedClaimsProducer assuranceVerifiedClaimsProducer(
+            @Qualifier(OidcServerDiscoverySettings.BEAN_NAME_FACTORY)
+            final OidcServerDiscoverySettings oidcServerDiscoverySettings,
+            @Qualifier(AssuranceVerificationSource.BEAN_NAME)
+            final AssuranceVerificationSource assuranceVerificationSource) {
+            return new DefaultAssuranceVerifiedClaimsProducer(assuranceVerificationSource, oidcServerDiscoverySettings);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = OidcIdTokenClaimCollector.BEAN_NAME)
         public OidcIdTokenClaimCollector oidcIdTokenClaimCollector(
-            @Qualifier(AssuranceVerificationSource.BEAN_NAME)
-            final AssuranceVerificationSource assuranceVerificationSource,
+            @Qualifier(AssuranceVerifiedClaimsProducer.BEAN_NAME)
+            final AssuranceVerifiedClaimsProducer assuranceVerifiedClaimsProducer,
             @Qualifier(AttributeDefinitionStore.BEAN_NAME)
             final AttributeDefinitionStore attributeDefinitionStore) {
-            return new OidcSimpleIdTokenClaimCollector(attributeDefinitionStore, assuranceVerificationSource);
+            return new OidcSimpleIdTokenClaimCollector(attributeDefinitionStore, assuranceVerifiedClaimsProducer);
         }
 
         @Bean
