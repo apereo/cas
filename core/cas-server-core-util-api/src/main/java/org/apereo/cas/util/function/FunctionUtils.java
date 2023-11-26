@@ -11,6 +11,8 @@ import org.jooq.lambda.fi.util.function.CheckedConsumer;
 import org.jooq.lambda.fi.util.function.CheckedFunction;
 import org.jooq.lambda.fi.util.function.CheckedSupplier;
 import org.springframework.retry.RetryCallback;
+import org.springframework.retry.RetryContext;
+import org.springframework.retry.RetryListener;
 import org.springframework.retry.backoff.FixedBackOffPolicy;
 import org.springframework.retry.policy.SimpleRetryPolicy;
 import org.springframework.retry.support.RetryTemplate;
@@ -488,8 +490,16 @@ public class FunctionUtils {
         classified.put(Throwable.class, Boolean.TRUE);
         clazzes.forEach(clz -> classified.put(clz, Boolean.TRUE));
 
-        retryTemplate.setRetryPolicy(new SimpleRetryPolicy(SimpleRetryPolicy.DEFAULT_MAX_ATTEMPTS, classified, true));
+        val retryPolicy = new SimpleRetryPolicy(SimpleRetryPolicy.DEFAULT_MAX_ATTEMPTS, classified, true);
+        retryTemplate.setRetryPolicy(retryPolicy);
         retryTemplate.setThrowLastExceptionOnExhausted(true);
+        retryTemplate.registerListener(new RetryListener() {
+            @Override
+            public <T, E extends Throwable> boolean open(final RetryContext context, final RetryCallback<T, E> callback) {
+                context.setAttribute("retry.maxAttempts", retryPolicy.getMaxAttempts());
+                return RetryListener.super.open(context, callback);
+            }
+        });
         return Unchecked.supplier(() -> retryTemplate.execute(callback)).get();
     }
 

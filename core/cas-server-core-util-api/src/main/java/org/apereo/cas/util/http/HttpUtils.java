@@ -76,7 +76,16 @@ public class HttpUtils {
             });
             prepareHttpRequest(request, execution);
             val client = getHttpClient(execution);
-            return client.execute(request);
+            return FunctionUtils.doAndRetry(retryContext -> {
+                val res = client.execute(request);
+                if (res == null || org.springframework.http.HttpStatus.valueOf(res.getCode()).isError()) {
+                    val maxAttempts = (int) retryContext.getAttribute("retry.maxAttempts");
+                    if (retryContext.getRetryCount() != maxAttempts - 1) {
+                        throw new IllegalStateException();
+                    }
+                }
+                return res;
+            });
         } catch (final SSLHandshakeException e) {
             val sanitizedUrl = FunctionUtils.doUnchecked(
                 () -> new URIBuilder(execution.getUrl()).removeQuery().clearParameters().build().toASCIIString());
