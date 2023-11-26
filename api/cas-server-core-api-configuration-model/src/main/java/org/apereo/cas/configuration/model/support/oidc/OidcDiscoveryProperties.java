@@ -9,6 +9,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 /**
@@ -237,4 +238,46 @@ public class OidcDiscoveryProperties implements Serializable {
     private List<String> requestObjectEncryptionEncodingValuesSupported = Stream.of("A128CBC-HS256",
         "A192CBC-HS384", "A256CBC-HS512",
         "A128GCM", "A192GCM", "A256GCM").toList();
+
+    /**
+     * Boolean value indicating support for verified_claims, i.e., the OpenID Connect for Identity Assurance extension.
+     */
+    private boolean verifiedClaimsSupported = true;
+
+    /**
+     * Set containing all supported trust frameworks. This array must have at least one member.
+     */
+    private Set<String> trustFrameworksSupported;
+
+    /**
+     * Set containing all types of identity evidence the OP uses. This array may have zero or more members.
+     */
+    private Set<String> evidenceSupported;
+
+    /**
+     * Needed when {@link #evidenceSupported} contains {@code document} or {@code id_document}.
+     * Set containing all identity document types utilized by the CAS for identity verification.
+     */
+    private Set<String> documentsSupported;
+
+    /**
+     * Set containing the validation methods the CAS supports.
+     */
+    private Set<String> documentsValidationMethodsSupported;
+
+    /**
+     * Set containing the verification methods the CAS supports.
+     */
+    private Set<String> documentsVerificationMethodsSupported;
+
+    /**
+     * Needed when evidence_supported contains {@code electronicrecord}. Set containing all
+     * electronic record types the CAS supports.
+     */
+    private Set<String> electronicRecordsSupported;
+
+    /**
+     * List of the supported verified claims.
+     */
+    private Set<String> claimsInVerifiedClaimsSupported;
 }

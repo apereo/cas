@@ -97,7 +97,8 @@ class OidcSimpleIdTokenClaimCollectorTests extends AbstractOidcTests {
         oidcIdTokenClaimCollector.collect(originalClaims, "assurance", List.of("value1", "value2"));
         oidcIdTokenClaimCollector.collect(originalClaims, "homeCountry", List.of("USA", "UK"));
         oidcIdTokenClaimCollector.collect(originalClaims, "mail", List.of("cas@apereo.org"));
-
+        oidcIdTokenClaimCollector.conclude(originalClaims);
+        
         assertFalse(originalClaims.hasClaim("assurance"));
         assertFalse(originalClaims.hasClaim("home-country"));
         assertFalse(originalClaims.hasClaim("homeCountry"));
