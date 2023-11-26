@@ -210,15 +210,6 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
         return metadataResolver;
     }
 
-    /**
-     * Fetch metadata http response.
-     *
-     * @param service          the service
-     * @param metadataLocation the metadata location
-     * @param criteriaSet      the criteria set
-     * @param backupFile       the backup file
-     * @return the http response
-     */
     protected HttpResponse fetchMetadata(final SamlRegisteredService service,
                                          final String metadataLocation,
                                          final CriteriaSet criteriaSet,
