@@ -1,0 +1,19 @@
+{
+  "dependencies": "generic-remote-webflow",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    "--cas.audit.engine.enabled=true",
+    "--cas.audit.slf4j.use-single-line=true",
+
+    "--cas.authn.remote.cookie.cookie-name=MyCookie",
+    "--cas.authn.remote.cookie.crypto.encryption.key=u696jJnPvm1DHLR7yVCSKMMzzoPoFxJZW4-MP1CkM5w",
+    "--cas.authn.remote.cookie.crypto.signing.key=zPdNCd0R1oMR0ClzEqZzapkte8rO0tNvygYjmHoUhitAu6CBscwMC3ZTKy8tleTKiQ6GVcuiQQgxfd1nSKxf7w",
+    
+    "--cas.service-registry.core.init-from-json=true"
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+}
