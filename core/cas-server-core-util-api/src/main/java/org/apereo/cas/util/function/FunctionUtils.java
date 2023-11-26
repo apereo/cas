@@ -495,9 +495,9 @@ public class FunctionUtils {
         retryTemplate.setThrowLastExceptionOnExhausted(true);
         retryTemplate.registerListener(new RetryListener() {
             @Override
-            public <T, E extends Throwable> boolean open(final RetryContext context, final RetryCallback<T, E> callback) {
+            public boolean open(final RetryContext context, final RetryCallback __) {
                 context.setAttribute("retry.maxAttempts", retryPolicy.getMaxAttempts());
-                return RetryListener.super.open(context, callback);
+                return RetryListener.super.open(context, __);
             }
         });
         return Unchecked.supplier(() -> retryTemplate.execute(callback)).get();
