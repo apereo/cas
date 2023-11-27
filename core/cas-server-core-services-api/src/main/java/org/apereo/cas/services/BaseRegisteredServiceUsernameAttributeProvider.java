@@ -47,7 +47,7 @@ public abstract class BaseRegisteredServiceUsernameAttributeProvider implements 
     private String removePattern;
 
     @Override
-    public final String resolveUsername(final RegisteredServiceUsernameProviderContext context) {
+    public final String resolveUsername(final RegisteredServiceUsernameProviderContext context) throws Throwable {
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(context.getService(), context.getRegisteredService());
             
         val resolvedUsername = resolveUsernameInternal(context);
@@ -85,25 +85,12 @@ public abstract class BaseRegisteredServiceUsernameAttributeProvider implements 
         return FunctionUtils.doIfNotNull(scope, () -> String.format("%s@%s", resolved, scope), () -> resolved).get();
     }
 
-    /**
-     * Encrypt resolved username.
-     *
-     * @param context  the context
-     * @param username the username
-     * @return the encrypted username or null
-     */
     protected String encryptResolvedUsername(final RegisteredServiceUsernameProviderContext context, final String username) {
         val applicationContext = ApplicationContextProvider.getApplicationContext();
         val cipher = applicationContext.getBean(RegisteredServiceCipherExecutor.DEFAULT_BEAN_NAME, RegisteredServiceCipherExecutor.class);
         return cipher.encode(username, Optional.of(context.getRegisteredService()));
     }
 
-    /**
-     * Resolve username internal string.
-     *
-     * @param context the context
-     * @return the string
-     */
-    protected abstract String resolveUsernameInternal(RegisteredServiceUsernameProviderContext context);
+    protected abstract String resolveUsernameInternal(RegisteredServiceUsernameProviderContext context) throws Throwable;
 
 }

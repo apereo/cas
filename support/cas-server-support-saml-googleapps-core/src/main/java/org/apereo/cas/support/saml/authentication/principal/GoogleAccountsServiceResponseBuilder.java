@@ -98,13 +98,15 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
     @Override
     public Response build(final WebApplicationService webApplicationService, final String serviceTicket,
                           final Authentication authentication) {
-        val service = (GoogleAccountsService) webApplicationService;
-        val parameters = new HashMap<String, String>();
-        val samlResponse = constructSamlResponse(service, authentication);
-        val signedResponse = AbstractSamlObjectBuilder.signSamlResponse(samlResponse, this.privateKey, publicKey);
-        parameters.put(SamlProtocolConstants.PARAMETER_SAML_RESPONSE, signedResponse);
-        parameters.put(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, service.getRelayState());
-        return buildPost(service, parameters);
+        return FunctionUtils.doUnchecked(() -> {
+            val service = (GoogleAccountsService) webApplicationService;
+            val parameters = new HashMap<String, String>();
+            val samlResponse = constructSamlResponse(service, authentication);
+            val signedResponse = AbstractSamlObjectBuilder.signSamlResponse(samlResponse, this.privateKey, publicKey);
+            parameters.put(SamlProtocolConstants.PARAMETER_SAML_RESPONSE, signedResponse);
+            parameters.put(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, service.getRelayState());
+            return buildPost(service, parameters);
+        });
     }
 
     @Override
@@ -113,7 +115,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
     }
 
     protected String constructSamlResponse(final GoogleAccountsService service,
-                                           final Authentication authentication) {
+                                           final Authentication authentication) throws Throwable {
         val currentDateTime = ZonedDateTime.now(ZoneOffset.UTC);
         val notBeforeIssueInstant = ZonedDateTime.parse("2003-04-17T00:46:02Z");
         val registeredService = servicesManager.findServiceBy(service);
@@ -181,11 +183,6 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
         privateKey = bean.getObject();
     }
 
-    /**
-     * Create the public key.
-     *
-     * @throws Exception if key creation ran into an error
-     */
     protected void createGoogleAppsPublicKey() throws Exception {
         if (!isValidConfiguration()) {
             LOGGER.debug("Google Apps public key bean will not be created, because it's not configured");

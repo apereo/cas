@@ -19,6 +19,7 @@ public interface RegisteredServiceUsernameAttributeProvider extends Serializable
      *
      * @param context the context
      * @return the username value configured for this service
+     * @throws Throwable the throwable
      */
-    String resolveUsername(RegisteredServiceUsernameProviderContext context);
+    String resolveUsername(RegisteredServiceUsernameProviderContext context) throws Throwable;
 }
