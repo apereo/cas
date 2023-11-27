@@ -13,6 +13,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -270,7 +271,7 @@ public class PasswordlessAuthenticationWebflowConfiguration {
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
                 .withAction(() -> {
-                    if (pp.getIfAvailable() != null) {
+                    if (pp.getIfAvailable() != null && CasRuntimeHintsRegistrar.notInNativeImage()) {
                         val selectorScriptResource = casProperties.getAuthn().getPasswordless().getCore().getDelegatedAuthenticationSelectorScript().getLocation();
                         return new PasswordlessDetermineDelegatedAuthenticationAction(casProperties,
                             pp.getObject(), new WatchableGroovyScriptResource(selectorScriptResource));

@@ -4,6 +4,7 @@ import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
@@ -106,9 +107,9 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
             return resumeFlow(context);
         }
 
-        val credential = WebUtils.getCredential(context);
+        val credentials = getConfigurationContext().getCasWebflowCredentialProvider().extract(context);
         val builder = getConfigurationContext().getAuthenticationSystemSupport()
-            .establishAuthenticationContextFromInitial(authentication, credential);
+            .establishAuthenticationContextFromInitial(authentication, credentials.toArray(new Credential[]{}));
 
         LOGGER.trace("Recording and tracking initial authentication results in the request context");
         WebUtils.putAuthenticationResultBuilder(builder, context);

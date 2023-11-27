@@ -17,8 +17,8 @@ public interface TicketTrackingPolicy {
      * Typically, ticket-granting tickets keep track of applications
      * and service tickets for which they are authorized to issue tickets.
      *
-     * @param ownerTicket   the owner ticket
-     * @param serviceTicket the service ticket
+     * @param ownerTicket the owner ticket
+     * @param ticket      the tracked ticket
      */
-    default void trackServiceTicket(final AuthenticatedServicesAwareTicketGrantingTicket ownerTicket, final ServiceTicket serviceTicket) {}
+    default void trackTicket(final TicketGrantingTicket ownerTicket, final Ticket ticket) {}
 }

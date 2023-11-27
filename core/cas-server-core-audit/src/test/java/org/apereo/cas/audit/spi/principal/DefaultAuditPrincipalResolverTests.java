@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import java.util.UUID;
 import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
@@ -42,10 +43,16 @@ public class DefaultAuditPrincipalResolverTests {
     @Autowired
     @Qualifier("auditablePrincipalResolver")
     private PrincipalResolver auditablePrincipalResolver;
-    
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @ParameterizedTest
     @MethodSource("getAuditParameters")
     void verifyOperation(final Object argument, final Object returnValue) throws Exception {
+        if (argument instanceof MockRequestContext ctx) {
+            ctx.setApplicationContext(applicationContext);
+        }
         val jp = mockJoinPointWithFirstArg(argument);
         val principalId = auditablePrincipalResolver.resolveFrom(jp, returnValue);
         assertNotEquals(PrincipalResolver.UNKNOWN_USER, principalId);

@@ -26,14 +26,14 @@ You may chain various attribute release policies that authorize claim release ba
 Standard scopes that internally catalog pre-defined claims all belong to 
 the namespace `org.apereo.cas.oidc.claims` and are described below:
 
-| Policy                                               | Description                                                                                                                             |
-|------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------|
-| `o.a.c.o.c.OidcProfileScopeAttributeReleasePolicy`   | Release claims mapped to the spec-predefined `profile` scope.                                                                           |
-| `o.a.c.o.c.OidcEmailScopeAttributeReleasePolicy`     | Release claims mapped to the spec-predefined `email` scope.                                                                             |
-| `o.a.c.o.c.OidcAddressScopeAttributeReleasePolicy`   | Release claims mapped to the spec-predefined `address` scope.                                                                           |
-| `o.a.c.o.c.OidcPhoneScopeAttributeReleasePolicy`     | Release claims mapped to the spec-predefined `phone` scope.                                                                             |
-| `o.a.c.o.c.OidcAssuranceScopeAttributeReleasePolicy` | Release claims mapped to the [CAS-predefined](https://openid.net/specs/openid-connect-4-identity-assurance-1_0.html) `assurance` scope. |
-| `o.a.c.o.c.OidcCustomScopeAttributeReleasePolicy`    | Release claims mapped to the CAS-defined `custom` scope.                                                                                |
+| Policy                                               | Description                                                                                    |
+|------------------------------------------------------|------------------------------------------------------------------------------------------------|
+| `o.a.c.o.c.OidcProfileScopeAttributeReleasePolicy`   | Release claims mapped to the spec-predefined `profile` scope.                                  |
+| `o.a.c.o.c.OidcEmailScopeAttributeReleasePolicy`     | Release claims mapped to the spec-predefined `email` scope.                                    |
+| `o.a.c.o.c.OidcAddressScopeAttributeReleasePolicy`   | Release claims mapped to the spec-predefined `address` scope.                                  |
+| `o.a.c.o.c.OidcPhoneScopeAttributeReleasePolicy`     | Release claims mapped to the spec-predefined `phone` scope.                                    |
+| `o.a.c.o.c.OidcAssuranceScopeAttributeReleasePolicy` | Release claims [mapped to the `assurance` scope](OIDC-Authentication-Identity-Assurance.html). |
+| `o.a.c.o.c.OidcCustomScopeAttributeReleasePolicy`    | Release claims mapped to the CAS-defined `custom` scope.                                       |
 
 ## User-Defined Scopes
 

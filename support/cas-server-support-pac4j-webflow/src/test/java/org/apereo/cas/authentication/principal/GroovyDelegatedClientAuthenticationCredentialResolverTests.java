@@ -11,6 +11,7 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.UUID;
 
@@ -30,9 +31,12 @@ class GroovyDelegatedClientAuthenticationCredentialResolverTests {
     @Qualifier("groovyDelegatedClientAuthenticationCredentialResolver")
     private DelegatedClientAuthenticationCredentialResolver groovyDelegatedClientAuthenticationCredentialResolver;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @Test
     void verifyOperation() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
 
         val credentials = new TokenCredentials(UUID.randomUUID().toString());
         val clientCredential = new ClientCredential(credentials, "FacebookClient");

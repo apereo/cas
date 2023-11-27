@@ -38,7 +38,7 @@ class WSFederationMetadataUIActionTests extends BaseCoreWsSecurityIdentityProvid
 
     @Test
     void verifyOperation() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
 
         val registeredService = new WSFederationRegisteredService();
         registeredService.setRealm("CAS");

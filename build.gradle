@@ -21,7 +21,6 @@ buildscript {
     dependencies {
 //        classpath "gradle.plugin.com.ewerk.gradle.plugins:jaxb2-plugin:1.0.10"
         classpath "com.github.node-gradle:gradle-node-plugin:$gradleNodeVersion"
-        classpath "org.gradle:test-retry-gradle-plugin:$gradleRetryVersion"
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
         classpath "com.gorylenko.gradle-git-properties:gradle-git-properties:$gradleGitVersion"
         classpath "io.freefair.gradle:lombok-plugin:$gradleLombokVersion"
@@ -140,11 +139,6 @@ allprojects {
 
     if (gradle.startParameter.taskNames.any { task -> task.contains("publishToMavenLocal") }) {
         apply plugin: "maven-publish"
-    }
-
-    def skipRetry = providers.systemProperty('skipTestRetry').present
-    if (!skipRetry) {
-        apply plugin: "org.gradle.test-retry"
     }
 
     apply from: rootProject.file("gradle/tasks.gradle")

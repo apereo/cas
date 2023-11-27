@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.ldap.services;
 import org.apereo.cas.configuration.model.support.ldap.serviceregistry.LdapServiceRegistryProperties;
 import org.apereo.cas.services.AbstractServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceDefinition;
 import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
@@ -57,7 +58,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry implements Disp
     @Override
     public RegisteredService save(final RegisteredService rs) {
         invokeServiceRegistryListenerPreSave(rs);
-        if (rs.getId() != RegisteredService.INITIAL_IDENTIFIER_VALUE) {
+        if (rs.getId() != RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE) {
             return update(rs);
         }
         insert(rs);

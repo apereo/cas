@@ -3,7 +3,6 @@ package org.apereo.cas.support.oauth.logout;
 import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.logout.LogoutExecutionPlan;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -20,7 +19,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -38,7 +36,8 @@ import static org.mockito.Mockito.*;
         "cas.authn.attribute-repository.stub.attributes.uid=cas",
         "cas.authn.attribute-repository.stub.attributes.givenName=apereo-cas",
         "spring.main.allow-bean-definition-overriding=true",
-        "cas.authn.oauth.session-replication.replicate-sessions=true"
+        "cas.authn.oauth.session-replication.replicate-sessions=true",
+        "cas.ticket.track-descendant-tickets=false"
     })
 @EnableTransactionManagement(proxyTargetClass = false)
 @EnableAspectJAutoProxy(proxyTargetClass = false)

@@ -9,6 +9,7 @@ import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.token.TokenTicketBuilder;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.UrlValidator;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -72,7 +73,9 @@ public class TokenWebApplicationServiceResponseBuilder extends WebApplicationSer
     }
 
     protected String generateToken(final WebApplicationService service, final Map<String, String> parameters) {
-        val ticketId = parameters.get(CasProtocolConstants.PARAMETER_TICKET);
-        return tokenTicketBuilder.build(ticketId, service);
+        return FunctionUtils.doUnchecked(() -> {
+            val ticketId = parameters.get(CasProtocolConstants.PARAMETER_TICKET);
+            return tokenTicketBuilder.build(ticketId, service);
+        });
     }
 }

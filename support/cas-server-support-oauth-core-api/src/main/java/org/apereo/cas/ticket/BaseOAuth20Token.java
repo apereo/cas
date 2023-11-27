@@ -64,7 +64,7 @@ public abstract class BaseOAuth20Token extends AbstractTicket implements OAuth20
 
     public BaseOAuth20Token(final String id,
                             final @NonNull Service service,
-                            final @NonNull Authentication authentication,
+                            final Authentication authentication,
                             final @NonNull ExpirationPolicy expirationPolicy,
                             final TicketGrantingTicket ticketGrantingTicket,
                             final @NonNull Collection<String> scopes,

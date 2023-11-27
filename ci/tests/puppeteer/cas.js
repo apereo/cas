@@ -455,7 +455,7 @@ exports.doGet = async (url, successHandler, failureHandler, headers = {}, respon
 
 exports.doPost = async (url, params = "", headers = {}, successHandler, failureHandler) => {
     const instance = axios.create({
-        timeout: 10000,
+        timeout: 12000,
         httpsAgent: new https.Agent({
             rejectUnauthorized: false
         })
@@ -818,15 +818,17 @@ exports.goto = async (page, url, retryCount = 5) => {
     return response;
 };
 
-exports.gotoLogin = async(page, service = undefined, port = 8443) => {
-    const url = `https://localhost:${port}/cas/login` + (service === undefined ? "" : `?service=${service}`);
+exports.gotoLogin = async(page, service = undefined, port = 8443, renew = undefined) => {
+    let queryString = (service === undefined ? "" : `service=${service}&`);
+    queryString += (renew === undefined ? "" : `renew=true&`);
+    let url = `https://localhost:${port}/cas/login?${queryString}`;
     return await this.goto(page, url);
 };
 
 exports.gotoLogout = async(page, service = undefined, port = 8443) => {
     const url = `https://localhost:${port}/cas/logout` + (service === undefined ? "" : `?service=${service}`);
     return await this.goto(page, url);
-}
+};
 
 exports.parseXML = async(xml, options = {}) => {
     let parsedXML = undefined;

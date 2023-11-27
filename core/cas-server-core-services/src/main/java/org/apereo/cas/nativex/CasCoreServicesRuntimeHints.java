@@ -65,6 +65,7 @@ import org.apereo.cas.services.ServiceRegistryInitializer;
 import org.apereo.cas.services.ServiceRegistryInitializerEventListener;
 import org.apereo.cas.services.StaticRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.TimeBasedRegisteredServiceAccessStrategy;
+import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 import org.apereo.cas.services.query.RegisteredServiceQuery;
 import org.apereo.cas.services.query.RegisteredServiceQueryIndex;
@@ -176,6 +177,7 @@ public class CasCoreServicesRuntimeHints implements CasRuntimeHintsRegistrar {
             .registerType(RestfulRegisteredServiceAuthenticationPolicyCriteria.class);
 
         List.of(
+            UnauthorizedServiceException.class,
             RegisteredServiceQuery.class,
             RegisteredServiceQueryIndex.class,
             CasRegisteredService.class

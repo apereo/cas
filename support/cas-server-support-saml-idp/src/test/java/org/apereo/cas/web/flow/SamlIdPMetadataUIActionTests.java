@@ -34,7 +34,7 @@ class SamlIdPMetadataUIActionTests extends BaseSamlIdPWebflowTests {
 
     @Test
     void verifyOperation() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
 
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         val service = RegisteredServiceTestUtils.getService(registeredService.getServiceId());
@@ -50,7 +50,7 @@ class SamlIdPMetadataUIActionTests extends BaseSamlIdPWebflowTests {
 
     @Test
     void verifyNoEntity() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
                      
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         registeredService.setServiceId("something-else");

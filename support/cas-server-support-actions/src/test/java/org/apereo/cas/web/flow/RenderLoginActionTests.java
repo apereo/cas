@@ -12,9 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.execution.RequestContextHolder;
 import java.util.Map;
 import static java.nio.charset.StandardCharsets.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -39,9 +37,7 @@ class RenderLoginActionTests {
 
         @Test
         void verifyNoRender() throws Throwable {
-            val context = MockRequestContext.create();
-            RequestContextHolder.setRequestContext(context);
-            ExternalContextHolder.setExternalContext(context.getExternalContext());
+            val context = MockRequestContext.create(applicationContext);
             assertNull(renderLoginAction.execute(context));
         }
     }
@@ -55,9 +51,7 @@ class RenderLoginActionTests {
 
         @Test
         void verifyGroovyRender() throws Throwable {
-            val context = MockRequestContext.create();
-            RequestContextHolder.setRequestContext(context);
-            ExternalContextHolder.setExternalContext(context.getExternalContext());
+            val context = MockRequestContext.create(applicationContext);
             assertNull(renderLoginAction.execute(context));
             assertNotNull(context.getFlowScope().get("decoration"));
         }
@@ -72,9 +66,7 @@ class RenderLoginActionTests {
 
         @Test
         void verifyRestfulRender() throws Throwable {
-            val context = MockRequestContext.create();
-            RequestContextHolder.setRequestContext(context);
-            ExternalContextHolder.setExternalContext(context.getExternalContext());
+            val context = MockRequestContext.create(applicationContext);
 
             val entity = MAPPER.writeValueAsString(Map.of("key", "value"));
             try (val webServer = new MockWebServer(1234,

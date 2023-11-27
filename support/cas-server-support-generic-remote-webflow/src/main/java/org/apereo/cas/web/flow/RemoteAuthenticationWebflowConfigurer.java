@@ -9,20 +9,20 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
 /**
- * The {@link RemoteAddressWebflowConfigurer} is responsible for
+ * The {@link RemoteAuthenticationWebflowConfigurer} is responsible for
  * adjusting the CAS webflow context for remote address integration.
  *
  * @author Misagh Moayyed
  * @since 4.2
  */
-public class RemoteAddressWebflowConfigurer extends AbstractCasWebflowConfigurer {
+public class RemoteAuthenticationWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     static final String START_AUTHENTICATE = "startAuthenticate";
 
-    public RemoteAddressWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
-                                          final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                          final ConfigurableApplicationContext applicationContext,
-                                          final CasConfigurationProperties casProperties) {
+    public RemoteAuthenticationWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
+                                                 final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                                 final ConfigurableApplicationContext applicationContext,
+                                                 final CasConfigurationProperties casProperties) {
         super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
     }
 

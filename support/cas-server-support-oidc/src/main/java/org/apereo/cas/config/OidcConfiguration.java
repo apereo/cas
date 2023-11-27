@@ -14,6 +14,8 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.assurance.AssuranceVerificationJsonSource;
+import org.apereo.cas.oidc.assurance.AssuranceVerificationSource;
 import org.apereo.cas.oidc.authn.OidcAccessTokenAuthenticator;
 import org.apereo.cas.oidc.authn.OidcCasCallbackUrlResolver;
 import org.apereo.cas.oidc.authn.OidcClientConfigurationAccessTokenAuthenticator;
@@ -109,6 +111,7 @@ import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
+import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.serialization.JacksonObjectMapperCustomizer;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.apereo.cas.util.spring.beans.BeanCondition;
@@ -246,7 +249,7 @@ public class OidcConfiguration {
                 .when(CONDITION_WEBFINGER.given(applicationContext.getEnvironment()))
                 .supply(() -> {
                     val userInfo = casProperties.getAuthn().getOidc().getWebfinger().getUserInfo();
-                    if (userInfo.getGroovy().getLocation() != null) {
+                    if (userInfo.getGroovy().getLocation() != null && CasRuntimeHintsRegistrar.notInNativeImage()) {
                         return new OidcGroovyWebFingerUserInfoRepository(userInfo.getGroovy().getLocation());
                     }
                     if (StringUtils.isNotBlank(userInfo.getRest().getUrl())) {
@@ -702,8 +705,7 @@ public class OidcConfiguration {
             final ExpirationPolicyBuilder oidcIdTokenExpirationPolicy,
             @Qualifier("oidcUserProfileViewRenderer")
             final OAuth20UserProfileViewRenderer oidcUserProfileViewRenderer,
-            @Qualifier(OidcIdTokenClaimCollector.BEAN_NAME)
-            final OidcIdTokenClaimCollector oidcIdTokenClaimCollector,
+            final List<OidcIdTokenClaimCollector> oidcIdTokenClaimCollectors,
             @Qualifier("callbackAuthorizeViewResolver")
             final OAuth20CallbackAuthorizeViewResolver callbackAuthorizeViewResolver,
             @Qualifier("oauthInvalidAuthorizationBuilder")
@@ -783,7 +785,7 @@ public class OidcConfiguration {
                 .issuerService(oidcIssuerService)
                 .clientRegistrationRequestTranslator(oidcClientRegistrationRequestTranslator)
                 .ticketFactory(ticketFactory)
-                .idTokenClaimCollector(oidcIdTokenClaimCollector)
+                .idTokenClaimCollectors(oidcIdTokenClaimCollectors)
                 .idTokenGeneratorService(oidcIdTokenGenerator)
                 .idTokenExpirationPolicy(oidcIdTokenExpirationPolicy)
                 .oidcRequestSupport(oidcRequestSupport)
@@ -844,9 +846,11 @@ public class OidcConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = OidcIdTokenClaimCollector.BEAN_NAME)
         public OidcIdTokenClaimCollector oidcIdTokenClaimCollector(
+            @Qualifier(AssuranceVerificationSource.BEAN_NAME)
+            final AssuranceVerificationSource assuranceVerificationSource,
             @Qualifier(AttributeDefinitionStore.BEAN_NAME)
             final AttributeDefinitionStore attributeDefinitionStore) {
-            return new OidcSimpleIdTokenClaimCollector(attributeDefinitionStore);
+            return new OidcSimpleIdTokenClaimCollector(attributeDefinitionStore, assuranceVerificationSource);
         }
 
         @Bean
@@ -1103,4 +1107,20 @@ public class OidcConfiguration {
         }
 
     }
+
+
+    @Configuration(value = "OidcAssuranceConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class OidcAssuranceConfiguration {
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = AssuranceVerificationSource.BEAN_NAME)
+        public AssuranceVerificationSource assuranceVerificationSource(
+            final CasConfigurationProperties casProperties) {
+            val source = casProperties.getAuthn().getOidc().getIdentityAssurance().getVerificationSource().getLocation();
+            return FunctionUtils.doIfNotNull(source,
+                () -> new AssuranceVerificationJsonSource(source), AssuranceVerificationSource::empty).get();
+        }
+    }
+
 }

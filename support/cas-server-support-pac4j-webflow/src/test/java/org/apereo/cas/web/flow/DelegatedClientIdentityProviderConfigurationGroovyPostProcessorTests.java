@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.Set;
 
@@ -33,12 +34,15 @@ class DelegatedClientIdentityProviderConfigurationGroovyPostProcessorTests {
     private DelegatedClientIdentityProviderConfigurationPostProcessor delegatedClientIdentityProviderConfigurationPostProcessor;
 
     @Autowired
-    @Qualifier("delegatedIdentityProviders")
+    @Qualifier(DelegatedIdentityProviders.BEAN_NAME)
     private DelegatedIdentityProviders identityProviders;
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @Test
     void verifyOperation() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         val client = identityProviders.findClient("CasClient").get();
         val provider = DelegatedClientIdentityProviderConfiguration.builder().name(client.getName()).build();
         val clientConfig = Set.of(provider);

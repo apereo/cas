@@ -15,9 +15,11 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.pac4j.core.credentials.extractor.CredentialsExtractor;
 import org.pac4j.core.exception.http.FoundAction;
 import org.pac4j.core.logout.processor.LogoutProcessor;
 import org.pac4j.saml.client.SAML2Client;
+import org.pac4j.saml.credentials.SAML2Credentials;
 import org.pac4j.saml.logout.processor.SAML2LogoutProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -25,6 +27,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.webflow.execution.Action;
+import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -38,12 +41,13 @@ import static org.mockito.Mockito.*;
 @Tag("Delegation")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class DelegatedAuthenticationClientFinishLogoutActionTests {
+    
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_FINISH_LOGOUT)
     private Action delegatedAuthenticationClientFinishLogoutAction;
 
     @Autowired
-    @Qualifier("delegatedIdentityProviders")
+    @Qualifier(DelegatedIdentityProviders.BEAN_NAME)
     private DelegatedIdentityProviders identityProviders;
 
     @Autowired
@@ -98,18 +102,24 @@ class DelegatedAuthenticationClientFinishLogoutActionTests {
     }
 
     @Test
-    @Order(1000)
+    @Order(100)
     void verifyOperationFailsWithError() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
         context.getHttpServletRequest().addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
         context.setParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, "SAML2Client");
-        val samlClient = (SAML2Client) identityProviders.findClient("SAML2Client").get();
+        val samlClient = (SAML2Client) identityProviders.findClient("SAML2Client").orElseThrow();
+
         val handler = mock(LogoutProcessor.class);
         when(handler.processLogout(any(), any())).thenReturn(new FoundAction("https://google.com"));
         samlClient.setLogoutProcessor(handler);
+
+        val credentialExtractor = mock(CredentialsExtractor.class);
+        when(credentialExtractor.extract(any())).thenReturn(Optional.of(mock(SAML2Credentials.class)));
+        samlClient.setCredentialsExtractor(credentialExtractor);
         val result = delegatedAuthenticationClientFinishLogoutAction.execute(context);
         assertNull(result);
         assertEquals(HttpStatus.FOUND.value(), context.getHttpServletResponse().getStatus());
         assertEquals("https://google.com", context.getHttpServletResponse().getHeader("Location"));
     }
+
 }

@@ -188,7 +188,7 @@ public class DelegatedAuthenticationEventExecutionPlanConfiguration {
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier("clientPrincipalFactory") final PrincipalFactory clientPrincipalFactory,
-            @Qualifier("delegatedIdentityProviders") final DelegatedIdentityProviders identityProviders,
+            @Qualifier(DelegatedIdentityProviders.BEAN_NAME) final DelegatedIdentityProviders identityProviders,
             @Qualifier(DelegatedClientUserProfileProvisioner.BEAN_NAME) final DelegatedClientUserProfileProvisioner clientUserProfileProvisioner,
             @Qualifier("delegatedClientDistributedSessionStore") final SessionStore delegatedClientDistributedSessionStore,
             @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
@@ -275,7 +275,7 @@ public class DelegatedAuthenticationEventExecutionPlanConfiguration {
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        @ConditionalOnMissingBean(name = "delegatedIdentityProviders")
+        @ConditionalOnMissingBean(name = DelegatedIdentityProviders.BEAN_NAME)
         public DelegatedIdentityProviders delegatedIdentityProviders(
             final CasConfigurationProperties casProperties,
             @Qualifier("pac4jDelegatedClientFactory") final DelegatedIdentityProviderFactory pac4jDelegatedIdentityProviderFactory) {
@@ -344,7 +344,7 @@ public class DelegatedAuthenticationEventExecutionPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlanConfigurer pac4jAuthenticationEventExecutionPlanConfigurer(
-            @Qualifier("delegatedIdentityProviders") final DelegatedIdentityProviders identityProviders,
+            @Qualifier(DelegatedIdentityProviders.BEAN_NAME) final DelegatedIdentityProviders identityProviders,
             @Qualifier("clientAuthenticationHandler") final AuthenticationHandler clientAuthenticationHandler,
             @Qualifier("clientAuthenticationMetaDataPopulator") final AuthenticationMetaDataPopulator clientAuthenticationMetaDataPopulator,
             @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER) final PrincipalResolver defaultPrincipalResolver) {
@@ -369,7 +369,7 @@ public class DelegatedAuthenticationEventExecutionPlanConfiguration {
         @ConditionalOnMissingBean(name = "delegatedAuthenticationCasServerProfileCustomizer")
         @Bean
         public CasServerProfileCustomizer delegatedAuthenticationCasServerProfileCustomizer(
-            @Qualifier("delegatedIdentityProviders") final DelegatedIdentityProviders identityProviders,
+            @Qualifier(DelegatedIdentityProviders.BEAN_NAME) final DelegatedIdentityProviders identityProviders,
             final CasConfigurationProperties casProperties) {
             val clients = identityProviders.findAllClients().stream().map(Client::getName).collect(Collectors.toSet());
             return profile -> profile.getDetails().put("delegatedClientTypesSupported", clients);

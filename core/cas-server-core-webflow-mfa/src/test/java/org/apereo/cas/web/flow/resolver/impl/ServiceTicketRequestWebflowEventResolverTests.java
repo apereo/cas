@@ -31,7 +31,7 @@ class ServiceTicketRequestWebflowEventResolverTests extends BaseCasWebflowMultif
     
     @Test
     void verifyAttemptWithoutCredential() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
 
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
@@ -47,7 +47,7 @@ class ServiceTicketRequestWebflowEventResolverTests extends BaseCasWebflowMultif
 
     @Test
     void verifyServiceTicketRequestSkipped() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         context.setParameter(CasProtocolConstants.PARAMETER_RENEW, "true");
         val tgt = new MockTicketGrantingTicket("casuser");
         val service = RegisteredServiceTestUtils.getService("service-ticket-request");
@@ -61,7 +61,7 @@ class ServiceTicketRequestWebflowEventResolverTests extends BaseCasWebflowMultif
 
     @Test
     void verifyServiceTicketRequestCreated() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
         val service = RegisteredServiceTestUtils.getService("service-ticket-request");
@@ -77,7 +77,7 @@ class ServiceTicketRequestWebflowEventResolverTests extends BaseCasWebflowMultif
 
     @Test
     void verifyServiceTicketRequestPrincipalMismatch() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         val tgt = new MockTicketGrantingTicket("randomuser");
         ticketRegistry.addTicket(tgt);
         val service = RegisteredServiceTestUtils.getService("service-ticket-request");
@@ -92,7 +92,7 @@ class ServiceTicketRequestWebflowEventResolverTests extends BaseCasWebflowMultif
 
     @Test
     void verifyServiceTicketRequestFailsAuthN() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
 
@@ -109,7 +109,7 @@ class ServiceTicketRequestWebflowEventResolverTests extends BaseCasWebflowMultif
 
     @Test
     void verifyServiceTicketRequestWithRenew() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         context.setParameter(CasProtocolConstants.PARAMETER_RENEW, "true");
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);

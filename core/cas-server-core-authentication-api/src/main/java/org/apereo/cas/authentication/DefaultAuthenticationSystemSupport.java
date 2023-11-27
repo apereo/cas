@@ -33,7 +33,7 @@ public class DefaultAuthenticationSystemSupport implements AuthenticationSystemS
     private final ServicesManager servicesManager;
     @Override
     public AuthenticationResultBuilder establishAuthenticationContextFromInitial(final Authentication authentication,
-                                                                                 final Credential credentials) {
+                                                                                 final Credential... credentials) {
         return establishAuthenticationContextFromInitial(authentication).collect(credentials);
     }
 

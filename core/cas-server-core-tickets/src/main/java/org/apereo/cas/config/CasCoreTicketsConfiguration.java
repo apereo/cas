@@ -6,10 +6,8 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.AllServicesSessionTrackingPolicy;
 import org.apereo.cas.ticket.DefaultTicketCatalog;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
-import org.apereo.cas.ticket.MostRecentServiceSessionTrackingPolicy;
 import org.apereo.cas.ticket.ServiceTicketFactory;
 import org.apereo.cas.ticket.ServiceTicketGeneratorAuthority;
 import org.apereo.cas.ticket.Ticket;
@@ -18,7 +16,6 @@ import org.apereo.cas.ticket.TicketCatalogConfigurer;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketFactoryExecutionPlanConfigurer;
 import org.apereo.cas.ticket.TicketGrantingTicketFactory;
-import org.apereo.cas.ticket.TicketTrackingPolicy;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.expiration.builder.ProxyGrantingTicketExpirationPolicyBuilder;
@@ -44,6 +41,10 @@ import org.apereo.cas.ticket.registry.pubsub.QueueableTicketRegistry;
 import org.apereo.cas.ticket.registry.pubsub.queue.QueueableTicketRegistryMessagePublisher;
 import org.apereo.cas.ticket.registry.pubsub.queue.QueueableTicketRegistryMessageReceiver;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
+import org.apereo.cas.ticket.tracking.AllServicesSessionTrackingPolicy;
+import org.apereo.cas.ticket.tracking.DefaultDescendantTicketsTrackingPolicy;
+import org.apereo.cas.ticket.tracking.MostRecentServiceSessionTrackingPolicy;
+import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.ProxyGrantingTicketIdGenerator;
 import org.apereo.cas.util.ProxyTicketIdGenerator;
@@ -113,6 +114,15 @@ public class CasCoreTicketsConfiguration {
             return onlyTrackMostRecentSession
                 ? new MostRecentServiceSessionTrackingPolicy(ticketRegistry)
                 : new AllServicesSessionTrackingPolicy(ticketRegistry);
+        }
+
+        @ConditionalOnMissingBean(name = TicketTrackingPolicy.BEAN_NAME_DESCENDANT_TICKET_TRACKING)
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public TicketTrackingPolicy descendantTicketsTrackingPolicy(
+                final CasConfigurationProperties casProperties) {
+            return FunctionUtils.doIf(casProperties.getTicket().isTrackDescendantTickets(),
+                DefaultDescendantTicketsTrackingPolicy::new, TicketTrackingPolicy::noOp).get();
         }
 
         @ConditionalOnMissingBean(name = TicketRegistrySupport.BEAN_NAME)

@@ -10,7 +10,7 @@ import org.apereo.cas.configuration.model.support.generic.FileAuthenticationProp
 import org.apereo.cas.configuration.model.support.generic.GroovyAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.generic.JsonResourceAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.generic.RejectAuthenticationProperties;
-import org.apereo.cas.configuration.model.support.generic.RemoteAddressAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.generic.RemoteAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.gua.GraphicalUserAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.jaas.JaasAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.jdbc.JdbcAuthenticationProperties;
@@ -236,10 +236,10 @@ public class AuthenticationProperties implements Serializable {
     private RejectAuthenticationProperties reject = new RejectAuthenticationProperties();
 
     /**
-     * Authentication based on a remote-address of a request.
+     * Authentication based on a remote of a request.
      */
     @NestedConfigurationProperty
-    private RemoteAddressAuthenticationProperties remoteAddress = new RemoteAddressAuthenticationProperties();
+    private RemoteAuthenticationProperties remote = new RemoteAuthenticationProperties();
 
     /**
      * Authentication settings when integrating CAS with a shibboleth IdP.

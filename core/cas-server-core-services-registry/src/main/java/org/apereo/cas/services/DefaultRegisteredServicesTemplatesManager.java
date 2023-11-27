@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import org.apereo.cas.configuration.model.core.services.ServiceRegistryProperties;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.serialization.StringSerializer;
 
 import groovy.text.GStringTemplateEngine;
@@ -52,7 +53,7 @@ public class DefaultRegisteredServicesTemplatesManager implements RegisteredServ
     @Override
     public RegisteredService apply(final RegisteredService registeredService) {
         if (templateDefinitionFiles.isEmpty() || StringUtils.isBlank(registeredService.getTemplateName())) {
-            LOGGER.trace("Registerered service template directory contains no template definitions, "
+            LOGGER.trace("Registered service template directory contains no template definitions, "
                          + "or registered service [{}] does specify template name(s)", registeredService.getName());
             return registeredService;
         }
@@ -77,12 +78,14 @@ public class DefaultRegisteredServicesTemplatesManager implements RegisteredServ
 
     private Optional<RegisteredService> locateTemplateServiceDefinition(final RegisteredService registeredService,
                                                                         final String templateName) {
-        val engine = new GStringTemplateEngine();
+
         return templateDefinitionFiles
             .stream()
+            .filter(__ -> CasRuntimeHintsRegistrar.notInNativeImage())
             .filter(registeredServiceSerializer::supports)
             .filter(file -> FilenameUtils.getBaseName(file.getAbsolutePath()).equalsIgnoreCase(templateName))
             .map(file -> FunctionUtils.doUnchecked(() -> {
+                val engine = new GStringTemplateEngine();
                 val templateParams = registeredService.getProperties()
                     .entrySet()
                     .stream()

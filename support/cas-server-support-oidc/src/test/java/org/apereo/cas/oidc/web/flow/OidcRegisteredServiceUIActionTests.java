@@ -10,6 +10,7 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import java.io.Serializable;
+import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -32,9 +33,11 @@ class OidcRegisteredServiceUIActionTests extends AbstractOidcTests {
     @Test
     void verifyOidcActionWithMDUI() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
-        servicesManager.save(getOidcRegisteredService());
+        val service = getOidcRegisteredService(UUID.randomUUID().toString());
+        servicesManager.save(service);
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService(
-            "https://www.example.org?client_id=id&client_secret=secret&redirect_uri=https://oauth.example.org"));
+            "https://www.example.org?client_id=%s&client_secret=%s&redirect_uri=https://oauth.example.org"
+                .formatted(service.getClientId(), service.getClientSecret())));
         val event = oidcRegisteredServiceUIAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
         val mdui = WebUtils.getServiceUserInterfaceMetadata(context, DefaultRegisteredServiceUserInterfaceInfo.class);

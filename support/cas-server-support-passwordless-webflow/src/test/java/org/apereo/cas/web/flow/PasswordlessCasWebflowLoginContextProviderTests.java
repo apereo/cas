@@ -27,7 +27,7 @@ class PasswordlessCasWebflowLoginContextProviderTests extends BasePasswordlessAu
 
     @Test
     void verifyOperation() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
 
         val account = new PasswordlessUserAccount();
         account.setUsername(UUID.randomUUID().toString());
