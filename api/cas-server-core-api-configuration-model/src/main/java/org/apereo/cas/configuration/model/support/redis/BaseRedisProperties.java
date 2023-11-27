@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.redis;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -22,7 +23,7 @@ import java.io.Serializable;
 @Setter
 @RequiresModule(name = "cas-server-support-redis-core")
 @Accessors(chain = true)
-public class BaseRedisProperties implements Serializable {
+public class BaseRedisProperties implements Serializable, CasFeatureModule {
 
     @Serial
     private static final long serialVersionUID = -2600996981339638782L;

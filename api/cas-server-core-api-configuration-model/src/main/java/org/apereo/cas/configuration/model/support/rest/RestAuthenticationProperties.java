@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.rest;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationHandlerStates;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
@@ -23,7 +24,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class RestAuthenticationProperties implements Serializable {
+public class RestAuthenticationProperties implements Serializable, CasFeatureModule {
 
     @Serial
     private static final long serialVersionUID = -6122859176355467060L;
