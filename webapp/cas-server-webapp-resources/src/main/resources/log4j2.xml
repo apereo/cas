@@ -21,7 +21,7 @@ or override log42.component.properties to turn off async
         <Property name="opensaml.log.level">${main:\--logging.level.org.opensaml:-warn}</Property>
         <Property name="hazelcast.log.level">${main:\--logging.level.com.hazelcast:-warn}</Property>
         <Property name="jdbc.log.level">${main:\--logging.level.org.hibernate:-error}</Property>
-        
+
         <Property name="log.console.stacktraces">true</Property>
         <Property name="log.file.stacktraces">false</Property>
         <!-- -Dlog.stacktraceappender=null to disable stacktrace log -->
@@ -170,7 +170,7 @@ or override log42.component.properties to turn off async
         <Logger name="org.pac4j" level="${sys:pac4j.log.level}"/>
 
         <Logger name="org.opensaml" level="${sys:opensaml.log.level}"/>
-        
+
         <Logger name="PROTOCOL_MESSAGE" level="info" />
 
         <Logger name="net.jradius" level="warn"/>

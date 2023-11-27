@@ -9,8 +9,8 @@
     --cas-theme-primary-bg: rgba(21, 62, 80, 0.2);
     --cas-theme-button-bg: #26418f;
     --cas-theme-primary-light: #006d85;
-    --cas-theme-secondary: #74C163;
-    --cas-theme-success: var(--cas-theme-secondary);
+    --cas-theme-secondary: #018077;
+    --cas-theme-success: #74C163;
     --cas-theme-danger: #58151c;
     --cas-theme-danger-bg: #f8d7da;
     --cas-theme-warning: #e6a210;
@@ -342,8 +342,11 @@ button.close {
     color: var(--cas-theme-danger, #b00020);
 }
 
-.text-secondary, .text-success {
+.text-secondary {
     color: var(--cas-theme-secondary);
+}
+.text-success {
+    color: var(--cas-theme-success);
 }
 
 .progress-bar-danger .mdc-linear-progress__bar-inner {
@@ -416,7 +419,7 @@ button.close {
 }
 
 .mdc-button--outline:not(:disabled, .reveal-password) {
-    background-color: #428bca;
+    background-color: var(--cas-theme-secondary, #018077);
     border-radius: 12px 4px;
 }
 
