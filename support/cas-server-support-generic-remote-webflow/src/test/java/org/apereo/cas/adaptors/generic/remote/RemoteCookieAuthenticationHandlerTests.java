@@ -3,7 +3,6 @@ package org.apereo.cas.adaptors.generic.remote;
 import org.apereo.cas.BaseRemoteAddressTests;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.crypto.PropertyBoundCipherExecutor;
 import lombok.val;
 import org.junit.jupiter.api.Tag;

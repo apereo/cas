@@ -467,8 +467,9 @@ public class FunctionUtils {
      * @param <T>      the type parameter
      * @param callback the callback
      * @return the t
+     * @throws Exception the exception
      */
-    public static <T> T doAndRetry(final RetryCallback<T, Exception> callback) {
+    public static <T> T doAndRetry(final RetryCallback<T, Exception> callback) throws Exception {
         return doAndRetry(List.of(), callback);
     }
 
@@ -479,9 +480,10 @@ public class FunctionUtils {
      * @param clazzes  the classified clazzes
      * @param callback the callback
      * @return the t
+     * @throws Exception the exception
      */
     public static <T> T doAndRetry(final List<Class<? extends Throwable>> clazzes,
-                                   final RetryCallback<T, Exception> callback) {
+                                   final RetryCallback<T, Exception> callback) throws Exception {
         val retryTemplate = new RetryTemplate();
         retryTemplate.setBackOffPolicy(new FixedBackOffPolicy());
 
@@ -500,7 +502,7 @@ public class FunctionUtils {
                 return RetryListener.super.open(context, __);
             }
         });
-        return Unchecked.supplier(() -> retryTemplate.execute(callback)).get();
+        return retryTemplate.execute(callback);
     }
 
     /**

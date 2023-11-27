@@ -39,14 +39,14 @@ class HttpUtilsTests {
 
     @Test
     void verifyExecWithExistingClient() throws Throwable {
-        try (val webServer = new MockWebServer(8081, HttpStatus.OK)) {
+        try (val webServer = new MockWebServer(HttpStatus.OK)) {
             webServer.start();
             val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword("password")
                 .basicAuthUsername("user")
                 .method(HttpMethod.GET)
                 .entity("entity")
-                .url("http://localhost:8081")
+                .url("http://localhost:%s".formatted(webServer.getPort()))
                 .httpClient(new SimpleHttpClientFactoryBean().getObject())
                 .build();
             assertNotNull(HttpUtils.execute(exec));

@@ -19,7 +19,6 @@ import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.scribejava.core.model.Verb;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -69,7 +68,6 @@ import org.pac4j.saml.store.EmptyStoreFactory;
 import org.pac4j.saml.store.HttpSessionStoreFactory;
 import org.pac4j.saml.store.SAMLMessageStoreFactory;
 import org.springframework.beans.factory.ObjectProvider;
-
 import java.security.interfaces.ECPrivateKey;
 import java.time.Period;
 import java.util.ArrayList;
@@ -106,7 +104,7 @@ public abstract class BaseDelegatedIdentityProviderFactory implements DelegatedI
 
     private final Cache<String, Collection<IndirectClient>> clientsCache;
 
-    protected abstract Collection<IndirectClient> loadIdentityProviders();
+    protected abstract Collection<IndirectClient> loadIdentityProviders() throws Exception;
 
     @Override
     public final Collection<IndirectClient> build() {
@@ -140,7 +138,7 @@ public abstract class BaseDelegatedIdentityProviderFactory implements DelegatedI
             val genName = className.concat(RandomUtils.randomNumeric(4));
             client.setName(genName);
             LOGGER.warn("Client name for [{}] is set to a generated value of [{}]. "
-                        + "Consider defining an explicit name for the delegated provider", className, genName);
+                + "Consider defining an explicit name for the delegated provider", className, genName);
         }
         val customProperties = client.getCustomProperties();
         customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT_TYPE, clientProperties.getAutoRedirectType());
@@ -301,8 +299,8 @@ public abstract class BaseDelegatedIdentityProviderFactory implements DelegatedI
             .getOauth2()
             .stream()
             .filter(oauth -> oauth.isEnabled()
-                             && StringUtils.isNotBlank(oauth.getId())
-                             && StringUtils.isNotBlank(oauth.getSecret()))
+                && StringUtils.isNotBlank(oauth.getId())
+                && StringUtils.isNotBlank(oauth.getSecret()))
             .map(oauth -> {
                 val client = new GenericOAuth20Client();
                 client.setProfileId(StringUtils.defaultIfBlank(oauth.getPrincipalIdAttribute(), pac4jProperties.getCore().getPrincipalIdAttribute()));
@@ -441,7 +439,7 @@ public abstract class BaseDelegatedIdentityProviderFactory implements DelegatedI
 
         val cfg = FunctionUtils.doUnchecked(() -> clazz.getDeclaredConstructor().newInstance());
         FunctionUtils.doIfNotBlank(oidc.getScope(), __ -> cfg.setScope(resolver.resolve(oidc.getScope())));
-        
+
         cfg.setUseNonce(oidc.isUseNonce());
         cfg.setDisablePkce(oidc.isDisablePkce());
 
@@ -493,14 +491,14 @@ public abstract class BaseDelegatedIdentityProviderFactory implements DelegatedI
             .getSaml()
             .stream()
             .filter(saml -> saml.isEnabled()
-                            && StringUtils.isNotBlank(saml.getKeystorePath())
-                            && StringUtils.isNotBlank(saml.getMetadata().getIdentityProviderMetadataPath())
-                            && StringUtils.isNotBlank(saml.getServiceProviderEntityId()))
+                && StringUtils.isNotBlank(saml.getKeystorePath())
+                && StringUtils.isNotBlank(saml.getMetadata().getIdentityProviderMetadataPath())
+                && StringUtils.isNotBlank(saml.getServiceProviderEntityId()))
             .map(saml -> {
                 val keystorePath = SpringExpressionLanguageValueResolver.getInstance().resolve(saml.getKeystorePath());
                 val identityProviderMetadataPath = SpringExpressionLanguageValueResolver.getInstance()
                     .resolve(saml.getMetadata().getIdentityProviderMetadataPath());
-                
+
                 val cfg = new SAML2Configuration(keystorePath, saml.getKeystorePassword(),
                     saml.getPrivateKeyPassword(), identityProviderMetadataPath);
                 cfg.setForceKeystoreGeneration(saml.isForceKeystoreGeneration());

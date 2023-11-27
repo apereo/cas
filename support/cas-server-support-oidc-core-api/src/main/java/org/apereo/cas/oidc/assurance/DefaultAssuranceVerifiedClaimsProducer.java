@@ -26,8 +26,8 @@ public class DefaultAssuranceVerifiedClaimsProducer implements AssuranceVerified
     @Override
     public Map<String, Object> produce(final JwtClaims jwtClaims, final String claimName, final String trustFramework) {
         if (!discoverySettings.isVerifiedClaimsSupported()
-            || (discoverySettings.getTrustFrameworksSupported() != null &&
-            !discoverySettings.getTrustFrameworksSupported().contains(trustFramework))) {
+            || (discoverySettings.getTrustFrameworksSupported() != null
+            && !discoverySettings.getTrustFrameworksSupported().contains(trustFramework))) {
             return Map.of();
         }
 
