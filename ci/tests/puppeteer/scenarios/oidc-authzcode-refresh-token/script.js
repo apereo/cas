@@ -112,5 +112,24 @@ async function exchangeToken(refreshToken, clientId, successHandler, errorHandle
             throw `Operation should not fail but instead produced: ${error}`;
         });
 
+    console.log("Let's wait 5 seconds for the TGT to expire, RTs should be still alive");
+    await page.waitForTimeout(5000);
+
+    await exchangeToken(refreshToken1, "client",
+        res => {
+            console.log(res.data);
+            assert(res.status === 200);
+        }, error => {
+            throw `Operation should not fail`;
+        });
+
+    await exchangeToken(refreshToken2, "client2",
+        res => {
+            console.log(res.data);
+            assert(res.status === 200);
+        }, error => {
+            throw `Operation should not fail`;
+        });
+
     await browser.close();
 })();
