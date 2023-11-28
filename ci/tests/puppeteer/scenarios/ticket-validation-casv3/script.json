@@ -1,6 +1,8 @@
 {
   "dependencies": "core",
-
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
@@ -10,7 +12,9 @@
 
     "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
     "--cas.authn.attribute-repository.stub.attributes.givenName=ApereoCAS",
+    "--cas.authn.attribute-repository.stub.attributes.sysid=cas_user_apereo",
 
+    "--logging.level.PROTOCOL_MESSAGE=info",
     "--cas.audit.slf4j.use-single-line=true",
     "--cas.authn.accept.name=STATIC"
   ],
@@ -29,5 +33,6 @@
         }
       }
     }
-  }
+  },
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }
