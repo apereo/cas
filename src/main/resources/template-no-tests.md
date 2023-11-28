@@ -11,7 +11,7 @@ If you'd like to keep the patch around and open while you make progress, please 
 
 Furthermore,
 
-- To learn about CAS test process and how you may design and develop unit/integration tests, please [see this link](https://apereo.github.io/cas/development/developer/Test-Process.html). If you are unclear on how to write basic unit tests, please [see this link](https://junit.org/).
+- To learn about CAS test process and how you may design and develop unit/integration tests, please [see this link](https://apereo.github.io/cas/developer/Test-Process.html). If you are unclear on how to write basic unit tests, please [see this link](https://junit.org/).
 - See [Contributor Guidelines](https://apereo.github.io/cas/developer/Contributor-Guidelines.html) to learn more about how to contribute to the project and review the criteria that allows for the project to accept contributions.
 - If you are seeking assistance and have a question about your CAS deployment, please visit [this page](https://apereo.github.io/cas/Support.html) to learn more about support options.
 - If your change-set attempts to solve a problem or defect, be sure to include tests to first and foremost demonstrate the issue. Tests must be able to reproduce the problem **without** changes and fixes first so that project maintainers can ascertain the validity of the issue scenario without resorting to manual steps. Tests and testing done after the fact is not acceptable.
