@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.authenticator;
 
+import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20ClientAuthenticationMethods;
@@ -57,7 +58,8 @@ public class OAuth20X509Authenticator implements Authenticator {
             val certificate = ((X509Credentials) credentials).getCertificate();
             val digest = EncodingUtils.encodeBase64(DigestUtils.digest("SHA-256", certificate.getPublicKey().getEncoded()));
             profile.addAttribute(OAuth20Constants.X509_CERTIFICATE_DIGEST, digest);
-
+            profile.addAttribute(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE, "X.509");
+            
             val attributeMap = CollectionUtils.<String, String>wrap(
                 "x509-sanEmail", registeredService.getTlsClientAuthSanEmail(),
                 "x509-sanDNS", registeredService.getTlsClientAuthSanDns(),

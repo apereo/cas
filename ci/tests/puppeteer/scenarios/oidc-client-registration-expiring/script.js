@@ -58,7 +58,7 @@ async function executeRequest(clientId, clientSecret, expectFailure) {
 
     await cas.doPost(url, "", {
         'Content-Type': "application/json",
-        'Authorization': 'Basic ' + btoa(clientId + ':' + clientSecret)
+        'Authorization': `Basic ${btoa(`${clientId}:${clientSecret}`)}`
     }, async res => await cas.log(res.data), error => {
         if (expectFailure) {
             cas.logr(`Operation has correctly failed with status: ${error.response.status}`);

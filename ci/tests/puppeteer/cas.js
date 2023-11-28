@@ -129,7 +129,7 @@ exports.innerHTML = async (page, selector) => {
 
 exports.innerText = async (page, selector) => {
     let text = await page.$eval(selector, el => el.innerText.trim());
-    await this.log(`Text for selector [${selector}] is: [${text}]`);
+    await this.log(`Text for selector [${selector}] is: ${text}`);
     return text;
 };
 

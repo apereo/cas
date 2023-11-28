@@ -147,7 +147,8 @@ public class DelegatedAuthenticationEventExecutionPlanConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasCookieBuilder delegatedClientDistributedSessionCookieGenerator(
             @Qualifier(GeoLocationService.BEAN_NAME) final ObjectProvider<GeoLocationService> geoLocationService,
-            @Qualifier("delegatedClientDistributedSessionCookieCipherExecutor") final CipherExecutor delegatedClientDistributedSessionCookieCipherExecutor,
+            @Qualifier("delegatedClientDistributedSessionCookieCipherExecutor")
+            final CipherExecutor delegatedClientDistributedSessionCookieCipherExecutor,
             final CasConfigurationProperties casProperties) {
             val cookie = casProperties.getAuthn().getPac4j().getCore().getSessionReplication().getCookie();
             if (StringUtils.isBlank(cookie.getName())) {
