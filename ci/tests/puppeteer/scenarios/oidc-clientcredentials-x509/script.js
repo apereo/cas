@@ -5,22 +5,7 @@ const fs = require('fs');
 const request = require('request');
 
 (async () => {
-    let browser = await puppeteer.launch(cas.browserOptions());
-    let page = await cas.newPage(browser);
-    await cas.gotoLogin(page);
-    await cas.loginWith(page, "aburr", "P@ssw0rd");
-    await cas.assertCookie(page);
-    await cas.assertInnerText(page, '#content div h2', "Log In Successful");
-    const attributesldap = await cas.innerText(page, '#attribute-tab-0 table#attributesTable tbody');
-    assert(attributesldap.includes("aburr"));
-    assert(attributesldap.includes("someattribute"));
-    assert(attributesldap.includes("ldap-dn"));
-    await browser.close();
 
-    browser = await puppeteer.launch(cas.browserOptions());
-    page = await cas.newPage(browser);
-
-    await page.setRequestInterception(true);
     let args = process.argv.slice(2);
     let config = JSON.parse(fs.readFileSync(args[0]));
     assert(config != null);
@@ -31,7 +16,15 @@ const request = require('request');
     const cert = fs.readFileSync(config.trustStoreCertificateFile);
     const key = fs.readFileSync(config.trustStorePrivateKeyFile);
 
+    const browser = await puppeteer.launch(cas.browserOptions());
+    const page = await cas.newPage(browser);
+    await page.setRequestInterception(true);
     page.on('request', interceptedRequest => {
+        if (interceptedRequest.isInterceptResolutionHandled()) {
+            return;
+        }
+
+        console.log(`Intercepting request for ${url}`);
         const options = {
             uri: interceptedRequest.url(),
             method: interceptedRequest.method(),
@@ -47,6 +40,7 @@ const request = require('request');
                 return interceptedRequest.abort('connectionrefused');
             }
 
+            cas.logb(`Responding with X.509 client certificate ${url}`);
             interceptedRequest.respond({
                 status: resp.statusCode,
                 contentType: resp.headers['content-type'],
@@ -54,19 +48,26 @@ const request = require('request');
                 body: body
             });
         });
-
     });
 
-    await cas.gotoLogin(page);
-    await page.waitForTimeout(5000);
-
-    await cas.assertInnerText(page, '#content div h2', "Log In Successful");
-    await cas.assertInnerTextContains(page, "#content div p", "1234567890@college.edu");
-
-    await cas.assertInnerTextContains(page, "#attribute-tab-0 table#attributesTable tbody", "casuserx509");
-    await cas.assertInnerTextContains(page, "#attribute-tab-0 table#attributesTable tbody", "someattribute");
-    await cas.assertInnerTextContains(page, "#attribute-tab-0 table#attributesTable tbody", "user-account-control");
-    await cas.assertInnerTextDoesNotContain(page, "#attribute-tab-0 table#attributesTable tbody", "shouldntbehere");
-
+    let params = "grant_type=client_credentials&scope=openid&client_id=client";
+    let url = `https://localhost:8443/cas/oidc/token?${params}`;
+    let response = await cas.goto(page, url);
+    await cas.log(`${response.status()} ${response.statusText()}`);
+    assert(response.ok());
+    let tokenResponse = JSON.parse(await cas.innerText(page, "body pre"));
+    await cas.logb(tokenResponse);
+    assert(tokenResponse.access_token !== undefined);
+    assert(tokenResponse.id_token !== undefined);
+    assert(tokenResponse.refresh_token !== undefined);
+    assert(tokenResponse.token_type === "Bearer");
+    assert(tokenResponse.scope === "openid");
+    assert(tokenResponse.expires_in === 28800);
+    let decoded = await cas.decodeJwt(tokenResponse.id_token);
+    assert(decoded["sub"] === "mmoayyed");
+    assert(decoded["sub"] === decoded["preferred_username"]);
+    assert(decoded["txn"] !== undefined);
+    assert(decoded["amr"][0] === "X.509");
+    
     await browser.close();
 })();
