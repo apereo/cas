@@ -1,9 +1,7 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.Principal;
-
 import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link PrincipalElectionStrategyConflictResolver}
