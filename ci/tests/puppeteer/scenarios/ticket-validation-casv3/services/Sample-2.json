@@ -1,0 +1,21 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^http://localhost:9889/anything/cas.*",
+  "id": 2,
+  "name": "Sample",
+  "usernameAttributeProvider" : {
+    "@class" : "org.apereo.cas.services.GroovyRegisteredServiceUsernameProvider",
+    "groovyScript" :
+            '''
+            groovy {
+              logger.info("** Attributes **: ${attributes}");
+              return attributes['sysid'][0] + '@apereo.org'
+            }
+            ''',
+    "canonicalizationMode" : "UPPER"
+  },
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy",
+    "authorizedToReleaseAuthenticationAttributes": false
+  }
+}
