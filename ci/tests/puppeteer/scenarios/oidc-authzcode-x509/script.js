@@ -61,9 +61,6 @@ const request = require('request');
     const url = `https://localhost:8443/cas/oidc/oidcAuthorize?client_id=client&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent("openid profile")}&response_type=code&nonce=vn4qulthnx`;
     await cas.goto(page, url);
     await page.waitForTimeout(1000);
-    if (await cas.isVisible(page, "#username")) {
-        await cas.loginWith(page);
-    }
     await cas.screenshot(page);
     await page.waitForTimeout(1000);
     if (await cas.isVisible(page, "#allow")) {

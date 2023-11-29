@@ -1,13 +1,13 @@
 package org.apereo.inspektr.audit.support;
 
-import org.apereo.inspektr.audit.AuditActionContext;
-import org.apereo.inspektr.audit.AuditTrailManager;
-import org.apereo.inspektr.common.web.ClientInfo;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apereo.inspektr.audit.AuditActionContext;
+import org.apereo.inspektr.audit.AuditTrailManager;
+import org.apereo.inspektr.common.web.ClientInfo;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcDaoSupport;
 import org.springframework.transaction.TransactionStatus;
@@ -260,28 +260,31 @@ public class JdbcAuditTrailManager extends NamedParameterJdbcDaoSupport implemen
                 .execute(new TransactionCallbackWithoutResult() {
                     @Override
                     protected void doInTransactionWithoutResult(final TransactionStatus transactionStatus) {
-                        val userId = columnLength <= 0 || auditActionContext.getPrincipal().length() <= columnLength
-                            ? auditActionContext.getPrincipal()
-                            : auditActionContext.getPrincipal().substring(0, columnLength);
-                        val resource = columnLength <= 0 || auditActionContext.getResourceOperatedUpon().length() <= columnLength
-                            ? auditActionContext.getResourceOperatedUpon()
-                            : auditActionContext.getResourceOperatedUpon().substring(0, columnLength);
-                        val action = columnLength <= 0 || auditActionContext.getActionPerformed().length() <= columnLength
-                            ? auditActionContext.getActionPerformed()
-                            : auditActionContext.getActionPerformed().substring(0, columnLength);
+                        val principal = auditActionContext.getPrincipal();
+                        val userId = columnLength <= 0 || principal.length() <= columnLength
+                            ? principal
+                            : principal.substring(0, columnLength);
+                        val resourceOperatedUpon = auditActionContext.getResourceOperatedUpon();
+                        val resource = columnLength <= 0 || resourceOperatedUpon.length() <= columnLength
+                            ? resourceOperatedUpon
+                            : resourceOperatedUpon.substring(0, columnLength);
+                        val actionPerformed = auditActionContext.getActionPerformed();
+                        val action = columnLength <= 0 || actionPerformed.length() <= columnLength
+                            ? actionPerformed
+                            : actionPerformed.substring(0, columnLength);
 
-                        getJdbcTemplate()
-                            .update(
-                                String.format(INSERT_SQL_TEMPLATE, tableName),
-                                userId,
-                                auditActionContext.getClientInfo().getClientIpAddress(),
-                                auditActionContext.getClientInfo().getServerIpAddress(),
-                                resource,
-                                action,
-                                auditActionContext.getApplicationCode(),
-                                auditActionContext.getWhenActionWasPerformed(),
-                                auditActionContext.getClientInfo().getGeoLocation(),
-                                auditActionContext.getClientInfo().getUserAgent());
+                        val clientInfo = auditActionContext.getClientInfo();
+                        getJdbcTemplate().update(
+                            String.format(INSERT_SQL_TEMPLATE, tableName),
+                            userId,
+                            clientInfo.getClientIpAddress(),
+                            clientInfo.getServerIpAddress(),
+                            resource,
+                            action,
+                            auditActionContext.getApplicationCode(),
+                            auditActionContext.getWhenActionWasPerformed(),
+                            clientInfo.getGeoLocation(),
+                            clientInfo.getUserAgent());
                     }
                 });
         }
