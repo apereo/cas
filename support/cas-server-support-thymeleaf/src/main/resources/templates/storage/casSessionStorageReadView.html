@@ -27,7 +27,7 @@
                 <input type="submit" style="display: none" />
             </form>
         </div>
-        
+
         <script>new mdc.linearProgress.MDCLinearProgress(document.querySelector('.mdc-linear-progress'));</script>
         <script th:inline="javascript">
             /*<![CDATA[*/
@@ -36,7 +36,7 @@
             if (sessionStorageContext === undefined || sessionStorageContext === null || sessionStorageContext === "") {
                 sessionStorageContext = "sessionStorage";
             }
-            
+
             const payload = readFromSessionStorage(sessionStorageContext);
             document.getElementById("sessionStorage").value = payload;
             document.getElementById("fm1").submit();
@@ -48,7 +48,7 @@
                 <style type="text/css">
                     #mainPanel {display:none;}
                 </style>
-            <div class="mdc-card p-4 m-auto w-lg-50 banner banner-danger alert alert-danger text-justify">
+            <div class="mdc-card p-4 m-auto w-lg-50 banner banner-danger alert alert-danger">
                 <h2 th:utext="#{screen.browser.js.disabled.title}"></h2>
                 <p class="intro" th:utext="#{screen.browser.js.disabled.text}"></p>
             </div>
