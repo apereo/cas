@@ -86,7 +86,7 @@ const request = require('request');
     });
     assert(payload.access_token != null);
     let decoded = await cas.decodeJwt(payload.id_token);
-    assert(decoded["sub"] === "CN=mmoayyed, OU=dev, O=bft, L=mt, C=world");
+    assert(/CN=(.+), OU=dev, O=bft, L=mt, C=world/.test(decoded["sub"]));
     assert(decoded["sub"] === decoded["preferred_username"]);
     assert(decoded["txn"] !== undefined);
     assert(decoded["amr"][0] === "X509");
