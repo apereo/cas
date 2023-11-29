@@ -2,7 +2,7 @@
   "@class": "org.apereo.cas.services.OidcRegisteredService",
   "clientId": "client",
   "clientSecret": "secret",
-  "serviceId": "^https://httpbin.org/anything/sample",
+  "serviceId": "^https://localhost:9859/anything/sample",
   "name": "Sample",
   "id": 1,
   "scopes" : [ "java.util.HashSet", [ "email", "profile" ] ],
@@ -10,7 +10,7 @@
   "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ],
   "bypassApprovalPrompt": true,
   "subjectType": "pairwise",
-  "sectorIdentifierUri": "https://httpbin.org",
+  "sectorIdentifierUri": "https://localhost:9859",
   "usernameAttributeProvider" : {
     "@class" : "org.apereo.cas.services.PairwiseOidcRegisteredServiceUsernameAttributeProvider",
     "persistentIdGenerator" : {
