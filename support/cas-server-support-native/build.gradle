@@ -12,6 +12,7 @@ ext {
 
 dependencies {
     compileOnly libraries.graalvmsdk
+    implementation libraries.graalvmpolyglot
     
     testImplementation libraries.graalvmsdk
     
