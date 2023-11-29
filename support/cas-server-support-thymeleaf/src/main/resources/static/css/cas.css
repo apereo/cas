@@ -3,14 +3,16 @@
 
 :root {
     --mdc-text-button-label-text-color: #f7f7f7;
-    --mdc-theme-error: #d9534f;
+    --mdc-shape-small: 4px;
+    --mdc-theme-error: #d93d33;
     --cas-theme-primary: #044561;
     --cas-theme-primary-bg: rgba(21, 62, 80, 0.2);
     --cas-theme-button-bg: #26418f;
     --cas-theme-primary-light: #006d85;
-    --cas-theme-secondary: #74C163;
-    --cas-theme-success: var(--cas-theme-secondary);
-    --cas-theme-danger: var(--mdc-theme-error);
+    --cas-theme-secondary: #018077;
+    --cas-theme-success: #74C163;
+    --cas-theme-danger: #58151c;
+    --cas-theme-danger-bg: #f8d7da;
     --cas-theme-warning: #e6a210;
     --cas-theme-border-light: 1px solid rgba(0, 0, 0, .2);
     --mdc-theme-primary: var(--cas-theme-primary, #153e50);
@@ -72,14 +74,14 @@ div#content {
 
 .notifications-count {
     position: absolute;
-    top: 10px;
-    right: 12px;
+    top: 8px;
+    right: 4px;
     background-color: #b00020;
     background-color: var(--cas-theme-danger);
     color: #fff;
     border-radius: 50%;
     padding: 1px 3px;
-    font: 8px Verdana;
+    font: 11px Verdana;
 }
 
 .cas-brand {
@@ -199,8 +201,8 @@ button.close {
 .banner-danger {
     border-color: #b00020;
     border-color: var(--cas-theme-danger, #b00020);
-    color: #D8000C;
-    background-color: #FFD2D2;
+    color: var(--cas-theme-danger, #58151c);
+    background-color: var(--cas-theme-danger-bg, #f8d7da);
 }
 
 .banner-danger .mdi {
@@ -341,8 +343,11 @@ button.close {
     color: var(--cas-theme-danger, #b00020);
 }
 
-.text-secondary, .text-success {
+.text-secondary {
     color: var(--cas-theme-secondary);
+}
+.text-success {
+    color: var(--cas-theme-success);
 }
 
 .progress-bar-danger .mdc-linear-progress__bar-inner {
@@ -373,7 +378,7 @@ button.close {
     border-radius: 4px;
 }
 
-.mdc-input-group .mdc-input-group-field .mdc-text-field {
+.mdc-input-group .mdc-input-group-field .mdc-notched-outline__trailing {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
 }
@@ -415,7 +420,7 @@ button.close {
 }
 
 .mdc-button--outline:not(:disabled, .reveal-password) {
-    background-color: #428bca;
+    background-color: var(--cas-theme-secondary, #018077);
     border-radius: 12px 4px;
 }
 
