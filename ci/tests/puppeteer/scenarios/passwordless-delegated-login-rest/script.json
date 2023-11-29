@@ -8,8 +8,7 @@
     "--cas.server.prefix=${cas.server.name}/cas",
     "--cas.service-registry.core.init-from-json=true",
 
-    "--cas.authn.passwordless.accounts.groovy.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/account-store.groovy",
-    "--cas.authn.passwordless.core.delegated-authentication-selector-script.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/delegate-idp-selector.groovy",
+    "--cas.authn.passwordless.accounts.rest.url=http://localhost:5432",
 
     "--cas.authn.pac4j.cas[0].login-url=https://localhost:9859/anything/cas1",
     "--cas.authn.pac4j.cas[0].protocol=CAS30",

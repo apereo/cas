@@ -6,7 +6,7 @@ const assert = require('assert');
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
 
-    let url1 = "https://httpbin.org/anything/sample";
+    let url1 = "https://localhost:9859/anything/sample";
     await cas.logg(`Trying with URL ${url1}`);
     let payload = await getPayload(page, url1, "client", "secret");
     let decoded = await cas.decodeJwt(payload.id_token);
