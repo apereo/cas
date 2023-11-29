@@ -1,5 +1,5 @@
 {
-  "dependencies": "oidc",
+  "dependencies": "oidc,x509-webflow",
   "conditions": {
     "docker": "true"
   },
@@ -24,7 +24,11 @@
     
     "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",
     "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/keystore.jwks",
-    
+
+    "--cas.authn.x509.name=X509",
+    "--cas.authn.x509.principal-type=SUBJECT_ALT_NAME",
+    "--cas.authn.x509.subject-alt-name.alternate-principal-attribute=subjectDn",
+
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
   ],
