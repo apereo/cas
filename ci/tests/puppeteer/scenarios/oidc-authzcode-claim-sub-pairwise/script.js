@@ -10,7 +10,7 @@ const assert = require('assert');
     await cas.logg(`Trying with URL ${url1}`);
     let payload = await getPayload(page, url1, "client", "secret");
     let decoded = await cas.decodeJwt(payload.id_token);
-    assert(decoded.sub === "+HVct3+8RWilWoU79il4K3dfaRE=");
+    assert(decoded.sub === "H93BJUD2wLReU5cflwSI4Flle/U=");
     await browser.close();
 })();
 

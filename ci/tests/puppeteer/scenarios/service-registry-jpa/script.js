@@ -46,36 +46,45 @@ async function importServices() {
 }
 
 (async () => {
-    let mysql = await cas.dockerContainer("mysql-server");
+    let failed = false;
+    try {
+        let mysql = await cas.dockerContainer("mysql-server");
 
-    await importServices();
-    await fetchServices();
+        await importServices();
+        await fetchServices();
 
-    await cas.log("Pausing MySQL docker container");
-    await mysql.pause();
+        await cas.log("Pausing MySQL docker container");
+        await mysql.pause();
 
-    await verifyServices();
+        await verifyServices();
 
-    const browser = await puppeteer.launch(cas.browserOptions());
-    const page = await cas.newPage(browser);
-    const service = "https://apereo.github.io";
-    await cas.gotoLogin(page, service);
-    await cas.loginWith(page);
-    let ticket = await cas.assertTicketParameter(page);
-    let body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
-    await cas.log(body);
-    let json = JSON.parse(body);
-    let authenticationSuccess = json.serviceResponse.authenticationSuccess;
-    assert(authenticationSuccess.user === "casuser");
-    await cas.gotoLogout(page);
-    await browser.close();
+        const browser = await puppeteer.launch(cas.browserOptions());
+        const page = await cas.newPage(browser);
+        const service = "https://apereo.github.io";
+        await cas.gotoLogin(page, service);
+        await cas.loginWith(page);
+        let ticket = await cas.assertTicketParameter(page);
+        let body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
+        await cas.log(body);
+        let json = JSON.parse(body);
+        let authenticationSuccess = json.serviceResponse.authenticationSuccess;
+        assert(authenticationSuccess.user === "casuser");
+        await cas.gotoLogout(page);
+        await browser.close();
 
-    await cas.log("Unpausing MySQL docker container");
-    await mysql.unpause();
+        await cas.log("Unpausing MySQL docker container");
+        await mysql.unpause();
 
-    await cas.sleep(2000);
-    await fetchServices();
-    await verifyServices();
-    await cas.logg("All CAS services are available");
-    await process.exit(0);
+        await cas.sleep(2000);
+        await fetchServices();
+        await verifyServices();
+        await cas.logg("All CAS services are available");
+    } catch (e) {
+        failed = true;
+        throw e;
+    } finally {
+        if (!failed) {
+            await process.exit(0);
+        }
+    }
 })();
