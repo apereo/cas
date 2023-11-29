@@ -57,14 +57,14 @@ public class PathWatcherService implements WatcherService, Runnable, DisposableB
         this.onCreate = onCreate;
         this.onModify = onModify;
         this.onDelete = onDelete;
-        if (canWatchServiceBeInitialized()) {
+        if (shouldEnableWatchService()) {
             initializeWatchService(watchablePath);
         }
     }
 
     @Override
     public void run() {
-        if (canWatchServiceBeInitialized()) {
+        if (shouldEnableWatchService()) {
             try {
                 var key = (WatchKey) null;
                 while ((key = watchService.take()) != null) {
@@ -93,7 +93,7 @@ public class PathWatcherService implements WatcherService, Runnable, DisposableB
 
     @Override
     public void start(final String name) {
-        if (canWatchServiceBeInitialized()) {
+        if (shouldEnableWatchService()) {
             LOGGER.trace("Starting watcher thread");
             thread = Thread.ofVirtual().name(name).start(this);
         }
@@ -126,10 +126,9 @@ public class PathWatcherService implements WatcherService, Runnable, DisposableB
         }));
     }
 
-    protected boolean canWatchServiceBeInitialized() {
-        val envValue = StringUtils.defaultIfBlank(System.getenv(getClass().getName()), "true");
-        val sysPropValue = StringUtils.defaultIfBlank(System.getProperty(getClass().getName()), "true");
-        return BooleanUtils.toBoolean(envValue) || BooleanUtils.toBoolean(sysPropValue);
+    protected boolean shouldEnableWatchService() {
+        val watchServiceEnabled = StringUtils.defaultIfBlank(System.getenv(getClass().getName()), System.getProperty(getClass().getName()));
+        return StringUtils.isBlank(watchServiceEnabled) || BooleanUtils.toBoolean(watchServiceEnabled);
     }
 
     protected void initializeWatchService(final Path watchablePath) {
