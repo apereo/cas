@@ -345,7 +345,6 @@ button.close {
 
 .text-secondary {
     color: var(--cas-theme-secondary);
-    color: var(--cas-theme-secondary);
 }
 .text-success {
     color: var(--cas-theme-success);
