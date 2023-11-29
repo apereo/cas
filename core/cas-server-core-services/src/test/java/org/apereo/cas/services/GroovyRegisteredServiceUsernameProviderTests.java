@@ -97,7 +97,7 @@ class GroovyRegisteredServiceUsernameProviderTests {
     @Test
     void verifyUsernameProviderInlineWithoutAttribute() throws Throwable {
         val provider = new GroovyRegisteredServiceUsernameProvider();
-        provider.setGroovyScript("groovy { return attributes['uid'][0] + '123456789' }");
+        provider.setGroovyScript("groovy { return attributes['unknown-attribute'][0] + '123456789' }");
 
         val usernameContext = RegisteredServiceUsernameProviderContext.builder()
             .registeredService(RegisteredServiceTestUtils.getRegisteredService())
@@ -106,6 +106,6 @@ class GroovyRegisteredServiceUsernameProviderTests {
             .principal(RegisteredServiceTestUtils.getPrincipal("casuser"))
             .build();
         val id = provider.resolveUsername(usernameContext);
-        assertEquals("CAS-System123456789", id);
+        assertEquals("casuser", id);
     }
 }
