@@ -11,7 +11,6 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -50,7 +49,7 @@ public class DetermineMultifactorPasswordlessAuthenticationAction extends BasePa
     }
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         val user = PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class);
         if (user == null) {
             LOGGER.error("Unable to locate passwordless account in the flow");
@@ -72,24 +71,22 @@ public class DetermineMultifactorPasswordlessAuthenticationAction extends BasePa
             return success();
         }
 
-        return FunctionUtils.doUnchecked(() -> {
-            val attributes = CollectionUtils.toMultiValuedMap((Map) user.getAttributes());
-            val principal = passwordlessPrincipalFactory.createPrincipal(user.getUsername(), attributes);
-            val auth = DefaultAuthenticationBuilder.newInstance().setPrincipal(principal).build();
-            val service = WebUtils.getService(requestContext);
+        val attributes = CollectionUtils.toMultiValuedMap((Map) user.getAttributes());
+        val principal = passwordlessPrincipalFactory.createPrincipal(user.getUsername(), attributes);
+        val auth = DefaultAuthenticationBuilder.newInstance().setPrincipal(principal).build();
+        val service = WebUtils.getService(requestContext);
 
-            val result = resolveMultifactorAuthenticationProvider(requestContext, auth, service);
-            if (result.isEmpty()) {
-                LOGGER.debug("No CAS-provided multifactor authentication trigger required user [{}] to proceed with MFA. "
-                    + "CAS will proceed with its normal passwordless authentication flow.", user);
-                return success();
-            }
+        val result = resolveMultifactorAuthenticationProvider(requestContext, auth, service);
+        if (result.isEmpty()) {
+            LOGGER.debug("No CAS-provided multifactor authentication trigger required user [{}] to proceed with MFA. "
+                + "CAS will proceed with its normal passwordless authentication flow.", user);
+            return success();
+        }
 
-            populateContextWithAuthenticationResult(requestContext, auth, service);
+        populateContextWithAuthenticationResult(requestContext, auth, service);
 
-            LOGGER.debug("Proceed with multifactor authentication flow [{}] for user [{}]", result.get(), user);
-            return new EventFactorySupport().event(this, result.map(MultifactorAuthenticationProvider::getId).orElse(StringUtils.EMPTY));
-        });
+        LOGGER.debug("Proceed with multifactor authentication flow [{}] for user [{}]", result.get(), user);
+        return new EventFactorySupport().event(this, result.map(MultifactorAuthenticationProvider::getId).orElse(StringUtils.EMPTY));
     }
 
     protected void populateContextWithAuthenticationResult(final RequestContext requestContext, final Authentication auth,

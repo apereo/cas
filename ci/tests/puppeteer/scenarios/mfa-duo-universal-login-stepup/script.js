@@ -5,7 +5,7 @@ const cas = require('../../cas.js');
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
 
-    const stepUpUrl = "https://localhost:8443/cas/login?service=https://httpbin.org/anything/1&authn_method=mfa-duo";
+    const stepUpUrl = "https://localhost:8443/cas/login?service=https://localhost:9859/anything/1&authn_method=mfa-duo";
 
     await cas.log("Establish SSO session");
     await cas.gotoLogin(page);

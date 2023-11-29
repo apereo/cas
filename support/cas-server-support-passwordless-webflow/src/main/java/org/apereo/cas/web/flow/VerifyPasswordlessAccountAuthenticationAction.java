@@ -3,7 +3,6 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.api.PasswordlessRequestParser;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -30,25 +29,22 @@ public class VerifyPasswordlessAccountAuthenticationAction extends BasePasswordl
     }
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
-        return FunctionUtils.doUnchecked(() -> {
-            val username = requestContext.getRequestParameters().getRequired(PasswordlessRequestParser.PARAMETER_USERNAME);
-            val passwordlessRequest = passwordlessRequestParser.parse(username);
-            val account = passwordlessUserAccountStore.findUser(passwordlessRequest.getUsername());
-            if (account.isEmpty()) {
-                WebUtils.addErrorMessageToContext(requestContext, "passwordless.error.unknown.user");
-                return error();
-            }
-            val user = account.get();
-            PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(requestContext, user);
-            PasswordlessWebflowUtils.putPasswordlessAuthenticationRequest(requestContext, passwordlessRequest);
-            if (user.isRequestPassword()) {
-                PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(requestContext, user);
-                val isDelegationActive = isDelegatedAuthenticationActiveFor(requestContext, user);
-                DelegationWebflowUtils.putDelegatedAuthenticationDisabled(requestContext, !isDelegationActive);
-                return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_PROMPT);
-            }
-            return success();
-        });
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+        val username = requestContext.getRequestParameters().getRequired(PasswordlessRequestParser.PARAMETER_USERNAME);
+        val passwordlessRequest = passwordlessRequestParser.parse(username);
+        val account = passwordlessUserAccountStore.findUser(passwordlessRequest.getUsername());
+        if (account.isEmpty()) {
+            WebUtils.addErrorMessageToContext(requestContext, "passwordless.error.unknown.user");
+            return error();
+        }
+        val user = account.get();
+        PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(requestContext, user);
+        PasswordlessWebflowUtils.putPasswordlessAuthenticationRequest(requestContext, passwordlessRequest);
+        val isDelegationActive = isDelegatedAuthenticationActiveFor(requestContext, user);
+        DelegationWebflowUtils.putDelegatedAuthenticationDisabled(requestContext, !isDelegationActive);
+        WebUtils.putCasLoginFormViewable(requestContext, user.isRequestPassword());
+        return user.isRequestPassword() || user.getAllowedDelegatedClients().size() > 1
+            ? new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_PROMPT)
+            : success();
     }
 }

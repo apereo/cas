@@ -1,0 +1,8 @@
+{
+  "@class" : "org.apereo.cas.api.PasswordlessUserAccount",
+  "username": "all.json",
+  "requestPassword": true,
+  "delegatedAuthenticationEligible": true,
+  "email": "cas@example.org",
+  "allowedDelegatedClients": [ "CasClient2", "CasClient1" ]
+}
