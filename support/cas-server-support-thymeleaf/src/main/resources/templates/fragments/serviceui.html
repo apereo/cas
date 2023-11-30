@@ -11,7 +11,7 @@
 </head>
 
 <body>
-<main role="main" class="container mt-3 mb-3">
+<main class="container mt-3 mb-3">
     <div th:fragment="serviceUI" th:if="${registeredService}" id="serviceui" class="mb-4">
         <div th:if="${serviceUIMetadata}" class="d-flex align-items-center p-2">
             <img id="serviceUIMetadataLogo" th:if="${serviceUIMetadata.logoUrl}" th:title="${serviceUIMetadata.displayName}"
@@ -21,7 +21,7 @@
             <img th:unless="${serviceUIMetadata.logoUrl}" th:title="${serviceUIMetadata.displayName}"
                  th:alt="${serviceUIMetadata.displayName}" th:src="@{images/webapp.png}"
                  th:width="${serviceUIMetadata.logoWidth}" th:height="${serviceUIMetadata.logoHeight}"/>
-            
+
             <div class="ml-2">
                 <h2 id="serviceUIMetadataDisplayName" th:text="${serviceUIMetadata.displayName}">serviceUIMetadata.displayName</h2>
                 <p id="serviceUIMetadataDescription" th:text="${serviceUIMetadata.description}">serviceUIMetadata.description</p>
@@ -29,7 +29,7 @@
                 <div id="wildcardService" th:if="${wildcardedRegisteredService}">
                     <p><i class="mdi mdi-information-slab-box"></i><span th:utext="#{screen.service.wildcard.message}" /></p>
                 </div>
-                
+
                 <p id="serviceUIMetadataInformationUrl"
                    th:if="${serviceUIMetadata.informationURL}"
                    th:utext="#{screen.mdui.infolink.text(${serviceUIMetadata.informationURL})}">
