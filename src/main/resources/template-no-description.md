@@ -1,4 +1,6 @@
 Thank you very much for submitting this pull request!
+     
+# What happened? 
 
 The pull request submitted here does not contain an adequate description of changes, or a descriptive title to explain the change request in clear detail. 
 Please be sure to describe the changes you made here in detail and include the problem description, an overview of the solution you made, and whether the 
@@ -42,6 +44,10 @@ analyze the logs, find comparable solutions and track breaking change and incomp
 This is where you describe steps to reproduce the problem, and how tests remove or mitigate the issue. Please note that your tests need to be entirely automated, and must be in form of a unit, integration or browser test that anybody including the continuous integration system here can run. Descriptive language in the form of *Go here, click this, use that* is quite helpful but not sufficient.
 
 If you believe this message to be an error, please post your explanation here as a comment and it will be reviewed.
+
+# Support
+
+If you are seeking assistance and have a question about your CAS deployment, you can always learn more about [CAS support options](https://apereo.github.io/cas/Support.html).
 
 Thanks again!
 

@@ -1,13 +1,16 @@
 Thank you very much for submitting this pull request!
+       
+# What happened? 
 
-This pull request is targeted at a maintenance branch. However, there is no parallel pull request that would port the same functionality forward to the `master` branch. Remember that changes applied to previous branches that target CAS versions in maintenance mode **MUST** be ported forward to the `master` branch as well, via a separate pull request. 
-
+This pull request is targeted at a maintenance branch. However, there is no parallel pull request that would port the same functionality forward to the `master` branch. Remember that changes applied to previous branches that target CAS versions in maintenance mode **MUST** be ported forward to the `master` branch as well, via a separate pull request.
 
 If you already have worked out the targeted-at-`master` pull request, preferably one that is merged, please update the body of your pull request description here to include the following reference:
 
 ```
 master: https://github.com/apereo/cas/pull/$PR_NUMBER
 ```
+   
+# How to contribute
 
 The recommended contribution strategy is one that would have you start with the `master` branch first. Once the change is accepted and merged, you would then be able to port the change back to the appropriate maintenance branch provided the change fits the scope of the maintenance branch and its tracking release and assuming the branch is still under care, you are more than welcome to move changes across the codebase various branches as much as needed to remove pain and improve.
 
@@ -15,6 +18,10 @@ If you'd like to keep the patch around and open while you make progress, please 
 
 - Construct your pull request title using the syntax `WIP - <title>` 
 - Create the initial pull request in "Draft" status.
+
+Please re-open the pull request (or ask project maintainers to do this for you) when you're ready
+
+# Resources
 
 Furthermore,
 
@@ -25,6 +32,10 @@ Furthermore,
 - If your change-set introduces a new CAS feature or improvement, please consider starting discussion with the project to see if your patch can be accepted and maintained by project owners and maintainers. Unless your change is extremely trivial and has been through proper review and is sponsored by a project maintainer, please do not spend time modifying code and configuration in a proposed pull request. 
 
 If you believe this message to be an error, please post your explanation here as a comment and it will be reviewed.
+
+# Support
+
+If you are seeking assistance or have a question about your CAS deployment, please visit [support options](https://apereo.github.io/cas/Support.html) to learn more.
 
 Thanks again!
 

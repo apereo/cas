@@ -1,4 +1,6 @@
 Thank you very much for submitting this pull request! 
+         
+# What happened? 
 
 Please note that this patch is targeted at a CAS branch that is no longer maintained, and has reached end of life, and as such cannot be accepted or merged. There will be no follow-up patch releases for this particular release line. If you are unable to upgrade to a community-supported CAS release, you can always keep the patch for your own deployment as a custom change. If you are interested in support options for your CAS deployment beyond free support options, visit [support options](https://apereo.github.io/cas/Support.html).
 

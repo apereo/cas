@@ -18,6 +18,9 @@ import java.util.regex.Pattern;
 @Slf4j
 @RequiredArgsConstructor
 public class CasPullRequestListener implements PullRequestListener {
+    private static final Pattern PATTERN_REVIEWED_BY = Pattern.compile("reviewed by:\\s*@*(\\w+)");
+    private static final Pattern PATTERN_PUPPETEER = Pattern.compile(".*puppeteer.*scenarios.*script.*");
+    
     private final MonitoredRepository repository;
 
     @Override
@@ -174,7 +177,7 @@ public class CasPullRequestListener implements PullRequestListener {
 
         if (modifiesJava || modifiesUI) {
             val hasTests = files.stream().anyMatch(file -> file.getFilename().endsWith("Tests.java")
-                || file.getFilename().matches(".*puppeteer.*scenarios.*script.*"));
+                || PATTERN_PUPPETEER.matcher(file.getFilename()).matches());
             if (!hasTests) {
                 var isCommitter = repository.getGitHubProperties().getRepository().getCommitters().contains(pr.getUser().getLogin());
                 if (!isCommitter) {
@@ -279,8 +282,24 @@ public class CasPullRequestListener implements PullRequestListener {
     @SneakyThrows
     private boolean processDependencyUpgradesPullRequests(final PullRequest pr) {
         var committer = repository.getGitHubProperties().getRepository().getCommitters().contains(pr.getUser().getLogin());
-        if (!committer && !pr.isLabeledAs(CasLabels.LABEL_SEE_SECURITY_POLICY)
-            && !pr.isTargetBranchOnHeroku() && !pr.isWorkInProgress() && !pr.isDraft() && !pr.isRenovateBot() && !pr.isTargetedAtMasterBranch()) {
+        if (!committer
+            && !pr.isLabeledAs(CasLabels.LABEL_SEE_SECURITY_POLICY)
+            && !pr.isTargetBranchOnHeroku()
+            && !pr.isWorkInProgress()
+            && !pr.isDraft()
+            && !pr.isRenovateBot()
+            && !pr.isTargetedAtMasterBranch()) {
+
+            var matcher = PATTERN_REVIEWED_BY.matcher(pr.getBody());
+            if (matcher.find()) {
+                var reviewedBy = matcher.group(1).replace("@", "");
+                var admins = repository.getGitHubProperties().getRepository().getAdmins();
+                if (admins.contains(reviewedBy)) {
+                    log.info("{} is a dependency upgrade that is reviewed by {}", pr, reviewedBy);
+                    return false;
+                }
+            }
+
             var files = repository.getPullRequestFiles(pr);
             if (files.size() == 1 && files.get(0).getFilename().endsWith("gradle.properties")) {
                 var template = IOUtils.toString(new ClassPathResource("template-security-policy.md").getInputStream(), StandardCharsets.UTF_8);
