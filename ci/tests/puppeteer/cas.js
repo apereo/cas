@@ -121,12 +121,14 @@ exports.clickLast = async (page, button) => {
     }, button);
 };
 
+/** Get innerHTML value of selector element. **/
 exports.innerHTML = async (page, selector) => {
     let text = await page.$eval(selector, el => el.innerHTML.trim());
     await this.log(`HTML for selector [${selector}] is: [${text}]`);
     return text;
 };
 
+/** Get innerText value (visible text contained) of a single element. **/
 exports.innerText = async (page, selector) => {
     let text = await page.$eval(selector, el => el.innerText.trim());
     await this.log(`Text for selector [${selector}] is: [${text}]`);
@@ -146,6 +148,7 @@ exports.elementValue = async (page, selector, valueToSet = undefined) => {
     return text;
 };
 
+/** Get innerTexts values of several elements. **/
 exports.innerTexts = async (page, selector) =>
     await page.evaluate((button) => {
         let results = [];
@@ -154,6 +157,7 @@ exports.innerTexts = async (page, selector) =>
         return results;
     }, selector);
 
+/** Get full trimmed textContent of a single element. **/
 exports.textContent = async (page, selector) => {
     let element = await page.$(selector);
     let text = await page.evaluate(element => element.textContent.trim(), element);
@@ -161,11 +165,20 @@ exports.textContent = async (page, selector) => {
     return text;
 };
 
+/** Get input value of a single element. **/
 exports.inputValue = async (page, selector) => {
     const element = await page.$(selector);
     const text = await page.evaluate(element => element.value, element);
     await this.log(`Input value for selector [${selector}] is: [${text}]`);
     return text;
+};
+
+/** Get specified attribute value of a single element. **/
+exports.attrValue = async (page, selector, attribute) => {
+    const element = await page.$(selector);
+    const value = await page.evaluate((elem, attrib) => elem.getAttribute(attrib), element, attribute);
+    await this.log(`Node [${selector}] attribute [${attribute}] has value: [${value}]`);
+    return value;
 };
 
 exports.uploadImage = async (imagePath) => {
@@ -208,6 +221,8 @@ exports.fetchGoogleAuthenticatorScratchCode = async (user = "casuser") => {
         });
     return JSON.stringify(JSON.parse(response)[0].scratchCodes[0]);
 };
+
+/** Check if selector element is visible. **/
 exports.isVisible = async (page, selector) => {
     let element = await page.$(selector);
     let result = (element != null && await element.boundingBox() != null);
@@ -215,10 +230,12 @@ exports.isVisible = async (page, selector) => {
     return result;
 };
 
+/** Assert selector element is visible. **/
 exports.assertVisibility = async (page, selector) => {
     assert(await this.isVisible(page, selector));
 };
 
+/** Assert selector element is invisible. **/
 exports.assertInvisibility = async (page, selector) => {
     let element = await page.$(selector);
     let result = element == null || await element.boundingBox() == null;
@@ -273,6 +290,7 @@ exports.submitForm = async (page, selector, predicate = undefined, statusCode = 
     ]);
 };
 
+/** Press Enter and wait 1s. **/
 exports.pressEnter = async (page) => {
     page.keyboard.press('Enter');
     page.waitForTimeout(1000);
@@ -293,7 +311,7 @@ exports.newPage = async (browser) => {
         this.logr(e);
         await this.sleep(1000);
     }
-    
+
     if (page === undefined) {
         let counter = 0;
         while (page === undefined && counter < 5) {
@@ -315,7 +333,7 @@ exports.newPage = async (browser) => {
         await this.logr(err);
         throw err;
     }
-    
+
     await page.bringToFront();
     page
         .on('console', message => {
@@ -331,6 +349,7 @@ exports.newPage = async (browser) => {
     return page;
 };
 
+/** Assert that page url contain a parameter. **/
 exports.assertParameter = async (page, param) => {
     await this.log(`Asserting parameter ${param} in URL: ${page.url()}`);
     let result = new URL(page.url());
@@ -365,6 +384,7 @@ exports.assertPageUrlPort = async(page, port) => {
     assert(result.port === port);
 };
 
+/** Assert that page url does NOT contain a parameter. **/
 exports.assertMissingParameter = async (page, param) => {
     let result = new URL(await page.url());
     assert(result.searchParams.has(param) === false);
@@ -556,9 +576,16 @@ exports.assertInnerTextDoesNotContain = async (page, selector, value) => {
     assert(!header.includes(value));
 };
 
+/** Assert a selected element inner Text has this exact value. **/
 exports.assertInnerText = async (page, selector, value) => {
     const header = await this.innerText(page, selector);
     assert(header === value)
+};
+
+/** Assert a selected element attribute has this exact value. **/
+exports.assertAttribute = async (page, selector, attribute, value) => {
+    const candidate = await this.attrValue(page, selector, attribute);
+    assert(candidate === value)
 };
 
 exports.assertPageTitle = async (page, value) => {
