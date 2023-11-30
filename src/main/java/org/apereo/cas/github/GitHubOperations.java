@@ -136,4 +136,7 @@ public interface GitHubOperations {
 
     void updatePullRequest(String organization, String name,
                            PullRequest pr, Map<String, ? extends Serializable> payload);
+
+    Page<PullRequestReview> getPullRequestReviews(String organization, String name, PullRequest pr);
+    Page<TimelineEntry> getPullRequestTimeline(String organization, String name, PullRequest pr);
 }

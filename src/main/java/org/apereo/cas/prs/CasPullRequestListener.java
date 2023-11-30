@@ -39,25 +39,37 @@ public class CasPullRequestListener implements PullRequestListener {
         processAutomaticMergeByChangeset(pr);
     }
 
-    private void processAutomaticMergeByChangeset(final PullRequest pr) {
-        if (pr.isRenovateBot() || pr.isDependaBot()) {
-            if (pr.isLabeledAs(CasLabels.LABEL_AUTO_MERGE)) {
-                log.info("Merging pull request {}", pr);
-                repository.approveAndMergePullRequest(pr);
-            } else {
-                var files = repository.getPullRequestFiles(pr);
-                if (files.size() == 1) {
-                    var firstFile = files.get(0).getFilename();
+    private boolean processAutomaticMergeByChangeset(final PullRequest pr) {
+        if (pr.isLabeledAs(CasLabels.LABEL_AUTO_MERGE)) {
+            if (pr.isRenovateBot() || pr.isDependaBot()) {
+                log.info("Merging Bot pull request {}", pr);
+                return repository.approveAndMergePullRequest(pr);
+            }
+            var files = repository.getPullRequestFiles(pr);
+            if (files.size() == 1) {
+                var firstFile = files.get(0).getFilename();
 
-                    if (firstFile.endsWith("locust/requirements.txt")
-                        || firstFile.endsWith("client/package-lock.json")
-                        || firstFile.endsWith("client/.nvmrc")) {
-                        log.info("Merging pull request {}", pr);
-                        repository.approveAndMergePullRequest(pr);
-                    }
+                if (firstFile.endsWith("locust/requirements.txt")
+                    || firstFile.endsWith("client/package-lock.json")
+                    || firstFile.endsWith("client/.nvmrc")) {
+                    log.info("Merging pull request {}", pr);
+                    return repository.approveAndMergePullRequest(pr);
                 }
             }
+            var timeline = repository.getPullRequestTimeline(pr);
+            var admins = repository.getGitHubProperties().getRepository().getAdmins();
+            var approvedByAdmin = timeline
+                .stream()
+                .anyMatch(r -> r.isLabeled()
+                    && r.getLabel().getName().equals(CasLabels.LABEL_AUTO_MERGE.getTitle())
+                    && r.getActor() != null
+                    && admins.contains(r.getActor().getLogin()));
+            if (approvedByAdmin) {
+                log.info("Merging admin-approved pull request {}", pr);
+                return repository.approveAndMergePullRequest(pr);
+            }
         }
+        return false;
     }
 
     private boolean shouldDisregardPullRequest(final PullRequest pr) {

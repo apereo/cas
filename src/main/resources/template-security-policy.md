@@ -8,6 +8,6 @@ Generally-speaking and given the amount of effort involved in planning and relea
 
 Supposed vulnerabilities that are picked up and reported by security scanners, static code analyzers and such affecting a third party library used by CAS generally do not qualify, unless there is solid evidence provided by the reporter to indicate a **real, practical issue** affecting CAS daily ops. Such warnings often appear superficial in the context of a CAS deployment. Usually, the best course of action would be to make the upgrades either locally to the installation script or switch to a more recent CAS version that might remove such warnings.
                  
-If you believe the changes in this patch fix a serious, practical security vulnerability found in a third-party library, please follow the project's security response guidelines to learn more about to share details and come to a resolution. For additional details, please review the [security vulnerability response](https://apereo.github.io/cas/developer/Sec-Vuln-Response.html).
+If you believe the changes in this patch fix a serious, practical security vulnerability found in a third-party library, please follow the project's security response guidelines to learn how to share details and come to a resolution. For additional details, please review the [security vulnerability response](https://apereo.github.io/cas/developer/Sec-Vuln-Response.html).
 
 If you are seeking assistance or have a question about your CAS deployment, please visit [support options](https://apereo.github.io/cas/Support.html) to learn more.

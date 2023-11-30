@@ -73,7 +73,8 @@ public class GitHubProperties {
         private String url;
 
         private List<String> committers = new ArrayList<>();
-        
+        private List<String> admins = new ArrayList<>();
+
         public String getFullName() {
             return organization + '/' + name;
         }

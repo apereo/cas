@@ -165,6 +165,17 @@ public class GitHubTemplate implements GitHubOperations {
         }
     }
 
+    @Override
+    public Page<PullRequestReview> getPullRequestReviews(final String organization, final String name, final PullRequest pr) {
+        val url = "https://api.github.com/repos/" + organization + '/' + name + "/pulls/" + pr.getNumber() + "/reviews";
+        return getPage(url, PullRequestReview[].class);
+    }
+
+    @Override
+    public Page<TimelineEntry> getPullRequestTimeline(final String organization, final String name, final PullRequest pr) {
+        val url = "https://api.github.com/repos/" + organization + '/' + name + "/issues/" + pr.getNumber() + "/timeline";
+        return getPage(url, TimelineEntry[].class);
+    }
 
     @Override
     @SneakyThrows

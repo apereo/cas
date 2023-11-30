@@ -11,6 +11,8 @@ import org.apereo.cas.github.Label;
 import org.apereo.cas.github.Milestone;
 import org.apereo.cas.github.PullRequest;
 import org.apereo.cas.github.PullRequestFile;
+import org.apereo.cas.github.PullRequestReview;
+import org.apereo.cas.github.TimelineEntry;
 import org.apereo.cas.github.Workflows;
 import com.github.zafarkhaja.semver.Version;
 import lombok.Getter;
@@ -175,6 +177,26 @@ public class MonitoredRepository {
             pr.getHead().getSha(), "squash");
     }
 
+    public List<PullRequestReview> getPullRequestReviews(final PullRequest pr) {
+        List<PullRequestReview> files = new ArrayList<>();
+        var pages = this.gitHub.getPullRequestReviews(getOrganization(), getName(), pr);
+        while (pages != null) {
+            files.addAll(pages.getContent());
+            pages = pages.next();
+        }
+        return files;
+    }
+
+    public List<TimelineEntry> getPullRequestTimeline(final PullRequest pr) {
+        List<TimelineEntry> files = new ArrayList<>();
+        var pages = this.gitHub.getPullRequestTimeline(getOrganization(), getName(), pr);
+        while (pages != null) {
+            files.addAll(pages.getContent());
+            pages = pages.next();
+        }
+        return files;
+    }
+
     public PullRequest labelPullRequestAs(final PullRequest pr, final CasLabels labelName) {
         if (!pr.isLabeledAs(labelName)) {
             return gitHub.addLabel(pr, labelName.getTitle());
@@ -199,10 +221,11 @@ public class MonitoredRepository {
         return getPullRequestFiles(pr.getNumber());
     }
 
-    public void approveAndMergePullRequest(final PullRequest pr) {
+    public boolean approveAndMergePullRequest(final PullRequest pr) {
         if (approvePullRequest(pr)) {
-            mergePullRequestIntoBase(pr);
+            return mergePullRequestIntoBase(pr);
         }
+        return false;
     }
 
     public List<PullRequestFile> getPullRequestFiles(final String pr) {
