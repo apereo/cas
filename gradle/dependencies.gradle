@@ -579,6 +579,7 @@ ext.libraries = [
         guava                   : [
                 dependencies.create("com.google.guava:guava:$guavaVersion") {
                     exclude(group: "com.google.errorprone", module: "error_prone_annotations")
+                    exclude(group: "org.checkerframework", module: "checker-qual")
                 },
                 dependencies.create("de.cronn:reflection-util:$reflectionUtilVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
