@@ -614,6 +614,7 @@ ext.libraries = [
                 dependencies.create("com.google.guava:guava:$guavaVersion") {
                     exclude(group: "com.google.errorprone", module: "error_prone_annotations")
                     exclude(group: "com.fasterxml.jackson.module", module: "jackson-module-jaxb-annotations")
+                    exclude(group: "org.checkerframework", module: "checker-qual")
                 }
         ],
         classgraph                 : [
