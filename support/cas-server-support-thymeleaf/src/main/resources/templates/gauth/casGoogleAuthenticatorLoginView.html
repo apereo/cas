@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}" th:lang="${#locale}">
 
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
@@ -27,7 +27,7 @@
                     <div class="w-100 mdc-input-group-field mdc-input-group-field-append">
                         <div class="d-flex">
                             <input type="hidden" id="accountId" name="accountId" size="25" autocomplete="off" th:field="*{accountId}" />
-                    
+
                             <label for="token"
                                 class="mdc-text-field caps-check mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon">
                                 <span class="mdc-notched-outline">
@@ -40,8 +40,8 @@
                                 <input class="mdc-text-field__input form-control pwd" type="password" name="token" id="token"
                                     th:field="*{token}" size="25" autocomplete="off" required />
                             </label>
-                    
-                    
+
+
                             <script type="text/javascript" th:inline="javascript">
                                 /*<![CDATA[*/
                                 let accountId = /*[[${registeredDevice.id}]]*/;
@@ -85,7 +85,7 @@
                 </button>
             </form>
         </span>
-        
+
         <div th:if="${gauthMultipleDeviceRegistrationEnabled}">
             <p>
             <hr width="75%">
@@ -246,7 +246,7 @@
             </div>
             <!-- Confirmation Dialog -->
 
-            
+
             <script type="text/javascript">
                 (material => {
                     document.addEventListener('DOMContentLoaded', () => {
@@ -260,7 +260,7 @@
                     });
                 })(mdc);
             </script>
-            
+
         </div>
         </p>
     </div>

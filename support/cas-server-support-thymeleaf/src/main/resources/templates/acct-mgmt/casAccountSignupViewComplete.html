@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}" th:lang="${#locale}">
 
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
@@ -69,7 +69,7 @@
                             <span class="visually-hidden">Toggle Password</span>
                         </button>
                     </div>
-                    
+
                     <div class="mdc-text-field-helper-line caps-warn">
                         <p class="mdc-text-field-helper-text mdc-text-field-helper-text--persistent mdc-text-field-helper-text--validation-msg text-danger">
                             <span th:utext="#{screen.capslock.on}"/>
@@ -124,7 +124,7 @@
                                    type="text"
                                    autocapitalize="none"
                                    spellcheck="false"/>
-                            
+
                         </label>
                     </div>
 

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}" th:lang="${#locale}">
    <head>
       <meta http-equiv="X-UA-Compatible" content="IE=edge" />
       <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
@@ -26,7 +26,7 @@
                      <span class="mdc-button__label" th:text="#{screen.button.continue}">Continue</span>
                   </button>
                </form>
-               
+
                <form method="post" id="changePasswordForm" class="fm-v" th:action="@{/login}"
                   th:if="${passwordManagementEnabled} AND ${passwordExpirationWarningFound}">
                   <input type="hidden" name="execution" th:value="${flowExecutionKey}" />

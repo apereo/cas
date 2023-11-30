@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}" th:lang="${#locale}">
 
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -56,7 +56,7 @@
                                    autocomplete="off" required />
                         </label>
                     </div>
-                    
+
                     <select name="timeUnit" id="timeUnit" class="custom-select" th:field="*{timeUnit}"
                             onchange="let hide = this.value!=='FOREVER'; $('#expirationField').toggle(hide)">
                         <option value="SECONDS" th:text="#{screen.consent.options.timeunit.seconds}">Seconds</option>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}" th:lang="${#locale}">
 
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
@@ -46,7 +46,7 @@
             <button id="continueButton" class="mdc-button mdc-button--raised btn btn-primary mt-4 d-block" type="submit">
                 <span th:text="#{screen.button.continue}"></span>
             </button>
-            
+
             <input type="hidden" id="eventId" name="_eventId" value="select"/>
             <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
             <input type="hidden" name="geolocation"/>
