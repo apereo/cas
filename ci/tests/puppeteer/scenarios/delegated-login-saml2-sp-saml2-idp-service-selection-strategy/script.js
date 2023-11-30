@@ -21,7 +21,7 @@ async function cleanUp() {
             await page.waitForTimeout(3000);
             await page.waitForSelector('#idpForm', {visible: true});
             await cas.submitForm(page, "#idpForm");
-            await page.waitForTimeout(4000);
+            await page.waitForTimeout(8000);
             await page.waitForSelector('#username', {visible: true});
             await cas.loginWith(page, "user1", "password");
             await page.waitForTimeout(5000);
