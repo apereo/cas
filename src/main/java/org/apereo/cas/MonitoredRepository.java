@@ -201,7 +201,7 @@ public class MonitoredRepository {
         if (!pr.isLabeledAs(labelName)) {
             return gitHub.addLabel(pr, labelName.getTitle());
         }
-        log.info("Pull request {} is already assigned to label {}", pr.getNumber(), labelName);
+        log.debug("Pull request {} is already assigned to label {}", pr.getNumber(), labelName);
         return pr;
     }
 
