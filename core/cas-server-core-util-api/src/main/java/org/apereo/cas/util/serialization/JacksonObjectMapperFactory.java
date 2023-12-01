@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.json.JsonWriteFeature;
+import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
@@ -70,6 +71,9 @@ public class JacksonObjectMapperFactory {
 
     @Builder.Default
     private final Map<String, Object> injectableValues = new LinkedHashMap<>();
+
+    @Builder.Default
+    private final boolean minimal = false;
 
     private final JsonFactory jsonFactory;
 
@@ -142,6 +146,10 @@ public class JacksonObjectMapperFactory {
         if (isDefaultTypingEnabled()) {
             obm.activateDefaultTyping(obm.getPolymorphicTypeValidator(),
                 ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
+        }
+
+        if (minimal) {
+            obm.setDefaultPrettyPrinter(new MinimalPrettyPrinter());
         }
         return obm;
     }

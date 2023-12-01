@@ -31,6 +31,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -57,7 +58,7 @@ import java.util.UUID;
         RefreshAutoConfiguration.class
     },
     properties = {
-        "cas.jdbc.show-sql=false",
+        "cas.jdbc.show-sql=true",
         "cas.audit.jdbc.column-length=-1",
         "cas.audit.jdbc.schedule.enabled=true",
         "cas.audit.jdbc.asynchronous=false"
@@ -83,15 +84,15 @@ class CasJdbcAuditConfigurationTests extends BaseAuditConfigurationTests {
 
     @Test
     void verifyLargeResource() throws Throwable {
+        val clientInfo = new ClientInfo("1.2.3.4", "1.2.3.4", UUID.randomUUID().toString(), "London")
+            .setExtraInfo(Map.of("Hello", "World"))
+            .setHeaders(Map.of("H1", "V1"));
         val context = new AuditActionContext(
             UUID.randomUUID().toString(),
             RandomUtils.randomAlphabetic(10_000),
             "TEST",
             "CAS", LocalDateTime.now(Clock.systemUTC()),
-            new ClientInfo("1.2.3.4",
-                "1.2.3.4",
-                "GoogleChrome",
-                "Paris"));
+            clientInfo);
         getAuditTrailManager().record(context);
     }
 }

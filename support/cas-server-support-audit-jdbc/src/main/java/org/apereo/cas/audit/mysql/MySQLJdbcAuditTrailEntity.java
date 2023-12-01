@@ -19,13 +19,17 @@ import jakarta.persistence.Table;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@Entity(name = "COM_AUDIT_TRAIL")
+@Entity(name = JdbcAuditTrailEntity.AUDIT_TRAIL_TABLE_NAME)
 @Table(name = JdbcAuditTrailEntity.AUDIT_TRAIL_TABLE_NAME)
 @SuperBuilder
 @Setter
 @Getter
 @Accessors(chain = true)
 @NoArgsConstructor
-@AttributeOverrides(@AttributeOverride(name = "resource", column = @Column(name = "AUD_RESOURCE", columnDefinition = "text")))
+@AttributeOverrides({
+    @AttributeOverride(name = "resource", column = @Column(name = "AUD_RESOURCE", columnDefinition = "text")),
+    @AttributeOverride(name = "headers", column = @Column(name = "AUD_HEADERS", columnDefinition = "text")),
+    @AttributeOverride(name = "extraInfo", column = @Column(name = "AUD_EXTRA_INFO", columnDefinition = "text"))
+})
 public class MySQLJdbcAuditTrailEntity extends AuditTrailEntity {
 }

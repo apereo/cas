@@ -18,7 +18,7 @@ import jakarta.persistence.Table;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@Entity(name = "COM_AUDIT_TRAIL")
+@Entity(name = JdbcAuditTrailEntity.AUDIT_TRAIL_TABLE_NAME)
 @Table(name = JdbcAuditTrailEntity.AUDIT_TRAIL_TABLE_NAME)
 @SuperBuilder
 @Setter

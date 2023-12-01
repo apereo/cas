@@ -9,16 +9,17 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link MapToJsonAttributeConverterTests}.
+ * This is {@link MultivaluedMapToJsonAttributeConverterTests}.
  *
  * @author Misagh Moayyed
  * @since 7.0.0
  */
 @Tag("JDBC")
-public class MapToJsonAttributeConverterTests {
+public class MultivaluedMapToJsonAttributeConverterTests {
+
     @Test
     void verifyOperation() throws Exception {
-        val converter = new MapToJsonAttributeConverter();
+        val converter = new MultivaluedMapToJsonAttributeConverter();
         val map = new HashMap<String, List<Object>>();
         map.put("attribute1", CollectionUtils.wrapList("1", "2"));
         val results = converter.convertToDatabaseColumn(map);

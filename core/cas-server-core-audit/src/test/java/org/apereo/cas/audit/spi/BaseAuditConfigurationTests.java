@@ -84,8 +84,11 @@ public abstract class BaseAuditConfigurationTests {
     public void onSetUp() {
         val auditTrailManager = getAuditTrailManager();
         auditTrailManager.removeAll();
+        val clientInfo = new ClientInfo("1.2.3.4", "1.2.3.4", UUID.randomUUID().toString(), "London")
+            .setExtraInfo(Map.of("Hello", "World"))
+            .setHeaders(Map.of("H1", "V1"));
         this.auditActionContext = new AuditActionContext(USER, "TEST", "TEST",
-            "CAS", LocalDateTime.now(Clock.systemUTC()), new ClientInfo("1.2.3.4", "1.2.3.4", UUID.randomUUID().toString(), "London"));
+            "CAS", LocalDateTime.now(Clock.systemUTC()), clientInfo);
         auditTrailManager.record(auditActionContext);
     }
 
