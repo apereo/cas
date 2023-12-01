@@ -17,6 +17,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.UUID;
 import static org.mockito.Mockito.*;
 
@@ -44,9 +45,12 @@ class GroovyAuditTrailManagerTests {
 
     @Test
     void verifyOperation() throws Throwable {
+        val clientInfo = new ClientInfo("1.2.3.4", "1.2.3.4", UUID.randomUUID().toString(), "London")
+            .setExtraInfo(Map.of("Hello", "World"))
+            .setHeaders(Map.of("H1", "V1"));
         val ctx = new AuditActionContext("casuser",
             "TEST", "TEST", "CAS", LocalDateTime.now(Clock.systemUTC()),
-            new ClientInfo("1.2.3.4", "1.2.3.4", UUID.randomUUID().toString(), "London"));
+            clientInfo);
         auditTrailManager.record(ctx);
     }
 
