@@ -165,20 +165,11 @@ exports.textContent = async (page, selector) => {
     return text;
 };
 
-/** Get input value of a single element. **/
 exports.inputValue = async (page, selector) => {
     const element = await page.$(selector);
     const text = await page.evaluate(element => element.value, element);
     await this.log(`Input value for selector [${selector}] is: [${text}]`);
     return text;
-};
-
-/** Get specified attribute value of a single element. **/
-exports.attrValue = async (page, selector, attribute) => {
-    const element = await page.$(selector);
-    const value = await page.evaluate((elem, attrib) => elem.getAttribute(attrib), element, attribute);
-    await this.log(`Node [${selector}] attribute [${attribute}] has value: [${value}]`);
-    return value;
 };
 
 exports.uploadImage = async (imagePath) => {
@@ -222,7 +213,6 @@ exports.fetchGoogleAuthenticatorScratchCode = async (user = "casuser") => {
     return JSON.stringify(JSON.parse(response)[0].scratchCodes[0]);
 };
 
-/** Check if selector element is visible. **/
 exports.isVisible = async (page, selector) => {
     let element = await page.$(selector);
     let result = (element != null && await element.boundingBox() != null);
@@ -230,19 +220,16 @@ exports.isVisible = async (page, selector) => {
     return result;
 };
 
-/** Assert selector element is visible. **/
 exports.assertVisibility = async (page, selector) => {
     assert(await this.isVisible(page, selector));
 };
 
-/** Assert selector element is invisible. **/
 exports.assertInvisibility = async (page, selector) => {
     let element = await page.$(selector);
     let result = element == null || await element.boundingBox() == null;
     await this.log(`Checking element invisibility for ${selector} while on page ${page.url()}: ${result}`);
     assert(result);
 };
-
 
 exports.assertCookie = async (page, cookieMustBePresent = true, cookieName = "TGC") => {
     const cookies = (await page.cookies()).filter(c => {
@@ -290,7 +277,6 @@ exports.submitForm = async (page, selector, predicate = undefined, statusCode = 
     ]);
 };
 
-/** Press Enter and wait 1s. **/
 exports.pressEnter = async (page) => {
     page.keyboard.press('Enter');
     page.waitForTimeout(1000);
@@ -349,7 +335,6 @@ exports.newPage = async (browser) => {
     return page;
 };
 
-/** Assert that page url contain a parameter. **/
 exports.assertParameter = async (page, param) => {
     await this.log(`Asserting parameter ${param} in URL: ${page.url()}`);
     let result = new URL(page.url());
@@ -384,7 +369,6 @@ exports.assertPageUrlPort = async(page, port) => {
     assert(result.port === port);
 };
 
-/** Assert that page url does NOT contain a parameter. **/
 exports.assertMissingParameter = async (page, param) => {
     let result = new URL(await page.url());
     assert(result.searchParams.has(param) === false);
@@ -576,16 +560,9 @@ exports.assertInnerTextDoesNotContain = async (page, selector, value) => {
     assert(!header.includes(value));
 };
 
-/** Assert a selected element inner Text has this exact value. **/
 exports.assertInnerText = async (page, selector, value) => {
     const header = await this.innerText(page, selector);
     assert(header === value)
-};
-
-/** Assert a selected element attribute has this exact value. **/
-exports.assertAttribute = async (page, selector, attribute, value) => {
-    const candidate = await this.attrValue(page, selector, attribute);
-    assert(candidate === value)
 };
 
 exports.assertPageTitle = async (page, value) => {
