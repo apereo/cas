@@ -10,7 +10,7 @@
 </head>
 
 <body>
-    <main role="main" class="container mt-3 mb-3">
+    <main class="container mt-3 mb-3">
         <div layout:fragment="content" id="login" class="mdc-card card mdc-card-content w-lg-50 p-4 m-auto">
             <h2 th:text="#{cas.mfa.registerdevice.label.title}">Register Device</h2>
             <p th:text="#{cas.mfa.registerdevice.label.intro}">Please name the current device.</p>
@@ -56,7 +56,7 @@
                                    autocomplete="off" required />
                         </label>
                     </div>
-                    
+
                     <select name="timeUnit" id="timeUnit" class="custom-select" th:field="*{timeUnit}"
                             onchange="let hide = this.value!=='FOREVER'; $('#expirationField').toggle(hide)">
                         <option value="SECONDS" th:text="#{screen.consent.options.timeunit.seconds}">Seconds</option>

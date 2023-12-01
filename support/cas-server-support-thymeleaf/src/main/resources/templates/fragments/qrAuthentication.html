@@ -9,7 +9,7 @@
     <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
 </head>
 <body>
-<main role="main" class="container mt-3 mb-3">
+<main class="container mt-3 mb-3">
     <div th:fragment="qrAuthentication" th:remove="tag">
 
         <script type="text/javascript" th:src="@{#{webjars.socket.js}}"></script>
@@ -62,14 +62,14 @@
                 </div>
             </div>
         </div>
-        
+
         <form method="post" id="qrform">
             <input id="token" name="token" type="hidden" />
             <input id="deviceId" name="deviceId" type="hidden" />
             <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
             <input type="hidden" name="_eventId" value="validate"/>
         </form>
-        
+
         <script th:inline="javascript">
             /*<![CDATA[*/
             let endpoint = /*[[@{/qr-websocket}]]*/  ;
@@ -104,7 +104,7 @@
             <input type="hidden" id="eventId" name="_eventId" value="submit"/>
             <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
         </form>
-        
+
     </div>
 </main>
 </body>

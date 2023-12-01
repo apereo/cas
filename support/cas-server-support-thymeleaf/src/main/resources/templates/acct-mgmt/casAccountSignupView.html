@@ -8,7 +8,7 @@
 </head>
 
 <body id="cas">
-<main role="main" class="container mt-3 mb-3">
+<main class="container mt-3 mb-3">
     <div layout:fragment="content" class="mdc-card p-4 m-auto w-lg-100">
         <script>
             function jqueryReady() {
@@ -18,7 +18,7 @@
 
         <h2 th:utext="#{cas.screen.acct.title}" />
         <p class="intro" th:utext="#{cas.screen.acct.intro}" />
-                 
+
         <form method="post" id="fm1" novalidate class="needs-validation">
             <div class="banner banner-danger my-2" th:if="${flowRequestContext.messageContext.hasErrorMessages()}">
                 <p th:each="message : ${flowRequestContext.messageContext.allMessages}"
@@ -63,15 +63,15 @@
                         th:classappend="${'custom-select ' + entry.cssClass}">
                         <option th:each="option,status : ${entry.values}" th:value="${status.index}" th:text="${option}" />
                 </select>
-                
-                
+
+
 
             </section>
-            
+
             <span th:if="${accountRegistrationCaptchaEnabled}">
                 <div th:replace="~{fragments/recaptcha :: recaptchaToken}" />
             </span>
-            
+
             <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
             <input type="hidden" name="_eventId" value="submit"/>
             <div class="form-actions d-flex justify-content-center">
