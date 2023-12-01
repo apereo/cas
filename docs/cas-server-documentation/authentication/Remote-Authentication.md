@@ -5,7 +5,6 @@ category: Authentication
 ---
 {% include variables.html %}
 
-
 # Remote Authentication
 
 This authentication strategy uses the HTTP request's properties (address, cookie, etc) to transparently authenticate a user.
@@ -14,7 +13,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-generic-remote-webflow" %}
 
-{% include_cached casproperties.html properties="cas.authn.remote" %}
+{% include_cached casproperties.html properties="cas.authn.remote" excludes=".cookie" %}
 
 ## Remote Address
 
@@ -37,3 +36,23 @@ of the proxy server and not the client. Given that this form of CAS authenticati
 be deployed within an internal network this is generally not a problem.
 
 ## Remote Cookie
+
+This method of authentication is able to accept a cookie value as a remote (shared) credential. Once the cookie is
+passed onto CAS and has been parsed and decoded, its value is used as the authenticated principal id.
+
+{% include_cached casproperties.html properties="cas.authn.remote.cookie" %}
+
+By default, the cookie value is expected to be signed and encrypted using dedicated cipher keys when passed onto CAS, and CAS
+must use the same keys to decode and verify the cookie value.
+
+If you wish to control how to the cookie value is decoded and parsed, you may do so via the following bean definition:
+
+```java
+@Bean
+public CipherExecutor remoteCookieCipherExecutor() {
+    return new MyCipherExecutor();
+}
+```
+
+[See this guide](../configuration/Configuration-Management-Extensions.html) to learn more
+about how to register configurations into the CAS runtime.

@@ -124,11 +124,20 @@ async function checkSessionsAreSynced(browser) {
 }
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
-    await checkSessionsAreSynced(browser);
-    await testBasicLoginLogout(browser);
-    await checkTicketValidationAcrossNodes(browser);
+    let failed = false;
+    try {
+        const browser = await puppeteer.launch(cas.browserOptions());
+        await checkSessionsAreSynced(browser);
+        await testBasicLoginLogout(browser);
+        await checkTicketValidationAcrossNodes(browser);
 
-    await browser.close();
-    await process.exit(0);
+        await browser.close();
+    } catch (e) {
+        failed = true;
+        throw e;
+    } finally {
+        if (!failed) {
+            await process.exit(0);
+        }
+    }
 })();

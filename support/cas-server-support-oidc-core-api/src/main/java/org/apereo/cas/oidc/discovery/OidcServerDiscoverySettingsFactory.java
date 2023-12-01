@@ -96,6 +96,16 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
                 .collect(Collectors.toSet());
             discovery.setAcrValuesSupported(providers);
         }
+
+        discovery.setVerifiedClaimsSupported(discoveryConfig.isVerifiedClaimsSupported());
+        discovery.setTrustFrameworksSupported(discoveryConfig.getTrustFrameworksSupported());
+        discovery.setEvidenceSupported(discoveryConfig.getEvidenceSupported());
+        discovery.setDocumentsSupported(discoveryConfig.getDocumentsSupported());
+        discovery.setDocumentsValidationMethodsSupported(discoveryConfig.getDocumentsValidationMethodsSupported());
+        discovery.setDocumentsVerificationMethodsSupported(discoveryConfig.getDocumentsVerificationMethodsSupported());
+        discovery.setElectronicRecordsSupported(discoveryConfig.getElectronicRecordsSupported());
+        discovery.setClaimsInVerifiedClaimsSupported(discoveryConfig.getClaimsInVerifiedClaimsSupported());
+        
         return discovery;
     }
 

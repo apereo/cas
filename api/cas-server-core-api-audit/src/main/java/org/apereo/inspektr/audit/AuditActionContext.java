@@ -25,39 +25,21 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode
 public class AuditActionContext implements Serializable {
 
-    /**
-     * Unique Id for serialization.
-     */
     @Serial
     private static final long serialVersionUID = -3530737409883959089L;
 
-    /**
-     * This is <i>WHO</i>.
-     */
     @JsonProperty("principal")
     private final String principal;
 
-    /**
-     * This is <i>WHAT</i>.
-     */
     @JsonProperty("auditableResource")
     private final String resourceOperatedUpon;
 
-    /**
-     * This is <i>ACTION</i>.
-     */
     @JsonProperty("actionPerformed")
     private final String actionPerformed;
 
-    /**
-     * This is <i>Application from which operation has been performed</i>.
-     */
     @JsonProperty("applicationCode")
     private final String applicationCode;
 
-    /**
-     * This is <i>WHEN</i>.
-     */
     @JsonProperty("whenActionWasPerformed")
     private final LocalDateTime whenActionWasPerformed;
 

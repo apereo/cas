@@ -16,7 +16,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("JDBC")
 public class MapToJsonAttributeConverterTests {
-
     @Test
     void verifyOperation() throws Exception {
         val converter = new MapToJsonAttributeConverter();

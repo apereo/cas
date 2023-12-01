@@ -38,8 +38,10 @@ configurations {
 
 dependencies {
     processAotClasspath libraries.graalvmsdk
+    processAotClasspath libraries.graalvmpolyglot
     processTestAotClasspath libraries.graalvmsdk
-    
+    processTestAotClasspath libraries.graalvmpolyglot
+
     implementation project(":webapp:cas-server-webapp-init")
     implementation project(":webapp:cas-server-webapp-resources")
     implementation project(":webapp:cas-server-webapp-init-tomcat")
@@ -92,6 +94,7 @@ dependencies {
     }
     
     testImplementation libraries.graalvmsdk
+    testImplementation libraries.graalvmpolyglot
 }
 
 graalvmNative {
@@ -124,7 +127,7 @@ graalvmNative {
             buildArgs.add('-H:+BuildReport')
             buildArgs.add('-H:+AddAllCharsets')
             buildArgs.add('-H:+UnlockExperimentalVMOptions')
-
+            
             buildArgs.add('-J-Xmx12G')
             buildArgs.add('-J-Xms4G')
             buildArgs.add('--native-image-info')

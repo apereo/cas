@@ -138,7 +138,7 @@ public class TicketRegistrySessionStore implements SessionStore {
             if (sessionId != null) {
                 val ticketId = TransientSessionTicketFactory.normalizeTicketId(sessionId);
 
-                LOGGER.trace("fetching ticket: [{}]", ticketId);
+                LOGGER.trace("Fetching ticket: [{}]", ticketId);
                 return ticketRegistry.getTicket(ticketId, TransientSessionTicket.class);
             }
         } catch (final Exception e) {

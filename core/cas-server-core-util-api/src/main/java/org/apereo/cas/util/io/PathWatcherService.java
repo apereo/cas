@@ -1,13 +1,14 @@
 package org.apereo.cas.util.io;
 
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.DisposableBean;
-
+import jakarta.annotation.Nullable;
 import java.io.File;
 import java.nio.file.ClosedWatchServiceException;
 import java.nio.file.Path;
@@ -15,9 +16,9 @@ import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-
 import static java.nio.file.StandardWatchEventKinds.*;
 
 /**
@@ -28,9 +29,12 @@ import static java.nio.file.StandardWatchEventKinds.*;
  */
 @Slf4j
 public class PathWatcherService implements WatcherService, Runnable, DisposableBean {
+    private static final String PROPERTY_DISABLE_WATCHER = PathWatcherService.class.getName();
+
     private static final WatchEvent.Kind[] KINDS = {ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY};
 
-    private final WatchService watcher;
+    @Nullable
+    private WatchService watchService;
 
     private final Consumer<File> onCreate;
 
@@ -38,13 +42,14 @@ public class PathWatcherService implements WatcherService, Runnable, DisposableB
 
     private final Consumer<File> onDelete;
 
+    @Nullable
     private Thread thread;
 
     public PathWatcherService(final File watchablePath, final Consumer<File> onModify) {
         this(watchablePath.toPath(),
-            file -> {
+            __ -> {
             }, onModify,
-            file -> {
+            __ -> {
             });
     }
 
@@ -54,34 +59,34 @@ public class PathWatcherService implements WatcherService, Runnable, DisposableB
         this.onCreate = onCreate;
         this.onModify = onModify;
         this.onDelete = onDelete;
-        this.watcher = FunctionUtils.doUnchecked(() -> watchablePath.getFileSystem().newWatchService());
-        LOGGER.trace("Created watcher for events of type [{}]", Arrays.stream(KINDS)
-            .map(WatchEvent.Kind::name)
-            .collect(Collectors.joining(",")));
-        FunctionUtils.doUnchecked(__ -> watchablePath.register(this.watcher, KINDS));
+        if (shouldEnableWatchService()) {
+            initializeWatchService(watchablePath);
+        }
     }
 
     @Override
     public void run() {
-        try {
-            var key = (WatchKey) null;
-            while ((key = watcher.take()) != null) {
-                handleEvent(key);
-                val valid = key.reset();
-                if (!valid) {
-                    LOGGER.info("Directory key is no longer valid. Quitting watcher service");
+        if (shouldEnableWatchService()) {
+            try {
+                var key = (WatchKey) null;
+                while ((key = watchService.take()) != null) {
+                    handleEvent(key);
+                    val valid = key.reset();
+                    if (!valid) {
+                        LOGGER.info("Directory key is no longer valid. Quitting watcher service");
+                    }
                 }
+            } catch (final InterruptedException | ClosedWatchServiceException e) {
+                LOGGER.trace(e.getMessage(), e);
+                Thread.currentThread().interrupt();
             }
-        } catch (final InterruptedException | ClosedWatchServiceException e) {
-            LOGGER.trace(e.getMessage(), e);
-            Thread.currentThread().interrupt();
         }
     }
 
     @Override
     public void close() {
         LOGGER.trace("Closing service registry watcher thread");
-        IOUtils.closeQuietly(this.watcher);
+        IOUtils.closeQuietly(watchService);
         if (this.thread != null) {
             thread.interrupt();
         }
@@ -90,8 +95,10 @@ public class PathWatcherService implements WatcherService, Runnable, DisposableB
 
     @Override
     public void start(final String name) {
-        LOGGER.trace("Starting watcher thread");
-        thread = Thread.ofVirtual().name(name).start(this);
+        if (shouldEnableWatchService()) {
+            LOGGER.trace("Starting watcher thread");
+            thread = Thread.ofVirtual().name(name).start(this);
+        }
     }
 
     @Override
@@ -99,7 +106,7 @@ public class PathWatcherService implements WatcherService, Runnable, DisposableB
         close();
     }
 
-    private void handleEvent(final WatchKey key) {
+    protected void handleEvent(final WatchKey key) {
         key.pollEvents().forEach(Unchecked.consumer(event -> {
             val eventName = event.kind().name();
 
@@ -119,5 +126,18 @@ public class PathWatcherService implements WatcherService, Runnable, DisposableB
                 onModify.accept(file);
             }
         }));
+    }
+
+    protected boolean shouldEnableWatchService() {
+        val watchServiceEnabled = StringUtils.defaultIfBlank(System.getenv(PROPERTY_DISABLE_WATCHER), System.getProperty(PROPERTY_DISABLE_WATCHER));
+        return StringUtils.isBlank(watchServiceEnabled) || BooleanUtils.toBoolean(watchServiceEnabled);
+    }
+
+    protected void initializeWatchService(final Path watchablePath) {
+        this.watchService = FunctionUtils.doUnchecked(() -> watchablePath.getFileSystem().newWatchService());
+        LOGGER.trace("Created watcher for events of type [{}]", Arrays.stream(KINDS)
+            .map(WatchEvent.Kind::name)
+            .collect(Collectors.joining(",")));
+        FunctionUtils.doUnchecked(__ -> watchablePath.register(Objects.requireNonNull(this.watchService), KINDS));
     }
 }

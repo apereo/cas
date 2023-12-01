@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -17,6 +16,7 @@ import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import java.util.Optional;
 
 
 /**
@@ -44,21 +44,19 @@ public class GroovyRegisteredServiceUsernameProvider extends BaseRegisteredServi
     }
 
     private static String fetchAttributeValue(final RegisteredServiceUsernameProviderContext context,
-                                              final String groovyScript) {
-
-        return ApplicationContextProvider.getScriptResourceCacheManager()
-            .map(cacheMgr -> FunctionUtils.doUnchecked(() -> {
-                val script = cacheMgr.resolveScriptableResource(groovyScript,
-                    context.getRegisteredService().getServiceId(), context.getRegisteredService().getName());
-                return fetchAttributeValueFromScript(script, context.getPrincipal(), context.getService());
-            }))
-            .map(Object::toString)
+                                              final String groovyScript) throws Throwable {
+        val cacheMgr = ApplicationContextProvider.getScriptResourceCacheManager()
             .orElseThrow(() -> new RuntimeException("No groovy script cache manager is available to execute username provider"));
+        val script = cacheMgr.resolveScriptableResource(groovyScript,
+            context.getRegisteredService().getServiceId(), context.getRegisteredService().getName());
+        return Optional.ofNullable(fetchAttributeValueFromScript(script, context.getPrincipal(), context.getService()))
+            .map(Object::toString)
+            .orElse(null);
     }
 
     @Override
-    public String resolveUsernameInternal(final RegisteredServiceUsernameProviderContext context) {
-        if (StringUtils.isNotBlank(this.groovyScript)) {
+    public String resolveUsernameInternal(final RegisteredServiceUsernameProviderContext context) throws Throwable {
+        if (StringUtils.isNotBlank(groovyScript)) {
             val result = fetchAttributeValue(context, groovyScript);
             if (result != null) {
                 LOGGER.debug("Found username [{}] from script", result);

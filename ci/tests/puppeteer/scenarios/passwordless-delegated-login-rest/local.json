@@ -1,0 +1,6 @@
+{
+  "@class" : "org.apereo.cas.api.PasswordlessUserAccount",
+  "username": "local.json",
+  "requestPassword": true,
+  "email": "cas@example.org"
+}

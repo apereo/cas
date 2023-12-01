@@ -74,30 +74,22 @@ public class DefaultPrincipalElectionStrategy implements PrincipalElectionStrate
         if (count > 1) {
             LOGGER.debug("Principal resolvers produced [{}] distinct principals [{}]", count, principalIds);
         }
-        val principalId = this.principalElectionConflictResolver.resolve(principals, attributes);
-        val finalPrincipal = this.principalFactory.createPrincipal(principalId, attributes);
+        return electPrincipal(principals, attributes);
+    }
+
+    protected Principal electPrincipal(final List<Principal> principals, final Map<String, List<Object>> attributes) throws Throwable {
+        val principal = principalElectionConflictResolver.resolve(principals);
+        val finalPrincipal = principalFactory.createPrincipal(principal.getId(), attributes);
         LOGGER.debug("Final principal constructed by the chain of resolvers is [{}]", finalPrincipal);
         return finalPrincipal;
     }
 
-    /**
-     * Gets principal attributes for principal.
-     *
-     * @param principal           the principal
-     * @param principalAttributes the principal attributes
-     * @return the principal attributes for principal
-     */
     protected Map<String, List<Object>> getPrincipalAttributesForPrincipal(final Principal principal, final Map<String, List<Object>> principalAttributes) {
         return principalAttributes;
     }
 
-    /**
-     * Gets principal from authentication.
-     *
-     * @param authentications the authentications
-     * @return the principal from authentication
-     */
     protected Principal getPrincipalFromAuthentication(final Collection<Authentication> authentications) {
-        return authentications.iterator().next().getPrincipal();
+        val principals = authentications.stream().map(Authentication::getPrincipal).collect(Collectors.toList());
+        return principalElectionConflictResolver.resolve(principals);
     }
 }
