@@ -668,6 +668,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "defaultDelegatedAuthenticationNavigationController")
         public DefaultDelegatedAuthenticationNavigationController defaultDelegatedAuthenticationNavigationController(
             @Qualifier(DelegatedClientAuthenticationConfigurationContext.BEAN_NAME)
             final DelegatedClientAuthenticationConfigurationContext delegatedClientAuthenticationConfigurationContext) {
