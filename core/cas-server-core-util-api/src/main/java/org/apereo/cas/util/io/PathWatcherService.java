@@ -29,6 +29,8 @@ import static java.nio.file.StandardWatchEventKinds.*;
  */
 @Slf4j
 public class PathWatcherService implements WatcherService, Runnable, DisposableBean {
+    private static final String PROPERTY_DISABLE_WATCHER = PathWatcherService.class.getName();
+
     private static final WatchEvent.Kind[] KINDS = {ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY};
 
     @Nullable
@@ -127,7 +129,7 @@ public class PathWatcherService implements WatcherService, Runnable, DisposableB
     }
 
     protected boolean shouldEnableWatchService() {
-        val watchServiceEnabled = StringUtils.defaultIfBlank(System.getenv(getClass().getName()), System.getProperty(getClass().getName()));
+        val watchServiceEnabled = StringUtils.defaultIfBlank(System.getenv(PROPERTY_DISABLE_WATCHER), System.getProperty(PROPERTY_DISABLE_WATCHER));
         return StringUtils.isBlank(watchServiceEnabled) || BooleanUtils.toBoolean(watchServiceEnabled);
     }
 
