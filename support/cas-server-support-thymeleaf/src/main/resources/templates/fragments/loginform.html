@@ -11,7 +11,7 @@
 </head>
 
 <body>
-<main role="main" class="container mt-3 mb-3">
+<main class="container mt-3 mb-3">
 
     <div th:fragment="loginform" class="d-flex flex-column justify-content-between m-auto"
          th:with="loginFormEnabled=${#strings.defaultString(#themes.code('cas.login-form.enabled'), 'true') == 'true'},
