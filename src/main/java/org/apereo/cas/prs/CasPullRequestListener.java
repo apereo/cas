@@ -296,7 +296,7 @@ public class CasPullRequestListener implements PullRequestListener {
                 var admins = repository.getGitHubProperties().getRepository().getAdmins();
                 if (admins.contains(reviewedBy)) {
                     log.info("{} is a dependency upgrade that is reviewed by {}", pr, reviewedBy);
-                    return false;
+                    return true;
                 }
             }
 
