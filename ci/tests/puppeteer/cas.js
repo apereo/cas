@@ -121,14 +121,12 @@ exports.clickLast = async (page, button) => {
     }, button);
 };
 
-/** Get innerHTML value of selector element. **/
 exports.innerHTML = async (page, selector) => {
     let text = await page.$eval(selector, el => el.innerHTML.trim());
     await this.log(`HTML for selector [${selector}] is: [${text}]`);
     return text;
 };
 
-/** Get innerText value (visible text contained) of a single element. **/
 exports.innerText = async (page, selector) => {
     let text = await page.$eval(selector, el => el.innerText.trim());
     await this.log(`Text for selector [${selector}] is: [${text}]`);
@@ -148,7 +146,6 @@ exports.elementValue = async (page, selector, valueToSet = undefined) => {
     return text;
 };
 
-/** Get innerTexts values of several elements. **/
 exports.innerTexts = async (page, selector) =>
     await page.evaluate((button) => {
         let results = [];
@@ -157,7 +154,6 @@ exports.innerTexts = async (page, selector) =>
         return results;
     }, selector);
 
-/** Get full trimmed textContent of a single element. **/
 exports.textContent = async (page, selector) => {
     let element = await page.$(selector);
     let text = await page.evaluate(element => element.textContent.trim(), element);
