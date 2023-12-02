@@ -67,6 +67,17 @@ class OidcJwtAccessTokenEncoderTests extends AbstractOidcTests {
     }
 
     @Test
+    void verifyNonEncodedToken() throws Throwable {
+        val accessToken = getAccessToken();
+        val registeredService = getRegisteredServiceForJwtAccessTokenWithKeys(accessToken);
+        val encoder = getAccessTokenEncoder(accessToken, registeredService);
+
+        val nonEncodedAccessToken = "nodotintoken";
+        val decode = encoder.decode(nonEncodedAccessToken);
+        assertEquals(nonEncodedAccessToken, decode);
+    }
+
+    @Test
     void verifyEncodingWithNoCiphersForService() throws Throwable {
         val accessToken = getAccessToken(StringUtils.EMPTY, "encoding-service-clientid");
         val registeredService = getRegisteredServiceForJwtAccessTokenWithKeys(accessToken);

@@ -49,12 +49,25 @@ public class OAuth20JwtAccessTokenEncoder implements CipherExecutor<String, Stri
 
     private final String issuer;
 
+    /**
+     * Doing basic check that {@code JWTParser.parse} does to reduce logging of stack traces.
+     * @param tokenId Possibly encoded token.
+     * @return true
+     */
+    private boolean isPossiblyEncoded(final String tokenId) {
+        return tokenId.contains(".");
+    }
+
     @Override
     public String decode(final String tokenId, final Object[] parameters) {
         return FunctionUtils.doAndHandle(() -> {
             if (StringUtils.isBlank(tokenId)) {
                 LOGGER.warn("No access token is provided to decode");
                 return null;
+            }
+            if (!isPossiblyEncoded(tokenId)) {
+                LOGGER.trace("Token is not encoded, using as-is: [{}]", tokenId);
+                return tokenId;
             }
             val header = JWTParser.parse(tokenId).getHeader();
             val claims = accessTokenJwtBuilder.unpack(Optional.ofNullable(resolveRegisteredService(header)), tokenId);
