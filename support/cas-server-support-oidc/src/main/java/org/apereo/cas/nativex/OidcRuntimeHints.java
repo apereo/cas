@@ -34,6 +34,9 @@ public class OidcRuntimeHints implements CasRuntimeHintsRegistrar {
         val releasePolicies = findSubclassesInPackage(OidcRegisteredServiceAttributeReleasePolicy.class, CentralAuthenticationService.NAMESPACE);
         registerReflectionHints(hints, releasePolicies);
         registerSerializationHints(hints, releasePolicies);
+
+        val entries = findSubclassesInPackage(OidcJsonWebKeystoreGeneratorService.class, CentralAuthenticationService.NAMESPACE);
+        registerReflectionHints(hints, entries);
     }
 
     private static void registerSerializationHints(final RuntimeHints hints, final Collection<Class> entries) {
