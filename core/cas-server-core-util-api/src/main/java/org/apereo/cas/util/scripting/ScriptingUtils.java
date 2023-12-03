@@ -4,22 +4,26 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-
+import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
+import groovy.lang.Binding;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyObject;
 import groovy.lang.GroovyShell;
 import groovy.lang.MissingMethodException;
 import groovy.lang.Script;
+import groovy.transform.CompileStatic;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.groovy.control.CompilerConfiguration;
+import org.codehaus.groovy.control.customizers.ASTTransformationCustomizer;
+import org.codehaus.groovy.control.customizers.ImportCustomizer;
 import org.codehaus.groovy.runtime.InvokerInvocationException;
 import org.springframework.core.io.Resource;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -39,6 +43,28 @@ import java.util.regex.Pattern;
 @Slf4j
 @UtilityClass
 public class ScriptingUtils {
+    /**
+     * System property to indicate groovy compilation must be static.
+     */
+    public static final String SYSTEM_PROPERTY_GROOVY_COMPILE_STATIC = "org.apereo.cas.groovy.compile.static";
+
+    private static final CompilerConfiguration GROOVY_COMPILER_CONFIG;
+
+    static {
+        GROOVY_COMPILER_CONFIG = new CompilerConfiguration();
+        if (CasRuntimeHintsRegistrar.inNativeImage() || BooleanUtils.toBoolean(System.getProperty(SYSTEM_PROPERTY_GROOVY_COMPILE_STATIC))) {
+            GROOVY_COMPILER_CONFIG.addCompilationCustomizers(new ASTTransformationCustomizer(CompileStatic.class));
+        }
+        val imports = new ImportCustomizer();
+        imports.addStarImports("java.time", "java.util", "java.io",
+            "java.math", "java.beans", "java.net", "java.nio", "org.slf4j", "org.apereo.cas",
+            "org.apereo.cas.authentication", "org.apereo.cas.authentication.principal",
+            "org.apereo.cas.util", "org.apereo.cas.web.support", "org.springframework.webflow",
+            "org.springframework.core.io", "jakarta.servlet.http");
+
+        GROOVY_COMPILER_CONFIG.addCompilationCustomizers(imports);
+    }
+
     @SuppressWarnings("InlineFormatString")
     private static final String INLINE_PATTERN = "%s\\s*\\{\\s*(.+)\\s*\\}";
 
@@ -285,17 +311,28 @@ public class ScriptingUtils {
     }
 
     /**
-     * Parse groovy shell script script.
+     * Parse groovy shell script.
+     *
+     * @param script the script
+     * @return the script
+     */
+    public static Script parseGroovyShellScript(final Map inputVariables, final String script) {
+        val variables = inputVariables != null ? new HashMap<>(inputVariables) : new HashMap<>();
+        variables.putIfAbsent("logger", LOGGER);
+        val binding = new Binding(variables);
+        val shell = new GroovyShell(binding, GROOVY_COMPILER_CONFIG);
+        LOGGER.debug("Parsing groovy script [{}]", script);
+        return shell.parse(script, binding);
+    }
+
+    /**
+     * Parse groovy shell script.
      *
      * @param script the script
      * @return the script
      */
     public static Script parseGroovyShellScript(final String script) {
-        return FunctionUtils.doAndHandle(() -> {
-            val shell = new GroovyShell();
-            LOGGER.debug("Parsing groovy script [{}]", script);
-            return shell.parse(script);
-        });
+        return StringUtils.isNotBlank(script) ? parseGroovyShellScript(Map.of(), script) : null;
     }
 
     /**
@@ -307,8 +344,7 @@ public class ScriptingUtils {
      */
     public static GroovyObject parseGroovyScript(final Resource groovyScript,
                                                  final boolean failOnError) {
-        val parent = ScriptingUtils.class.getClassLoader();
-        try (val loader = new GroovyClassLoader(parent)) {
+        try (val loader = newGroovyClassLoader()) {
             val groovyClass = loadGroovyClass(groovyScript, loader);
             if (groovyClass != null) {
                 LOGGER.trace("Creating groovy object instance from class [{}]", groovyScript.getURI().getPath());
@@ -322,6 +358,15 @@ public class ScriptingUtils {
             LoggingUtils.error(LOGGER, e);
         }
         return null;
+    }
+
+    /**
+     * New groovy class loader.
+     *
+     * @return the groovy class loader
+     */
+    public static GroovyClassLoader newGroovyClassLoader() {
+        return new GroovyClassLoader(ScriptingUtils.class.getClassLoader(), GROOVY_COMPILER_CONFIG);
     }
 
     private Class loadGroovyClass(final Resource groovyScript,
@@ -401,16 +446,15 @@ public class ScriptingUtils {
                 return null;
             }
             val script = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
-            try (val classLoader = new GroovyClassLoader(ScriptingUtils.class.getClassLoader(),
-                new CompilerConfiguration(), true)) {
+            try (val classLoader = ScriptingUtils.newGroovyClassLoader()) {
                 val clazz = classLoader.parseClass(script);
                 LOGGER.trace("Preparing constructor arguments [{}] for resource [{}]", args, resource);
                 val ctor = clazz.getDeclaredConstructor(constructorArgs);
                 val result = ctor.newInstance(args);
                 if (!expectedType.isAssignableFrom(result.getClass())) {
                     throw new ClassCastException("Result [" + result
-                                                 + " is of type " + result.getClass()
-                                                 + " when we were expecting " + expectedType);
+                        + " is of type " + result.getClass()
+                        + " when we were expecting " + expectedType);
                 }
                 return (T) result;
             }

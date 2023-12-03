@@ -1,9 +1,12 @@
 package org.apereo.cas.util.scripting;
 
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.concurrent.CasReentrantLock;
 import groovy.lang.Binding;
+import groovy.lang.GroovyRuntimeException;
 import groovy.lang.Script;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -18,17 +21,14 @@ import java.util.Map;
  */
 @Getter
 @Slf4j
+@RequiredArgsConstructor
 public class GroovyShellScript implements ExecutableCompiledGroovyScript {
     private static final ThreadLocal<Map<String, Object>> BINDING_THREAD_LOCAL = new ThreadLocal<>();
 
     private final CasReentrantLock lock = new CasReentrantLock();
-    private final Script groovyScript;
     private final String script;
 
-    public GroovyShellScript(final String script) {
-        this.script = script;
-        this.groovyScript = ScriptingUtils.parseGroovyShellScript(script);
-    }
+    private Script groovyScript;
 
     @Override
     public <T> T execute(final Object[] args, final Class<T> clazz) throws Throwable {
@@ -46,16 +46,19 @@ public class GroovyShellScript implements ExecutableCompiledGroovyScript {
             try {
                 LOGGER.trace("Beginning to execute script [{}]", this);
                 val binding = BINDING_THREAD_LOCAL.get();
-                if (groovyScript != null) {
-                    if (binding != null && !binding.isEmpty()) {
-                        LOGGER.trace("Setting binding [{}]", binding);
-                        groovyScript.setBinding(new Binding(binding));
-                    }
-                    LOGGER.trace("Current binding [{}]", groovyScript.getBinding());
-                    val result = ScriptingUtils.executeGroovyShellScript(groovyScript, clazz);
-                    LOGGER.debug("Groovy script [{}] returns result [{}]", this, result);
-                    return result;
+                if (groovyScript == null) {
+                    groovyScript = ScriptingUtils.parseGroovyShellScript(binding, script);
                 }
+                if (binding != null && !binding.isEmpty()) {
+                    LOGGER.trace("Setting binding [{}]", binding);
+                    groovyScript.setBinding(new Binding(binding));
+                }
+                LOGGER.trace("Current binding [{}]", groovyScript.getBinding());
+                val result = ScriptingUtils.executeGroovyShellScript(groovyScript, clazz);
+                LOGGER.debug("Groovy script [{}] returns result [{}]", this, result);
+                return result;
+            } catch (final GroovyRuntimeException e) {
+                LoggingUtils.error(LOGGER, e);
             } finally {
                 BINDING_THREAD_LOCAL.remove();
                 if (groovyScript != null) {

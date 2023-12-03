@@ -22,14 +22,13 @@ import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProp
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.configuration.model.core.authentication.policy.BaseAuthenticationPolicyProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
+import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.validation.Assertion;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import groovy.lang.GroovyClassLoader;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -43,7 +42,6 @@ import org.apereo.services.persondir.support.merger.NoncollidingAttributeAdder;
 import org.apereo.services.persondir.support.merger.ReplacingAttributeAdder;
 import org.apereo.services.persondir.support.merger.ReturnChangesAdditiveAttributeMerger;
 import org.apereo.services.persondir.support.merger.ReturnOriginalAdditiveAttributeMerger;
-import org.codehaus.groovy.control.CompilerConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.DefaultResourceLoader;
 import java.nio.charset.StandardCharsets;
@@ -244,10 +242,10 @@ public class CoreAuthenticationUtils {
                 val loader = new DefaultResourceLoader();
                 val resource = loader.getResource(selectionCriteria);
                 val script = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
-                val classLoader = new GroovyClassLoader(Beans.class.getClassLoader(),
-                    new CompilerConfiguration(), true);
-                val clz = classLoader.parseClass(script);
-                return (Predicate<Credential>) clz.getDeclaredConstructor().newInstance();
+                try (val classLoader = ScriptingUtils.newGroovyClassLoader()) {
+                    val clz = classLoader.parseClass(script);
+                    return (Predicate<Credential>) clz.getDeclaredConstructor().newInstance();
+                }
             }
             val predicateClazz = ClassUtils.getClass(selectionCriteria);
             return (Predicate<Credential>) predicateClazz.getDeclaredConstructor().newInstance();
