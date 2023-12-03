@@ -35,16 +35,14 @@ function snapshot() {
       printred "CAS version ${casVersion} MUST be a SNAPSHOT version"
       exit 1
   fi
-  printgreen "Publishing CAS SNAPSHOT artifacts. Please be patient as this might take a while..."
+  printgreen "Publishing CAS SNAPSHOT artifacts. This might take a while..."
   ./gradlew build publish -x test -x javadoc -x check --no-daemon --parallel \
     -DskipAot=true -DpublishSnapshots=true --build-cache --no-configuration-cache --configure-on-demand \
     -Dorg.gradle.internal.http.socketTimeout=640000 \
     -Dorg.gradle.internal.http.connectionTimeout=640000 \
     -Dorg.gradle.internal.publish.checksums.insecure=true \
-    -Dorg.gradle.internal.remote.repository.deploy.max.attempts=5 \
-    -Dorg.gradle.internal.remote.repository.deploy.initial.backoff=5000 \
-    -Dorg.gradle.internal.repository.max.tentatives=10 \
-    -Dorg.gradle.internal.repository.initial.backoff=1000 \
+    -Dorg.gradle.internal.network.retry.max.attempts=5 \
+    -Dorg.gradle.internal.network.retry.initial.backOff=5000 \
     -DrepositoryUsername="$1" -DrepositoryPassword="$2"
   if [ $? -ne 0 ]; then
       printred "Publishing CAS SNAPSHOTs failed."
@@ -58,17 +56,15 @@ function publish {
         printred "CAS version ${casVersion} cannot be a SNAPSHOT version"
         exit 1
     fi
-    printgreen "Publishing CAS releases. Please be patient as this might take a while..."
+    printgreen "Publishing CAS releases. This might take a while..."
     ./gradlew publishToSonatype closeAndReleaseStagingRepository \
       --no-parallel --no-watch-fs --no-configuration-cache -DskipAot=true -DpublishReleases=true \
       -DrepositoryUsername="$1" -DrepositoryPassword="$2" -DpublishReleases=true \
       -Dorg.gradle.internal.http.socketTimeout=640000 \
-      -Dorg.gradle.internal.http.connectionTimeout=640000  \
+      -Dorg.gradle.internal.http.connectionTimeout=640000 \
       -Dorg.gradle.internal.publish.checksums.insecure=true \
-      -Dorg.gradle.internal.remote.repository.deploy.max.attempts=5 \
-      -Dorg.gradle.internal.remote.repository.deploy.initial.backoff=5000 \
-      -Dorg.gradle.internal.repository.max.tentatives=10 \
-      -Dorg.gradle.internal.repository.initial.backoff=1000
+      -Dorg.gradle.internal.network.retry.max.attempts=5 \
+      -Dorg.gradle.internal.network.retry.initial.backOff=5000
     if [ $? -ne 0 ]; then
         printred "Publishing CAS failed."
         exit 1
@@ -76,7 +72,7 @@ function publish {
 }
 
 function finished {
-    printgreen "Done! The release is now automatically published on Sonatype. There is nothing more for you to do. Thank you!"
+    printgreen "Done! The release is now automatically published. There is nothing more for you to do. Thank you!"
 }
 
 clear
