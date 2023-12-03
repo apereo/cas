@@ -87,9 +87,17 @@ INITONLY="false"
 NATIVE_BUILD="false"
 NATIVE_RUN="false"
 BUILD_SPAWN="background"
+QUIT_QUIETLY="false"
 
 while (( "$#" )); do
   case "$1" in
+  --nbr)
+    NATIVE_RUN="true"
+    NATIVE_BUILD="true"
+    BUILDFLAGS="${BUILDFLAGS} --no-configuration-cache"
+    QUIT_QUIETLY="true"
+    shift 1;
+    ;;
   --nr|--native-run)
     NATIVE_RUN="true"
     shift 1;
@@ -539,7 +547,7 @@ if [[ "${buildDockerImage}" == "true" ]]; then
   printgreen "Built Docker image cas-${scenarioName}"
 fi
 
-if [[ "${RERUN}" != "true" && "${NATIVE_BUILD}" == "false" ]]; then
+if [[ "${RERUN}" != "true" && ("${NATIVE_BUILD}" == "false" || "${NATIVE_RUN}" == "true") ]]; then
   environmentVariables=$(jq -j '.environmentVariables // empty | join(";")' "$config");
   IFS=';' read -r -a variables <<< "$environmentVariables"
   for env in "${variables[@]}"
@@ -706,7 +714,7 @@ if [[ "${NATIVE_BUILD}" == "true" ]]; then
   RC=0
 fi
 
-if [[ "${DRYRUN}" != "true" && "${NATIVE_BUILD}" == "false" ]]; then
+if [[ "${DRYRUN}" != "true" && ("${NATIVE_BUILD}" == "false" || "${NATIVE_RUN}" == "true") ]]; then
   if [[ "${CLEAR}" == "true" ]]; then
     clear
   fi
@@ -749,7 +757,7 @@ if [[ "${RERUN}" != "true" ]]; then
     printyellow "This allows for the bootstrapping and initialization of the test scenario without actually running the test suite"
   fi
 
-  if [[ "${CI}" != "true" ]]; then
+  if [[ "${CI}" != "true" && "${QUIT_QUIETLY}" == "false" ]]; then
     printgreen "Hit enter to clean up scenario ${scenario}\n"
     read -r
   fi

@@ -158,6 +158,26 @@ graalvmNative {
             buildArgs.add('--enable-url-protocols=jar,file,resource,http,https')
         }
     }
+
+    /*
+    agent {
+        defaultMode = "direct"
+        enabled = true
+        builtinCallerFilter = false
+        builtinHeuristicFilter = false
+        enableExperimentalPredefinedClasses = true
+        enableExperimentalUnsafeAllocationTracing = false
+        trackReflectionMetadata = false
+        modes {
+            standard {
+            }
+            direct {
+                options.add("config-output-dir={output_dir}")
+                options.add("experimental-configuration-with-origins")
+            }
+        }
+    }
+     */
 }
 
 processAot {

@@ -60,7 +60,7 @@ public class ScriptingUtils {
             "java.math", "java.beans", "java.net", "java.nio", "org.slf4j", "org.apereo.cas",
             "org.apereo.cas.authentication", "org.apereo.cas.authentication.principal",
             "org.apereo.cas.util", "org.apereo.cas.web.support", "org.springframework.webflow",
-            "org.springframework.core.io", "jakarta.servlet.http");
+            "org.springframework.core.io", "jakarta.servlet.http", "org.apereo.cas.authentication.mfa");
 
         GROOVY_COMPILER_CONFIG.addCompilationCustomizers(imports);
     }
