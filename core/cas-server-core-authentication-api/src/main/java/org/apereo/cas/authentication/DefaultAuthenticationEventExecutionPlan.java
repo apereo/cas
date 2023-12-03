@@ -128,7 +128,7 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
             }
             authenticationHandlerPrincipalResolverMap.put(handler, principalResolver);
             return true;
-        }, () -> false).get();
+        }, () -> false, LOGGER).get();
     }
 
     @Override

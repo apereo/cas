@@ -105,7 +105,7 @@ public class OidcDefaultClientRegistrationRequestTranslator implements OidcClien
         }
 
         FunctionUtils.doIfNotBlank(registrationRequest.getTokenEndpointAuthMethod(),
-            __ -> registeredService.setTokenEndpointAuthenticationMethod(registrationRequest.getTokenEndpointAuthMethod()));
+            __ -> registeredService.setTokenEndpointAuthenticationMethod(registrationRequest.getTokenEndpointAuthMethod()), LOGGER);
 
         if (StringUtils.isBlank(registeredService.getClientId())) {
             registeredService.setClientId(context.getClientIdGenerator().getNewString());
@@ -118,9 +118,9 @@ public class OidcDefaultClientRegistrationRequestTranslator implements OidcClien
             registrationRequest.getPostLogoutRedirectUris());
         registeredService.setLogoutUrl(urls);
 
-        FunctionUtils.doIfNotBlank(registrationRequest.getLogo(), __ -> registeredService.setLogo(registrationRequest.getLogo()));
-        FunctionUtils.doIfNotBlank(registrationRequest.getPolicyUri(), __ -> registeredService.setInformationUrl(registrationRequest.getPolicyUri()));
-        FunctionUtils.doIfNotBlank(registrationRequest.getTermsOfUseUri(), __ -> registeredService.setPrivacyUrl(registrationRequest.getTermsOfUseUri()));
+        FunctionUtils.doIfNotBlank(registrationRequest.getLogo(), __ -> registeredService.setLogo(registrationRequest.getLogo()), LOGGER);
+        FunctionUtils.doIfNotBlank(registrationRequest.getPolicyUri(), __ -> registeredService.setInformationUrl(registrationRequest.getPolicyUri()), LOGGER);
+        FunctionUtils.doIfNotBlank(registrationRequest.getTermsOfUseUri(), __ -> registeredService.setPrivacyUrl(registrationRequest.getTermsOfUseUri()), LOGGER);
 
         processUserInfoSigningAndEncryption(registrationRequest, registeredService);
         processScopesAndResponsesAndGrants(registrationRequest, registeredService);
@@ -144,20 +144,20 @@ public class OidcDefaultClientRegistrationRequestTranslator implements OidcClien
 
     private static void processTlsClientAuthentication(final OidcClientRegistrationRequest registrationRequest,
                                                        final OidcRegisteredService registeredService) {
-        FunctionUtils.doIfNotNull(registrationRequest.getTlsClientAuthSanDns(), registeredService::setTlsClientAuthSanDns);
-        FunctionUtils.doIfNotNull(registrationRequest.getTlsClientAuthSanEmail(), registeredService::setTlsClientAuthSanEmail);
-        FunctionUtils.doIfNotNull(registrationRequest.getTlsClientAuthSanIp(), registeredService::setTlsClientAuthSanIp);
-        FunctionUtils.doIfNotNull(registrationRequest.getTlsClientAuthSanUri(), registeredService::setTlsClientAuthSanUri);
-        FunctionUtils.doIfNotNull(registrationRequest.getTlsClientAuthSubjectDn(), registeredService::setTlsClientAuthSubjectDn);
+        FunctionUtils.doIfNotNull(registrationRequest.getTlsClientAuthSanDns(), registeredService::setTlsClientAuthSanDns, LOGGER);
+        FunctionUtils.doIfNotNull(registrationRequest.getTlsClientAuthSanEmail(), registeredService::setTlsClientAuthSanEmail, LOGGER);
+        FunctionUtils.doIfNotNull(registrationRequest.getTlsClientAuthSanIp(), registeredService::setTlsClientAuthSanIp, LOGGER);
+        FunctionUtils.doIfNotNull(registrationRequest.getTlsClientAuthSanUri(), registeredService::setTlsClientAuthSanUri, LOGGER);
+        FunctionUtils.doIfNotNull(registrationRequest.getTlsClientAuthSubjectDn(), registeredService::setTlsClientAuthSubjectDn, LOGGER);
     }
 
     private void processScopesAndResponsesAndGrants(final OidcClientRegistrationRequest registrationRequest,
                                                     final OidcRegisteredService registeredService) {
         val context = configurationContext.getObject();
         FunctionUtils.doIfNotNull(registrationRequest.getGrantTypes(),
-            __ -> registeredService.setSupportedGrantTypes(new HashSet<>(registrationRequest.getGrantTypes())));
+            __ -> registeredService.setSupportedGrantTypes(new HashSet<>(registrationRequest.getGrantTypes())), LOGGER);
         FunctionUtils.doIfNotNull(registrationRequest.getResponseTypes(),
-            __ -> registeredService.setSupportedResponseTypes(new HashSet<>(registrationRequest.getResponseTypes())));
+            __ -> registeredService.setSupportedResponseTypes(new HashSet<>(registrationRequest.getResponseTypes())), LOGGER);
 
         val properties = context.getCasProperties();
         val supportedScopes = new HashSet<>(properties.getAuthn().getOidc().getDiscovery().getScopes());
@@ -189,13 +189,13 @@ public class OidcDefaultClientRegistrationRequestTranslator implements OidcClien
     private static void processIntrospectionSigningAndEncryption(final OidcClientRegistrationRequest registrationRequest,
                                                                  final OidcRegisteredService registeredService) {
         FunctionUtils.doIfNotBlank(registrationRequest.getIntrospectionSignedResponseAlg(),
-            __ -> registeredService.setIntrospectionSignedResponseAlg(registrationRequest.getIntrospectionSignedResponseAlg()));
+            __ -> registeredService.setIntrospectionSignedResponseAlg(registrationRequest.getIntrospectionSignedResponseAlg()), LOGGER);
 
         FunctionUtils.doIfNotBlank(registrationRequest.getIntrospectionEncryptedResponseAlg(),
-            __ -> registeredService.setIntrospectionEncryptedResponseAlg(registrationRequest.getIntrospectionEncryptedResponseAlg()));
+            __ -> registeredService.setIntrospectionEncryptedResponseAlg(registrationRequest.getIntrospectionEncryptedResponseAlg()), LOGGER);
 
         FunctionUtils.doIfNotBlank(registrationRequest.getIntrospectionEncryptedResponseEncoding(),
-            __ -> registeredService.setIntrospectionEncryptedResponseEncoding(registrationRequest.getIntrospectionEncryptedResponseEncoding()));
+            __ -> registeredService.setIntrospectionEncryptedResponseEncoding(registrationRequest.getIntrospectionEncryptedResponseEncoding()), LOGGER);
     }
 
     private static void processIdTokenSigningAndEncryption(final OidcClientRegistrationRequest registrationRequest,

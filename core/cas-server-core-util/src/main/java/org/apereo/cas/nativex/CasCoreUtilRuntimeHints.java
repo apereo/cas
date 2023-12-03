@@ -9,6 +9,7 @@ import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 import org.apereo.cas.util.thread.Cleanable;
 import com.fasterxml.jackson.annotation.ObjectIdGenerator;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ClassUtils;
 import org.springframework.aot.hint.MemberCategory;
@@ -81,6 +82,7 @@ import java.util.stream.IntStream;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
+@Slf4j
 public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
     private static final int GROOVY_DGM_CLASS_COUNTER = 1500;
 
@@ -215,7 +217,7 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
             val clazz = ClassUtils.getClass("nonapi.io.github.classgraph.classloaderhandler.ClassLoaderHandler", false);
             registerReflectionHintForAll(hints,
                 findSubclassesInPackage(clazz, "nonapi.io.github.classgraph.classloaderhandler"));
-        });
+        }, LOGGER);
 
         registerReflectionHintForAll(hints,
             List.of(
@@ -245,7 +247,7 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
             clazz = ClassUtils.getClass("com.github.benmanes.caffeine.cache.LocalCache", false);
             registerReflectionHintForConstructors(hints,
                 findSubclassesInPackage(clazz, "com.github.benmanes.caffeine.cache"));
-        });
+        }, LOGGER);
     }
 
     private static void registerSerializationHints(final RuntimeHints hints) {

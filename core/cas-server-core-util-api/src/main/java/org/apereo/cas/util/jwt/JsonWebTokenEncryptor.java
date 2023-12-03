@@ -74,7 +74,7 @@ public class JsonWebTokenEncryptor {
                 jwe.setKeyIdHeaderValue(idk.getId());
                 jwe.setKey(idk.getKey());
             } else {
-                FunctionUtils.doIfNotNull(this.keyId, jwe::setKeyIdHeaderValue);
+                FunctionUtils.doIfNotNull(this.keyId, jwe::setKeyIdHeaderValue, LOGGER);
                 jwe.setKey(this.key);
             }
             headers.forEach((k, v) -> jwe.setHeader(k, v.toString()));

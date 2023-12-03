@@ -14,6 +14,7 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.util.ReflectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ApplicationContext;
 import java.lang.reflect.Modifier;
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
  * @since 5.2.0
  */
 @RequiredArgsConstructor
+@Slf4j
 public class DefaultCasServerProfileRegistrar implements CasServerProfileRegistrar {
     protected final CasConfigurationProperties casProperties;
     protected final Set<String> availableAttributes;
@@ -44,7 +46,7 @@ public class DefaultCasServerProfileRegistrar implements CasServerProfileRegistr
             .map(type -> FunctionUtils.doAndHandle(() -> {
                 val service = (RegisteredService) type.getDeclaredConstructor().newInstance();
                 return service.getFriendlyName() + '@' + service.getClass().getName();
-            }))
+            }, LOGGER))
             .filter(Objects::nonNull)
             .collect(Collectors.toSet());
     }

@@ -7,6 +7,7 @@ import com.okta.sdk.client.Client;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.apereo.services.persondir.IPersonAttributes;
@@ -32,6 +33,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Getter
 @Setter
+@Slf4j
 public class OktaPersonAttributeDao extends BasePersonAttributeDao {
     private IUsernameAttributeProvider usernameAttributeProvider = new SimpleUsernameAttributeProvider();
 
@@ -50,44 +52,44 @@ public class OktaPersonAttributeDao extends BasePersonAttributeDao {
         val attributes = new HashMap<String, Object>();
         val user = oktaClient.getUser(uid);
 
-        FunctionUtils.doIfNotNull(user.getActivated(), attribute -> attributes.put("oktaUserActivatedDate", user.getActivated().getTime()));
-        FunctionUtils.doIfNotNull(user.getCreated(), attribute -> attributes.put("oktaUserCreatedDate", user.getCreated().getTime()));
-        FunctionUtils.doIfNotNull(user.getLastLogin(), attribute -> attributes.put("oktaUserLastLoginDate", user.getLastLogin().getTime()));
-        FunctionUtils.doIfNotNull(user.getLastUpdated(), attribute -> attributes.put("oktaUserLastUpdatedDate", user.getLastUpdated().getTime()));
-        FunctionUtils.doIfNotNull(user.getPasswordChanged(), attribute -> attributes.put("oktaUserPasswordChangedDate", user.getPasswordChanged().getTime()));
-        FunctionUtils.doIfNotNull(user.getId(), attribute -> attributes.put("oktaUserId", attribute));
-        FunctionUtils.doIfNotNull(user.getStatus(), attribute -> attributes.put("oktaUserStatus", attribute.toString()));
-        FunctionUtils.doIfNotNull(user.getType(), attribute -> attributes.put("oktaUserType", attribute));
+        FunctionUtils.doIfNotNull(user.getActivated(), attribute -> attributes.put("oktaUserActivatedDate", user.getActivated().getTime()), LOGGER);
+        FunctionUtils.doIfNotNull(user.getCreated(), attribute -> attributes.put("oktaUserCreatedDate", user.getCreated().getTime()), LOGGER);
+        FunctionUtils.doIfNotNull(user.getLastLogin(), attribute -> attributes.put("oktaUserLastLoginDate", user.getLastLogin().getTime()), LOGGER);
+        FunctionUtils.doIfNotNull(user.getLastUpdated(), attribute -> attributes.put("oktaUserLastUpdatedDate", user.getLastUpdated().getTime()), LOGGER);
+        FunctionUtils.doIfNotNull(user.getPasswordChanged(), attribute -> attributes.put("oktaUserPasswordChangedDate", user.getPasswordChanged().getTime()), LOGGER);
+        FunctionUtils.doIfNotNull(user.getId(), attribute -> attributes.put("oktaUserId", attribute), LOGGER);
+        FunctionUtils.doIfNotNull(user.getStatus(), attribute -> attributes.put("oktaUserStatus", attribute.toString()), LOGGER);
+        FunctionUtils.doIfNotNull(user.getType(), attribute -> attributes.put("oktaUserType", attribute), LOGGER);
 
         val profile = user.getProfile();
-        FunctionUtils.doIfNotNull(profile.getCity(), attribute -> attributes.put("oktaCity", attribute));
-        FunctionUtils.doIfNotNull(profile.getCostCenter(), attribute -> attributes.put("oktaCostCenter", attribute));
-        FunctionUtils.doIfNotNull(profile.getCountryCode(), attribute -> attributes.put("oktaCountryCode", attribute));
-        FunctionUtils.doIfNotNull(profile.getDepartment(), attribute -> attributes.put("oktaDepartment", attribute));
-        FunctionUtils.doIfNotNull(profile.getDisplayName(), attribute -> attributes.put("oktaDisplayName", attribute));
-        FunctionUtils.doIfNotNull(profile.getDivision(), attribute -> attributes.put("oktaDivision", attribute));
-        FunctionUtils.doIfNotNull(profile.getEmail(), attribute -> attributes.put("oktaEmail", attribute));
-        FunctionUtils.doIfNotNull(profile.getEmployeeNumber(), attribute -> attributes.put("oktaEmployeeNumber", attribute));
-        FunctionUtils.doIfNotNull(profile.getFirstName(), attribute -> attributes.put("oktaFirstName", attribute));
-        FunctionUtils.doIfNotNull(profile.getHonorificPrefix(), attribute -> attributes.put("oktaPrefix", attribute));
-        FunctionUtils.doIfNotNull(profile.getHonorificSuffix(), attribute -> attributes.put("oktaSuffix", attribute));
-        FunctionUtils.doIfNotNull(profile.getLastName(), attribute -> attributes.put("oktaLastName", attribute));
-        FunctionUtils.doIfNotNull(profile.getLocale(), attribute -> attributes.put("oktaLocale", attribute));
-        FunctionUtils.doIfNotNull(profile.getManager(), attribute -> attributes.put("oktaManager", attribute));
-        FunctionUtils.doIfNotNull(profile.getManagerId(), attribute -> attributes.put("oktaManagerId", attribute));
-        FunctionUtils.doIfNotNull(profile.getMiddleName(), attribute -> attributes.put("oktaMiddleName", attribute));
-        FunctionUtils.doIfNotNull(profile.getMobilePhone(), attribute -> attributes.put("oktaMobilePhone", attribute));
-        FunctionUtils.doIfNotNull(profile.getNickName(), attribute -> attributes.put("oktaNickName", attribute));
-        FunctionUtils.doIfNotNull(profile.getOrganization(), attribute -> attributes.put("oktaOrganization", attribute));
-        FunctionUtils.doIfNotNull(profile.getPostalAddress(), attribute -> attributes.put("oktaPostalAddress", attribute));
-        FunctionUtils.doIfNotNull(profile.getPreferredLanguage(), attribute -> attributes.put("oktaPreferredLanguage", attribute));
-        FunctionUtils.doIfNotNull(profile.getPrimaryPhone(), attribute -> attributes.put("oktaPrimaryPhone", attribute));
-        FunctionUtils.doIfNotNull(profile.getSecondEmail(), attribute -> attributes.put("oktaSecondEmail", attribute));
-        FunctionUtils.doIfNotNull(profile.getState(), attribute -> attributes.put("oktaState", attribute));
-        FunctionUtils.doIfNotNull(profile.getStreetAddress(), attribute -> attributes.put("oktaStreetAddress", attribute));
-        FunctionUtils.doIfNotNull(profile.getTimezone(), attribute -> attributes.put("oktaTimezone", attribute));
-        FunctionUtils.doIfNotNull(profile.getTitle(), attribute -> attributes.put("oktaTitle", attribute));
-        FunctionUtils.doIfNotNull(profile.getLogin(), attribute -> attributes.put("oktaLogin", attribute));
+        FunctionUtils.doIfNotNull(profile.getCity(), attribute -> attributes.put("oktaCity", attribute), LOGGER);
+        FunctionUtils.doIfNotNull(profile.getCostCenter(), attribute -> attributes.put("oktaCostCenter", attribute), LOGGER);
+        FunctionUtils.doIfNotNull(profile.getCountryCode(), attribute -> attributes.put("oktaCountryCode", attribute), LOGGER);
+        FunctionUtils.doIfNotNull(profile.getDepartment(), attribute -> attributes.put("oktaDepartment", attribute), LOGGER);
+        FunctionUtils.doIfNotNull(profile.getDisplayName(), attribute -> attributes.put("oktaDisplayName", attribute), LOGGER);
+        FunctionUtils.doIfNotNull(profile.getDivision(), attribute -> attributes.put("oktaDivision", attribute), LOGGER);
+        FunctionUtils.doIfNotNull(profile.getEmail(), attribute -> attributes.put("oktaEmail", attribute), LOGGER);
+        FunctionUtils.doIfNotNull(profile.getEmployeeNumber(), attribute -> attributes.put("oktaEmployeeNumber", attribute), LOGGER);
+        FunctionUtils.doIfNotNull(profile.getFirstName(), attribute -> attributes.put("oktaFirstName", attribute), LOGGER);
+        FunctionUtils.doIfNotNull(profile.getHonorificPrefix(), attribute -> attributes.put("oktaPrefix", attribute), LOGGER);
+        FunctionUtils.doIfNotNull(profile.getHonorificSuffix(), attribute -> attributes.put("oktaSuffix", attribute), LOGGER);
+        FunctionUtils.doIfNotNull(profile.getLastName(), attribute -> attributes.put("oktaLastName", attribute), LOGGER);
+        FunctionUtils.doIfNotNull(profile.getLocale(), attribute -> attributes.put("oktaLocale", attribute), LOGGER);
+        FunctionUtils.doIfNotNull(profile.getManager(), attribute -> attributes.put("oktaManager", attribute), LOGGER);
+        FunctionUtils.doIfNotNull(profile.getManagerId(), attribute -> attributes.put("oktaManagerId", attribute), LOGGER);
+        FunctionUtils.doIfNotNull(profile.getMiddleName(), attribute -> attributes.put("oktaMiddleName", attribute), LOGGER);
+        FunctionUtils.doIfNotNull(profile.getMobilePhone(), attribute -> attributes.put("oktaMobilePhone", attribute), LOGGER);
+        FunctionUtils.doIfNotNull(profile.getNickName(), attribute -> attributes.put("oktaNickName", attribute), LOGGER);
+        FunctionUtils.doIfNotNull(profile.getOrganization(), attribute -> attributes.put("oktaOrganization", attribute), LOGGER);
+        FunctionUtils.doIfNotNull(profile.getPostalAddress(), attribute -> attributes.put("oktaPostalAddress", attribute), LOGGER);
+        FunctionUtils.doIfNotNull(profile.getPreferredLanguage(), attribute -> attributes.put("oktaPreferredLanguage", attribute), LOGGER);
+        FunctionUtils.doIfNotNull(profile.getPrimaryPhone(), attribute -> attributes.put("oktaPrimaryPhone", attribute), LOGGER);
+        FunctionUtils.doIfNotNull(profile.getSecondEmail(), attribute -> attributes.put("oktaSecondEmail", attribute), LOGGER);
+        FunctionUtils.doIfNotNull(profile.getState(), attribute -> attributes.put("oktaState", attribute), LOGGER);
+        FunctionUtils.doIfNotNull(profile.getStreetAddress(), attribute -> attributes.put("oktaStreetAddress", attribute), LOGGER);
+        FunctionUtils.doIfNotNull(profile.getTimezone(), attribute -> attributes.put("oktaTimezone", attribute), LOGGER);
+        FunctionUtils.doIfNotNull(profile.getTitle(), attribute -> attributes.put("oktaTitle", attribute), LOGGER);
+        FunctionUtils.doIfNotNull(profile.getLogin(), attribute -> attributes.put("oktaLogin", attribute), LOGGER);
 
         return new CaseInsensitiveNamedPersonImpl(uid, stuffAttributesIntoList(attributes));
     }

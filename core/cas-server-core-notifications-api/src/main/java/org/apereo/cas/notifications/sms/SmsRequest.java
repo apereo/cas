@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.With;
 import lombok.experimental.SuperBuilder;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
@@ -23,6 +24,7 @@ import java.util.Optional;
 @Getter
 @With
 @RequiredArgsConstructor
+@Slf4j
 public class SmsRequest {
     private final Principal principal;
 
@@ -63,7 +65,7 @@ public class SmsRequest {
     public String getRecipient() {
         return FunctionUtils.doIf(hasAttributeValue(),
             () -> getAttributeValue().map(Object::toString).orElseGet(this::getTo),
-            this::getTo).get();
+            this::getTo, LOGGER).get();
     }
 
     /**

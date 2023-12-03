@@ -23,6 +23,7 @@ import org.apereo.cas.web.support.WebUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.AuditActionContext;
@@ -46,6 +47,7 @@ import java.util.stream.Collectors;
  * @since 6.6.0
  */
 @RequiredArgsConstructor
+@Slf4j
 public class PrepareAccountProfileViewAction extends BaseCasWebflowAction {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
@@ -65,7 +67,7 @@ public class PrepareAccountProfileViewAction extends BaseCasWebflowAction {
         val tgt = WebUtils.getTicketGrantingTicketId(requestContext);
         val ticketGrantingTicket = FunctionUtils.doAndHandle(
             () -> Optional.of(ticketRegistry.getTicket(tgt, TicketGrantingTicket.class)),
-            throwable -> Optional.<TicketGrantingTicket>empty()).get();
+            throwable -> Optional.<TicketGrantingTicket>empty(), LOGGER).get();
 
         ticketGrantingTicket.ifPresent(ticket -> {
             WebUtils.putAuthentication(ticket.getAuthentication(), requestContext);
@@ -96,7 +98,7 @@ public class PrepareAccountProfileViewAction extends BaseCasWebflowAction {
             .filter(registeredService -> FunctionUtils.doAndHandle(
                 () -> RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
                     registeredService, ticket.getAuthentication().getPrincipal().getId(), authzAttributes),
-                throwable -> false).get())
+                throwable -> false, LOGGER).get())
             .sorted()
             .collect(Collectors.toList());
         WebUtils.putAuthorizedServices(requestContext, authorizedServices);
@@ -167,7 +169,7 @@ public class PrepareAccountProfileViewAction extends BaseCasWebflowAction {
             val dateFormat = new ISOStandardDateFormat();
             this.authenticationDate = dateFormat.format(DateTimeUtils.dateOf(ticket.getAuthentication().getAuthenticationDate()));
             this.geoLocation = FunctionUtils.doIf(BeanSupplier.isNotProxy(geoLocationService),
-                () -> geoLocationService.locate(this.clientIpAddress).build(), () -> "N/A").get();
+                () -> geoLocationService.locate(this.clientIpAddress).build(), () -> "N/A", LOGGER).get();
             this.payload = FunctionUtils.doUnchecked(() -> MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this));
         }
     }

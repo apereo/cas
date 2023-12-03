@@ -19,6 +19,7 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.file.PathUtils;
@@ -46,6 +47,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.0.0
  */
 @Tag("SAML2")
+@Slf4j
 class SamlRegisteredServiceTests extends BaseSamlIdPConfigurationTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "samlRegisteredService.json");
@@ -66,7 +68,7 @@ class SamlRegisteredServiceTests extends BaseSamlIdPConfigurationTests {
         val jsonFolder = new File(FileUtils.getTempDirectory(), JSON_SERVICE_REGISTRY_FOLDER);
         if (jsonFolder.isDirectory()) {
             FunctionUtils.doAndHandle(
-                __ -> PathUtils.deleteDirectory(jsonFolder.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY));
+                __ -> PathUtils.deleteDirectory(jsonFolder.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY), LOGGER);
             jsonFolder.delete();
         }
         if (!jsonFolder.mkdir()) {

@@ -66,6 +66,6 @@ public class CasSimpleMultifactorAuthenticationHandler extends AbstractPreAndPos
             val resolvedPrincipal = resolvePrincipal(applicationContext, credentialPrincipal);
             val principal = multifactorAuthenticationService.validate(resolvedPrincipal, tokenCredential);
             return createHandlerResult(tokenCredential, principal);
-        }, e -> new FailedLoginException(e.getMessage()));
+        }, e -> new FailedLoginException(e.getMessage()), LOGGER);
     }
 }

@@ -128,7 +128,7 @@ public class GoogleCloudFirestoreTicketRegistry extends AbstractTicketRegistry {
                 .update(ticketDocument.asUpdatableMap())
                 .get();
             LOGGER.debug("Added ticket [{}] to [{}] @ [{}]", ticket.getId(), collectionName, writeResult.getUpdateTime());
-        });
+        }, LOGGER);
         return ticket;
     }
 
@@ -164,7 +164,7 @@ public class GoogleCloudFirestoreTicketRegistry extends AbstractTicketRegistry {
                     .get();
                 LOGGER.debug("Added ticket [{}] to [{}] @ [{}]", ticket.getId(), collectionName, writeResult.getUpdateTime());
             }
-        });
+        }, LOGGER);
     }
 
     @Override

@@ -3,6 +3,7 @@ package org.apereo.cas.notifications.mail;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.context.HierarchicalMessageSource;
@@ -16,6 +17,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
  * @since 7.0.0
  */
 @RequiredArgsConstructor
+@Slf4j
 public class DefaultEmailSender implements EmailSender {
     private final JavaMailSender mailSender;
 
@@ -38,7 +40,7 @@ public class DefaultEmailSender implements EmailSender {
         helper.setSubject(subject);
 
         helper.setFrom(emailRequest.getEmailProperties().getFrom());
-        FunctionUtils.doIfNotBlank(emailRequest.getEmailProperties().getReplyTo(), __ -> helper.setReplyTo(emailRequest.getEmailProperties().getReplyTo()));
+        FunctionUtils.doIfNotBlank(emailRequest.getEmailProperties().getReplyTo(), __ -> helper.setReplyTo(emailRequest.getEmailProperties().getReplyTo()), LOGGER);
         helper.setValidateAddresses(emailRequest.getEmailProperties().isValidateAddresses());
         helper.setPriority(emailRequest.getEmailProperties().getPriority());
         helper.setCc(emailRequest.getEmailProperties().getCc().toArray(ArrayUtils.EMPTY_STRING_ARRAY));

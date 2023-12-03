@@ -115,7 +115,7 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
             () -> {
                 LOGGER.debug("Using principal id [{}] to generate persistent identifier", defaultId);
                 return defaultId;
-            }).get();
+            }, LOGGER).get();
     }
 
     @Override

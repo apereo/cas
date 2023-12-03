@@ -85,7 +85,7 @@ public class ReturnRestfulAttributeReleasePolicy extends BaseMappedAttributeRele
                 });
                 return FunctionUtils.doIf(getAllowedAttributes().isEmpty(),
                         () -> returnedAttributes,
-                        () -> authorizeMappedAttributes(context, returnedAttributes))
+                        () -> authorizeMappedAttributes(context, returnedAttributes), LOGGER)
                     .get();
             }
         } catch (final Exception e) {

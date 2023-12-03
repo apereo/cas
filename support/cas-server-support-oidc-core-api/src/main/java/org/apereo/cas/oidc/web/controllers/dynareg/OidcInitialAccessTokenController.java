@@ -159,6 +159,6 @@ public class OidcInitialAccessTokenController extends BaseOidcController {
             val accessToken = accessTokenResult.getAccessToken().get();
             getConfigurationContext().getTicketRegistry().addTicket(accessToken);
             return Optional.of(accessToken);
-        }, e -> Optional.<OAuth20AccessToken>empty()).get();
+        }, e -> Optional.<OAuth20AccessToken>empty(), LOGGER).get();
     }
 }

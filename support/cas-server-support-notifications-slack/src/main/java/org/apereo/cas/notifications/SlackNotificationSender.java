@@ -43,7 +43,7 @@ public class SlackNotificationSender implements NotificationSender {
         val body = buildNotificationMessageBody(messageData);
         val slackUsernames = FunctionUtils.doIfNotBlank(slackProperties.getUsernameAttribute(),
             () -> principal.getAttributes().get(slackProperties.getUsernameAttribute()),
-            () -> List.of(principal.getId()));
+            () -> List.of(principal.getId()), LOGGER);
         return slackUsernames
             .stream()
             .allMatch(Unchecked.predicate(slackUsername -> {
@@ -58,8 +58,8 @@ public class SlackNotificationSender implements NotificationSender {
                 LOGGER.trace(response.toString());
                 FunctionUtils.doIfNotBlank(response.getError(),
                     __ -> LoggingUtils.error(LOGGER, "Error: %s, Provided: %s, Needed: %s"
-                        .formatted(response.getError(), response.getProvided(), response.getNeeded())));
-                FunctionUtils.doIfNotBlank(response.getWarning(), LOGGER::warn);
+                        .formatted(response.getError(), response.getProvided(), response.getNeeded())), LOGGER);
+                FunctionUtils.doIfNotBlank(response.getWarning(), LOGGER::warn, LOGGER);
                 return response.isOk();
             }));
     }

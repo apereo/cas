@@ -76,7 +76,7 @@ public class OidcJsonWebKeyStoreUtils {
                 (CheckedFunction<Throwable, Optional<JsonWebKeySet>>) throwable -> {
                     LoggingUtils.error(LOGGER, throwable);
                     return Optional.empty();
-                })
+                }, LOGGER)
             .get();
     }
 

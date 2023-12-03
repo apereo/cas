@@ -3,6 +3,7 @@ package org.apereo.cas.util;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import java.net.URL;
@@ -18,6 +19,7 @@ import java.util.jar.Manifest;
  * @since 3.0.0
  */
 @UtilityClass
+@Slf4j
 @SuppressWarnings("CatchAndPrintStackTrace")
 public class CasVersion {
     private static final String IMPLEMENTATION_DATE;
@@ -64,6 +66,6 @@ public class CasVersion {
                 val manifest = new Manifest(new URL(manifestPath).openStream());
                 val attributes = manifest.getMainAttributes();
                 return StringUtils.defaultIfBlank(attributes.getValue("Implementation-Date"), ZonedDateTime.now(Clock.systemUTC()).toString());
-            });
+            }, LOGGER);
     }
 }

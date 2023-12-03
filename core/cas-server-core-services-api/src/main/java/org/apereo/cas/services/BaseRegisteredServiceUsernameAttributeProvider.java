@@ -78,11 +78,11 @@ public abstract class BaseRegisteredServiceUsernameAttributeProvider implements 
     }
 
     protected String removePatternFromUsernameIfNecessary(final String username) {
-        return FunctionUtils.doIfNotNull(removePattern, () -> RegExUtils.removePattern(username, removePattern), () -> username).get();
+        return FunctionUtils.doIfNotNull(removePattern, () -> RegExUtils.removePattern(username, removePattern), () -> username, LOGGER).get();
     }
 
     protected String scopeUsernameIfNecessary(final String resolved) {
-        return FunctionUtils.doIfNotNull(scope, () -> String.format("%s@%s", resolved, scope), () -> resolved).get();
+        return FunctionUtils.doIfNotNull(scope, () -> String.format("%s@%s", resolved, scope), () -> resolved, LOGGER).get();
     }
 
     protected String encryptResolvedUsername(final RegisteredServiceUsernameProviderContext context, final String username) {

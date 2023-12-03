@@ -68,7 +68,7 @@ public class GoogleCloudSecretsManagerCloudConfigBootstrapConfiguration {
             return new SecretManagerPropertySource(getClass().getSimpleName(), googleCloudSecretsManagerTemplate, projectIdProvider) {
                 @Override
                 public Object getProperty(final String name) {
-                    var propertyValue = FunctionUtils.doAndHandle(() -> super.getProperty(name), e -> null).get();
+                    var propertyValue = FunctionUtils.doAndHandle(() -> super.getProperty(name), e -> null, LOGGER).get();
                     return Optional.ofNullable(propertyValue)
                         .map(ByteString.class::cast)
                         .map(ByteString::toStringUtf8)

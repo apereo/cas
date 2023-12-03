@@ -70,14 +70,14 @@ public class DefaultCasConfigurationEventListener implements CasConfigurationEve
                 servlet.setApplicationContext(applicationContext);
                 servlet.init();
             }
-        });
+        }, LOGGER);
     }
 
     private void rebind() {
         LOGGER.info("Refreshing CAS configuration. Stand by...");
         val ctx = FunctionUtils.doIfNotNull(configurationPropertiesEnvironmentManager,
                 () -> configurationPropertiesEnvironmentManager.rebindCasConfigurationProperties(applicationContext),
-                () -> CasConfigurationPropertiesEnvironmentManager.rebindCasConfigurationProperties(binder, applicationContext))
+                () -> CasConfigurationPropertiesEnvironmentManager.rebindCasConfigurationProperties(binder, applicationContext), LOGGER)
             .get();
         Objects.requireNonNull(ctx);
         initializeBeansEagerly();

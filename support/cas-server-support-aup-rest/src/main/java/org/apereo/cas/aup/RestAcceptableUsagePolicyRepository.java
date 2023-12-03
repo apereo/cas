@@ -62,7 +62,7 @@ public class RestAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
                 "username", principal.getId(),
                 "locale", request.getLocale().toString());
             val service = WebUtils.getService(requestContext);
-            FunctionUtils.doIfNotNull(service, __ -> parameters.put("service", service.getId()));
+            FunctionUtils.doIfNotNull(service, __ -> parameters.put("service", service.getId()), LOGGER);
             LOGGER.debug("Sending AUP acceptance payload [{}] to [{}]", rest.getUrl(), parameters);
             val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(rest.getBasicAuthPassword())
@@ -130,7 +130,7 @@ public class RestAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
                     "username", principal.getId(),
                     "locale", request.getLocale().toString());
                 val service = WebUtils.getService(requestContext);
-                FunctionUtils.doIfNotNull(service, __ -> parameters.put("service", service.getId()));
+                FunctionUtils.doIfNotNull(service, __ -> parameters.put("service", service.getId()), LOGGER);
 
                 val exec = HttpExecutionRequest.builder()
                     .basicAuthPassword(rest.getBasicAuthPassword())

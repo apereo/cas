@@ -88,6 +88,6 @@ public class OAuth20X509Authenticator implements Authenticator {
                 val values = CollectionUtils.toCollection(profile.getAttribute(attribute));
                 return !values.isEmpty() && values.stream().anyMatch(email -> RegexUtils.find(pattern, email.toString()));
             },
-            () -> Boolean.TRUE);
+            () -> Boolean.TRUE, LOGGER);
     }
 }

@@ -361,11 +361,11 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         val confirmation = newSamlObject(SubjectConfirmation.class);
         confirmation.setMethod(SubjectConfirmation.METHOD_BEARER);
         val data = newSamlObject(SubjectConfirmationData.class);
-        FunctionUtils.doIfNotBlank(recipient, data::setRecipient);
-        FunctionUtils.doIfNotBlank(inResponseTo, data::setInResponseTo);
-        FunctionUtils.doIfNotNull(address, __ -> data.setAddress(address.getHostAddress()));
-        FunctionUtils.doIfNotNull(notOnOrAfter, __ -> data.setNotOnOrAfter(notOnOrAfter.toInstant()));
-        FunctionUtils.doIfNotNull(notBefore, __ -> data.setNotBefore(notBefore.toInstant()));
+        FunctionUtils.doIfNotBlank(recipient, data::setRecipient, LOGGER);
+        FunctionUtils.doIfNotBlank(inResponseTo, data::setInResponseTo, LOGGER);
+        FunctionUtils.doIfNotNull(address, __ -> data.setAddress(address.getHostAddress()), LOGGER);
+        FunctionUtils.doIfNotNull(notOnOrAfter, __ -> data.setNotOnOrAfter(notOnOrAfter.toInstant()), LOGGER);
+        FunctionUtils.doIfNotNull(notBefore, __ -> data.setNotBefore(notBefore.toInstant()), LOGGER);
         confirmation.setSubjectConfirmationData(data);
         return confirmation;
     }

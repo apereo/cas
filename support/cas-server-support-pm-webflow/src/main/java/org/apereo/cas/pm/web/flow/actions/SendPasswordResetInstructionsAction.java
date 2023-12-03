@@ -218,7 +218,7 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
             val credential = new BasicIdentifiableCredential();
             credential.setId(username);
             val person = principalResolver.resolve(credential);
-            FunctionUtils.doIfNotNull(person, principal -> parameters.put("principal", principal));
+            FunctionUtils.doIfNotNull(person, principal -> parameters.put("principal", principal), LOGGER);
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
             val locale = Optional.ofNullable(RequestContextUtils.getLocaleResolver(request))
                 .map(resolver -> resolver.resolveLocale(request));

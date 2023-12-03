@@ -80,7 +80,7 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
             }
         } else {
             LOGGER.info("Configuration directory [{}] is not a directory or cannot be found at the specific path",
-                 FunctionUtils.doIfNotNull(config, () -> config, () -> "unspecified").get());
+                 FunctionUtils.doIfNotNull(config, () -> config, () -> "unspecified", LOGGER).get());
         }
 
         val embeddedProperties = loadEmbeddedProperties(resourceLoader, environment);

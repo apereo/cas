@@ -163,17 +163,17 @@ public class HazelcastConfigurationFactory {
         val ssl = hz.getCluster().getNetwork().getSsl();
         val sslConfig = new SSLConfig();
         sslConfig.setFactoryClassName(BasicSSLContextFactory.class.getName());
-        FunctionUtils.doIfNotNull(ssl.getKeystore(), value -> sslConfig.setProperty("keystore", value));
-        FunctionUtils.doIfNotNull(ssl.getProtocol(), value -> sslConfig.setProperty("protocol", value));
-        FunctionUtils.doIfNotNull(ssl.getKeystorePassword(), value -> sslConfig.setProperty("keystorePassword", value));
-        FunctionUtils.doIfNotNull(ssl.getKeyStoreType(), value -> sslConfig.setProperty("keyStoreType", value));
-        FunctionUtils.doIfNotNull(ssl.getTrustStore(), value -> sslConfig.setProperty("trustStore", value));
-        FunctionUtils.doIfNotNull(ssl.getTrustStoreType(), value -> sslConfig.setProperty("trustStoreType", value));
-        FunctionUtils.doIfNotNull(ssl.getTrustStorePassword(), value -> sslConfig.setProperty("trustStorePassword", value));
-        FunctionUtils.doIfNotNull(ssl.getMutualAuthentication(), value -> sslConfig.setProperty("mutualAuthentication", value));
-        FunctionUtils.doIfNotNull(ssl.getCipherSuites(), value -> sslConfig.setProperty("cipherSuites", value));
-        FunctionUtils.doIfNotNull(ssl.getTrustManagerAlgorithm(), value -> sslConfig.setProperty("trustManagerAlgorithm", value));
-        FunctionUtils.doIfNotNull(ssl.getKeyManagerAlgorithm(), value -> sslConfig.setProperty("keyManagerAlgorithm", value));
+        FunctionUtils.doIfNotNull(ssl.getKeystore(), value -> sslConfig.setProperty("keystore", value), LOGGER);
+        FunctionUtils.doIfNotNull(ssl.getProtocol(), value -> sslConfig.setProperty("protocol", value), LOGGER);
+        FunctionUtils.doIfNotNull(ssl.getKeystorePassword(), value -> sslConfig.setProperty("keystorePassword", value), LOGGER);
+        FunctionUtils.doIfNotNull(ssl.getKeyStoreType(), value -> sslConfig.setProperty("keyStoreType", value), LOGGER);
+        FunctionUtils.doIfNotNull(ssl.getTrustStore(), value -> sslConfig.setProperty("trustStore", value), LOGGER);
+        FunctionUtils.doIfNotNull(ssl.getTrustStoreType(), value -> sslConfig.setProperty("trustStoreType", value), LOGGER);
+        FunctionUtils.doIfNotNull(ssl.getTrustStorePassword(), value -> sslConfig.setProperty("trustStorePassword", value), LOGGER);
+        FunctionUtils.doIfNotNull(ssl.getMutualAuthentication(), value -> sslConfig.setProperty("mutualAuthentication", value), LOGGER);
+        FunctionUtils.doIfNotNull(ssl.getCipherSuites(), value -> sslConfig.setProperty("cipherSuites", value), LOGGER);
+        FunctionUtils.doIfNotNull(ssl.getTrustManagerAlgorithm(), value -> sslConfig.setProperty("trustManagerAlgorithm", value), LOGGER);
+        FunctionUtils.doIfNotNull(ssl.getKeyManagerAlgorithm(), value -> sslConfig.setProperty("keyManagerAlgorithm", value), LOGGER);
         sslConfig.setProperty("validateIdentity", String.valueOf(ssl.isValidateIdentity()));
         networkConfig.setSSLConfig(sslConfig);
     }

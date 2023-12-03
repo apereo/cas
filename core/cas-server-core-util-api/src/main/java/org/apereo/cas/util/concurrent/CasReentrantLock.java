@@ -39,7 +39,7 @@ public class CasReentrantLock {
     public boolean tryLock() {
         return FunctionUtils.doAndHandle(
             () -> lock.tryLock(LOCK_TIMEOUT_SECONDS, TimeUnit.SECONDS),
-            e -> false).get();
+            e -> false, LOGGER).get();
     }
 
     /**

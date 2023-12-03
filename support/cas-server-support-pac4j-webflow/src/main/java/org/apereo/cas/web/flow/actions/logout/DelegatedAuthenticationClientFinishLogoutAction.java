@@ -60,7 +60,7 @@ public class DelegatedAuthenticationClientFinishLogoutAction extends BaseCasWebf
                             val result = client.getLogoutProcessor().processLogout(callContext, logoutCredentials);
                             JEEHttpActionAdapter.INSTANCE.adapt(result, context);
                         });
-                    }));
+                    }, LOGGER));
             }
         } else {
             val logoutRedirect = WebUtils.getLogoutRedirectUrl(requestContext, String.class);

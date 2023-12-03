@@ -65,7 +65,7 @@ public class OidcCallbackAuthorizeViewResolver implements OAuth20CallbackAuthori
             val responseType = oauthRequestParameterResolver.resolveResponseModeType(context);
             val redirect = FunctionUtils.doIf(OAuth20ResponseModeFactory.isResponseModeTypeFormPost(registeredService, responseType),
                     originalRedirectUrl::get,
-                    () -> OidcRequestSupport.getRedirectUrlWithError(originalRedirectUrl.get(), OidcConstants.LOGIN_REQUIRED, context))
+                    () -> OidcRequestSupport.getRedirectUrlWithError(originalRedirectUrl.get(), OidcConstants.LOGIN_REQUIRED, context), LOGGER)
                 .get();
             return FunctionUtils.doUnchecked(() -> {
                 LOGGER.warn("Unable to detect authenticated user profile for prompt-less login attempts. Redirecting to URL [{}]", redirect);

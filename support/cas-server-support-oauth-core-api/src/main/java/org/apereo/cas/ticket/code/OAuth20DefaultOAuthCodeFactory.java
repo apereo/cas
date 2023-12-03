@@ -75,7 +75,7 @@ public class OAuth20DefaultOAuthCodeFactory implements OAuth20CodeFactory {
             val encoded = cipherExecutor.encode(codeId);
             LOGGER.debug("Encoded OAuth code [{}]", encoded);
             return encoded;
-        }, () -> codeId).get();
+        }, () -> codeId, LOGGER).get();
 
         val oauthCode = new OAuth20DefaultCode(codeIdToUse, service, authentication,
             expirationPolicyToUse, ticketGrantingTicket, scopes,

@@ -75,7 +75,7 @@ public class DefaultConsentEngine implements ConsentEngine {
         val decisionFound = findConsentDecision(service, registeredService, authentication);
         val supplier = FunctionUtils.doIfNull(decisionFound,
             () -> consentDecisionBuilder.build(service, registeredService, principalId, attributes),
-            () -> consentDecisionBuilder.update(decisionFound, attributes));
+            () -> consentDecisionBuilder.update(decisionFound, attributes), LOGGER);
 
         val decision = supplier.get();
         decision.setOptions(options);

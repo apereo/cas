@@ -12,6 +12,7 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.function.FunctionUtils;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.context.WebContext;
 
@@ -21,6 +22,7 @@ import org.pac4j.core.context.WebContext;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
+@Slf4j
 public class OidcPushedAuthorizationRequestValidator extends BaseOAuth20AuthorizationRequestValidator {
     private final TicketRegistry ticketRegistry;
     private final TicketFactory ticketFactory;
@@ -48,7 +50,7 @@ public class OidcPushedAuthorizationRequestValidator extends BaseOAuth20Authoriz
             context.setRequestAttribute(OidcPushedAuthorizationRequest.class.getName(), holder);
             val givenClientId = getClientIdFromRequest(context);
             return givenClientId.equals(holder.getClientId()) && verifyRegisteredServiceByClientId(context, holder.getClientId()) != null;
-        }, throwable -> false).get();
+        }, throwable -> false, LOGGER).get();
     }
 
     @Override

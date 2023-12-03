@@ -6,6 +6,7 @@ import com.google.common.base.Splitter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
@@ -28,6 +29,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Slf4j
 public class AccountsPreDefinedLoginModule implements LoginModule {
     private Subject subject;
 
@@ -63,7 +65,7 @@ public class AccountsPreDefinedLoginModule implements LoginModule {
             callbackHandler.handle(new Callback[]{nameCallback, passwordCallback});
         }, throwable -> {
             throw new FailedLoginException(throwable.getMessage());
-        }).accept(nameCallback);
+        }, LOGGER).accept(nameCallback);
 
         val username = nameCallback.getName();
         if (accounts.containsKey(username)) {

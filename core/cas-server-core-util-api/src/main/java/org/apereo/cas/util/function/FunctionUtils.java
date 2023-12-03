@@ -3,13 +3,13 @@ package org.apereo.cas.util.function;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.util.LoggingUtils;
 import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.jooq.lambda.fi.util.function.CheckedConsumer;
 import org.jooq.lambda.fi.util.function.CheckedFunction;
 import org.jooq.lambda.fi.util.function.CheckedSupplier;
+import org.slf4j.Logger;
 import org.springframework.retry.RetryCallback;
 import org.springframework.retry.RetryContext;
 import org.springframework.retry.RetryListener;
@@ -29,7 +29,6 @@ import java.util.function.Supplier;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Slf4j
 @UtilityClass
 public class FunctionUtils {
 
@@ -41,10 +40,11 @@ public class FunctionUtils {
      * @param condition     the condition
      * @param trueFunction  the true function
      * @param falseFunction the false function
+     * @param logger        the Logger to use
      * @return the function
      */
     public static <T, R> Function<T, R> doIf(final Predicate<Object> condition, final Supplier<R> trueFunction,
-                                             final Supplier<R> falseFunction) {
+                                             final Supplier<R> falseFunction, final Logger logger) {
         return t -> {
             try {
                 if (condition.test(t)) {
@@ -52,7 +52,7 @@ public class FunctionUtils {
                 }
                 return falseFunction.get();
             } catch (final Throwable e) {
-                LoggingUtils.warn(LOGGER, e);
+                LoggingUtils.warn(logger, e);
                 return falseFunction.get();
             }
         };
@@ -98,10 +98,11 @@ public class FunctionUtils {
      * @param condition     the condition
      * @param trueFunction  the true function
      * @param falseFunction the false function
+     * @param logger        the Logger
      * @return the function
      */
     public static <R> Supplier<R> doIf(final boolean condition, final Supplier<R> trueFunction,
-                                       final Supplier<R> falseFunction) {
+                                       final Supplier<R> falseFunction, final Logger logger) {
         return () -> {
             try {
                 if (condition) {
@@ -109,7 +110,7 @@ public class FunctionUtils {
                 }
                 return falseFunction.get();
             } catch (final Throwable e) {
-                LoggingUtils.warn(LOGGER, e);
+                LoggingUtils.warn(logger, e);
                 return falseFunction.get();
             }
         };
@@ -123,11 +124,13 @@ public class FunctionUtils {
      * @param condition     the condition
      * @param trueFunction  the true function
      * @param falseFunction the false function
+     * @param logger        the Logger to use
      * @return the function
      */
     public static <T, R> Function<T, R> doIf(final Predicate<T> condition,
                                              final CheckedFunction<T, R> trueFunction,
-                                             final CheckedFunction<T, R> falseFunction) {
+                                             final CheckedFunction<T, R> falseFunction,
+                                             final Logger logger) {
         return t -> {
             try {
                 if (condition.test(t)) {
@@ -135,7 +138,7 @@ public class FunctionUtils {
                 }
                 return falseFunction.apply(t);
             } catch (final Throwable e) {
-                LoggingUtils.warn(LOGGER, e);
+                LoggingUtils.warn(logger, e);
                 try {
                     return falseFunction.apply(t);
                 } catch (final Throwable ex) {
@@ -152,12 +155,14 @@ public class FunctionUtils {
      * @param input         the input
      * @param trueFunction  the true function
      * @param falseFunction the false function
+     * @param logger        the Logger to use
      * @return the t
      */
     public static <T> T doIfNotBlank(final CharSequence input,
                                      final CheckedSupplier<T> trueFunction,
-                                     final CheckedSupplier<T> falseFunction) {
-        return doAndHandle(() -> StringUtils.isNotBlank(input) ? trueFunction.get() : falseFunction.get());
+                                     final CheckedSupplier<T> falseFunction,
+                                     final Logger logger) {
+        return doAndHandle(() -> StringUtils.isNotBlank(input) ? trueFunction.get() : falseFunction.get(), logger);
     }
 
     /**
@@ -165,15 +170,17 @@ public class FunctionUtils {
      *
      * @param input        the input
      * @param trueFunction the true function
+     * @param logger       the Logger to use
      */
     public static <T extends CharSequence> void doIfNotBlank(final T input,
-                                                             final CheckedConsumer<T> trueFunction) {
+                                                             final CheckedConsumer<T> trueFunction,
+                                                             final Logger logger) {
         try {
             if (StringUtils.isNotBlank(input)) {
                 trueFunction.accept(input);
             }
         } catch (final Throwable e) {
-            LoggingUtils.warn(LOGGER, e);
+            LoggingUtils.warn(logger, e);
         }
     }
 
@@ -183,11 +190,13 @@ public class FunctionUtils {
      * @param <R>          the type parameter
      * @param input        the input
      * @param trueFunction the true function
+     * @param logger       the Logger to use
      * @return the value from the supplier or null
      */
     public static <R> R doIfNotNull(final Object input,
-                                    final CheckedSupplier<R> trueFunction) {
-        return doIfNotNull(input, trueFunction, () -> null).get();
+                                    final CheckedSupplier<R> trueFunction,
+                                    final Logger logger) {
+        return doIfNotNull(input, trueFunction, () -> null, logger).get();
     }
 
     /**
@@ -197,11 +206,13 @@ public class FunctionUtils {
      * @param input         the input
      * @param trueFunction  the true function
      * @param falseFunction the false function
+     * @param logger        the Logger to use
      * @return the supplier
      */
     public static <R> Supplier<R> doIfNotNull(final Object input,
                                               final CheckedSupplier<R> trueFunction,
-                                              final Supplier<R> falseFunction) {
+                                              final Supplier<R> falseFunction,
+                                              final Logger logger) {
         return () -> {
             try {
                 if (input != null) {
@@ -209,7 +220,7 @@ public class FunctionUtils {
                 }
                 return falseFunction.get();
             } catch (final Throwable e) {
-                LoggingUtils.warn(LOGGER, e);
+                LoggingUtils.warn(logger, e);
                 return falseFunction.get();
             }
         };
@@ -222,15 +233,17 @@ public class FunctionUtils {
      * @param <T>          the type parameter
      * @param input        the input
      * @param trueFunction the true function
+     * @param logger       the Logger to use
      */
     public static <T> void doIfNotNull(final T input,
-                                       final CheckedConsumer<T> trueFunction) {
+                                       final CheckedConsumer<T> trueFunction,
+                                       final Logger logger) {
         try {
             if (input != null) {
                 trueFunction.accept(input);
             }
         } catch (final Throwable e) {
-            LoggingUtils.warn(LOGGER, e);
+            LoggingUtils.warn(logger, e);
         }
     }
 
@@ -241,10 +254,12 @@ public class FunctionUtils {
      * @param input        the input
      * @param trueFunction the true function
      * @param elseFunction the else function
+     * @param logger       the Logger to use
      */
     public static <T> void doIfNotNull(final T input,
                                        final CheckedConsumer<T> trueFunction,
-                                       final CheckedConsumer<T> elseFunction) {
+                                       final CheckedConsumer<T> elseFunction,
+                                       final Logger logger) {
         try {
             if (input != null) {
                 trueFunction.accept(input);
@@ -252,7 +267,7 @@ public class FunctionUtils {
                 elseFunction.accept(null);
             }
         } catch (final Throwable e) {
-            LoggingUtils.warn(LOGGER, e);
+            LoggingUtils.warn(logger, e);
         }
     }
 
@@ -262,11 +277,13 @@ public class FunctionUtils {
      * @param <T>          the type parameter
      * @param input        the input
      * @param trueFunction the true function
+     * @param logger       the Logger to use
      */
     public static <T> void doIfNull(final T input,
-                                    final CheckedConsumer<T> trueFunction) {
+                                    final CheckedConsumer<T> trueFunction,
+                                    final Logger logger) {
         doIfNull(input, trueFunction, t -> {
-        });
+        }, logger);
     }
 
     /**
@@ -276,10 +293,12 @@ public class FunctionUtils {
      * @param input         the input
      * @param trueFunction  the true function
      * @param falseFunction the false function
+     * @param logger        the Logger to use
      */
     public static <T> void doIfNull(final T input,
                                     final CheckedConsumer<T> trueFunction,
-                                    final CheckedConsumer<T> falseFunction) {
+                                    final CheckedConsumer<T> falseFunction,
+                                    final Logger logger) {
         try {
             if (input == null) {
                 trueFunction.accept(null);
@@ -287,7 +306,7 @@ public class FunctionUtils {
                 falseFunction.accept(input);
             }
         } catch (final Throwable e) {
-            LoggingUtils.warn(LOGGER, e);
+            LoggingUtils.warn(logger, e);
         }
     }
 
@@ -298,11 +317,13 @@ public class FunctionUtils {
      * @param input         the input
      * @param trueFunction  the true function
      * @param falseFunction the false function
+     * @param logger        the Logger to use
      * @return the supplier
      */
     public static <R> Supplier<R> doIfNull(final Object input,
                                            final Supplier<R> trueFunction,
-                                           final Supplier<R> falseFunction) {
+                                           final Supplier<R> falseFunction,
+                                           final Logger logger) {
         return () -> {
             try {
                 if (input == null) {
@@ -310,7 +331,7 @@ public class FunctionUtils {
                 }
                 return falseFunction.get();
             } catch (final Throwable e) {
-                LoggingUtils.warn(LOGGER, e);
+                LoggingUtils.warn(logger, e);
                 return falseFunction.get();
             }
         };
@@ -323,16 +344,18 @@ public class FunctionUtils {
      * @param <R>          the type parameter
      * @param function     the function
      * @param errorHandler the error handler
+     * @param logger       the Logger to use
      * @return the function
      */
     public static <T, R> Function<T, R> doAndHandle(final CheckedFunction<T, R> function,
-                                                    final CheckedFunction<Throwable, R> errorHandler) {
+                                                    final CheckedFunction<Throwable, R> errorHandler,
+                                                    final Logger logger) {
         return t -> {
             try {
                 return function.apply(t);
             } catch (final Throwable e) {
                 try {
-                    LoggingUtils.warn(LOGGER, e);
+                    LoggingUtils.warn(logger, e);
                     return errorHandler.apply(e);
                 } catch (final Throwable ex) {
                     throw new IllegalArgumentException(ex.getMessage());
@@ -347,16 +370,18 @@ public class FunctionUtils {
      * @param <R>          the type parameter
      * @param function     the function
      * @param errorHandler the error handler
+     * @param logger       the Logger to use
      * @return the checked consumer
      */
     public static <R> Consumer<R> doAndHandle(final CheckedConsumer<R> function,
-                                              final CheckedFunction<Throwable, R> errorHandler) {
+                                              final CheckedFunction<Throwable, R> errorHandler,
+                                              final Logger logger) {
         return value -> {
             try {
                 function.accept(value);
             } catch (final Throwable e) {
                 try {
-                    LoggingUtils.warn(LOGGER, e);
+                    LoggingUtils.warn(logger, e);
                     errorHandler.apply(e);
                 } catch (final Throwable ex) {
                     throw new IllegalArgumentException(ex);
@@ -370,15 +395,16 @@ public class FunctionUtils {
      *
      * @param <R>      the type parameter
      * @param function the function
+     * @param logger   the Logger to use
      * @return the r
      */
-    public static <R> R doAndHandle(final CheckedSupplier<R> function) {
+    public static <R> R doAndHandle(final CheckedSupplier<R> function, final Logger logger) {
         try {
             return function.get();
         } catch (final InvalidTicketException e) {
-            LOGGER.debug(e.getMessage(), e);
+            logger.debug(e.getMessage(), e);
         } catch (final Throwable e) {
-            LoggingUtils.warn(LOGGER, e);
+            LoggingUtils.warn(logger, e);
         }
         return null;
     }
@@ -388,12 +414,13 @@ public class FunctionUtils {
      *
      * @param <R>      the type parameter
      * @param function the function
+     * @param logger   the Logger to use
      */
-    public static <R> void doAndHandle(final CheckedConsumer<R> function) {
+    public static <R> void doAndHandle(final CheckedConsumer<R> function, final Logger logger) {
         try {
             function.accept(null);
         } catch (final Throwable e) {
-            LoggingUtils.warn(LOGGER, e);
+            LoggingUtils.warn(logger, e);
         }
     }
 
@@ -403,15 +430,16 @@ public class FunctionUtils {
      * @param <R>          the type parameter
      * @param function     the function
      * @param errorHandler the error handler
+     * @param logger       the Logger to use
      * @return the supplier
      */
-    public static <R> Supplier<R> doAndHandle(final CheckedSupplier<R> function, final CheckedFunction<Throwable, R> errorHandler) {
+    public static <R> Supplier<R> doAndHandle(final CheckedSupplier<R> function, final CheckedFunction<Throwable, R> errorHandler, final Logger logger) {
         return () -> {
             try {
                 return function.get();
             } catch (final Throwable e) {
                 try {
-                    LoggingUtils.warn(LOGGER, e);
+                    LoggingUtils.warn(logger, e);
                     return errorHandler.apply(e);
                 } catch (final Throwable ex) {
                     if (ex instanceof final RuntimeException re) {
@@ -427,15 +455,16 @@ public class FunctionUtils {
      * Do without throws and return status.
      *
      * @param func   the func
+     * @param logger the Logger to use
      * @param params the params
      * @return true /false
      */
-    public static boolean doWithoutThrows(final Consumer<Object> func, final Object... params) {
+    public static boolean doWithoutThrows(final Consumer<Object> func, final Logger logger, final Object... params) {
         try {
             func.accept(params);
             return true;
         } catch (final Throwable e) {
-            LoggingUtils.warn(LOGGER, e);
+            LoggingUtils.warn(logger, e);
             return false;
         }
     }
@@ -565,15 +594,17 @@ public class FunctionUtils {
      * @param <T>      the type parameter
      * @param supplier the supplier
      * @param handler  the handler
+     * @param logger   the Logger to use
      * @return the t
      * @throws Exception the exception
      */
     public static <T> T doAndThrow(final CheckedSupplier<T> supplier,
-                                   final Function<Throwable, ? extends Exception> handler) throws Exception {
+                                   final Function<Throwable, ? extends Exception> handler,
+                                   final Logger logger) throws Exception {
         try {
             return supplier.get();
         } catch (final Throwable e) {
-            LoggingUtils.error(LOGGER, e);
+            LoggingUtils.error(logger, e);
             throw handler.apply(e);
         }
     }

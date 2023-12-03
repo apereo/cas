@@ -96,7 +96,7 @@ public class DelegatedClientAuthenticationHandler extends BaseDelegatedClientAut
             return createResult(clientCredentials, userProfile, client, service);
         }, e -> {
             throw new PreventedException(e);
-        }).get();
+        }, LOGGER).get();
     }
 
     @Override

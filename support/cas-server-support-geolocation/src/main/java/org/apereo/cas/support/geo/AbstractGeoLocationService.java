@@ -21,7 +21,7 @@ import java.net.InetAddress;
 public abstract class AbstractGeoLocationService implements GeoLocationService {
     @Override
     public GeoLocationResponse locate(final String address) {
-        return FunctionUtils.doAndHandle(() -> locate(InetAddress.getByName(address)), e -> null).get();
+        return FunctionUtils.doAndHandle(() -> locate(InetAddress.getByName(address)), e -> null, LOGGER).get();
     }
 
     @Override

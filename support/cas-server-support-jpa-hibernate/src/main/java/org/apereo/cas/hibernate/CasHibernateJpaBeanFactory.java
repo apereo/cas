@@ -9,6 +9,7 @@ import org.apereo.cas.jpa.JpaPersistenceProviderConfigurer;
 import org.apereo.cas.jpa.JpaPersistenceProviderContext;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -40,6 +41,7 @@ import java.util.stream.Stream;
  * @since 6.2.0
  */
 @RequiredArgsConstructor
+@Slf4j
 public class CasHibernateJpaBeanFactory implements JpaBeanFactory {
     private final ConfigurableApplicationContext applicationContext;
 
@@ -83,7 +85,7 @@ public class CasHibernateJpaBeanFactory implements JpaBeanFactory {
                     aware.setApplicationContext(applicationContext);
                 }
                 properties.put(MappingSettings.PHYSICAL_NAMING_STRATEGY, namingStrategy);
-            });
+            }, LOGGER);
         properties.putAll(jpaProperties.getProperties());
 
         val bean = JpaBeans.newEntityManagerFactoryBean(config);

@@ -108,7 +108,7 @@ public class SendForgotUsernameInstructionsAction extends BaseCasWebflowAction {
         val result = sendForgotUsernameEmailToAccount(query, requestContext);
         return FunctionUtils.doIf(result.isSuccess(),
                 () -> success(result),
-                () -> getErrorEvent("username.failed", "Cannot send the username to given email address", requestContext))
+                () -> getErrorEvent("username.failed", "Cannot send the username to given email address", requestContext), LOGGER)
             .get();
     }
 

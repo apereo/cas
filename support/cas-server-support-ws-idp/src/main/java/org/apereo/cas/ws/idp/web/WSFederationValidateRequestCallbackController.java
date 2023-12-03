@@ -95,7 +95,7 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
                     LOGGER.debug("No security token is yet available. Invoking security token service to issue token");
                     return fetchSecurityTokenFromAssertion(assertion, targetService);
                 }),
-                () -> securityTokenReq)
+                () -> securityTokenReq, LOGGER)
             .get();
         addSecurityTokenTicketToRegistry(request, securityToken);
         val rpToken = produceRelyingPartyToken(request, targetService, fedRequest, securityToken, assertion);

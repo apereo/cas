@@ -7,6 +7,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import java.util.List;
@@ -22,6 +23,7 @@ import java.util.Optional;
  */
 @RequiredArgsConstructor
 @Getter
+@Slf4j
 public class DefaultTicketRegistrySupport implements TicketRegistrySupport {
 
     private final TicketRegistry ticketRegistry;
@@ -52,7 +54,7 @@ public class DefaultTicketRegistrySupport implements TicketRegistrySupport {
         return FunctionUtils.doAndHandle(() -> {
             val state = ticketRegistry.getTicket(ticketId, Ticket.class);
             return state == null || state.isExpired() ? null : state;
-        });
+        }, LOGGER);
     }
 
     @Override

@@ -91,7 +91,7 @@ public class TerminateSessionAction extends BaseCasWebflowAction {
     protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
         val terminateSession = FunctionUtils.doIf(logoutProperties.isConfirmLogout(),
                 () -> isLogoutRequestConfirmed(requestContext),
-                () -> Boolean.TRUE)
+                () -> Boolean.TRUE, LOGGER)
             .get();
 
         if (terminateSession) {
@@ -153,7 +153,7 @@ public class TerminateSessionAction extends BaseCasWebflowAction {
             .toList();
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val session = request.getSession(false);
-        FunctionUtils.doIfNotNull(session, HttpSession::invalidate);
+        FunctionUtils.doIfNotNull(session, HttpSession::invalidate, LOGGER);
         terminationHandlers.forEach(processor -> processor.afterSessionTermination(terminationResults, requestContext));
     }
 

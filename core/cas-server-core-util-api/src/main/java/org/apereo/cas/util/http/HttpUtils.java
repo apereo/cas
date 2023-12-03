@@ -114,7 +114,7 @@ public class HttpUtils {
      */
     public void close(final HttpResponse response) {
         if (response instanceof final CloseableHttpResponse closeableHttpResponse) {
-            FunctionUtils.doAndHandle(__ -> closeableHttpResponse.close());
+            FunctionUtils.doAndHandle(__ -> closeableHttpResponse.close(), LOGGER);
         }
     }
 

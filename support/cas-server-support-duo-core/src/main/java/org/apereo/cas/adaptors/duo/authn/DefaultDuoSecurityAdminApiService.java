@@ -14,6 +14,7 @@ import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.duosecurity.client.Http;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import okhttp3.OkHttpClient;
 import org.apache.commons.lang3.StringUtils;
@@ -42,6 +43,7 @@ import java.util.stream.Collectors;
  */
 @EqualsAndHashCode
 @RequiredArgsConstructor
+@Slf4j
 public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiService {
     private static final long TIMEOUT_SECONDS = 60;
 
@@ -56,16 +58,16 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
     private static DuoSecurityUserAccount mapDuoSecurityUserAccount(final JSONObject userJson) throws JSONException {
         val user = new DuoSecurityUserAccount(userJson.getString("username"));
         user.setStatus(DuoSecurityUserAccountStatus.from(userJson.getString("status")));
-        FunctionUtils.doIfNotNull(userJson.get("email"), value -> user.addAttribute("email", value.toString()));
-        FunctionUtils.doIfNotNull(userJson.getString("user_id"), value -> user.addAttribute("user_id", value));
-        FunctionUtils.doIfNotNull(userJson.get("firstname"), value -> user.addAttribute("firstname", value.toString()));
-        FunctionUtils.doIfNotNull(userJson.get("lastname"), value -> user.addAttribute("lastname", value.toString()));
-        FunctionUtils.doIfNotNull(userJson.get("realname"), value -> user.addAttribute("realname", value.toString()));
-        FunctionUtils.doIfNotNull(userJson.getBoolean("is_enrolled"), value -> user.addAttribute("is_enrolled", value.toString()));
-        FunctionUtils.doIfNotNull(userJson.getLong("last_login"), value -> user.addAttribute("last_login", value.toString()));
-        FunctionUtils.doIfNotNull(userJson.getLong("created"), value -> user.addAttribute("created", value.toString()));
-        FunctionUtils.doIfNotNull(userJson.optString("alias1"), value -> user.addAttribute("alias1", value));
-        FunctionUtils.doIfNotNull(userJson.optString("alias2"), value -> user.addAttribute("alias2", value));
+        FunctionUtils.doIfNotNull(userJson.get("email"), value -> user.addAttribute("email", value.toString()), LOGGER);
+        FunctionUtils.doIfNotNull(userJson.getString("user_id"), value -> user.addAttribute("user_id", value), LOGGER);
+        FunctionUtils.doIfNotNull(userJson.get("firstname"), value -> user.addAttribute("firstname", value.toString()), LOGGER);
+        FunctionUtils.doIfNotNull(userJson.get("lastname"), value -> user.addAttribute("lastname", value.toString()), LOGGER);
+        FunctionUtils.doIfNotNull(userJson.get("realname"), value -> user.addAttribute("realname", value.toString()), LOGGER);
+        FunctionUtils.doIfNotNull(userJson.getBoolean("is_enrolled"), value -> user.addAttribute("is_enrolled", value.toString()), LOGGER);
+        FunctionUtils.doIfNotNull(userJson.getLong("last_login"), value -> user.addAttribute("last_login", value.toString()), LOGGER);
+        FunctionUtils.doIfNotNull(userJson.getLong("created"), value -> user.addAttribute("created", value.toString()), LOGGER);
+        FunctionUtils.doIfNotNull(userJson.optString("alias1"), value -> user.addAttribute("alias1", value), LOGGER);
+        FunctionUtils.doIfNotNull(userJson.optString("alias2"), value -> user.addAttribute("alias2", value), LOGGER);
         if (user.getStatus() != DuoSecurityUserAccountStatus.DENY && !user.isEnrolled()) {
             user.setStatus(DuoSecurityUserAccountStatus.ENROLL);
         }

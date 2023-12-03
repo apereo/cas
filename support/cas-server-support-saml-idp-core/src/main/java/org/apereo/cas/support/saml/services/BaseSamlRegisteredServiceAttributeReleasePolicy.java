@@ -94,9 +94,9 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
             }, throwable -> {
                 LoggingUtils.error(LOGGER, throwable);
                 return null;
-            })
+            }, LOGGER)
                 .apply(svcParam),
-            () -> null).get();
+            () -> null, LOGGER).get();
     }
 
     protected static Optional<AuthnRequest> getSamlAuthnRequest(final RegisteredServiceAttributeReleasePolicyContext context) {

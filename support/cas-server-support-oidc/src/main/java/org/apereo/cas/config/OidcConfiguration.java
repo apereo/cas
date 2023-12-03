@@ -534,7 +534,7 @@ public class OidcConfiguration {
                     cipher.setEncryptionEnabled(crypto.isEncryptionEnabled());
                     return cipher;
                 },
-                CipherExecutor::noOpOfSerializableToString).get();
+                CipherExecutor::noOpOfSerializableToString, LOGGER).get();
         }
 
     }
@@ -1083,7 +1083,7 @@ public class OidcConfiguration {
                     cipher.setEncryptionEnabled(crypto.isEncryptionEnabled());
                     return cipher;
                 },
-                CipherExecutor::noOpOfSerializableToString).get();
+                CipherExecutor::noOpOfSerializableToString, LOGGER).get();
         }
 
         @Bean
@@ -1101,7 +1101,7 @@ public class OidcConfiguration {
             return FunctionUtils.doIf(crypto.isEnabled(),
                 () -> new OidcRegisteredServiceJwtResponseModeCipherExecutor(oidcDefaultJsonWebKeystoreCache,
                     oidcServiceJsonWebKeystoreCache, oidcIssuerService),
-                RegisteredServiceCipherExecutor::noOp).get();
+                RegisteredServiceCipherExecutor::noOp, LOGGER).get();
         }
 
         @Bean
@@ -1132,7 +1132,7 @@ public class OidcConfiguration {
             final CasConfigurationProperties casProperties) {
             val source = casProperties.getAuthn().getOidc().getIdentityAssurance().getVerificationSource().getLocation();
             return FunctionUtils.doIfNotNull(source,
-                () -> new AssuranceVerificationJsonSource(source), AssuranceVerificationSource::empty).get();
+                () -> new AssuranceVerificationJsonSource(source), AssuranceVerificationSource::empty, LOGGER).get();
         }
     }
 

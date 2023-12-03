@@ -4,6 +4,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health;
@@ -22,6 +23,7 @@ import java.util.HashMap;
  * @since 7.0.0
  */
 @RequiredArgsConstructor
+@Slf4j
 public class DynamoDbHealthIndicator extends AbstractHealthIndicator {
     private final ApplicationContext applicationContext;
 
@@ -39,9 +41,9 @@ public class DynamoDbHealthIndicator extends AbstractHealthIndicator {
                         "itemCount", table.itemCount(),
                         "tableSizeInBytes", table.tableSizeBytes(),
                         "tableArn", table.tableArn());
-                    FunctionUtils.doIfNotNull(table.billingModeSummary(), summary -> details.put("billingMode", summary.billingModeAsString()));
-                    FunctionUtils.doIfNotNull(table.provisionedThroughput(), tp -> details.put("readCapacity", tp.readCapacityUnits()));
-                    FunctionUtils.doIfNotNull(table.provisionedThroughput(), tp -> details.put("writeCapacity", tp.writeCapacityUnits()));
+                    FunctionUtils.doIfNotNull(table.billingModeSummary(), summary -> details.put("billingMode", summary.billingModeAsString()), LOGGER);
+                    FunctionUtils.doIfNotNull(table.provisionedThroughput(), tp -> details.put("readCapacity", tp.readCapacityUnits()), LOGGER);
+                    FunctionUtils.doIfNotNull(table.provisionedThroughput(), tp -> details.put("writeCapacity", tp.writeCapacityUnits()), LOGGER);
                     entries.put(tableName, details);
                 }
             }));

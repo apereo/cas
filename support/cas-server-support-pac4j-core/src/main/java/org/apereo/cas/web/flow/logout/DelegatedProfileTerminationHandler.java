@@ -32,8 +32,8 @@ public class DelegatedProfileTerminationHandler implements SessionTerminationHan
         val manager = new ProfileManager(context, new JEESessionStore());
         manager.removeProfiles();
         val session = request.getSession(false);
-        val url = FunctionUtils.doIfNotNull(session, () -> (String) session.getAttribute(Pac4jConstants.REQUESTED_URL));
-        return FunctionUtils.doIfNotNull(url, () -> List.of(new Pac4jRequestedUrl(url)), List::<Pac4jRequestedUrl>of).get();
+        val url = FunctionUtils.doIfNotNull(session, () -> (String) session.getAttribute(Pac4jConstants.REQUESTED_URL), LOGGER);
+        return FunctionUtils.doIfNotNull(url, () -> List.of(new Pac4jRequestedUrl(url)), List::<Pac4jRequestedUrl>of, LOGGER).get();
     }
 
     @Override

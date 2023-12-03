@@ -53,7 +53,7 @@ public class LdapConsentRepository implements ConsentRepository, DisposableBean 
         return FunctionUtils.doAndHandle(() -> {
             LOGGER.trace("Mapping JSON value [{}] to consent object", json);
             return MAPPER.readValue(JsonValue.readHjson(json).toString(), ConsentDecision.class);
-        }, throwable -> null).get();
+        }, throwable -> null, LOGGER).get();
     }
 
     private static String mapToJson(final ConsentDecision consent) throws Exception {

@@ -92,7 +92,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
         FunctionUtils.doAndHandle(__ -> {
             createGoogleAppsPrivateKey();
             createGoogleAppsPublicKey();
-        });
+        }, LOGGER);
     }
 
     @Override

@@ -45,6 +45,6 @@ public class GoogleCloudTicketRegistryQueuePublisher implements QueueableTicketR
             Objects.requireNonNull(future);
             val publishedMessage = future.get();
             LOGGER.trace("Sent message [{}] from ticket registry id [{}]", publishedMessage, cmd.getId());
-        });
+        }, LOGGER);
     }
 }

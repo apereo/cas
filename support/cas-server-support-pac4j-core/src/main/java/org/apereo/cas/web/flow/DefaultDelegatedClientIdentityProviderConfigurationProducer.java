@@ -112,7 +112,7 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
                     .resolve();
             }
             return Optional.<DelegatedClientIdentityProviderConfiguration>empty();
-        }, throwable -> Optional.<DelegatedClientIdentityProviderConfiguration>empty()).get();
+        }, throwable -> Optional.<DelegatedClientIdentityProviderConfiguration>empty(), LOGGER).get();
     }
 
     protected void initializeClientIdentityProvider(final IndirectClient client) throws Throwable {

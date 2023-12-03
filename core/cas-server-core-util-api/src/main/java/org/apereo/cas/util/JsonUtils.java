@@ -5,6 +5,7 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.http.MediaType;
@@ -24,6 +25,7 @@ import java.util.Map;
  * @since 4.1
  */
 @UtilityClass
+@Slf4j
 public class JsonUtils {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder().build().toObjectMapper();
 
@@ -96,6 +98,6 @@ public class JsonUtils {
      * @return true/false
      */
     public boolean isValidJson(final String json) {
-        return FunctionUtils.doAndHandle(() -> !MAPPER.readTree(json).isEmpty(), t -> false).get();
+        return FunctionUtils.doAndHandle(() -> !MAPPER.readTree(json).isEmpty(), t -> false, LOGGER).get();
     }
 }

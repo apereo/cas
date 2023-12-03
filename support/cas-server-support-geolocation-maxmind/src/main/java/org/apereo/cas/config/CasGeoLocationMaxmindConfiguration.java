@@ -12,6 +12,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import com.maxmind.db.CHMCache;
 import com.maxmind.db.Reader;
 import com.maxmind.geoip2.DatabaseReader;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -32,6 +33,7 @@ import org.springframework.core.io.Resource;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.GeoLocation, module = "maxmind")
 @AutoConfiguration
+@Slf4j
 public class CasGeoLocationMaxmindConfiguration {
 
     private static DatabaseReader readDatabase(final Resource maxmindDatabase) throws Exception {
@@ -41,7 +43,7 @@ public class CasGeoLocationMaxmindConfiguration {
                         .fileMode(Reader.FileMode.MEMORY)
                         .withCache(new CHMCache())
                         .build()),
-                () -> null)
+                () -> null, LOGGER)
             .get();
     }
 

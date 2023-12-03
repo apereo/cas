@@ -7,6 +7,7 @@ import org.apereo.cas.util.io.WatcherService;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.Resource;
 
@@ -20,6 +21,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class JsonResourceSurrogateAuthenticationService extends SimpleSurrogateAuthenticationService implements DisposableBean {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
@@ -45,7 +47,7 @@ public class JsonResourceSurrogateAuthenticationService extends SimpleSurrogateA
         FunctionUtils.doAndHandle(__ -> {
             getEligibleAccounts().clear();
             getEligibleAccounts().putAll(readAccountsFromFile(file));
-        });
+        }, LOGGER);
     }
 
     @Override

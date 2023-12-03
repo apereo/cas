@@ -134,7 +134,7 @@ public class OidcJwtAuthenticator implements Authenticator {
         }, e -> {
             LoggingUtils.error(LOGGER, e);
             return Optional.<Credentials>empty();
-        }).get();
+        }, LOGGER).get();
     }
 
     protected OidcRegisteredService getOidcRegisteredService(final CallContext callContext) throws Throwable {
@@ -144,7 +144,7 @@ public class OidcJwtAuthenticator implements Authenticator {
         val oauthCode = FunctionUtils.doAndHandle(() -> {
             val givenCode = ticketRegistry.getTicket(code, OAuth20Code.class);
             return givenCode == null || givenCode.isExpired() ? null : givenCode;
-        });
+        }, LOGGER);
         val clientId = oauthCode == null ? webContext.getRequestParameter(OAuth20Constants.CLIENT_ID).orElse(null) : oauthCode.getClientId();
         val registeredService = (OidcRegisteredService) OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId);
         val audit = AuditableContext.builder()
@@ -162,7 +162,7 @@ public class OidcJwtAuthenticator implements Authenticator {
             userProfile.setId(jwt.getSubject());
             userProfile.addAttributes(jwt.getClaimsMap());
             credentials.setUserProfile(userProfile);
-        });
+        }, LOGGER);
     }
 
     protected boolean validateJwtAlgorithm(final Algorithm alg) {

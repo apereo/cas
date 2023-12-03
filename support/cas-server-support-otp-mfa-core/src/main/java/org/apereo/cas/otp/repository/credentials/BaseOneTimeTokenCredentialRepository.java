@@ -6,6 +6,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.util.Collection;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
  * @since 5.0.0
  */
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+@Slf4j
 public abstract class BaseOneTimeTokenCredentialRepository implements OneTimeTokenCredentialRepository {
     /**
      * The Token credential cipher.
@@ -61,7 +63,7 @@ public abstract class BaseOneTimeTokenCredentialRepository implements OneTimeTok
         val decodedSecret = tokenCredentialCipher.decode(account.getSecretKey());
         val decodedScratchCodes = account.getScratchCodes()
             .stream()
-            .map(code -> FunctionUtils.doAndHandle(() -> scratchCodesCipher.decode(code), t -> code).get())
+            .map(code -> FunctionUtils.doAndHandle(() -> scratchCodesCipher.decode(code), t -> code, LOGGER).get())
             .collect(Collectors.toList());
         val newAccount = account.clone();
         newAccount.setSecretKey(decodedSecret);

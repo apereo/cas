@@ -101,6 +101,6 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
         if (service == null || StringUtils.isBlank(service.getId())) {
             return "UNKNOWN";
         }
-        return FunctionUtils.doAndHandle(() -> new URI(service.getId()).getHost());
+        return FunctionUtils.doAndHandle(() -> new URI(service.getId()).getHost(), LOGGER);
     }
 }

@@ -286,7 +286,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
             f -> {
                 LOGGER.debug("KeyUsage digitalSignature=%s, Returning true since keyUsage validation not required by configuration.");
                 return Boolean.TRUE;
-            });
+            }, LOGGER);
         return func.apply(certificate);
     }
 

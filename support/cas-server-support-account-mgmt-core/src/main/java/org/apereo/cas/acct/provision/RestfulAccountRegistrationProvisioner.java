@@ -11,6 +11,7 @@ import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -31,6 +32,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * @since 6.5.0
  */
 @RequiredArgsConstructor
+@Slf4j
 public class RestfulAccountRegistrationProvisioner implements AccountRegistrationProvisioner {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true)
@@ -47,7 +49,7 @@ public class RestfulAccountRegistrationProvisioner implements AccountRegistratio
             response.set(executeRequest(request));
             return FunctionUtils.doIfNull(response.get(),
                     AccountRegistrationResponse::new,
-                    () -> buildAccountRegistrationResponse(response.get()))
+                    () -> buildAccountRegistrationResponse(response.get()), LOGGER)
                 .get();
         } finally {
             HttpUtils.close(response.get());

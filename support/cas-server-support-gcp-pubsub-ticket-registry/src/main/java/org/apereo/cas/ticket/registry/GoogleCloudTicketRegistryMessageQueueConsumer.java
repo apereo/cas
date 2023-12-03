@@ -49,6 +49,6 @@ public class GoogleCloudTicketRegistryMessageQueueConsumer implements Consumer<B
         }, (CheckedFunction<Throwable, Object>) e -> {
             LoggingUtils.error(LOGGER, e);
             return message.nack();
-        }).accept(message);
+        }, LOGGER).accept(message);
     }
 }

@@ -6,6 +6,7 @@ import org.apereo.cas.util.CasVersion;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -26,6 +27,7 @@ import java.util.Properties;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.CasConfiguration)
 @AutoConfiguration
+@Slf4j
 @Lazy(false)
 public class CasPropertiesConfiguration {
     @Bean
@@ -33,8 +35,8 @@ public class CasPropertiesConfiguration {
         return () -> {
             val sysProps = System.getProperties();
             val properties = new Properties();
-            FunctionUtils.doIfNotNull(CasVersion.getVersion(), value -> properties.put("info.cas.version", value));
-            FunctionUtils.doIfNotNull(sysProps.get("java.home"), value -> properties.put("info.cas.java.home", value));
+            FunctionUtils.doIfNotNull(CasVersion.getVersion(), value -> properties.put("info.cas.version", value), LOGGER);
+            FunctionUtils.doIfNotNull(sysProps.get("java.home"), value -> properties.put("info.cas.java.home", value), LOGGER);
             properties.put("info.cas.java.vendor", sysProps.get("java.vendor"));
             properties.put("info.cas.java.version", sysProps.get("java.version"));
             val src = new PropertiesPropertySource(CasVersion.class.getName(), properties);

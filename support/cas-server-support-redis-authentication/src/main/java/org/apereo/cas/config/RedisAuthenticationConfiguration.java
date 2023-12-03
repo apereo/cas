@@ -22,6 +22,7 @@ import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
@@ -46,6 +47,7 @@ import java.util.stream.Collectors;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Authentication, module = "redis")
 @AutoConfiguration
+@Slf4j
 public class RedisAuthenticationConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.redis.enabled").isTrue().evenIfMissing();
 
@@ -154,7 +156,7 @@ public class RedisAuthenticationConfiguration {
                         template.initialize();
                         val cb = new RedisPersonAttributeDao(template);
                         cb.setOrder(r.getOrder());
-                        FunctionUtils.doIfNotNull(r.getId(), id -> cb.setId(id));
+                        FunctionUtils.doIfNotNull(r.getId(), id -> cb.setId(id), LOGGER);
                         return cb;
                     })
                     .collect(Collectors.toList()));

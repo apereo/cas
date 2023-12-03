@@ -51,7 +51,7 @@ public class SimpleInterruptTrackingEngine implements InterruptTrackingEngine {
             return StringUtils.isNotBlank(cookieValue)
                 ? Optional.ofNullable(MAPPER.readValue(EncodingUtils.decodeBase64ToString(cookieValue), InterruptResponse.class))
                 : Optional.<InterruptResponse>empty();
-        }, e -> Optional.<InterruptResponse>empty()).apply(requestContext);
+        }, e -> Optional.<InterruptResponse>empty(), LOGGER).apply(requestContext);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class SimpleInterruptTrackingEngine implements InterruptTrackingEngine {
                     val authentication = WebUtils.getAuthentication(requestContext);
                     return interruptResponse.stream().anyMatch(InterruptResponse::isInterrupt)
                         || (authentication != null && authentication.containsAttribute(AUTHENTICATION_ATTRIBUTE_FINALIZED_INTERRUPT));
-                }, e -> false)
+                }, e -> false, LOGGER)
             .apply(requestContext);
     }
 }

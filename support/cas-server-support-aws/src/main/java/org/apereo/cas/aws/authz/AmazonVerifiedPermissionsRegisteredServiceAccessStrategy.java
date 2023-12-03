@@ -97,7 +97,7 @@ public class AmazonVerifiedPermissionsRegisteredServiceAccessStrategy extends Ba
                 LOGGER.debug("Authorization response [{}], evaluated policies [{}]",
                     authorizedResponse.decisionAsString(), authorizedResponse.determiningPolicies());
                 return authorizedResponse.decision() == Decision.ALLOW;
-            }, e -> false).get();
+            }, e -> false, LOGGER).get();
         }
     }
 

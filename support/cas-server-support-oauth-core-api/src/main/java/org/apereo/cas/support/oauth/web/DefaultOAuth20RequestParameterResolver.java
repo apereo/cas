@@ -229,7 +229,7 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
 
         val claims = FunctionUtils.doIf(supported,
             () -> resolveRequestParameter(context, OAuth20Constants.CLAIMS).map(String::valueOf).orElse(StringUtils.EMPTY),
-            () -> StringUtils.EMPTY).get();
+            () -> StringUtils.EMPTY, LOGGER).get();
 
         if (StringUtils.isBlank(claims)) {
             return new HashMap<>(0);

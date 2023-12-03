@@ -232,7 +232,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
         FunctionUtils.doAndHandle(__ -> {
             LOGGER.info("Shutting down Hazelcast instance [{}]", hazelcastInstance.getConfig().getInstanceName());
             hazelcastInstance.shutdown();
-        });
+        }, LOGGER);
     }
 
     @Override
@@ -258,6 +258,6 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
             val inst = hazelcastInstance.<String, HazelcastTicketHolder>getMap(mapName);
             LOGGER.debug("Located Hazelcast map instance [{}]", mapName);
             return inst;
-        });
+        }, LOGGER);
     }
 }

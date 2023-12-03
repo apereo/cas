@@ -59,7 +59,7 @@ public class OAuth20JwtAccessTokenEncoder implements CipherExecutor<String, Stri
             val header = JWTParser.parse(tokenId).getHeader();
             val claims = accessTokenJwtBuilder.unpack(Optional.ofNullable(resolveRegisteredService(header)), tokenId);
             return claims.getJWTID();
-        }, e -> tokenId).get();
+        }, e -> tokenId, LOGGER).get();
     }
 
     @Override

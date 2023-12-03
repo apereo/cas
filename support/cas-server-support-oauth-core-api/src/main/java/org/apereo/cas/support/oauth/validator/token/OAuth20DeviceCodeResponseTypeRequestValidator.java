@@ -64,7 +64,7 @@ public class OAuth20DeviceCodeResponseTypeRequestValidator implements OAuth20Tok
         }, t -> {
             LOGGER.warn("Registered service access is not allowed for service definition for client id [{}]", clientId);
             return false;
-        }).get();
+        }, LOGGER).get();
     }
 
     @Override

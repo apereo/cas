@@ -375,7 +375,7 @@ public class WebAuthnConfiguration {
                     val location = webauthn.getJson().getLocation();
                     return FunctionUtils.doIfNotNull(location,
                         () -> new JsonResourceWebAuthnCredentialRepository(casProperties, location, webAuthnCredentialRegistrationCipherExecutor),
-                        () -> new InMemoryRegistrationStorage(casProperties, webAuthnCredentialRegistrationCipherExecutor)).get();
+                        () -> new InMemoryRegistrationStorage(casProperties, webAuthnCredentialRegistrationCipherExecutor), LOGGER).get();
                 })
                 .otherwiseProxy()
                 .get();

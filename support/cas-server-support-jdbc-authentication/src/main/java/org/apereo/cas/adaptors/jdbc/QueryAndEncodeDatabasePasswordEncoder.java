@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.support.jdbc.authn.QueryEncodeJdbcAuth
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import java.nio.charset.StandardCharsets;
@@ -16,6 +17,7 @@ import java.util.Map;
  * @since 7.0.0
  */
 @RequiredArgsConstructor
+@Slf4j
 public class QueryAndEncodeDatabasePasswordEncoder implements DatabasePasswordEncoder {
     protected final QueryEncodeJdbcAuthenticationProperties properties;
 
@@ -39,7 +41,7 @@ public class QueryAndEncodeDatabasePasswordEncoder implements DatabasePasswordEn
     protected byte[] getStaticSalt(final Map<String, Object> queryValues) {
         return FunctionUtils.doIfNotBlank(properties.getStaticSalt(),
             () -> properties.getStaticSalt().getBytes(StandardCharsets.UTF_8),
-            () -> ArrayUtils.EMPTY_BYTE_ARRAY);
+            () -> ArrayUtils.EMPTY_BYTE_ARRAY, LOGGER);
     }
 
     protected byte[] getDynamicSalt(final Map<String, Object> queryValues) {

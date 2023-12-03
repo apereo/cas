@@ -45,7 +45,7 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
 
     @Override
     public void destroy() {
-        FunctionUtils.doIfNotNull(distributedCacheManager, DistributedCacheManager::close);
+        FunctionUtils.doIfNotNull(distributedCacheManager, DistributedCacheManager::close, LOGGER);
     }
 
     @Override

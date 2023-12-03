@@ -455,7 +455,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
                 decoder.decode();
                 return decoder.getMessageContext();
             }
-        }, throwable -> null).get();
+        }, throwable -> null, LOGGER).get();
     }
 
     protected void autoConfigureCookiePath(final HttpServletRequest request) {
@@ -489,7 +489,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
                 .orElseThrow(() -> new IllegalArgumentException("Unable to extract SAML request"));
             val context = Pair.of((AuthnRequest) result.getLeft(), result.getRight());
             return initiateAuthenticationRequest(context, response, request);
-        }, WebUtils::produceErrorView).get();
+        }, WebUtils::produceErrorView, LOGGER).get();
     }
 
     protected final Pair<? extends RequestAbstractType, MessageContext> retrieveAuthenticationRequest(

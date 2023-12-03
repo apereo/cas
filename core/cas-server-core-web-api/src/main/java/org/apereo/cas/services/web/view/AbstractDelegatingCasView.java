@@ -67,7 +67,7 @@ public abstract class AbstractDelegatingCasView extends AbstractCasView {
                 LOGGER.debug(message);
                 responseWrapper.copyBodyToResponse();
             }
-        });
+        }, LOGGER);
     }
 
     /**

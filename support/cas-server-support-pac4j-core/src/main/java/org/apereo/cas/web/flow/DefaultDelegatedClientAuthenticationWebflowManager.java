@@ -233,7 +233,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManager implements Deleg
         }, e -> {
             LoggingUtils.error(LOGGER, e);
             throw UnauthorizedServiceException.denied("Rejected: %s".formatted(clientId));
-        }).get();
+        }, LOGGER).get();
     }
 
     protected String getDelegatedClientId(final WebContext webContext, final Client client) {

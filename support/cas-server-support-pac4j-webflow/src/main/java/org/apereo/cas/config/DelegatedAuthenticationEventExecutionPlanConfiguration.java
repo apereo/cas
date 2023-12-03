@@ -139,7 +139,7 @@ public class DelegatedAuthenticationEventExecutionPlanConfiguration {
                         ? CipherExecutorUtils.newStringCipherExecutor(crypto, DelegatedClientAuthenticationDistributedSessionCookieCipherExecutor.class)
                         : CipherExecutor.noOp();
                 },
-                CipherExecutor::noOp).get();
+                CipherExecutor::noOp, LOGGER).get();
         }
 
         @ConditionalOnMissingBean(name = "delegatedClientDistributedSessionCookieGenerator")

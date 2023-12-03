@@ -122,7 +122,7 @@ public class CasCoreTicketsConfiguration {
         public TicketTrackingPolicy descendantTicketsTrackingPolicy(
                 final CasConfigurationProperties casProperties) {
             return FunctionUtils.doIf(casProperties.getTicket().isTrackDescendantTickets(),
-                DefaultDescendantTicketsTrackingPolicy::new, TicketTrackingPolicy::noOp).get();
+                DefaultDescendantTicketsTrackingPolicy::new, TicketTrackingPolicy::noOp, LOGGER).get();
         }
 
         @ConditionalOnMissingBean(name = TicketRegistrySupport.BEAN_NAME)
@@ -227,7 +227,7 @@ public class CasCoreTicketsConfiguration {
         public PublisherIdentifier messageQueueTicketRegistryIdentifier(final CasConfigurationProperties casProperties) {
             val bean = new PublisherIdentifier();
             val amqp = casProperties.getTicket().getRegistry().getCore();
-            FunctionUtils.doIfNotBlank(amqp.getQueueIdentifier(), __ -> bean.setId(amqp.getQueueIdentifier()));
+            FunctionUtils.doIfNotBlank(amqp.getQueueIdentifier(), __ -> bean.setId(amqp.getQueueIdentifier()), LOGGER);
             return bean;
         }
 

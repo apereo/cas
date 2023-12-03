@@ -36,6 +36,6 @@ public class BasicAuthenticationAction extends AbstractNonInteractiveCredentials
         return FunctionUtils.doIfNotNull(token, () -> {
             LOGGER.debug("Received basic authentication request from credentials [{}]", token.getPrincipal());
             return new UsernamePasswordCredential(token.getPrincipal().toString(), token.getCredentials().toString());
-        });
+        }, LOGGER);
     }
 }

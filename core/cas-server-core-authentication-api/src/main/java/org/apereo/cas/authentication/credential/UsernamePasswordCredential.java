@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -39,6 +40,7 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode(exclude = "password", callSuper = true)
+@Slf4j
 public class UsernamePasswordCredential extends AbstractCredential implements MutableCredential {
     /**
      * Authentication attribute name for password.
@@ -109,7 +111,7 @@ public class UsernamePasswordCredential extends AbstractCredential implements Mu
      * @return the string
      */
     public String toPassword() {
-        return FunctionUtils.doIfNull(this.password, () -> null, () -> new String(this.password)).get();
+        return FunctionUtils.doIfNull(this.password, () -> null, () -> new String(this.password), LOGGER).get();
     }
 
     /**
@@ -121,7 +123,7 @@ public class UsernamePasswordCredential extends AbstractCredential implements Mu
         FunctionUtils.doIfNotNull(password, p -> {
             this.password = new char[p.length()];
             System.arraycopy(password.toCharArray(), 0, this.password, 0, password.length());
-        }, p -> this.password = ArrayUtils.EMPTY_CHAR_ARRAY);
+        }, p -> this.password = ArrayUtils.EMPTY_CHAR_ARRAY, LOGGER);
     }
 
 

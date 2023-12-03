@@ -164,7 +164,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
             LOGGER.debug("Updating ticket [{}]", ticket);
             addOrUpdateTicket(ticket);
             messagePublisher.update(ticket);
-        });
+        }, LOGGER);
         return ticket;
     }
 
@@ -175,7 +175,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
             val redisTicketsKey = redisKeyGeneratorFactory.getRedisKeyGenerator(Ticket.class.getName())
                 .orElseThrow().forEntry(ticketPrefix, digestIdentifier(ticketId));
             return getTicketFromRedisByKey(predicate, redisTicketsKey);
-        });
+        }, LOGGER);
     }
 
     @Override

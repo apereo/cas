@@ -86,7 +86,7 @@ public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataRe
             val path = backupFile.toPath();
             val etag = response.getFirstHeader("ETag").getValue();
             Files.setAttribute(path, "user:ETag", ByteBuffer.wrap(etag.getBytes(StandardCharsets.UTF_8)));
-        });
+        }, LOGGER);
     }
 
     @Override
@@ -102,7 +102,7 @@ public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataRe
                 val etag = new String((byte[]) Files.getAttribute(path, "user:ETag"), StandardCharsets.UTF_8).trim();
                 headers.put("If-None-Match", etag);
             }
-        });
+        }, LOGGER);
         LOGGER.trace("Fetching metadata via MDQ for [{}]", metadataLocation);
         val exec = HttpExecutionRequest.builder()
             .basicAuthPassword(metadata.getBasicAuthnPassword())

@@ -113,7 +113,7 @@ public class OAuth20RevocationEndpointController<T extends OAuth20ConfigurationC
         val registryToken = FunctionUtils.doAndHandle(() -> {
             val state = getConfigurationContext().getTicketRegistry().getTicket(token, OAuth20Token.class);
             return state == null || state.isExpired() ? null : state;
-        });
+        }, LOGGER);
         if (registryToken == null) {
             LOGGER.error("Provided token [{}] has not been found in the ticket registry", token);
         } else if (isRefreshToken(registryToken) || isAccessToken(registryToken)) {

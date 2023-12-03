@@ -131,7 +131,7 @@ public class CasThemesConfiguration {
                     registration.addResourceLocations(locations);
                     registration.addResourceLocations(webProperties.getResources().getStaticLocations());
 
-                    FunctionUtils.doIfNotNull(webProperties.getResources().getCache().getPeriod(), period -> registration.setCachePeriod((int) period.getSeconds()));
+                    FunctionUtils.doIfNotNull(webProperties.getResources().getCache().getPeriod(), period -> registration.setCachePeriod((int) period.getSeconds()), LOGGER);
                     registration.setCacheControl(webProperties.getResources().getCache().getCachecontrol().toHttpCacheControl());
                     registration.setUseLastModified(true);
                     val cache = thymeleafProperties != null && thymeleafProperties.isCache();

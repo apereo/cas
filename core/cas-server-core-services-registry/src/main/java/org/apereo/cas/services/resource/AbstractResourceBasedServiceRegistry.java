@@ -156,7 +156,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
 
             initializeRegistry(Paths.get(file.getCanonicalPath()), serializers,
                 registeredServiceReplicationStrategy, resourceNamingStrategy, serviceRegistryConfigWatcher);
-        });
+        }, LOGGER);
     }
 
     private Resource prepareRegisteredServicesDirectory(final Resource configDirectory) throws IOException {

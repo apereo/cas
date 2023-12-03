@@ -196,7 +196,7 @@ public class SamlObjectSignatureValidator {
             }, e -> {
                 LOGGER.debug(e.getMessage(), e);
                 return false;
-            }).get();
+            }, LOGGER).get();
         }
 
         FunctionUtils.throwIf(!foundValidCredential, () -> {

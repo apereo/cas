@@ -65,7 +65,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
         val targetState = WebUtils.getTargetTransition(context);
         return FunctionUtils.doIf(StringUtils.isNotBlank(targetState) && event.getId().equals(CasWebflowConstants.TRANSITION_ID_SUCCESS),
                 () -> new EventFactorySupport().event(this, targetState),
-                () -> event)
+                () -> event, LOGGER)
             .get();
     }
 

@@ -74,7 +74,7 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
                     LOGGER.trace("Resolving entity id from SAML2 IdP metadata to determine issuer for [{}]", context.getRegisteredService().getName());
                     val entityDescriptor = Objects.requireNonNull(getConfigurationContext().getSamlIdPMetadataResolver().resolveSingle(criteriaSet));
                     return entityDescriptor.getEntityID();
-                }))
+                }), LOGGER)
             .get();
 
         samlResponse.setIssuer(buildSamlResponseIssuer(issuerId));

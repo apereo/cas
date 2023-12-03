@@ -4,6 +4,7 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
@@ -30,6 +31,7 @@ import java.util.UUID;
  * @since 5.0.0
  */
 @RequiredArgsConstructor
+@Slf4j
 public class ThreadContextMDCServletFilter implements Filter {
 
     private final ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
@@ -86,11 +88,11 @@ public class ThreadContextMDCServletFilter implements Filter {
             Collections.list(request.getAttributeNames()).forEach(a -> addContextAttribute(a, request.getAttribute(a)));
             val requestHeaderNames = request.getHeaderNames();
             FunctionUtils.doIfNotNull(requestHeaderNames,
-                __ -> Collections.list(requestHeaderNames).forEach(h -> addContextAttribute(h, request.getHeader(h))));
+                __ -> Collections.list(requestHeaderNames).forEach(h -> addContextAttribute(h, request.getHeader(h))), LOGGER);
             val cookieValue = ticketGrantingTicketCookieGenerator.getObject().retrieveCookieValue(request);
             if (StringUtils.isNotBlank(cookieValue)) {
                 val p = ticketRegistrySupport.getObject().getAuthenticatedPrincipalFrom(cookieValue);
-                FunctionUtils.doIfNotNull(p, __ -> addContextAttribute("principal", p.getId()));
+                FunctionUtils.doIfNotNull(p, __ -> addContextAttribute("principal", p.getId()), LOGGER);
             }
             filterChain.doFilter(servletRequest, servletResponse);
         } finally {

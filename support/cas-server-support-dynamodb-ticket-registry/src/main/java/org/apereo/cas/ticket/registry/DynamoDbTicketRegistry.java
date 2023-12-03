@@ -87,7 +87,7 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
         FunctionUtils.doAndHandle(__ -> {
             val toPut = toSave.map(Unchecked.function(this::toTicketPayload));
             dbTableService.put(toPut);
-        });
+        }, LOGGER);
     }
 
     @Override
@@ -96,7 +96,7 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
             LOGGER.debug("Adding ticket [{}] with ttl [{}s]", ticket.getId(),
                 ticket.getExpirationPolicy().getTimeToLive());
             dbTableService.put(toTicketPayload(ticket));
-        });
+        }, LOGGER);
     }
 
     private DynamoDbTicketRegistryFacilitator.TicketPayload toTicketPayload(final Ticket ticket) throws Exception {

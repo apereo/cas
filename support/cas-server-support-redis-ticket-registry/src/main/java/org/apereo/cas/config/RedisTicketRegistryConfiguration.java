@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
@@ -33,6 +34,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.redis.lettucemod.api.sync.RedisModulesCommands;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
@@ -66,6 +68,7 @@ import java.util.Optional;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "redis")
 @AutoConfiguration
+@Slf4j
 public class RedisTicketRegistryConfiguration {
 
     private static final BeanCondition CONDITION = BeanCondition.on("cas.ticket.registry.redis.enabled").isTrue().evenIfMissing();
@@ -115,7 +118,7 @@ public class RedisTicketRegistryConfiguration {
             final CasConfigurationProperties casProperties) {
             val bean = new PublisherIdentifier();
             val redis = casProperties.getTicket().getRegistry().getRedis();
-            FunctionUtils.doIfNotBlank(redis.getQueueIdentifier(), bean::setId);
+            FunctionUtils.doIfNotBlank(redis.getQueueIdentifier(), bean::setId, LOGGER);
             return bean;
         }
 

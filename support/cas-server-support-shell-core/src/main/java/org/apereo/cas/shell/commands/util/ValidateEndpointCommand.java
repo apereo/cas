@@ -67,7 +67,7 @@ public class ValidateEndpointCommand {
                     val proxyAddr = new InetSocketAddress(proxyUrl.getHost(), proxyUrl.getPort());
                     return constructedUrl.openConnection(new Proxy(Proxy.Type.HTTP, proxyAddr));
                 }),
-                Unchecked.supplier(constructedUrl::openConnection))
+                Unchecked.supplier(constructedUrl::openConnection), LOGGER)
             .get();
     }
 
@@ -125,8 +125,8 @@ public class ValidateEndpointCommand {
                     certificate.checkValidity();
                     return "valid";
                 },
-                e -> "invalid: " + e.getMessage()
-            ).apply(certificate);
+                e -> "invalid: " + e.getMessage(),
+                LOGGER).apply(certificate);
 
             LOGGER.info("\tsubject: [{}]", certificate.getSubjectDN().getName());
             LOGGER.info("\tissuer: [{}]", certificate.getIssuerDN().getName());

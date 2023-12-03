@@ -55,7 +55,7 @@ public class CasCookieConfiguration {
             return FunctionUtils.doIf(casProperties.getTgc().getCrypto().isEnabled(),
                 () -> new DefaultCasCookieValueManager(cookieCipherExecutor, geoLocationService,
                     DefaultCookieSameSitePolicy.INSTANCE, casProperties.getTgc()),
-                CookieValueManager::noOp).get();
+                CookieValueManager::noOp, LOGGER).get();
         }
 
         @ConditionalOnMissingBean(name = "cookieCipherExecutor")

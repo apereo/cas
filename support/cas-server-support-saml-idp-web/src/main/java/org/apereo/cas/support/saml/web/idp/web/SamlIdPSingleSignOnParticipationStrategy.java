@@ -68,7 +68,7 @@ public class SamlIdPSingleSignOnParticipationStrategy extends BaseSingleSignOnPa
                     return initialResult && result.isSuccess() && validatedProvider.isPresent()
                            && !registeredService.getMultifactorAuthenticationPolicy().isForceExecution();
                 })
-            .orElse(initialResult), throwable -> false).get();
+            .orElse(initialResult), throwable -> false, LOGGER).get();
     }
 
     protected Optional<MultifactorAuthenticationProvider> resolveMultifactorAuthenticationTrigger(

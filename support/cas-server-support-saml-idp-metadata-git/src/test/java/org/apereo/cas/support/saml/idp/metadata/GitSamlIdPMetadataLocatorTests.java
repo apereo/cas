@@ -63,13 +63,13 @@ class GitSamlIdPMetadataLocatorTests extends BaseGitSamlMetadataTests {
         val gitRepoDir = new File(FileUtils.getTempDirectory(), "cas-metadata-idp");
         if (gitRepoDir.exists()) {
             FunctionUtils.doAndHandle(
-                __ -> PathUtils.deleteDirectory(gitRepoDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY));
+                __ -> PathUtils.deleteDirectory(gitRepoDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY), LOGGER);
         }
         val cloneDirectory = "cas-saml-metadata-gsimlt";
         val gitCloneRepoDir = new File(FileUtils.getTempDirectory(), cloneDirectory);
         if (gitCloneRepoDir.exists()) {
             FunctionUtils.doAndHandle(
-                __ -> PathUtils.deleteDirectory(gitCloneRepoDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY));
+                __ -> PathUtils.deleteDirectory(gitCloneRepoDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY), LOGGER);
         }
     }
 

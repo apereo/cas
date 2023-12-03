@@ -52,7 +52,7 @@ public class DefaultDelegatedAuthenticationCredentialExtractor implements Delega
                 .map(cc -> client.validateCredentials(callContext, cc))
                 .filter(Optional::isPresent)
                 .map(Optional::get);
-        }, e -> Optional.<Credentials>empty()).get();
+        }, e -> Optional.<Credentials>empty(), LOGGER).get();
 
     }
 }

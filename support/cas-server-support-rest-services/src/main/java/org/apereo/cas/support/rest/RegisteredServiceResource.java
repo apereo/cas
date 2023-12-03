@@ -107,6 +107,6 @@ public class RegisteredServiceResource {
                 throw new BadRestRequestException("Unable to establish authentication using provided credentials for " + upc.getUsername());
             }
             return result.getAuthentication();
-        });
+        }, LOGGER);
     }
 }

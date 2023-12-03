@@ -6,6 +6,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
 import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import org.apereo.cas.util.text.MessageSanitizer;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
 import org.springframework.context.ApplicationContext;
@@ -24,6 +25,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 3.0.0.
  */
+@Slf4j
 public class ApplicationContextProvider implements ApplicationContextAware {
     private static ApplicationContext APPLICATION_CONTEXT;
 
@@ -168,6 +170,6 @@ public class ApplicationContextProvider implements ApplicationContextAware {
                 return Optional.of(applicationContext.getBean(name, clazz));
             }
             return Optional.<T>empty();
-        }, e -> Optional.<T>empty()).get();
+        }, e -> Optional.<T>empty(), LOGGER).get();
     }
 }

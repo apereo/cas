@@ -82,7 +82,7 @@ public class DelegatedClientAuthenticationStoreWebflowStateAction extends BaseCa
                     val message = String.format("Authentication request was denied from the provider %s", clientName);
                     LoggingUtils.warn(LOGGER, message, throwable);
                     throw UnauthorizedServiceException.wrap(throwable);
-                })
+                }, LOGGER)
             .get();
     }
 

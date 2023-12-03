@@ -155,7 +155,7 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
 
     protected void populateContextWithAuthentication(final RequestContext requestContext, final BrowserWebStorageSessionStore sessionStorage) throws Throwable {
         val authenticationResultBuilder = (AuthenticationResultBuilder) sessionStorage.getSessionAttributes().get(AuthenticationResultBuilder.class.getSimpleName());
-        FunctionUtils.doIfNotNull(authenticationResultBuilder, value -> WebUtils.putAuthenticationResultBuilder(value, requestContext));
+        FunctionUtils.doIfNotNull(authenticationResultBuilder, value -> WebUtils.putAuthenticationResultBuilder(value, requestContext), LOGGER);
         val authenticationResult = authenticationResultBuilder.build(authenticationSystemSupport.getPrincipalElectionStrategy());
         WebUtils.putAuthenticationResult(authenticationResult, requestContext);
         Objects.requireNonNull(authenticationResult.getAuthentication());

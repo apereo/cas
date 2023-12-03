@@ -120,11 +120,11 @@ public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHa
                 FunctionUtils.doAndHandle(__ -> {
                     this.inetNetworkRange = InetAddress.getByName(network);
                     LOGGER.debug("InetAddress network: [{}]", this.inetNetworkRange.toString());
-                });
+                }, LOGGER);
                 FunctionUtils.doAndHandle(__ -> {
                     this.inetNetmask = InetAddress.getByName(netmask);
                     LOGGER.debug("InetAddress netmask: [{}]", this.inetNetmask.toString());
-                });
+                }, LOGGER);
             }
         }
     }

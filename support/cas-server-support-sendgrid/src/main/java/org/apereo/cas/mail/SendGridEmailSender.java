@@ -48,7 +48,7 @@ public class SendGridEmailSender implements EmailSender {
                     .details(response.getHeaders())
                     .build();
             },
-                e -> EmailCommunicationResult.builder().success(false).body(e.getMessage()).build()).get())
+                e -> EmailCommunicationResult.builder().success(false).body(e.getMessage()).build(), LOGGER).get())
             .toList();
 
         return results

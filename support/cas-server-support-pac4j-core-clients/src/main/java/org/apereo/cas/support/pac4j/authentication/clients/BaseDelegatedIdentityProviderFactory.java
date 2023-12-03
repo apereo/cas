@@ -144,11 +144,11 @@ public abstract class BaseDelegatedIdentityProviderFactory implements DelegatedI
         customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT_TYPE, clientProperties.getAutoRedirectType());
 
         FunctionUtils.doIfNotBlank(clientProperties.getPrincipalIdAttribute(),
-            __ -> customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_PRINCIPAL_ATTRIBUTE_ID, clientProperties.getPrincipalIdAttribute()));
+            __ -> customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_PRINCIPAL_ATTRIBUTE_ID, clientProperties.getPrincipalIdAttribute()), LOGGER);
         FunctionUtils.doIfNotBlank(clientProperties.getCssClass(),
-            __ -> customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_CSS_CLASS, clientProperties.getCssClass()));
+            __ -> customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_CSS_CLASS, clientProperties.getCssClass()), LOGGER);
         FunctionUtils.doIfNotBlank(clientProperties.getDisplayName(),
-            __ -> customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_DISPLAY_NAME, clientProperties.getDisplayName()));
+            __ -> customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_DISPLAY_NAME, clientProperties.getDisplayName()), LOGGER);
 
         val callbackUrl = StringUtils.defaultIfBlank(clientProperties.getCallbackUrl(), casProperties.getServer().getLoginUrl());
         client.setCallbackUrl(callbackUrl);
@@ -201,10 +201,10 @@ public abstract class BaseDelegatedIdentityProviderFactory implements DelegatedI
             val client = new FacebookClient(fb.getId(), fb.getSecret());
             configureClient(client, fb, casProperties);
 
-            FunctionUtils.doIfNotBlank(fb.getScope(), __ -> client.setScope(fb.getScope()));
+            FunctionUtils.doIfNotBlank(fb.getScope(), __ -> client.setScope(fb.getScope()), LOGGER);
 
 
-            FunctionUtils.doIfNotBlank(fb.getFields(), __ -> client.setFields(fb.getFields()));
+            FunctionUtils.doIfNotBlank(fb.getFields(), __ -> client.setFields(fb.getFields()), LOGGER);
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             return List.of(client);
         }
@@ -218,7 +218,7 @@ public abstract class BaseDelegatedIdentityProviderFactory implements DelegatedI
             val client = new LinkedIn2Client(ln.getId(), ln.getSecret());
             configureClient(client, ln, casProperties);
 
-            FunctionUtils.doIfNotBlank(ln.getScope(), __ -> client.setScope(ln.getScope()));
+            FunctionUtils.doIfNotBlank(ln.getScope(), __ -> client.setScope(ln.getScope()), LOGGER);
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             return List.of(client);
         }
@@ -232,7 +232,7 @@ public abstract class BaseDelegatedIdentityProviderFactory implements DelegatedI
             val client = new GitHubClient(github.getId(), github.getSecret());
             configureClient(client, github, casProperties);
 
-            FunctionUtils.doIfNotBlank(github.getScope(), __ -> client.setScope(github.getScope()));
+            FunctionUtils.doIfNotBlank(github.getScope(), __ -> client.setScope(github.getScope()), LOGGER);
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             return List.of(client);
         }
@@ -314,7 +314,7 @@ public abstract class BaseDelegatedIdentityProviderFactory implements DelegatedI
                 client.setScope(oauth.getScope());
                 client.setCustomParams(oauth.getCustomParams());
                 client.setWithState(oauth.isWithState());
-                FunctionUtils.doIfNotBlank(oauth.getClientAuthenticationMethod(), client::setClientAuthenticationMethod);
+                FunctionUtils.doIfNotBlank(oauth.getClientAuthenticationMethod(), client::setClientAuthenticationMethod, LOGGER);
                 client.getConfiguration().setResponseType(oauth.getResponseType());
                 configureClient(client, oauth, casProperties);
                 LOGGER.debug("Created client [{}]", client);
@@ -438,7 +438,7 @@ public abstract class BaseDelegatedIdentityProviderFactory implements DelegatedI
         val resolver = SpringExpressionLanguageValueResolver.getInstance();
 
         val cfg = FunctionUtils.doUnchecked(() -> clazz.getDeclaredConstructor().newInstance());
-        FunctionUtils.doIfNotBlank(oidc.getScope(), __ -> cfg.setScope(resolver.resolve(oidc.getScope())));
+        FunctionUtils.doIfNotBlank(oidc.getScope(), __ -> cfg.setScope(resolver.resolve(oidc.getScope())), LOGGER);
 
         cfg.setUseNonce(oidc.isUseNonce());
         cfg.setDisablePkce(oidc.isDisablePkce());
@@ -465,17 +465,17 @@ public abstract class BaseDelegatedIdentityProviderFactory implements DelegatedI
                 .map(ClientAuthenticationMethod::parse)
                 .collect(Collectors.toSet());
             cfg.setSupportedClientAuthenticationMethods(clientMethods);
-        });
+        }, LOGGER);
 
         FunctionUtils.doIfNotBlank(oidc.getClientAuthenticationMethod(),
-            method -> cfg.setClientAuthenticationMethod(ClientAuthenticationMethod.parse(method)));
+            method -> cfg.setClientAuthenticationMethod(ClientAuthenticationMethod.parse(method)), LOGGER);
 
         if (StringUtils.isNotBlank(oidc.getTokenExpirationAdvance())) {
             cfg.setTokenExpirationAdvance((int) Beans.newDuration(oidc.getTokenExpirationAdvance()).toSeconds());
         }
 
-        FunctionUtils.doIfNotBlank(oidc.getResponseMode(), __ -> cfg.setResponseMode(oidc.getResponseMode()));
-        FunctionUtils.doIfNotBlank(oidc.getResponseType(), __ -> cfg.setResponseType(oidc.getResponseType()));
+        FunctionUtils.doIfNotBlank(oidc.getResponseMode(), __ -> cfg.setResponseMode(oidc.getResponseMode()), LOGGER);
+        FunctionUtils.doIfNotBlank(oidc.getResponseType(), __ -> cfg.setResponseType(oidc.getResponseType()), LOGGER);
 
         if (!oidc.getMappedClaims().isEmpty()) {
             cfg.setMappedClaims(CollectionUtils.convertDirectedListToMap(oidc.getMappedClaims()));
@@ -505,16 +505,16 @@ public abstract class BaseDelegatedIdentityProviderFactory implements DelegatedI
 
                 FunctionUtils.doIf(saml.getCertificateExpirationDays() > 0,
                     __ -> cfg.setCertificateExpirationPeriod(Period.ofDays(saml.getCertificateExpirationDays()))).accept(saml);
-                FunctionUtils.doIfNotNull(saml.getResponseBindingType(), cfg::setResponseBindingType);
-                FunctionUtils.doIfNotNull(saml.getCertificateSignatureAlg(), cfg::setCertificateSignatureAlg);
+                FunctionUtils.doIfNotNull(saml.getResponseBindingType(), cfg::setResponseBindingType, LOGGER);
+                FunctionUtils.doIfNotNull(saml.getCertificateSignatureAlg(), cfg::setCertificateSignatureAlg, LOGGER);
 
                 cfg.setPartialLogoutTreatedAsSuccess(saml.isPartialLogoutAsSuccess());
                 cfg.setResponseDestinationAttributeMandatory(saml.isResponseDestinationMandatory());
                 cfg.setSupportedProtocols(saml.getSupportedProtocols());
 
-                FunctionUtils.doIfNotBlank(saml.getRequestInitiatorUrl(), __ -> cfg.setRequestInitiatorUrl(saml.getRequestInitiatorUrl()));
-                FunctionUtils.doIfNotBlank(saml.getSingleLogoutServiceUrl(), __ -> cfg.setSingleSignOutServiceUrl(saml.getSingleLogoutServiceUrl()));
-                FunctionUtils.doIfNotBlank(saml.getLogoutResponseBindingType(), __ -> cfg.setSpLogoutResponseBindingType(saml.getLogoutResponseBindingType()));
+                FunctionUtils.doIfNotBlank(saml.getRequestInitiatorUrl(), __ -> cfg.setRequestInitiatorUrl(saml.getRequestInitiatorUrl()), LOGGER);
+                FunctionUtils.doIfNotBlank(saml.getSingleLogoutServiceUrl(), __ -> cfg.setSingleSignOutServiceUrl(saml.getSingleLogoutServiceUrl()), LOGGER);
+                FunctionUtils.doIfNotBlank(saml.getLogoutResponseBindingType(), __ -> cfg.setSpLogoutResponseBindingType(saml.getLogoutResponseBindingType()), LOGGER);
 
                 cfg.setCertificateNameToAppend(StringUtils.defaultIfBlank(saml.getCertificateNameToAppend(), saml.getClientName()));
                 cfg.setMaximumAuthenticationLifetime(Beans.newDuration(saml.getMaximumAuthenticationLifetime()).toSeconds());
@@ -524,7 +524,7 @@ public abstract class BaseDelegatedIdentityProviderFactory implements DelegatedI
                 FunctionUtils.doIfNotNull(saml.getMetadata().getServiceProvider().getFileSystem().getLocation(), location -> {
                     val resource = ResourceUtils.getRawResourceFrom(location);
                     cfg.setServiceProviderMetadataResource(resource);
-                });
+                }, LOGGER);
 
                 cfg.setAuthnRequestBindingType(saml.getDestinationBinding());
                 cfg.setSpLogoutRequestBindingType(saml.getLogoutRequestBinding());
@@ -538,8 +538,8 @@ public abstract class BaseDelegatedIdentityProviderFactory implements DelegatedI
                 cfg.setSslSocketFactory(casSSLContext.getSslContext().getSocketFactory());
                 cfg.setHostnameVerifier(casSSLContext.getHostnameVerifier());
 
-                FunctionUtils.doIfNotBlank(saml.getPrincipalIdAttribute(), __ -> cfg.setAttributeAsId(saml.getPrincipalIdAttribute()));
-                FunctionUtils.doIfNotBlank(saml.getNameIdAttribute(), __ -> cfg.setNameIdAttribute(saml.getNameIdAttribute()));
+                FunctionUtils.doIfNotBlank(saml.getPrincipalIdAttribute(), __ -> cfg.setAttributeAsId(saml.getPrincipalIdAttribute()), LOGGER);
+                FunctionUtils.doIfNotBlank(saml.getNameIdAttribute(), __ -> cfg.setNameIdAttribute(saml.getNameIdAttribute()), LOGGER);
 
                 cfg.setWantsAssertionsSigned(saml.isWantsAssertionsSigned());
                 cfg.setWantsResponsesSigned(saml.isWantsResponsesSigned());
@@ -558,7 +558,7 @@ public abstract class BaseDelegatedIdentityProviderFactory implements DelegatedI
                                 val clazz = ClassUtils.getClass(getClass().getClassLoader(), saml.getMessageStoreFactory());
                                 val factory = (SAMLMessageStoreFactory) clazz.getDeclaredConstructor().newInstance();
                                 cfg.setSamlMessageStoreFactory(factory);
-                            });
+                            }, LOGGER);
                         }
                     });
 
@@ -570,7 +570,7 @@ public abstract class BaseDelegatedIdentityProviderFactory implements DelegatedI
                     cfg.setAuthnContextClassRefs(saml.getAuthnContextClassRef());
                 }
 
-                FunctionUtils.doIfNotBlank(saml.getNameIdPolicyFormat(), __ -> cfg.setNameIdPolicyFormat(saml.getNameIdPolicyFormat()));
+                FunctionUtils.doIfNotBlank(saml.getNameIdPolicyFormat(), __ -> cfg.setNameIdPolicyFormat(saml.getNameIdPolicyFormat()), LOGGER);
 
                 if (!saml.getRequestedAttributes().isEmpty()) {
                     saml.getRequestedAttributes().stream()
@@ -590,7 +590,7 @@ public abstract class BaseDelegatedIdentityProviderFactory implements DelegatedI
                 }
 
                 FunctionUtils.doIfNotBlank(saml.getSignatureCanonicalizationAlgorithm(),
-                    __ -> cfg.setSignatureCanonicalizationAlgorithm(saml.getSignatureCanonicalizationAlgorithm()));
+                    __ -> cfg.setSignatureCanonicalizationAlgorithm(saml.getSignatureCanonicalizationAlgorithm()), LOGGER);
                 cfg.setProviderName(saml.getProviderName());
                 cfg.setNameIdPolicyAllowCreate(saml.getNameIdPolicyAllowCreate().toBoolean());
 
@@ -600,13 +600,13 @@ public abstract class BaseDelegatedIdentityProviderFactory implements DelegatedI
                             val resource = ResourceUtils.getResourceFrom(saml.getSaml2AttributeConverter());
                             val script = new WatchableGroovyScriptResource(resource);
                             cfg.setSamlAttributeConverter(new GroovyAttributeConverter(script));
-                        });
+                        }, LOGGER);
                     } else {
                         FunctionUtils.doAndHandle(__ -> {
                             val clazz = ClassUtils.getClass(getClass().getClassLoader(), saml.getSaml2AttributeConverter());
                             val converter = (AttributeConverter) clazz.getDeclaredConstructor().newInstance();
                             cfg.setSamlAttributeConverter(converter);
-                        });
+                        }, LOGGER);
                     }
                 }
 

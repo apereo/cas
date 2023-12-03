@@ -11,6 +11,7 @@ import com.okta.sdk.authc.credentials.TokenClientCredentials;
 import com.okta.sdk.client.AuthorizationMode;
 import com.okta.sdk.client.Client;
 import com.okta.sdk.client.Clients;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -22,6 +23,7 @@ import java.nio.charset.StandardCharsets;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
+@Slf4j
 public class OktaConfigurationFactory {
 
     /**
@@ -35,7 +37,7 @@ public class OktaConfigurationFactory {
             .setOrgUrl(properties.getOrganizationUrl())
             .setConnectionTimeout(properties.getConnectionTimeout());
 
-        FunctionUtils.doIfNotNull(properties.getApiToken(), token -> clientBuilder.setClientCredentials(new TokenClientCredentials(token)));
+        FunctionUtils.doIfNotNull(properties.getApiToken(), token -> clientBuilder.setClientCredentials(new TokenClientCredentials(token)), LOGGER);
         FunctionUtils.doIfNotNull(properties.getPrivateKey().getLocation(), path -> {
             val resource = IOUtils.toString(path.getInputStream(), StandardCharsets.UTF_8);
             clientBuilder
@@ -43,7 +45,7 @@ public class OktaConfigurationFactory {
                 .setPrivateKey(resource)
                 .setClientId(properties.getClientId())
                 .setScopes(CollectionUtils.wrapHashSet(properties.getScopes()));
-        });
+        }, LOGGER);
 
         if (StringUtils.isNotBlank(properties.getProxyHost()) && properties.getProxyPort() > 0) {
             if (StringUtils.isNotBlank(properties.getProxyUsername()) && StringUtils.isNotBlank(properties.getProxyPassword())) {

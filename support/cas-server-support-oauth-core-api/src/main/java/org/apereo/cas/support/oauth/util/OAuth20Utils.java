@@ -112,7 +112,7 @@ public class OAuth20Utils {
                 val query = RegisteredServiceQuery.of(OAuthRegisteredService.class, "clientId", clientId).withIncludeAssignableTypes(true);
                 return servicesManager.findServicesBy(query).findFirst().map(OAuthRegisteredService.class::cast).orElse(null);
             },
-            () -> null);
+            () -> null, LOGGER);
     }
 
     /**
@@ -127,7 +127,7 @@ public class OAuth20Utils {
         validateRedirectUri(redirectUri);
         return FunctionUtils.doIfNotBlank(redirectUri,
             () -> getRegisteredOAuthServiceByPredicate(servicesManager, service -> service.matches(redirectUri)),
-            () -> null);
+            () -> null, LOGGER);
     }
 
     private static OAuthRegisteredService getRegisteredOAuthServiceByPredicate(final ServicesManager servicesManager,

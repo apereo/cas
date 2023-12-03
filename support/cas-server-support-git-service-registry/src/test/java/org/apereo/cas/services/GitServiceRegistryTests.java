@@ -90,12 +90,12 @@ class GitServiceRegistryTests extends AbstractServiceRegistryTests {
             val gitRepoSampleDir = new File(FileUtils.getTempDirectory(), "cas-sample-data");
             if (gitRepoSampleDir.exists()) {
                 FunctionUtils.doAndHandle(
-                    __ -> PathUtils.deleteDirectory(gitRepoSampleDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY));
+                    __ -> PathUtils.deleteDirectory(gitRepoSampleDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY), LOGGER);
             }
             val gitDir = new File(FileUtils.getTempDirectory(), GitServiceRegistryProperties.DEFAULT_CAS_SERVICE_REGISTRY_NAME);
             if (gitDir.exists()) {
                 FunctionUtils.doAndHandle(
-                    __ -> PathUtils.deleteDirectory(gitDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY));
+                    __ -> PathUtils.deleteDirectory(gitDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY), LOGGER);
             }
             try (val gitSampleRepo = Git.init().setDirectory(gitRepoSampleDir).setBare(false).call()) {
                 FileUtils.write(new File(gitRepoSampleDir, "readme.txt"), "text", StandardCharsets.UTF_8);
@@ -119,11 +119,11 @@ class GitServiceRegistryTests extends AbstractServiceRegistryTests {
         try {
             val gitRepoDir = new File(FileUtils.getTempDirectory(), "cas-sample-data");
             FunctionUtils.doAndHandle(
-                __ -> PathUtils.deleteDirectory(gitRepoDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY));
+                __ -> PathUtils.deleteDirectory(gitRepoDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY), LOGGER);
             val gitDir = new File(FileUtils.getTempDirectory(), GitServiceRegistryProperties.DEFAULT_CAS_SERVICE_REGISTRY_NAME);
             if (gitDir.exists()) {
                 FunctionUtils.doAndHandle(
-                    __ -> PathUtils.deleteDirectory(gitDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY));
+                    __ -> PathUtils.deleteDirectory(gitDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY), LOGGER);
             }
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);

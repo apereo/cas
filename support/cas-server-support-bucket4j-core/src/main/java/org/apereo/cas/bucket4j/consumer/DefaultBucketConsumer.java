@@ -48,7 +48,7 @@ public class DefaultBucketConsumer implements BucketConsumer {
                 LoggingUtils.error(LOGGER, e);
                 Thread.currentThread().interrupt();
                 return false;
-            }).get();
+            }, LOGGER).get();
 
             val headers = new LinkedHashMap<String, String>();
             val availableTokens = bucket.getAvailableTokens();

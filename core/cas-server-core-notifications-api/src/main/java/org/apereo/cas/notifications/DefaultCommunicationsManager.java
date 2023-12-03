@@ -67,7 +67,7 @@ public class DefaultCommunicationsManager implements CommunicationsManager {
         return FunctionUtils.doIf(isMailSenderDefined() && emailRequest.getEmailProperties().isDefined() && !recipients.isEmpty(),
             Unchecked.supplier(() -> emailSender.send(emailRequest)),
             () -> EmailCommunicationResult.builder().success(false)
-                .to(recipients).body(emailRequest.getBody()).build()).get();
+                .to(recipients).body(emailRequest.getBody()).build(), LOGGER).get();
     }
 
     @Override

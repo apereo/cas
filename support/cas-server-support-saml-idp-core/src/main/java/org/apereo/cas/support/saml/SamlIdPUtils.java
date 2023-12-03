@@ -326,7 +326,7 @@ public class SamlIdPUtils {
                     LOGGER.trace("Resolving entity id from SAML2 IdP metadata to determine issuer for [{}]", samlRegisteredService.getName());
                     val entityDescriptor = Objects.requireNonNull(samlIdPMetadataResolver.resolveSingle(criteriaSet));
                     return entityDescriptor.getEntityID();
-                }))
+                }), LOGGER)
             .get();
         LOGGER.debug("Using name qualifier [{}] for the Name ID", nameQualifier);
         return nameQualifier;

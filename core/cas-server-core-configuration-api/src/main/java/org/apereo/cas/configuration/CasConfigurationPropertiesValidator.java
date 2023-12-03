@@ -62,7 +62,7 @@ public class CasConfigurationPropertiesValidator {
     }
 
     private List<String> validateCasConfiguration() {
-        return FunctionUtils.doAndHandle(() -> validateConfiguration(CasConfigurationProperties.class));
+        return FunctionUtils.doAndHandle(() -> validateConfiguration(CasConfigurationProperties.class), LOGGER);
     }
 
     private List<String> validateConfiguration(final Class clazz) {

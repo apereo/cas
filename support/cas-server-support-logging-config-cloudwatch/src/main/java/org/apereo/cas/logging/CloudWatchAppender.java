@@ -365,7 +365,7 @@ public class CloudWatchAppender extends AbstractAppender implements Serializable
                 throwable -> {
                     LOGGER.error(throwable.getMessage(), throwable);
                     return null;
-                }).get();
+                }, LOGGER).get();
 
             var createLogGroup = true;
             if (describeLogGroupsResult != null && describeLogGroupsResult.hasLogGroups()) {
@@ -391,7 +391,7 @@ public class CloudWatchAppender extends AbstractAppender implements Serializable
             throwable -> {
                 LOGGER.error(throwable.getMessage(), throwable);
                 return null;
-            }).get();
+            }, LOGGER).get();
         if (describeLogStreamsResult != null && describeLogStreamsResult.hasLogStreams()) {
             for (val ls : describeLogStreamsResult.logStreams()) {
                 if (logStreamName.equals(ls.logStreamName())) {

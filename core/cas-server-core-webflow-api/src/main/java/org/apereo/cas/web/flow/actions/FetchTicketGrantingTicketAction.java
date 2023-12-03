@@ -34,7 +34,7 @@ public class FetchTicketGrantingTicketAction extends BaseCasWebflowAction {
         Optional.ofNullable(cookieResult).ifPresent(cookie -> {
             LOGGER.debug("Attempting to locate ticket-granting ticket from cookie value [{}]", cookie);
             val ticket = FunctionUtils.doAndHandle(
-                () -> ticketRegistry.getTicket(cookie, TicketGrantingTicket.class), throwable -> null).get();
+                () -> ticketRegistry.getTicket(cookie, TicketGrantingTicket.class), throwable -> null, LOGGER).get();
             if (ticket != null) {
                 LOGGER.debug("Found ticket-granting ticket [{}]", ticket.getId());
                 WebUtils.putTicketGrantingTicket(requestContext, ticket);

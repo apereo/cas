@@ -1,8 +1,10 @@
 package org.apereo.cas.util;
 
+
 import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.sql.Timestamp;
@@ -33,6 +35,7 @@ import java.util.concurrent.TimeUnit;
  */
 @SuppressWarnings("JavaUtilDate")
 @UtilityClass
+@Slf4j
 public class DateTimeUtils {
 
     /**
@@ -150,7 +153,7 @@ public class DateTimeUtils {
         val parsers = List.of(DateTimeFormatter.ISO_ZONED_DATE_TIME, DateTimeFormatter.RFC_1123_DATE_TIME);
         return parsers
             .stream()
-            .map(parser -> FunctionUtils.doAndHandle(() -> ZonedDateTime.parse(value, parser), throwable -> null).get())
+            .map(parser -> FunctionUtils.doAndHandle(() -> ZonedDateTime.parse(value, parser), throwable -> null, LOGGER).get())
             .filter(Objects::nonNull)
             .findFirst()
             .orElse(null);

@@ -57,7 +57,7 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
             val encoded = cipherExecutor.encode(ticketId);
             LOGGER.debug("Encoded service ticket id [{}]", encoded);
             return encoded;
-        }, () -> ticketId).get();
+        }, () -> ticketId, LOGGER).get();
         return produceTicket(ticketGrantingTicket, service, credentialProvided, result, clazz);
     }
 

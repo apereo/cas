@@ -10,6 +10,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.token.TokenConstants;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.core.Ordered;
 
@@ -20,6 +21,7 @@ import org.springframework.core.Ordered;
  * @since 7.0.0
  */
 @RequiredArgsConstructor
+@Slf4j
 public class TokenAuthenticationPostProcessor implements AuthenticationPostProcessor {
     private final ServicesManager servicesManager;
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;
@@ -38,7 +40,7 @@ public class TokenAuthenticationPostProcessor implements AuthenticationPostProce
             accessResult.throwExceptionIfNeeded();
             val token = TokenAuthenticationSecurity.forRegisteredService(registeredService).generateTokenFor(authentication);
             builder.addAttribute(TokenConstants.PARAMETER_NAME_TOKEN, token);
-        });
+        }, LOGGER);
     }
 
     @Override

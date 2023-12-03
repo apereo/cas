@@ -14,6 +14,7 @@ import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.servlet.support.RequestContextUtils;
@@ -31,6 +32,7 @@ import java.util.stream.Collectors;
  */
 @RequiredArgsConstructor(staticName = "of",
                          access = AccessLevel.PROTECTED)
+@Slf4j
 class CasSimpleMultifactorSendEmail {
     private final CommunicationsManager communicationsManager;
     private final CasSimpleMultifactorAuthenticationProperties properties;
@@ -42,7 +44,7 @@ class CasSimpleMultifactorSendEmail {
                 val body = prepareEmailMessageBody(principal, tokenTicket, requestContext);
                 return List.of(sendEmail(requestContext, body, principal, recipients));
             },
-            () -> List.<EmailCommunicationResult>of(EmailCommunicationResult.builder().success(false).build())).get();
+            () -> List.<EmailCommunicationResult>of(EmailCommunicationResult.builder().success(false).build()), LOGGER).get();
         return new EmailCommunicationResults(results);
     }
 
@@ -57,7 +59,7 @@ class CasSimpleMultifactorSendEmail {
                     .map(attribute -> sendEmail(requestContext, body, principal, attribute))
                     .collect(Collectors.toList());
             },
-            () -> List.<EmailCommunicationResult>of(EmailCommunicationResult.builder().success(false).build())).get();
+            () -> List.<EmailCommunicationResult>of(EmailCommunicationResult.builder().success(false).build()), LOGGER).get();
         return new EmailCommunicationResults(results);
     }
 

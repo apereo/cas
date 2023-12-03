@@ -41,7 +41,7 @@ public class DefaultLogoutRedirectionStrategy implements LogoutRedirectionStrate
             .or(() -> {
                 val redirectUrl = casProperties.getView().getDefaultRedirectUrl();
                 return FunctionUtils.doIf(StringUtils.isNotBlank(redirectUrl),
-                    () -> Optional.of(serviceFactory.createService(redirectUrl)), Optional::<WebApplicationService>empty).get();
+                    () -> Optional.of(serviceFactory.createService(redirectUrl)), Optional::<WebApplicationService>empty, LOGGER).get();
             })
             .filter(service -> singleLogoutServiceLogoutUrlBuilder.isServiceAuthorized(service, Optional.of(request), Optional.of(response)))
             .ifPresentOrElse(service -> {

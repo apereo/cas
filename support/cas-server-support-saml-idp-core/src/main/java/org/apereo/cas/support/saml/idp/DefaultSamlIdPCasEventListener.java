@@ -30,7 +30,7 @@ public class DefaultSamlIdPCasEventListener implements SamlIdPCasEventListener {
         }, e -> {
             LoggingUtils.error(LOGGER, e);
             return null;
-        }).get();
+        }, LOGGER).get();
         LOGGER.trace("Generated SAML IdP metadata document is [{}]", document);
     }
 }

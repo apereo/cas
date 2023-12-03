@@ -70,7 +70,7 @@ public class CasPersonDirectoryJsonConfiguration {
                                 dao.setResourceWatcherService(watcherService);
                             }
                             dao.setOrder(json.getOrder());
-                            FunctionUtils.doIfNotNull(json.getId(), id -> dao.setId(id));
+                            FunctionUtils.doIfNotNull(json.getId(), id -> dao.setId(id), LOGGER);
                             dao.setEnabled(json.getState() != AttributeRepositoryStates.DISABLED);
                             dao.putTag(PersonDirectoryAttributeRepositoryPlanConfigurer.class.getSimpleName(),
                                 json.getState() == AttributeRepositoryStates.ACTIVE);

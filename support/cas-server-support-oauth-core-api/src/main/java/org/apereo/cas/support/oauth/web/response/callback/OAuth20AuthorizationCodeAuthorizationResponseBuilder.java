@@ -58,7 +58,7 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder extends BaseOA
         }, (CheckedFunction<Throwable, TicketGrantingTicket>) throwable -> {
             LOGGER.error("Unable to update ticket-granting-ticket [{}]", ticketGrantingTicket, throwable);
             return null;
-        }).accept(tgt));
+        }, LOGGER).accept(tgt));
         return buildCallbackViewViaRedirectUri(holder, code);
     }
 

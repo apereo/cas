@@ -68,7 +68,7 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
                     return getConfigContext().getCasProperties()
                         .getServer().getLogoutUrl().concat("?").concat(logoutParam).concat("=").concat(service.getId());
                 },
-                () -> getConfigContext().getCasProperties().getServer().getLogoutUrl())
+                () -> getConfigContext().getCasProperties().getServer().getLogoutUrl(), LOGGER)
             .get();
         response.sendRedirect(logoutUrl);
     }

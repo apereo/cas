@@ -53,12 +53,12 @@ public class MaxmindDatabaseGeoLocationService extends AbstractGeoLocationServic
                 val response = cityDatabaseReader.city(address);
                 location.addAddress(response.getCity().getName());
                 collectGeographicalPosition(location, response);
-            });
+            }, LOGGER);
 
             FunctionUtils.doIfNotNull(countryDatabaseReader, __ -> {
                 val response = countryDatabaseReader.country(address);
                 location.addAddress(response.getCountry().getName());
-            });
+            }, LOGGER);
 
             if (location.getAddresses().isEmpty() && properties.getAccountId() > 0 && StringUtils.isNotBlank(properties.getLicenseKey())) {
                 try (val client = buildWebServiceClient()) {

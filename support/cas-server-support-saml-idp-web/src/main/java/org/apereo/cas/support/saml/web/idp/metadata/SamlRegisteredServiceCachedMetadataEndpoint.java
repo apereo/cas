@@ -172,7 +172,7 @@ public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasActuator
                     .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
                 return ResponseEntity.ok(body);
             })).orElseThrow(() -> new SamlException("Unable to locate and resolve metadata for service " + registeredService.getName()));
-        }, e -> ResponseEntity.badRequest().body(Map.of("error", e.getMessage()))).get();
+        }, e -> ResponseEntity.badRequest().body(Map.of("error", e.getMessage())), LOGGER).get();
     }
 
     protected SamlRegisteredService findRegisteredService(final String serviceId) throws Throwable {

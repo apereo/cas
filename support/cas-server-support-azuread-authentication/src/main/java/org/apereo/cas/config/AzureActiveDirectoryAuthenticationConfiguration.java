@@ -18,6 +18,7 @@ import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
@@ -43,6 +44,7 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Authentication, module = "azuread")
 @AutoConfiguration
+@Slf4j
 public class AzureActiveDirectoryAuthenticationConfiguration {
 
     @Configuration(value = "AzureActiveDirectoryAttributeConfiguration", proxyBeanMethods = false)
@@ -59,14 +61,14 @@ public class AzureActiveDirectoryAuthenticationConfiguration {
                 .filter(msft -> StringUtils.isNotBlank(msft.getClientId()) && StringUtils.isNotBlank(msft.getClientSecret()))
                 .forEach(msft -> {
                     val dao = new MicrosoftGraphPersonAttributeDao();
-                    FunctionUtils.doIfNotNull(msft.getId(), id -> dao.setId(id));
-                    FunctionUtils.doIfNotNull(msft.getApiBaseUrl(), dao::setApiBaseUrl);
-                    FunctionUtils.doIfNotNull(msft.getGrantType(), dao::setGrantType);
-                    FunctionUtils.doIfNotNull(msft.getLoginBaseUrl(), dao::setLoginBaseUrl);
-                    FunctionUtils.doIfNotNull(msft.getLoggingLevel(), dao::setLoggingLevel);
-                    FunctionUtils.doIfNotNull(msft.getAttributes(), dao::setProperties);
-                    FunctionUtils.doIfNotNull(msft.getResource(), dao::setResource);
-                    FunctionUtils.doIfNotNull(msft.getScope(), dao::setScope);
+                    FunctionUtils.doIfNotNull(msft.getId(), id -> dao.setId(id), LOGGER);
+                    FunctionUtils.doIfNotNull(msft.getApiBaseUrl(), dao::setApiBaseUrl, LOGGER);
+                    FunctionUtils.doIfNotNull(msft.getGrantType(), dao::setGrantType, LOGGER);
+                    FunctionUtils.doIfNotNull(msft.getLoginBaseUrl(), dao::setLoginBaseUrl, LOGGER);
+                    FunctionUtils.doIfNotNull(msft.getLoggingLevel(), dao::setLoggingLevel, LOGGER);
+                    FunctionUtils.doIfNotNull(msft.getAttributes(), dao::setProperties, LOGGER);
+                    FunctionUtils.doIfNotNull(msft.getResource(), dao::setResource, LOGGER);
+                    FunctionUtils.doIfNotNull(msft.getScope(), dao::setScope, LOGGER);
 
                     dao.setTenant(resolver.resolve(msft.getTenant()));
                     dao.setDomain(resolver.resolve(msft.getDomain()));

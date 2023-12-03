@@ -75,6 +75,6 @@ public class AssuranceVerificationJsonSource implements AssuranceVerificationSou
             });
             verifications.clear();
             verifications.addAll(results);
-        });
+        }, LOGGER);
     }
 }

@@ -168,7 +168,7 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
 
         val data = CollectionUtils.<String, Object>wrap(SamlProtocolConstants.PARAMETER_SAML_RESPONSE, message);
         val relayState = request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE);
-        FunctionUtils.doIfNotNull(relayState, value -> data.put(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, value));
+        FunctionUtils.doIfNotNull(relayState, value -> data.put(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, value), LOGGER);
         return LogoutRedirectionResponse.builder().logoutPostUrl(Optional.ofNullable(location)).logoutPostData(data).build();
     }
 

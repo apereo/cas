@@ -90,7 +90,7 @@ public class GenerateSamlIdPMetadataCommand {
             () -> {
                 LOGGER.warn("Metadata artifacts are available at the specified location [{}]", metadataLocation);
                 return force;
-            }).get();
+            }, LOGGER).get();
 
         if (generateMetadata) {
             val props = new CasConfigurationProperties();

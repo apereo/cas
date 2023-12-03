@@ -88,7 +88,7 @@ public class JpaBeans {
         }
 
         val bean = new HikariDataSource();
-        FunctionUtils.doIfNotBlank(jpaProperties.getDriverClass(), __ -> bean.setDriverClassName(jpaProperties.getDriverClass()));
+        FunctionUtils.doIfNotBlank(jpaProperties.getDriverClass(), __ -> bean.setDriverClassName(jpaProperties.getDriverClass()), LOGGER);
 
         val url = SpringExpressionLanguageValueResolver.getInstance().resolve(jpaProperties.getUrl());
         bean.setJdbcUrl(url);
@@ -131,7 +131,7 @@ public class JpaBeans {
             bean.setPersistenceProvider(config.getPersistenceProvider());
         }
 
-        FunctionUtils.doIfNotBlank(config.getPersistenceUnitName(), __ -> bean.setPersistenceUnitName(config.getPersistenceUnitName()));
+        FunctionUtils.doIfNotBlank(config.getPersistenceUnitName(), __ -> bean.setPersistenceUnitName(config.getPersistenceUnitName()), LOGGER);
         if (!config.getPackagesToScan().isEmpty()) {
             bean.setPackagesToScan(config.getPackagesToScan().toArray(ArrayUtils.EMPTY_STRING_ARRAY));
         }

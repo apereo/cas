@@ -62,9 +62,9 @@ public record CasConfigurationPropertiesEnvironmentManager(ConfigurationProperti
     public static CompositePropertySource configureEnvironmentPropertySources(final ConfigurableEnvironment environment) {
         val nativePropertySources = new CompositePropertySource("casNativeCompositeSource");
         val propertySources = environment.getPropertySources();
-        FunctionUtils.doIfNotNull(propertySources.get("commandLineArgs"), nativePropertySources::addFirstPropertySource);
-        FunctionUtils.doIfNotNull(propertySources.get("systemProperties"), nativePropertySources::addPropertySource);
-        FunctionUtils.doIfNotNull(propertySources.get("systemEnvironment"), nativePropertySources::addPropertySource);
+        FunctionUtils.doIfNotNull(propertySources.get("commandLineArgs"), nativePropertySources::addFirstPropertySource, LOGGER);
+        FunctionUtils.doIfNotNull(propertySources.get("systemProperties"), nativePropertySources::addPropertySource, LOGGER);
+        FunctionUtils.doIfNotNull(propertySources.get("systemEnvironment"), nativePropertySources::addPropertySource, LOGGER);
         return nativePropertySources;
     }
 }

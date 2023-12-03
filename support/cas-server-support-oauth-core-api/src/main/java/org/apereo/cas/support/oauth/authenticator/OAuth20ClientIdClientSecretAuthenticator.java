@@ -179,7 +179,7 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
             val token = FunctionUtils.doAndHandle(() -> {
                 val state = ticketRegistry.getTicket(code.get(), OAuth20Code.class);
                 return state == null || state.isExpired() ? null : state;
-            });
+            }, LOGGER);
 
             if (token != null && StringUtils.isNotEmpty(token.getCodeChallenge())) {
                 LOGGER.debug("The OAuth code [{}] issued contains code challenge which requires PKCE Authentication", code.get());

@@ -9,6 +9,7 @@ import org.apereo.cas.util.text.MessageSanitizer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.cloud.spring.core.DefaultGcpProjectIdProvider;
 import com.google.cloud.spring.logging.StackdriverTraceConstants;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.core.Filter;
@@ -39,6 +40,7 @@ import java.util.concurrent.TimeUnit;
  * @since 7.0.0
  */
 @Plugin(name = "GoogleCloudAppender", category = "Core", elementType = "appender", printObject = true)
+@Slf4j
 public class GoogleCloudAppender extends AbstractAppender {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
@@ -63,7 +65,7 @@ public class GoogleCloudAppender extends AbstractAppender {
         this.projectId = FunctionUtils.doIfNull(projectId, () -> {
             val projectIdProvider = new DefaultGcpProjectIdProvider();
             return projectIdProvider.getProjectId();
-        }, () -> projectId).get();
+        }, () -> projectId, LOGGER).get();
     }
 
     /**

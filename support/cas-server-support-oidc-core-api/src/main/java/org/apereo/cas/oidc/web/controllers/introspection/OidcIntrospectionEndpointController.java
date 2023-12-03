@@ -121,7 +121,7 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
                         return signAndEncryptIntrospection(context, introspect, registeredService);
                     }
                     return buildPlainIntrospectionClaims(context, introspect, registeredService);
-                }, e -> ResponseEntity.badRequest().body("Unable to produce introspection JWT claims")).get();
+                }, e -> ResponseEntity.badRequest().body("Unable to produce introspection JWT claims"), LOGGER).get();
             })
             .orElse(responseEntity);
     }

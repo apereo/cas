@@ -68,7 +68,7 @@ public class CasSimpleMultifactorAuthenticationEndpoint extends BaseCasActuatorE
             val givenService = extractService(service);
             val result = generateToken(credential, givenService);
             return ResponseEntity.ok(result);
-        }, e -> ResponseEntity.badRequest().body("Invalid or unauthenticated request")).get();
+        }, e -> ResponseEntity.badRequest().body("Invalid or unauthenticated request"), LOGGER).get();
     }
 
     protected MultifactorAuthenticationTokenResponse generateToken(final Credential credential, final Service givenService) throws Throwable {

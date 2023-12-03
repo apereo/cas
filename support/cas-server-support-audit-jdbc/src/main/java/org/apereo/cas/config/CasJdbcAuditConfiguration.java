@@ -16,6 +16,7 @@ import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.util.thread.Cleanable;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.AuditTrailManager;
@@ -58,6 +59,7 @@ import javax.sql.DataSource;
 @EnableTransactionManagement(proxyTargetClass = false)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Audit, module = "jdbc")
 @AutoConfiguration
+@Slf4j
 public class CasJdbcAuditConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.audit.jdbc.url").evenIfMissing();
 
@@ -174,9 +176,9 @@ public class CasJdbcAuditConfiguration {
                     manager.setAsynchronous(jdbc.isAsynchronous());
                     manager.setColumnLength(jdbc.getColumnLength());
                     manager.setTableName(getAuditTableNameFrom(jdbc));
-                    FunctionUtils.doIfNotBlank(jdbc.getSelectSqlQueryTemplate(), manager::setSelectByDateSqlTemplate);
-                    FunctionUtils.doIfNotBlank(jdbc.getDateFormatterPattern(), manager::setDateFormatterPattern);
-                    FunctionUtils.doIfNotBlank(jdbc.getDateFormatterFunction(), manager::setDateFormatterFunction);
+                    FunctionUtils.doIfNotBlank(jdbc.getSelectSqlQueryTemplate(), manager::setSelectByDateSqlTemplate, LOGGER);
+                    FunctionUtils.doIfNotBlank(jdbc.getDateFormatterPattern(), manager::setDateFormatterPattern, LOGGER);
+                    FunctionUtils.doIfNotBlank(jdbc.getDateFormatterFunction(), manager::setDateFormatterFunction, LOGGER);
                     return manager;
                 })
                 .otherwiseProxy()

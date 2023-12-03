@@ -12,6 +12,7 @@ import org.apereo.cas.web.cookie.CookieValueManager;
 import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
@@ -24,6 +25,7 @@ import jakarta.servlet.http.HttpServletRequest;
  * @since 5.1.0
  */
 @UtilityClass
+@Slf4j
 public class CookieUtils {
 
     /**
@@ -87,7 +89,7 @@ public class CookieUtils {
             return FunctionUtils.doAndHandle(() -> {
                 val state = ticketRegistry.getTicket(cookieValue, TicketGrantingTicket.class);
                 return state == null || state.isExpired() ? null : state;
-            });
+            }, LOGGER);
         }
         return null;
     }

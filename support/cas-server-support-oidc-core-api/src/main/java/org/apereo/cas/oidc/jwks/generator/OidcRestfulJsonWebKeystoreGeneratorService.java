@@ -75,7 +75,7 @@ public class OidcRestfulJsonWebKeystoreGeneratorService implements OidcJsonWebKe
         val response = HttpUtils.execute(exec);
         FunctionUtils.doIfNotNull(response,
             httpResponse -> LOGGER.debug("Storing JWKS resource via [{}] returned [{}]",
-                rest.getUrl(), response.getReasonPhrase()));
+                rest.getUrl(), response.getReasonPhrase()), LOGGER);
         return jsonWebKeySet;
     }
 }

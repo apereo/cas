@@ -100,7 +100,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
             config.setName(wsfed.getName());
             config.setTolerance(Beans.newDuration(wsfed.getTolerance()).toMillis());
             config.setCookieGenerator(getCookieGeneratorForWsFederationConfig(wsfed, applicationContext));
-            FunctionUtils.doIfNotNull(wsfed.getId(), config::setId);
+            FunctionUtils.doIfNotNull(wsfed.getId(), config::setId, LOGGER);
             return config;
         }
 
@@ -121,7 +121,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
                                 + "MAY NOT be safe in a production environment. "
                                 + "Consider using other choices to handle encryption, signing and verification of delegated authentication cookie.");
                     return CipherExecutor.noOp();
-                }).get();
+                }, LOGGER).get();
         }
 
         @ConditionalOnMissingBean(name = "wsFederationConfigurations")

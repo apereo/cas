@@ -9,6 +9,7 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.hjson.JsonValue;
 import org.jooq.lambda.Unchecked;
@@ -30,6 +31,7 @@ import java.util.Set;
  * @since 5.2.0
  */
 @Getter
+@Slf4j
 public class JsonConsentRepository extends BaseConsentRepository implements DisposableBean {
     @Serial
     private static final long serialVersionUID = -402728417464783825L;
@@ -53,7 +55,7 @@ public class JsonConsentRepository extends BaseConsentRepository implements Disp
 
     @Override
     public void destroy() {
-        FunctionUtils.doIfNotNull(watcherService, WatcherService::close);
+        FunctionUtils.doIfNotNull(watcherService, WatcherService::close, LOGGER);
     }
 
     @Override
@@ -93,7 +95,7 @@ public class JsonConsentRepository extends BaseConsentRepository implements Disp
                 }
             }
             return new LinkedHashSet<>(0);
-        }, throwable -> new LinkedHashSet<>(0)).get();
+        }, throwable -> new LinkedHashSet<>(0), LOGGER).get();
     }
 
     private void writeAccountToJsonResource() {

@@ -593,7 +593,7 @@ public class LdapUtils {
                 cfg.setTrustStoreType(properties.getTrustStoreType());
                 val password = SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getTrustStorePassword());
                 cfg.setTrustStorePassword(password);
-            });
+            }, LOGGER);
             FunctionUtils.doIfNotNull(properties.getKeystore(), store -> {
                 val activeStore = SpringExpressionLanguageValueResolver.getInstance().resolve(store);
                 LOGGER.trace("Creating LDAP SSL configuration via keystore [{}]", activeStore);
@@ -601,7 +601,7 @@ public class LdapUtils {
                 cfg.setKeyStoreType(properties.getKeystoreType());
                 val password = SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getKeystorePassword());
                 cfg.setKeyStorePassword(password);
-            });
+            }, LOGGER);
             connectionConfig.setSslConfig(new SslConfig(cfg));
         } else {
             LOGGER.debug("Creating LDAP SSL configuration via the native JVM truststore");
@@ -630,7 +630,7 @@ public class LdapUtils {
             val initializer = new BindConnectionInitializer();
             val saslConfig = getSaslConfigFrom(properties);
 
-            FunctionUtils.doIfNotBlank(properties.getSaslAuthorizationId(), __ -> saslConfig.setAuthorizationId(properties.getSaslAuthorizationId()));
+            FunctionUtils.doIfNotBlank(properties.getSaslAuthorizationId(), __ -> saslConfig.setAuthorizationId(properties.getSaslAuthorizationId()), LOGGER);
             saslConfig.setMutualAuthentication(properties.getSaslMutualAuth());
             if (StringUtils.isNotBlank(properties.getSaslQualityOfProtection())) {
                 saslConfig.setQualityOfProtection(QualityOfProtection.valueOf(properties.getSaslQualityOfProtection()));
@@ -980,7 +980,7 @@ public class LdapUtils {
                         () -> {
                             LOGGER.debug("Creating active directory authentication response handler with warning period [{}]", warningPeriod);
                             return new ActiveDirectoryAuthenticationResponseHandler(warningPeriod);
-                        })
+                        }, LOGGER)
                     .get();
                 responseHandlers.add(handler);
                 Arrays.stream(ActiveDirectoryAuthenticationResponseHandler.ATTRIBUTES).forEach(attr -> {
@@ -1073,7 +1073,7 @@ public class LdapUtils {
         }
 
         FunctionUtils.doIfNotBlank(props.getPrincipalDnAttributeName(),
-            __ -> handler.setPrincipalDnAttributeName(props.getPrincipalDnAttributeName()));
+            __ -> handler.setPrincipalDnAttributeName(props.getPrincipalDnAttributeName()), LOGGER);
         handler.setAllowMultiplePrincipalAttributeValues(props.isAllowMultiplePrincipalAttributeValues());
         handler.setAllowMissingPrincipalAttributeValue(props.isAllowMissingPrincipalAttributeValue());
         handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(props.getPasswordEncoder(), applicationContext));
@@ -1118,7 +1118,7 @@ public class LdapUtils {
                         throwable -> {
                             LoggingUtils.warn(LOGGER, throwable);
                             return null;
-                        })
+                        }, LOGGER)
                     .get())
                 .filter(Objects::nonNull)
                 .findFirst()
@@ -1136,7 +1136,7 @@ public class LdapUtils {
                         throwable -> {
                             LoggingUtils.warn(LOGGER, throwable);
                             return null;
-                        })
+                        }, LOGGER)
                     .get())
                 .filter(Objects::nonNull)
                 .findFirst()

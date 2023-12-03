@@ -138,6 +138,6 @@ public class ECPSamlIdPProfileHandlerController extends AbstractSamlIdPProfileHa
         return FunctionUtils.doIfNotNull(token, () -> {
             LOGGER.debug("Received basic authentication ECP request from credentials [{}]", token.getPrincipal());
             return new UsernamePasswordCredential(token.getPrincipal().toString(), token.getCredentials().toString());
-        });
+        }, LOGGER);
     }
 }

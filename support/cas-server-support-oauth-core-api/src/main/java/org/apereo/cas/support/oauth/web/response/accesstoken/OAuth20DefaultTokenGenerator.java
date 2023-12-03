@@ -168,9 +168,9 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         requestedClaims.forEach(authnBuilder::addAttribute);
 
         FunctionUtils.doIfNotNull(holder.getDpop(),
-            __ -> authnBuilder.addAttribute(OAuth20Constants.DPOP, holder.getDpop()));
+            __ -> authnBuilder.addAttribute(OAuth20Constants.DPOP, holder.getDpop()), LOGGER);
         FunctionUtils.doIfNotNull(holder.getDpopConfirmation(),
-            __ -> authnBuilder.addAttribute(OAuth20Constants.DPOP_CONFIRMATION, holder.getDpopConfirmation()));
+            __ -> authnBuilder.addAttribute(OAuth20Constants.DPOP_CONFIRMATION, holder.getDpopConfirmation()), LOGGER);
         
         val authentication = authnBuilder.build();
         LOGGER.debug("Creating access token for [{}]", holder);
@@ -193,7 +193,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
             () -> {
                 LOGGER.debug("Service [{}] is not able/allowed to receive refresh tokens", holder.getService());
                 return null;
-            }).get();
+            }, LOGGER).get();
 
         return Pair.of(accessToken, refreshToken);
     }
@@ -269,7 +269,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
                     LOGGER.error("Provided user code [{}] is invalid or expired and cannot be found in the ticket registry",
                         deviceCodeTicket.getUserCode());
                     throw new InvalidOAuth20DeviceTokenException(deviceCodeTicket.getUserCode());
-                })
+                }, LOGGER)
             .get();
     }
 
@@ -279,7 +279,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
                 throwable -> {
                     LoggingUtils.error(LOGGER, throwable);
                     throw new InvalidOAuth20DeviceTokenException(deviceCode);
-                })
+                }, LOGGER)
             .get();
     }
 

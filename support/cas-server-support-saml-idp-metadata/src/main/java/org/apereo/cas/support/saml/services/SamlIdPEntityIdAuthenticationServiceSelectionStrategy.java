@@ -66,6 +66,6 @@ public class SamlIdPEntityIdAuthenticationServiceSelectionStrategy extends BaseA
                 .stream()
                 .filter(p -> p.getName().equals(SamlProtocolConstants.PARAMETER_ENTITY_ID))
                 .findFirst();
-        });
+        }, LOGGER);
     }
 }

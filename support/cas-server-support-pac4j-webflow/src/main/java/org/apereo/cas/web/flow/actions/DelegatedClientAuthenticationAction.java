@@ -183,7 +183,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
                 }
                 return populateContextWithClientCredential(client, context);
             },
-            Optional::empty);
+            Optional::empty, LOGGER);
     }
 
     protected Event finalizeDelegatedClientAuthentication(final RequestContext context,

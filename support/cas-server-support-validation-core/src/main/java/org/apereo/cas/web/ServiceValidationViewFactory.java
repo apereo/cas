@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.validation.ValidationResponseType;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -23,6 +24,7 @@ import java.util.function.Function;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
+@Slf4j
 public class ServiceValidationViewFactory {
 
     /**
@@ -172,7 +174,7 @@ public class ServiceValidationViewFactory {
         val format = request.getParameter(CasProtocolConstants.PARAMETER_FORMAT);
         final Function<String, ValidationResponseType> func = FunctionUtils.doIf(StringUtils::isNotBlank,
             t -> ValidationResponseType.valueOf(t.toUpperCase(Locale.ENGLISH)),
-            __ -> service != null ? service.getFormat() : ValidationResponseType.XML);
+            __ -> service != null ? service.getFormat() : ValidationResponseType.XML, LOGGER);
         return func.apply(format);
     }
 }

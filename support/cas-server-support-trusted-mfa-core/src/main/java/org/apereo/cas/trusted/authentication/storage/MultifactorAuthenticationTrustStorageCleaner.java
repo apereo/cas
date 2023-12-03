@@ -31,6 +31,6 @@ public class MultifactorAuthenticationTrustStorageCleaner implements Cleanable {
         FunctionUtils.doAndHandle(__ -> {
             LOGGER.trace("Proceeding to clean up expired trusted authentication records...");
             storage.remove();
-        });
+        }, LOGGER);
     }
 }

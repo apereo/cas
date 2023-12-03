@@ -31,21 +31,21 @@ public class TextMagicSmsSender implements SmsSender {
                               final Optional<HttpClient> httpClient) {
         val client = new ApiClient();
 
-        FunctionUtils.doIfNotBlank(properties.getUsername(), __ -> client.setUsername(properties.getUsername()));
+        FunctionUtils.doIfNotBlank(properties.getUsername(), __ -> client.setUsername(properties.getUsername()), LOGGER);
 
-        FunctionUtils.doIfNotBlank(properties.getToken(), __ -> client.setAccessToken(properties.getToken()));
+        FunctionUtils.doIfNotBlank(properties.getToken(), __ -> client.setAccessToken(properties.getToken()), LOGGER);
         client.setDebugging(properties.isDebugging());
         client.setVerifyingSsl(properties.isVerifyingSsl());
 
 
-        FunctionUtils.doIfNotBlank(properties.getPassword(), __ -> client.setPassword(properties.getPassword()));
+        FunctionUtils.doIfNotBlank(properties.getPassword(), __ -> client.setPassword(properties.getPassword()), LOGGER);
 
         client.setReadTimeout(properties.getReadTimeout());
         client.setConnectTimeout(properties.getConnectTimeout());
         client.setWriteTimeout(properties.getWriteTimeout());
 
 
-        FunctionUtils.doIfNotBlank(properties.getUserAgent(), __ -> client.setUserAgent(properties.getUserAgent()));
+        FunctionUtils.doIfNotBlank(properties.getUserAgent(), __ -> client.setUserAgent(properties.getUserAgent()), LOGGER);
 
         if (StringUtils.isNotBlank(properties.getApiKey())) {
             client.setApiKey(properties.getApiKey());

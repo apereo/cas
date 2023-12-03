@@ -10,6 +10,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.AuditTrailManager.AuditFormats;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
@@ -22,6 +23,7 @@ import org.aspectj.lang.JoinPoint;
  * @since 3.1.2
  */
 @RequiredArgsConstructor
+@Slf4j
 public class CredentialsAsFirstParameterResourceResolver implements AuditResourceResolver {
     protected final AuthenticationServiceSelectionPlan serviceSelectionStrategy;
     protected final AuditEngineProperties properties;
@@ -51,7 +53,7 @@ public class CredentialsAsFirstParameterResourceResolver implements AuditResourc
                 payload.put("registeredServiceId", registeredService.getServiceId());
                 payload.put("registeredServiceName", registeredService.getName());
                 payload.put("service", getServiceId(transaction.getService()));
-            });
+            }, LOGGER);
         }
         val auditFormat = AuditFormats.valueOf(properties.getAuditFormat().name());
         return auditFormat.serialize(payload);

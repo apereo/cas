@@ -12,6 +12,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.io.WatcherService;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -37,6 +38,7 @@ import java.util.Optional;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.ServiceRegistry, module = "yaml")
 @AutoConfiguration
+@Slf4j
 public class YamlServiceRegistryConfiguration {
 
     @Configuration(value = "YamlServiceRegistryCoreConfiguration", proxyBeanMethods = false)
@@ -79,7 +81,7 @@ public class YamlServiceRegistryConfiguration {
             final ServiceRegistry yamlServiceRegistry) {
             val registry = casProperties.getServiceRegistry().getYaml();
             return plan -> FunctionUtils.doIfNotNull(registry.getLocation(),
-                input -> plan.registerServiceRegistry(yamlServiceRegistry));
+                input -> plan.registerServiceRegistry(yamlServiceRegistry), LOGGER);
         }
     }
 }

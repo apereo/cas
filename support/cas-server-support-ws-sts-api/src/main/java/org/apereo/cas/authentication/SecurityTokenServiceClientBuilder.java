@@ -7,6 +7,7 @@ import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.BusFactory;
@@ -27,6 +28,7 @@ import java.util.HashMap;
  * @since 5.1.0
  */
 @RequiredArgsConstructor
+@Slf4j
 public class SecurityTokenServiceClientBuilder {
     private final WsFederationProperties wsFederationProperties;
 
@@ -51,7 +53,7 @@ public class SecurityTokenServiceClientBuilder {
         sts.setKeyType(WSFederationConstants.HTTP_DOCS_OASIS_OPEN_ORG_WS_SX_WS_TRUST_200512_BEARER);
         sts.setWsdlLocation(prepareWsdlLocation(service));
 
-        FunctionUtils.doIfNotBlank(service.getPolicyNamespace(), __ -> sts.setWspNamespace(service.getPolicyNamespace()));
+        FunctionUtils.doIfNotBlank(service.getPolicyNamespace(), __ -> sts.setWspNamespace(service.getPolicyNamespace()), LOGGER);
         val namespace = StringUtils.defaultIfBlank(service.getNamespace(),
             WSFederationConstants.HTTP_DOCS_OASIS_OPEN_ORG_WS_SX_WS_TRUST_200512);
         sts.setServiceQName(new QName(namespace, StringUtils.defaultIfBlank(service.getWsdlService(),
@@ -62,7 +64,7 @@ public class SecurityTokenServiceClientBuilder {
         sts.getProperties().putAll(new HashMap<>(0));
         sts.setTokenType(StringUtils.defaultIfBlank(service.getTokenType(), WSS4JConstants.WSS_SAML2_TOKEN_TYPE));
 
-        FunctionUtils.doIfNotBlank(service.getPolicyNamespace(), __ -> sts.setWspNamespace(service.getPolicyNamespace()));
+        FunctionUtils.doIfNotBlank(service.getPolicyNamespace(), __ -> sts.setWspNamespace(service.getPolicyNamespace()), LOGGER);
         val tlsClientParams = getTlsClientParameters();
         sts.setTlsClientParameters(tlsClientParams);
         val configurer = new CasHTTPConduitConfigurer(tlsClientParams);

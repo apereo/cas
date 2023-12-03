@@ -304,7 +304,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
                 }
             } catch (final GeneralSecurityException e) {
                 LOGGER.debug(e.getMessage(), e);
-                FunctionUtils.doIfNotNull(e.getCause(), o -> executionResult.getFailures().add(e.getCause()));
+                FunctionUtils.doIfNotNull(e.getCause(), o -> executionResult.getFailures().add(e.getCause()), LOGGER);
             } catch (final Throwable e) {
                 LOGGER.debug(e.getMessage(), e);
                 executionResult.getFailures().add(e);

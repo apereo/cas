@@ -6,6 +6,7 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.token.cipher.JwtTicketCipherExecutor;
 import org.apereo.cas.token.cipher.RegisteredServiceJwtTicketCipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import java.util.Optional;
 
@@ -15,6 +16,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
+@Slf4j
 public class OAuth20RegisteredServiceJwtAccessTokenCipherExecutor extends RegisteredServiceJwtTicketCipherExecutor {
     @Override
     protected RegisteredServiceProperty.RegisteredServiceProperties getSigningKeyRegisteredServiceProperty() {
@@ -73,7 +75,7 @@ public class OAuth20RegisteredServiceJwtAccessTokenCipherExecutor extends Regist
     protected JwtTicketCipherExecutor prepareCipherExecutor(final JwtTicketCipherExecutor cipher,
                                                             final RegisteredService registeredService) {
         if (registeredService instanceof final OAuthRegisteredService oauthRegisteredService) {
-            FunctionUtils.doIfNotBlank(oauthRegisteredService.getJwtAccessTokenSigningAlg(), cipher::setSigningAlgorithm);
+            FunctionUtils.doIfNotBlank(oauthRegisteredService.getJwtAccessTokenSigningAlg(), cipher::setSigningAlgorithm, LOGGER);
         }
         return cipher;
     }

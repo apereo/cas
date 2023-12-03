@@ -2,6 +2,7 @@ package org.apereo.cas.util;
 
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -24,6 +25,7 @@ import java.util.Properties;
  * @since 5.3.0
  */
 @UtilityClass
+@Slf4j
 public class SystemUtils {
     private static final GitProperties GIT_PROPERTIES;
 
@@ -57,15 +59,15 @@ public class SystemUtils {
 
         val info = new LinkedHashMap<String, Object>();
 
-        FunctionUtils.doIfNotNull(CasVersion.getVersion(), t -> info.put("CAS Version", t));
+        FunctionUtils.doIfNotNull(CasVersion.getVersion(), t -> info.put("CAS Version", t), LOGGER);
         info.put("CAS Branch", StringUtils.defaultIfBlank(GIT_PROPERTIES.getBranch(), "master"));
-        FunctionUtils.doIfNotNull(GIT_PROPERTIES.getCommitId(), t -> info.put("CAS Commit Id", t));
-        FunctionUtils.doIfNotNull(CasVersion.getDateTime(), t -> info.put("CAS Build Date/Time", t));
+        FunctionUtils.doIfNotNull(GIT_PROPERTIES.getCommitId(), t -> info.put("CAS Commit Id", t), LOGGER);
+        FunctionUtils.doIfNotNull(CasVersion.getDateTime(), t -> info.put("CAS Build Date/Time", t), LOGGER);
 
         info.put("Spring Boot Version", SpringBootVersion.getVersion());
         info.put("Spring Version", SpringVersion.getVersion());
 
-        FunctionUtils.doIfNotNull(properties.get("java.home"), t -> info.put("Java Home", t));
+        FunctionUtils.doIfNotNull(properties.get("java.home"), t -> info.put("Java Home", t), LOGGER);
         info.put("Java Vendor", properties.get("java.vendor"));
         info.put("Java Version", properties.get("java.version"));
         info.put("Servlet Version", HttpServlet.class.getPackage().getImplementationVersion());

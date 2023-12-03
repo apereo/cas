@@ -25,6 +25,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.jaxws.context.WebServiceContextImpl;
@@ -98,6 +99,7 @@ import java.util.Map;
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.WsFederationIdentityProvider)
 @ImportResource(locations = "classpath:jaxws-realms.xml")
 @AutoConfiguration
+@Slf4j
 public class CoreWsSecuritySecurityTokenServiceConfiguration {
 
     @Configuration(value = "CoreWsSecuritySecurityTokenServiceDelegationConfiguration", proxyBeanMethods = false)
@@ -185,7 +187,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
             val subProvider = new DefaultSubjectProvider();
 
             FunctionUtils.doIfNotBlank(wsfed.getSubjectNameQualifier(),
-                __ -> subProvider.setSubjectNameQualifier(wsfed.getSubjectNameQualifier()));
+                __ -> subProvider.setSubjectNameQualifier(wsfed.getSubjectNameQualifier()), LOGGER);
             switch (wsfed.getSubjectNameIdFormat().trim().toLowerCase(Locale.ENGLISH)) {
                 case "email" -> subProvider.setSubjectNameIDFormat(NameIDType.EMAIL);
                 case "entity" -> subProvider.setSubjectNameIDFormat(NameIDType.ENTITY);

@@ -60,7 +60,7 @@ public class X509UPNExtractorUtils {
 
             val func = FunctionUtils.doIf(Predicates.instanceOf(ASN1TaggedObject.class),
                 () -> ASN1TaggedObject.getInstance(primitiveObj).getBaseObject(),
-                () -> primitiveObj);
+                () -> primitiveObj, LOGGER);
             val prim = func.apply(primitiveObj);
 
             if (prim instanceof final ASN1OctetString instance) {

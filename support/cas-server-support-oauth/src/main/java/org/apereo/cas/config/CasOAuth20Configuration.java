@@ -216,7 +216,7 @@ public class CasOAuth20Configuration {
                             + "the token encryption/signing functionality.");
                         return Boolean.TRUE;
                     },
-                    crypto::isEnabled)
+                    crypto::isEnabled, LOGGER)
                 .get();
 
             if (enabled) {
@@ -642,7 +642,7 @@ public class CasOAuth20Configuration {
                         ? CipherExecutorUtils.newStringCipherExecutor(crypto, OAuth20DistributedSessionCookieCipherExecutor.class)
                         : CipherExecutor.noOp();
                 },
-                CipherExecutor::noOp).get();
+                CipherExecutor::noOp, LOGGER).get();
         }
 
         @ConditionalOnMissingBean(name = "oauthDistributedSessionCookieGenerator")
@@ -800,7 +800,7 @@ public class CasOAuth20Configuration {
                             + "are defined for operations. CAS will proceed to enable the encryption/signing functionality.");
                         return Boolean.TRUE;
                     },
-                    crypto::isEnabled)
+                    crypto::isEnabled, LOGGER)
                 .get();
 
             if (enabled) {

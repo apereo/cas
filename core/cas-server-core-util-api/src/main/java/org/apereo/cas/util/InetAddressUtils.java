@@ -34,7 +34,7 @@ public class InetAddressUtils {
         }, e -> {
             LOGGER.trace("Host name could not be determined automatically.", e);
             return null;
-        }).get();
+        }, LOGGER).get();
     }
 
 
@@ -51,7 +51,7 @@ public class InetAddressUtils {
                 return hostName.substring(0, index);
             }
             return hostName;
-        }, throwable -> "unknown").get();
+        }, throwable -> "unknown", LOGGER).get();
     }
 
     /**

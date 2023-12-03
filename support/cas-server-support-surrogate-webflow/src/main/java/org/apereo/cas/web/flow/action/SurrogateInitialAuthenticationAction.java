@@ -34,7 +34,7 @@ public class SurrogateInitialAuthenticationAction extends BaseCasWebflowAction {
             val surrogateRequest = surrogateCredentialParser.parse(credential);
             surrogateRequest.ifPresentOrElse(payload -> addSurrogateInformation(context, payload),
                 () -> removeSurrogateInformation(context, Objects.requireNonNull(credential)));
-        });
+        }, LOGGER);
         return null;
     }
 

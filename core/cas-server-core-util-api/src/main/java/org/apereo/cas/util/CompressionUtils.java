@@ -93,7 +93,7 @@ public class CompressionUtils {
             val resultLength = inflater.inflate(xmlMessageBytes);
             inflater.end();
             return new String(xmlMessageBytes, 0, resultLength, StandardCharsets.UTF_8);
-        }, throwable -> null).get();
+        }, throwable -> null, LOGGER).get();
     }
 
     /**

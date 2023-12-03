@@ -13,6 +13,7 @@ import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import com.okta.sdk.client.Client;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.SimpleUsernameAttributeProvider;
@@ -34,6 +35,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.PersonDirectory, module = "okta")
 @AutoConfiguration
+@Slf4j
 public class OktaPersonDirectoryConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.attribute-repository.okta.organization-url");
 
@@ -68,7 +70,7 @@ public class OktaPersonDirectoryConfiguration {
                 val dao = new OktaPersonAttributeDao(oktaPersonDirectoryClient);
                 dao.setUsernameAttributeProvider(new SimpleUsernameAttributeProvider(properties.getUsernameAttribute()));
                 dao.setOrder(properties.getOrder());
-                FunctionUtils.doIfNotNull(properties.getId(), id -> dao.setId(id));
+                FunctionUtils.doIfNotNull(properties.getId(), id -> dao.setId(id), LOGGER);
                 return BeanContainer.of(CollectionUtils.wrapList(dao));
             })
             .otherwise(BeanContainer::empty)

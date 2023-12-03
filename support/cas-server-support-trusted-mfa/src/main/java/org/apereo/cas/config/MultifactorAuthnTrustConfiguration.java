@@ -106,7 +106,7 @@ public class MultifactorAuthnTrustConfiguration {
                 return new InMemoryMultifactorAuthenticationTrustStorage(
                     casProperties.getAuthn().getMfa().getTrusted(),
                     mfaTrustCipherExecutor, storage, mfaTrustRecordKeyGenerator);
-            }).get();
+            }, LOGGER).get();
         }
 
         @ConditionalOnMissingBean(name = "transactionManagerMfaAuthnTrust")

@@ -11,6 +11,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.webflow.execution.RequestContext;
@@ -22,6 +23,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
+@Slf4j
 @RequiredArgsConstructor(staticName = "of", access = AccessLevel.PROTECTED)
 class CasSimpleMultifactorMakePhoneCall {
     private final CommunicationsManager communicationsManager;
@@ -42,7 +44,7 @@ class CasSimpleMultifactorMakePhoneCall {
                     .text(messageBody)
                     .build();
                 return communicationsManager.phoneCall(callRequest);
-            }), () -> false).get();
+            }), () -> false, LOGGER).get();
     }
 
     protected String buildMessageBody(final PhoneProperties phoneProperties, final String token,
@@ -53,6 +55,6 @@ class CasSimpleMultifactorMakePhoneCall {
                 .parameters(Map.of("token", token, "tokenWithoutPrefix", tokenWithoutPrefix))
                 .build()
                 .get(),
-            () -> token);
+            () -> token, LOGGER);
     }
 }

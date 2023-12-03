@@ -45,7 +45,7 @@ public class LogoutAction extends AbstractLogoutAction {
                 () -> Objects.requireNonNull(logoutRequests)
                     .stream()
                     .anyMatch(logoutRequest -> logoutRequest.getStatus() == LogoutRequestStatus.NOT_ATTEMPTED),
-                () -> Boolean.FALSE)
+                () -> Boolean.FALSE, LOGGER)
             .get();
 
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);

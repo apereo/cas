@@ -34,7 +34,7 @@ public class DefaultPrincipalAttributesMapper implements PrincipalAttributesMapp
                 val script = cacheMgr.resolveScriptableResource(file, attributeName, file);
                 return FunctionUtils.doIf(script != null,
                     Unchecked.supplier(() -> fetchAttributeValueFromScript(script, attributeName, resolvedAttributes)),
-                    TreeMap<String, List<Object>>::new).get();
+                    TreeMap<String, List<Object>>::new, LOGGER).get();
             })
             .orElseThrow(() -> new RuntimeException("No groovy script cache manager is available to execute attribute mappings"));
     }

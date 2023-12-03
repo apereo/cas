@@ -58,7 +58,7 @@ public class SamlIdPHttpRedirectDeflateEncoder extends HTTPRedirectDeflateEncode
         removeSignature(samlObject);
         encodedRequest = deflateAndBase64Encode(samlObject);
         messageContext.setMessage(request);
-        FunctionUtils.doIfNotNull(relayState, value -> SAMLBindingSupport.setRelayState(messageContext, value));
+        FunctionUtils.doIfNotNull(relayState, value -> SAMLBindingSupport.setRelayState(messageContext, value), LOGGER);
 
         this.redirectUrl = buildRedirectURL(messageContext, endpointUrl, encodedRequest);
         LOGGER.debug("Created redirect URL [{}] based on endpoint [{}]", this.redirectUrl, endpointUrl);

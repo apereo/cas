@@ -265,7 +265,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         val encoded = FunctionUtils.doIf(this.signingEnabled, () -> {
             LOGGER.trace("Attempting to verify signature based on signing key defined by [{}]", getSigningKeySetting());
             return verifySignature(currentValue, signingKey);
-        }, () -> currentValue).get();
+        }, () -> currentValue, LOGGER).get();
         return new String(encoded, StandardCharsets.UTF_8);
     }
 
@@ -274,7 +274,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         val encoded = FunctionUtils.doIf(this.signingEnabled, () -> {
             LOGGER.trace("Attempting to verify signature based on signing key defined by [{}]", getSigningKeySetting());
             return verifySignature(currentValue, signingKey);
-        }, () -> currentValue).get();
+        }, () -> currentValue, LOGGER).get();
 
         if (encoded != null && encoded.length > 0) {
             val encodedObj = new String(encoded, StandardCharsets.UTF_8);
@@ -294,7 +294,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
                 LOGGER.trace("Attempting to encrypt value based on encryption key defined by [{}]", getEncryptionKeySetting());
                 return encryptValueAsJwt(encryptionKey, value);
             },
-            value::toString).get();
+            value::toString, LOGGER).get();
 
         if (this.signingEnabled) {
             LOGGER.trace("Attempting to sign value based on signing key defined by [{}]", getSigningKeySetting());
@@ -311,15 +311,15 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
                 val signed = sign(value.toString().getBytes(StandardCharsets.UTF_8), signingKey);
                 return new String(signed, StandardCharsets.UTF_8);
             },
-            value::toString
-        ).get();
+            value::toString,
+            LOGGER).get();
 
         return FunctionUtils.doIf(isEncryptionPossible(encryptionKey),
             () -> {
                 LOGGER.trace("Attempting to encrypt value based on encryption key defined by [{}]", getEncryptionKeySetting());
                 return encryptValueAsJwt(encryptionKey, encoded);
             },
-            () -> encoded).get();
+            () -> encoded, LOGGER).get();
     }
 
     /**

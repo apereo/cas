@@ -64,7 +64,7 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
 
     @Override
     public void destroy() {
-        FunctionUtils.doIfNotNull(watcherService, WatcherService::close);
+        FunctionUtils.doIfNotNull(watcherService, WatcherService::close, LOGGER);
     }
 
     @Override

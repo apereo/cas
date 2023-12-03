@@ -70,7 +70,7 @@ public class CasPersonDirectoryJdbcConfiguration {
                         .filter(jdbc -> StringUtils.isNotBlank(jdbc.getSql()) && StringUtils.isNotBlank(jdbc.getUrl()))
                         .forEach(jdbc -> {
                             val jdbcDao = createJdbcPersonAttributeDao(jdbc);
-                            FunctionUtils.doIfNotNull(jdbc.getId(), id -> jdbcDao.setId(id));
+                            FunctionUtils.doIfNotNull(jdbc.getId(), id -> jdbcDao.setId(id), LOGGER);
 
                             val queryAttributes = CollectionUtils.wrap("username", jdbc.getUsername());
                             queryAttributes.putAll(jdbc.getQueryAttributes());

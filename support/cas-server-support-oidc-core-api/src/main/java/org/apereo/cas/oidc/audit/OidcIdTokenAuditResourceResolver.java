@@ -8,6 +8,7 @@ import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
 import org.aspectj.lang.JoinPoint;
@@ -21,6 +22,7 @@ import java.util.HashMap;
  * @since 7.0.0
  */
 @RequiredArgsConstructor
+@Slf4j
 public class OidcIdTokenAuditResourceResolver extends ReturnValueAsStringResourceResolver {
     private final AuditEngineProperties properties;
 
@@ -33,11 +35,11 @@ public class OidcIdTokenAuditResourceResolver extends ReturnValueAsStringResourc
         val userProfile = (UserProfile) auditableTarget.getArgs()[1];
         values.put(OAuth20Constants.CLIENT_ID, accessToken.getClientId());
         values.put(OAuth20Constants.SCOPE, accessToken.getScopes());
-        FunctionUtils.doIfNotNull(userProfile, __ -> values.put("username", userProfile.getId()));
-        FunctionUtils.doIfNotNull(accessToken.getService(), svc -> values.put("service", svc));
+        FunctionUtils.doIfNotNull(userProfile, __ -> values.put("username", userProfile.getId()), LOGGER);
+        FunctionUtils.doIfNotNull(accessToken.getService(), svc -> values.put("service", svc), LOGGER);
         if (idToken.claims().hasClaim(OidcConstants.TXN)) {
             val txn = FunctionUtils.doUnchecked(() -> idToken.claims().getStringClaimValue(OidcConstants.TXN));
-            FunctionUtils.doIfNotNull(txn, __ -> values.put(OidcConstants.TXN, txn));
+            FunctionUtils.doIfNotNull(txn, __ -> values.put(OidcConstants.TXN, txn), LOGGER);
             values.put("authn_methods", accessToken.getAuthentication().getSuccesses().keySet());
         }
         return new String[]{auditFormat.serialize(values)};

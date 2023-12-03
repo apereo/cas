@@ -5,6 +5,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
  */
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@Slf4j
 public abstract class AbstractCacheHealthIndicator extends AbstractHealthIndicator {
 
     private final long evictionThreshold;
@@ -65,7 +67,7 @@ public abstract class AbstractCacheHealthIndicator extends AbstractHealthIndicat
         }, throwable -> {
             builder.down(throwable);
             return builder;
-        }).accept(builder);
+        }, LOGGER).accept(builder);
     }
 
     /**

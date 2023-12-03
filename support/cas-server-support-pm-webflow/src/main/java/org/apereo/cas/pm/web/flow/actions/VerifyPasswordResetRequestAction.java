@@ -92,7 +92,7 @@ public class VerifyPasswordResetRequestAction extends BasePasswordManagementActi
             .map(PasswordResetRequest::getPasswordResetTicket)
             .filter(Objects::nonNull)
             .filter(r -> r.getExpirationPolicy().isExpired(r))
-            .ifPresent(token -> FunctionUtils.doAndHandle(__ -> ticketRegistrySupport.getTicketRegistry().deleteTicket(token)));
+            .ifPresent(token -> FunctionUtils.doAndHandle(__ -> ticketRegistrySupport.getTicketRegistry().deleteTicket(token), LOGGER));
     }
 
     private PasswordResetRequest getPasswordResetRequestFrom(final String tgt) {

@@ -494,7 +494,7 @@ public class SamlIdPEndpointsConfiguration {
                         ? CipherExecutorUtils.newStringCipherExecutor(crypto, SamlIdPDistributedSessionCookieCipherExecutor.class)
                         : CipherExecutor.noOp();
                 },
-                CipherExecutor::noOp).get();
+                CipherExecutor::noOp, LOGGER).get();
         }
 
         @ConditionalOnMissingBean(name = "samlIdPDistributedSessionCookieGenerator")

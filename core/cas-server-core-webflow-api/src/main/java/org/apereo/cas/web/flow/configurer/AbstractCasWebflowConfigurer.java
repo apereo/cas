@@ -140,7 +140,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
             } else {
                 LOGGER.info("Webflow auto-configuration is disabled for [{}]", getClass().getName());
             }
-        }, throwable -> null).accept(this);
+        }, throwable -> null, LOGGER).accept(this);
     }
 
     @Override

@@ -11,6 +11,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.webflow.execution.RequestContext;
@@ -23,6 +24,7 @@ import java.util.Map;
  * @since 7.0.0
  */
 @RequiredArgsConstructor(staticName = "of", access = AccessLevel.PROTECTED)
+@Slf4j
 class CasSimpleMultifactorSendSms {
     private final CommunicationsManager communicationsManager;
     private final CasSimpleMultifactorAuthenticationProperties properties;
@@ -41,7 +43,7 @@ class CasSimpleMultifactorSendSms {
                     .text(smsText)
                     .build();
                 return communicationsManager.sms(smsRequest);
-            }), () -> false).get();
+            }), () -> false, LOGGER).get();
     }
 
     protected String buildTextMessageBody(final SmsProperties smsProperties, final String token,
@@ -52,6 +54,6 @@ class CasSimpleMultifactorSendSms {
                 .parameters(Map.of("token", token, "tokenWithoutPrefix", tokenWithoutPrefix))
                 .build()
                 .get(),
-            () -> token);
+            () -> token, LOGGER);
     }
 }

@@ -60,7 +60,7 @@ public class DefaultDelegatedClientAuthenticationFailureEvaluator implements Del
             LOGGER.debug("Delegation request has failed. Details are [{}]", model);
             return Optional.of(new ModelAndView(CasWebflowConstants.VIEW_ID_DELEGATED_AUTHENTICATION_STOP_WEBFLOW, model));
         },
-            Optional::<ModelAndView>empty)
+            Optional::<ModelAndView>empty, LOGGER)
         .get();
     }
 }

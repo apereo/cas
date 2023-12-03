@@ -46,7 +46,7 @@ public class GroovyMultifactorAuthenticationProviderBypassEvaluator extends Base
                 principal.getId(), registeredService, provider, watchableScript.getResource());
             val args = new Object[]{authentication, principal, registeredService, provider, LOGGER, request};
             return watchableScript.execute(args, Boolean.class);
-        }, e -> true).get();
+        }, e -> true, LOGGER).get();
 
     }
 }

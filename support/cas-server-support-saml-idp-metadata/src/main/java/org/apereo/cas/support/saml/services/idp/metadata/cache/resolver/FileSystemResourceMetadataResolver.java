@@ -56,7 +56,7 @@ public class FileSystemResourceMetadataResolver extends BaseSamlRegisteredServic
             val metadataResolver = getMetadataResolver(metadataResource, metadataFile);
             configureAndInitializeSingleMetadataResolver(metadataResolver, service);
             return CollectionUtils.wrap(metadataResolver);
-        }, (CheckedFunction<Throwable, Collection<? extends MetadataResolver>>) throwable -> new ArrayList<>(0)).get();
+        }, (CheckedFunction<Throwable, Collection<? extends MetadataResolver>>) throwable -> new ArrayList<>(0), LOGGER).get();
     }
 
     @Override
@@ -65,7 +65,7 @@ public class FileSystemResourceMetadataResolver extends BaseSamlRegisteredServic
             val metadataLocation = SpringExpressionLanguageValueResolver.getInstance().resolve(service.getMetadataLocation());
             val metadataResource = ResourceUtils.isUrl(metadataLocation) ? null : ResourceUtils.getResourceFrom(metadataLocation);
             return metadataResource instanceof FileSystemResource;
-        }, throwable -> false).get();
+        }, throwable -> false, LOGGER).get();
     }
 
     @Override

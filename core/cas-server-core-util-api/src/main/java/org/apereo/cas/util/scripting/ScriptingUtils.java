@@ -295,7 +295,7 @@ public class ScriptingUtils {
             val shell = new GroovyShell();
             LOGGER.debug("Parsing groovy script [{}]", script);
             return shell.parse(script);
-        });
+        }, LOGGER);
     }
 
     /**

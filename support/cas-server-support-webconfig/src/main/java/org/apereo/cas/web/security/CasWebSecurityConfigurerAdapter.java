@@ -133,7 +133,7 @@ public class CasWebSecurityConfigurerAdapter {
         configureEndpointAccessByFormLogin(requests);
 
         val jaas = casProperties.getMonitor().getEndpoints().getJaas();
-        FunctionUtils.doIfNotNull(jaas.getLoginConfig(), __ -> configureJaasAuthenticationProvider(http, jaas));
+        FunctionUtils.doIfNotNull(jaas.getLoginConfig(), __ -> configureJaasAuthenticationProvider(http, jaas), LOGGER);
 
         http.securityContext(securityContext -> securityContext.securityContextRepository(securityContextRepository));
         webSecurityConfigurers

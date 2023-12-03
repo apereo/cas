@@ -537,7 +537,7 @@ public class CasCoreAuditConfiguration {
                         val templateFile = casProperties.getAudit().getGroovy().getTemplate().getLocation().getFile();
                         val mgr = new GroovyAuditTrailManager(templateFile, applicationContext);
                         plan.registerAuditTrailManager(mgr);
-                    }))
+                    }, LOGGER))
                 .otherwiseProxy()
                 .get();
         }

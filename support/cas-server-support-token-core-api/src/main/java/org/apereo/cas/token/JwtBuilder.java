@@ -138,7 +138,7 @@ public class JwtBuilder {
                         return parse(defaultTokenCipherExecutor.decode(jwtJson));
                     }, () -> {
                         throw new IllegalArgumentException("Unable to validate JWT signature");
-                    }).get();
+                    }, LOGGER).get();
             }
             return parse(jwtJson);
         });

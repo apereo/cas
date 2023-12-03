@@ -54,8 +54,8 @@ public class CoreTicketUtils {
                     registry.getEncryption().getKey());
                 return Boolean.TRUE;
             },
-            registry::isEnabled
-        ).get();
+            registry::isEnabled,
+            LOGGER).get();
 
 
         if (enabled || forceIfBlankKeys) {

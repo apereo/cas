@@ -204,7 +204,7 @@ public class DynamoDbTableUtils {
                 .build();
             LOGGER.debug("Submitting request [{}] to get record with expression filters [{}]", scanRequest, filterExpression);
             return dynamoDbClient.scan(scanRequest);
-        }, e -> ScanResponse.builder().items(Map.of()).build()).get();
+        }, e -> ScanResponse.builder().items(Map.of()).build(), LOGGER).get();
     }
 
     /**

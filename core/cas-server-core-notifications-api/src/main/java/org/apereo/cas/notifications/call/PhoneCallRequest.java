@@ -1,5 +1,6 @@
 package org.apereo.cas.notifications.call;
 
+
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -7,6 +8,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.With;
 import lombok.experimental.SuperBuilder;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import java.util.Optional;
@@ -21,6 +23,7 @@ import java.util.Optional;
 @Getter
 @With
 @RequiredArgsConstructor
+@Slf4j
 public class PhoneCallRequest {
     private final Principal principal;
 
@@ -61,7 +64,7 @@ public class PhoneCallRequest {
     public String getRecipient() {
         return FunctionUtils.doIf(hasAttributeValue(),
             () -> getAttributeValue().map(Object::toString).orElseGet(this::getTo),
-            this::getTo).get();
+            this::getTo, LOGGER).get();
     }
 
     /**

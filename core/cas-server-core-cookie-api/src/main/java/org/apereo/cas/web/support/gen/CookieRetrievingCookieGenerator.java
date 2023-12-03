@@ -224,6 +224,6 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
                 val path = StringUtils.removeEndIgnoreCase(StringUtils.defaultIfBlank(givenPath, DEFAULT_COOKIE_PATH), "/");
                 return StringUtils.defaultIfBlank(path, "/");
             },
-            () -> StringUtils.defaultIfBlank(givenPath, DEFAULT_COOKIE_PATH)).get();
+            () -> StringUtils.defaultIfBlank(givenPath, DEFAULT_COOKIE_PATH), LOGGER).get();
     }
 }

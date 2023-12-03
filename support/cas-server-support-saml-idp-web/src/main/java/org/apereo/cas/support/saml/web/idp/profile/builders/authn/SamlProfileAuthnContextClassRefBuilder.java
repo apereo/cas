@@ -102,7 +102,7 @@ public class SamlProfileAuthnContextClassRefBuilder extends AbstractSaml20Object
                                 script.setBinding(args);
                                 return script.execute(args.values().toArray(), String.class, true);
                             },
-                            () -> null).get();
+                            () -> null, LOGGER).get();
                     })
                     .orElseThrow(() -> new RuntimeException("Unable to locate script cache manager"));
             }

@@ -54,7 +54,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
 
         FunctionUtils.doIfNull(context.getReleasingAttributes(),
             __ -> releasePolicyAttributes.putAll(getPrincipalAttributesFromReleasePolicy(context)),
-            releasePolicyAttributes::putAll);
+            releasePolicyAttributes::putAll, LOGGER);
 
         LOGGER.debug("Attributes resolved by the release policy available for selection of username attribute [{}] are [{}].",
             usernameAttribute, releasePolicyAttributes);

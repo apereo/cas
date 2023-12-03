@@ -70,7 +70,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
                 ? JsonValue.readHjson(json).toString()
                 : String.join("\n", IOUtils.readLines(json));
             return readObjectFromString(data);
-        }, throwable -> null).get();
+        }, throwable -> null, LOGGER).get();
     }
 
     @Override
@@ -78,7 +78,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
         return FunctionUtils.doAndHandle(() -> {
             val jsonString = readJsonFrom(json);
             return readObjectFromString(jsonString);
-        }, throwable -> null).get();
+        }, throwable -> null, LOGGER).get();
     }
 
     @Override
@@ -88,7 +88,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
                 ? JsonValue.readHjson(FileUtils.readFileToString(json, StandardCharsets.UTF_8)).toString()
                 : FileUtils.readFileToString(json, StandardCharsets.UTF_8);
             return readObjectFromString(data);
-        }, throwable -> null).get();
+        }, throwable -> null, LOGGER).get();
     }
 
     @Override

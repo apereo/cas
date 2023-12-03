@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
+
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.services.CasModelRegisteredService;
 import org.apereo.cas.services.ServicesManager;
@@ -11,6 +12,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -29,6 +31,7 @@ import java.util.Optional;
 @Getter
 @Setter
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+@Slf4j
 public abstract class AbstractWebApplicationServiceResponseBuilder implements ResponseBuilder<WebApplicationService> {
     @Serial
     private static final long serialVersionUID = -4584738964007702423L;
@@ -74,7 +77,7 @@ public abstract class AbstractWebApplicationServiceResponseBuilder implements Re
                 val registeredService = servicesManager.findServiceBy(finalService);
                 return registeredService instanceof final CasModelRegisteredService casService ? casService.getResponseType() : null;
             },
-            __ -> methodRequest);
+            __ -> methodRequest, LOGGER);
         val method = func.apply(methodRequest);
         if (StringUtils.isBlank(method) || !EnumUtils.isValidEnum(Response.ResponseType.class, method.toUpperCase(Locale.ENGLISH))) {
             return Response.ResponseType.REDIRECT;

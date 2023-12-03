@@ -93,7 +93,7 @@ public class CasInterruptConfiguration {
             return FunctionUtils.doIf(props.getCrypto().isEnabled(),
                 () -> new DefaultCasCookieValueManager(cookieCipherExecutor, geoLocationService,
                     DefaultCookieSameSitePolicy.INSTANCE, props),
-                CookieValueManager::noOp).get();
+                CookieValueManager::noOp, LOGGER).get();
         }
 
         @Bean

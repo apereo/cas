@@ -64,11 +64,11 @@ public class OktaAuthenticationStateHandlerAdapter extends AuthenticationStateHa
             val user = successResponse.getUser();
             this.username = user.getLogin();
 
-            FunctionUtils.doIfNotNull(successResponse.getSessionToken(), value -> userAttributes.put("oktaSessionToken", CollectionUtils.wrapList(value)));
-            FunctionUtils.doIfNotNull(successResponse.getStatusString(), value -> userAttributes.put("oktaStatus", CollectionUtils.wrapList(value)));
-            FunctionUtils.doIfNotNull(successResponse.getType(), value -> userAttributes.put("oktaType", CollectionUtils.wrapList(value)));
-            FunctionUtils.doIfNotNull(successResponse.getExpiresAt(), value -> userAttributes.put("oktaExpiration", CollectionUtils.wrapList(value)));
-            FunctionUtils.doIfNotNull(successResponse.getRecoveryType(), value -> userAttributes.put("oktaRecoveryType", CollectionUtils.wrapList(value)));
+            FunctionUtils.doIfNotNull(successResponse.getSessionToken(), value -> userAttributes.put("oktaSessionToken", CollectionUtils.wrapList(value)), LOGGER);
+            FunctionUtils.doIfNotNull(successResponse.getStatusString(), value -> userAttributes.put("oktaStatus", CollectionUtils.wrapList(value)), LOGGER);
+            FunctionUtils.doIfNotNull(successResponse.getType(), value -> userAttributes.put("oktaType", CollectionUtils.wrapList(value)), LOGGER);
+            FunctionUtils.doIfNotNull(successResponse.getExpiresAt(), value -> userAttributes.put("oktaExpiration", CollectionUtils.wrapList(value)), LOGGER);
+            FunctionUtils.doIfNotNull(successResponse.getRecoveryType(), value -> userAttributes.put("oktaRecoveryType", CollectionUtils.wrapList(value)), LOGGER);
             
             user.getProfile().forEach((key, value) -> userAttributes.put(key, CollectionUtils.wrapList(value)));
         } else {

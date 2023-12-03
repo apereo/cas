@@ -45,7 +45,7 @@ public class OidcAccessTokenAuthenticator extends OAuth20AccessTokenAuthenticato
             val profile = super.buildUserProfile(tokenCredentials, callContext, accessToken);
             validateIdTokenIfAny(accessToken, profile);
             return profile;
-        });
+        }, LOGGER);
     }
 
     protected void validateIdTokenIfAny(final OAuth20AccessToken accessToken, final CommonProfile profile) throws Exception {

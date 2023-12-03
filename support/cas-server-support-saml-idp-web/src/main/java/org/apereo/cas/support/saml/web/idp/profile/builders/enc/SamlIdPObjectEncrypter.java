@@ -255,7 +255,7 @@ public class SamlIdPObjectEncrypter {
                 });
         }, e -> {
             throw new SamlException(e.getMessage(), e);
-        }).get();
+        }, LOGGER).get();
     }
 
     /**
@@ -283,7 +283,7 @@ public class SamlIdPObjectEncrypter {
                 });
         }, e -> {
             throw new IllegalArgumentException(e);
-        }).get();
+        }, LOGGER).get();
     }
 
     /**

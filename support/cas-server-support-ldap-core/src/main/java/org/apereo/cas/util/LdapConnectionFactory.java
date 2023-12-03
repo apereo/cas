@@ -60,7 +60,7 @@ public class LdapConnectionFactory implements Closeable {
             val response = operation.execute(new AddRequest(entry.getDn(), entry.getAttributes()));
             LOGGER.debug("Result code [{}], message: [{}]", response.getResultCode(), response.getDiagnosticMessage());
             return response.getResultCode() == ResultCode.SUCCESS;
-        }, e -> false).get();
+        }, e -> false, LOGGER).get();
     }
 
 
@@ -77,7 +77,7 @@ public class LdapConnectionFactory implements Closeable {
             val response = delete.execute(request);
             LOGGER.debug("Result code [{}], message: [{}]", response.getResultCode(), response.getDiagnosticMessage());
             return response.getResultCode() == ResultCode.SUCCESS;
-        }, e -> false).get();
+        }, e -> false, LOGGER).get();
     }
 
 
@@ -105,7 +105,7 @@ public class LdapConnectionFactory implements Closeable {
             val response = operation.execute(request);
             LOGGER.debug("Result code [{}], message: [{}]", response.getResultCode(), response.getDiagnosticMessage());
             return response.getResultCode() == ResultCode.SUCCESS;
-        }, e -> false).get();
+        }, e -> false, LOGGER).get();
     }
 
     /**

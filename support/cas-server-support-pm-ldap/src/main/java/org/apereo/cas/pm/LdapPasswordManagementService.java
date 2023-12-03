@@ -175,7 +175,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
                     return Boolean.FALSE;
                 }).toList();
             return results.stream().allMatch(result -> result);
-        }, e -> false).get();
+        }, e -> false, LOGGER).get();
     }
 
     /**

@@ -11,6 +11,7 @@ import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import com.google.common.base.Splitter;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -31,6 +32,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.PersonDirectory, module = "syncope")
 @AutoConfiguration
+@Slf4j
 public class SyncopePersonDirectoryConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.attribute-repository.syncope.url").isUrl();
 
@@ -53,7 +55,7 @@ public class SyncopePersonDirectoryConfiguration {
                     .map(domain -> {
                         val dao = new SyncopePersonAttributeDao(properties);
                         dao.setOrder(properties.getOrder());
-                        FunctionUtils.doIfNotNull(properties.getId(), id -> dao.setId(id));
+                        FunctionUtils.doIfNotNull(properties.getId(), id -> dao.setId(id), LOGGER);
                         return dao;
                     })
                     .toList();

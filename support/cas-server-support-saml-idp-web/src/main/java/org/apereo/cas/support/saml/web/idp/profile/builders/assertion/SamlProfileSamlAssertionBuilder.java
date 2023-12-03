@@ -95,7 +95,7 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
                     LOGGER.trace("Resolving entity id from SAML2 IdP metadata to determine issuer for [{}]", context.getRegisteredService().getName());
                     val entityDescriptor = Objects.requireNonNull(samlIdPMetadataResolver.resolveSingle(criteriaSet));
                     return entityDescriptor.getEntityID();
-                }))
+                }), LOGGER)
             .get();
 
         val id = '_' + String.valueOf(RandomUtils.nextLong());

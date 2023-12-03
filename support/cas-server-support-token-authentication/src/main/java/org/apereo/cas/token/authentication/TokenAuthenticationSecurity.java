@@ -97,8 +97,8 @@ public class TokenAuthenticationSecurity {
      */
     public JwtGenerator toGenerator() {
         val generator = new JwtGenerator();
-        FunctionUtils.doIfNotNull(securityConfiguration.getSignatureConfiguration(), generator::setSignatureConfiguration);
-        FunctionUtils.doIfNotNull(securityConfiguration.getEncryptionConfiguration(), generator::setEncryptionConfiguration);
+        FunctionUtils.doIfNotNull(securityConfiguration.getSignatureConfiguration(), generator::setSignatureConfiguration, LOGGER);
+        FunctionUtils.doIfNotNull(securityConfiguration.getEncryptionConfiguration(), generator::setEncryptionConfiguration, LOGGER);
         return generator;
     }
 
@@ -109,8 +109,8 @@ public class TokenAuthenticationSecurity {
      */
     public JwtAuthenticator toAuthenticator() {
         val authn = new JwtAuthenticator();
-        FunctionUtils.doIfNotNull(securityConfiguration.getEncryptionConfiguration(), authn::setEncryptionConfiguration);
-        FunctionUtils.doIfNotNull(securityConfiguration.getSignatureConfiguration(), authn::setSignatureConfiguration);
+        FunctionUtils.doIfNotNull(securityConfiguration.getEncryptionConfiguration(), authn::setEncryptionConfiguration, LOGGER);
+        FunctionUtils.doIfNotNull(securityConfiguration.getSignatureConfiguration(), authn::setSignatureConfiguration, LOGGER);
         return authn;
     }
 

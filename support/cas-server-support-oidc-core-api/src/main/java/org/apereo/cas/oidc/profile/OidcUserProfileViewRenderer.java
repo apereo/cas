@@ -66,7 +66,7 @@ public class OidcUserProfileViewRenderer extends OAuth20DefaultUserProfileViewRe
                 return signAndEncryptUserProfileClaims(userProfile, response, registeredService);
             }
             return buildPlainUserProfileClaims(userProfile, response, registeredService);
-        }, e -> ResponseEntity.badRequest().body("Unable to produce user profile claims")).get();
+        }, e -> ResponseEntity.badRequest().body("Unable to produce user profile claims"), LOGGER).get();
     }
 
     protected ResponseEntity<String> buildPlainUserProfileClaims(final Map<String, Object> userProfile,

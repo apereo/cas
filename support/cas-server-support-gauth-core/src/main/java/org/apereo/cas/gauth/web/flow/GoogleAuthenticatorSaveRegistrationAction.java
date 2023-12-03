@@ -51,7 +51,7 @@ public class GoogleAuthenticatorSaveRegistrationAction extends OneTimeTokenAccou
             }
             LOGGER.warn("Unable to authorize given token [{}] for account [{}]", token, account);
             return false;
-        }, e -> false)
+        }, e -> false, LOGGER)
         .apply(account);
     }
 

@@ -87,7 +87,7 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
                 + "This is likely due to a permission issue", metadataBackupDirectory);
             LOGGER.debug(e.getMessage(), e);
             return metadataBackupDirectory;
-        }).accept(metadataBackupDirectory);
+        }, LOGGER).accept(metadataBackupDirectory);
     }
 
     @Audit(action = AuditableActions.SAML2_METADATA_RESOLUTION,

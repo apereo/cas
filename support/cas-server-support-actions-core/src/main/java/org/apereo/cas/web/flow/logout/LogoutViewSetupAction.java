@@ -10,6 +10,7 @@ import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.cas.web.view.DynamicHtmlView;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -20,6 +21,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Slf4j
 public class LogoutViewSetupAction extends AbstractLogoutAction {
 
     /**
@@ -49,8 +51,8 @@ public class LogoutViewSetupAction extends AbstractLogoutAction {
         val continuation = (SingleLogoutContinuation) request.getAttribute(SingleLogoutContinuation.class.getName());
         FunctionUtils.doIfNotNull(continuation, __ -> {
             context.getFlowScope().put(FLOW_SCOPE_ATTRIBUTE_PROCEED, Boolean.TRUE);
-            FunctionUtils.doIfNotBlank(continuation.getContent(), cnt -> context.getFlowScope().put(DynamicHtmlView.class.getName(), cnt));
-        });
+            FunctionUtils.doIfNotBlank(continuation.getContent(), cnt -> context.getFlowScope().put(DynamicHtmlView.class.getName(), cnt), LOGGER);
+        }, LOGGER);
         return null;
     }
 }

@@ -109,7 +109,7 @@ public class WsFederationHelper {
                     Unchecked.supplier(() -> {
                         LOGGER.debug("Extracting a keypair from the private key");
                         return converter.getKeyPair((PEMKeyPair) privateKeyPemObject);
-                    }))
+                    }), LOGGER)
                 .apply(privateKeyPemObject);
 
             val certParser = new X509CertParser();
@@ -348,7 +348,7 @@ public class WsFederationHelper {
                 LOGGER.error("Could not extract or decrypt an assertion based on the security token provided");
                 return null;
             },
-            () -> securityTokenFromAssertion);
+            () -> securityTokenFromAssertion, LOGGER);
 
         return func.apply(securityTokenFromAssertion);
     }

@@ -127,7 +127,7 @@ public class LdapAuthenticationConfiguration {
 
             @Override
             public void destroy() {
-                FunctionUtils.doIfNotNull(endpointLdapAuthenticationProvider, EndpointLdapAuthenticationProvider::destroy);
+                FunctionUtils.doIfNotNull(endpointLdapAuthenticationProvider, EndpointLdapAuthenticationProvider::destroy, LOGGER);
             }
 
             @Override

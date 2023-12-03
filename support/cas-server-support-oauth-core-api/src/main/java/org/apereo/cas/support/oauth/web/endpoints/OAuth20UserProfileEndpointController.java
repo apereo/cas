@@ -78,7 +78,7 @@ public class OAuth20UserProfileEndpointController<T extends OAuth20Configuration
         val accessTokenTicket = FunctionUtils.doAndHandle(() -> {
             val state = getConfigurationContext().getTicketRegistry().getTicket(decodedAccessTokenId, OAuth20AccessToken.class);
             return state == null || state.isExpired() ? null : state;
-        });
+        }, LOGGER);
         if (accessTokenTicket == null || accessTokenTicket.isExpired()) {
             LOGGER.error("Access token [{}] cannot be found in the ticket registry or has expired.", decodedAccessTokenId);
             return buildUnauthorizedResponseEntity(OAuth20Constants.EXPIRED_ACCESS_TOKEN);
@@ -98,7 +98,7 @@ public class OAuth20UserProfileEndpointController<T extends OAuth20Configuration
             val map = getConfigurationContext().getUserProfileDataCreator().createFrom(accessTokenTicket, context);
             return getConfigurationContext().getUserProfileViewRenderer().render(map, accessTokenTicket, response);
         },
-            e -> buildUnauthorizedResponseEntity(OAuth20Constants.INVALID_REQUEST)).get();
+            e -> buildUnauthorizedResponseEntity(OAuth20Constants.INVALID_REQUEST), LOGGER).get();
     }
 
     protected void validateAccessToken(final String accessTokenId, final OAuth20AccessToken accessToken,
