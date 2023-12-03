@@ -41,6 +41,8 @@ import com.yubico.webauthn.attestation.AttestationTrustSource;
 import com.yubico.webauthn.data.COSEAlgorithmIdentifier;
 import com.yubico.webauthn.data.PublicKeyCredentialParameters;
 import com.yubico.webauthn.data.PublicKeyCredentialType;
+import com.yubico.webauthn.data.RelyingPartyIdentity;
+import com.yubico.webauthn.data.UserIdentity;
 import com.yubico.webauthn.data.UserVerificationRequirement;
 import com.yubico.webauthn.extension.uvm.KeyProtectionType;
 import com.yubico.webauthn.extension.uvm.MatcherProtectionType;
@@ -94,6 +96,8 @@ public class WebAuthnRuntimeHints implements CasRuntimeHintsRegistrar {
             AuthenticatorStatus.class,
             AuthenticatorAttestationType.class,
             AttachmentHint.class,
+            RelyingPartyIdentity.class,
+            UserIdentity.class,
             UserVerificationMethod.class,
             UserVerificationRequirement.class,
             AlternativeDescriptions.class,
