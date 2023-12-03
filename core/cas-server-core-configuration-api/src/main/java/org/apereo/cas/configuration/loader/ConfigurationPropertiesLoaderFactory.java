@@ -2,13 +2,11 @@ package org.apereo.cas.configuration.loader;
 
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
