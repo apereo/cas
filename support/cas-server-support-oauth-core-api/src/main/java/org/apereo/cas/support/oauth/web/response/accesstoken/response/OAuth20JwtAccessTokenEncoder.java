@@ -50,21 +50,22 @@ public class OAuth20JwtAccessTokenEncoder implements CipherExecutor<String, Stri
     private final String issuer;
 
     /**
-     * Doing basic check that {@code JWTParser.parse} does to reduce logging of stack traces.
+     * Doing basic check that {@link JWTParser#parse} does to reduce logging of stack traces.
+     * Encrypted tokens can have five dot delimited sections and plain or signed tokens have three.
      * @param tokenId Possibly encoded token.
-     * @return true
+     * @return true/false
      */
     private boolean isPossiblyEncoded(final String tokenId) {
-        return tokenId.contains(".");
+        if (StringUtils.isBlank(tokenId)) {
+            LOGGER.warn("Blank access token provided to isPossiblyEncoded");
+            return false;
+        }
+        return tokenId.split("\\.").length >= 3;
     }
 
     @Override
     public String decode(final String tokenId, final Object[] parameters) {
         return FunctionUtils.doAndHandle(() -> {
-            if (StringUtils.isBlank(tokenId)) {
-                LOGGER.warn("No access token is provided to decode");
-                return null;
-            }
             if (!isPossiblyEncoded(tokenId)) {
                 LOGGER.trace("Token is not encoded, using as-is: [{}]", tokenId);
                 return tokenId;
