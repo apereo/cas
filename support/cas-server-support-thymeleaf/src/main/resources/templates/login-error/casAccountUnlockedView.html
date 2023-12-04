@@ -8,7 +8,7 @@
     </head>
 
     <body>
-        <main role="main" class="container mt-3 mb-3">
+        <main class="container mt-3 mb-3">
             <div layout:fragment="content" class="my-2 mdc-card card p-4 m-auto w-lg-66">
                 <h2 th:utext="#{screen.accountunlocked.heading}">Your account is unlocked.</h2>
                 <p th:each="message : ${flowRequestContext.messageContext.allMessages}" th:utext="${message.text}">Message Text</p>

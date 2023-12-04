@@ -10,10 +10,10 @@
 </head>
 
 <body id="cas">
-    <main role="main" class="container mt-3 mb-3">
+    <main class="container mt-3 mb-3">
         <div layout:fragment="content" id="login" class="mdc-card card p-4 m-auto w-lg-66">
             <p>The following devices are registered for <code th:text="${principal.id}"></code>:</p>
-            
+
             <div class="card-text">
                 <div th:each="device: ${registeredDevices}" class="border-bottom py-4">
                     <form th:name="${'form-' + device.id}" th:id="${'form-' + device.id}" method="post">
@@ -58,7 +58,7 @@
                 </button>
             </form>
             </p>
-            
+
         </div>
     </main>
 </body>

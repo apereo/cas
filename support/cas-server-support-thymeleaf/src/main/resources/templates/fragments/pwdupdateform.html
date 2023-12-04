@@ -11,7 +11,7 @@
 </head>
 
 <body>
-<main role="main" class="container mt-3 mb-3">
+<main class="container mt-3 mb-3">
     <div id="pwdmain" th:fragment="pwdupdateform">
         <script th:inline="javascript">
             /*<![CDATA[*/
@@ -182,7 +182,7 @@
 
         <p id="pwddesc" th:unless="${passwordManagementEnabled}"
            th:utext="${expiredPass} ? #{screen.expiredpass.message('https://pwd.example.org')} : #{screen.mustchangepass.message('https://pwd.example.org')}">Expired/Must Change Password text</p>
-        
+
     </div>
 </main>
 </body>

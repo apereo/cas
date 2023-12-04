@@ -11,7 +11,7 @@
 </head>
 
 <body>
-<main role="main" class="container mt-3 mb-3">
+<main class="container mt-3 mb-3">
     <div th:fragment="loginProviders" th:remove="tag" class="login-providers">
         <div th:if="${#bools.isFalse(delegatedAuthenticationDynamicProviderSelection)}">
             <script type="text/javascript">
@@ -148,7 +148,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <script type="text/javascript" th:inline="javascript">
                 /*<![CDATA[*/
 

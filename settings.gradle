@@ -29,8 +29,8 @@ buildCache {
 gradleEnterprise {
     server = 'https://develocity.apereo.org/'
     allowUntrustedServer = false
-    // accessKey = gradleEnterpriseAccessKey
     buildScan {
+        publishAlways()
         publishIfAuthenticated()
         capture {
             taskInputFiles = true
