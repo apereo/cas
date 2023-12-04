@@ -73,6 +73,7 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
             from "${buildDir}/resources/main", { into "WEB-INF/classes" }
             launchScript()
             duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+            notCompatibleWithConfigurationCache("BootJar is not supported by the Gradle configuration cache")
         }
 
         /*

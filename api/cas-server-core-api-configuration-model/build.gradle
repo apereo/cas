@@ -38,7 +38,7 @@ if (!skipConfigurationMetadata) {
                     "metadata for nested and indexed properties. The process starts with the build directory " +
                     "at [$buildDir] for the CAS configuration module at [$projectDir.canonicalPath].\n"
         }
-
+        notCompatibleWithConfigurationCache("Configuration metadata generation is not supported by the Gradle configuration cache")
         mainClass.set("org.apereo.cas.configuration.metadata.ConfigurationMetadataGenerator")
         classpath = sourceSets.main.compileClasspath + sourceSets.main.runtimeClasspath + sourceSets.configurationMetadata.runtimeClasspath
         args buildDir, projectDir.canonicalPath
