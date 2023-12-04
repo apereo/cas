@@ -15,7 +15,7 @@ ext {
 }
 
 tasks.named("bootJar") {
-    notCompatibleWithConfigurationCache("BootJar is not supported by the Gradle configuration cache")
+    notCompatibleWithConfigurationCache("bootJar is not supported by the Gradle configuration cache")
 }
 
 configurations {
@@ -186,6 +186,7 @@ graalvmNative {
 
 processAot {
     enabled = providers.systemProperty("skipAot").getOrElse("false") == "false"
+    notCompatibleWithConfigurationCache("processAot is not supported by the Gradle configuration cache")
 
     def list = []
     list.add("--add-opens")
@@ -214,7 +215,8 @@ processAot {
 
     def aotSpringActiveProfiles = providers.systemProperty("aotSpringActiveProfiles").getOrElse("native")
     logger.info "AOT processing spring active profile: ${aotSpringActiveProfiles}"
-    
+
+
     args(
         "--spring.profiles.active=${aotSpringActiveProfiles}",
         "--spring.main.lazy-initialization=false",
