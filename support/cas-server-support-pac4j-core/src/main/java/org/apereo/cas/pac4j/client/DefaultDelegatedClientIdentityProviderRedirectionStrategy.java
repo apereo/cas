@@ -62,28 +62,30 @@ public class DefaultDelegatedClientIdentityProviderRedirectionStrategy implement
             if (service != null) {
                 val registeredService = servicesManager.findServiceBy(service);
                 val delegatedPolicy = registeredService.getAccessStrategy().getDelegatedAuthenticationPolicy();
-                if (delegatedPolicy.isExclusiveToProvider(provider.getName())) {
-                    LOGGER.trace("Registered service [{}] is exclusively allowed to use provider [{}]", registeredService, provider);
-                    provider.setAutoRedirectType(DelegationAutoRedirectTypes.SERVER);
-                    return Optional.of(provider);
-                }
+                if (delegatedPolicy != null) {
+                    if (delegatedPolicy.isExclusiveToProvider(provider.getName())) {
+                        LOGGER.trace("Registered service [{}] is exclusively allowed to use provider [{}]", registeredService, provider);
+                        provider.setAutoRedirectType(DelegationAutoRedirectTypes.SERVER);
+                        return Optional.of(provider);
+                    }
 
-                if (StringUtils.isNotBlank(delegatedPolicy.getSelectionStrategy())) {
-                    return ApplicationContextProvider.getScriptResourceCacheManager()
-                        .map(Unchecked.function(cacheMgr -> {
-                            val strategy = SpringExpressionLanguageValueResolver.getInstance()
-                                .resolve(delegatedPolicy.getSelectionStrategy());
-                            val script = cacheMgr.resolveScriptableResource(strategy,
-                                String.valueOf(registeredService.getId()), registeredService.getName());
-                            val args = CollectionUtils.<String, Object>wrap("requestContext", context,
-                                "service", service, "registeredService", registeredService,
-                                "providers", providers, "applicationContext", applicationContext,
-                                "logger", LOGGER);
-                            script.setBinding(args);
-                            val result = script.execute(args.values().toArray(), DelegatedClientIdentityProviderConfiguration.class, false);
-                            return Optional.ofNullable(result);
-                        }))
-                        .orElseThrow(() -> new RuntimeException("No groovy script cache manager"));
+                    if (StringUtils.isNotBlank(delegatedPolicy.getSelectionStrategy())) {
+                        return ApplicationContextProvider.getScriptResourceCacheManager()
+                            .map(Unchecked.function(cacheMgr -> {
+                                val strategy = SpringExpressionLanguageValueResolver.getInstance()
+                                    .resolve(delegatedPolicy.getSelectionStrategy());
+                                val script = cacheMgr.resolveScriptableResource(strategy,
+                                    String.valueOf(registeredService.getId()), registeredService.getName());
+                                val args = CollectionUtils.<String, Object>wrap("requestContext", context,
+                                    "service", service, "registeredService", registeredService,
+                                    "providers", providers, "applicationContext", applicationContext,
+                                    "logger", LOGGER);
+                                script.setBinding(args);
+                                val result = script.execute(args.values().toArray(), DelegatedClientIdentityProviderConfiguration.class, false);
+                                return Optional.ofNullable(result);
+                            }))
+                            .orElseThrow(() -> new RuntimeException("No groovy script cache manager"));
+                    }
                 }
             }
 
