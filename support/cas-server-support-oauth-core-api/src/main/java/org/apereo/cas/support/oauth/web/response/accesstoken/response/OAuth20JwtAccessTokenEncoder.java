@@ -22,6 +22,8 @@ import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -50,7 +52,7 @@ public class OAuth20JwtAccessTokenEncoder implements CipherExecutor<String, Stri
     private final String issuer;
 
     /**
-     * Doing basic check that {@link JWTParser#parse} does to reduce logging of stack traces.
+     * Doing basic checks to reduce logged stack traces when {@link JWTParser#parse} throws {@link ParseException}.
      * Encrypted tokens can have five dot delimited sections and plain or signed tokens have three.
      * @param tokenId Possibly encoded token.
      * @return true/false
