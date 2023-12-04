@@ -17,7 +17,7 @@ test {
 
 tasks.named("bootJar") {
     enabled = !rootProject.skipBootifulArtifact
-    notCompatibleWithConfigurationCache("BootJar is not supported by the Gradle configuration cache")
+    notCompatibleWithConfigurationCache("bootJar is not supported by the Gradle configuration cache")
 }
 
 if (tasks.findByName("install") != null) {
