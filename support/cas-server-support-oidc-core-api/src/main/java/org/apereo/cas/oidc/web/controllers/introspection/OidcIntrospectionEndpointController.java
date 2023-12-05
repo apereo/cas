@@ -6,7 +6,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20IntrospectionEndpointController;
-import org.apereo.cas.support.oauth.web.response.introspection.success.OAuth20IntrospectionAccessTokenSuccessResponse;
+import org.apereo.cas.support.oauth.web.response.introspection.OAuth20IntrospectionAccessTokenResponse;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -89,7 +89,7 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
     
     @Override
     protected ResponseEntity buildIntrospectionEntityResponse(final WebContext context,
-                                                              final OAuth20IntrospectionAccessTokenSuccessResponse introspect) {
+                                                              final OAuth20IntrospectionAccessTokenResponse introspect) {
         val responseEntity = super.buildIntrospectionEntityResponse(context, introspect);
         return context.getRequestHeader("Accept")
             .filter(headerValue -> StringUtils.equalsAnyIgnoreCase(headerValue, OAuth20Constants.INTROSPECTION_JWT_HEADER_CONTENT_TYPE))
@@ -109,7 +109,7 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
     }
 
     protected ResponseEntity<String> buildPlainIntrospectionClaims(final WebContext context,
-                                                                   final OAuth20IntrospectionAccessTokenSuccessResponse introspect,
+                                                                   final OAuth20IntrospectionAccessTokenResponse introspect,
                                                                    final OAuthRegisteredService registeredService) throws Exception {
         val claims = convertIntrospectionIntoClaims(introspect, registeredService);
         val jwt = new PlainJWT(JWTClaimsSet.parse(claims.getClaimsMap()));
@@ -117,7 +117,7 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
         return buildResponseEntity(jwtRequest, registeredService);
     }
 
-    private JwtClaims convertIntrospectionIntoClaims(final OAuth20IntrospectionAccessTokenSuccessResponse introspect,
+    private JwtClaims convertIntrospectionIntoClaims(final OAuth20IntrospectionAccessTokenResponse introspect,
                                                      final OAuthRegisteredService registeredService) throws Exception {
         val signingAndEncryptionService = getConfigurationContext().getIntrospectionSigningAndEncryptionService();
         val claims = new JwtClaims();
@@ -130,7 +130,7 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
     }
 
     protected ResponseEntity<String> signAndEncryptIntrospection(final WebContext context,
-                                                                 final OAuth20IntrospectionAccessTokenSuccessResponse introspect,
+                                                                 final OAuth20IntrospectionAccessTokenResponse introspect,
                                                                  final OAuthRegisteredService registeredService) throws Throwable {
         val claims = convertIntrospectionIntoClaims(introspect, registeredService);
         LOGGER.debug("Collected introspection claims, before cipher operations, are [{}]", claims);

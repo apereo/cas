@@ -1,24 +1,27 @@
-package org.apereo.cas.support.oauth.web.response.introspection.success;
+package org.apereo.cas.support.oauth.web.response.introspection;
 
-import org.apereo.cas.support.oauth.web.response.introspection.BaseOAuth20IntrospectionAccessTokenResponse;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
+import lombok.experimental.Accessors;
 
 import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * This is {@link OAuth20IntrospectionAccessTokenSuccessResponse}.
+ * This is {@link OAuth20IntrospectionAccessTokenResponse}.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
  */
 @Getter
 @Setter
-public class OAuth20IntrospectionAccessTokenSuccessResponse extends BaseOAuth20IntrospectionAccessTokenResponse {
+@Accessors(chain = true)
+@ToString
+public class OAuth20IntrospectionAccessTokenResponse extends BaseOAuth20IntrospectionAccessTokenResponse {
     @Serial
     private static final long serialVersionUID = -7917281748569741345L;
 

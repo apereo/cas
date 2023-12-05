@@ -14,7 +14,3 @@ echo -e "Using encryption certificate:\n$IDP_ENCRYPTION_CERTIFICATE"
 chmod +x "${PWD}/ci/tests/saml2/run-saml-server.sh"
 "${PWD}/ci/tests/saml2/run-saml-server.sh"
 
-chmod +x "${PWD}/ci/tests/saml2/run-samlsp-server.sh"
-export AUTHN_CONTEXT="https://refeds.org/profile/mfa"
-"${PWD}/ci/tests/saml2/run-samlsp-server.sh"
-
