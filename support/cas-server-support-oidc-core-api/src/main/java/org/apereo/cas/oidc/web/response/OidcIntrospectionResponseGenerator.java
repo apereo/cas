@@ -30,6 +30,7 @@ public class OidcIntrospectionResponseGenerator extends OAuth20DefaultIntrospect
     @Override
     protected OAuth20IntrospectionAccessTokenResponse collectIntrospectionDetails(final OAuth20IntrospectionAccessTokenResponse response,
                                                                                   final OAuth20Token accessToken) {
+        super.collectIntrospectionDetails(response, accessToken);
         Optional.ofNullable(accessToken.getService()).ifPresent(service -> {
             val registeredService = oidcConfigurationContext.getObject().getServicesManager().findServiceBy(service, OidcRegisteredService.class);
             response.setIss(oidcConfigurationContext.getObject().getIssuerService().determineIssuer(Optional.ofNullable(registeredService)));

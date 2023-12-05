@@ -20,7 +20,6 @@ import org.apereo.cas.support.wsfederation.attributes.WsFederationAttributeMutat
 import org.apereo.cas.support.wsfederation.authentication.handler.support.WsFederationAuthenticationHandler;
 import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredentialsToPrincipalResolver;
 import org.apereo.cas.support.wsfederation.web.WsFederationCookieCipherExecutor;
-import org.apereo.cas.support.wsfederation.web.WsFederationCookieGenerator;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -29,6 +28,8 @@ import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.web.support.CookieUtils;
+import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.mgmr.DefaultCasCookieValueManager;
 import org.apereo.cas.web.support.mgmr.DefaultCookieSameSitePolicy;
 import lombok.extern.slf4j.Slf4j;
@@ -109,8 +110,9 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
             val cookie = wsfed.getCookie();
             val cipher = getCipherExecutorForWsFederationConfig(cookie);
             val geoLocationService = applicationContext.getBeanProvider(GeoLocationService.class);
-            return new WsFederationCookieGenerator(new DefaultCasCookieValueManager(cipher, geoLocationService,
-                DefaultCookieSameSitePolicy.INSTANCE, cookie), cookie);
+            val valueManager = new DefaultCasCookieValueManager(cipher, geoLocationService,
+                DefaultCookieSameSitePolicy.INSTANCE, cookie);
+            return new CookieRetrievingCookieGenerator(CookieUtils.buildCookieGenerationContext(cookie), valueManager);
         }
 
         private static CipherExecutor getCipherExecutorForWsFederationConfig(final WsFederationDelegatedCookieProperties cookie) {

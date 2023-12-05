@@ -98,8 +98,7 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
                     getConfigurationContext().getServicesManager(), introspect.getClientId());
                 val signingAndEncryptionService = getConfigurationContext().getIntrospectionSigningAndEncryptionService();
                 return FunctionUtils.doAndHandle(() -> {
-                    if (signingAndEncryptionService.shouldSignToken(registeredService)
-                        || signingAndEncryptionService.shouldEncryptToken(registeredService)) {
+                    if (signingAndEncryptionService.shouldSignToken(registeredService) || signingAndEncryptionService.shouldEncryptToken(registeredService)) {
                         return signAndEncryptIntrospection(context, introspect, registeredService);
                     }
                     return buildPlainIntrospectionClaims(context, introspect, registeredService);

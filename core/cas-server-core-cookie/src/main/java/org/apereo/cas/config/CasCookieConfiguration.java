@@ -11,8 +11,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.cookie.CookieValueManager;
 import org.apereo.cas.web.support.CookieUtils;
-import org.apereo.cas.web.support.gen.TicketGrantingCookieRetrievingCookieGenerator;
-import org.apereo.cas.web.support.gen.WarningCookieRetrievingCookieGenerator;
+import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.mgmr.DefaultCasCookieValueManager;
 import org.apereo.cas.web.support.mgmr.DefaultCookieSameSitePolicy;
 
@@ -44,7 +43,7 @@ public class CasCookieConfiguration {
     @Configuration(value = "CasCookieCoreConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCookieCoreConfiguration {
-        @ConditionalOnMissingBean(name = "cookieValueManager")
+        @ConditionalOnMissingBean(name = CookieValueManager.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CookieValueManager cookieValueManager(
@@ -90,7 +89,7 @@ public class CasCookieConfiguration {
         @ConditionalOnMissingBean(name = "warnCookieGenerator")
         public CasCookieBuilder warnCookieGenerator(final CasConfigurationProperties casProperties) {
             val props = casProperties.getWarningCookie();
-            return new WarningCookieRetrievingCookieGenerator(CookieUtils.buildCookieGenerationContext(props));
+            return new CookieRetrievingCookieGenerator(CookieUtils.buildCookieGenerationContext(props));
         }
 
         @ConditionalOnMissingBean(name = CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
@@ -98,9 +97,9 @@ public class CasCookieConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasCookieBuilder ticketGrantingTicketCookieGenerator(
             final CasConfigurationProperties casProperties,
-            @Qualifier("cookieValueManager") final CookieValueManager cookieValueManager) {
+            @Qualifier(CookieValueManager.BEAN_NAME) final CookieValueManager cookieValueManager) {
             val context = CookieUtils.buildCookieGenerationContext(casProperties.getTgc());
-            return new TicketGrantingCookieRetrievingCookieGenerator(context, cookieValueManager);
+            return new CookieRetrievingCookieGenerator(context, cookieValueManager);
         }
     }
 
