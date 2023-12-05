@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.io.Serial;
 import java.io.Serializable;
 import java.net.InetAddress;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -29,6 +30,8 @@ import java.util.Objects;
 public class ClientInfo implements Serializable {
     @Serial
     private static final long serialVersionUID = 7492721606084356617L;
+
+    private static final String UNKNOWN = "unknown";
 
     /**
      * IP Address of the client (Remote).
@@ -71,7 +74,7 @@ public class ClientInfo implements Serializable {
      * @return the server ip address
      */
     public String getServerIpAddress() {
-        return Objects.requireNonNullElse(this.serverIpAddress, "unknown");
+        return Objects.requireNonNullElse(this.serverIpAddress, UNKNOWN);
     }
 
     /**
@@ -80,7 +83,7 @@ public class ClientInfo implements Serializable {
      * @return the client ip address
      */
     public String getClientIpAddress() {
-        return Objects.requireNonNullElse(this.clientIpAddress, "unknown");
+        return Objects.requireNonNullElse(this.clientIpAddress, UNKNOWN);
     }
 
     /**
@@ -89,7 +92,7 @@ public class ClientInfo implements Serializable {
      * @return the geo location
      */
     public String getGeoLocation() {
-        return Objects.requireNonNullElse(geoLocation, "unknown");
+        return Objects.requireNonNullElse(geoLocation, UNKNOWN);
     }
 
     /**
@@ -98,7 +101,7 @@ public class ClientInfo implements Serializable {
      * @return the user agent
      */
     public String getUserAgent() {
-        return Objects.requireNonNullElse(userAgent, "unknown");
+        return Objects.requireNonNullElse(userAgent, UNKNOWN);
     }
 
     /**
@@ -240,64 +243,59 @@ public class ClientInfo implements Serializable {
      * @return the client info
      */
     public static ClientInfo from(final HttpServletRequest request) {
-        return ClientInfo.from(request, null, null, false);
+        return ClientInfo.from(request, ClientInfoExtractionOptions.builder().build());
     }
 
     /**
      * Build client info.
      *
-     * @param request                       the request
-     * @param alternateServerAddrHeaderName the alternate server addr header name
-     * @param alternateLocalAddrHeaderName  the alternate local addr header name
-     * @param useServerHostAddress          the use server host address
+     * @param request the request
+     * @param options the options
      * @return the client info
      */
-    public static ClientInfo from(final HttpServletRequest request,
-                                  final String alternateServerAddrHeaderName,
-                                  final String alternateLocalAddrHeaderName,
-                                  final boolean useServerHostAddress) {
+    public static ClientInfo from(final HttpServletRequest request, final ClientInfoExtractionOptions options) {
         val locale = request != null ? request.getLocale() : Locale.getDefault();
         val headers = new HashMap<String, String>();
 
         if (request != null) {
-            val headerNames = request.getHeaderNames();
-            while (headerNames.hasMoreElements()) {
-                var headerName = headerNames.nextElement();
-                headers.put(headerName, request.getHeader(headerName));
-            }
+            val definedHeaders = options.getHttpRequestHeaders();
+            Collections.list(request.getHeaderNames())
+                .stream()
+                .filter(headerName -> definedHeaders.contains("*") || definedHeaders.contains(headerName))
+                .forEach(headerName -> headers.put(headerName, request.getHeader(headerName)));
         }
 
         var serverIpAddress = request != null ? request.getLocalAddr() : null;
         var clientIpAddress = request != null ? request.getRemoteAddr() : null;
 
-        var geoLocation = "unknown";
-        var userAgent = "unknown";
+        var geoLocation = UNKNOWN;
+        var userAgent = UNKNOWN;
 
         if (request != null) {
-            if (useServerHostAddress) {
+            if (options.isUseServerHostAddress()) {
                 serverIpAddress = Unchecked.supplier(() -> InetAddress.getLocalHost().getHostAddress()).get();
-            } else if (alternateServerAddrHeaderName != null && !alternateServerAddrHeaderName.isEmpty()) {
-                serverIpAddress = request.getHeader(alternateServerAddrHeaderName) != null
-                    ? request.getHeader(alternateServerAddrHeaderName) : request.getLocalAddr();
+            } else if (options.getAlternateServerAddrHeaderName() != null && !options.getAlternateServerAddrHeaderName().isEmpty()) {
+                serverIpAddress = request.getHeader(options.getAlternateServerAddrHeaderName()) != null
+                    ? request.getHeader(options.getAlternateServerAddrHeaderName()) : request.getLocalAddr();
             }
 
-            if (alternateLocalAddrHeaderName != null && !alternateLocalAddrHeaderName.isEmpty()) {
-                clientIpAddress = request.getHeader(alternateLocalAddrHeaderName) != null
-                    ? request.getHeader(alternateLocalAddrHeaderName)
+            if (options.getAlternateLocalAddrHeaderName() != null && !options.getAlternateLocalAddrHeaderName().isEmpty()) {
+                clientIpAddress = request.getHeader(options.getAlternateLocalAddrHeaderName()) != null
+                    ? request.getHeader(options.getAlternateLocalAddrHeaderName())
                     : request.getRemoteAddr();
             }
             val header = request.getHeader("user-agent");
-            userAgent = header == null ? "unknown" : header;
+            userAgent = header == null ? UNKNOWN : header;
 
             var geo = request.getParameter("geolocation");
             if (geo == null) {
                 geo = request.getHeader("geolocation");
             }
-            geoLocation = geo == null ? "unknown" : geo;
+            geoLocation = geo == null ? UNKNOWN : geo;
         }
 
-        val serverIp = serverIpAddress == null ? "unknown" : serverIpAddress;
-        val clientIp = clientIpAddress == null ? "unknown" : clientIpAddress;
+        val serverIp = serverIpAddress == null ? UNKNOWN : serverIpAddress;
+        val clientIp = clientIpAddress == null ? UNKNOWN : clientIpAddress;
 
         return ClientInfo
             .empty()
