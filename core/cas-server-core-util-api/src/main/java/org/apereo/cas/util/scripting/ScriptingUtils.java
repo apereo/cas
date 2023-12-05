@@ -57,10 +57,18 @@ public class ScriptingUtils {
         }
         val imports = new ImportCustomizer();
         imports.addStarImports("java.time", "java.util", "java.io",
-            "java.math", "java.beans", "java.net", "java.nio", "org.slf4j", "org.apereo.cas",
-            "org.apereo.cas.authentication", "org.apereo.cas.authentication.principal",
-            "org.apereo.cas.util", "org.apereo.cas.web.support", "org.springframework.webflow",
-            "org.springframework.core.io", "jakarta.servlet.http", "org.apereo.cas.authentication.mfa");
+            "java.math", "java.beans", "java.net", "java.nio",
+            "groovy.json", "groovy.text", "groovy.util", "groovy.lang", "groovy.transform",
+            "org.slf4j",
+            "jakarta.servlet.http",
+            "org.springframework.core.io",
+            "org.springframework.webflow",
+            "org.apereo.cas",
+            "org.apereo.cas.authentication",
+            "org.apereo.cas.authentication.principal",
+            "org.apereo.cas.util",
+            "org.apereo.cas.web.support",
+            "org.apereo.cas.authentication.mfa");
 
         GROOVY_COMPILER_CONFIG.addCompilationCustomizers(imports);
     }
