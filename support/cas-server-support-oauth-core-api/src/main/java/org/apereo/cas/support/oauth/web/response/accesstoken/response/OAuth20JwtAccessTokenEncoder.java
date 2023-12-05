@@ -52,30 +52,28 @@ public class OAuth20JwtAccessTokenEncoder implements CipherExecutor<String, Stri
     private final String issuer;
 
     /**
+     * Decode a JWT token or return an opaque token as-is.
+     * Avoid logging stack trace if JWT parsing fails.
+     * @param tokenId    encrypted value
+     * @param parameters the parameters
+     * @return the decoded value.
      * Doing basic checks to reduce logged stack traces when {@link JWTParser#parse} throws {@link ParseException}.
      * Encrypted tokens can have five dot delimited sections and plain or signed tokens have three.
-     * @param tokenId Possibly encoded token.
-     * @return true/false
      */
-    private boolean isPossiblyEncoded(final String tokenId) {
-        if (StringUtils.isBlank(tokenId)) {
-            LOGGER.warn("Blank access token provided to isPossiblyEncoded");
-            return false;
-        }
-        return tokenId.split("\\.").length >= 3;
-    }
-
     @Override
     public String decode(final String tokenId, final Object[] parameters) {
-        return FunctionUtils.doAndHandle(() -> {
-            if (!isPossiblyEncoded(tokenId)) {
-                LOGGER.trace("Token is not encoded, using as-is: [{}]", tokenId);
-                return tokenId;
-            }
+        if (StringUtils.isBlank(tokenId)) {
+            LOGGER.warn("No access token is provided to decode");
+            return tokenId;
+        }
+        try {
             val header = JWTParser.parse(tokenId).getHeader();
             val claims = accessTokenJwtBuilder.unpack(Optional.ofNullable(resolveRegisteredService(header)), tokenId);
             return claims.getJWTID();
-        }, e -> tokenId).get();
+        } catch (final ParseException e) {
+            LOGGER.trace("Token is not valid JWT, returning it as-is: [{}]", tokenId);
+            return tokenId;
+        }
     }
 
     @Override
