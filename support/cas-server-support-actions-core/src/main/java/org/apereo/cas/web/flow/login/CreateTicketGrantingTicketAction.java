@@ -134,7 +134,7 @@ public class CreateTicketGrantingTicketAction extends BaseCasWebflowAction {
         }
     }
 
-    private String determineTicketGrantingTicketId(final RequestContext context) {
+    protected String determineTicketGrantingTicketId(final RequestContext context) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         val ticketGrantingTicketId = configurationContext.getTicketGrantingTicketCookieGenerator().retrieveCookieValue(request);
         if (StringUtils.isBlank(ticketGrantingTicketId)) {
@@ -143,8 +143,8 @@ public class CreateTicketGrantingTicketAction extends BaseCasWebflowAction {
         return ticketGrantingTicketId;
     }
 
-    private boolean shouldIssueTicketGrantingTicket(final Authentication authentication,
-                                                    final String ticketGrantingTicket) throws Exception {
+    protected boolean shouldIssueTicketGrantingTicket(final Authentication authentication,
+                                                      final String ticketGrantingTicket) throws Exception {
         LOGGER.trace("Located ticket-granting ticket in the context. Retrieving associated authentication");
         val authenticationFromTgt = configurationContext.getTicketRegistrySupport().getAuthenticationFrom(ticketGrantingTicket);
 

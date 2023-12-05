@@ -18,6 +18,11 @@ import java.io.Serializable;
 public interface CookieValueManager extends Serializable {
 
     /**
+     * Default bean name.
+     */
+    String BEAN_NAME = "cookieValueManager";
+
+    /**
      * No op cookie value manager.
      *
      * @return the cookie value manager

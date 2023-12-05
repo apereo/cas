@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("GroovyAuthentication")
-@TestPropertySource(properties = "cas.authn.mfa.core.provider-selector-groovy-script.location=classpath:mfaGroovySelector.groovy")
+@TestPropertySource(properties = "cas.authn.mfa.core.provider-selection.provider-selector-groovy-script.location=classpath:mfaGroovySelector.groovy")
 class GroovyScriptMultifactorAuthenticationProviderSelectorTests extends BaseCasWebflowMultifactorAuthenticationTests {
 
     @Autowired

@@ -280,6 +280,15 @@
       }
     },
     {
+      "name": "cas.authn.mfa.core.provider-selection-enabled",
+      "type": "java.lang.Boolean",
+      "deprecation": {
+        "replacement": "cas.authn.mfa.core.provider-selection.provider-selection-enabled",
+        "reason": "provider-selection-enabled setting is moved into the cas.authn.mfa.core.provider-selection namespace.",
+        "level": "error"
+      }
+    },
+    {
       "name": "cas.authn.mfa.global-provider-id",
       "type": "java.lang.String",
       "deprecation": {

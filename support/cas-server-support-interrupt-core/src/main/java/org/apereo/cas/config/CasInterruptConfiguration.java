@@ -20,10 +20,10 @@ import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.util.spring.boot.ConditionalOnMissingGraalVMNativeImage;
-import org.apereo.cas.web.InterruptCookieRetrievingCookieGenerator;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.cookie.CookieValueManager;
 import org.apereo.cas.web.support.CookieUtils;
+import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.mgmr.DefaultCasCookieValueManager;
 import org.apereo.cas.web.support.mgmr.DefaultCookieSameSitePolicy;
 import lombok.extern.slf4j.Slf4j;
@@ -101,7 +101,7 @@ public class CasInterruptConfiguration {
         @ConditionalOnMissingBean(name = "interruptCookieGenerator")
         public CasCookieBuilder interruptCookieGenerator(final CasConfigurationProperties casProperties) {
             val props = casProperties.getInterrupt().getCookie();
-            return new InterruptCookieRetrievingCookieGenerator(CookieUtils.buildCookieGenerationContext(props));
+            return new CookieRetrievingCookieGenerator(CookieUtils.buildCookieGenerationContext(props));
         }
 
         @Bean

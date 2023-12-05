@@ -29,7 +29,7 @@
     "--cas.authn.mfa.gauth.crypto.enabled=false",
     "--cas.authn.mfa.gauth.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/gauth.json",
 
-    "--cas.authn.mfa.core.provider-selection-enabled=true",
+    "--cas.authn.mfa.core.provider-selection.provider-selection-enabled=true",
 
     "--cas.authn.mfa.simple.mail.html=false",
     "--cas.authn.mfa.simple.mail.from=cas@example.com",

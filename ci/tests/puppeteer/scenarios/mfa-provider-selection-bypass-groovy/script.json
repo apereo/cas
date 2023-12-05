@@ -18,7 +18,7 @@
     "--cas.authn.mfa.gauth.bypass.groovy.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/bypass.groovy",
 
     "--cas.authn.mfa.triggers.global.global-provider-id=mfa-gauth,mfa-yubikey",
-    "--cas.authn.mfa.core.provider-selection-enabled=true"
+    "--cas.authn.mfa.core.provider-selection.provider-selection-enabled=true"
   ]
 }
 

@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebflowEvents")
 @Import(RankedMultifactorAuthenticationProviderWebflowEventResolverWithCompositeTests.MultifactorTestConfiguration.class)
 @TestPropertySource(properties = {
-    "cas.authn.mfa.core.provider-selection-enabled=true",
+    "cas.authn.mfa.core.provider-selection.provider-selection-enabled=true",
     "cas.authn.mfa.triggers.global.global-provider-id=mfa-dummy1,mfa-dummy2"
 })
 class RankedMultifactorAuthenticationProviderWebflowEventResolverWithCompositeTests
