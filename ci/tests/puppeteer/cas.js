@@ -129,7 +129,7 @@ exports.innerHTML = async (page, selector) => {
 
 exports.innerText = async (page, selector) => {
     let text = await page.$eval(selector, el => el.innerText.trim());
-    await this.log(`Text for selector [${selector}] is: [${text}]`);
+    await this.log(`Text for selector [${selector}] is: ${text}`);
     return text;
 };
 
@@ -208,6 +208,7 @@ exports.fetchGoogleAuthenticatorScratchCode = async (user = "casuser") => {
         });
     return JSON.stringify(JSON.parse(response)[0].scratchCodes[0]);
 };
+
 exports.isVisible = async (page, selector) => {
     let element = await page.$(selector);
     let result = (element != null && await element.boundingBox() != null);
@@ -225,7 +226,6 @@ exports.assertInvisibility = async (page, selector) => {
     await this.log(`Checking element invisibility for ${selector} while on page ${page.url()}: ${result}`);
     assert(result);
 };
-
 
 exports.assertCookie = async (page, cookieMustBePresent = true, cookieName = "TGC") => {
     const cookies = (await page.cookies()).filter(c => {
@@ -293,7 +293,7 @@ exports.newPage = async (browser) => {
         this.logr(e);
         await this.sleep(1000);
     }
-    
+
     if (page === undefined) {
         let counter = 0;
         while (page === undefined && counter < 5) {
@@ -315,7 +315,7 @@ exports.newPage = async (browser) => {
         await this.logr(err);
         throw err;
     }
-    
+
     await page.bringToFront();
     page
         .on('console', message => {

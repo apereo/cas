@@ -1,6 +1,8 @@
 {
   "dependencies": "passwordless-webflow,pac4j-webflow",
-
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
@@ -9,16 +11,17 @@
     "--cas.authn.passwordless.accounts.groovy.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/account-store.groovy",
     "--cas.authn.passwordless.core.delegated-authentication-selector-script.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/delegate-idp-selector.groovy",
 
-    "--cas.authn.pac4j.cas[0].login-url=https://httpbin.org/anything/cas1",
+    "--cas.authn.pac4j.cas[0].login-url=https://localhost:9859/anything/cas1",
     "--cas.authn.pac4j.cas[0].protocol=CAS30",
     "--cas.authn.pac4j.cas[0].client-name=CasClient1",
 
-    "--cas.authn.pac4j.cas[1].login-url=https://httpbin.org/anything/cas2",
+    "--cas.authn.pac4j.cas[1].login-url=https://localhost:9859/anything/cas2",
     "--cas.authn.pac4j.cas[1].protocol=CAS30",
     "--cas.authn.pac4j.cas[1].client-name=CasClient2",
 
-    "--cas.authn.pac4j.cas[2].login-url=https://httpbin.org/anything/cas3",
+    "--cas.authn.pac4j.cas[2].login-url=https://localhost:9859/anything/cas3",
     "--cas.authn.pac4j.cas[2].protocol=CAS30",
     "--cas.authn.pac4j.cas[2].client-name=CasClient3"
-  ]
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }

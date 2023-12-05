@@ -1,0 +1,43 @@
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apereo.cas.$recipeName
+displayName: Upgrade CAS to version $casVersion
+recipeList:
+  - org.openrewrite.gradle.AddProperty:
+      key: cas.version
+      value: $casVersion
+      overwrite: true
+      filePattern: 'gradle.properties'
+  - org.openrewrite.gradle.AddProperty:
+      key: version
+      value: $casVersion
+      overwrite: true
+      filePattern: 'gradle.properties'
+  - org.openrewrite.gradle.AddProperty:
+      key: sourceCompatibility
+      value: $javaVersion
+      overwrite: true
+      filePattern: 'gradle.properties'
+  - org.openrewrite.gradle.AddProperty:
+      key: targetCompatibility
+      value: $javaVersion
+      overwrite: true
+      filePattern: 'gradle.properties'
+  - org.openrewrite.gradle.AddProperty:
+      key: springBootVersion
+      value: $springBootVersion
+      overwrite: true
+      filePattern: 'gradle.properties'
+  - org.openrewrite.gradle.UpdateGradleWrapper:
+      version: $gradleVersion
+      addIfMissing: true
+  - org.openrewrite.gradle.AddProperty:
+      key: tomcatVersion
+      value: $tomcatVersion
+      overwrite: false
+      filePattern: 'gradle.properties'
+  - org.openrewrite.gradle.AddProperty:
+      key: jibVersion
+      value: $jibVersion
+      overwrite: true
+      filePattern: 'gradle.properties'

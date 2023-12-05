@@ -5,6 +5,7 @@ import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.attribute.AttributeDefinition;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
@@ -49,8 +50,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This is {@link OidcIdTokenGeneratorService}.
@@ -122,16 +125,15 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         claims.setNotBeforeMinutesInThePast((float) Beans.newDuration(oidc.getCore().getSkew()).toMinutes());
         claims.setSubject(principal.getId());
 
-        val attributes = authentication.getAttributes();
-
         buildAuthenticationContextClassRef(claims, authentication);
 
-        if (attributes.containsKey(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS)) {
-            val val = CollectionUtils.toCollection(attributes.get(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS));
-            LOGGER.debug("ID token amr claim calculated as [{}]", val);
-            claims.setStringListClaim(OidcConstants.AMR, val.toArray(ArrayUtils.EMPTY_STRING_ARRAY));
+        val amrValues = buildAuthenticationMethods(authentication);
+        if (!amrValues.isEmpty()) {
+            LOGGER.debug("ID token amr claim calculated as [{}]", amrValues);
+            claims.setStringListClaim(OidcConstants.AMR, amrValues.toArray(ArrayUtils.EMPTY_STRING_ARRAY));
         }
 
+        val attributes = authentication.getAttributes();
         claims.setStringClaim(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
         claims.setClaim(OidcConstants.CLAIM_AUTH_TIME, tgt.getAuthentication().getAuthenticationDate().toEpochSecond());
 
@@ -249,6 +251,10 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
             handleMappedClaimOrDefault(OidcConstants.CLAIM_PREFERRED_USERNAME,
                 registeredService, principal, claims, principal.getId());
         }
+        
+        val collectors = new ArrayList<>(getConfigurationContext().getIdTokenClaimCollectors());
+        AnnotationAwareOrderComparator.sortIfNecessary(collectors);
+        collectors.forEach(collector -> collector.conclude(claims));
     }
 
     private boolean isClaimSupportedForRelease(final String claimName, final RegisteredService registeredService) {
@@ -282,7 +288,6 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         val collectors = new ArrayList<>(getConfigurationContext().getIdTokenClaimCollectors());
         AnnotationAwareOrderComparator.sortIfNecessary(collectors);
         collectors.forEach(collector -> collector.collect(claims, claimName, collectionValues));
-
     }
 
     protected String getJwtId(final TicketGrantingTicket tgt) {
@@ -334,6 +339,16 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
             .build()
             .generate();
         claims.setClaim(OidcConstants.CLAIM_AT_HASH, hash);
+    }
+
+    protected Set<Object> buildAuthenticationMethods(final Authentication authentication) {
+        val allAttributes = new HashMap<>(authentication.getAttributes());
+        allAttributes.putAll(authentication.getPrincipal().getAttributes());
+        return Stream.of(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS, AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE)
+            .filter(allAttributes::containsKey)
+            .map(name -> CollectionUtils.toCollection(allAttributes.get(name)))
+            .findFirst()
+            .orElseGet(Set::of);
     }
 }
 

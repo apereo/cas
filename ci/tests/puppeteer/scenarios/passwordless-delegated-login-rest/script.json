@@ -1,0 +1,26 @@
+{
+  "dependencies": "passwordless-webflow,pac4j-webflow",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    "--cas.service-registry.core.init-from-json=true",
+
+    "--cas.authn.passwordless.accounts.rest.url=http://localhost:5432",
+
+    "--cas.authn.pac4j.cas[0].login-url=https://localhost:9859/anything/cas1",
+    "--cas.authn.pac4j.cas[0].protocol=CAS30",
+    "--cas.authn.pac4j.cas[0].client-name=CasClient1",
+
+    "--cas.authn.pac4j.cas[1].login-url=https://localhost:9859/anything/cas2",
+    "--cas.authn.pac4j.cas[1].protocol=CAS30",
+    "--cas.authn.pac4j.cas[1].client-name=CasClient2",
+
+    "--cas.authn.pac4j.cas[2].login-url=https://localhost:9859/anything/cas3",
+    "--cas.authn.pac4j.cas[2].protocol=CAS30",
+    "--cas.authn.pac4j.cas[2].client-name=CasClient3"
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+}

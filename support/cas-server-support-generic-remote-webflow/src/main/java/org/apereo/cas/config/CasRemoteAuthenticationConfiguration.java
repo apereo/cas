@@ -1,7 +1,8 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.adaptors.generic.remote.RemoteAddressAuthenticationHandler;
-import org.apereo.cas.adaptors.generic.remote.RemoteAddressNonInteractiveCredentialsAction;
+import org.apereo.cas.adaptors.generic.remote.RemoteAuthenticationCookieCipherExecutor;
+import org.apereo.cas.adaptors.generic.remote.RemoteCookieAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
@@ -11,14 +12,20 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.cipher.CipherExecutorUtils;
+import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.spring.beans.BeanCondition;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.RemoteAuthenticationNonInteractiveCredentialsAction;
 import org.apereo.cas.web.flow.RemoteAuthenticationWebflowConfigurer;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -52,10 +59,8 @@ public class CasRemoteAuthenticationConfiguration {
         public CasWebflowConfigurer remoteAuthenticationWebflowConfigurer(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
-            final FlowBuilderServices flowBuilderServices) {
+            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY) final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES) final FlowBuilderServices flowBuilderServices) {
             return new RemoteAuthenticationWebflowConfigurer(flowBuilderServices,
                 loginFlowDefinitionRegistry, applicationContext, casProperties);
         }
@@ -63,23 +68,23 @@ public class CasRemoteAuthenticationConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_REMOTE_AUTHENTICATION_ADDRESS_CHECK)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public Action remoteAddressCheck(
+        public Action remoteAuthenticationCheck(
+            final CasConfigurationProperties casProperties,
             @Qualifier("adaptiveAuthenticationPolicy")
             final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
             @Qualifier("serviceTicketRequestWebflowEventResolver")
             final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
             @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
             final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver) {
-            return new RemoteAddressNonInteractiveCredentialsAction(initialAuthenticationAttemptWebflowEventResolver,
-                serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy);
+            return new RemoteAuthenticationNonInteractiveCredentialsAction(initialAuthenticationAttemptWebflowEventResolver,
+                serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy, casProperties.getAuthn().getRemote());
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "remoteCasWebflowExecutionPlanConfigurer")
         public CasWebflowExecutionPlanConfigurer remoteCasWebflowExecutionPlanConfigurer(
-            @Qualifier("remoteAuthenticationWebflowConfigurer")
-            final CasWebflowConfigurer remoteAuthenticationWebflowConfigurer) {
+            @Qualifier("remoteAuthenticationWebflowConfigurer") final CasWebflowConfigurer remoteAuthenticationWebflowConfigurer) {
             return plan -> plan.registerWebflowConfigurer(remoteAuthenticationWebflowConfigurer);
         }
     }
@@ -89,18 +94,58 @@ public class CasRemoteAuthenticationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "remoteAddressAuthenticationHandler")
-        public AuthenticationHandler remoteAddressAuthenticationHandler(final CasConfigurationProperties casProperties,
-                                                                        @Qualifier("remoteAddressPrincipalFactory")
-                                                                        final PrincipalFactory remoteAddressPrincipalFactory,
-                                                                        @Qualifier(ServicesManager.BEAN_NAME)
-                                                                        final ServicesManager servicesManager) {
-            val remoteAddress = casProperties.getAuthn().getRemote();
-            val bean = new RemoteAddressAuthenticationHandler(remoteAddress.getName(),
-                servicesManager, remoteAddressPrincipalFactory, remoteAddress.getOrder());
-            bean.configureIpNetworkRange(remoteAddress.getIpAddressRange());
-            return bean;
+        public AuthenticationHandler remoteAddressAuthenticationHandler(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties,
+            @Qualifier("remoteAddressPrincipalFactory") final PrincipalFactory remoteAddressPrincipalFactory,
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
+            return BeanSupplier.of(AuthenticationHandler.class)
+                .when(BeanCondition.on("cas.authn.remote.ip-address-range")
+                    .given(applicationContext.getEnvironment()))
+                .supply(() -> {
+                    val remoteAddress = casProperties.getAuthn().getRemote();
+                    val bean = new RemoteAddressAuthenticationHandler(remoteAddress,
+                        servicesManager, remoteAddressPrincipalFactory);
+                    bean.configureIpNetworkRange(remoteAddress.getIpAddressRange());
+                    return bean;
+                })
+                .otherwiseProxy()
+                .get();
         }
 
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "remoteCookieAuthenticationHandler")
+        public AuthenticationHandler remoteCookieAuthenticationHandler(
+            @Qualifier("remoteCookieCipherExecutor")
+            final CipherExecutor remoteCookieCipherExecutor,
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties,
+            @Qualifier("remoteAddressPrincipalFactory") final PrincipalFactory remoteAddressPrincipalFactory,
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
+            return BeanSupplier.of(AuthenticationHandler.class)
+                .when(BeanCondition.on("cas.authn.remote.cookie.cookie-name")
+                    .given(applicationContext.getEnvironment()))
+                .supply(() -> {
+                    val remote = casProperties.getAuthn().getRemote();
+                    return new RemoteCookieAuthenticationHandler(remote, servicesManager,
+                        remoteAddressPrincipalFactory, remoteCookieCipherExecutor);
+                })
+                .otherwiseProxy()
+                .get();
+        }
+
+        @ConditionalOnMissingBean(name = "remoteCookieCipherExecutor")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public CipherExecutor remoteCookieCipherExecutor(final CasConfigurationProperties casProperties) {
+            val crypto = casProperties.getAuthn().getRemote().getCookie().getCrypto();
+            if (crypto.isEnabled() || (StringUtils.isNotBlank(crypto.getEncryption().getKey())
+                && StringUtils.isNotBlank(crypto.getSigning().getKey()))) {
+                return CipherExecutorUtils.newStringCipherExecutor(crypto, RemoteAuthenticationCookieCipherExecutor.class);
+            }
+            return CipherExecutor.noOp();
+        }
 
         @ConditionalOnMissingBean(name = "remoteAddressPrincipalFactory")
         @Bean
@@ -116,12 +161,15 @@ public class CasRemoteAuthenticationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlanConfigurer remoteAuthenticationEventExecutionPlanConfigurer(
-            @Qualifier("remoteAddressAuthenticationHandler")
-            final AuthenticationHandler remoteAddressAuthenticationHandler,
-            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
-            final PrincipalResolver defaultPrincipalResolver) {
-            return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(
-                remoteAddressAuthenticationHandler, defaultPrincipalResolver);
+            @Qualifier("remoteAddressAuthenticationHandler") final AuthenticationHandler remoteAddressAuthenticationHandler,
+            @Qualifier("remoteCookieAuthenticationHandler") final AuthenticationHandler remoteCookieAuthenticationHandler,
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER) final PrincipalResolver defaultPrincipalResolver) {
+            return plan -> {
+                plan.registerAuthenticationHandlerWithPrincipalResolver(
+                    remoteAddressAuthenticationHandler, defaultPrincipalResolver);
+                plan.registerAuthenticationHandlerWithPrincipalResolver(
+                    remoteCookieAuthenticationHandler, defaultPrincipalResolver);
+            };
         }
     }
 

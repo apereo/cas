@@ -36,6 +36,7 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -165,10 +166,11 @@ public class CasJdbcAuditConfiguration {
             return BeanSupplier.of(AuditTrailManager.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
-                    val jdbc = casProperties.getAudit().getJdbc();
-                    val manager = new JdbcAuditTrailManager(inspektrAuditTransactionTemplate);
+                    val manager = new JdbcAuditTrailManager(inspektrAuditTransactionTemplate,
+                        new JdbcTemplate(inspektrAuditTrailDataSource));
                     manager.setCleanupCriteria(auditCleanupCriteria);
-                    manager.setDataSource(inspektrAuditTrailDataSource);
+
+                    val jdbc = casProperties.getAudit().getJdbc();
                     manager.setAsynchronous(jdbc.isAsynchronous());
                     manager.setColumnLength(jdbc.getColumnLength());
                     manager.setTableName(getAuditTableNameFrom(jdbc));

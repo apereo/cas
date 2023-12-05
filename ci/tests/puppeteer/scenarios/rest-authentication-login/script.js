@@ -38,19 +38,28 @@ const auth = require('basic-auth');
     app.use(authenticate);
     
     let server = app.listen(5432, async () => {
-        await cas.log(`Listening...`);
+        let failed = false;
+        try {
+            await cas.log(`Listening...`);
 
-        const browser = await puppeteer.launch(cas.browserOptions());
-        const page = await cas.newPage(browser);
-        await cas.gotoLogin(page);
-        await cas.loginWith(page, "restapi", "YdCP05HvuhOH^*Z");
-        await cas.assertCookie(page);
+            const browser = await puppeteer.launch(cas.browserOptions());
+            const page = await cas.newPage(browser);
+            await cas.gotoLogin(page);
+            await cas.loginWith(page, "restapi", "YdCP05HvuhOH^*Z");
+            await cas.assertCookie(page);
 
-        server.close(() => {
-            cas.log('Exiting server...');
-            browser.close();
-        });
-        await process.exit(0);
+            server.close(() => {
+                cas.log('Exiting server...');
+                browser.close();
+            });
+        } catch (e) {
+            failed = true;
+            throw e;
+        } finally {
+            if (!failed) {
+                await process.exit(0);
+            }
+        }
     });
 
 })();

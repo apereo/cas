@@ -8,7 +8,7 @@
    </head>
 
    <body>
-      <main role="main" class="container mt-3 mb-3">
+      <main class="container mt-3 mb-3">
          <div layout:fragment="content" class="loginMessageView mdc-card card p-4 w-lg-66 m-auto">
             <h1 class="m-0" th:text="#{screen.authentication.warning}">Authentication Succeeded with Warnings</h1>
             <ul class="mdc-list">
@@ -26,7 +26,7 @@
                      <span class="mdc-button__label" th:text="#{screen.button.continue}">Continue</span>
                   </button>
                </form>
-               
+
                <form method="post" id="changePasswordForm" class="fm-v" th:action="@{/login}"
                   th:if="${passwordManagementEnabled} AND ${passwordExpirationWarningFound}">
                   <input type="hidden" name="execution" th:value="${flowExecutionKey}" />

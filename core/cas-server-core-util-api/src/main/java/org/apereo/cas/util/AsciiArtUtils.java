@@ -53,13 +53,15 @@ public class AsciiArtUtils {
     public static void printAsciiArtWarning(final Logger out, final String additional) {
         val ascii = """
 
-              ____ _____ ___  ____  _\s
-             / ___|_   _/ _ \\|  _ \\| |
-             \\___ \\ | || | | | |_) | |
-              ___) || || |_| |  __/|_|
-             |____/ |_| \\___/|_|   (_)
-                                     \s
-            """;
+              _____ ______   ___   ____  __\s
+             / ___/|      T /   \\ |    \\|  T
+            (   \\_ |      |Y     Y|  o  )  |
+             \\__  Tl_j  l_j|  O  ||   _/|__j
+             /  \\ |  |  |  |     ||  |   __\s
+             \\    |  |  |  l     !|  |  |  T
+              \\___j  l__j   \\___/ l__j  l__j
+                                           \s
+                        """;
         out.warn(ASCII_ART_LOGGER_MARKER, ANSI_CYAN);
         out.warn(ASCII_ART_LOGGER_MARKER, "\n\n".concat(ascii).concat(additional));
         out.warn(ASCII_ART_LOGGER_MARKER, ANSI_RESET);
@@ -73,16 +75,18 @@ public class AsciiArtUtils {
      */
     public static void printAsciiArtReady(final Logger out, final String additional) {
         val ascii = """
-
-              ____  _____    _    ______   __
-             |  _ \\| ____|  / \\  |  _ \\ \\ / /
-             | |_) |  _|   / _ \\ | | | \\ V /\s
-             |  _ <| |___ / ___ \\| |_| || | \s
-             |_| \\_\\_____/_/   \\_\\____/ |_| \s
-                                            \s
-            """;
+             
+             ____     ___   ____  ___    __ __\s
+            |    \\   /  _] /    T|   \\  |  T  T
+            |  D  ) /  [_ Y  o  ||    \\ |  |  |
+            |    / Y    _]|     ||  D  Y|  ~  |
+            |    \\ |   [_ |  _  ||     |l___, |
+            |  .  Y|     T|  |  ||     ||     !
+            l__j\\_jl_____jl__j__jl_____jl____/\s
+                                              \s
+                        """;
         out.info(ASCII_ART_LOGGER_MARKER, ANSI_CYAN);
-        out.info(ASCII_ART_LOGGER_MARKER, "\n\n".concat(ascii).concat(additional));
+        out.info(ASCII_ART_LOGGER_MARKER, "\n\n".concat(ascii).concat(additional).concat("\n"));
         out.info(ASCII_ART_LOGGER_MARKER, ANSI_RESET);
     }
 

@@ -1,0 +1,38 @@
+description = "Apereo CAS Open Rewrite Support"
+
+processResources {
+    def casVersion = project.version
+    def tomcatVersion = project.tomcatVersion
+    def sourceCompatibility = project.sourceCompatibility
+    def springBootVersion = project.springBootVersion
+    def jibVersion = project.jibVersion
+    def gradleVersion = gradle.gradleVersion
+    def recipeName = "cas${casVersion.replaceAll(/\.|-SNAPSHOT/, '')}"
+    def templateContents = file("src/main/resources/current.gtemplate").text
+
+    def outputDir = file("src/main/resources/META-INF/rewrite")
+    def outputFile = file("${outputDir.absolutePath}/${recipeName}.yml")
+    outputs.file(outputFile)
+
+    doFirst {
+        def model = [:]
+
+        model.put("recipeName", recipeName)
+        model.put("tomcatVersion", tomcatVersion)
+        model.put("casVersion", casVersion)
+        model.put("javaVersion", sourceCompatibility)
+        model.put("jibVersion", jibVersion)
+        model.put("gradleVersion", gradleVersion)
+        model.put("springBootVersion", springBootVersion)
+        
+        def engine = new groovy.text.GStringTemplateEngine()
+        def recipe = engine.createTemplate(templateContents).make(model).toString()
+
+        if (!outputDir.exists()) {
+            outputDir.mkdirs()
+        }
+        outputFile.write(recipe)
+    }
+}
+
+resourcesJar.dependsOn(processResources)
