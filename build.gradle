@@ -21,7 +21,7 @@ configurations.all {
 
 
 task downloadFile(type: Download) {
-    src "https://docs.gradle.com/build-cache-node/jar/build-cache-node-13.1.jar"
+    src "https://docs.gradle.com/build-cache-node/jar/build-cache-node-18.0.jar"
     dest new File("${projectDir}/build-cache-node.jar")
     overwrite true
 }
