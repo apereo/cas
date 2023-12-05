@@ -6,6 +6,7 @@ import com.mongodb.WriteConcern;
 import lombok.val;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
+import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import java.util.Collection;
 import java.util.List;
 
@@ -18,7 +19,7 @@ import java.util.List;
 public class MongoCoreRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
-        val entries = List.<Class>of(WriteConcern.class, ReadConcern.class);
+        val entries = List.<Class>of(WriteConcern.class, ReadConcern.class, AggregationOperation.class);
         registerReflectionHints(hints, entries);
     }
 
