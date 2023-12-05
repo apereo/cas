@@ -1,9 +1,7 @@
 package org.apereo.cas.uma.claim;
 
 import org.apereo.cas.uma.ticket.permission.UmaPermissionTicket;
-import org.apereo.cas.uma.ticket.resource.ResourceSet;
 import org.apereo.cas.util.CollectionUtils;
-
 import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -17,9 +15,9 @@ import lombok.val;
 @Slf4j
 public class DefaultUmaResourceSetClaimPermissionExaminer implements UmaResourceSetClaimPermissionExaminer {
     @Override
-    public UmaResourceSetClaimPermissionResult examine(final ResourceSet rs, final UmaPermissionTicket ticket) {
+    public UmaResourceSetClaimPermissionResult examine(final UmaPermissionTicket ticket) {
         val result = new UmaResourceSetClaimPermissionResult();
-        for (val policy : rs.getPolicies()) {
+        for (val policy : ticket.getResourceSet().getPolicies()) {
             val details = new UmaResourceSetClaimPermissionResult.Details();
 
             for (val permission : policy.getPermissions()) {

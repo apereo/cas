@@ -39,14 +39,6 @@ public abstract class BaseUmaEndpointController {
 
     private final UmaConfigurationContext umaConfigurationContext;
 
-    /**
-     * Gets authenticated profile.
-     *
-     * @param request            the request
-     * @param response           the response
-     * @param requiredPermission the required permission
-     * @return the authenticated profile
-     */
     protected UserProfile getAuthenticatedProfile(final HttpServletRequest request,
                                                   final HttpServletResponse response,
                                                   final String requiredPermission) {
@@ -63,23 +55,10 @@ public abstract class BaseUmaEndpointController {
         return profile;
     }
 
-    /**
-     * Build response entity error model.
-     *
-     * @param e the e
-     * @return the multi value map
-     */
     protected MultiValueMap<String, Object> buildResponseEntityErrorModel(final InvalidResourceSetException e) {
         return buildResponseEntityErrorModel(e.getStatus(), e.getMessage());
     }
 
-    /**
-     * Build response entity error model.
-     *
-     * @param code    the code
-     * @param message the message
-     * @return the multi value map
-     */
     protected MultiValueMap<String, Object> buildResponseEntityErrorModel(final HttpStatus code, final String message) {
         return CollectionUtils.asMultiValueMap("code",
             code.value(),
@@ -87,12 +66,6 @@ public abstract class BaseUmaEndpointController {
     }
 
 
-    /**
-     * Gets resource set uri location.
-     *
-     * @param saved the saved
-     * @return the resource set uri location
-     */
     protected String getResourceSetUriLocation(final ResourceSet saved) {
         return getUmaConfigurationContext().getCasProperties()
                    .getAuthn().getOauth().getUma().getCore().getIssuer()

@@ -7,6 +7,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
+import org.apereo.cas.support.oauth.web.response.introspection.OAuth20IntrospectionResponseGenerator;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.IdTokenGeneratorService;
 import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
@@ -72,6 +73,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -159,7 +161,8 @@ public class CasOAuthUmaConfiguration {
             final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
             @Qualifier("umaResourceSetRepository")
             final ResourceSetRepository umaResourceSetRepository,
-            final CasConfigurationProperties casProperties) {
+            final CasConfigurationProperties casProperties,
+            final List<OAuth20IntrospectionResponseGenerator> oauthIntrospectionResponseGenerator) {
 
             return UmaConfigurationContext.builder()
                 .authenticationAttributeReleasePolicy(authenticationAttributeReleasePolicy)
@@ -176,6 +179,7 @@ public class CasOAuthUmaConfiguration {
                 .umaResourceSetRepository(umaResourceSetRepository)
                 .idTokenSigningAndEncryptionService(umaTokenSigningAndEncryptionService)
                 .ticketFactory(ticketFactory)
+                .introspectionResponseGenerator(oauthIntrospectionResponseGenerator)
                 .build();
         }
 

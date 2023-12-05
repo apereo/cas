@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc;
 
 import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -470,14 +471,23 @@ public abstract class AbstractOidcTests {
     }
 
     protected OAuth20AccessToken getAccessToken(final String idToken, final String clientId) throws Throwable {
-        val principal = RegisteredServiceTestUtils.getPrincipal("casuser", CollectionUtils.wrap("email", List.of("casuser@example.org")));
+        val principal = RegisteredServiceTestUtils.getPrincipal("casuser",
+            CollectionUtils.wrap("email", List.of("casuser@example.org")));
         return getAccessToken(principal, idToken, clientId);
     }
 
-    protected OAuth20AccessToken getAccessToken(
-        final Principal principal,
-        final String idToken,
-        final String clientId) throws Throwable {
+    protected OAuth20AccessToken getAccessToken(final Principal principal, final String clientId) throws Throwable {
+        return getAccessToken(principal, StringUtils.EMPTY, clientId);
+    }
+
+    protected OAuth20AccessToken getAccessToken(final Authentication authentication, final String clientId) throws Throwable {
+        val at = getAccessToken(authentication.getPrincipal(), StringUtils.EMPTY, clientId);
+        when(at.getAuthentication()).thenReturn(authentication);
+        return at;
+    }
+
+    protected OAuth20AccessToken getAccessToken(final Principal principal, final String idToken,
+                                                final String clientId) throws Throwable {
         val code = addCode(principal, getOidcRegisteredService());
 
         val accessToken = mock(OAuth20AccessToken.class);

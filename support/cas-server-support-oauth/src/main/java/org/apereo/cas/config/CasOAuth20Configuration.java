@@ -99,6 +99,8 @@ import org.apereo.cas.support.oauth.web.response.callback.mode.DefaultOAuth20Res
 import org.apereo.cas.support.oauth.web.response.callback.mode.OAuth20ResponseModeFormPostBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.mode.OAuth20ResponseModeFragmentBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.mode.OAuth20ResponseModeQueryBuilder;
+import org.apereo.cas.support.oauth.web.response.introspection.OAuth20DefaultIntrospectionResponseGenerator;
+import org.apereo.cas.support.oauth.web.response.introspection.OAuth20IntrospectionResponseGenerator;
 import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20ConsentApprovalViewResolver;
@@ -285,7 +287,8 @@ public class CasOAuth20Configuration {
             @Qualifier(ArgumentExtractor.BEAN_NAME) final ArgumentExtractor argumentExtractor,
             final ObjectProvider<List<OAuth20AuthorizationResponseBuilder>> oauthAuthorizationResponseBuilders,
             final ObjectProvider<List<OAuth20AuthorizationRequestValidator>> oauthAuthorizationRequestValidators,
-            @Qualifier("oauthTokenGenerator") final OAuth20TokenGenerator oauthTokenGenerator) {
+            @Qualifier("oauthTokenGenerator") final OAuth20TokenGenerator oauthTokenGenerator,
+            final List<OAuth20IntrospectionResponseGenerator> oauthIntrospectionResponseGenerator) {
             return OAuth20ConfigurationContext.builder()
                 .argumentExtractor(argumentExtractor)
                 .requestParameterResolver(oauthRequestParameterResolver)
@@ -320,6 +323,7 @@ public class CasOAuth20Configuration {
                 .clientSecretValidator(oauth20ClientSecretValidator)
                 .authenticationAttributeReleasePolicy(authenticationAttributeReleasePolicy)
                 .attributeDefinitionStore(attributeDefinitionStore)
+                .introspectionResponseGenerator(oauthIntrospectionResponseGenerator)
                 .build();
         }
     }
@@ -1223,6 +1227,14 @@ public class CasOAuth20Configuration {
     @Configuration(value = "CasOAuth20ResponseConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasOAuth20ResponseConfiguration {
+
+        @ConditionalOnMissingBean(name = "oauthIntrospectionResponseGenerator")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public OAuth20IntrospectionResponseGenerator oauthIntrospectionResponseGenerator() {
+            return new OAuth20DefaultIntrospectionResponseGenerator();
+        }
+
         @ConditionalOnMissingBean(name = "oauthResourceOwnerCredentialsResponseBuilder")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

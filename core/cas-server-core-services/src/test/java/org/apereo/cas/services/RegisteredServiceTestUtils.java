@@ -195,6 +195,10 @@ public class RegisteredServiceTestUtils {
         return Unchecked.supplier(() -> getRegisteredService(id, CasRegisteredService.class, true, requiredAttributes)).get();
     }
 
+    public static Principal getPrincipal(final Map<String, List<Object>> attributes) throws Throwable {
+        return getPrincipal(CONST_USERNAME, attributes);
+    }
+
     public static Principal getPrincipal() throws Throwable {
         return getPrincipal(CONST_USERNAME);
     }

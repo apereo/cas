@@ -38,7 +38,7 @@ class GroovyRegisteredServiceAccessStrategyTests {
             .build();
         assertTrue(accessStrategy.authorizeRequest(request));
         assertNull(accessStrategy.getUnauthorizedRedirectUrl());
-        assertNull(accessStrategy.getDelegatedAuthenticationPolicy());
+        assertNotNull(accessStrategy.getDelegatedAuthenticationPolicy());
         assertNotNull(accessStrategy.getRequiredAttributes());
     }
 
