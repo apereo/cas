@@ -63,7 +63,7 @@ public class AuditTrailEntity {
     @Column(name = "AUD_LOCALE", nullable = false)
     private Locale locale;
 
-    @Column(name = "AUD_HEADERS", length = 2048)
+    @Column(name = "AUD_HEADERS", length = 4096)
     private String headers;
 
     @Column(name = "AUD_EXTRA_INFO")

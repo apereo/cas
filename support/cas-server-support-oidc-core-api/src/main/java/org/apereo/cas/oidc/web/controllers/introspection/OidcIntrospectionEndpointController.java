@@ -2,13 +2,11 @@ package org.apereo.cas.oidc.web.controllers.introspection;
 
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
-import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20IntrospectionEndpointController;
 import org.apereo.cas.support.oauth.web.response.introspection.success.OAuth20IntrospectionAccessTokenSuccessResponse;
-import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -88,23 +86,7 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
     public ResponseEntity handlePostRequest(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         return super.handlePostRequest(request, response);
     }
-
-    @Override
-    protected OAuth20IntrospectionAccessTokenSuccessResponse createIntrospectionValidResponse(
-        final String accessTokenId, final OAuth20Token ticket) {
-        val response = super.createIntrospectionValidResponse(accessTokenId, ticket);
-        if (ticket != null) {
-            Optional.ofNullable(ticket.getService()).ifPresent(service -> {
-                val registeredService = getConfigurationContext().getServicesManager().findServiceBy(service, OidcRegisteredService.class);
-                response.setIss(getConfigurationContext().getIssuerService().determineIssuer(Optional.ofNullable(registeredService)));
-            });
-            FunctionUtils.doIf(response.isActive(), __ -> response.setScope(String.join(" ", ticket.getScopes()))).accept(response);
-            CollectionUtils.firstElement(ticket.getAuthentication().getAttributes().get(OAuth20Constants.DPOP_CONFIRMATION))
-                .ifPresent(dpop -> response.getConfirmation().setJkt(dpop.toString()));
-        }
-        return response;
-    }
-
+    
     @Override
     protected ResponseEntity buildIntrospectionEntityResponse(final WebContext context,
                                                               final OAuth20IntrospectionAccessTokenSuccessResponse introspect) {
@@ -114,7 +96,7 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
             .map(headerValue -> {
                 val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
                     getConfigurationContext().getServicesManager(), introspect.getClientId());
-                val signingAndEncryptionService = getConfigurationContext().getTokenIntrospectionSigningAndEncryptionService();
+                val signingAndEncryptionService = getConfigurationContext().getIntrospectionSigningAndEncryptionService();
                 return FunctionUtils.doAndHandle(() -> {
                     if (signingAndEncryptionService.shouldSignToken(registeredService)
                         || signingAndEncryptionService.shouldEncryptToken(registeredService)) {
@@ -137,7 +119,7 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
 
     private JwtClaims convertIntrospectionIntoClaims(final OAuth20IntrospectionAccessTokenSuccessResponse introspect,
                                                      final OAuthRegisteredService registeredService) throws Exception {
-        val signingAndEncryptionService = getConfigurationContext().getTokenIntrospectionSigningAndEncryptionService();
+        val signingAndEncryptionService = getConfigurationContext().getIntrospectionSigningAndEncryptionService();
         val claims = new JwtClaims();
         claims.setIssuer(signingAndEncryptionService.resolveIssuer(Optional.of(registeredService)));
         claims.setAudience(registeredService.getClientId());
@@ -152,7 +134,7 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
                                                                  final OAuthRegisteredService registeredService) throws Throwable {
         val claims = convertIntrospectionIntoClaims(introspect, registeredService);
         LOGGER.debug("Collected introspection claims, before cipher operations, are [{}]", claims);
-        val signingAndEncryptionService = getConfigurationContext().getTokenIntrospectionSigningAndEncryptionService();
+        val signingAndEncryptionService = getConfigurationContext().getIntrospectionSigningAndEncryptionService();
         val result = signingAndEncryptionService.encode(registeredService, claims);
         LOGGER.debug("Finalized introspection JWT is [{}]", result);
         return buildResponseEntity(result, registeredService);
