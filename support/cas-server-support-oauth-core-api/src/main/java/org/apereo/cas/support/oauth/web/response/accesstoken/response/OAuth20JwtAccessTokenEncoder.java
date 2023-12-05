@@ -22,6 +22,8 @@ import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -49,17 +51,29 @@ public class OAuth20JwtAccessTokenEncoder implements CipherExecutor<String, Stri
 
     private final String issuer;
 
+    /**
+     * Decode a JWT token or return an opaque token as-is.
+     * Avoid logging stack trace if JWT parsing fails.
+     * @param tokenId    encrypted value
+     * @param parameters the parameters
+     * @return the decoded value.
+     * Doing basic checks to reduce logged stack traces when {@link JWTParser#parse} throws {@link ParseException}.
+     * Encrypted tokens can have five dot delimited sections and plain or signed tokens have three.
+     */
     @Override
     public String decode(final String tokenId, final Object[] parameters) {
-        return FunctionUtils.doAndHandle(() -> {
-            if (StringUtils.isBlank(tokenId)) {
-                LOGGER.warn("No access token is provided to decode");
-                return null;
-            }
+        if (StringUtils.isBlank(tokenId)) {
+            LOGGER.debug("No access token is provided to decode");
+            return tokenId;
+        }
+        try {
             val header = JWTParser.parse(tokenId).getHeader();
             val claims = accessTokenJwtBuilder.unpack(Optional.ofNullable(resolveRegisteredService(header)), tokenId);
             return claims.getJWTID();
-        }, e -> tokenId).get();
+        } catch (final ParseException e) {
+            LOGGER.trace("Token is not valid JWT, returning it as-is: [{}]", tokenId);
+            return tokenId;
+        }
     }
 
     @Override
