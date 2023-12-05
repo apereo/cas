@@ -3,7 +3,6 @@ package org.apereo.cas.oidc.jwks.generator.jpa;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreEntity;
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreGeneratorService;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
@@ -15,9 +14,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionOperations;
-
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import java.util.Optional;
 
 /**
@@ -35,8 +32,7 @@ public class OidcJpaJsonWebKeystoreGeneratorService implements OidcJsonWebKeysto
 
     private final TransactionOperations transactionTemplate;
 
-    @PersistenceContext(unitName = "jpaOidcJwksContext")
-    private EntityManager entityManager;
+    private final EntityManager entityManager;
 
     @Override
     public Optional<Resource> find() {
