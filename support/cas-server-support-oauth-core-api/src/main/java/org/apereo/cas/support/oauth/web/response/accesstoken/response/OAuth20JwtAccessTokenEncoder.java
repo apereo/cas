@@ -63,7 +63,7 @@ public class OAuth20JwtAccessTokenEncoder implements CipherExecutor<String, Stri
     @Override
     public String decode(final String tokenId, final Object[] parameters) {
         if (StringUtils.isBlank(tokenId)) {
-            LOGGER.warn("No access token is provided to decode");
+            LOGGER.debug("No access token is provided to decode");
             return tokenId;
         }
         try {
