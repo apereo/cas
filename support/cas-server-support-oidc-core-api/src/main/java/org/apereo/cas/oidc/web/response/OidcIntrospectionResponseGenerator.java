@@ -5,7 +5,7 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.web.response.introspection.OAuth20DefaultIntrospectionResponseGenerator;
-import org.apereo.cas.support.oauth.web.response.introspection.success.OAuth20IntrospectionAccessTokenSuccessResponse;
+import org.apereo.cas.support.oauth.web.response.introspection.OAuth20IntrospectionAccessTokenResponse;
 import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -28,23 +28,22 @@ public class OidcIntrospectionResponseGenerator extends OAuth20DefaultIntrospect
     protected final ObjectProvider<OidcConfigurationContext> oidcConfigurationContext;
 
     @Override
-    public OAuth20IntrospectionAccessTokenSuccessResponse generate(final String accessTokenId, final OAuth20Token accessToken) {
-        val response = super.generate(accessTokenId, accessToken);
-        if (accessToken != null) {
-            Optional.ofNullable(accessToken.getService()).ifPresent(service -> {
-                val registeredService = oidcConfigurationContext.getObject().getServicesManager().findServiceBy(service, OidcRegisteredService.class);
-                response.setIss(oidcConfigurationContext.getObject().getIssuerService().determineIssuer(Optional.ofNullable(registeredService)));
-            });
-            FunctionUtils.doIf(response.isActive(), __ -> response.setScope(String.join(" ", accessToken.getScopes()))).accept(response);
-            CollectionUtils.firstElement(accessToken.getAuthentication().getAttributes().get(OAuth20Constants.DPOP_CONFIRMATION))
-                .ifPresent(dpop -> response.getConfirmation().setJkt(dpop.toString()));
-        }
+    protected OAuth20IntrospectionAccessTokenResponse collectIntrospectionDetails(final OAuth20IntrospectionAccessTokenResponse response,
+                                                                                  final OAuth20Token accessToken) {
+        Optional.ofNullable(accessToken.getService()).ifPresent(service -> {
+            val registeredService = oidcConfigurationContext.getObject().getServicesManager().findServiceBy(service, OidcRegisteredService.class);
+            response.setIss(oidcConfigurationContext.getObject().getIssuerService().determineIssuer(Optional.ofNullable(registeredService)));
+        });
+        FunctionUtils.doIf(response.isActive(), __ -> response.setScope(String.join(" ", accessToken.getScopes()))).accept(response);
+        CollectionUtils.firstElement(accessToken.getAuthentication().getAttributes().get(OAuth20Constants.DPOP_CONFIRMATION))
+            .ifPresent(dpop -> response.getConfirmation().setJkt(dpop.toString()));
         return response;
     }
 
     @Override
     public boolean supports(final OAuth20Token accessToken) {
         return super.supports(accessToken)
+            && accessToken != null
             && accessToken.getScopes().contains(OidcConstants.StandardScopes.OPENID.getScope());
     }
 

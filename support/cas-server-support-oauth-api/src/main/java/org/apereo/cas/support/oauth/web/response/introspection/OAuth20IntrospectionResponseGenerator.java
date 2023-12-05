@@ -1,6 +1,5 @@
 package org.apereo.cas.support.oauth.web.response.introspection;
 
-import org.apereo.cas.support.oauth.web.response.introspection.success.OAuth20IntrospectionAccessTokenSuccessResponse;
 import org.apereo.cas.ticket.OAuth20Token;
 import org.springframework.core.Ordered;
 
@@ -18,7 +17,7 @@ public interface OAuth20IntrospectionResponseGenerator extends Ordered {
      * @param accessToken   the access token
      * @return the response
      */
-    OAuth20IntrospectionAccessTokenSuccessResponse generate(String accessTokenId, OAuth20Token accessToken);
+    OAuth20IntrospectionAccessTokenResponse generate(String accessTokenId, OAuth20Token accessToken);
 
     @Override
     default int getOrder() {
@@ -29,7 +28,9 @@ public interface OAuth20IntrospectionResponseGenerator extends Ordered {
      * Supports this token.
      *
      * @param accessToken the access token
-     * @return true/false
+     * @return true /false
      */
-    boolean supports(OAuth20Token accessToken);
+    default boolean supports(final OAuth20Token accessToken) {
+        return true;
+    }
 }

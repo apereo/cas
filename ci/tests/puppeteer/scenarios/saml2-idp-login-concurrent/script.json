@@ -4,8 +4,6 @@
     "docker": "true"
   },
   "properties": [
-
-
     "--cas.authn.attribute-repository.stub.attributes.uid=casuser",
     "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
 
