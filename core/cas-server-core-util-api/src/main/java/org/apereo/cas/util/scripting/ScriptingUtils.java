@@ -57,16 +57,27 @@ public class ScriptingUtils {
         }
         val imports = new ImportCustomizer();
         imports.addStarImports("java.time", "java.util", "java.io",
-            "java.math", "java.beans", "java.net", "java.nio",
+            "java.math", "java.beans", "java.net", "java.nio", "java.util.stream",
             "groovy.json", "groovy.text", "groovy.util", "groovy.lang", "groovy.transform",
             "org.slf4j",
+            "org.apache.commons.lang3",
             "jakarta.servlet.http",
+            "org.opensaml.core.xml",
+            "org.opensaml.saml.saml2.core",
+            "org.springframework.context",
+            "org.springframework.core",
             "org.springframework.core.io",
             "org.springframework.webflow",
+            "org.springframework.webflow.execution",
+            "org.springframework.webflow.action",
             "org.apereo.cas",
+            "org.apereo.cas.audit",
             "org.apereo.cas.authentication",
+            "org.apereo.cas.authentication.services",
+            "org.apereo.cas.authentication.credential",
             "org.apereo.cas.authentication.principal",
             "org.apereo.cas.util",
+            "org.apereo.cas.web",
             "org.apereo.cas.web.support",
             "org.apereo.cas.authentication.mfa");
 

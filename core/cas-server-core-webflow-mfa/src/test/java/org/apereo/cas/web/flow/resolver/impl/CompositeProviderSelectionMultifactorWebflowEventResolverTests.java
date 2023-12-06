@@ -105,11 +105,11 @@ class CompositeProviderSelectionMultifactorWebflowEventResolverTests {
         @Qualifier("multifactorAuthenticationProviderSelectionCookieGenerator")
         private CasCookieBuilder multifactorAuthenticationProviderSelectionCookieGenerator;
 
-
         @Test
         void verifyCompositeWithCookie() throws Throwable {
             val context = MockRequestContext.create();
-            multifactorAuthenticationProviderSelectionCookieGenerator.addCookie(context.getHttpServletResponse(), TestMultifactorAuthenticationProvider.ID);
+            multifactorAuthenticationProviderSelectionCookieGenerator.addCookie(
+                context.getHttpServletResponse(), TestMultifactorAuthenticationProvider.ID);
             context.setRequestCookiesFromResponse();
 
             val provider = new DefaultChainingMultifactorAuthenticationProvider(

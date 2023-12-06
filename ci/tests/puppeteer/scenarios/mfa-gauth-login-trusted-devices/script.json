@@ -2,7 +2,7 @@
   "dependencies": "gauth,trusted-mfa",
 
   "properties": [
-    "--logging.level.org.apereo.cas=debug",
+    "--logging.level.org.apereo.cas=info",
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
     "--cas.audit.slf4j.use-single-line=true",

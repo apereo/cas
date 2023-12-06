@@ -10,7 +10,7 @@
     "--cas.audit.slf4j.use-single-line=true",
     
     "--cas.service-registry.core.init-from-json=true",
-    "--logging.level.org.apereo.cas=debug",
+    "--logging.level.org.apereo.cas=info",
 
     "--spring.mail.host=localhost",
     "--spring.mail.port=25000",

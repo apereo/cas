@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow.actions.composite;
 
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
@@ -29,6 +30,22 @@ public class MultifactorProviderSelectedAction extends BaseCasWebflowAction {
     static final String PARAMETER_SELECTED_MFA_PROVIDER = "mfaProvider";
 
     private final CasCookieBuilder multifactorProviderCookieBuilder;
+    private final CasConfigurationProperties casProperties;
+
+    @Override
+    protected Event doPreExecute(final RequestContext context) throws Exception {
+        val contextPath = context.getExternalContext().getContextPath();
+        val cookiePath = StringUtils.isNotBlank(contextPath) ? contextPath + '/' : "/";
+        val cookie = casProperties.getAuthn().getMfa().getCore().getProviderSelection().getCookie();
+        if (cookie.isEnabled() && cookie.isAutoConfigureCookiePath()) {
+            val path = multifactorProviderCookieBuilder.getCookiePath();
+            if (StringUtils.isBlank(path)) {
+                LOGGER.debug("Setting path for cookies for multifactor authentication selection cookie generator to: [{}]", cookiePath);
+                multifactorProviderCookieBuilder.setCookiePath(cookiePath);
+            }
+        }
+        return super.doPreExecute(context);
+    }
 
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) {

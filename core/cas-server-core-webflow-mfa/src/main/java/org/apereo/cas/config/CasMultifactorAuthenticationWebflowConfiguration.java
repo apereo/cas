@@ -531,7 +531,7 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
-                .withAction(() -> new MultifactorProviderSelectedAction(multifactorAuthenticationProviderSelectionCookieGenerator))
+                .withAction(() -> new MultifactorProviderSelectedAction(multifactorAuthenticationProviderSelectionCookieGenerator, casProperties))
                 .withId(CasWebflowConstants.ACTION_ID_MULTIFACTOR_PROVIDER_SELECTED)
                 .build()
                 .get();
@@ -589,7 +589,8 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreMultifactorAuthenticationProviderCompositeConfiguration {
         private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.mfa.core.provider-selection.provider-selection-enabled").isTrue();
-        
+        private static final BeanCondition COOKIE_CONDITION = CONDITION.and("cas.authn.mfa.core.provider-selection.cookie.enabled").isTrue().evenIfMissing();
+
         @ConditionalOnMissingBean(name = "multifactorAuthenticationProviderSelectionCookieGenerator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -597,7 +598,7 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
             return BeanSupplier.of(CasCookieBuilder.class)
-                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .when(COOKIE_CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
                     val cookie = casProperties.getAuthn().getMfa().getCore().getProviderSelection().getCookie();
                     val context = CookieUtils.buildCookieGenerationContext(cookie);
