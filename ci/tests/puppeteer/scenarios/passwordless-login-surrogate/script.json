@@ -12,7 +12,7 @@
     "--spring.mail.port=25000",
 
     "--cas.service-registry.core.init-from-json=true",
-    "--logging.level.org.apereo.cas=debug",
+    "--logging.level.org.apereo.cas=info",
 
     "--cas.authn.passwordless.tokens.mail.html=false",
     "--cas.authn.passwordless.tokens.mail.text=${token}",

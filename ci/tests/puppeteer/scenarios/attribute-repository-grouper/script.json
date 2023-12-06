@@ -14,7 +14,7 @@
     "--cas.authn.attribute-repository.grouper.subject-type=SUBJECT_ID",
 
     "--cas.authn.accept.users=GrouperSystem::Mellon",
-    "--logging.level.org.apereo.cas=debug",
+    "--logging.level.org.apereo.cas=info",
 
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"

@@ -105,10 +105,10 @@ public interface BeanCondition {
     /**
      * And bean condition.
      *
-     * @param booleanSupplier the boolean supplier
+     * @param condition the boolean supplier
      * @return the bean condition
      */
-    BeanCondition and(Condition booleanSupplier);
+    BeanCondition and(Condition condition);
 
     /**
      * To supplier supplier.

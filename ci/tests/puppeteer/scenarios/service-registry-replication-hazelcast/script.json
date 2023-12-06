@@ -3,7 +3,7 @@
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",
 
   "properties": [
-    "--logging.level.org.apereo.cas=debug",
+    "--logging.level.org.apereo.cas=info",
 
     "--management.endpoints.enabled-by-default=true",
     "--management.endpoints.web.exposure.include=*",

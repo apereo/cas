@@ -7,7 +7,7 @@
 
     "--cas.service-registry.core.init-from-json=true",
 
-    "--logging.level.org.apereo.cas=debug",
+    "--logging.level.org.apereo.cas=info",
     "--logging.level.org.thymeleaf=info"
   ]
 }

@@ -17,7 +17,7 @@
     "--cas.server.prefix=https://localhost:8443/cas",
     "--cas.server.scope=example.net",
 
-    "--logging.level.org.apereo.cas=debug",
+    "--logging.level.org.apereo.cas=info",
 
     "--cas.authn.saml-idp.metadata.core.sso-service-post-binding-enabled=false",
     "--cas.authn.saml-idp.metadata.core.sso-service-post-simple-sign-binding-enabled=false",

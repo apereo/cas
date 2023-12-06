@@ -5,7 +5,7 @@
   },
 
   "properties": [
-    "--logging.level.org.apereo.cas=debug",
+    "--logging.level.org.apereo.cas=info",
     "--logging.level.org.springframework.webflow=warn",
 
     "--cas.authn.attribute-repository.stub.attributes.bypassEnabled=TRUE",

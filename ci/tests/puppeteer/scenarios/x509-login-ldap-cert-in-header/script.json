@@ -8,7 +8,7 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
     
-    "--logging.level.org.apereo.cas=debug",
+    "--logging.level.org.apereo.cas=info",
     "--cas.audit.slf4j.use-single-line=true",
     
     "--cas.service-registry.core.init-from-json=true",

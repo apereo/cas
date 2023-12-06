@@ -18,7 +18,7 @@
     "--cas.audit.engine.enabled=true",
     "--cas.authn.accept.name=STATIC",
 
-    "--logging.level.org.apereo.cas=debug",
+    "--logging.level.org.apereo.cas=info",
     "--cas.http-client.host-name-verifier=none",
 
     "--cas.authn.mfa.gauth.crypto.enabled=false",
