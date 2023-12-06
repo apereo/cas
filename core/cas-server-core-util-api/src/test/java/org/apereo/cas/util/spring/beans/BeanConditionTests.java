@@ -18,6 +18,15 @@ import static org.junit.jupiter.api.Assertions.*;
 class BeanConditionTests {
 
     @Test
+    void verifyCopyCondition() throws Throwable {
+        val c1 = BeanCondition.on("cas.property1");
+        val c2 = c1.toStartWith().and("cas.property2");
+        assertNotEquals(c1, c2);
+        assertEquals(1, c1.count());
+        assertEquals(2, c2.count());
+    }
+
+    @Test
     void verifyExpressionLanguageEmbedded() throws Throwable {
         val env = new MockEnvironment();
         env.setProperty("cas.property1", "time-${#localDateTimeUtc}");

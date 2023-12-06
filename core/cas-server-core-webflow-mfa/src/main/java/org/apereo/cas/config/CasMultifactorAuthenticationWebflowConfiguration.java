@@ -589,7 +589,7 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreMultifactorAuthenticationProviderCompositeConfiguration {
         private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.mfa.core.provider-selection.provider-selection-enabled").isTrue();
-        private static final BeanCondition COOKIE_CONDITION = CONDITION.and("cas.authn.mfa.core.provider-selection.cookie.enabled").isTrue().evenIfMissing();
+        private static final BeanCondition COOKIE_CONDITION = CONDITION.toStartWith().and("cas.authn.mfa.core.provider-selection.cookie.enabled").isTrue().evenIfMissing();
 
         @ConditionalOnMissingBean(name = "multifactorAuthenticationProviderSelectionCookieGenerator")
         @Bean
