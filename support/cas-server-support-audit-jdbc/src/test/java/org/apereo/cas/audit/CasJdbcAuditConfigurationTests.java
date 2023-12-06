@@ -31,8 +31,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.IntStream;
 
 /**
  * This is {@link CasJdbcAuditConfigurationTests}.
@@ -84,9 +86,13 @@ class CasJdbcAuditConfigurationTests extends BaseAuditConfigurationTests {
 
     @Test
     void verifyLargeResource() throws Throwable {
+        val headers = new HashMap<String, String>();
+        IntStream.rangeClosed(1, 100).forEach(i -> headers.put(
+            i + "-" + UUID.randomUUID(),
+            RandomUtils.randomAlphanumeric(500)));
         val clientInfo = new ClientInfo("1.2.3.4", "1.2.3.4", UUID.randomUUID().toString(), "London")
             .setExtraInfo(Map.of("Hello", "World"))
-            .setHeaders(Map.of("H1", "V1"));
+            .setHeaders(headers);
         val context = new AuditActionContext(
             UUID.randomUUID().toString(),
             RandomUtils.randomAlphabetic(10_000),
