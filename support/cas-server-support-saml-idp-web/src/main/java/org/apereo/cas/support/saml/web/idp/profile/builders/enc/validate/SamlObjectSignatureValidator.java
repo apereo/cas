@@ -85,22 +85,22 @@ public class SamlObjectSignatureValidator {
      * @param resolver       the resolver
      * @param request        the request
      * @param context        the context
-     * @throws Exception the exception
+     * @return the boolean
+     * @throws Throwable the throwable
      */
-    public void verifySamlProfileRequestIfNeeded(final RequestAbstractType profileRequest,
-                                                 final MetadataResolver resolver,
-                                                 final HttpServletRequest request,
-                                                 final MessageContext context) throws Throwable {
+    public boolean verifySamlProfileRequest(final RequestAbstractType profileRequest,
+                                            final MetadataResolver resolver,
+                                            final HttpServletRequest request,
+                                            final MessageContext context) throws Throwable {
 
         val roleDescriptorResolver = getRoleDescriptorResolver(resolver, context, profileRequest);
         LOGGER.debug("Validating signature for [{}]", profileRequest.getClass().getName());
 
         val signature = profileRequest.getSignature();
         if (signature != null) {
-            validateSignatureOnProfileRequest(profileRequest, signature, roleDescriptorResolver);
-        } else {
-            validateSignatureOnAuthenticationRequest(profileRequest, request, context, roleDescriptorResolver);
+            return validateSignatureOnProfileRequest(profileRequest, signature, roleDescriptorResolver);
         }
+        return validateSignatureOnAuthenticationRequest(profileRequest, request, context, roleDescriptorResolver);
     }
 
     /**
@@ -110,25 +110,17 @@ public class SamlObjectSignatureValidator {
      * @param adaptor        the adaptor
      * @param request        the request
      * @param context        the context
-     * @throws Exception the exception
+     * @return the boolean
+     * @throws Throwable the throwable
      */
-    public void verifySamlProfileRequestIfNeeded(final RequestAbstractType profileRequest,
-                                                 final SamlRegisteredServiceMetadataAdaptor adaptor,
-                                                 final HttpServletRequest request,
-                                                 final MessageContext context) throws Throwable {
+    public boolean verifySamlProfileRequest(final RequestAbstractType profileRequest,
+                                         final SamlRegisteredServiceMetadataAdaptor adaptor,
+                                         final HttpServletRequest request,
+                                         final MessageContext context) throws Throwable {
 
-        verifySamlProfileRequestIfNeeded(profileRequest, adaptor.metadataResolver(), request, context);
+        return verifySamlProfileRequest(profileRequest, adaptor.metadataResolver(), request, context);
     }
 
-    /**
-     * Gets role descriptor resolver.
-     *
-     * @param resolver       the resolver
-     * @param context        the context
-     * @param profileRequest the profile request
-     * @return the role descriptor resolver
-     * @throws Exception the exception
-     */
     protected RoleDescriptorResolver getRoleDescriptorResolver(final MetadataResolver resolver,
                                                                final MessageContext context,
                                                                final RequestAbstractType profileRequest) throws Exception {
@@ -136,7 +128,7 @@ public class SamlObjectSignatureValidator {
         return SamlIdPUtils.getRoleDescriptorResolver(resolver, idp.getMetadata().getCore().isRequireValidMetadata());
     }
 
-    private void validateSignatureOnAuthenticationRequest(final RequestAbstractType profileRequest,
+    private boolean validateSignatureOnAuthenticationRequest(final RequestAbstractType profileRequest,
                                                           final HttpServletRequest request,
                                                           final MessageContext context,
                                                           final RoleDescriptorResolver roleDescriptorResolver) throws Throwable {
@@ -203,9 +195,10 @@ public class SamlObjectSignatureValidator {
             LOGGER.error("No valid credentials could be found to verify the signature for [{}]", profileRequest.getIssuer());
             return new SamlException("No valid signing credentials for authentication request validation could be resolved");
         });
+        return true;
     }
 
-    private void validateSignatureOnProfileRequest(final RequestAbstractType profileRequest,
+    private boolean validateSignatureOnProfileRequest(final RequestAbstractType profileRequest,
                                                    final Signature signature,
                                                    final RoleDescriptorResolver roleDescriptorResolver) throws Throwable {
         val validator = new SAMLSignatureProfileValidator();
@@ -223,9 +216,9 @@ public class SamlObjectSignatureValidator {
         val it = credentials.iterator();
         while (!foundValidCredential && it.hasNext()) {
             try {
-                val c = it.next();
-                LOGGER.debug("Validating signature using credentials for [{}]", c.getEntityId());
-                SignatureValidator.validate(signature, c);
+                val credential = it.next();
+                LOGGER.debug("Validating signature using credentials for [{}]", credential.getEntityId());
+                SignatureValidator.validate(signature, credential);
                 LOGGER.info("Successfully validated the request signature.");
                 foundValidCredential = true;
             } catch (final Exception e) {
@@ -237,6 +230,7 @@ public class SamlObjectSignatureValidator {
             LOGGER.error("No valid credentials could be found to verify the signature for [{}]", profileRequest.getIssuer());
             return new SamlException("No valid signing credentials for profile request validation could be resolved");
         });
+        return true;
     }
 
     private Set<Credential> getSigningCredential(final RoleDescriptorResolver resolver,

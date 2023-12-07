@@ -57,6 +57,7 @@ import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataCustomi
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.util.Saml20HexRandomIdGenerator;
 import org.apereo.cas.support.saml.web.idp.profile.builders.AuthenticatedAssertionContext;
@@ -74,7 +75,9 @@ import lombok.val;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.velocity.app.VelocityEngine;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.binding.artifact.SAMLArtifactMap;
+import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.AuthnContext;
 import org.opensaml.saml.saml2.core.AuthnRequest;
@@ -103,6 +106,8 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZonedDateTime;
@@ -302,8 +307,15 @@ public abstract class BaseSamlIdPConfigurationTests {
         return getSamlRegisteredServiceFor(false, false, false, entityId);
     }
 
-    @TestConfiguration(value = "SamlIdPMetadataTestConfiguration",
-        proxyBeanMethods = false)
+    protected AuthnRequest signAuthnRequest(final HttpServletRequest request, final HttpServletResponse response,
+                                            final AuthnRequest authnRequest, final SamlRegisteredService samlRegisteredService) throws Exception {
+        val adaptor = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver,
+            samlRegisteredService, samlRegisteredService.getServiceId()).get();
+        return samlIdPObjectSigner.encode(authnRequest, samlRegisteredService,
+            adaptor, response, request, SAMLConstants.SAML2_POST_BINDING_URI, authnRequest, new MessageContext());
+    }
+
+    @TestConfiguration(value = "SamlIdPMetadataTestConfiguration", proxyBeanMethods = false)
     static class SamlIdPMetadataTestConfiguration {
 
         @Bean

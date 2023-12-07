@@ -415,7 +415,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
             LOGGER.trace("Request is not signed or validation is skipped, so there is no need to verify its signature.");
         } else if (adaptor.isAuthnRequestsSigned() && !registeredService.isSkipValidatingAuthnRequest()) {
             LOGGER.trace("The authentication context is signed; Proceeding to validate signatures...");
-            configurationContext.getSamlObjectSignatureValidator().verifySamlProfileRequestIfNeeded(authnRequest, adaptor, request, ctx);
+            configurationContext.getSamlObjectSignatureValidator().verifySamlProfileRequest(authnRequest, adaptor, request, ctx);
         }
     }
 

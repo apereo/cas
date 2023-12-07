@@ -7,14 +7,16 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
 import org.apereo.cas.support.saml.idp.SamlIdPSessionManager;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate.SamlObjectSignatureValidator;
 import org.apereo.cas.web.flow.BaseSamlIdPWebflowTests;
-
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObjectBuilder;
+import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.AuthnContextClassRef;
 import org.opensaml.saml.saml2.core.AuthnContextComparisonTypeEnumeration;
 import org.opensaml.saml.saml2.core.RequestedAuthnContext;
@@ -27,8 +29,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
-
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link SamlIdPMultifactorAuthenticationTriggerTests}.
@@ -48,7 +50,7 @@ class SamlIdPMultifactorAuthenticationTriggerTests extends BaseSamlIdPWebflowTes
     void verifyContextMapping() throws Throwable {
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         val service = RegisteredServiceTestUtils.getService(registeredService.getServiceId());
-        
+
         val authnRequest = SamlIdPTestUtils.getAuthnRequest(openSamlConfigBean, registeredService);
         var builder = (SAMLObjectBuilder) openSamlConfigBean.getBuilderFactory()
             .getBuilder(AuthnContextClassRef.DEFAULT_ELEMENT_NAME);
@@ -66,6 +68,7 @@ class SamlIdPMultifactorAuthenticationTriggerTests extends BaseSamlIdPWebflowTes
         val response = new MockHttpServletResponse();
 
         val messageContext = new MessageContext();
+        signAuthnRequest(request, response, authnRequest, registeredService, messageContext);
         messageContext.setMessage(authnRequest);
         val context = Pair.of(authnRequest, messageContext);
 
@@ -84,5 +87,15 @@ class SamlIdPMultifactorAuthenticationTriggerTests extends BaseSamlIdPWebflowTes
         public MultifactorAuthenticationProvider dummyProvider() {
             return new TestMultifactorAuthenticationProvider("mfa-dummy");
         }
+
+        @Bean
+        public SamlObjectSignatureValidator samlObjectSignatureValidator() throws Throwable {
+            val mockValidator = mock(SamlObjectSignatureValidator.class);
+            when(mockValidator.verifySamlProfileRequest(any(), any(MetadataResolver.class), any(), any())).thenReturn(Boolean.TRUE);
+            when(mockValidator.verifySamlProfileRequest(any(), any(SamlRegisteredServiceMetadataAdaptor.class),
+                any(), any(MessageContext.class))).thenReturn(Boolean.TRUE);
+            return mockValidator;
+        }
+
     }
 }

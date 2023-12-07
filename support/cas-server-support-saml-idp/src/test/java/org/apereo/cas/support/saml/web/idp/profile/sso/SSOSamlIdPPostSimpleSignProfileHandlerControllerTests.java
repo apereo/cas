@@ -4,10 +4,8 @@ import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPHttpRedirectDeflateEncoder;
 import org.apereo.cas.util.EncodingUtils;
-
 import lombok.val;
 import net.shibboleth.shared.net.URLBuilder;
 import org.apache.commons.lang3.StringUtils;
@@ -17,7 +15,6 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AuthnRequest;
@@ -28,10 +25,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
-
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -64,7 +57,7 @@ class SSOSamlIdPPostSimpleSignProfileHandlerControllerTests extends BaseSamlIdPC
         request.setMethod("POST");
         val response = new MockHttpServletResponse();
 
-        val authnRequest = signAuthnRequest(request, response, getAuthnRequest());
+        val authnRequest = signAuthnRequest(request, response, getAuthnRequest(), samlRegisteredService);
         val xml = SamlUtils.transformSamlObject(openSamlConfigBean, authnRequest).toString();
         request.addParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST, EncodingUtils.encodeBase64(xml));
         val mv = controller.handleSaml2ProfileSsoPostRequest(response, request);
@@ -77,7 +70,7 @@ class SSOSamlIdPPostSimpleSignProfileHandlerControllerTests extends BaseSamlIdPC
         val request = new MockHttpServletRequest();
         request.setMethod("GET");
         val response = new MockHttpServletResponse();
-        val authnRequest = signAuthnRequest(request, response, getAuthnRequest());
+        val authnRequest = signAuthnRequest(request, response, getAuthnRequest(), samlRegisteredService);
 
         val encoder = new SamlIdPHttpRedirectDeflateEncoder("https://cas.example.org/login", authnRequest);
         encoder.doEncode();
@@ -99,15 +92,6 @@ class SSOSamlIdPPostSimpleSignProfileHandlerControllerTests extends BaseSamlIdPC
         val response = new MockHttpServletResponse();
         val mv = controller.handleSaml2ProfileSsoPostRequest(response, request);
         assertEquals(HttpStatus.BAD_REQUEST, mv.getStatus());
-    }
-    private AuthnRequest signAuthnRequest(final HttpServletRequest request,
-                                          final HttpServletResponse response,
-                                          final AuthnRequest authnRequest) throws Exception {
-        val adaptor = SamlRegisteredServiceMetadataAdaptor
-            .get(samlRegisteredServiceCachingMetadataResolver, samlRegisteredService,
-                samlRegisteredService.getServiceId()).get();
-        return samlIdPObjectSigner.encode(authnRequest, samlRegisteredService,
-            adaptor, response, request, SAMLConstants.SAML2_POST_BINDING_URI, authnRequest, new MessageContext());
     }
 
     private AuthnRequest getAuthnRequest() {

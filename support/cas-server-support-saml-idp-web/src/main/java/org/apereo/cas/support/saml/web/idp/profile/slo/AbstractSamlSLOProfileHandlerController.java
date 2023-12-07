@@ -83,7 +83,7 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
         if (SAMLBindingSupport.isMessageSigned(messageContext)) {
             LOGGER.trace("Verifying signature on the SAML logout request for [{}]", entityId);
             configContext.getSamlObjectSignatureValidator()
-                .verifySamlProfileRequestIfNeeded(logoutRequest, facade, request, messageContext);
+                .verifySamlProfileRequest(logoutRequest, facade, request, messageContext);
         }
         configContext.getOpenSamlConfigBean().logObject(logoutRequest);
 
