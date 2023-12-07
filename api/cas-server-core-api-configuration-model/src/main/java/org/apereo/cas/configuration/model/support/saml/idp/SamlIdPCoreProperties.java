@@ -57,7 +57,7 @@ public class SamlIdPCoreProperties implements Serializable {
     /**
      * A mapping of authentication context class refs.
      * This is where specific authentication context classes
-     * are reference and mapped to providers that CAS may support
+     * are referenced and mapped to providers that CAS may support
      * mainly for, i.e. MFA purposes.
      * <p>
      * Example might be {@code urn:oasis:names:tc:SAML:2.0:ac:classes:SomeClassName->mfa-duo}.
