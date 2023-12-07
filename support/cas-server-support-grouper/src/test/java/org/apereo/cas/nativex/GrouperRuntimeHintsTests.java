@@ -1,25 +1,26 @@
 package org.apereo.cas.nativex;
 
+import org.apereo.cas.grouper.GrouperFacade;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.predicate.RuntimeHintsPredicates;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link RedisCoreRuntimeHintsTests}.
+ * This is {@link GrouperRuntimeHintsTests}.
  *
  * @author Misagh Moayyed
  * @since 7.0.0
  */
 @Tag("Native")
-class RedisCoreRuntimeHintsTests {
+public class GrouperRuntimeHintsTests {
+
     @Test
     void verifyHints() throws Throwable {
         val hints = new RuntimeHints();
-        new RedisCoreRuntimeHints().registerHints(hints, getClass().getClassLoader());
-        assertTrue(RuntimeHintsPredicates.proxies().forInterfaces(RedisConnectionFactory.class).test(hints));
+        new GrouperRuntimeHints().registerHints(hints, getClass().getClassLoader());
+        assertTrue(RuntimeHintsPredicates.proxies().forInterfaces(GrouperFacade.class).test(hints));
     }
 }

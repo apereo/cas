@@ -106,5 +106,9 @@
   {
     "name": "java.net.URL[]",
     "unsafeAllocated": true
+  },
+  {
+    "name": "org.springframework.core.annotation.TypeMappedAnnotation[]",
+    "unsafeAllocated": true
   }
 ]
