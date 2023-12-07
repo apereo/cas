@@ -110,8 +110,8 @@ public class SamlProfileAuthnContextClassRefBuilder extends AbstractSaml20Object
         }
 
         val defClass = getDefaultAuthenticationContextClass();
-        val requestedAuthnContext = context.getSamlRequest() instanceof AuthnRequest
-            ? ((AuthnRequest) context.getSamlRequest()).getRequestedAuthnContext() : null;
+        val requestedAuthnContext = context.getSamlRequest() instanceof final AuthnRequest authnRequest
+            ? authnRequest.getRequestedAuthnContext() : null;
         if (requestedAuthnContext == null) {
             LOGGER.debug("No specific authN context is requested. Returning [{}]", defClass);
             return buildDefaultAuthenticationContextClass(defClass, context);

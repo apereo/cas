@@ -10,7 +10,7 @@ category: Protocols
 Each service may specify a required authentication class, which may overwrite the 
 appropriate field in the ultimate SAML2 response that is sent back to the service provider. 
 
-{% include_cached casproperties.html properties="cas.authn.saml-idp" includes="authentication-context" %}
+{% include_cached casproperties.html properties="cas.authn.saml-idp" includes=".core,.response" %}
 
 {% tabs saml2authnctx %}
 
