@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.web.idp.profile;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPConstants;
+import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 
 import lombok.val;
@@ -110,6 +111,8 @@ class SamlIdPInitiatedProfileHandlerControllerTests extends BaseSamlIdPConfigura
         request.addParameter(SamlIdPConstants.PROVIDER_ID, samlRegisteredService.getServiceId());
         request.addParameter("CName1", "SomeParameter");
         request.addParameter("CName2", "SomeParameter");
+        request.addParameter(SamlIdPConstants.SIGNATURE, "some-signature");
+        request.addParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST, "some-saml-request");
         request.addParameter(SamlIdPConstants.TARGET, "relay-state");
         val response = new MockHttpServletResponse();
         val mv = idpInitiatedSamlProfileHandlerController.handleIdPInitiatedSsoRequest(response, request);
@@ -117,6 +120,8 @@ class SamlIdPInitiatedProfileHandlerControllerTests extends BaseSamlIdPConfigura
         val view = (RedirectView) mv.getView();
         assertTrue(view.getUrl().contains("CName1="));
         assertTrue(view.getUrl().contains("CName2="));
+        assertFalse(view.getUrl().contains("%s=".formatted(SamlProtocolConstants.PARAMETER_SAML_REQUEST)));
+        assertFalse(view.getUrl().contains("%s=".formatted(SamlIdPConstants.SIGNATURE)));
     }
 
     @Test

@@ -106,6 +106,14 @@ public interface SamlIdPConstants {
      * The time constant.
      */
     String TIME = "time";
+    /**
+     * The signature algorithm parameter.
+     */
+    String SIG_ALG = "SigAlg";
+    /**
+     * The signature parameter.
+     */
+    String SIGNATURE = "Signature";
 
     /**
      * The samlError constant.
