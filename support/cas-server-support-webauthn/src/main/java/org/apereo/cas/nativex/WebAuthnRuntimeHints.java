@@ -38,6 +38,7 @@ import com.yubico.fido.metadata.VerificationMethodDescriptor;
 import com.yubico.fido.metadata.Version;
 import com.yubico.webauthn.RegisteredCredential;
 import com.yubico.webauthn.attestation.AttestationTrustSource;
+import com.yubico.webauthn.data.ByteArray;
 import com.yubico.webauthn.data.COSEAlgorithmIdentifier;
 import com.yubico.webauthn.data.PublicKeyCredentialParameters;
 import com.yubico.webauthn.data.PublicKeyCredentialType;
@@ -106,6 +107,7 @@ public class WebAuthnRuntimeHints implements CasRuntimeHintsRegistrar {
             MatcherProtectionType.class,
             AAGUID.class,
             AAID.class,
+            ByteArray.class,
             Version.class,
             PublicKeyCredentialParameters.class,
             PublicKeyCredentialType.class,

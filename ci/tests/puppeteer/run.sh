@@ -571,13 +571,22 @@ if [[ "${RERUN}" != "true" && ("${NATIVE_BUILD}" == "false" || "${NATIVE_RUN}" =
       printred "Bootstrap script [${bootstrapScript}] failed."
       exit 1
     fi
+
+    if [[ "${NATIVE_RUN}" == "true" ]]; then
+      printcyan "Waiting for bootstrap script to complete before CAS native image runs"
+      if [[ "$CI" == "true" ]]; then
+        sleep 25
+      else
+        sleep 10
+      fi
+    fi
   fi
 
   serverPort=8443
   processIds=()
   instances=$(jq -j '.instances // 1' "${config}")
   if [[ ! -z "$instances" ]]; then
-    echo "Found instances: ${instances}"
+    printcyan "Found instances: ${instances}"
   fi
   for (( c = 1; c <= instances; c++ ))
   do
@@ -596,6 +605,15 @@ if [[ "${RERUN}" != "true" && ("${NATIVE_BUILD}" == "false" || "${NATIVE_RUN}" =
       fi
     done
 
+    if [[ "${NATIVE_RUN}" == "true" && -n "${initScript}" ]]; then
+      printcyan "Waiting for initialization scripts to complete before CAS native image runs"
+      if [[ "$CI" == "true" ]]; then
+        sleep 25
+      else
+        sleep 10
+      fi
+    fi
+    
     if [[ "${INITONLY}" == "false" ]]; then
       runArgs=$(jq -j '.jvmArgs // empty' "${config}")
       runArgs="${runArgs//\$\{PWD\}/${PWD}}"
