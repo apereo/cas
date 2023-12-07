@@ -90,7 +90,8 @@ public class SamlIdPMultifactorAuthenticationTrigger implements MultifactorAuthe
 
             val context = contextProvider.getObject();
             val webContext = new JEEContext(request, response);
-            val result = SamlIdPSessionManager.of(context.getOpenSamlConfigBean(), context.getSessionStore()).fetch(webContext, AuthnRequest.class);
+            val result = SamlIdPSessionManager.of(context.getOpenSamlConfigBean(),
+                context.getSessionStore()).fetch(webContext, AuthnRequest.class);
             if (result.isPresent()) {
                 val authnRequest = (AuthnRequest) result.get().getLeft();
                 return authnRequest.getRequestedAuthnContext() != null
