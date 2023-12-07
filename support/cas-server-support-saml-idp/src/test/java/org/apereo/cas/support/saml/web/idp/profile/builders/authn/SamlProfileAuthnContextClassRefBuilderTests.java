@@ -29,6 +29,24 @@ class SamlProfileAuthnContextClassRefBuilderTests {
     @Nested
     class DefaultTests extends BaseSamlIdPConfigurationTests {
         @Test
+        void verifyGroovyInlinedOperationByService() throws Throwable {
+            val service = getSamlRegisteredServiceForTestShib();
+            service.setRequiredAuthenticationContextClass("groovy { 'https://refeds.org/profile/example' } ");
+            val authnRequest = getAuthnRequestFor(service);
+            val adaptor = SamlRegisteredServiceMetadataAdaptor.get(
+                samlRegisteredServiceCachingMetadataResolver, service, authnRequest);
+
+            val buildContext = SamlProfileBuilderContext.builder()
+                .samlRequest(authnRequest)
+                .authenticatedAssertion(Optional.of(getAssertion()))
+                .registeredService(service)
+                .adaptor(adaptor.get())
+                .build();
+            val result = defaultAuthnContextClassRefBuilder.build(buildContext);
+            assertEquals("https://refeds.org/profile/example", result.getAuthnContextClassRef().getURI());
+        }
+
+        @Test
         void verifyGroovyOperationByService() throws Throwable {
             val service = getSamlRegisteredServiceForTestShib();
             service.setRequiredAuthenticationContextClass("classpath:SamlAuthnContext.groovy");
