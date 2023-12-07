@@ -22,14 +22,15 @@ on:
     - cron: '0 23 * * *'
 #  push:
 #    branches: [ master ]
-#  pull_request:
-#    types: [ labeled ]
+  pull_request:
+    types: [ labeled ]
 #    branches: [ master ]
 
 ##########################################################################
 
 jobs:
   cancel-previous-runs:
+    if: ${{ (github.event_name == 'schedule' || contains(github.event.pull_request.labels.*.name, 'Bot')) }}
     runs-on: macos-latest
     timeout-minutes: 1
     steps:
@@ -40,6 +41,7 @@ jobs:
   ##########################################################################
 
   initialize:
+    if: ${{ (github.event_name == 'schedule' || contains(github.event.pull_request.labels.*.name, 'Bot')) }}
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
@@ -59,6 +61,7 @@ jobs:
   ##########################################################################
 
   build:
+    if: ${{ (github.event_name == 'schedule' || contains(github.event.pull_request.labels.*.name, 'Bot')) }}
     needs: [initialize]
     continue-on-error: false
     strategy:
@@ -97,6 +100,7 @@ jobs:
   ##########################################################################
 
   build-latest-jdk:
+    if: ${{ (github.event_name == 'schedule' || contains(github.event.pull_request.labels.*.name, 'Bot')) }}
     runs-on: macos-latest
     needs: [initialize]
     continue-on-error: false
@@ -126,6 +130,7 @@ jobs:
   ##########################################################################
 
   build-graalvm:
+    if: ${{ (github.event_name == 'schedule' || contains(github.event.pull_request.labels.*.name, 'Bot')) }}
     runs-on: macos-latest
     needs: [initialize]
     continue-on-error: false
