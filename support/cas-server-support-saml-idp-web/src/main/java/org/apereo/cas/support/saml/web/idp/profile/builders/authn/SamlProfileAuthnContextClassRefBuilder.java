@@ -89,7 +89,7 @@ public class SamlProfileAuthnContextClassRefBuilder extends AbstractSaml20Object
         if (StringUtils.isNotBlank(requiredClass)) {
             LOGGER.debug("Using [{}] as indicated by SAML registered service [{}]",
                 requiredClass, context.getRegisteredService().getName());
-            if (!ResourceUtils.isUrl(requiredClass) && ResourceUtils.doesResourceExist(requiredClass)) {
+            if (!ResourceUtils.isUrl(requiredClass)) {
                 LOGGER.debug("Executing groovy script [{}] to determine authentication context class for [{}]",
                     requiredClass, context.getAdaptor().getEntityId());
                 return ApplicationContextProvider.getScriptResourceCacheManager()
