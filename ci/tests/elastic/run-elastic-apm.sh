@@ -9,7 +9,7 @@ docker run -d \
   --name=elastic-apm \
   --user=apm-server \
   --volume="$(pwd)/ci/tests/elastic/apm-server.yml:/usr/share/apm-server/apm-server.yml:ro" \
-  docker.elastic.co/apm/apm-server:8.10.0 \
+  docker.elastic.co/apm/apm-server:8.11.2 \
   --strict.perms=false -e
 sleep 5
 docker ps | grep "elastic-apm"
