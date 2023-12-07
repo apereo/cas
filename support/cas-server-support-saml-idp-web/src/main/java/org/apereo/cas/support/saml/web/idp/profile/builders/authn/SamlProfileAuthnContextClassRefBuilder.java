@@ -134,7 +134,7 @@ public class SamlProfileAuthnContextClassRefBuilder extends AbstractSaml20Object
         val contextValues = CollectionUtils.toCollection(context.getAuthenticatedAssertion()
             .get().getAttributes().get(casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute()));
         val definedContexts = CollectionUtils.convertDirectedListToMap(
-            casProperties.getAuthn().getSamlIdp().getCore().getAuthenticationContextClassMappings());
+            casProperties.getAuthn().getSamlIdp().getCore().getContext().getAuthenticationContextClassMappings());
         return definedContexts.entrySet()
             .stream()
             .filter(entry -> contextValues.contains(entry.getValue()))
@@ -145,7 +145,7 @@ public class SamlProfileAuthnContextClassRefBuilder extends AbstractSaml20Object
 
     protected String getDefaultAuthenticationContextClass() {
         return StringUtils.defaultIfBlank(
-            casProperties.getAuthn().getSamlIdp().getResponse().getDefaultAuthenticationContextClass(),
+            casProperties.getAuthn().getSamlIdp().getCore().getContext().getDefaultAuthenticationContextClass(),
             AuthnContext.PPT_AUTHN_CTX);
     }
 
@@ -156,7 +156,7 @@ public class SamlProfileAuthnContextClassRefBuilder extends AbstractSaml20Object
         authnContextClassRefs.forEach(ref -> LOGGER.debug("Requested AuthN Context [{}]", ref.getURI()));
 
         val definedContexts = CollectionUtils.convertDirectedListToMap(
-            casProperties.getAuthn().getSamlIdp().getCore().getAuthenticationContextClassMappings());
+            casProperties.getAuthn().getSamlIdp().getCore().getContext().getAuthenticationContextClassMappings());
         LOGGER.debug("Defined authentication context mappings are [{}]", definedContexts);
 
         return authnContextClassRefs.stream()

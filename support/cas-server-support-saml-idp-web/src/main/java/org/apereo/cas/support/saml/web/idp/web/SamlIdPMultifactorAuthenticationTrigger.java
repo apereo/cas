@@ -104,7 +104,7 @@ public class SamlIdPMultifactorAuthenticationTrigger implements MultifactorAuthe
 
     protected Map<String, String> getAuthenticationContextMappings() {
         val authnContexts = contextProvider.getObject().getCasProperties()
-            .getAuthn().getSamlIdp().getCore().getAuthenticationContextClassMappings();
+            .getAuthn().getSamlIdp().getCore().getContext().getAuthenticationContextClassMappings();
         return CollectionUtils.convertDirectedListToMap(authnContexts);
     }
 }

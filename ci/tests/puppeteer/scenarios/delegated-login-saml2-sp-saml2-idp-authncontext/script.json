@@ -21,7 +21,7 @@
     "--cas.authn.saml-idp.core.entity-id=https://cas.apereo.org/saml/idp",
     "--cas.authn.saml-idp.metadata.file-system.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md",
 
-    "--cas.authn.saml-idp.core.authentication-context-class-mappings[0]=https://refeds.org/profile/mfa->http://schemas.example.com/claims/multipleauthn,urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport,urn:oasis:names:tc:SAML:2.0:ac:classes:Password",
+    "--cas.authn.saml-idp.core.context.authentication-context-class-mappings[0]=https://refeds.org/profile/mfa->http://schemas.example.com/claims/multipleauthn,urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport,urn:oasis:names:tc:SAML:2.0:ac:classes:Password",
     "--cas.authn.mfa.core.authentication-context-attribute=authnContext",
 
     "--cas.server.name=https://localhost:8443",

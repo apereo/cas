@@ -40,7 +40,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("MFATrigger")
 @Import(SamlIdPMultifactorAuthenticationTriggerTests.MultifactorTestConfiguration.class)
-@TestPropertySource(properties = "cas.authn.saml-idp.core.authentication-context-class-mappings=context1->mfa-dummy")
+@TestPropertySource(properties = "cas.authn.saml-idp.core.context.authentication-context-class-mappings=context1->mfa-dummy")
 class SamlIdPMultifactorAuthenticationTriggerTests extends BaseSamlIdPWebflowTests {
     @Autowired
     @Qualifier("samlIdPMultifactorAuthenticationTrigger")
