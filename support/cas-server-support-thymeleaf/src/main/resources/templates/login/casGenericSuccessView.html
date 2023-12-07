@@ -18,7 +18,7 @@
         </script>
         <div class="w-100 m-auto mdc-card card p-4">
             <h2>
-                <i class="mdi mdi-door-open fas fa-door-open"></i>
+                <i class="mdi mdi-door-open fas fa-door-open" aria-hidden="true"></i>
                 <span th:utext="#{screen.success.header}">Log In Successful</span>
                 <span id="principalId" th:utext="${authentication.principal.id}" style="display:none;"/>
             </h2>
@@ -135,8 +135,8 @@
 
                                 <tr th:each="service : ${authorizedServices}" class="mdc-data-table__row">
                                     <td class="mdc-data-table__cell">
-                                        <i class="mdi mdi-web fas fa-globe" th:unless="${service.logo}"></i>
-                                        <img th:src="${service.logo}" width="26px" height="26px" th:if="${service.logo}"/>
+                                        <i class="mdi mdi-web fas fa-globe" th:unless="${service.logo}" aria-hidden="true"></i>
+                                        <img th:src="${service.logo}" width="26px" height="26px" th:if="${service.logo}" alt="Service logo"/>
                                     </td>
                                     <td class="mdc-data-table__cell">
                                         <a th:id="${'service' + service.id}" th:title="${service.name}" th:alt="${service.description}" th:utext="${service.name}"/>

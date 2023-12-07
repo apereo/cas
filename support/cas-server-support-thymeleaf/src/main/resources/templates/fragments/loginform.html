@@ -43,7 +43,7 @@
 
                 <div id="login-form-controls" th:if="${loginFormViewable and loginFormEnabled}">
                     <div th:if="${existingSingleSignOnSessionAvailable}">
-                        <i class="mdi mdi-alert-decagram fas fa-exclamation-triangle"></i>&nbsp;
+                        <i class="mdi mdi-alert-decagram fas fa-exclamation-triangle" aria-hidden="true"></i>&nbsp;
                         <span id="existingSsoMsg" th:if="${registeredService}" class="mdc-button__label"
                               th:utext="#{screen.welcome.forcedsso(${existingSingleSignOnSessionPrincipal?.id},${registeredService.name})}"/>
                         <span id="existingSsoMsg" th:unless="${registeredService}" class="mdc-button__label"
@@ -130,7 +130,7 @@
                                 <button
                                     class="reveal-password mdc-button mdc-button--unelevated mdc-input-group-append mdc-icon-button btn btn-primary"
                                     tabindex="-1" type="button">
-                                    <i class="mdi mdi-eye reveal-password-icon fas fa-eye"></i>
+                                    <i class="mdi mdi-eye reveal-password-icon fas fa-eye" aria-hidden="true"></i>
                                     <span class="visually-hidden">Toggle Password</span>
                                 </button>
                             </div>
