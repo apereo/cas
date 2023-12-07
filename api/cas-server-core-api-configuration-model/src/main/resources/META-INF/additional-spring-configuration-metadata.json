@@ -463,8 +463,8 @@
       "name": "cas.authn.saml-idp.authentication-context-class-mappings",
       "type": "java.lang.String",
       "deprecation": {
-        "replacement": "cas.authn.saml-idp.core.authentication-context-class-mappings",
-        "reason": "authentication-context-class-mappings setting is moved into the core namespace.",
+        "replacement": "cas.authn.saml-idp.core.context.authentication-context-class-mappings",
+        "reason": "authentication-context-class-mappings setting is moved into the core.context namespace.",
         "level": "error"
       }
     },

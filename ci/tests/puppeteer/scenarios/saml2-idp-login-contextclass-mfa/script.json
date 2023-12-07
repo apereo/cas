@@ -5,7 +5,7 @@
   },
   "properties": [
     "--cas.authn.saml-idp.core.entity-id=https://cas.apereo.org/saml/idp",
-    "--cas.authn.saml-idp.core.authentication-context-class-mappings=https://refeds.org/profile/mfa->mfa-gauth",
+    "--cas.authn.saml-idp.core.context.authentication-context-class-mappings=https://refeds.org/profile/mfa->mfa-gauth",
     "--cas.authn.saml-idp.metadata.file-system.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md",
 
     "--cas.authn.attribute-repository.stub.attributes.email=casuser@example.org",

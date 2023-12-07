@@ -111,7 +111,7 @@ class SamlProfileAuthnContextClassRefBuilderTests {
     }
 
     @Nested
-    @TestPropertySource(properties = "cas.authn.saml-idp.core.authentication-context-class-mappings[0]=https://refeds.org/profile/mfa->" + TestMultifactorAuthenticationProvider.ID)
+    @TestPropertySource(properties = "cas.authn.saml-idp.core.context.authentication-context-class-mappings[0]=https://refeds.org/profile/mfa->" + TestMultifactorAuthenticationProvider.ID)
     class MappedToMfaProviderTests extends BaseSamlIdPConfigurationTests {
 
         @Test
@@ -143,7 +143,7 @@ class SamlProfileAuthnContextClassRefBuilderTests {
     @Nested
     @TestPropertySource(properties = {
         "cas.authn.mfa.core.authentication-context-attribute=amr",
-        "cas.authn.saml-idp.core.authentication-context-class-mappings[0]=https://refeds.org/profile/mfa->mfa"
+        "cas.authn.saml-idp.core.context.authentication-context-class-mappings[0]=https://refeds.org/profile/mfa->mfa"
     })
     class MappedToValueTests extends BaseSamlIdPConfigurationTests {
 
