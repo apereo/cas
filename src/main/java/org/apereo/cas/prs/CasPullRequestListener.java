@@ -4,6 +4,7 @@ import org.apereo.cas.CasLabels;
 import org.apereo.cas.MonitoredRepository;
 import org.apereo.cas.PullRequestListener;
 import org.apereo.cas.github.PullRequest;
+import com.vdurmont.semver4j.Semver;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +21,7 @@ import java.util.regex.Pattern;
 public class CasPullRequestListener implements PullRequestListener {
     private static final Pattern PATTERN_REVIEWED_BY = Pattern.compile("reviewed by:\\s*@*(\\w+)");
     private static final Pattern PATTERN_PUPPETEER = Pattern.compile(".*puppeteer.*scenarios.*script.*");
-    
+
     private final MonitoredRepository repository;
 
     @Override
@@ -43,30 +44,52 @@ public class CasPullRequestListener implements PullRequestListener {
     }
 
     private boolean processAutomaticMergeByChangeset(final PullRequest pr) {
-        if (pr.isLabeledAs(CasLabels.LABEL_AUTO_MERGE)) {
-            if (pr.isRenovateBot() || pr.isDependaBot()) {
-                log.info("Merging Bot pull request {}", pr);
-                return repository.approveAndMergePullRequest(pr);
-            }
+        if (pr.isRenovateBot() || pr.isDependaBot()) {
             var files = repository.getPullRequestFiles(pr);
             if (files.size() == 1) {
                 var firstFile = files.get(0).getFilename();
 
                 if (firstFile.endsWith("locust/requirements.txt")
+                    || firstFile.matches(".github/workflows/.+.yml")
                     || firstFile.endsWith("client/package-lock.json")
                     || firstFile.endsWith("client/.nvmrc")) {
                     log.info("Merging pull request {}", pr);
                     return repository.approveAndMergePullRequest(pr);
                 }
+
+                try {
+                    var pattern = Pattern.compile("\\| `(\\d+\\.\\d+\\.\\d+)` \\-\\> `(\\d+\\.\\d+\\.\\d+)` \\|");
+                    var matcher = pattern.matcher(pr.getBody());
+                    if (matcher.find()) {
+                        var startingVersion = new Semver(matcher.group(1));
+                        var endingVersion = new Semver(matcher.group(2));
+                        if (startingVersion.getMajor().equals(endingVersion.getMajor())
+                            && startingVersion.getMinor().equals(endingVersion.getMinor())
+                            && endingVersion.getPatch() > startingVersion.getPatch()) {
+                            log.info("Merging patch dependency upgrade {} from {} to {}", pr, startingVersion, endingVersion);
+                            return repository.approveAndMergePullRequest(pr);
+                        }
+                    }
+                } catch (final Exception e) {
+                    log.error(e.getMessage(), e);
+                }
+            }
+        }
+
+        if (pr.isLabeledAs(CasLabels.LABEL_AUTO_MERGE)) {
+            if (pr.isRenovateBot() || pr.isDependaBot()) {
+                log.info("Merging Bot pull request {}", pr);
+                return repository.approveAndMergePullRequest(pr);
             }
             var timeline = repository.getPullRequestTimeline(pr);
             var admins = repository.getGitHubProperties().getRepository().getAdmins();
             var approvedByAdmin = timeline
                 .stream()
-                .anyMatch(r -> r.isLabeled()
-                    && r.getLabel().getName().equals(CasLabels.LABEL_AUTO_MERGE.getTitle())
-                    && r.getActor() != null
-                    && admins.contains(r.getActor().getLogin()));
+                .anyMatch(r ->
+                    r.isLabeled()
+                        && r.getLabel().getName().equals(CasLabels.LABEL_AUTO_MERGE.getTitle())
+                        && r.getActor() != null
+                        && admins.contains(r.getActor().getLogin()));
             if (approvedByAdmin) {
                 log.info("Merging admin-approved pull request {}", pr);
                 return repository.approveAndMergePullRequest(pr);
