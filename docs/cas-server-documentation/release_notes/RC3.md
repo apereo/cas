@@ -96,7 +96,7 @@ You may also instruct CAS to use [Twilio SendGrid](../notifications/Sending-Emai
 
 ### CAS Intializr UI
 
-The [CAS Initializr](https://casinit.herokuapp.com/ui) project now provides a user interface:
+The [CAS Initializr](https://getcas.apereo.org/ui) project now provides a user interface:
 
 <img width="1600" alt="image" src="https://user-images.githubusercontent.com/1205228/205378501-a0e6ad1b-bf81-42ea-8a69-5ad13c0dde39.png">
 

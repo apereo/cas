@@ -350,7 +350,7 @@ function generateOverlay(artifactId, type) {
 
   $("#overlayform").remove();
   $('body').append(" \
-  <form id='overlayform' action='https://casinit.herokuapp.com/starter.zip' method='post'> \
+  <form id='overlayform' action='https://getcas.apereo.org/starter.zip' method='post'> \
     <input type='submit' value='submit' /> \
     <input type='hidden' name='dependencies' value='" + id + "' /> \
     <input type='hidden' name='type' value='" + type + "' /> \
