@@ -8,9 +8,15 @@ tasks.register("createRecipe") {
     def jibVersion = project.jibVersion
     def gradleVersion = gradle.gradleVersion
     def recipeName = "cas${casVersion.replaceAll(/\.|-SNAPSHOT/, '')}"
-    def templateContents = file("src/main/resources/current.gtemplate").text
+
+    def inputFile = file("src/main/resources/current.gtemplate")
+    def templateContents = inputFile.text
     def recipeFileName = "$buildDir/generated/META-INF/rewrite/${recipeName}.yml"
     def outputFile = file(recipeFileName)
+
+    outputs.file(outputFile)
+    outputs.cacheIf { true }
+    inputs.file(inputFile).withPropertyName("openrewrite-template").withPathSensitivity(PathSensitivity.RELATIVE)
 
     doFirst {
         def model = [:]
