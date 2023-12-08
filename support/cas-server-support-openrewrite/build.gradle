@@ -10,6 +10,7 @@ tasks.register("createRecipe") {
     def recipeName = "cas${casVersion.replaceAll(/\.|-SNAPSHOT/, '')}"
     def templateContents = file("src/main/resources/current.gtemplate").text
     def recipeFileName = "$buildDir/generated/META-INF/rewrite/${recipeName}.yml"
+    def outputFile = file(recipeFileName)
 
     doFirst {
         def model = [:]
@@ -24,8 +25,6 @@ tasks.register("createRecipe") {
         def engine = new groovy.text.GStringTemplateEngine()
         def recipe = engine.createTemplate(templateContents).make(model).toString()
 
-        def outputFile = file(recipeFileName)
-        outputFile.parentFile.mkdirs()
         outputFile.write(recipe)
     }
 }
