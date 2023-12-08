@@ -12,11 +12,16 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 /**
  * This is {@link OidcJwtAccessTokenEncoderTests}.
@@ -64,6 +69,26 @@ class OidcJwtAccessTokenEncoderTests extends AbstractOidcTests {
         val decoded = encoder.decode(encodedAccessToken);
         assertNotNull(decoded);
         assertEquals(accessToken.getId(), decoded);
+    }
+
+    public static Stream<Arguments> getNonTokenArgs() {
+        return Stream.of(
+            arguments((String) null),
+            arguments(StringUtils.EMPTY),
+            arguments("nodotintoken"),
+            arguments("bad.token.id")
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getNonTokenArgs")
+    void verifyNonEncodedToken(final String tokenId) throws Throwable {
+        val accessToken = getAccessToken();
+        val registeredService = getRegisteredServiceForJwtAccessTokenWithKeys(accessToken);
+        val encoder = getAccessTokenEncoder(accessToken, registeredService);
+
+        val decode = encoder.decode(tokenId);
+        assertEquals(tokenId, decode);
     }
 
     @Test
