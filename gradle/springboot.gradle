@@ -29,7 +29,7 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
         buildInfo {
             properties {
                 if (!rootProject.generateTimestamps) {
-                    time = null
+                    excludes = ['time']
                 }
             }
         }
