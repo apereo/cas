@@ -30,7 +30,7 @@ import org.apereo.cas.support.saml.*
 import org.apereo.cas.support.saml.services.*
 import org.opensaml.saml.metadata.resolver.*
 
-Collection<MetadataResolver> run(final Object... args) {
+def run(final Object... args) {
    def registeredService = args[0]
    def samlConfigBean = args[1]
    def samlProperties = args[2]
@@ -39,11 +39,8 @@ Collection<MetadataResolver> run(final Object... args) {
 
     /*
      Stuff happens where you build the relevant metadata resolver instance(s).
-     When done, wrap the results into a collection and return.
-     A null or empty collection will be ignored by CAS.
     */
    def metadataResolver = ...
-   return CollectionUtils.wrap(metadataResolver)
 }
 ```
 
