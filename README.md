@@ -78,7 +78,7 @@ The following features are supported by the CAS project:
 The foundations of CAS are built upon: [Spring Boot](https://projects.spring.io/spring-boot) and
 [Spring Cloud](https://projects.spring.io/spring-cloud/).
 
-## Development [![devlocity](https://img.shields.io/badge/Revved%20up%20by-Gradle%20Devlocity-06A0CE?logo=Gradle&labelColor=02303A)][devlocity] [![codecov](https://codecov.io/gh/apereo/cas/branch/master/graph/badge.svg?style=for-the-badge)][cascodecov]
+## Development [![Revved up by Develocity](https://img.shields.io/badge/Revved%20up%20by-Develocity-06A0CE?logo=Gradle&labelColor=02303A)][devlocity] [![codecov](https://codecov.io/gh/apereo/cas/branch/master/graph/badge.svg?style=for-the-badge)][cascodecov]
 
 - To build the project locally, please follow [this guide][casbuildprocess].
 - The release schedule is [available here][releaseschedule].
