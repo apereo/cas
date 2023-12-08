@@ -56,20 +56,49 @@ public class ScriptingUtils {
             GROOVY_COMPILER_CONFIG.addCompilationCustomizers(new ASTTransformationCustomizer(CompileStatic.class));
         }
         val imports = new ImportCustomizer();
-        imports.addStarImports("java.time", "java.util", "java.io",
-            "java.math", "java.beans", "java.net", "java.nio", "java.util.stream",
-            "groovy.json", "groovy.text", "groovy.util", "groovy.lang", "groovy.transform",
+        imports.addStarImports(
+            "java.time",
+            "java.util",
+            "java.io",
+            "java.math",
+            "java.beans",
+            "java.net",
+            "java.nio",
+            "java.util.stream",
+
+            "groovy.net",
+            "groovy.json",
+            "groovy.text",
+            "groovy.util",
+            "groovy.lang",
+            "groovy.transform",
+
             "org.slf4j",
+
+            "org.apache.http",
+            "org.apache.http.util",
+            "org.apache.http.client.methods",
+            "org.apache.http.impl.client",
+
             "org.apache.commons.lang3",
+            
+            "jakarta.servlet",
             "jakarta.servlet.http",
-            "org.opensaml.core.xml",
-            "org.opensaml.saml.saml2.core",
+
             "org.springframework.context",
             "org.springframework.core",
             "org.springframework.core.io",
             "org.springframework.webflow",
             "org.springframework.webflow.execution",
             "org.springframework.webflow.action",
+
+            "org.opensaml.core.xml",
+            "org.opensaml.saml.metadata.resolver",
+            "org.opensaml.saml.saml2.core",
+            "org.opensaml.saml.saml2.binding",
+            "org.opensaml.saml.metadata.resolver",
+            "org.opensaml.saml.common",
+            
             "org.apereo.cas",
             "org.apereo.cas.audit",
             "org.apereo.cas.authentication",
@@ -79,7 +108,10 @@ public class ScriptingUtils {
             "org.apereo.cas.util",
             "org.apereo.cas.web",
             "org.apereo.cas.web.support",
-            "org.apereo.cas.authentication.mfa");
+            "org.apereo.cas.authentication.mfa",
+            "org.apereo.cas.support.saml",
+            "org.apereo.cas.support.saml.services"
+        );
 
         GROOVY_COMPILER_CONFIG.addCompilationCustomizers(imports);
     }

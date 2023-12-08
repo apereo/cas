@@ -11,6 +11,7 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
+import org.apache.commons.lang3.StringUtils;
 import org.cryptacular.util.CertUtil;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
@@ -341,7 +342,7 @@ public class SamlUtils {
      * @return true/false
      */
     public static boolean isDynamicMetadataQueryConfigured(final String metadataLocation) {
-        return metadataLocation.trim().endsWith("/entities/{0}");
+        return StringUtils.isNotBlank(metadataLocation) && metadataLocation.trim().endsWith("/entities/{0}");
     }
 
     /**

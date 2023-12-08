@@ -32,14 +32,14 @@ env:
   JDK_DISTRIBUTION: "corretto"
   NODE_CURRENT: '20.10.0'
   MAX_ATTEMPTS: 1
-  RETRY_MINUTES: 45
+  RETRY_MINUTES: 20
   SCENARIO_REGEX: ".*"
 
 on:
 #  push:
 #    branches: [ master ]
   schedule:
-    - cron: '0 14 */3 * *'
+    - cron: '0 10 */2 * *'
 
 ##########################################################################
 
