@@ -1,6 +1,5 @@
 description = "Apereo CAS Open Rewrite Support"
 
-
 tasks.register("createRecipe") {
     def casVersion = rootProject.version
     def tomcatVersion = project.tomcatVersion
@@ -31,7 +30,4 @@ tasks.register("createRecipe") {
     }
 }
 
-jar {
-    dependsOn(createRecipe)
-    from 'build/generated'
-}
+sourceSets.main.output.dir file("$buildDir/generated"), builtBy: 'createRecipe'
