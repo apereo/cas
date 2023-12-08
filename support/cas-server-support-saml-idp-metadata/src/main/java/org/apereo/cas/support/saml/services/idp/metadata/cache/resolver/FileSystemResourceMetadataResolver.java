@@ -10,6 +10,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import lombok.extern.slf4j.Slf4j;
@@ -64,7 +65,7 @@ public class FileSystemResourceMetadataResolver extends BaseSamlRegisteredServic
         return FunctionUtils.doAndHandle(() -> {
             val metadataLocation = SpringExpressionLanguageValueResolver.getInstance().resolve(service.getMetadataLocation());
             val metadataResource = ResourceUtils.isUrl(metadataLocation) ? null : ResourceUtils.getResourceFrom(metadataLocation);
-            return metadataResource instanceof FileSystemResource;
+            return metadataResource instanceof FileSystemResource && !ScriptingUtils.isGroovyScript(metadataLocation);
         }, throwable -> false).get();
     }
 

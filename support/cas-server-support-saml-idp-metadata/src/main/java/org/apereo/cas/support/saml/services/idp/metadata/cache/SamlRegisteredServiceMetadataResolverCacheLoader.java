@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.services.idp.metadata.cache;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlan;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.concurrent.CasReentrantLock;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpClient;
@@ -11,6 +12,7 @@ import com.github.benmanes.caffeine.cache.CacheLoader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import net.shibboleth.shared.component.AbstractIdentifiableInitializableComponent;
 import org.jooq.lambda.Unchecked;
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
@@ -96,6 +98,13 @@ public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLo
             }))
             .flatMap(Collection::stream)
             .filter(Objects::nonNull)
+            .peek(Unchecked.consumer(givenResolver -> {
+                if (givenResolver instanceof final AbstractIdentifiableInitializableComponent metadataResolver && !metadataResolver.isInitialized()) {
+                    FunctionUtils.doIfBlank(metadataResolver.getId(), __ -> metadataResolver.setId(registeredService.getName() + '-' + RandomUtils.generateSecureRandomId()));
+                    LOGGER.trace("Metadata resolver [{}] will be forcefully initialized", metadataResolver.getId());
+                    metadataResolver.initialize();
+                }
+            }))
             .collect(Collectors.toList());
     }
 }

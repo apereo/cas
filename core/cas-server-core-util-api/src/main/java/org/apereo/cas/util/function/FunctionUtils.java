@@ -146,6 +146,19 @@ public class FunctionUtils {
     }
 
     /**
+     * Do if blank.
+     *
+     * @param <T>          the type parameter
+     * @param input        the input
+     * @param trueFunction the true function
+     */
+    public static <T> void doIfBlank(final CharSequence input, final CheckedConsumer<T> trueFunction) {
+        if (StringUtils.isBlank(input)) {
+            doAndHandle(trueFunction);
+        }
+    }
+
+    /**
      * Do if not blank.
      *
      * @param <T>           the type parameter
@@ -166,8 +179,7 @@ public class FunctionUtils {
      * @param input        the input
      * @param trueFunction the true function
      */
-    public static <T extends CharSequence> void doIfNotBlank(final T input,
-                                                             final CheckedConsumer<T> trueFunction) {
+    public static <T extends CharSequence> void doIfNotBlank(final T input, final CheckedConsumer<T> trueFunction) {
         try {
             if (StringUtils.isNotBlank(input)) {
                 trueFunction.accept(input);
