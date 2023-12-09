@@ -490,24 +490,32 @@ if (rootProject.publishFlag && !rootProject.publishMinimalArtifacts) {
 
 if (gradle.startParameter.taskNames.any { task -> task.startsWith("jacoco") }) {
     tasks.register('jacocoRootReport', JacocoReport) {
-        def executions = subprojects.findAll { subproject ->
+        outputs.cacheIf { true }
+
+        subprojects.each {subproject -> {
             if (!subproject.path.contains(":docs")) {
                 subproject.tasks.withType(Test).each{ task ->
                     dependsOn(task)
                     mustRunAfter(task)
                 }
             }
+        }}
+
+        def executions = subprojects.collect {subproject ->
             def execFile = subproject.layout.buildDirectory.file('jacoco/jacocoTest.exec').get().asFile
-            logger.info "${subproject.name} with execution file ${execFile}"
-            true
-        }.collect {subproject ->
-            subproject.layout.buildDirectory.file('jacoco/jacocoTest.exec').get().asFile
+            if (execFile.exists()) {
+                logger.info "${subproject.name} with execution file ${execFile}"
+                inputs.file(execFile).withPropertyName("${subproject.name}-jacoco").withPathSensitivity(PathSensitivity.RELATIVE)
+            }
+            execFile
         }
+        
         logger.info "Coverage execution data files: ${executions}"
         executionData.from(executions)
-
+        outputs.files(rootProject.layout.buildDirectory.file('reports/jacoco/jacocoRootReport/jacocoRootReport.xml').get().asFile)
+        
         reports {
-            html.required.set(true)
+//            html.required.set(true)
             xml.required.set(true)
             csv.required.set(true)
         }
