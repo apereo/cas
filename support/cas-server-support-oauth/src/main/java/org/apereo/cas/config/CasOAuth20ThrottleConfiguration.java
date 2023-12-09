@@ -13,17 +13,15 @@ import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlan;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.spring.RefreshableHandlerInterceptor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.apereo.cas.web.SecurityLogicInterceptor;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import lombok.val;
-import org.pac4j.core.authorization.authorizer.DefaultAuthorizers;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.DirectClient;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.engine.DefaultSecurityLogic;
-import org.pac4j.core.matching.matcher.DefaultMatchers;
-import org.pac4j.springframework.web.SecurityInterceptor;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -135,9 +133,7 @@ public class CasOAuth20ThrottleConfiguration {
             @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER) final CasCookieBuilder ticketGrantingTicketCookieGenerator,
             @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry) {
             val logic = new OAuth20TicketGrantingTicketAwareSecurityLogic(ticketGrantingTicketCookieGenerator, ticketRegistry);
-            return new SecurityInterceptor(oauthSecConfig.withSecurityLogic(logic),
-                Authenticators.CAS_OAUTH_CLIENT,
-                DefaultAuthorizers.IS_FULLY_AUTHENTICATED, DefaultMatchers.SECURITYHEADERS);
+            return new SecurityLogicInterceptor(oauthSecConfig.withSecurityLogic(logic), Authenticators.CAS_OAUTH_CLIENT);
         }
 
         @ConditionalOnMissingBean(name = "requiresAuthenticationAccessTokenInterceptor")
@@ -151,11 +147,9 @@ public class CasOAuth20ThrottleConfiguration {
                 .filter(DirectClient.class::isInstance)
                 .map(Client::getName)
                 .collect(Collectors.joining(","));
-
             val logic = new DefaultSecurityLogic();
             logic.setLoadProfilesFromSession(false);
-            return new SecurityInterceptor(oauthSecConfig.withSecurityLogic(logic), clients,
-                DefaultAuthorizers.IS_FULLY_AUTHENTICATED, DefaultMatchers.SECURITYHEADERS);
+            return new SecurityLogicInterceptor(oauthSecConfig.withSecurityLogic(logic), clients);
         }
     }
 }

@@ -7,10 +7,10 @@ category: Logs & Audits
 
 # Audits
 
-CAS uses the [Inspektr framework](https://github.com/apereo/inspektr) for auditing purposes
-and statistics. The Inspektr project allows for non-intrusive auditing and logging of the
-coarse-grained execution paths e.g. Spring-managed beans method executions by using annotations
-and Spring-managed `@Aspect`-style aspects.
+CAS uses its own *Inspektr* framework for auditing purposes and statistics. This framework used to be a separate project
+and lived outside the codebase previously and has since been merged entirely into the CAS codebase. The Inspektr components 
+allow for non-intrusive auditing and logging of the coarse-grained execution paths e.g. Spring-managed 
+beans method executions by using annotations and Spring-managed `@Aspect`-style aspects.
 
 CAS server auto-configures all the relevant Inspektr components. All the available configuration
 options that are injected to Inspektr classes are available to deployers via relevant CAS properties.
