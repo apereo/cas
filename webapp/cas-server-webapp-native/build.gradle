@@ -17,6 +17,9 @@ ext {
 tasks.named("bootJar") {
     notCompatibleWithConfigurationCache("bootJar is not supported by the Gradle configuration cache")
 }
+tasks.named("nativeCompile") {
+    notCompatibleWithConfigurationCache("nativeCompile is not supported by the Gradle configuration cache")
+}
 
 configurations {
     configureEach {

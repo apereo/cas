@@ -6,6 +6,7 @@ import lombok.val;
 import org.hibernate.dialect.Dialect;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
+import org.springframework.orm.jpa.JpaVendorAdapter;
 import java.util.Collection;
 import java.util.List;
 
@@ -18,10 +19,8 @@ import java.util.List;
 public class CasHibernateRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
-        registerReflectionHints(hints,
-            findSubclassesInPackage(Dialect.class, "org.hibernate"));
-
-        registerReflectionHints(hints, List.of(CasHibernatePhysicalNamingStrategy.class));
+        registerReflectionHints(hints, findSubclassesInPackage(Dialect.class, "org.hibernate"));
+        registerReflectionHints(hints, List.of(JpaVendorAdapter.class, CasHibernatePhysicalNamingStrategy.class));
     }
 
     private static void registerReflectionHints(final RuntimeHints hints, final Collection entries) {

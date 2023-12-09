@@ -18,7 +18,10 @@ import java.util.List;
 public class InweboAuthenticationRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
-        val list = List.of(XIncludeAwareParserConfiguration.class, DTDDVFactoryImpl.class);
+        val list = List.of(
+            XIncludeAwareParserConfiguration.class,
+            DTDDVFactoryImpl.class
+        );
         registerReflectionHint(hints, list);
     }
 
