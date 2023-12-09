@@ -8,6 +8,7 @@ import org.apereo.cas.web.flow.authentication.CasWebflowExceptionHandler;
 import org.apereo.cas.web.flow.configurer.CasWebflowCustomizer;
 import org.apereo.cas.web.flow.decorator.WebflowDecorator;
 import org.apereo.cas.web.flow.executor.ClientFlowExecutionRepository;
+import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import lombok.val;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
@@ -40,6 +41,7 @@ public class CasCoreWebflowRuntimeHints implements CasRuntimeHintsRegistrar {
             .registerJdkProxy(StateDefinition.class)
             .registerJdkProxy(CasWebflowConfigurer.class)
             .registerJdkProxy(CasWebflowCustomizer.class)
+            .registerJdkProxy(CasWebflowEventResolver.class)
             .registerJdkProxy(WebflowDecorator.class)
             .registerJdkProxy(CasWebflowExecutionPlanConfigurer.class)
             .registerJdkProxy(CasWebflowExceptionHandler.class);
@@ -48,12 +50,11 @@ public class CasCoreWebflowRuntimeHints implements CasRuntimeHintsRegistrar {
             .registerType(ClientFlowExecutionRepository.SerializedFlowExecutionState.class)
             .registerType(LocalAttributeMap.class);
 
-        registerReflectionHints(hints,
-            findSubclassesInPackage(MessageContext.class, "org.springframework.binding"));
-        registerReflectionHints(hints,
-            findSubclassesInPackage(ValidationContext.class, "org.springframework.binding"));
+        registerReflectionHints(hints, findSubclassesInPackage(MessageContext.class, "org.springframework.binding"));
+        registerReflectionHints(hints, findSubclassesInPackage(ValidationContext.class, "org.springframework.binding"));
 
         registerReflectionHints(hints, List.of(
+            CasWebflowEventResolver.class,
             TypeReference.of("org.springframework.webflow.engine.impl.RequestControlContextImpl"),
             TypeReference.of("org.springframework.webflow.engine.impl.FlowSessionImpl"),
             TransitionSet.class,
