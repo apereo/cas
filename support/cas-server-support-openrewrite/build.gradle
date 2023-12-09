@@ -1,22 +1,25 @@
 description = "Apereo CAS Open Rewrite Support"
 
-processResources {
-    def casVersion = project.version
+tasks.register("createOpenRewriteRecipe") {
+    def casVersion = rootProject.version.replaceAll(/-SNAPSHOT/, '')
     def tomcatVersion = project.tomcatVersion
     def sourceCompatibility = project.sourceCompatibility
     def springBootVersion = project.springBootVersion
     def jibVersion = project.jibVersion
     def gradleVersion = gradle.gradleVersion
     def recipeName = "cas${casVersion.replaceAll(/\.|-SNAPSHOT/, '')}"
-    def templateContents = file("src/main/resources/current.gtemplate").text
 
-    def outputDir = file("src/main/resources/META-INF/rewrite")
-    def outputFile = file("${outputDir.absolutePath}/${recipeName}.yml")
+    def inputFile = file("src/main/resources/current.gtemplate")
+    def templateContents = inputFile.text
+    def recipeFileName = "src/main/resources/META-INF/rewrite/${recipeName}.yml"
+    def outputFile = file(recipeFileName)
+
     outputs.file(outputFile)
+    outputs.cacheIf { true }
+    inputs.file(inputFile).withPropertyName("openrewrite-template").withPathSensitivity(PathSensitivity.RELATIVE)
 
     doFirst {
         def model = [:]
-
         model.put("recipeName", recipeName)
         model.put("tomcatVersion", tomcatVersion)
         model.put("casVersion", casVersion)
@@ -24,15 +27,12 @@ processResources {
         model.put("jibVersion", jibVersion)
         model.put("gradleVersion", gradleVersion)
         model.put("springBootVersion", springBootVersion)
-        
+
         def engine = new groovy.text.GStringTemplateEngine()
         def recipe = engine.createTemplate(templateContents).make(model).toString()
 
-        if (!outputDir.exists()) {
-            outputDir.mkdirs()
-        }
         outputFile.write(recipe)
+        println "OpenRewrite recipe created at ${outputFile}"
+        println "The following recipes are available:\n${outputFile.parentFile.listFiles().collect { it.name} }"
     }
 }
-
-resourcesJar.dependsOn(processResources)
