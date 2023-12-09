@@ -8,7 +8,6 @@ const path = require("path");
     let page = await cas.newPage(browser);
     await cas.gotoLogin(page);
     await cas.loginWith(page);
-    await page.close();
     let page2 = await cas.newPage(browser);
     await page2.setRequestInterception(true);
     await page2.on('request', request => {
