@@ -75,4 +75,3 @@ ci/tests/k3d/install.sh
 ci/tests/k3d/get_helm.sh
 **/yarn.lock
 support/cas-server-support-palantir/src/main/resources/static/assets
-support/cas-server-support-openrewrite/src/main/resources/META-INF/rewrite/*.yml

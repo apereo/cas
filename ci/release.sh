@@ -12,7 +12,7 @@ function printgreen() {
 }
 
 function printred() {
-  printf "🔴 ${RED}$1${ENDCOLOR}\n"
+  printf "🚨 ${RED}$1${ENDCOLOR}\n"
 }
 
 function clean {
@@ -56,6 +56,14 @@ function publish {
         printred "CAS version ${casVersion} cannot be a SNAPSHOT version"
         exit 1
     fi
+
+    ./gradlew createOpenRewriteRecipe
+    git diff --quiet
+    if [ $? -ne 0 ]; then
+      git status
+      git add "**/rewrite/*.yml" && git commit -m "Generated OpenRewrite recipe for ${casVersion}"
+    fi
+
     printgreen "Publishing CAS releases. This might take a while..."
     ./gradlew publishToSonatype closeAndReleaseStagingRepository \
       --no-parallel --no-watch-fs --no-configuration-cache -DskipAot=true -DpublishReleases=true \
@@ -69,14 +77,33 @@ function publish {
         printred "Publishing CAS failed."
         exit 1
     fi
+
+    createTag
+}
+
+function createTag {
+  printgreen "Tagging the source tree for CAS version: ${casVersion}"
+  read -p "CAS version to release (Leave blank for ${casVersion}): " releaseVersion
+  if [[ -z "${releaseVersion}" ]]; then
+    releaseVersion="${casVersion}"
+  fi
+
+  releaseTag="v${releaseVersion}"
+  if [[ $(git tag -l "${releaseTag}") ]]; then
+    git tag -d "${releaseTag}" && git push --delete origin "${releaseTag}"
+  fi
+  git tag "${releaseTag}" && git push origin "${releaseTag}"
 }
 
 function finished {
     printgreen "Done! The release is now automatically published. There is nothing more for you to do. Thank you!"
 }
 
-clear
-java -version
+git diff --quiet
+if [ $? -ne 0 ]; then
+  printred "Git repository has modified or untracked files. Commit or discard all changes and try again."
+  exit 1
+fi
 
 if [[ "${casVersion}" == v* ]] ;
 then
@@ -87,8 +114,8 @@ fi
 echo -e "\n"
 echo "***************************************************************"
 echo "Welcome to the release process for Apereo CAS ${casVersion}"
+echo -n $(java -version)
 echo "***************************************************************"
-echo -e "\n"
 echo -e "Make sure the following criteria is met for non-SNAPSHOT versions:\n"
 echo -e "\t- Your Sonatype account (username/password) must be authorized to publish releases to 'org.apereo'."
 echo -e "\t- Your PGP signatures must be configured via '~/.gradle/gradle.properties' to sign the release artifacts:"
