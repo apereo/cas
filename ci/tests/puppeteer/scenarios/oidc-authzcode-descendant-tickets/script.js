@@ -119,9 +119,9 @@ async function refreshTokens(refreshToken, clientId, successHandler, errorHandle
     }
 
     await refreshTokens(tokens.refreshToken, "client",
-        res => {
+        () => {
             throw `Refresh Token request should not pass; ${tokens.accessToken} is expired`
-        }, error => cas.logg("Refresh Token request has failed, correctly."));
+        }, () => cas.logg("Refresh Token request has failed, correctly."));
 
     await browser.close();
 })();

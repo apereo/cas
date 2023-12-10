@@ -23,7 +23,7 @@ async function verifyServices() {
     await cas.log("Verifying services from CAS");
     for (let i = 1; i <= TOTAL; i++) {
         await cas.doGet(`${BASE_URL}/${i}`,
-            async res => {
+            async () => {
             }, async error => {
                 throw error;
             }, {'Content-Type': "application/json"});

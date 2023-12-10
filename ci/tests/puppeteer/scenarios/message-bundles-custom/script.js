@@ -5,7 +5,7 @@ const path = require("path");
 
 function updateProperty(properties, propertiesFile, value) {
     properties.set("screen.welcome.security", value);
-    properties.save(propertiesFile, (err, data) => {
+    properties.save(propertiesFile, (err) => {
         if (err) {
             throw err;
         }

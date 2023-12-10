@@ -1,3 +1,5 @@
+// noinspection JSUnusedLocalSymbols
+
 const assert = require('assert');
 const cas = require('../../cas.js');
 
@@ -13,7 +15,7 @@ const cas = require('../../cas.js');
     let refreshToken = null;
     await cas.doPost(url, "", {
         'Content-Type': "application/json",
-        'Authorization': 'Basic ' + btoa('client:secret')
+        'Authorization': `Basic ${btoa('client:secret')}`
     }, res => {
         cas.log(res.data);
         assert(res.data.access_token !== null);

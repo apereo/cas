@@ -28,7 +28,7 @@ async function verifyDeviceCode(data) {
     const url = `https://localhost:8443/cas/oauth2.0/accessToken?${params.toString()}`;
     await cas.doPost(url, "", {
         'Content-Type': "application/json"
-    }, res => {
+    }, () => {
         throw `Operation must fail`;
     }, error => {
         assert(error.response.status === 400);
@@ -37,7 +37,7 @@ async function verifyDeviceCode(data) {
     await cas.sleep(3000);
     await cas.doPost(url, "", {
         'Content-Type': "application/json"
-    }, res => {
+    }, () => {
         throw `Operation must fail`;
     }, error => {
         assert(error.response.status === 400);

@@ -1,5 +1,4 @@
 const puppeteer = require('puppeteer');
-const assert = require('assert');
 const cas = require('../../cas.js');
 
 (async () => {
@@ -10,7 +9,7 @@ const cas = require('../../cas.js');
     await cas.goto(page, "https://localhost:8443/cas/actuator/health");
     await page.waitForTimeout(1000);
     await cas.doGet("https://localhost:8443/cas/actuator/health",
-        res => {
+        () => {
 
         }, error => {
             throw error;

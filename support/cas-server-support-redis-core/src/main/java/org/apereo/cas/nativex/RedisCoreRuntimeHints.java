@@ -18,8 +18,7 @@ import java.util.List;
 public class RedisCoreRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
-        hints.proxies().registerJdkProxy(RedisModulesCommands.class);
-        hints.proxies().registerJdkProxy(RedisClusterCommands.class);
+        hints.proxies().registerJdkProxy(RedisModulesCommands.class, RedisClusterCommands.class);
         hints.proxies().registerJdkProxy(RedisConnectionFactory.class);
 
         registerReflectionHints(hints, List.of(

@@ -7,7 +7,7 @@ const cas = require('../../cas.js');
     let url = `https://localhost:8443/cas/oauth2.0/token?${params}`;
     await cas.doPost(url, params, {
         'Content-Type': "application/json",
-        'Authorization': 'Basic ' + btoa('client:secret')
+        'Authorization': `Basic ${btoa('client:secret')}`
     }, res => {
         cas.log(res.data);
         assert(res.data.access_token !== null);

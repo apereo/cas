@@ -13,7 +13,7 @@ const assert = require('assert');
     let ticket = await cas.assertTicketParameter(page);
 
     const keyPath = path.join(__dirname, 'private.key');
-    const { payload, protectedHeader } = await cas.decryptJwt(ticket, keyPath);
+    const { payload } = await cas.decryptJwt(ticket, keyPath);
     assert(payload.iss === "https://localhost:8443/cas");
     assert(payload.aud === "https://localhost:9859/anything/1");
     assert(payload.credentialType === "UsernamePasswordCredential");

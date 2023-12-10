@@ -94,7 +94,7 @@ async function exchangeToken(refreshToken, clientId, successHandler, errorHandle
             assert(res.data.access_token !== null);
             assert(res.data.refresh_token === undefined);
             assert(res.status === 200);
-        }, error => {
+        }, () => {
             throw `Operation should not fail`;
         });
 
@@ -103,7 +103,7 @@ async function exchangeToken(refreshToken, clientId, successHandler, errorHandle
             assert(res.data.access_token !== null);
             assert(res.data.refresh_token !== null);
             assert(res.status === 200);
-        }, error => {
+        }, () => {
             throw `Operation should not fail`;
         });
 

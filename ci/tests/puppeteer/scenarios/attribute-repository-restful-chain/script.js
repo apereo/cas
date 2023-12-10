@@ -1,8 +1,6 @@
 const puppeteer = require('puppeteer');
 const assert = require('assert');
 const cas = require('../../cas.js');
-const fs = require("fs");
-const path = require("path");
 
 (async () => {
     const attributes = {

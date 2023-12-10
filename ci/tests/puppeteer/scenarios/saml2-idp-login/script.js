@@ -47,7 +47,6 @@ async function staleAuthenticationFlow(context) {
     await cas.log("Checking for page URL...");
     let url = await page.url();
     await cas.logPage(page);
-    await page.close();
 
     await cas.log(`Restarting the flow with ${url}`);
     const page2 = await cas.newPage(context);

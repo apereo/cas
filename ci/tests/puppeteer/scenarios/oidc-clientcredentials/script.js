@@ -6,7 +6,7 @@ async function sendRequest(url, clientid, clientsecret) {
     if (clientsecret !== "") {
         headers = {
             'Content-Type': "application/json",
-            'Authorization': 'Basic ' + btoa(clientid + ':' + clientsecret)
+            'Authorization': `Basic ${btoa(`${clientid}:${clientsecret}`)}`
         };
     } else {
         headers = {
@@ -14,8 +14,6 @@ async function sendRequest(url, clientid, clientsecret) {
         };
     }
     await cas.doPost(url, "", headers, async res => {
-        const urlObj = new URL(url);
-
         await cas.log(res.data);
         assert(res.data.access_token !== null);
 

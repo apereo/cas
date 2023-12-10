@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer');
 const cas = require('../../cas.js');
 const express = require('express');
-const assert = require('assert');
+
 const auth = require('basic-auth');
 
 (async () => {

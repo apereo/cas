@@ -11,7 +11,7 @@ const cas = require('../../cas.js');
 
     await cas.doPost(url, "", {
         'Content-Type': "application/json",
-        'Authorization': 'Basic ' + btoa('client' + ':' + 'secret')
+        'Authorization': `Basic ${btoa('client' + ':' + 'secret')}`
     }, async res => {
 
         await cas.log(res.data);

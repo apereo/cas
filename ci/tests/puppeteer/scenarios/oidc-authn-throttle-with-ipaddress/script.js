@@ -36,7 +36,7 @@ async function submitRequest(url, status) {
     await cas.log(`Calling ${url}`);
     await cas.doPost(url, "", {
         'Content-Type': "application/json",
-        'Authorization': 'Basic ' + btoa('unknown:unknown')
+        'Authorization': `Basic ${btoa('unknown:unknown')}`
     }, res => {
         throw `Operation should not have passed: ${res}`
     }, error => {
