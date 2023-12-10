@@ -2,6 +2,7 @@ package org.apereo.cas.interrupt.webflow;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.interrupt.InterruptResponse;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.SingleSignOnParticipationRequest;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
@@ -16,7 +17,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.webflow.test.MockRequestContext;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

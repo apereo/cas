@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyPrope
 import org.apereo.cas.configuration.model.support.aup.InMemoryAcceptableUsagePolicyProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.Getter;
 import lombok.val;
@@ -19,7 +20,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.test.MockRequestContext;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
