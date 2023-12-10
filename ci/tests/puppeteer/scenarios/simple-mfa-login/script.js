@@ -9,9 +9,7 @@ const cas = require('../../cas.js');
     await cas.loginWith(page);
     await page.waitForTimeout(1000);
     await cas.assertVisibility(page, '#token');
-    // Assert that HTML root node has attribute `lang="en"`
-    let node = await page.$('html');
-    assert("en" === await node.evaluate(el => el.getAttribute("lang")));
+    await cas.attributeValue(page, "html", "lang", "en");
 
     // Call MockMock - SMTP Mock Server
     const page2 = await browser.newPage();
@@ -23,7 +21,6 @@ const cas = require('../../cas.js');
     await page2.close();
 
     await page.bringToFront();
-    // Assert that HTML root node has attribute `lang="en"`
     node = await page.$('html');
     assert("en" === await node.evaluate(el => el.getAttribute("lang")));
     await cas.type(page, "#token", code);

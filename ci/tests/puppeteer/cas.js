@@ -285,6 +285,16 @@ exports.type = async (page, selector, value, obfuscate = false) => {
     await page.type(selector, value);
 };
 
+exports.attributeValue = async (page, selector, attribute, expectedValue = undefined) => {
+    const element = await page.$(selector);
+    const value = await page.evaluate((elem, attrib) => elem.getAttribute(attrib), element, attribute);
+    await this.logb(`Node [${selector}] attribute [${attribute}] has value: [${value}]`);
+    if (expectedValue !== undefined) {
+        assert(value, expectedValue);
+    }
+    return value;
+};
+
 exports.newPage = async (browser) => {
     let page = undefined;
     try {
