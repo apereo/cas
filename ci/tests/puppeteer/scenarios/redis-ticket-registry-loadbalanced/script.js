@@ -14,7 +14,6 @@ async function ensureNoSsoSessionsExistAfterLogout(page, port) {
 }
 
 async function testBasicLoginLogout(browser) {
-
     const page = await cas.newPage(browser);
     await logoutEverywhere(page);
     const service = "https://apereo.github.io";
@@ -30,8 +29,6 @@ async function testBasicLoginLogout(browser) {
     await logoutEverywhere(page);
     await ensureNoSsoSessionsExistAfterLogout(page, 8443);
     await ensureNoSsoSessionsExistAfterLogout(page, 8444);
-
-    await page.close();
 }
 
 async function logoutEverywhere(page) {
@@ -50,21 +47,20 @@ async function checkTicketValidationAcrossNodes(browser) {
     const ticket = await cas.assertTicketParameter(page);
 
     await cas.log("Validating ticket on second node");
-    let response = await page.goto(`https://localhost:8444/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
+    await page.goto(`https://localhost:8444/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
     let content = await cas.textContent(page, "body");
     let payload = JSON.parse(content);
     let authenticationSuccess = payload.serviceResponse.authenticationSuccess;
     assert(authenticationSuccess.user === "casuser");
 
     await cas.log(`Validating ticket ${ticket} again on original node`);
-    response = await page.goto(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
+    await page.goto(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
     content = await cas.textContent(page, "body");
     payload = JSON.parse(content);
     let authenticationFailure = payload.serviceResponse.authenticationFailure;
     assert(authenticationFailure.code === "INVALID_TICKET");
 
     await logoutEverywhere(page);
-    await page.close();
 }
 
 async function ensureSessionsRecorded(page, port, conditions) {
@@ -120,7 +116,6 @@ async function checkSessionsAreSynced(browser) {
     await ensureSessionsRecorded(page, 8444, conditions);
 
     await logoutEverywhere(page);
-    await page.close();
 }
 
 (async () => {
@@ -130,7 +125,6 @@ async function checkSessionsAreSynced(browser) {
         await checkSessionsAreSynced(browser);
         await testBasicLoginLogout(browser);
         await checkTicketValidationAcrossNodes(browser);
-
         await browser.close();
     } catch (e) {
         failed = true;

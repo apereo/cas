@@ -34,7 +34,7 @@ const puppeteer = require("puppeteer");
 
     let idToken = await cas.doPost(tokenUrl, "", {
         'Content-Type': "application/json",
-        'Authorization': 'Basic ' + btoa('client:secret')
+        'Authorization': `Basic ${btoa('client:secret')}`
     }, async res => {
         await cas.log(res.data.id_token);
         return res.data.id_token;

@@ -18,7 +18,7 @@ const assert = require('assert');
     resource = "okta:acct:joe.stormtrooper@example.org";
     await cas.doGet(`https://localhost:8443/cas/oidc/.well-known/webfinger?resource=${resource}&rel=${rel}`,
         res => {
-            throw `Operation failed ${error}`;
+            throw `Operation failed ${res}`;
         }, error => assert(error.response.status === 404));
 })();
 

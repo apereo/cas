@@ -119,7 +119,7 @@ async function exchangeToken(refreshToken, clientId, successHandler, errorHandle
         res => {
             cas.log(res.data);
             assert(res.status === 200);
-        }, error => {
+        }, () => {
             throw `Operation should not fail`;
         });
 
@@ -127,7 +127,7 @@ async function exchangeToken(refreshToken, clientId, successHandler, errorHandle
         res => {
             cas.log(res.data);
             assert(res.status === 200);
-        }, error => {
+        }, () => {
             throw `Operation should not fail`;
         });
 

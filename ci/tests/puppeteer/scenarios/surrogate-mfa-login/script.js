@@ -7,9 +7,7 @@ async function getOneTimeCode(browser) {
     await page.waitForTimeout(1000);
     await cas.click(page, "table tbody td a");
     await page.waitForTimeout(3000);
-    let code = await cas.textContent(page, "div[name=bodyPlainText] .well");
-    await page.close();
-    return code;
+    return await cas.textContent(page, "div[name=bodyPlainText] .well");
 }
 
 async function impersonatePreSelected(page, browser) {

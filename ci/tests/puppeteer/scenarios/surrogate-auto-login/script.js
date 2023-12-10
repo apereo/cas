@@ -19,7 +19,6 @@ const cas = require('../../cas.js');
     await page2.waitForTimeout(1000);
     await cas.click(page2, "table tbody td a");
     await page2.waitForTimeout(1000);
-    await page2.close();
 
     await browser.close();
 })();

@@ -23,7 +23,6 @@ const cas = require('../../cas.js');
     await cas.click(page2, "table tbody td a");
     await page2.waitForTimeout(1000);
     let code = await cas.textContent(page2, "div[name=bodyPlainText] .well");
-    await page2.close();
 
     await page.bringToFront();
     await cas.type(page, "#token", code);
