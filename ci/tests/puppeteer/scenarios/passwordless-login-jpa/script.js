@@ -11,10 +11,9 @@ const cas = require('../../cas.js');
     let pswd = await page.$('#password');
     assert(pswd == null);
 
-    let uid = await page.$('#username');
-    assert(await uid.evaluate(el => el.getAttribute("autocapitalize")) === "none");
-    assert(await uid.evaluate(el => el.getAttribute("spellcheck")) === "false");
-    assert(await uid.evaluate(el => el.getAttribute("autocomplete")) === "username");
+    await cas.attributeValue(page, "#username", "autocapitalize", "none");
+    await cas.attributeValue(page, "#username", "spellcheck", "false");
+    await cas.attributeValue(page, "#username", "autocomplete", "username");
 
     await cas.type(page,'#username', "casuser");
     await cas.pressEnter(page);

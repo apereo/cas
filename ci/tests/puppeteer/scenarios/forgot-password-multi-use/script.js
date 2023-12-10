@@ -1,5 +1,4 @@
 const puppeteer = require('puppeteer');
-const assert = require('assert');
 const cas = require('../../cas.js');
 
 (async () => {
@@ -14,10 +13,9 @@ const cas = require('../../cas.js');
     await page.waitForTimeout(1000);
     await cas.assertInnerText(page, "#reset #fm1 h3", "Reset your password");
     await cas.assertVisibility(page, '#username');
-    let uid = await page.$('#username');
-    assert("none" === await uid.evaluate(el => el.getAttribute("autocapitalize")));
-    assert("false" === await uid.evaluate(el => el.getAttribute("spellcheck")));
-    assert("username" === await uid.evaluate(el => el.getAttribute("autocomplete")));
+    await cas.attributeValue(page, "#username", "autocapitalize", "none");
+    await cas.attributeValue(page, "#username", "spellcheck", "false");
+    await cas.attributeValue(page, "#username", "autocomplete", "username");
 
     await cas.type(page,'#username', "casuser");
     await cas.pressEnter(page);
