@@ -60,9 +60,11 @@ public class RestfulPrincipalFactory extends DefaultPrincipalFactory {
                 .build();
             response = HttpUtils.execute(exec);
             if (response != null && response.getCode() == HttpStatus.OK.value()) {
-                val result = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
-                LOGGER.debug("Principal factory response received: [{}]", result);
-                return MAPPER.readValue(JsonValue.readHjson(result).toString(), SimplePrincipal.class);
+                try (val content = ((HttpEntityContainer) response).getEntity().getContent()) {
+                    val result = IOUtils.toString(content, StandardCharsets.UTF_8);
+                    LOGGER.debug("Principal factory response received: [{}]", result);
+                    return MAPPER.readValue(JsonValue.readHjson(result).toString(), SimplePrincipal.class);
+                }
             }
         } catch (final Exception e) {
             throw new IllegalArgumentException(e.getMessage(), e);

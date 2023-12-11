@@ -71,8 +71,10 @@ public class RestfulUrlTemplateResolver extends ThemeFileTemplateResolver {
             response = HttpUtils.execute(exec);
             val statusCode = response.getCode();
             if (HttpStatus.valueOf(statusCode).is2xxSuccessful()) {
-                val result = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
-                return new StringTemplateResource(result);
+                try (val content = ((HttpEntityContainer) response).getEntity().getContent()) {
+                    val result = IOUtils.toString(content, StandardCharsets.UTF_8);
+                    return new StringTemplateResource(result);
+                }
             }
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);

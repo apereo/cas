@@ -53,9 +53,11 @@ public class RestfulWebAuthnCredentialRepository extends BaseWebAuthnCredentialR
                 .build();
             response = HttpUtils.execute(exec);
             if (Objects.requireNonNull(response).getCode() == HttpStatus.OK.value()) {
-                val result = getCipherExecutor().decode(IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8));
-                return WebAuthnUtils.getObjectMapper().readValue(result, new TypeReference<List<CredentialRegistration>>() {
-                });
+                try (val content = ((HttpEntityContainer) response).getEntity().getContent()) {
+                    val result = getCipherExecutor().decode(IOUtils.toString(content, StandardCharsets.UTF_8));
+                    return WebAuthnUtils.getObjectMapper().readValue(result, new TypeReference<List<CredentialRegistration>>() {
+                    });
+                }
             }
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
@@ -78,10 +80,12 @@ public class RestfulWebAuthnCredentialRepository extends BaseWebAuthnCredentialR
                 .build();
             response = HttpUtils.execute(exec);
             if (Objects.requireNonNull(response).getCode() == HttpStatus.OK.value()) {
-                val result = getCipherExecutor().decode(IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8));
-                val records = WebAuthnUtils.getObjectMapper().readValue(result, new TypeReference<List<CredentialRegistration>>() {
-                });
-                return records.stream();
+                try (val content = ((HttpEntityContainer) response).getEntity().getContent()) {
+                    val result = getCipherExecutor().decode(IOUtils.toString(content, StandardCharsets.UTF_8));
+                    val records = WebAuthnUtils.getObjectMapper().readValue(result, new TypeReference<List<CredentialRegistration>>() {
+                    });
+                    return records.stream();
+                }
             }
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);

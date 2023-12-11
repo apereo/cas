@@ -75,9 +75,11 @@ public class SurrogateRestAuthenticationService extends BaseSurrogateAuthenticat
                 .parameters(CollectionUtils.wrap("principal", username))
                 .build();
             response = HttpUtils.execute(exec);
-            val result = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
-            val expectedType = MAPPER.getTypeFactory().constructParametricType(List.class, String.class);
-            return MAPPER.readValue(JsonValue.readHjson(result).toString(), expectedType);
+            try (val content = ((HttpEntityContainer) response).getEntity().getContent()) {
+                val result = IOUtils.toString(content, StandardCharsets.UTF_8);
+                val expectedType = MAPPER.getTypeFactory().constructParametricType(List.class, String.class);
+                return MAPPER.readValue(JsonValue.readHjson(result).toString(), expectedType);
+            }
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         } finally {

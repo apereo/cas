@@ -54,9 +54,11 @@ public class OidcRestfulJsonWebKeystoreGeneratorService implements OidcJsonWebKe
             return null;
         }
 
-        val result = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
-        LOGGER.debug("Received payload result from [{}] as [{}]", rest.getUrl(), result);
-        return new ByteArrayResource(result.getBytes(StandardCharsets.UTF_8), "OIDC JWKS");
+        try (val content = ((HttpEntityContainer) response).getEntity().getContent()) {
+            val result = IOUtils.toString(content, StandardCharsets.UTF_8);
+            LOGGER.debug("Received payload result from [{}] as [{}]", rest.getUrl(), result);
+            return new ByteArrayResource(result.getBytes(StandardCharsets.UTF_8), "OIDC JWKS");
+        }
     }
 
     @Override
