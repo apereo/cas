@@ -58,9 +58,11 @@ public record SmsModeSmsSender(SmsModeProperties properties) implements SmsSende
             response = HttpUtils.execute(exec);
 
             val status = HttpStatus.valueOf(response.getCode());
-            val entity = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
-            LOGGER.debug("Response from SmsMode: [{}]", entity);
-            return status.is2xxSuccessful();
+            try (val content = ((HttpEntityContainer) response).getEntity().getContent()) {
+                val entity = IOUtils.toString(content, StandardCharsets.UTF_8);
+                LOGGER.debug("Response from SmsMode: [{}]", entity);
+                return status.is2xxSuccessful();
+            }
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         } finally {
