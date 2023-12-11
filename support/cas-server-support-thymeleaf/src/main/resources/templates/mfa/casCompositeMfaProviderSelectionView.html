@@ -19,11 +19,9 @@
                     <form th:name="${'fm-' + provider}" th:id="${'fm-' + provider}" method="post" th:action="@{/login}">
                         <h4 class="d-flex align-items-center">
                             <i class="mdi mdi-laptop fas fa-laptop me-2"></i>
-                            <span th:utext="#{'cas.mfa.providerselection.' + ${provider}}">Provider name goes
-                                here</span>
+                            <span th:utext="#{'cas.mfa.providerselection.' + ${provider}}">Provider name goes here</span>
                         </h4>
-                        <p th:utext="#{'cas.mfa.providerselection.' + ${provider} + '.notes'}">Provider description goes
-                            here</p>
+                        <p th:utext="#{'cas.mfa.providerselection.' + ${provider} + '.notes'}">Provider description goes here</p>
                         <button th:id="${'btn-' + provider}" class="mdc-button mdc-button--raised btn btn-primary" value="Use">
                             <span class="mdc-button__label" th:text="Use">Use</span>
                         </button>

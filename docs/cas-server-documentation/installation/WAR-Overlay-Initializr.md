@@ -99,7 +99,7 @@ Apereo CAS support subscribers**. To get started with this instance, a simple wa
 
 ```bash
 function getcas() {
-  url="https://casinit.herokuapp.com/starter.tgz"
+  url="https://getcas.apereo.org/starter.tgz"
   projectType="cas-overlay"
   dependencies=""
   directory="overlay"
@@ -210,4 +210,4 @@ http <cas-initializr-url> Accept:application/json | jq
 
 CAS Initializr is set to use the [CAS BOM](BOM-Dependency-Management.html) for dependency management.
 
-[initializr]: https://casinit.herokuapp.com/ui
+[initializr]: https://getcas.apereo.org/ui

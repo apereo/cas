@@ -95,6 +95,7 @@ import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationRe
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20InvalidAuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResponseModeBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResponseModeFactory;
+import org.apereo.cas.support.oauth.web.response.introspection.OAuth20IntrospectionResponseGenerator;
 import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
@@ -776,9 +777,11 @@ public class OidcConfiguration {
             @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME)
             final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
             @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
-            final AuditableExecution registeredServiceAccessStrategyEnforcer) {
+            final AuditableExecution registeredServiceAccessStrategyEnforcer,
+            final List<OAuth20IntrospectionResponseGenerator> oauthIntrospectionResponseGenerator) {
             return (OidcConfigurationContext) OidcConfigurationContext.builder()
-                .tokenIntrospectionSigningAndEncryptionService(oidcTokenIntrospectionSigningAndEncryptionService)
+                .introspectionSigningAndEncryptionService(oidcTokenIntrospectionSigningAndEncryptionService)
+                .introspectionResponseGenerator(oauthIntrospectionResponseGenerator)
                 .argumentExtractor(argumentExtractor)
                 .responseModeJwtBuilder(oidcResponseModeJwtBuilder)
                 .authenticationAttributeReleasePolicy(authenticationAttributeReleasePolicy)

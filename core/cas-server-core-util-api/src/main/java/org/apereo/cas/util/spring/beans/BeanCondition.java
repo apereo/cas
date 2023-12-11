@@ -2,6 +2,7 @@ package org.apereo.cas.util.spring.beans;
 
 import org.springframework.core.env.PropertyResolver;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.function.Supplier;
 
 /**
@@ -30,6 +31,20 @@ public interface BeanCondition {
     static BeanCondition on(final String name) {
         return new CompoundCondition(name);
     }
+
+    /**
+     * Copy bean condition into a new instance.
+     *
+     * @return bean condition
+     */
+    BeanCondition toStartWith();
+
+    /**
+     * Count conditions.
+     *
+     * @return the int
+     */
+    int count();
 
     /**
      * Match if missing bean condition.
@@ -103,12 +118,23 @@ public interface BeanCondition {
     BeanCondition and(Supplier<Boolean> booleanSupplier);
 
     /**
-     * And bean condition.
+     * And bean conditions.
      *
-     * @param booleanSupplier the boolean supplier
+     * @param condition the boolean supplier
      * @return the bean condition
      */
-    BeanCondition and(Condition booleanSupplier);
+    BeanCondition and(Condition... condition);
+
+    /**
+     * And bean conditions.
+     *
+     * @param conditions the conditions
+     * @return the bean condition
+     */
+    default BeanCondition and(final Collection<Condition> conditions) {
+        conditions.forEach(this::and);
+        return this;
+    }
 
     /**
      * To supplier supplier.

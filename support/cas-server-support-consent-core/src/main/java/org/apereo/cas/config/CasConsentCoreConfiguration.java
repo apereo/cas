@@ -21,6 +21,7 @@ import org.apereo.cas.consent.InMemoryConsentRepository;
 import org.apereo.cas.consent.JsonConsentRepository;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
@@ -133,21 +134,23 @@ public class CasConsentCoreConfiguration {
         @ConditionalOnMissingBean(name = ConsentRepository.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public ConsentRepository consentRepository(final CasConfigurationProperties casProperties) throws Throwable {
-            val location = casProperties.getConsent().getJson().getLocation();
-            if (location != null) {
-                LOGGER.warn("Storing consent records in [{}]. This MAY NOT be appropriate in production. "
-                            + "Consider choosing an alternative repository format for storing consent decisions", location);
-                return new JsonConsentRepository(location);
-            }
+        public ConsentRepository consentRepository(final CasConfigurationProperties casProperties) {
+            return FunctionUtils.doUnchecked(() -> {
+                val location = casProperties.getConsent().getJson().getLocation();
+                if (location != null) {
+                    LOGGER.warn("Storing consent records in [{}]. This MAY NOT be appropriate in production. "
+                        + "Consider choosing an alternative repository format for storing consent decisions", location);
+                    return new JsonConsentRepository(location);
+                }
 
-            val groovy = casProperties.getConsent().getGroovy().getLocation();
-            if (groovy != null && CasRuntimeHintsRegistrar.notInNativeImage()) {
-                return new GroovyConsentRepository(groovy);
-            }
+                val groovy = casProperties.getConsent().getGroovy().getLocation();
+                if (groovy != null && CasRuntimeHintsRegistrar.notInNativeImage()) {
+                    return new GroovyConsentRepository(groovy);
+                }
 
-            LOGGER.warn("Storing consent records in memory. This option is ONLY relevant for demos and testing purposes.");
-            return new InMemoryConsentRepository();
+                LOGGER.warn("Storing consent records in memory. This option is ONLY relevant for demos and testing purposes.");
+                return new InMemoryConsentRepository();
+            });
         }
     }
 

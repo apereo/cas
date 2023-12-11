@@ -69,12 +69,6 @@ public class DefaultRegisteredServiceAccessStrategy extends BaseRegisteredServic
     protected URI unauthorizedRedirectUrl;
 
     /**
-     * The delegated authn policy.
-     */
-    protected RegisteredServiceDelegatedAuthenticationPolicy delegatedAuthenticationPolicy =
-        new DefaultRegisteredServiceDelegatedAuthenticationPolicy();
-
-    /**
      * Defines the attribute aggregation behavior when checking for required attributes.
      * Default requires that all attributes be present and match the principal's.
      */

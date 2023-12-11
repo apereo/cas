@@ -14,7 +14,7 @@
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
 
-    "--cas.authn.mfa.core.provider-selection-enabled=true",
+    "--cas.authn.mfa.core.provider-selection.provider-selection-enabled=true",
 
     "--cas.authn.mfa.gauth.name=GoogleAuth",
     "--cas.authn.mfa.gauth.crypto.enabled=false",

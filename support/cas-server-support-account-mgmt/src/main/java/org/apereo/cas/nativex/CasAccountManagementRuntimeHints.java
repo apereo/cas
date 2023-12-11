@@ -2,6 +2,7 @@ package org.apereo.cas.nativex;
 
 import org.apereo.cas.acct.provision.AccountRegistrationProvisionerConfigurer;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
+import lombok.val;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 import java.util.Collection;
@@ -16,9 +17,13 @@ import java.util.List;
 public class CasAccountManagementRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
-        registerReflectionHints(hints, List.of(
-            AccountRegistrationProvisionerConfigurer.class
-        ));
+        val entries = List.<Class>of(AccountRegistrationProvisionerConfigurer.class);
+        registerProxyHints(hints, entries);
+        registerReflectionHints(hints, entries);
+    }
+
+    private static void registerProxyHints(final RuntimeHints hints, final Collection<Class> subclassesInPackage) {
+        subclassesInPackage.forEach(clazz -> hints.proxies().registerJdkProxy(clazz));
     }
 
     private static void registerReflectionHints(final RuntimeHints hints, final Collection entries) {

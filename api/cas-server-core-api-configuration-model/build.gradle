@@ -32,13 +32,13 @@ dependencies {
 
 if (!skipConfigurationMetadata) {
     tasks.register('generateConfigurationMetadata', JavaExec) {
+        def projectPath = projectDir.canonicalPath
         doFirst {
             logger.info "\nRunning CAS Spring configuration metadata processor in addition to the native " +
                     "Spring Boot metadata processor, to create configuration " +
                     "metadata for nested and indexed properties. The process starts with the build directory " +
-                    "at [$buildDir] for the CAS configuration module at [$projectDir.canonicalPath].\n"
+                    "at [$buildDir] for the CAS configuration module at [$projectPath].\n"
         }
-
         mainClass.set("org.apereo.cas.configuration.metadata.ConfigurationMetadataGenerator")
         classpath = sourceSets.main.compileClasspath + sourceSets.main.runtimeClasspath + sourceSets.configurationMetadata.runtimeClasspath
         args buildDir, projectDir.canonicalPath

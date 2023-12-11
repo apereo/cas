@@ -7,7 +7,7 @@
   "properties": [
     "--cas.authn.saml-idp.core.entity-id=https://cas.apereo.org/saml/idp/%{random}",
     "--cas.authn.saml-idp.metadata.file-system.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md",
-    "--cas.authn.saml-idp.core.authentication-context-class-mappings=https://refeds.org/profile/mfa->mfa-duo",
+    "--cas.authn.saml-idp.core.context.authentication-context-class-mappings=https://refeds.org/profile/mfa->mfa-duo",
 
     "--cas.authn.attribute-repository.stub.attributes.email=casuser@example.org",
 
@@ -19,7 +19,7 @@
     "--cas.authn.accept.name=STATIC",
     "--cas.authn.accept.users=duobypass::Mellon",
 
-    "--logging.level.org.apereo.cas=debug",
+    "--logging.level.org.apereo.cas=info",
     
     "--cas.authn.mfa.duo[0].account-status-enabled=true",
     

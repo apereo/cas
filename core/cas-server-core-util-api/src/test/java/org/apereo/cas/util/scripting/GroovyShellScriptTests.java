@@ -8,6 +8,10 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.junitpioneer.jupiter.ClearSystemProperty;
+import org.junitpioneer.jupiter.SetSystemProperty;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,9 +27,38 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Groovy")
 @Slf4j
+@Execution(ExecutionMode.SAME_THREAD)
 class GroovyShellScriptTests {
 
     @Nested
+    @SetSystemProperty(key = ScriptingUtils.SYSTEM_PROPERTY_GROOVY_COMPILE_STATIC, value = "true")
+    class StaticCompilationTests {
+        @Test
+        void verifyOperation() throws Exception {
+            val script =
+                """
+                    def logger = (Logger) binding.getVariable('logger')
+                    def attributes = (Map) binding.getVariable('attributes')
+                    logger.info('Attributes: {}', attributes)
+                    
+                    if ((attributes.get('entitlement') as List).contains('admin')) {
+                        return [(attributes['uid'] as List).get(0).toString().toUpperCase()]
+                    } else {
+                        return attributes['identifier'] as List
+                    }
+                    """;
+            val shellScript = new GroovyShellScript(script.stripIndent());
+
+            val attributes1 = new HashMap<String, Object>();
+            attributes1.put("entitlement", List.of("admin"));
+            attributes1.put("uid", List.of("casadmin"));
+            attributes1.put("identifier", List.of("1984"));
+            new RunnableScript(attributes1, shellScript, "CASADMIN").run();
+        }
+    }
+
+    @Nested
+    @ClearSystemProperty(key = ScriptingUtils.SYSTEM_PROPERTY_GROOVY_COMPILE_STATIC)
     class ConcurrentTests {
         @Test
         void verifyOperation() {
@@ -54,8 +87,8 @@ class GroovyShellScriptTests {
             val threads = new ArrayList<Thread>();
             for (var i = 1; i <= 50; i++) {
                 val runnable = i % 2 == 0
-                    ? new ScriptedAttribute(attributes1, shellScript, "CASADMIN")
-                    : new ScriptedAttribute(attributes2, shellScript, "123456");
+                    ? new RunnableScript(attributes1, shellScript, "CASADMIN")
+                    : new RunnableScript(attributes2, shellScript, "123456");
                 val thread = new Thread(runnable);
                 thread.setName("Thread-" + i);
                 thread.setUncaughtExceptionHandler((t, e) -> {
@@ -76,33 +109,15 @@ class GroovyShellScriptTests {
                 fail("Test failed");
             }
         }
-
-        @RequiredArgsConstructor
-        private static final class ScriptedAttribute implements Runnable {
-            private final Map<String, Object> attributes;
-            private final GroovyShellScript shellScript;
-            private final Object expectedAttribute;
-
-            @Override
-            public void run() {
-                try {
-                    shellScript.setBinding(CollectionUtils.wrap("attributes", attributes));
-                    val returnValue = shellScript.execute(ArrayUtils.EMPTY_OBJECT_ARRAY, List.class);
-                    assertEquals(1, returnValue.size());
-                    assertEquals(expectedAttribute, returnValue.getFirst());
-                } catch (final Throwable e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
     }
 
     @Nested
+    @ClearSystemProperty(key = ScriptingUtils.SYSTEM_PROPERTY_GROOVY_COMPILE_STATIC)
     class DefaultTests {
         @Test
         void verifyExec() {
             try (val shell = new GroovyShellScript("println 'test'")) {
-                assertNotNull(shell.getGroovyScript());
+                assertNull(shell.getGroovyScript());
                 assertNotNull(shell.getScript());
 
                 assertDoesNotThrow(() -> shell.execute(ArrayUtils.EMPTY_OBJECT_ARRAY));
@@ -117,6 +132,25 @@ class GroovyShellScriptTests {
                     shell.execute(ArrayUtils.EMPTY_OBJECT_ARRAY);
                     shell.execute("run", Void.class, ArrayUtils.EMPTY_OBJECT_ARRAY);
                 });
+            }
+        }
+    }
+
+    @RequiredArgsConstructor
+    private static final class RunnableScript implements Runnable {
+        private final Map<String, Object> attributes;
+        private final GroovyShellScript shellScript;
+        private final Object expectedAttribute;
+
+        @Override
+        public void run() {
+            try {
+                shellScript.setBinding(CollectionUtils.wrap("attributes", attributes));
+                val returnValue = shellScript.execute(ArrayUtils.EMPTY_OBJECT_ARRAY, List.class);
+                assertEquals(1, returnValue.size());
+                assertEquals(expectedAttribute, returnValue.getFirst());
+            } catch (final Throwable e) {
+                throw new RuntimeException(e);
             }
         }
     }

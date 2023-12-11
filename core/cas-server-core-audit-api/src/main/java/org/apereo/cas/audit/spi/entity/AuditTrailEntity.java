@@ -51,7 +51,7 @@ public class AuditTrailEntity {
     @Column(name = "APPLIC_CD")
     private String applicationCode;
 
-    @Column(name = "AUD_USERAGENT")
+    @Column(name = "AUD_USERAGENT", length = 512)
     private String userAgent;
     
     @Column(name = "AUD_GEOLOCATION")
@@ -63,10 +63,10 @@ public class AuditTrailEntity {
     @Column(name = "AUD_LOCALE", nullable = false)
     private Locale locale;
 
-    @Column(name = "AUD_HEADERS", length = 2048)
+    @Column(name = "AUD_HEADERS", columnDefinition = "longvarchar")
     private String headers;
 
-    @Column(name = "AUD_EXTRA_INFO")
+    @Column(name = "AUD_EXTRA_INFO", columnDefinition = "longvarchar")
     private String extraInfo;
 
     public AuditTrailEntity() {

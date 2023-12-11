@@ -35,6 +35,7 @@ Contents of this file may contain the following settings:
 |-------------------------------------------|-----------------------------------------------------------------------------------------|--------------------------------------|
 | `cas.standard.css.file`                   | Path to theme CSS file; Multiple files may be comma-separated.                          | `/themes/[theme_name]/css/cas.css`   |
 | `cas.standard.js.file`                    | Path to theme Javascript file; Multiple files may be comma-separated.                   | `/themes/[theme_name]/js/js/css`     |
+| `cas.standard.fragments.head`             | Names of fragments found in `custom.html` fragment, included in the layout `<head>` tag | Blank                                |
 | `cas.logo.file`                           | Path to theme logo to display via the common layout.                                    | `/images/logo.png`                   |
 | `cas.drawer-menu.enabled`                 | Decide whether drawer menu should be displayed.                                         | `true`                               |
 | `cas.theme.name`                          | Theme name used in various titles/captions.                                             | `Example Theme`                      |
@@ -48,7 +49,6 @@ Contents of this file may contain the following settings:
 | `cas.successful-login.display-attributes` | Whether attributes/applications should be displayed on login.                           | `/themes/example/images/hero.png`    |
 | `cas.public-workstation.enabled`          | Whether user can indicate a public workstation option on login.                         | `false`                              |
 | `cas.warn-on-redirect`                    | Whether user should be warned prior to redirects to applications.                       | `false`                              |
-| `cas.standard.fragments.head`             | Names of fragments found in `custom.html` fragment, included in the layout `<head>` tag | ``                                   |
 
 - Create the directory `src/main/resources/static/themes/[theme_name]`. Put the 
   theme-specific `cas.css` and `cas.js` inside the appropriate directories for `css` and `js`.
