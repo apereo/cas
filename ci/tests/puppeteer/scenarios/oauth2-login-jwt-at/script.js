@@ -53,6 +53,8 @@ async function executeFlow(browser, redirectUri, clientId, accessTokenSecret) {
     const params = new URLSearchParams();
     params.append('access_token', accessToken);
 
+    cas.log('GOOD TOKEN: ' + accessToken);
+
     await cas.doPost('https://localhost:8443/cas/oauth2.0/profile', params, {},
         res => {
             let result = res.data;
@@ -61,6 +63,27 @@ async function executeFlow(browser, redirectUri, clientId, accessTokenSecret) {
             assert(result.service === "https://apereo.github.io");
         }, error => {
             throw error;
+        });
+
+    const parts = accessToken.split('.');
+    let badAccessToken;
+    if (parts.length === 3) {
+        badAccessToken = parts[0] + '.Z' + parts[1] + '.' + parts[2];
+    } else {
+        badAccessToken = parts[0] + '.' + parts[1] + '.Z' + parts[2] + '.' + parts[3] + '.' + parts[4];
+    }
+    const badParams = new URLSearchParams();
+    badParams.append('access_token', badAccessToken);
+
+    cas.log('BAD TOKEN: ' + badAccessToken);
+
+    await cas.doPost('https://localhost:8443/cas/oauth2.0/profile', badParams, {},
+        res => {
+            console.log(res.data);
+            throw 'Operation must fail to get the profile with a bad access token';
+        }, error => {
+            assert(error.response.status === 401);
+            assert(error.response.data.error === 'invalid_request');
         });
 
     await cas.gotoLogout(page);
