@@ -18,10 +18,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.ExternalContextHolder;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.execution.RequestContextHolder;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.core.Ordered.*;
 
@@ -48,18 +44,13 @@ class GroovyDelegatedClientAuthenticationRequestCustomizerTests {
     private DelegatedClientAuthenticationRequestCustomizer groovyDelegatedClientAuthenticationRequestCustomizer;
 
     @BeforeEach
-    public void setup() {
+    public void setup() throws Exception {
         val service = RegisteredServiceTestUtils.getService();
-        httpServletResponse = new MockHttpServletResponse();
-        httpServletRequest = new MockHttpServletRequest();
+        requestContext = MockRequestContext.create();
+        httpServletResponse = requestContext.getHttpServletResponse();
+        httpServletRequest = requestContext.getHttpServletRequest();
         httpServletRequest.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
         context = new JEEContext(httpServletRequest, httpServletResponse);
-
-        requestContext = new MockRequestContext();
-        requestContext.setExternalContext(new ServletExternalContext(new MockServletContext(),
-            httpServletRequest, httpServletResponse));
-        RequestContextHolder.setRequestContext(requestContext);
-        ExternalContextHolder.setExternalContext(requestContext.getExternalContext());
     }
 
     @Test

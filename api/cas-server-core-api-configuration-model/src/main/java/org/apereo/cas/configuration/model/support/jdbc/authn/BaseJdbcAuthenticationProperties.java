@@ -13,6 +13,8 @@ import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serial;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is {@link BaseJdbcAuthenticationProperties}.
@@ -67,4 +69,15 @@ public abstract class BaseJdbcAuthenticationProperties extends AbstractJpaProper
      * and the lifecycle in which it can be invoked or activated.
      */
     private AuthenticationHandlerStates state = AuthenticationHandlerStates.ACTIVE;
+
+    /**
+     * List of column names to fetch as user attributes.
+     * This is only effective in scenarios where the JDBC authentication method
+     * is able to execute a SQL query against a database table and return results.
+     * Authentication methods that merely check for the user account's existence
+     * or verify the user with just a simple bind are not able to fetch attributes.
+     * <p>Attributes name are separated by a comma and may use a "directed list" syntax where the allowed
+     * syntax would be {@code column-name->cas-attribute}.
+     */
+    private List<String> principalAttributeList = new ArrayList<>(0);
 }
