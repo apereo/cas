@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &
-export REDIS_VERSION=${1:-7.2.0-v4}
-export REDIS_SENTINEL_VERSION=${1:-7.2.1}
+export REDIS_VERSION=${1:-7.2.0-v6}
+export REDIS_SENTINEL_VERSION=${1:-7.2.3}
 
 echo "Running Redis $REDIS_VERSION, Sentinel: $REDIS_SENTINEL_VERSION"
 

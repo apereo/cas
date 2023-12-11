@@ -20,6 +20,7 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerat
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20InvalidAuthorizationResponseBuilder;
+import org.apereo.cas.support.oauth.web.response.introspection.OAuth20IntrospectionResponseGenerator;
 import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
@@ -140,6 +141,8 @@ public class OAuth20ConfigurationContext {
     private final ArgumentExtractor argumentExtractor;
 
     private final AttributeDefinitionStore attributeDefinitionStore;
+
+    private final List<OAuth20IntrospectionResponseGenerator> introspectionResponseGenerator;
 
     /**
      * Gets ticket granting ticket.

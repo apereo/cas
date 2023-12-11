@@ -8,7 +8,7 @@
     
     "--cas.service-registry.core.init-from-json=true",
     "--cas.authn.mfa.groovy-script.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/GroovyMfa.groovy",
-    "--cas.authn.mfa.core.provider-selection-enabled=true"
+    "--cas.authn.mfa.core.provider-selection.provider-selection-enabled=true"
   ]
 }
 

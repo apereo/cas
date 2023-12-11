@@ -43,7 +43,7 @@
     "--cas.authn.wsfed[0].attribute-resolver-enabled=true",
     "--cas.authn.wsfed[0].auto-redirect-type=SERVER",
 
-    "--cas.authn.mfa.core.provider-selection-enabled=true",
+    "--cas.authn.mfa.core.provider-selection.provider-selection-enabled=true",
 
     "--spring.mail.host=localhost",
     "--spring.mail.port=25000",

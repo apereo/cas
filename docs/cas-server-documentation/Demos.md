@@ -23,7 +23,7 @@ The following internal tools are managed by the Apereo CAS project:
 
 | Topic                                                                            | Source/Branch                                        | Location                                             |
 |----------------------------------------------------------------------------------|------------------------------------------------------|------------------------------------------------------|
-| [CAS Overlay Initializr](development/installation/WAR-Overlay-Installation.html) | [See this](https://github.com/apereo/cas-initializr) | [Link](https://casinit.herokuapp.com/ui)             |
+| [CAS Overlay Initializr](development/installation/WAR-Overlay-Installation.html) | [See this](https://github.com/apereo/cas-initializr) | [Link](https://getcas.apereo.org/ui)                 |
 | CAS GitHub Repository Bot                                                        | `heroku-githubbot`                                   | [Link](https://apereocas-githubbot.herokuapp.com/)   |
 | CAS Gradle Build Remote Cache                                                    | `heroku-gradle-buildcache`                           | [Link](https://cas-gradle-buildcache.herokuapp.com/) |
 

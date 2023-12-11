@@ -9,6 +9,7 @@ import org.apereo.cas.ticket.registry.pubsub.QueueableTicketRegistry;
 import org.apereo.cas.ticket.serialization.TicketSerializationExecutionPlanConfigurer;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
+import org.apereo.cas.util.thread.Cleanable;
 import lombok.val;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
@@ -27,6 +28,8 @@ public class CasCoreTicketsRuntimeHints implements CasRuntimeHintsRegistrar {
             .registerJdkProxy(TicketSerializationExecutionPlanConfigurer.class)
             .registerJdkProxy(TicketFactoryExecutionPlanConfigurer.class);
 
+
+        registerSpringProxy(hints, Cleanable.class, TicketRegistry.class);
         registerSpringProxy(hints, QueueableTicketRegistry.class, TicketRegistry.class);
 
         registerSerializationHints(hints, findSubclassesInPackage(Ticket.class, CentralAuthenticationService.NAMESPACE));

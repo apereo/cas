@@ -144,14 +144,17 @@ public class OidcJwksJpaConfiguration {
         final ConfigurableApplicationContext applicationContext,
         @Qualifier("transactionManagerOidcJwks")
         final PlatformTransactionManager transactionManagerOidcJwks,
-        final CasConfigurationProperties casProperties) {
+        final CasConfigurationProperties casProperties,
+        @Qualifier("oidcJwksEntityManagerFactory")
+        final ObjectProvider<EntityManagerFactory> emf) {
         return BeanSupplier.of(Supplier.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> {
                 val oidc = casProperties.getAuthn().getOidc();
                 LOGGER.info("Managing JWKS via a relational database at [{}]", oidc.getJwks().getJpa().getUrl());
                 val transactionTemplate = new TransactionTemplate(transactionManagerOidcJwks);
-                return () -> new OidcJpaJsonWebKeystoreGeneratorService(oidc, transactionTemplate);
+                return () -> new OidcJpaJsonWebKeystoreGeneratorService(oidc,
+                    transactionTemplate, emf.getObject().createEntityManager());
             })
             .otherwiseProxy()
             .get();

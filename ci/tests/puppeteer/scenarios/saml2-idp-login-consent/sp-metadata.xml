@@ -10,7 +10,7 @@
             </saml:Attribute>
         </mdattr:EntityAttributes>
     </Extensions>
-    <SPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:1.1:protocol urn:oasis:names:tc:SAML:2.0:protocol">
+    <SPSSODescriptor AuthnRequestsSigned="true" protocolSupportEnumeration="urn:oasis:names:tc:SAML:1.1:protocol urn:oasis:names:tc:SAML:2.0:protocol">
         <md:Extensions xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata">
             <DiscoveryResponse xmlns="urn:oasis:names:tc:SAML:profiles:SSO:idp-discovery-protocol" Binding="urn:oasis:names:tc:SAML:profiles:SSO:idp-discovery-protocol" Location="https://saml.example.org/Shibboleth.sso/Login" index="1"/>
             <DiscoveryResponse xmlns="urn:oasis:names:tc:SAML:profiles:SSO:idp-discovery-protocol" Binding="urn:oasis:names:tc:SAML:profiles:SSO:idp-discovery-protocol" Location="https://saml.example.org/Shibboleth.sso/Clear" index="3"/>

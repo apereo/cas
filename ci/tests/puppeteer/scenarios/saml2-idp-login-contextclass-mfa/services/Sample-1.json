@@ -1,10 +1,10 @@
 {
   "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
-  "serviceId" : "https://.+/saml-sp",
+  "serviceId" : "http://localhost:9443/simplesaml.*",
   "name" : "Sample",
   "id" : 1,
   "evaluationOrder" : 1,
-  "metadataLocation" : "http://localhost:8076/sp/saml/metadata",
+  "metadataLocation" : "http://localhost:9443/simplesaml/module.php/saml/sp/metadata.php/refeds-sp",
   "attributeReleasePolicy": {
     "@class": "org.apereo.cas.support.saml.services.EduPersonTargetedIdAttributeReleasePolicy",
     "salt": "OqmG80fEKBQt",

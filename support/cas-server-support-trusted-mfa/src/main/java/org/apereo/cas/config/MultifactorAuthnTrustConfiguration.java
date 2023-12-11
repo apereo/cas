@@ -89,7 +89,7 @@ public class MultifactorAuthnTrustConfiguration {
             @Qualifier("mfaTrustCipherExecutor")
             final CipherExecutor mfaTrustCipherExecutor,
             @Qualifier("mfaTrustRecordKeyGenerator")
-            final MultifactorAuthenticationTrustRecordKeyGenerator mfaTrustRecordKeyGenerator) throws Throwable {
+            final MultifactorAuthenticationTrustRecordKeyGenerator mfaTrustRecordKeyGenerator) {
             val trusted = casProperties.getAuthn().getMfa().getTrusted();
             val storage = Caffeine.newBuilder().initialCapacity(INITIAL_CACHE_SIZE)
                 .maximumSize(MAX_CACHE_SIZE).expireAfter(new MultifactorAuthenticationTrustRecordExpiry()).build(s -> {

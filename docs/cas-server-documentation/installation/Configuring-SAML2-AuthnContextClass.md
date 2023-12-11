@@ -10,7 +10,7 @@ category: Protocols
 Each service may specify a required authentication class, which may overwrite the 
 appropriate field in the ultimate SAML2 response that is sent back to the service provider. 
 
-{% include_cached casproperties.html properties="cas.authn.saml-idp" includes=".core,.response" %}
+{% include_cached casproperties.html properties="cas.authn.saml-idp.core.context" %}
 
 {% tabs saml2authnctx %}
 
@@ -31,7 +31,7 @@ Always use the specified authentication context class in the final response.
 
 {% endtab %}
 
-{% tab saml2authnctx Groovy %}
+{% tab saml2authnctx External Groovy %}
 
 You can always manipulate the authentication context class in more dynamic ways using a Groovy script:
 
@@ -42,7 +42,7 @@ You can always manipulate the authentication context class in more dynamic ways 
   "name": "SAML",
   "id": 1,
   "metadataLocation": "/path/to/sp-metadata.xml",
-  "requiredAuthenticationContextClass": "file:///path/to/GroovyScript.groovy",
+  "requiredAuthenticationContextClass": "file:///path/to/GroovyScript.groovy"
 }
 ```
 
@@ -64,6 +64,23 @@ def run(final Object... args) {
 
 {% endtab %}
 
+{% tab saml2authnctx Embedded Groovy %}
+
+Similar to the external Groovy script option, except the script is embedded inside the service definition:
+
+```json
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": "https://spring.io/security/saml-sp",
+  "name": "SAML",
+  "id": 1,
+  "metadataLocation": "/path/to/sp-metadata.xml",
+  "requiredAuthenticationContextClass": "groovy { return 'https://refeds.org/profile/mfa' } "
+}
+```
+
+{% endtab %}
+
 {% tab saml2authnctx Custom %}
 
 It is possible to design and inject your authentication context class builder
@@ -76,9 +93,14 @@ public SamlProfileAuthnContextClassRefBuilder defaultAuthnContextClassRefBuilder
 }
 ```
 
-Your configuration class needs to be registered with 
-CAS. [See this guide](../configuration/Configuration-Management-Extensions.html) for better details.
+Your configuration class needs to be registered with CAS. [See this guide](../configuration/Configuration-Management-Extensions.html) for better details.
 
 {% endtab %}
 
 {% endtabs %}
+
+## Multifactor Authentication
+
+CAS can be instructed via configuration properties to map authentication context classes from SAML2 authentication requests 
+to multifactor authentication profiles. Aside from the configuration adjustments, note that the SAML2 authentication requests 
+**MUST** be properly signed for the multifactor authentication trigger to recognize the relevant profile.

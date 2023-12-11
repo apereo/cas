@@ -7,16 +7,16 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
-
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.webflow.execution.Event;
-
 import jakarta.servlet.http.HttpServletRequest;
-
 import java.util.Collection;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -27,18 +27,19 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class CompositeProviderSelectionMultifactorWebflowEventResolver extends SelectiveMultifactorAuthenticationProviderWebflowEventResolver {
+    protected final CasCookieBuilder cookieBuilder;
 
     public CompositeProviderSelectionMultifactorWebflowEventResolver(
-        final CasWebflowEventResolutionConfigurationContext configurationContext) {
+        final CasWebflowEventResolutionConfigurationContext configurationContext,
+        final CasCookieBuilder cookieBuilder) {
         super(configurationContext);
+        this.cookieBuilder = cookieBuilder;
     }
 
     @Override
     protected Optional<Pair<Collection<Event>, Collection<MultifactorAuthenticationProvider>>> filterEventsByMultifactorAuthenticationProvider(
-        final Collection<Event> resolveEvents,
-        final Authentication authentication,
-        final RegisteredService registeredService,
-        final HttpServletRequest request,
+        final Collection<Event> resolveEvents, final Authentication authentication,
+        final RegisteredService registeredService, final HttpServletRequest request,
         final Service service) {
 
         val composite = resolveEvents
@@ -51,8 +52,10 @@ public class CompositeProviderSelectionMultifactorWebflowEventResolver extends S
         val chainingProvider = (ChainingMultifactorAuthenticationProvider)
             event.getAttributes().get(MultifactorAuthenticationProvider.class.getName());
 
-        return chainingProvider.getMultifactorAuthenticationProviders()
+        val selectedMfaProvider = cookieBuilder.retrieveCookieValue(request);
+        val selectedProviders = chainingProvider.getMultifactorAuthenticationProviders()
             .stream()
+            .filter(provider -> StringUtils.isBlank(selectedMfaProvider) || provider.matches(selectedMfaProvider))
             .map(provider -> getConfigurationContext().getAuthenticationContextValidator()
                 .validate(authentication, provider.getId(), Optional.ofNullable(registeredService)))
             .filter(MultifactorAuthenticationContextValidationResult::isSuccess)
@@ -67,6 +70,7 @@ public class CompositeProviderSelectionMultifactorWebflowEventResolver extends S
             .orElseGet(() -> {
                 val activeProviders = chainingProvider.getMultifactorAuthenticationProviders()
                     .stream()
+                    .filter(provider -> StringUtils.isBlank(selectedMfaProvider) || provider.matches(selectedMfaProvider))
                     .filter(provider -> {
                         val bypass = provider.getBypassEvaluator();
                         return bypass == null || bypass.shouldMultifactorAuthenticationProviderExecute(authentication,
@@ -76,5 +80,16 @@ public class CompositeProviderSelectionMultifactorWebflowEventResolver extends S
                 LOGGER.debug("Finalized set of resolved events are [{}] with providers [{}]", resolveEvents, activeProviders);
                 return activeProviders.isEmpty() ? Optional.empty() : Optional.of(Pair.of(resolveEvents, activeProviders));
             });
+
+        if (selectedProviders.isPresent() && StringUtils.isNotBlank(selectedMfaProvider)) {
+            val resolvedProviders = selectedProviders.get().getValue();
+            if (resolvedProviders.size() == 1) {
+                val rememberedProvider = resolvedProviders.stream().filter(provider -> provider.matches(selectedMfaProvider))
+                    .findFirst().orElseThrow();
+                return Optional.of(Pair.of(Set.of(new Event(this, selectedMfaProvider)),
+                    CollectionUtils.wrapArrayList(rememberedProvider)));
+            }
+        }
+        return selectedProviders;
     }
 }
