@@ -3,9 +3,9 @@ const cas = require('../../cas.js');
 const propertiesReader = require('properties-reader');
 const path = require("path");
 
-function updateProperty(properties, propertiesFile, value) {
-    properties.set("screen.welcome.security", value);
-    properties.save(propertiesFile, (err) => {
+async function updateProperty(properties, propertiesFile, value) {
+    await properties.set("screen.welcome.security", value);
+    await properties.save(propertiesFile, (err, data) => {
         if (err) {
             throw err;
         }
@@ -24,13 +24,13 @@ function updateProperty(properties, propertiesFile, value) {
         await cas.assertInnerText(page, "#sidebar div p", "Stay safe!");
         await cas.assertInnerText(page, "#login-form-controls h3 span", "Welcome to CAS");
 
-        updateProperty(properties, propertiesFile, "Hello World!");
+        await updateProperty(properties, propertiesFile, "Hello World!");
 
         await page.waitForTimeout(2000);
         await page.reload("https://localhost:8443/cas/login");
         await cas.assertInnerText(page, "#sidebar div p", "Hello World!");
     } finally {
-        updateProperty(properties, propertiesFile, "Stay safe!");
+        await updateProperty(properties, propertiesFile, "Stay safe!");
         await browser.close();
     }
 })();

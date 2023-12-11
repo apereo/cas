@@ -9,7 +9,7 @@ import org.bouncycastle.util.io.pem.PemReader;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.core.io.Resource;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import javax.crypto.Cipher;
 
 import java.io.InputStreamReader;
