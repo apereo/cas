@@ -5,7 +5,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.response.introspection.BaseOAuth20IntrospectionAccessTokenResponse;
 import org.apereo.cas.support.oauth.web.response.introspection.OAuth20IntrospectionAccessTokenFailureResponse;
-import org.apereo.cas.support.oauth.web.response.introspection.success.OAuth20IntrospectionAccessTokenSuccessResponse;
+import org.apereo.cas.support.oauth.web.response.introspection.OAuth20IntrospectionAccessTokenResponse;
 import org.apereo.cas.util.EncodingUtils;
 
 import lombok.val;
@@ -49,7 +49,7 @@ class OAuth20IntrospectionEndpointControllerTests extends AbstractOAuth20Tests {
     void verifyOperation() throws Throwable {
         val service = addRegisteredService();
         val auth = service.getClientId() + ':' + CLIENT_SECRET;
-        val body = (OAuth20IntrospectionAccessTokenSuccessResponse) internalVerifyOperation(auth, service);
+        val body = (OAuth20IntrospectionAccessTokenResponse) internalVerifyOperation(auth, service);
 
         assertNotNull(body);
         assertEquals(service.getClientId(), body.getClientId());
@@ -71,7 +71,7 @@ class OAuth20IntrospectionEndpointControllerTests extends AbstractOAuth20Tests {
         val registeredService = addRegisteredService();
 
         val auth2 = CLIENT_ID2 + ':' + CLIENT_SECRET;
-        val body = (OAuth20IntrospectionAccessTokenSuccessResponse) internalVerifyOperation(auth2, registeredService);
+        val body = (OAuth20IntrospectionAccessTokenResponse) internalVerifyOperation(auth2, registeredService);
         assertNotNull(body);
         assertEquals(registeredService.getClientId(), body.getClientId());
         assertEquals(SERVICE_URL, body.getAud());

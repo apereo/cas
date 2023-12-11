@@ -30,6 +30,7 @@ import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.util.spring.boot.ConditionalOnMissingGraalVMNativeImage;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
@@ -53,6 +54,8 @@ import org.apereo.cas.web.flow.resolver.impl.DefaultCasDelegatingWebflowEventRes
 import org.apereo.cas.web.flow.resolver.impl.RankedMultifactorAuthenticationProviderWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.SelectiveMultifactorAuthenticationProviderWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.mfa.DefaultMultifactorAuthenticationProviderWebflowEventResolver;
+import org.apereo.cas.web.support.CookieUtils;
+import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
@@ -317,6 +320,7 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
         @ConditionalOnMissingBean(name = "groovyScriptMultifactorAuthenticationTrigger")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingGraalVMNativeImage
         public MultifactorAuthenticationTrigger groovyScriptMultifactorAuthenticationTrigger(
             @Qualifier(MultifactorAuthenticationProviderSelector.BEAN_NAME) final MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector,
             @Qualifier(MultifactorAuthenticationProviderResolver.BEAN_NAME) final MultifactorAuthenticationProviderResolver multifactorAuthenticationProviderResolver,
@@ -409,6 +413,7 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
     @Configuration(value = "CasMultifactorAuthenticationWebflowSelectorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasMultifactorAuthenticationWebflowSelectorConfiguration {
+
         @ConditionalOnMissingBean(name = MultifactorAuthenticationProviderSelector.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -416,11 +421,11 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
             @Qualifier("failureModeEvaluator") final MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator,
             final CasConfigurationProperties casProperties) {
             val mfa = casProperties.getAuthn().getMfa();
-            val script = mfa.getCore().getProviderSelectorGroovyScript();
+            val script = mfa.getCore().getProviderSelection().getProviderSelectorGroovyScript();
             if (script.getLocation() != null && CasRuntimeHintsRegistrar.notInNativeImage()) {
                 return new GroovyScriptMultifactorAuthenticationProviderSelector(script.getLocation());
             }
-            if (mfa.getCore().isProviderSelectionEnabled()) {
+            if (mfa.getCore().getProviderSelection().isProviderSelectionEnabled()) {
                 return new ChainingMultifactorAuthenticationProviderSelector(failureModeEvaluator);
             }
             return new RankedMultifactorAuthenticationProviderSelector();
@@ -520,11 +525,13 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_MULTIFACTOR_PROVIDER_SELECTED)
         public Action multifactorProviderSelectedAction(final ConfigurableApplicationContext applicationContext,
-                                                        final CasConfigurationProperties casProperties) {
+                                                        final CasConfigurationProperties casProperties,
+                                                        @Qualifier("multifactorAuthenticationProviderSelectionCookieGenerator")
+                                                        final CasCookieBuilder multifactorAuthenticationProviderSelectionCookieGenerator) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
-                .withAction(MultifactorProviderSelectedAction::new)
+                .withAction(() -> new MultifactorProviderSelectedAction(multifactorAuthenticationProviderSelectionCookieGenerator, casProperties))
                 .withId(CasWebflowConstants.ACTION_ID_MULTIFACTOR_PROVIDER_SELECTED)
                 .build()
                 .get();
@@ -567,10 +574,13 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowEventResolver selectiveAuthenticationProviderWebflowEventResolver(
+            @Qualifier("multifactorAuthenticationProviderSelectionCookieGenerator")
+            final CasCookieBuilder multifactorAuthenticationProviderSelectionCookieGenerator,
             final CasConfigurationProperties casProperties,
-            @Qualifier("casWebflowConfigurationContext") final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
-            return casProperties.getAuthn().getMfa().getCore().isProviderSelectionEnabled()
-                ? new CompositeProviderSelectionMultifactorWebflowEventResolver(casWebflowConfigurationContext)
+            @Qualifier("casWebflowConfigurationContext")
+            final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
+            return casProperties.getAuthn().getMfa().getCore().getProviderSelection().isProviderSelectionEnabled()
+                ? new CompositeProviderSelectionMultifactorWebflowEventResolver(casWebflowConfigurationContext, multifactorAuthenticationProviderSelectionCookieGenerator)
                 : new SelectiveMultifactorAuthenticationProviderWebflowEventResolver(casWebflowConfigurationContext);
         }
     }
@@ -578,7 +588,25 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
     @Configuration(value = "CasCoreMultifactorAuthenticationProviderCompositeConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreMultifactorAuthenticationProviderCompositeConfiguration {
-        private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.mfa.core.provider-selection-enabled").isTrue();
+        private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.mfa.core.provider-selection.provider-selection-enabled").isTrue();
+        private static final BeanCondition COOKIE_CONDITION = CONDITION.toStartWith().and("cas.authn.mfa.core.provider-selection.cookie.enabled").isTrue().evenIfMissing();
+
+        @ConditionalOnMissingBean(name = "multifactorAuthenticationProviderSelectionCookieGenerator")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public CasCookieBuilder multifactorAuthenticationProviderSelectionCookieGenerator(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties) {
+            return BeanSupplier.of(CasCookieBuilder.class)
+                .when(COOKIE_CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> {
+                    val cookie = casProperties.getAuthn().getMfa().getCore().getProviderSelection().getCookie();
+                    val context = CookieUtils.buildCookieGenerationContext(cookie);
+                    return new CookieRetrievingCookieGenerator(context);
+                })
+                .otherwiseProxy()
+                .get();
+        }
 
         @Bean
         @ConditionalOnMissingBean(name = "compositeProviderSelectionMultifactorWebflowConfigurer")
@@ -601,7 +629,8 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowExecutionPlanConfigurer compositeProviderSelectionCasWebflowExecutionPlanConfigurer(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("compositeProviderSelectionMultifactorWebflowConfigurer") final CasWebflowConfigurer compositeProviderSelectionMultifactorWebflowConfigurer) {
+            @Qualifier("compositeProviderSelectionMultifactorWebflowConfigurer")
+            final CasWebflowConfigurer compositeProviderSelectionMultifactorWebflowConfigurer) {
             return BeanSupplier.of(CasWebflowExecutionPlanConfigurer.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> plan -> plan.registerWebflowConfigurer(compositeProviderSelectionMultifactorWebflowConfigurer))

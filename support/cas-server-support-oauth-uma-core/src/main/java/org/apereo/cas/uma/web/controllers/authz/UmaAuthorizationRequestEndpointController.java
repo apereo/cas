@@ -84,33 +84,21 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
                 return new ResponseEntity("resource-set or linked policies are undefined", HttpStatus.BAD_REQUEST);
             }
 
-            val results = getUmaConfigurationContext().getClaimPermissionExaminer().examine(resourceSet, permissionTicket);
+            val results = getUmaConfigurationContext().getClaimPermissionExaminer().examine(permissionTicket);
             if (results.isSatisfied()) {
-                return generateRequestingPartyToken(request, response, profileResult, umaRequest, permissionTicket, resourceSet);
+                return generateRequestingPartyToken(request, response, profileResult, umaRequest, permissionTicket);
             }
 
-            return handleMismatchedClaims(request, response, resourceSet, profileResult, results, permissionTicket);
+            return handleMismatchedClaims(request, response, profileResult, results, permissionTicket);
         } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
         }
         return new ResponseEntity("Unable to handle authorization request", HttpStatus.BAD_REQUEST);
     }
 
-    /**
-     * Handle mismatched claims response entity.
-     *
-     * @param request          the request
-     * @param response         the response
-     * @param resourceSet      the resource set
-     * @param profileResult    the profile result
-     * @param analysisResult   the analysis result
-     * @param permissionTicket the permission ticket
-     * @return the response entity
-     */
     protected ResponseEntity handleMismatchedClaims(
         final HttpServletRequest request,
         final HttpServletResponse response,
-        final ResourceSet resourceSet,
         final UserProfile profileResult,
         final UmaResourceSetClaimPermissionResult analysisResult,
         final UmaPermissionTicket permissionTicket) {
@@ -147,15 +135,15 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
     protected ResponseEntity generateRequestingPartyToken(
         final HttpServletRequest request, final HttpServletResponse response,
         final UserProfile profileResult, final UmaAuthorizationRequest umaRequest,
-        final UmaPermissionTicket permissionTicket, final ResourceSet resourceSet) throws Throwable {
+        final UmaPermissionTicket permissionTicket) throws Throwable {
         val currentAat = (OAuth20AccessToken) profileResult.getAttribute(OAuth20AccessToken.class.getName());
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(getUmaConfigurationContext().getServicesManager(),
             OAuth20Utils.getClientIdFromAuthenticatedProfile(profileResult));
 
         val scopes = new LinkedHashSet<>(permissionTicket.getScopes());
         scopes.add(OAuth20Constants.UMA_AUTHORIZATION_SCOPE);
-        scopes.addAll(resourceSet.getScopes());
-
+        scopes.addAll(permissionTicket.getResourceSet().getScopes());
+        
         val holder = AccessTokenRequestContext.builder()
             .authentication(currentAat.getAuthentication())
             .ticketGrantingTicket(currentAat.getTicketGrantingTicket())
@@ -182,7 +170,7 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
         val userProfile = OAuth20Utils.getAuthenticatedUserProfile(new JEEContext(request, response),
             getUmaConfigurationContext().getSessionStore());
         userProfile.addAttribute(UmaPermissionTicket.class.getName(), permissionTicket);
-        userProfile.addAttribute(ResourceSet.class.getName(), resourceSet);
+        userProfile.addAttribute(ResourceSet.class.getName(), permissionTicket.getResourceSet());
 
         val idToken = getUmaConfigurationContext().getRequestingPartyTokenGenerator()
             .generate(accessToken, userProfile, OAuth20ResponseTypes.CODE, OAuth20GrantTypes.UMA_TICKET, registeredService);

@@ -89,6 +89,13 @@ public class AuditEngineProperties implements Serializable {
     private boolean ignoreAuditFailures;
 
     /**
+     * Collection of HTTP headers that could be extracted from the request
+     * and tracked by the underlying audit engine and storage. By default,
+     * all request headers are tracked and stored.
+     */
+    private List<String> httpRequestHeaders = Stream.of("*").toList();
+
+    /**
      * Indicate a list of supported audit actions that should be recognized,
      * processed and recorded by CAS audit managers. Each supported action
      * can be treated as a regular expression to match against built-in

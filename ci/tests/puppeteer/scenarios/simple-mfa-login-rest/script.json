@@ -12,7 +12,7 @@
     "--spring.mail.host=localhost",
     "--spring.mail.port=25000",
 
-    "--logging.level.org.apereo.cas=debug",
+    "--logging.level.org.apereo.cas=info",
     "--cas.authn.mfa.simple.trusted-device-enabled=true",
 
     "--cas.authn.mfa.simple.token.rest.url=http://localhost:5432",

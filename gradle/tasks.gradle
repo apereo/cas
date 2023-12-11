@@ -69,16 +69,14 @@ tasks.register('pathingJar', Jar) {
             attributes "Class-Path":
                     files.collect {
                         it.toURL().toString().replaceFirst("/file:/+/", "/")
-                    }
-                            .join(" ")
+                    }.join(" ")
         }
     }
 }
 
 tasks.register('testJar', Jar) {
     dependsOn testClasses
-    description = "archive the testClasses"
-    archiveBaseName.set("${project.archivesBaseName}-tests")
+    description = "Archive the testClasses"
     archiveClassifier.set("tests")
     from sourceSets.test.output
 }

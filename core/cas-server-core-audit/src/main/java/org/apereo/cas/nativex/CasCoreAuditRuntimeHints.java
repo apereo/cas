@@ -2,6 +2,7 @@ package org.apereo.cas.nativex;
 
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.audit.AuditTrailExecutionPlanConfigurer;
+import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.inspektr.audit.AuditTrailManagementAspect;
 import org.apereo.inspektr.audit.AuditTrailManager;
@@ -28,6 +29,7 @@ public class CasCoreAuditRuntimeHints implements CasRuntimeHintsRegistrar {
         registerReflectionHints(hints, List.of(
             AuditTrailExecutionPlan.class,
             AuditTrailExecutionPlanConfigurer.class,
+            AuditTrailRecordResolutionPlanConfigurer.class,
             AuditTrailManagementAspect.class
         ));
 
@@ -37,6 +39,7 @@ public class CasCoreAuditRuntimeHints implements CasRuntimeHintsRegistrar {
             AuditActionResolver.class,
             AuditResourceResolver.class,
             AuditTrailExecutionPlanConfigurer.class,
+            AuditTrailRecordResolutionPlanConfigurer.class,
             AuditEventRepository.class));
     }
 

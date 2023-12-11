@@ -3,7 +3,6 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-import org.apereo.cas.web.CasGoogleAnalyticsCookieGenerator;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasGoogleAnalyticsWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -13,6 +12,7 @@ import org.apereo.cas.web.flow.CreateGoogleAnalyticsCookieAction;
 import org.apereo.cas.web.flow.RemoveGoogleAnalyticsCookieAction;
 import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 import org.apereo.cas.web.support.CookieUtils;
+import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -43,7 +43,7 @@ public class CasGoogleAnalyticsConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasCookieBuilder casGoogleAnalyticsCookieGenerator(final CasConfigurationProperties casProperties) {
         val props = casProperties.getGoogleAnalytics().getCookie();
-        return new CasGoogleAnalyticsCookieGenerator(CookieUtils.buildCookieGenerationContext(props));
+        return new CookieRetrievingCookieGenerator(CookieUtils.buildCookieGenerationContext(props));
     }
 
     @ConditionalOnMissingBean(name = "casGoogleAnalyticsWebflowConfigurer")

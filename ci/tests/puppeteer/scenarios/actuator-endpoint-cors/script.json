@@ -12,7 +12,7 @@
     "--spring.security.user.password=Mellon",
 
     "--logging.level.org.springframework.security=debug",
-    "--logging.level.org.apereo.cas=debug",
+    "--logging.level.org.apereo.cas=info",
 
     "--management.endpoints.web.cors.allowed-headers=*",
     "--management.endpoints.web.cors.allowed-methods=OPTIONS,GET,POST",

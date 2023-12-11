@@ -32,6 +32,7 @@ import javax.xml.namespace.QName;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -43,6 +44,17 @@ import java.util.Optional;
  */
 @Slf4j
 public class SamlIdPInitiatedProfileHandlerController extends AbstractSamlIdPProfileHandlerController {
+
+    private static final List<String> PARAMETERS_TO_IGNORE = List.of(
+        SamlIdPConstants.TARGET,
+        SamlIdPConstants.TIME,
+        SamlIdPConstants.SIG_ALG,
+        SamlIdPConstants.SIGNATURE,
+        SamlIdPConstants.SHIRE,
+        SamlIdPConstants.PROVIDER_ID,
+        SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE,
+        SamlProtocolConstants.PARAMETER_SAML_REQUEST,
+        SamlProtocolConstants.PARAMETER_SAML_RESPONSE);
 
     public SamlIdPInitiatedProfileHandlerController(final SamlProfileHandlerConfigurationContext ctx) {
         super(ctx);
@@ -86,16 +98,17 @@ public class SamlIdPInitiatedProfileHandlerController extends AbstractSamlIdPPro
             val paramNames = request.getParameterNames();
             while (paramNames.hasMoreElements()) {
                 val parameterName = paramNames.nextElement();
-                if (!parameterName.equalsIgnoreCase(SamlIdPConstants.TARGET)
-                    && !parameterName.equalsIgnoreCase(SamlIdPConstants.TIME)
-                    && !parameterName.equalsIgnoreCase(SamlIdPConstants.SHIRE)
-                    && !parameterName.equalsIgnoreCase(SamlIdPConstants.PROVIDER_ID)) {
+                if (canAcceptParameter(parameterName)) {
                     urlBuilder.addParameter(parameterName, request.getParameter(parameterName));
                 }
             }
             view.setUrl(urlBuilder.build().toString());
         }
         return modelAndView;
+    }
+
+    private static boolean canAcceptParameter(final String parameterName) {
+        return !PARAMETERS_TO_IGNORE.contains(parameterName);
     }
 
     protected AuthnRequest buildAuthnRequest(final String providerId, final String shire, final String time) {

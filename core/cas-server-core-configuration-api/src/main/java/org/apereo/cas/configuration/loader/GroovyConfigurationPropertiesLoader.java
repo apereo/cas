@@ -2,14 +2,13 @@ package org.apereo.cas.configuration.loader;
 
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
-
+import org.apereo.cas.util.scripting.ScriptingUtils;
 import groovy.util.ConfigSlurper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.Resource;
-
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -35,6 +34,7 @@ public class GroovyConfigurationPropertiesLoader extends BaseConfigurationProper
     public PropertySource load() {
         val properties = new LinkedHashMap<>();
         val slurper = new ConfigSlurper();
+        slurper.setClassLoader(ScriptingUtils.newGroovyClassLoader());
         applicationProfiles.forEach(Unchecked.consumer(profile -> {
             slurper.setEnvironment(profile);
             slurper.registerConditionalBlock("profiles", profile);

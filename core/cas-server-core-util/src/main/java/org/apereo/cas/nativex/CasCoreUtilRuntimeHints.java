@@ -5,12 +5,19 @@ import org.apereo.cas.util.LogMessageSummarizer;
 import org.apereo.cas.util.cipher.JsonWebKeySetStringCipherExecutor;
 import org.apereo.cas.util.cipher.RsaKeyPairCipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.model.TriStateBoolean;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 import org.apereo.cas.util.thread.Cleanable;
 import com.fasterxml.jackson.annotation.ObjectIdGenerator;
+import groovy.lang.GroovyClassLoader;
+import groovy.lang.Script;
 import lombok.val;
 import org.apache.commons.lang3.ClassUtils;
+import org.codehaus.groovy.runtime.BytecodeInterface8;
+import org.codehaus.groovy.transform.StaticTypesTransformation;
+import org.codehaus.groovy.transform.sc.StaticCompileTransformation;
+import org.slf4j.LoggerFactory;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.TypeReference;
@@ -58,6 +65,7 @@ import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
+import java.util.Stack;
 import java.util.TimeZone;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -191,9 +199,10 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
             RsaKeyPairCipherExecutor.class,
             JsonWebKeySetStringCipherExecutor.class,
             System.class));
-
+        
         registerReflectionHintForConstructors(hints,
             List.of(
+                TriStateBoolean.Deserializer.class,
                 PersistenceAnnotationBeanPostProcessor.class,
                 ConfigurationClassPostProcessor.class,
                 EventListenerMethodProcessor.class,
@@ -217,13 +226,16 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
                 findSubclassesInPackage(clazz, "nonapi.io.github.classgraph.classloaderhandler"));
         });
 
+
         registerReflectionHintForAll(hints,
             List.of(
-                "org.codehaus.groovy.transform.StaticTypesTransformation",
-                "groovy.lang.GroovyClassLoader",
-                "groovy.lang.Script",
-                "java.util.Stack",
-                "org.slf4j.LoggerFactory"));
+                StaticCompileTransformation.class,
+                StaticTypesTransformation.class,
+                GroovyClassLoader.class,
+                BytecodeInterface8.class,
+                Script.class,
+                LoggerFactory.class,
+                Stack.class));
     }
 
     private static void registerGroovyDGMClasses(final RuntimeHints hints, final ClassLoader classLoader) {

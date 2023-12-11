@@ -1,8 +1,6 @@
 {
   "dependencies": "reports,yubikey,gauth,trusted-mfa",
   "properties": [
-
-    
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
 
@@ -17,10 +15,12 @@
     "--cas.authn.mfa.yubikey.secret-key=iBIehjui22aK8x82oe6qzGeb0As=",
     "--cas.authn.mfa.yubikey.trusted-device-enabled=true",
 
-    "--cas.authn.mfa.core.provider-selection-enabled=true",
+    "--cas.authn.mfa.core.provider-selection.provider-selection-enabled=true",
+    "--cas.authn.mfa.core.provider-selection.cookie.enabled=false",
 
     "--cas.audit.engine.enabled=true",
-
+    "--cas.audit.slf4j.use-single-line=true",
+    
     "--cas.authn.mfa.trusted.core.device-registration-enabled=true",
     "--cas.authn.mfa.trusted.core.auto-assign-device-name=true",
 

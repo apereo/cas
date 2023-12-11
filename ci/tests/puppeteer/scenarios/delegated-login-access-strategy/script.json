@@ -19,7 +19,7 @@
     "--cas.authn.pac4j.cas[1].client-name=CASServerTwo",
     "--cas.authn.pac4j.cas[1].display-name=My CAS Two",
     
-    "--logging.level.org.apereo.cas=debug",
+    "--logging.level.org.apereo.cas=info",
 
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=*",

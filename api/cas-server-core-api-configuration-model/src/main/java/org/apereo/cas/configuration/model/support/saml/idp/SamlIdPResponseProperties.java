@@ -52,12 +52,6 @@ public class SamlIdPResponseProperties implements Serializable {
     private boolean signError;
 
     /**
-     * The default authentication context class to include in the response
-     * if none is specified via the service.
-     */
-    private String defaultAuthenticationContextClass = "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport";
-
-    /**
      * Indicates the default name-format for all attributes
      * in case the individual attribute is not individually mapped.
      */
