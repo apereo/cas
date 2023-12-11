@@ -12,8 +12,7 @@ const assert = require("assert");
     
     let entityId = "https://localhost:9859/shibboleth";
     let url = "https://localhost:8443/cas/idp/profile/SAML2/Unsolicited/SSO";
-    url += `?providerId=${entityId}`;
-    url += "&target=https%3A%2F%2Flocalhost%3A8443%2Fcas%2Flogin";
+    url += `?providerId=${entityId}&target=https%3A%2F%2Flocalhost%3A8443%2Fcas%2Flogin`;
     await cas.goto(page, url);
     await page.waitForTimeout(4000);
     await cas.loginWith(page);

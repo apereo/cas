@@ -14,6 +14,10 @@ ext {
     ]
 }
 
+tasks.named("bootJar") {
+    notCompatibleWithConfigurationCache("bootJar is not supported by the Gradle configuration cache")
+}
+
 configurations {
     configureEach {
         exclude(group: "org.apache.groovy", module: "groovy-templates")
@@ -158,10 +162,31 @@ graalvmNative {
             buildArgs.add('--enable-url-protocols=jar,file,resource,http,https')
         }
     }
+
+    /*
+    agent {
+        defaultMode = "direct"
+        enabled = true
+        builtinCallerFilter = false
+        builtinHeuristicFilter = false
+        enableExperimentalPredefinedClasses = true
+        enableExperimentalUnsafeAllocationTracing = false
+        trackReflectionMetadata = false
+        modes {
+            standard {
+            }
+            direct {
+                options.add("config-output-dir={output_dir}")
+                options.add("experimental-configuration-with-origins")
+            }
+        }
+    }
+     */
 }
 
 processAot {
     enabled = providers.systemProperty("skipAot").getOrElse("false") == "false"
+    notCompatibleWithConfigurationCache("processAot is not supported by the Gradle configuration cache")
 
     def list = []
     list.add("--add-opens")
@@ -190,7 +215,8 @@ processAot {
 
     def aotSpringActiveProfiles = providers.systemProperty("aotSpringActiveProfiles").getOrElse("native")
     logger.info "AOT processing spring active profile: ${aotSpringActiveProfiles}"
-    
+
+
     args(
         "--spring.profiles.active=${aotSpringActiveProfiles}",
         "--spring.main.lazy-initialization=false",

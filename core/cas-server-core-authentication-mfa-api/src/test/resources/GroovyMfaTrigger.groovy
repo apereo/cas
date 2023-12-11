@@ -1,8 +1,5 @@
-import org.apereo.cas.authentication.*
-import org.apereo.cas.authentication.mfa.*
-
 def run(final Object... args) {
-    def service = args[0]
+    def service = args[0] as WebApplicationService
     def registeredService = args[1]
     def authentication = args[2]
     def httpRequest = args[3]

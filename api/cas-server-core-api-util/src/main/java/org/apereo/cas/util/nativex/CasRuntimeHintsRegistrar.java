@@ -136,7 +136,7 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
      * @return true/false
      */
     static boolean inNativeImage() {
-        return inImageBuildtimeCode()
+        return inImageBuildTimeCode()
             || inImageRuntimeCode()
             || BooleanUtils.toBoolean(System.getProperty(SYSTEM_PROPERTY_SPRING_AOT_PROCESSING));
     }
@@ -165,7 +165,7 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
      * Returns true if (at the time of the call) code is executing in the context of image building
      * (e.g. in a static initializer of class that will be contained in the image).
      */
-    private static boolean inImageBuildtimeCode() {
+    private static boolean inImageBuildTimeCode() {
         return PROPERTY_IMAGE_CODE_VALUE_BUILDTIME.equals(System.getProperty(PROPERTY_IMAGE_CODE_KEY));
     }
 

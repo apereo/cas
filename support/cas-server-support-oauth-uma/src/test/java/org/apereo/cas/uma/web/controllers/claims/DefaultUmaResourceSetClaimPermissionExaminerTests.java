@@ -50,8 +50,9 @@ class DefaultUmaResourceSetClaimPermissionExaminerTests extends BaseUmaEndpointC
         permission.setScopes(CollectionUtils.wrapHashSet("s1", "s2"));
         policy.setPermissions(CollectionUtils.wrapHashSet(permission));
         resourceSet.setPolicies(CollectionUtils.wrapHashSet(policy));
-        
-        val result = umaResourceSetClaimPermissionExaminer.examine(resourceSet, permissionTicket);
+
+        when(permissionTicket.getResourceSet()).thenReturn(resourceSet);
+        val result = umaResourceSetClaimPermissionExaminer.examine(permissionTicket);
         assertNotNull(result);
         assertTrue(result.getDetails().containsKey(permission.getId()));
     }
@@ -79,7 +80,8 @@ class DefaultUmaResourceSetClaimPermissionExaminerTests extends BaseUmaEndpointC
         policy.setPermissions(CollectionUtils.wrapHashSet(permission));
         resourceSet.setPolicies(CollectionUtils.wrapHashSet(policy));
 
-        val result = umaResourceSetClaimPermissionExaminer.examine(resourceSet, permissionTicket);
+        when(permissionTicket.getResourceSet()).thenReturn(resourceSet);
+        val result = umaResourceSetClaimPermissionExaminer.examine(permissionTicket);
         assertNotNull(result);
         assertFalse(result.getDetails().containsKey(permission.getId()));
     }

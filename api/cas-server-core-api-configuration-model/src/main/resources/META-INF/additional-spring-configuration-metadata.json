@@ -280,6 +280,15 @@
       }
     },
     {
+      "name": "cas.authn.mfa.core.provider-selection-enabled",
+      "type": "java.lang.Boolean",
+      "deprecation": {
+        "replacement": "cas.authn.mfa.core.provider-selection.provider-selection-enabled",
+        "reason": "provider-selection-enabled setting is moved into the cas.authn.mfa.core.provider-selection namespace.",
+        "level": "error"
+      }
+    },
+    {
       "name": "cas.authn.mfa.global-provider-id",
       "type": "java.lang.String",
       "deprecation": {
@@ -454,8 +463,8 @@
       "name": "cas.authn.saml-idp.authentication-context-class-mappings",
       "type": "java.lang.String",
       "deprecation": {
-        "replacement": "cas.authn.saml-idp.core.authentication-context-class-mappings",
-        "reason": "authentication-context-class-mappings setting is moved into the core namespace.",
+        "replacement": "cas.authn.saml-idp.core.context.authentication-context-class-mappings",
+        "reason": "authentication-context-class-mappings setting is moved into the core.context namespace.",
         "level": "error"
       }
     },

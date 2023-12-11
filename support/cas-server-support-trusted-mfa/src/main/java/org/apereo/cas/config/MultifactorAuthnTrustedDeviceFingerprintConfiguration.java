@@ -11,7 +11,6 @@ import org.apereo.cas.trusted.web.flow.fingerprint.DeviceFingerprintComponentMan
 import org.apereo.cas.trusted.web.flow.fingerprint.DeviceFingerprintStrategy;
 import org.apereo.cas.trusted.web.flow.fingerprint.GeoLocationDeviceFingerprintComponentManager;
 import org.apereo.cas.trusted.web.flow.fingerprint.UserAgentDeviceFingerprintComponentManager;
-import org.apereo.cas.trusted.web.support.TrustedDeviceCookieRetrievingCookieGenerator;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.gen.Base64RandomStringGenerator;
@@ -22,6 +21,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.cookie.CookieValueManager;
 import org.apereo.cas.web.support.CookieUtils;
+import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.mgmr.DefaultCookieSameSitePolicy;
 import org.apereo.cas.web.support.mgmr.EncryptedCookieValueManager;
 
@@ -151,8 +151,7 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
                     .given(applicationContext.getEnvironment()))
                 .supply(() -> {
                     val cookie = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getCookie();
-                    return new TrustedDeviceCookieRetrievingCookieGenerator(CookieUtils.buildCookieGenerationContext(cookie),
-                        deviceFingerprintCookieValueManager);
+                    return new CookieRetrievingCookieGenerator(CookieUtils.buildCookieGenerationContext(cookie), deviceFingerprintCookieValueManager);
                 })
                 .otherwiseProxy()
                 .get();

@@ -1,21 +1,13 @@
-
 {
   "@class": "java.util.HashMap",
-  "casuser":
-  [
+  "casuser": [
     "java.util.ArrayList",
     [
       {
         "@class": "org.apereo.cas.gauth.credential.GoogleAuthenticatorAccount",
-        "scratchCodes":
-        [
+        "scratchCodes": [
           "java.util.ArrayList",
           [
-            11040714,
-            63605147,
-            62216081,
-            62216082,
-            62216083,
             62216084,
             20207704,
             20207705

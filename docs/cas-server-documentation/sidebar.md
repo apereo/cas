@@ -533,6 +533,7 @@ layout: null
             *   [JWKS](#oidcjwksmenu)
                 *   [Overview](/cas/{{ version }}/authentication/OIDC-Authentication-JWKS.html)
                 *   [Storage](#oidcjwksstorage)
+                    *   [Overview](/cas/{{ version }}/authentication/OIDC-Authentication-JWKS-Storage.html)
                     *   [Groovy](/cas/{{ version }}/authentication/OIDC-Authentication-JWKS-Storage-Groovy.html)
                     *   [JPA](/cas/{{ version }}/authentication/OIDC-Authentication-JWKS-Storage-JPA.html)
                     *   [MongoDb](/cas/{{ version }}/authentication/OIDC-Authentication-JWKS-Storage-MongoDb.html)
@@ -758,6 +759,7 @@ layout: null
         *   [Custom](/cas/{{ version }}/notifications/Notifications-Configuration-Custom.html)
 
 * [Integration](#appintegration)
+    *   [Apache Groovy](/cas/{{ version }}/integration/Apache-Groovy-Scripting.html)
     *   [SAML2 Service Providers](/cas/{{ version }}/integration/Configuring-SAML-SP-Integrations.html)
         *   [~~Google Apps~~](/cas/{{ version }}/integration/Google-Apps-Integration.html)
     *   [Google reCAPTCHA](/cas/{{ version }}/integration/Configuring-Google-reCAPTCHA.html)

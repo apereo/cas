@@ -3,6 +3,7 @@ package org.apereo.cas.util.model;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -80,6 +81,7 @@ public enum TriStateBoolean {
         return state;
     }
 
+    @NoArgsConstructor
     public static class Deserializer extends JsonDeserializer<TriStateBoolean> {
 
         @Override
