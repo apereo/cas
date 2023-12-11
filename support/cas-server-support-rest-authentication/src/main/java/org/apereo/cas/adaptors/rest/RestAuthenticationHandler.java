@@ -113,11 +113,13 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         final UsernamePasswordCredential credential,
         final HttpResponse response) throws Throwable {
         try {
-            val result = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
-            LOGGER.debug("REST authentication response received: [{}]", result);
-            val principalFromRest = MAPPER.readValue(result, Principal.class);
-            val principal = principalFactory.createPrincipal(principalFromRest.getId(), principalFromRest.getAttributes());
-            return createHandlerResult(credential, principal, getWarnings(response));
+            try (val content = ((HttpEntityContainer) response).getEntity().getContent()) {
+                val result = IOUtils.toString(content, StandardCharsets.UTF_8);
+                LOGGER.debug("REST authentication response received: [{}]", result);
+                val principalFromRest = MAPPER.readValue(result, Principal.class);
+                val principal = principalFactory.createPrincipal(principalFromRest.getId(), principalFromRest.getAttributes());
+                return createHandlerResult(credential, principal, getWarnings(response));
+            }
         } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
             throw new FailedLoginException("Unable to detect the authentication principal for " + credential.getUsername());

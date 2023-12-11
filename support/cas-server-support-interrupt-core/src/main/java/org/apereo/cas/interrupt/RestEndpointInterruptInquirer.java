@@ -79,9 +79,10 @@ public class RestEndpointInterruptInquirer extends BaseInterruptInquirer {
                 .build();
             response = HttpUtils.execute(exec);
             if (response != null && ((HttpEntityContainer) response).getEntity() != null) {
-                val content = ((HttpEntityContainer) response).getEntity().getContent();
-                val result = IOUtils.toString(content, StandardCharsets.UTF_8);
-                return MAPPER.readValue(JsonValue.readHjson(result).toString(), InterruptResponse.class);
+                try (val content = ((HttpEntityContainer) response).getEntity().getContent()) {
+                    val result = IOUtils.toString(content, StandardCharsets.UTF_8);
+                    return MAPPER.readValue(JsonValue.readHjson(result).toString(), InterruptResponse.class);
+                }
             }
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);

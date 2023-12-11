@@ -54,9 +54,11 @@ public class RestfulPasswordlessUserAccountStore implements PasswordlessUserAcco
             response = HttpUtils.execute(exec);
 
             if (response != null && HttpStatus.valueOf(response.getCode()).is2xxSuccessful() && ((HttpEntityContainer) response).getEntity() != null) {
-                val result = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
-                val account = MAPPER.readValue(JsonValue.readHjson(result).toString(), PasswordlessUserAccount.class);
-                return Optional.ofNullable(account);
+                try (val content = ((HttpEntityContainer) response).getEntity().getContent()) {
+                    val result = IOUtils.toString(content, StandardCharsets.UTF_8);
+                    val account = MAPPER.readValue(JsonValue.readHjson(result).toString(), PasswordlessUserAccount.class);
+                    return Optional.ofNullable(account);
+                }
             }
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
