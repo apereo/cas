@@ -1,13 +1,10 @@
 package org.apereo.cas.adaptors.jdbc;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.jdbc.authn.QueryJdbcAuthenticationProperties;
 import org.apereo.cas.jpa.JpaPersistenceProviderContext;
-import org.apereo.cas.util.CollectionUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +15,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -26,10 +22,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import javax.security.auth.login.FailedLoginException;
 import javax.sql.DataSource;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -75,13 +69,10 @@ class NamedQueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthentic
     @Test
     void verifySuccess() throws Throwable {
         val sql = "SELECT * FROM CAS_NAMED_USERS where username=:username";
-        val map = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(List.of("phone:phoneNumber"));
-
         val properties = new QueryJdbcAuthenticationProperties().setSql(sql).setFieldPassword("password");
         properties.setName("namedHandler");
-        val q = new QueryDatabaseAuthenticationHandler(properties,
-            null, PrincipalFactoryUtils.newPrincipalFactory(),
-            this.dataSource, CollectionUtils.wrap(map));
+        properties.setPrincipalAttributeList(List.of("phone:phoneNumber"));
+        val q = new QueryDatabaseAuthenticationHandler(properties, null, PrincipalFactoryUtils.newPrincipalFactory(), this.dataSource);
         val result = q.authenticate(
             CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0"), mock(Service.class));
         assertNotNull(result);
@@ -92,12 +83,10 @@ class NamedQueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthentic
     @Test
     void verifySuccessWithCount() throws Throwable {
         val sql = "SELECT count(*) as total FROM CAS_NAMED_USERS where username=:username AND password=:password";
-        val map = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(List.of("phone:phoneNumber"));
         val properties = new QueryJdbcAuthenticationProperties().setSql(sql);
         properties.setName("namedHandler");
-        val q = new QueryDatabaseAuthenticationHandler(properties,
-            null, PrincipalFactoryUtils.newPrincipalFactory(),
-            this.dataSource, CollectionUtils.wrap(map));
+        properties.setPrincipalAttributeList(List.of("phone:phoneNumber"));
+        val q = new QueryDatabaseAuthenticationHandler(properties, null, PrincipalFactoryUtils.newPrincipalFactory(), this.dataSource);
         val result = q.authenticate(
             CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0"), mock(Service.class));
         assertNotNull(result);
@@ -110,9 +99,7 @@ class NamedQueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthentic
         val sql = "SELECT count(*) FROM CAS_NAMED_USERS where username=:username AND password=:password";
         val properties = new QueryJdbcAuthenticationProperties().setSql(sql).setFieldPassword("password");
         properties.setName("namedHandler");
-        val q = new QueryDatabaseAuthenticationHandler(properties,
-            null, PrincipalFactoryUtils.newPrincipalFactory(),
-            this.dataSource, new HashMap<>());
+        val q = new QueryDatabaseAuthenticationHandler(properties, null, PrincipalFactoryUtils.newPrincipalFactory(), this.dataSource);
         assertThrows(FailedLoginException.class,
             () -> q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("whatever", "psw0"), mock(Service.class)));
     }

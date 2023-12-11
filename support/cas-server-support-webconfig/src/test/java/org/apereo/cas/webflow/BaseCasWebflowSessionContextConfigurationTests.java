@@ -61,10 +61,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
@@ -130,14 +126,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 public abstract class BaseCasWebflowSessionContextConfigurationTests {
-    private static MockRequestContext getMockRequestContext() {
-        val ctx = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        val sCtx = new MockServletContext();
-        ctx.setExternalContext(new ServletExternalContext(sCtx, request, response));
-        return ctx;
-    }
 
     @Test
     void verifyExecutorsAreBeans() throws Throwable {
@@ -146,9 +134,9 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
 
     @Test
     void verifyFlowExecutorByClient() throws Throwable {
-        val ctx = getMockRequestContext();
+        val context = MockRequestContext.create();
         val map = new LocalAttributeMap<>();
-        getFlowExecutor().launchExecution("login", map, ctx.getExternalContext());
+        getFlowExecutor().launchExecution("login", map, context.getExternalContext());
     }
 
     public abstract FlowExecutor getFlowExecutor();

@@ -1,5 +1,7 @@
 package org.apereo.cas.util;
 
+import org.apereo.cas.util.http.HttpRequestUtils;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.val;
 import org.springframework.binding.expression.support.LiteralExpression;
 import org.springframework.binding.message.DefaultMessageContext;
@@ -16,6 +18,7 @@ import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.DefaultTransitionCriteria;
+import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockExternalContext;
 import org.springframework.webflow.test.MockFlowExecutionContext;
@@ -113,6 +116,12 @@ public class MockRequestContext extends MockRequestControlContext {
 
     public MockRequestContext setRequestCookiesFromResponse() {
         getHttpServletRequest().setCookies(getHttpServletResponse().getCookies());
+        return this;
+    }
+
+    @CanIgnoreReturnValue
+    public RequestContext withUserAgent(final String s) {
+        addHeader(HttpRequestUtils.USER_AGENT_HEADER, s);
         return this;
     }
 

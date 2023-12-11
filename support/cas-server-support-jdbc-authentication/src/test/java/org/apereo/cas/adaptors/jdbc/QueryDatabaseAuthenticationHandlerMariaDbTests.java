@@ -1,15 +1,12 @@
 package org.apereo.cas.adaptors.jdbc;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.jdbc.authn.QueryJdbcAuthenticationProperties;
 import org.apereo.cas.jpa.JpaPersistenceProviderContext;
-import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.util.serialization.SerializationUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,7 +18,6 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -30,7 +26,6 @@ import jakarta.persistence.Id;
 import javax.sql.DataSource;
 import java.util.List;
 import java.util.Set;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -85,12 +80,11 @@ class QueryDatabaseAuthenticationHandlerMariaDbTests extends BaseDatabaseAuthent
 
     @Test
     void verifySuccess() throws Throwable {
-        val map = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(List.of("location"));
         val properties = new QueryJdbcAuthenticationProperties().setSql(SQL).setFieldPassword(PASSWORD_FIELD).setFieldDisabled("disabled");
-        val q = new QueryDatabaseAuthenticationHandler(properties, null, PrincipalFactoryUtils.newPrincipalFactory(),
-            this.dataSource, CollectionUtils.wrap(map));
-        val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
-        val result = q.authenticate(c, mock(Service.class));
+        properties.setPrincipalAttributeList(List.of("location"));
+        val q = new QueryDatabaseAuthenticationHandler(properties, null, PrincipalFactoryUtils.newPrincipalFactory(), dataSource);
+        val credential = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
+        val result = q.authenticate(credential, mock(Service.class));
         assertNotNull(result);
         assertNotNull(result.getPrincipal());
         assertTrue(result.getPrincipal().getAttributes().containsKey("location"));
@@ -105,7 +99,7 @@ class QueryDatabaseAuthenticationHandlerMariaDbTests extends BaseDatabaseAuthent
             return new JpaPersistenceProviderContext().setIncludeEntityClasses(Set.of(QueryDatabaseAuthenticationHandlerMariaDbTests.UsersTable.class.getName()));
         }
     }
-    
+
     @SuppressWarnings("unused")
     @Entity(name = "casmariadbusers")
     static class UsersTable {

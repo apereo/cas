@@ -47,12 +47,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
-import org.springframework.webflow.context.ExternalContextHolder;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.execution.RequestContextHolder;
 import java.io.File;
 import java.util.Locale;
 import java.util.Map;
@@ -97,18 +93,13 @@ class DefaultDelegatedClientAuthenticationWebflowManagerTests {
     private MockHttpServletRequest httpServletRequest;
 
     @BeforeEach
-    public void setup() {
+    public void setup() throws Exception {
         val service = RegisteredServiceTestUtils.getService();
         httpServletRequest = new MockHttpServletRequest();
         httpServletRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome");
         httpServletRequest.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
         context = new JEEContext(httpServletRequest, new MockHttpServletResponse());
-
-        requestContext = new MockRequestContext();
-        requestContext.setExternalContext(new ServletExternalContext(new MockServletContext(),
-            context.getNativeRequest(), context.getNativeResponse()));
-        RequestContextHolder.setRequestContext(requestContext);
-        ExternalContextHolder.setExternalContext(requestContext.getExternalContext());
+        requestContext = MockRequestContext.create();
     }
 
     @Test
