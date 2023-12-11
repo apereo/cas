@@ -90,9 +90,11 @@ public class RestAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
             response = HttpUtils.execute(exec);
             val statusCode = response.getStatusLine().getStatusCode();
             if (HttpStatus.valueOf(statusCode).is2xxSuccessful()) {
-                val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
-                val terms = MAPPER.readValue(JsonValue.readHjson(result).toString(), AcceptableUsagePolicyTerms.class);
-                return Optional.ofNullable(terms);
+                try (val content = response.getEntity().getContent()) {
+                    val result = IOUtils.toString(content, StandardCharsets.UTF_8);
+                    val terms = MAPPER.readValue(JsonValue.readHjson(result).toString(), AcceptableUsagePolicyTerms.class);
+                    return Optional.ofNullable(terms);
+                }
             }
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);

@@ -223,11 +223,13 @@ public class OidcClientRegistrationRequestTranslator {
                     .build();
                 sectorResponse = HttpUtils.execute(exec);
                 if (sectorResponse != null && sectorResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                    val result = IOUtils.toString(sectorResponse.getEntity().getContent(), StandardCharsets.UTF_8);
-                    val expectedType = MAPPER.getTypeFactory().constructParametricType(List.class, String.class);
-                    val urls = MAPPER.readValue(JsonValue.readHjson(result).toString(), expectedType);
-                    if (!urls.equals(registrationRequest.getRedirectUris())) {
-                        throw new IllegalArgumentException("Invalid sector identifier uri");
+                    try (val content = sectorResponse.getEntity().getContent()) {
+                        val result = IOUtils.toString(content, StandardCharsets.UTF_8);
+                        val expectedType = MAPPER.getTypeFactory().constructParametricType(List.class, String.class);
+                        val urls = MAPPER.readValue(JsonValue.readHjson(result).toString(), expectedType);
+                        if (!urls.equals(registrationRequest.getRedirectUris())) {
+                            throw new IllegalArgumentException("Invalid sector identifier uri");
+                        }
                     }
                 }
             } finally {

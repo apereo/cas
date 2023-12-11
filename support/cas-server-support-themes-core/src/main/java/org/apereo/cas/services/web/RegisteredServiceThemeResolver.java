@@ -122,8 +122,10 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
                     .build();
                 response = HttpUtils.execute(exec);
                 if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                    val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
-                    return StringUtils.defaultIfBlank(result, getDefaultThemeName());
+                    try (val content = response.getEntity().getContent()) {
+                        val result = IOUtils.toString(content, StandardCharsets.UTF_8);
+                        return StringUtils.defaultIfBlank(result, getDefaultThemeName());
+                    }
                 }
             }
             val theme = resolveThemeForService(rService, request);

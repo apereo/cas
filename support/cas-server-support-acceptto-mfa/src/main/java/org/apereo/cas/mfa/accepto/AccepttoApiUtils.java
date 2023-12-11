@@ -115,9 +115,11 @@ public class AccepttoApiUtils {
                 LOGGER.debug("Response status code is [{}]", status);
 
                 if (status == HttpStatus.SC_OK) {
-                    val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
-                    LOGGER.debug("Received API response as [{}]", result);
-                    return MAPPER.readValue(JsonValue.readHjson(result).toString(), Map.class);
+                    try (val content = response.getEntity().getContent()) {
+                        val result = IOUtils.toString(content, StandardCharsets.UTF_8);
+                        LOGGER.debug("Received API response as [{}]", result);
+                        return MAPPER.readValue(JsonValue.readHjson(result).toString(), Map.class);
+                    }
                 }
             }
         } catch (final Exception e) {
@@ -187,22 +189,24 @@ public class AccepttoApiUtils {
             response = HttpUtils.execute(exec);
             val status = response.getStatusLine().getStatusCode();
             LOGGER.debug("Authentication response status code is [{}]", status);
-            val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
-            val results = MAPPER.readValue(JsonValue.readHjson(result).toString(), Map.class);
-            LOGGER.trace("Received API response as [{}]", results);
-            if (!results.containsKey("content")) {
-                throw new IllegalArgumentException("Unable to locate content in API response");
+            try (val contis = response.getEntity().getContent()) {
+                val result = IOUtils.toString(contis, StandardCharsets.UTF_8);
+                val results = MAPPER.readValue(JsonValue.readHjson(result).toString(), Map.class);
+                LOGGER.trace("Received API response as [{}]", results);
+                if (!results.containsKey("content")) {
+                    throw new IllegalArgumentException("Unable to locate content in API response");
+                }
+                val content = results.get("content").toString();
+                LOGGER.trace("Validating response signature for [{}] using [{}]", content, apiResponsePublicKey);
+                val decoded = EncodingUtils.verifyJwsSignature(apiResponsePublicKey, content);
+                if (decoded == null) {
+                    LOGGER.error("Unable to verify API content using public key [{}]", apiResponsePublicKey);
+                    return new HashMap<>(0);
+                }
+                val decodedResult = JsonValue.readHjson(new String(decoded, StandardCharsets.UTF_8)).toString();
+                LOGGER.debug("Received final API response as [{}]", decodedResult);
+                return MAPPER.readValue(decodedResult, Map.class);
             }
-            val content = results.get("content").toString();
-            LOGGER.trace("Validating response signature for [{}] using [{}]", content, apiResponsePublicKey);
-            val decoded = EncodingUtils.verifyJwsSignature(apiResponsePublicKey, content);
-            if (decoded == null) {
-                LOGGER.error("Unable to verify API content using public key [{}]", apiResponsePublicKey);
-                return new HashMap<>(0);
-            }
-            val decodedResult = JsonValue.readHjson(new String(decoded, StandardCharsets.UTF_8)).toString();
-            LOGGER.debug("Received final API response as [{}]", decodedResult);
-            return MAPPER.readValue(decodedResult, Map.class);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         } finally {

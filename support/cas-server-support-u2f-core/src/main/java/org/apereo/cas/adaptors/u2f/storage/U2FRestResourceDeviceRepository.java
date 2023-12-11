@@ -57,9 +57,11 @@ public class U2FRestResourceDeviceRepository extends BaseResourceU2FDeviceReposi
 
                 response = HttpUtils.execute(exec);
                 if (Objects.requireNonNull(response).getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
-                    return MAPPER.readValue(response.getEntity().getContent(),
-                        new TypeReference<>() {
-                        });
+                    try (val content = response.getEntity().getContent()) {
+                        return MAPPER.readValue(content,
+                                new TypeReference<>() {
+                                });
+                    }
                 }
             } finally {
                 HttpUtils.close(response);

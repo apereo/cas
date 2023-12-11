@@ -152,8 +152,10 @@ public class RestfulYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
             if (response != null) {
                 val status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
                 if (status.is2xxSuccessful()) {
-                    val content = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
-                    return MAPPER.readValue(content, YubiKeyAccount.class);
+                    try (val contis = response.getEntity().getContent()) {
+                        val content = IOUtils.toString(contis, StandardCharsets.UTF_8);
+                        return MAPPER.readValue(content, YubiKeyAccount.class);
+                    }
                 }
             }
         } catch (final Exception e) {
@@ -178,9 +180,11 @@ public class RestfulYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
             if (response != null) {
                 val status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
                 if (status.is2xxSuccessful()) {
-                    val content = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
-                    return MAPPER.readValue(content, new TypeReference<List<YubiKeyAccount>>() {
-                    });
+                    try (val contis = response.getEntity().getContent()) {
+                        val content = IOUtils.toString(contis, StandardCharsets.UTF_8);
+                        return MAPPER.readValue(content, new TypeReference<List<YubiKeyAccount>>() {
+                        });
+                    }
                 }
             }
         } catch (final Exception e) {
