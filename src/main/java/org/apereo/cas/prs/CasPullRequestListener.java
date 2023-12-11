@@ -161,7 +161,9 @@ public class CasPullRequestListener implements PullRequestListener {
             if (pr.isLabeledAs(CasLabels.LABEL_CI)) {
                 repository.removeLabelFrom(pr, CasLabels.LABEL_CI);
             }
-            repository.labelPullRequestAs(pr, CasLabels.LABEL_CI);
+            if (repository.approvePullRequest(pr)) {
+                repository.labelPullRequestAs(pr, CasLabels.LABEL_CI);
+            }
         }
     }
 
