@@ -21,7 +21,7 @@ const puppeteer = require("puppeteer");
 })();
 
 async function verifyDeviceCode(data) {
-    let params = new URLSearchParams();
+    const params = new URLSearchParams();
     params.append("grant_type", "urn:ietf:params:oauth:grant-type:device_code");
     params.append("client_id", "client");
     params.append("device_code", data.device_code);

@@ -14,10 +14,10 @@ const assert = require("assert");
     await cas.click(page, "#allow");
     await page.waitForNavigation();
     await cas.log(`Page url: ${await page.url()}\n`);
-    let response = await cas.assertParameter(page, "response");
+    const response = await cas.assertParameter(page, "response");
 
-    let token = await cas.decodeJwt(response, true);
-    let kid = await token.header.kid;
+    const token = await cas.decodeJwt(response, true);
+    const kid = await token.header.kid;
     await cas.log(`Token is signed via key identifier ${kid}`);
 
     await cas.doGet("https://localhost:8443/cas/oidc/jwks",

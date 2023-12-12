@@ -1,5 +1,5 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 const colors = require("colors");
 const assert = require("assert");
 
@@ -12,16 +12,16 @@ const assert = require("assert");
 
     await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service");
-    await cas.assertInnerText(page, '#content div h2', "Log In Successful");
+    await cas.assertInnerText(page, "#content div h2", "Log In Successful");
 
     await cas.gotoLogout(page);
     await cas.logPage(page);
-    let url = await page.url();
+    const url = await page.url();
     assert(url === "https://localhost:8443/cas/logout");
 
     await page.waitForTimeout(1000);
     await cas.assertCookie(page, false);
 
     await browser.close();
-    console.log(colors.green(`Login test complete.`));
+    console.log(colors.green("Login test complete."));
 })();

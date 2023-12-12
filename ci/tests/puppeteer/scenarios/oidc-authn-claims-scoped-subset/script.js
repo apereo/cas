@@ -6,12 +6,12 @@ const assert = require("assert");
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
 
-    let url1 = "https://localhost:9859/anything/sample1";
+    const url1 = "https://localhost:9859/anything/sample1";
     await cas.logg(`Trying with URL ${url1}`);
 
-    let payload = await getPayload(page, url1, "client1", "secret1",
+    const payload = await getPayload(page, url1, "client1", "secret1",
         encodeURIComponent("openid email"));
-    let decoded = await cas.decodeJwt(payload.id_token);
+    const decoded = await cas.decodeJwt(payload.id_token);
     assert(decoded.sub === "CAS@EXAMPLE.ORG");
     assert(decoded.aud === "client1");
     assert(decoded["preferred_username"] === "CAS@EXAMPLE.ORG");
@@ -22,7 +22,7 @@ const assert = require("assert");
     assert(decoded["authenticationDate"] === undefined);
     assert(decoded["authenticationMethod"] === undefined);
 
-    let profileUrl = `https://localhost:8443/cas/oidc/profile?access_token=${payload.access_token}`;
+    const profileUrl = `https://localhost:8443/cas/oidc/profile?access_token=${payload.access_token}`;
     await cas.log(`Calling user profile ${profileUrl}`);
     await cas.doPost(profileUrl, "", {
         "Content-Type": "application/json"
@@ -56,12 +56,12 @@ async function getPayload(page, redirectUri, clientId, clientSecret, scopes) {
         await page.waitForNavigation();
     }
 
-    let code = await cas.assertParameter(page, "code");
+    const code = await cas.assertParameter(page, "code");
     await cas.log(`Current code is ${code}`);
     const accessTokenUrl = "https://localhost:8443/cas/oidc/token?grant_type=authorization_code"
         + `&client_id=${clientId}&client_secret=${clientSecret}&redirect_uri=${redirectUri}&code=${code}`;
 
-    return await cas.doPost(accessTokenUrl, "", {
+    return cas.doPost(accessTokenUrl, "", {
         "Content-Type": "application/json"
     }, (res) => res.data, (error) => {
         throw `Operation failed to obtain access token: ${error}`;

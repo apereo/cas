@@ -7,8 +7,8 @@ const fs = require("fs");
 
 (async () => {
 
-    let template = path.join(__dirname, "device-record.json");
-    let body = fs.readFileSync(template, "utf8");
+    const template = path.join(__dirname, "device-record.json");
+    const body = fs.readFileSync(template, "utf8");
     await cas.log(`Import device record:\n${body}`);
     await cas.doRequest("https://localhost:8443/cas/actuator/multifactorTrustedDevices/import", "POST", {
         "Accept": "application/json",
@@ -25,7 +25,7 @@ const fs = require("fs");
     await cas.assertCookie(page);
 
     await cas.logPage(page);
-    let url = await page.url();
+    const url = await page.url();
     assert(url === "https://localhost:8443/cas/account");
 
     await cas.goto(page, "https://localhost:8443/cas/account");

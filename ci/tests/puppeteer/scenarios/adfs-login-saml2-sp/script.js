@@ -23,7 +23,7 @@ const cas = require("../../cas.js");
     await cas.assertInnerTextContains(page, "#content p", "status page of SimpleSAMLphp");
     await cas.assertVisibility(page, "#table_with_attributes");
 
-    let authData = JSON.parse(await cas.innerHTML(page, "details pre"));
+    const authData = JSON.parse(await cas.innerHTML(page, "details pre"));
     await cas.log(authData);
     await page.waitForTimeout(1000);
 

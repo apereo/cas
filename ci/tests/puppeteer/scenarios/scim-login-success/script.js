@@ -16,7 +16,7 @@ const assert = require("assert");
     await cas.doGet("http://localhost:9666/scim/v2/Users?attributes=userName",
         (res) => {
             assert(res.status === 200);
-            let length = res.data.Resources.length;
+            const length = res.data.Resources.length;
             cas.log(`Found ${length} record`);
             assert(length === 1);
             assert(res.data.Resources[0].userName === "casscimuser");

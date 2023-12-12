@@ -26,7 +26,7 @@ const cas = require("../../cas.js");
     await page.waitForTimeout(1000);
     await cas.click(page, "table tbody td a");
     await page.waitForTimeout(1000);
-    let link = await cas.textContent(page, "div[name=bodyPlainText] .well");
+    const link = await cas.textContent(page, "div[name=bodyPlainText] .well");
     await cas.log(`Activation link is ${link}`);
     await cas.goto(page, link);
     await page.waitForTimeout(1000);

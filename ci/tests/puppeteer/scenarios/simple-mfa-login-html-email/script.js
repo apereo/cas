@@ -25,9 +25,9 @@ const cas = require("../../cas.js");
     await page2.waitForTimeout(1000);
     await cas.screenshot(page);
 
-    let greeting = await cas.textContent(page2, "#greeting");
+    const greeting = await cas.textContent(page2, "#greeting");
     assert(greeting === "Hello, CAS Apereo");
-    let code = await cas.textContent(page2, "#otpcode");
+    const code = await cas.textContent(page2, "#otpcode");
     await cas.log(`Code to use is extracted as ${code}`);
     await page2.close();
 

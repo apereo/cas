@@ -7,11 +7,11 @@ const os = require("os");
 (async () => {
     const baseUrl = "https://localhost:8443/cas/actuator/registeredServices";
 
-    let template = path.join(__dirname, "registered-service.json");
-    let contents = fs.readFileSync(template, "utf8");
+    const template = path.join(__dirname, "registered-service.json");
+    const contents = fs.readFileSync(template, "utf8");
     const totalCount = 20;
     for (let i = 1; i <= totalCount; i++) {
-        let serviceBody = contents.replace("${id}", String(i));
+        const serviceBody = contents.replace("${id}", String(i));
         await cas.log(`Import registered service:\n${serviceBody}`);
         await cas.doRequest(`${baseUrl}/import`, "POST", {
             "Accept": "application/json",
@@ -20,7 +20,7 @@ const os = require("os");
         }, 201, serviceBody);
     }
 
-    let body = JSON.parse(await cas.doRequest(baseUrl, "GET", {
+    const body = JSON.parse(await cas.doRequest(baseUrl, "GET", {
         "Content-Type": "application/json"
     }, 200));
     assert(body[1].length === totalCount);
@@ -28,7 +28,7 @@ const os = require("os");
     await cas.doGet(`${baseUrl}/export`,
         (res) => {
             const tempDir = os.tmpdir();
-            let exported = path.join(tempDir, "services.zip");
+            const exported = path.join(tempDir, "services.zip");
             res.data.pipe(fs.createWriteStream(exported));
             cas.log(`Exported services are at ${exported}`);
         },

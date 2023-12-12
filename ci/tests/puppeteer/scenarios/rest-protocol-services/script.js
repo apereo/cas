@@ -1,7 +1,7 @@
 const cas = require("../../cas.js");
 
 (async () => {
-    let service = {
+    const service = {
         "@class": "org.apereo.cas.services.CasRegisteredService",
         "serviceId": "https://apereo.github.io/cas",
         "name": "CAS",

@@ -6,7 +6,7 @@ const fs = require("fs");
 const path = require("path");
 
 (async () => {
-    let configFilePath = path.join(__dirname, "config.yml");
+    const configFilePath = path.join(__dirname, "config.yml");
     const file = fs.readFileSync(configFilePath, "utf8");
     const configFile = YAML.parse(file);
 
@@ -39,7 +39,7 @@ async function doLogin(page, uid, psw, email) {
 }
 
 async function updateConfig(configFile, configFilePath, data) {
-    let config = {
+    const config = {
         cas: {
             authn: {
                 syncope: {

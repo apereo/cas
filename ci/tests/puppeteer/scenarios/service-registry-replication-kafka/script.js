@@ -31,11 +31,11 @@ const path = require("path");
         "Content-Type": "application/json"
     });
     
-    let s1Path = path.join(__dirname, "services/Sample-1.json");
+    const s1Path = path.join(__dirname, "services/Sample-1.json");
     await cas.log(`Parsing JSON file ${s1Path}`);
-    let s1 = JSON.parse(fs.readFileSync(s1Path, "utf8"));
+    const s1 = JSON.parse(fs.readFileSync(s1Path, "utf8"));
 
-    let description = (Math.random() + 1).toString(36).substring(4);
+    const description = (Math.random() + 1).toString(36).substring(4);
     await cas.log(`Generated new description: ${description}`);
     await update(s1, description, s1Path);
 

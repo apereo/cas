@@ -10,7 +10,7 @@ const assert = require("assert");
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
     await cas.loginWith(page);
     await page.waitForTimeout(2000);
-    let ticket = await cas.assertTicketParameter(page);
+    const ticket = await cas.assertTicketParameter(page);
 
     const keyPath = path.join(__dirname, "private.key");
     const { payload } = await cas.decryptJwt(ticket, keyPath);

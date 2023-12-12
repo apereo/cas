@@ -29,7 +29,7 @@ const cas = require("../../cas.js");
     await cas.gotoLogout(page);
 
     await cas.gotoLogin(page, "https://apereo.github.io");
-    let url = await page.url();
+    const url = await page.url();
     await cas.loginWith(page, "casblock", "Mellon");
     await cas.screenshot(page);
     await cas.logPage(page);
@@ -45,8 +45,8 @@ const cas = require("../../cas.js");
     await cas.assertInvisibility(page, "#fm1");
 
     await page.evaluate(() => {
-        let execution = document.querySelector("#formlinks input[name=execution]").value;
-        let content = document.querySelector("#content");
+        const execution = document.querySelector("#formlinks input[name=execution]").value;
+        const content = document.querySelector("#content");
         content.innerHTML += `
         <form method="post" id="fmblocked">
             <input type="hidden" name="execution" value="${execution}"/>

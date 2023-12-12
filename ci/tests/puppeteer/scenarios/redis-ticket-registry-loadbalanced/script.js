@@ -6,7 +6,7 @@ async function ensureNoSsoSessionsExistAfterLogout(page, port) {
     const url = `https://localhost:${port}/cas/actuator/ssoSessions?type=ALL`;
     await cas.log(`Navigating to ${url}`);
     await page.goto(url);
-    let content = await cas.textContent(page, "body");
+    const content = await cas.textContent(page, "body");
     const payload = JSON.parse(content);
     await cas.log(payload);
     assert(payload.totalTicketGrantingTickets === 0);
@@ -22,9 +22,9 @@ async function testBasicLoginLogout(browser) {
     await cas.loginWith(page);
     const ticket = await cas.assertTicketParameter(page);
     await page.goto(`https://localhost:8444/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
-    let content = await cas.textContent(page, "body");
+    const content = await cas.textContent(page, "body");
     const payload = JSON.parse(content);
-    let authenticationSuccess = payload.serviceResponse.authenticationSuccess;
+    const authenticationSuccess = payload.serviceResponse.authenticationSuccess;
     assert(authenticationSuccess.user === "casuser");
     await logoutEverywhere(page);
     await ensureNoSsoSessionsExistAfterLogout(page, 8443);
@@ -50,14 +50,14 @@ async function checkTicketValidationAcrossNodes(browser) {
     await page.goto(`https://localhost:8444/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
     let content = await cas.textContent(page, "body");
     let payload = JSON.parse(content);
-    let authenticationSuccess = payload.serviceResponse.authenticationSuccess;
+    const authenticationSuccess = payload.serviceResponse.authenticationSuccess;
     assert(authenticationSuccess.user === "casuser");
 
     await cas.log(`Validating ticket ${ticket} again on original node`);
     await page.goto(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
     content = await cas.textContent(page, "body");
     payload = JSON.parse(content);
-    let authenticationFailure = payload.serviceResponse.authenticationFailure;
+    const authenticationFailure = payload.serviceResponse.authenticationFailure;
     assert(authenticationFailure.code === "INVALID_TICKET");
 
     await logoutEverywhere(page);
@@ -68,7 +68,7 @@ async function ensureSessionsRecorded(page, port, conditions) {
     const url = `https://localhost:${port}/cas/actuator/ssoSessions?type=ALL`;
     await cas.log(`Navigating to ${url}`);
     await page.goto(url);
-    let content = await cas.textContent(page, "body");
+    const content = await cas.textContent(page, "body");
     const payload = JSON.parse(content);
     console.dir(payload, {depth: null, colors: true});
 

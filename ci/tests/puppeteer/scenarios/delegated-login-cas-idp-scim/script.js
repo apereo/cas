@@ -24,7 +24,7 @@ const cas = require("../../cas.js");
     await cas.loginWith(page);
     await page.waitForTimeout(1000);
 
-    let result = new URL(page.url());
+    const result = new URL(page.url());
     await cas.log(result.searchParams.toString());
 
     assert(result.searchParams.has("ticket") === false);
@@ -45,7 +45,7 @@ const cas = require("../../cas.js");
     await cas.doGet("http://localhost:9666/scim/v2/Users?attributes=userName",
         (res) => {
             assert(res.status === 200);
-            let length = res.data.Resources.length;
+            const length = res.data.Resources.length;
             cas.log(`Found ${length} record`);
             assert(length === 1);
             assert(res.data.Resources[0].userName === "casuser");

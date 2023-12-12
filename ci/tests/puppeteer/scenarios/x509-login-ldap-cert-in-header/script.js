@@ -22,9 +22,9 @@ const fs = require("fs");
 
     await page.setRequestInterception(true);
 
-    let args = process.argv.slice(2);
-    let config = JSON.parse(fs.readFileSync(args[0]));
-    assert(config != null);
+    const args = process.argv.slice(2);
+    const config = JSON.parse(fs.readFileSync(args[0]));
+    assert(config !== null);
 
     await cas.log(`Certificate file: ${config.trustStoreCertificateFile}`);
 
@@ -34,7 +34,7 @@ const fs = require("fs");
     await cas.log(`ssl-client-cert-from-proxy: ${certHeader}`);
 
     page.on("request", (request) => {
-        let data = {
+        const data = {
             "method": "GET",
             "headers": {
                 ...request.headers(),

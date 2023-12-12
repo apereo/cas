@@ -22,13 +22,13 @@ async function login(page, redirectUrl, params) {
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
-    let redirectUrl = "https://httpbin.org/post";
+    const redirectUrl = "https://httpbin.org/post";
     await login(page, redirectUrl, "response_mode=form_post");
     await cas.logPage(page);
     await page.waitForTimeout(2000);
     await cas.log("Waiting for page content body to render...");
     await page.waitForSelector("body pre", { visible: true });
-    let content = await cas.textContent(page, "body pre");
+    const content = await cas.textContent(page, "body pre");
     const payload = JSON.parse(content);
     assert(payload.args.error !== "login_required");
     assert(payload.args.state !== state);

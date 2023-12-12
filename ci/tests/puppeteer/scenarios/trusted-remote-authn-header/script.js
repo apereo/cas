@@ -8,7 +8,7 @@ const assert = require("assert");
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     await page.authenticate({"username":"admin", "password": "password"});
-    let response = await cas.goto(page, casLoginUrl);
+    const response = await cas.goto(page, casLoginUrl);
     await cas.log(`${response.status()} ${response.statusText()}`);
     assert(response.ok());
     await cas.assertCookie(page);

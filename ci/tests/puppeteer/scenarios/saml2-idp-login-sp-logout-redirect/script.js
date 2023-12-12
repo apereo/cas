@@ -8,12 +8,12 @@ const fs = require("fs");
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     try {
-        let page = await cas.newPage(browser);
+        const page = await cas.newPage(browser);
         const service = "https://example.com";
         await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
         await page.waitForTimeout(1000);
         await cas.loginWith(page);
-        let ticket = await cas.assertTicketParameter(page);
+        const ticket = await cas.assertTicketParameter(page);
         const body = await cas.doRequest(`https://localhost:8443/cas/validate?service=${service}&ticket=${ticket}`);
         assert(body === "yes\ncasuser\n");
 
@@ -31,7 +31,7 @@ const fs = require("fs");
         await cas.log(sloPage);
 
         const tempDir = os.tmpdir();
-        let sloFile = `${tempDir}/saml2slo.html`;
+        const sloFile = `${tempDir}/saml2slo.html`;
         
         await fs.writeFileSync(sloFile, sloPage);
         await cas.log(`Logout page is written to ${sloFile}`);

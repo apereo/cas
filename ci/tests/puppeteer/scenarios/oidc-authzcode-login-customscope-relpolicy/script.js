@@ -18,21 +18,21 @@ const assert = require("assert");
         await page.waitForNavigation();
     }
 
-    let code = await cas.assertParameter(page, "code");
+    const code = await cas.assertParameter(page, "code");
     await cas.log(`Current code is ${code}`);
     const accessTokenUrl = "https://localhost:8443/cas/oidc/token?grant_type=authorization_code"
         + `&client_id=client&client_secret=secret&redirect_uri=https://apereo.github.io&code=${code}`;
-    let payload = await cas.doPost(accessTokenUrl, "", {
+    const payload = await cas.doPost(accessTokenUrl, "", {
         "Content-Type": "application/json"
     }, (res) => res.data, (error) => {
         throw `Operation failed to obtain access token: ${error}`;
     });
-    assert(payload.access_token != null);
-    assert(payload.token_type != null);
-    assert(payload.expires_in != null);
-    assert(payload.scope != null);
+    assert(payload.access_token !== null);
+    assert(payload.token_type !== null);
+    assert(payload.expires_in !== null);
+    assert(payload.scope !== null);
 
-    let decoded = await cas.decodeJwt(payload.id_token);
+    const decoded = await cas.decodeJwt(payload.id_token);
     assert(decoded.sub !== null);
     assert(decoded.client_id !== null);
     assert(decoded["preferred_username"] !== null);

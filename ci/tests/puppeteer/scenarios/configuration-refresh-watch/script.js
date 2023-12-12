@@ -15,7 +15,7 @@ const path = require("path");
     await cas.assertCookie(page);
     await cas.gotoLogout(page);
 
-    let configFilePath = path.join(__dirname, "config.yml");
+    const configFilePath = path.join(__dirname, "config.yml");
     const file = fs.readFileSync(configFilePath, "utf8");
     const configFile = YAML.parse(file);
     const users = configFile.cas.authn.accept.users;

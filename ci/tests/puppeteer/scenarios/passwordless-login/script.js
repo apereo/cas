@@ -8,8 +8,8 @@ const cas = require("../../cas.js");
     
     await cas.gotoLogin(page);
 
-    let pswd = await page.$("#password");
-    assert(pswd == null);
+    const pswd = await page.$("#password");
+    assert(pswd === null);
 
     await cas.attributeValue(page, "#username", "autocapitalize", "none");
     await cas.attributeValue(page, "#username", "spellcheck", "false");
@@ -27,7 +27,7 @@ const cas = require("../../cas.js");
     await page2.waitForTimeout(1000);
     await cas.click(page2, "table tbody td a");
     await page2.waitForTimeout(1000);
-    let code = await cas.textContent(page2, "div[name=bodyPlainText] .well");
+    const code = await cas.textContent(page2, "div[name=bodyPlainText] .well");
 
     await page.bringToFront();
     await cas.type(page, "#token", code);
@@ -43,12 +43,12 @@ const cas = require("../../cas.js");
     await page.waitForTimeout(1000);
     await cas.screenshot(page);
     
-    let surrogateEnabled = await page.$("#surrogateEnabled");
-    assert(surrogateEnabled == null);
-    let surrogatePrincipal = await page.$("#surrogatePrincipal");
-    assert(surrogatePrincipal == null);
-    let surrogateUser = await page.$("#surrogateUser");
-    assert(surrogateUser == null);
+    const surrogateEnabled = await page.$("#surrogateEnabled");
+    assert(surrogateEnabled === null);
+    const surrogatePrincipal = await page.$("#surrogatePrincipal");
+    assert(surrogatePrincipal === null);
+    const surrogateUser = await page.$("#surrogateUser");
+    assert(surrogateUser === null);
     await page.waitForTimeout(1000);
 
     await browser.close();

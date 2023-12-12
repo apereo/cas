@@ -5,9 +5,9 @@ const cas = require("../../cas.js");
     let browser = await puppeteer.launch(cas.browserOptions());
     let page = await cas.newPage(browser);
     await cas.gotoLogin(page);
-    let eventId = await cas.elementValue(page, "input[name=_eventId]");
-    let execution = await cas.elementValue(page, "input[name=execution]");
-    let geolocation = await cas.elementValue(page, "input[name=geolocation]");
+    const eventId = await cas.elementValue(page, "input[name=_eventId]");
+    const execution = await cas.elementValue(page, "input[name=execution]");
+    const geolocation = await cas.elementValue(page, "input[name=geolocation]");
     await cas.log(`Event ID: ${eventId}, Execution: ${execution}, GeoLocation: ${geolocation}`);
     await browser.close();
 

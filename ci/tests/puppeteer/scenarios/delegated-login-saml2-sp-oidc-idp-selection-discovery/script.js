@@ -24,7 +24,7 @@ async function startWithCasSp(page) {
     await page.waitForTimeout(2000);
     await cas.loginWith(page);
     await page.waitForTimeout(1000);
-    let ticket = await cas.assertTicketParameter(page);
+    const ticket = await cas.assertTicketParameter(page);
     const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}`);
     await cas.log(body);
     assert(body.includes("<cas:user>casuser</cas:user>"));
@@ -48,7 +48,7 @@ async function startWithSamlSp(page) {
     await page.waitForSelector("#table_with_attributes", {visible: true});
     await cas.assertInnerTextContains(page, "#content p", "status page of SimpleSAMLphp");
     await cas.assertVisibility(page, "#table_with_attributes");
-    let authData = JSON.parse(await cas.innerHTML(page, "details pre"));
+    const authData = JSON.parse(await cas.innerHTML(page, "details pre"));
     await cas.log(authData);
     
     await cas.gotoLogin(page);

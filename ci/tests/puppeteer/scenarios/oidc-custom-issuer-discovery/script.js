@@ -5,7 +5,7 @@ const cas = require("../../cas.js");
     const issuer = "https://localhost:8443/cas/oidc/custom/issuer/fawnoos";
     await cas.doGet(`${issuer}/.well-known/openid-configuration`,
         (res) => {
-            let result = res.data;
+            const result = res.data;
             assert(result.jwks_uri.startsWith(issuer));
             assert(result.authorization_endpoint.startsWith(issuer));
             assert(result.token_endpoint.startsWith(issuer));

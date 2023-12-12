@@ -20,7 +20,7 @@ const jose = require("jose");
         await page.waitForNavigation();
     }
 
-    let dt = new Date();
+    const dt = new Date();
     dt.setSeconds(dt.getSeconds() - 5);
     const payload = {
         "htm": "POST",
@@ -45,7 +45,7 @@ const jose = require("jose");
         });
 
     await cas.log(`DPoP JWT is ${dpopProof}`);
-    let code = await cas.assertParameter(page, "code");
+    const code = await cas.assertParameter(page, "code");
     await cas.log(`Current code is ${code}`);
     const accessTokenUrl = "https://localhost:8443/cas/oidc/token";
     const params = `grant_type=authorization_code&client_id=client&redirect_uri=https://apereo.github.io&code=${code}`;
@@ -72,8 +72,8 @@ const jose = require("jose");
     });
 
 
-    let sha256 = await cas.sha256(accessToken);
-    let base64Token = await cas.base64Url(sha256);
+    const sha256 = await cas.sha256(accessToken);
+    const base64Token = await cas.base64Url(sha256);
     const profilePayload = {
         "htm": "POST",
         "htu": "https://localhost:8443/cas/oidc/profile",
@@ -94,7 +94,7 @@ const jose = require("jose");
         });
     await cas.log(`DPoP JWT is ${dpopProofProfile}`);
 
-    let profileUrl = `https://localhost:8443/cas/oidc/profile?token=${accessToken}`;
+    const profileUrl = `https://localhost:8443/cas/oidc/profile?token=${accessToken}`;
     await cas.log(`Calling user profile ${profileUrl}`);
 
     await cas.doPost(profileUrl, "", {
@@ -102,7 +102,7 @@ const jose = require("jose");
         "DPoP": dpopProofProfile
     }, (res) => {
         cas.log(res.data);
-        assert(res.data.sub != null);
+        assert(res.data.sub !== null);
     }, (error) => {
         throw `Operation failed: ${error}`;
     });
@@ -112,9 +112,9 @@ const jose = require("jose");
 })();
 
 async function introspect(token) {
-    let value = "client:secret";
-    let buff = Buffer.alloc(value.length, value);
-    let authzHeader = `Basic ${buff.toString("base64")}`;
+    const value = "client:secret";
+    const buff = Buffer.alloc(value.length, value);
+    const authzHeader = `Basic ${buff.toString("base64")}`;
     await cas.log(`Authorization header: ${authzHeader}`);
 
     await cas.log(`Introspecting token ${token}`);

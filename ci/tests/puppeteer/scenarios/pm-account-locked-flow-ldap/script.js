@@ -15,7 +15,7 @@ async function loginWith(page, user, password) {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     await loginWith(page, "casuser", "Mellon");
-    let captcha = await cas.innerText(page, "#captcha");
+    const captcha = await cas.innerText(page, "#captcha");
     await cas.type(page, "#captchaValue", captcha);
     await cas.submitForm(page, "#fm1");
     await page.waitForTimeout(1000);

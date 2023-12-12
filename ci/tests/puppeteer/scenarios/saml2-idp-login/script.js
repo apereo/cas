@@ -15,7 +15,7 @@ async function normalAuthenticationFlow(context) {
     await cas.assertInnerTextContains(page, "#content p", "status page of SimpleSAMLphp");
     await cas.assertVisibility(page, "#table_with_attributes");
 
-    let authData = JSON.parse(await cas.innerHTML(page, "details pre"));
+    const authData = JSON.parse(await cas.innerHTML(page, "details pre"));
     await cas.log(authData);
     await page.waitForTimeout(1000);
 
@@ -25,7 +25,7 @@ async function normalAuthenticationFlow(context) {
     const endpoints = ["health", `samlIdPRegisteredServiceMetadataCache?serviceId=Sample&entityId=${entityId}`];
     const baseUrl = "https://localhost:8443/cas/actuator/";
     for (let i = 0; i < endpoints.length; i++) {
-        let url = baseUrl + endpoints[i];
+        const url = baseUrl + endpoints[i];
         const response = await cas.goto(page, url);
         await cas.log(`${response.status()} ${response.statusText()}`);
         assert(response.ok());
@@ -45,7 +45,7 @@ async function staleAuthenticationFlow(context) {
     await cas.screenshot(page);
 
     await cas.log("Checking for page URL...");
-    let url = await page.url();
+    const url = await page.url();
     await cas.logPage(page);
 
     await cas.log(`Restarting the flow with ${url}`);
@@ -57,7 +57,7 @@ async function staleAuthenticationFlow(context) {
     await page2.waitForSelector("#table_with_attributes", {visible: true});
     await cas.assertInnerTextContains(page2, "#content p", "status page of SimpleSAMLphp");
     await cas.assertVisibility(page2, "#table_with_attributes");
-    let authData = JSON.parse(await cas.innerHTML(page2, "details pre"));
+    const authData = JSON.parse(await cas.innerHTML(page2, "details pre"));
     await cas.log(authData);
     await page2.waitForTimeout(1000);
     await cas.goto(page2, "https://localhost:8443/cas/logout");
@@ -90,7 +90,7 @@ async function staleAuthenticationFlow(context) {
 
     const baseUrl = "https://localhost:8443/cas/actuator/";
     for (let i = 0; i < samlMetrics.length; i++) {
-        let url = `${baseUrl}metrics/org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver.${samlMetrics[i]}`;
+        const url = `${baseUrl}metrics/org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver.${samlMetrics[i]}`;
         await cas.log(`Trying ${url}`);
         await cas.doRequest(url, "GET", {
             "Accept": "application/json",

@@ -16,7 +16,7 @@ const assert = require("assert");
             "Content-Type": "application/json"
         }, 201, body);
     assert(result !== null);
-    let entity = JSON.parse(result.toString());
+    const entity = JSON.parse(result.toString());
     await cas.log(entity);
     assert(entity.client_id !== null);
     assert(entity.client_secret !== null);
@@ -42,7 +42,7 @@ const assert = require("assert");
         "Content-Length": body.length,
         "Content-Type": "application/json"
     }, 200, body);
-    let updatedEntity = JSON.parse(result.toString());
+    const updatedEntity = JSON.parse(result.toString());
     await cas.log(updatedEntity);
     assert(entity.client_secret !== updatedEntity.client_secret);
     assert(updatedEntity.client_name === service.client_name);
@@ -52,14 +52,14 @@ const assert = require("assert");
 
 
 async function executeRequest(clientId, clientSecret, expectFailure) {
-    let params = "&grant_type=client_credentials&scope=openid";
-    let url = `https://localhost:8443/cas/oidc/token?${params}`;
+    const params = "&grant_type=client_credentials&scope=openid";
+    const url = `https://localhost:8443/cas/oidc/token?${params}`;
     await cas.log(`Calling ${url}`);
 
     await cas.doPost(url, "", {
         "Content-Type": "application/json",
         "Authorization": `Basic ${btoa(`${clientId}:${clientSecret}`)}`
-    }, async (res) => await cas.log(res.data), (error) => {
+    }, async (res) => cas.log(res.data), (error) => {
         if (expectFailure) {
             cas.logr(`Operation has correctly failed with status: ${error.response.status}`);
         } else {

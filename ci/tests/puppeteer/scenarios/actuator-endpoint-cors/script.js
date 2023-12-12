@@ -5,9 +5,9 @@ const puppeteer = require("puppeteer");
 const assert = require("assert");
 
 (async () => {
-    let app = express();
+    const app = express();
     app.use(express.static(path.join(__dirname, "pages")));
-    let server = app.listen(8444, async () => {
+    const server = app.listen(8444, async () => {
         let failed = false;
         try {
             const browser = await puppeteer.launch(cas.browserOptions());

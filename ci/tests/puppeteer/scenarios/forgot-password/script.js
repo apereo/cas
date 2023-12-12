@@ -31,7 +31,7 @@ const cas = require("../../cas.js");
     await cas.click(page, "table tbody td a");
     await page.waitForTimeout(1000);
 
-    let link = await cas.textContent(page, "div[name=bodyPlainText] .well");
+    const link = await cas.textContent(page, "div[name=bodyPlainText] .well");
     await cas.goto(page, link);
     await page.waitForTimeout(1000);
 

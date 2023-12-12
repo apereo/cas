@@ -7,12 +7,12 @@ const path = require("path");
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
 
-    let entityIds = [
+    const entityIds = [
         "sp1:example",
         "sp2:example"
     ];
     for (const entityId of entityIds) {
-        let url = `https://localhost:8443/cas/idp/profile/SAML2/Unsolicited/SSO?providerId=${entityId}`;
+        const url = `https://localhost:8443/cas/idp/profile/SAML2/Unsolicited/SSO?providerId=${entityId}`;
         await cas.log(`Navigating to ${url}`);
         await cas.goto(page, url);
         await cas.screenshot(page);
@@ -21,7 +21,7 @@ const path = require("path");
         await cas.waitForElement(page, "body");
         const content = JSON.parse(await cas.innerText(page, "body"));
         await cas.log(content);
-        assert(content.form.SAMLResponse != null);
+        assert(content.form.SAMLResponse !== null);
         await cas.gotoLogout(page);
     }
     await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));

@@ -16,7 +16,7 @@ async function fetchIdentityProviders() {
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
-    let properties = {
+    const properties = {
         "cas.authn.pac4j.cas[0].login-url": "https://localhost:8444/cas/login",
         "cas.authn.pac4j.cas[0].protocol": "CAS30",
         "cas.authn.pac4j.cas[0].client-name": "CasClient",
@@ -26,12 +26,12 @@ async function fetchIdentityProviders() {
         "cas.authn.pac4j.oidc[0].generic.discovery-uri": "https://dev-968370-admin.oktapreview.com/oauth2/default/.well-known/openid-configuration",
         "cas.authn.pac4j.oidc[0].generic.client-name": "OidcClient"
     };
-    let payload = {
+    const payload = {
         "/delegatedauthn": {
             "get": properties
         }
     };
-    let mockServer = await cas.mockJsonServer(payload, 5432);
+    const mockServer = await cas.mockJsonServer(payload, 5432);
     const page = await cas.newPage(browser);
     await cas.gotoLogin(page);
     await page.waitForTimeout(3000);

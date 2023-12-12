@@ -23,7 +23,7 @@ async function startWithCasSp(page) {
     await page.waitForTimeout(2000);
     await cas.loginWith(page);
     await page.waitForTimeout(1000);
-    let ticket = await cas.assertTicketParameter(page);
+    const ticket = await cas.assertTicketParameter(page);
     const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}`);
     await cas.log(body);
     assert(body.includes("<cas:user>casuser</cas:user>"));

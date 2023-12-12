@@ -18,7 +18,7 @@ async function sendRequest(url, clientid, clientsecret) {
         assert(res.data.access_token !== null);
 
         await cas.log("Decoding JWT access token...");
-        let accessToken = await cas.decodeJwt(res.data.access_token);
+        const accessToken = await cas.decodeJwt(res.data.access_token);
         assert(accessToken.sub === "casuser");
         assert(accessToken.name === "ApereoCAS");
         assert(accessToken["client_id"] === clientid);
@@ -28,7 +28,7 @@ async function sendRequest(url, clientid, clientsecret) {
         assert(accessToken["organization"] === "ApereoFoundation");
 
         await cas.log("Decoding JWT ID token...");
-        let idToken = await cas.decodeJwt(res.data.id_token);
+        const idToken = await cas.decodeJwt(res.data.id_token);
 
         assert(res.data.id_token !== null);
         assert(res.data.refresh_token !== null);
@@ -55,7 +55,7 @@ async function sendRequest(url, clientid, clientsecret) {
 async function verifyPasswordGrantType() {
     let params = "client_id=client&client_secret=secret&grant_type=password&username=casuser&password=P@SSw0rd&";
     params += `scope=${encodeURIComponent("openid MyCustomScope email profile eduPerson")}`;
-    let url = `https://localhost:8443/cas/oidc/token?${params}`;
+    const url = `https://localhost:8443/cas/oidc/token?${params}`;
     await cas.log(`Calling ${url}`);
     await sendRequest(url, "client", "");
 }
@@ -63,7 +63,7 @@ async function verifyPasswordGrantType() {
 async function verifyClientCredentialsGrantType() {
     let params = "grant_type=client_credentials&";
     params += `scope=${encodeURIComponent("openid MyCustomScope email profile eduPerson")}`;
-    let url = `https://localhost:8443/cas/oidc/token?${params}`;
+    const url = `https://localhost:8443/cas/oidc/token?${params}`;
     await cas.log(`Calling ${url}`);
     await sendRequest(url, "client2", "secret2");
 }

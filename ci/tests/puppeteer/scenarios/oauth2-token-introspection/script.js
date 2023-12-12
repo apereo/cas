@@ -1,5 +1,3 @@
-// noinspection JSUnusedLocalSymbols
-
 const assert = require("assert");
 const cas = require("../../cas.js");
 
@@ -8,11 +6,9 @@ const cas = require("../../cas.js");
     let params = "grant_type=client_credentials&";
     params += "scope=openid";
 
-    let url = `https://localhost:8443/cas/oauth2.0/token?${params}`;
+    const url = `https://localhost:8443/cas/oauth2.0/token?${params}`;
     await cas.log(`Calling ${url}`);
 
-    let accessToken = null;
-    let refreshToken = null;
     await cas.doPost(url, "", {
         "Content-Type": "application/json",
         "Authorization": `Basic ${btoa("client:secret")}`
@@ -30,6 +26,7 @@ const cas = require("../../cas.js");
 
     await cas.log("Introspecting invalid token...");
     await introspect("AT-1234567890", (res, token) => {
+        cas.logb(`Received token: ${token}`);
         assert(res.data.active === false);
         assert(res.data.scope === "CAS");
         assert(res.data.tokenType === undefined);
@@ -52,9 +49,9 @@ function successHandler(res, token) {
 }
 
 async function introspect(token, handlerOnSuccess) {
-    let value = "client:secret";
-    let buff = Buffer.alloc(value.length, value);
-    let authzHeader = `Basic ${buff.toString("base64")}`;
+    const value = "client:secret";
+    const buff = Buffer.alloc(value.length, value);
+    const authzHeader = `Basic ${buff.toString("base64")}`;
     await cas.log(`Authorization header: ${authzHeader}`);
 
     await cas.log(`Introspecting token ${token}`);

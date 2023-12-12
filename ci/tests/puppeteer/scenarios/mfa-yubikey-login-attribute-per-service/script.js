@@ -19,7 +19,7 @@ const cas = require("../../cas.js");
     const endpoints = ["yubikeyAccountRepository/casuser"];
     const baseUrl = "https://localhost:8443/cas/actuator/";
     for (let i = 0; i < endpoints.length; i++) {
-        let url = baseUrl + endpoints[i];
+        const url = baseUrl + endpoints[i];
         const response = await cas.goto(page, url);
         await cas.logg(`Status: ${response.status()} ${response.statusText()}`);
         assert(response.ok());

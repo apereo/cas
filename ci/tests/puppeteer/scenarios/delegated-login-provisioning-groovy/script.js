@@ -16,7 +16,7 @@ const path = require("path");
     await page.waitForTimeout(1000);
     await cas.assertTicketParameter(page);
 
-    let result = path.join(os.tmpdir(), "profile.txt");
+    const result = path.join(os.tmpdir(), "profile.txt");
     await cas.log(`Target file should be at ${result}`);
     assert(fs.existsSync(result) === true);
     

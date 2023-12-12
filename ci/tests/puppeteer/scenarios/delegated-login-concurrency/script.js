@@ -4,16 +4,16 @@ const {JSONPath} = require("jsonpath-plus");
 const cas = require("../../cas.js");
 
 const startPuppeteerLoadTest = require("puppeteer-loadtest");
-let args = process.argv.slice(2);
+const args = process.argv.slice(2);
 const config = JSON.parse(fs.readFileSync(args[0]));
-assert(config != null);
+assert(config !== null);
 
 const paramOptions = {
     file: config.loadScript,
     samplesRequested: config.samplesRequested,
     concurrencyRequested: config.concurrencyRequested
 };
-const loadtest = async () => await startPuppeteerLoadTest(paramOptions);
+const loadtest = async () => startPuppeteerLoadTest(paramOptions);
 
 loadtest().then((results) => {
     cas.log(JSON.stringify(results, null, 2));

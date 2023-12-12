@@ -20,7 +20,7 @@ const assert = require("assert");
     await page2.waitForTimeout(1000);
     await cas.click(page2, "table tbody td a");
     await page2.waitForTimeout(1000);
-    let code = await cas.textContent(page2, "div[name=bodyPlainText] .well");
+    const code = await cas.textContent(page2, "div[name=bodyPlainText] .well");
     await page2.close();
 
     await page.bringToFront();
@@ -33,9 +33,9 @@ const assert = require("assert");
 
     let authData = JSON.parse(await cas.innerHTML(page, "details pre"));
     await cas.log(authData);
-    let initialAuthData = authData.AuthnInstant;
+    const initialAuthData = authData.AuthnInstant;
     await cas.logg(`Initial authentication instant: ${initialAuthData}`);
-    let allCookies = await page.cookies();
+    const allCookies = await page.cookies();
     allCookies.forEach((cookie) => {
         cas.log(`Deleting cookie ${cookie.name}`);
         page.deleteCookie({
@@ -49,7 +49,7 @@ const assert = require("assert");
 
     authData = JSON.parse(await cas.innerHTML(page, "details pre"));
     await cas.log(authData);
-    let nextAuthData = authData.AuthnInstant;
+    const nextAuthData = authData.AuthnInstant;
     await cas.logg(`Second authentication instant: ${nextAuthData}`);
     assert(nextAuthData !== initialAuthData);
 

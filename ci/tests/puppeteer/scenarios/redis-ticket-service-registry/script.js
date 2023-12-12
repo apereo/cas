@@ -28,11 +28,11 @@ const querystring = require("querystring");
     await cas.logg("Removing all SSO Sessions");
     await cas.doRequest(`${baseUrl}/ssoSessions?type=ALL&from=1&count=100000`, "DELETE", {});
 
-    let formData = {
+    const formData = {
         username: "casuser",
         password: "Mellon"
     };
-    let postData = querystring.stringify(formData);
+    const postData = querystring.stringify(formData);
     const total = 20;
     for (let i = 0; i < total; i++) {
         await cas.doRequest("https://localhost:8443/cas/v1/tickets", "POST",

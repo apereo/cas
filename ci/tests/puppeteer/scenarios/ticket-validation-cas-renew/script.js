@@ -3,7 +3,6 @@ const assert = require("assert");
 const cas = require("../../cas.js");
 
 (async () => {
-
     for (const endpoint of ["validate", "serviceValidate", "p3/serviceValidate"]) {
         await cas.log(`Checking validation endpoint: ${endpoint}`);
 
@@ -45,7 +44,7 @@ async function validate(endpoint, service, ticket, renew = false) {
         path = `${path}&renew=true`;
     }
     await cas.log(`Validating ${path}`);
-    let result = await cas.doRequest(`https://localhost:8443${path}`);
+    const result = await cas.doRequest(`https://localhost:8443${path}`);
     await cas.log(result);
     return result;
 }

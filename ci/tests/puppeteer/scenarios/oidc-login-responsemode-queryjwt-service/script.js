@@ -16,9 +16,9 @@ const path = require("path");
     await cas.click(page, "#allow");
     await page.waitForNavigation();
     await cas.log(`Page url: ${await page.url()}\n`);
-    let response = await cas.assertParameter(page, "response");
+    const response = await cas.assertParameter(page, "response");
 
-    let configFilePath = path.join(__dirname, "services/Sample-1.jwks");
+    const configFilePath = path.join(__dirname, "services/Sample-1.jwks");
     await cas.log(`Reading keystore from ${configFilePath}`);
     const keyContent = JSON.parse(fs.readFileSync(configFilePath, "utf8"));
 

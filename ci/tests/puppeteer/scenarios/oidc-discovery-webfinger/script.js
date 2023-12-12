@@ -3,7 +3,7 @@ const assert = require("assert");
 
 (async () => {
     let resource = "okta:acct:joe.stormtrooper@localhost";
-    let rel = "http://openid.net/specs/connect/1.0/issuer";
+    const rel = "http://openid.net/specs/connect/1.0/issuer";
 
     await cas.doGet(`https://localhost:8443/cas/oidc/.well-known/webfinger?resource=${resource}&rel=${rel}`,
         (res) => {

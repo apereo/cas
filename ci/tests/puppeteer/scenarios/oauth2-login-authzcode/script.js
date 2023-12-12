@@ -15,7 +15,7 @@ const cas = require("../../cas.js");
     await cas.loginWith(page);
     await page.waitForTimeout(1000);
 
-    let code = await cas.assertParameter(page, "code");
+    const code = await cas.assertParameter(page, "code");
     await cas.log(`OAuth code ${code}`);
 
     let accessTokenParams = "client_id=client&";
@@ -23,7 +23,7 @@ const cas = require("../../cas.js");
     accessTokenParams += "grant_type=authorization_code&";
     accessTokenParams += `redirect_uri=${redirectUri}`;
 
-    let accessTokenUrl = `https://localhost:8443/cas/oauth2.0/token?${accessTokenParams}&code=${code}`;
+    const accessTokenUrl = `https://localhost:8443/cas/oauth2.0/token?${accessTokenParams}&code=${code}`;
     await cas.log(`Calling ${accessTokenUrl}`);
 
     let accessToken = null;
@@ -38,14 +38,14 @@ const cas = require("../../cas.js");
         throw `Operation failed to obtain access token: ${error}`;
     });
 
-    assert(accessToken != null);
+    assert(accessToken !== null);
 
     const params = new URLSearchParams();
     params.append("access_token", accessToken);
     
     await cas.doPost("https://localhost:8443/cas/oauth2.0/profile", params, {},
         (res) => {
-            let result = res.data;
+            const result = res.data;
             assert(result.id === "casuser");
             assert(result.client_id === "client");
             assert(result.service === "https://apereo.github.io");

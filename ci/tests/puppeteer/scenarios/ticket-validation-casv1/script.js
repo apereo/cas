@@ -11,7 +11,7 @@ const cas = require("../../cas.js");
     await cas.attributeValue(page, "#username", "spellcheck", "false");
     await cas.attributeValue(page, "#username", "autocomplete", "username");
     await cas.loginWith(page);
-    let ticket = await cas.assertTicketParameter(page);
+    const ticket = await cas.assertTicketParameter(page);
     const body = await cas.doRequest(`https://localhost:8443/cas/validate?service=${service}&ticket=${ticket}`);
     await cas.log(body);
     assert(body === "yes\ncasuser\n");

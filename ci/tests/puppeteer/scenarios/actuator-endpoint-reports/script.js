@@ -7,7 +7,7 @@ const cas = require("../../cas.js");
 
     await cas.gotoLogin(page);
     await cas.loginWith(page);
-    let tgc = await cas.assertCookie(page);
+    const tgc = await cas.assertCookie(page);
 
     const endpoints = [
         "info",
@@ -45,10 +45,10 @@ const cas = require("../../cas.js");
 
     const baseUrl = "https://localhost:8443/cas/actuator/";
     for (let i = 0; i < endpoints.length; i++) {
-        let url = baseUrl + endpoints[i];
+        const url = baseUrl + endpoints[i];
         await cas.log("===================================");
         await cas.log(`Trying ${url}`);
-        let body = await cas.doRequest(url, "GET", {
+        const body = await cas.doRequest(url, "GET", {
             "Accept": "application/json",
             "Content-Type": "application/json",
             "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36"
@@ -63,7 +63,7 @@ const cas = require("../../cas.js");
         "getTickets"
     ];
     for (let i = 0; i < ticketMetrics.length; i++) {
-        let url = `${baseUrl}metrics/org.apereo.cas.ticket.registry.TicketRegistry.${ticketMetrics[i]}`;
+        const url = `${baseUrl}metrics/org.apereo.cas.ticket.registry.TicketRegistry.${ticketMetrics[i]}`;
         await cas.log(`Trying ${url}`);
         await cas.doRequest(url, "GET", {
             "Accept": "application/json",
@@ -77,7 +77,7 @@ const cas = require("../../cas.js");
         "findServiceBy"
     ];
     for (let i = 0; i < servicesMetrics.length; i++) {
-        let url = `${baseUrl}metrics/org.apereo.cas.services.ServicesManager.${servicesMetrics[i]}`;
+        const url = `${baseUrl}metrics/org.apereo.cas.services.ServicesManager.${servicesMetrics[i]}`;
         await cas.log(`Trying ${url}`);
         await cas.doRequest(url, "GET", {
             "Accept": "application/json",
@@ -90,7 +90,7 @@ const cas = require("../../cas.js");
     ];
     
     for (let i = 0; i < authnMetrics.length; i++) {
-        let url = `${baseUrl}metrics/org.apereo.cas.authentication.AuthenticationManager.${authnMetrics[i]}`;
+        const url = `${baseUrl}metrics/org.apereo.cas.authentication.AuthenticationManager.${authnMetrics[i]}`;
         await cas.log(`Trying ${url}`);
         await cas.doRequest(url, "GET", {
             "Accept": "application/json",
@@ -105,7 +105,7 @@ const cas = require("../../cas.js");
         "logout"
     ];
     for (let i = 0; i < webflowMetrics.length; i++) {
-        let url = `${baseUrl}metrics/org.springframework.webflow.executor.FlowExecutor.${webflowMetrics[i]}`;
+        const url = `${baseUrl}metrics/org.springframework.webflow.executor.FlowExecutor.${webflowMetrics[i]}`;
         await cas.log(`Trying ${url}`);
         await cas.doRequest(url, "GET", {
             "Accept": "application/json",

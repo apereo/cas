@@ -3,14 +3,19 @@ const assert = require("assert");
 const cas = require("../../cas.js");
 const fs = require("fs");
 
+async function assertFailure(page) {
+    await cas.assertInnerText(page, "#loginErrorsPanel p", "Service access denied due to missing privileges.");
+    await page.waitForTimeout(1000);
+}
+
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     await page.setRequestInterception(true);
 
-    let args = process.argv.slice(2);
-    let config = JSON.parse(fs.readFileSync(args[0]));
-    assert(config != null);
+    const args = process.argv.slice(2);
+    const config = JSON.parse(fs.readFileSync(args[0]));
+    assert(config !== null);
 
     await cas.log(`Certificate file: ${config.trustStoreCertificateFile}`);
 
@@ -20,7 +25,7 @@ const fs = require("fs");
     await cas.log(`ssl-client-cert-from-proxy: ${certHeader}`);
 
     page.on("request", (request) => {
-        let data = {
+        const data = {
             "method": "GET",
             "headers": {
                 ...request.headers(),
@@ -42,9 +47,6 @@ const fs = require("fs");
     await browser.close();
 })();
 
-async function assertFailure(page) {
-    await cas.assertInnerText(page, "#loginErrorsPanel p", "Service access denied due to missing privileges.");
-    await page.waitForTimeout(1000);
-}
+
 
 

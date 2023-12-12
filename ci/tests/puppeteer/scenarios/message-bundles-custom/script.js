@@ -6,6 +6,7 @@ const path = require("path");
 async function updateProperty(properties, propertiesFile, value) {
     await properties.set("screen.welcome.security", value);
     await properties.save(propertiesFile, (err, data) => {
+        cas.logb(`Saving ${data}`);
         if (err) {
             throw err;
         }
@@ -13,9 +14,9 @@ async function updateProperty(properties, propertiesFile, value) {
 }
 
 (async () => {
-    let browser = await puppeteer.launch(cas.browserOptions());
-    let propertiesFile = path.join(__dirname, "custom_messages.properties");
-    let properties = propertiesReader(propertiesFile, "utf-8", {writer: { saveSections: false }});
+    const browser = await puppeteer.launch(cas.browserOptions());
+    const propertiesFile = path.join(__dirname, "custom_messages.properties");
+    const properties = propertiesReader(propertiesFile, "utf-8", {writer: { saveSections: false }});
     try {
         await cas.log(`Loading properties file ${propertiesFile}`);
         const page = await cas.newPage(browser);

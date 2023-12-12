@@ -20,7 +20,7 @@ const cas = require("../../cas.js");
     await cas.logPage(page);
     await cas.assertParameter(page, "ticket");
     await cas.assertParameter(page, "client_name");
-    let url = await page.url();
+    const url = await page.url();
     assert(url.includes("https://localhost:8443/cas/login"));
     await browser.close();
 })();

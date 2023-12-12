@@ -23,7 +23,7 @@ const cas = require("../../cas.js");
     await cas.submitForm(page, "#mfa-gauth > form[name=fm-mfa-gauth]");
     await page.waitForTimeout(1000);
 
-    let scratch = await cas.fetchGoogleAuthenticatorScratchCode();
+    const scratch = await cas.fetchGoogleAuthenticatorScratchCode();
     await cas.log(`Using scratch code ${scratch} to login...`);
     await cas.type(page,"#token", scratch);
     await cas.pressEnter(page);

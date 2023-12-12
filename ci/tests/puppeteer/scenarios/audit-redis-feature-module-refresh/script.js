@@ -6,7 +6,7 @@ const fs = require("fs");
 const YAML = require("yaml");
 
 (async () => {
-    let configFilePath = path.join(__dirname, "config.yml");
+    const configFilePath = path.join(__dirname, "config.yml");
     const file = fs.readFileSync(configFilePath, "utf8");
     const configFile = YAML.parse(file);
     
@@ -44,7 +44,7 @@ const YAML = require("yaml");
 
 
 async function updateConfig(configFile, configFilePath, data) {
-    let config = {
+    const config = {
         cas: {
             audit: {
                 redis: {

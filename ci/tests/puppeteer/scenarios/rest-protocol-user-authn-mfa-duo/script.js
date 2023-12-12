@@ -18,7 +18,7 @@ const querystring = require("querystring");
             "Content-Length": Buffer.byteLength(postData),
             "Content-Type": "application/x-www-form-urlencoded"
         }, 200, postData);
-    let result = JSON.parse(body);
+    const result = JSON.parse(body);
     console.dir(result, {depth: null, colors: true});
     assert(result.authentication.authenticationDate !== undefined);
     assert(result.authentication.principal.id === "casuser");

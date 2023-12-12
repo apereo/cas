@@ -13,11 +13,11 @@ const cas = require("../../cas.js");
     await cas.logg("Checking for SSO sessions for all users");
     await cas.doGet(`${baseUrl}?type=ALL`, async (res) => {
         assert(res.status === 200);
-        let index = Object.keys(res.data.activeSsoSessions).length - 1;
-        let activeSession = res.data.activeSsoSessions[index];
+        const index = Object.keys(res.data.activeSsoSessions).length - 1;
+        const activeSession = res.data.activeSsoSessions[index];
         cas.log(JSON.stringify(activeSession.authenticated_services));
         assert(activeSession.number_of_uses === 4);
-        let services = activeSession.authenticated_services;
+        const services = activeSession.authenticated_services;
         assert(Object.keys(services).length) === 1;
     }, async (err) => {
         throw err;

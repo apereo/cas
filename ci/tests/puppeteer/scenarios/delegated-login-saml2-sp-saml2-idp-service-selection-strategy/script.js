@@ -28,7 +28,7 @@ async function cleanUp() {
     await page.waitForSelector("#table_with_attributes", {visible: true});
     await cas.assertInnerTextContains(page, "#content p", "status page of SimpleSAMLphp");
     await cas.assertVisibility(page, "#table_with_attributes");
-    let authData = JSON.parse(await cas.innerHTML(page, "details pre"));
+    const authData = JSON.parse(await cas.innerHTML(page, "details pre"));
     await cas.log(authData);
 
     assert(authData["saml:sp:AuthnContext"] === "https://refeds.org/profile/mfa");

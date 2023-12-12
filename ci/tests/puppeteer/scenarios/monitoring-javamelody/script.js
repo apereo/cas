@@ -14,7 +14,7 @@ const assert = require("assert");
 
     response = await cas.goto(page, "https://localhost:8443/cas/monitoring?part=counterSummaryPerClass&counter=spring");
     await cas.log(`${response.status()} ${response.statusText()}`);
-    let entries = await cas.innerTexts(page, "td.wrappedText a");
+    const entries = await cas.innerTexts(page, "td.wrappedText a");
     await cas.log(entries);
 
     assert(entries.find((entry) => entry === "ServicesManagerScheduledLoader") !== undefined);

@@ -10,7 +10,7 @@ async function getAllEvents() {
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
-    let page = await cas.newPage(browser);
+    const page = await cas.newPage(browser);
     const context = browser.defaultBrowserContext();
     await context.overridePermissions("https://localhost:8443/cas/login", ["geolocation"]);
     await page.setGeolocation({latitude: 90, longitude: 20});
@@ -21,8 +21,8 @@ async function getAllEvents() {
     const totalAttempts = 2;
     for (let i = 1; i <= totalAttempts; i++) {
         await cas.gotoLogin(page);
-        let user = (Math.random() + 1).toString(36).substring(4);
-        let password = (Math.random() + 1).toString(36).substring(4);
+        const user = (Math.random() + 1).toString(36).substring(4);
+        const password = (Math.random() + 1).toString(36).substring(4);
         await cas.loginWith(page, user, password);
         await page.waitForTimeout(1000);
     }

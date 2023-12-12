@@ -19,10 +19,10 @@ async function validateRequest(service, ticket, format = "JSON") {
     let ticket = await cas.assertTicketParameter(page);
     let body = await validateRequest(service, ticket);
 
-    let json = JSON.parse(body);
-    let authenticationSuccess = json.serviceResponse.authenticationSuccess;
+    const json = JSON.parse(body);
+    const authenticationSuccess = json.serviceResponse.authenticationSuccess;
     assert(authenticationSuccess.user === "casuser");
-    assert(authenticationSuccess.attributes.credentialType != null);
+    assert(authenticationSuccess.attributes.credentialType !== null);
     assert(authenticationSuccess.proxyGrantingTicket.includes("PGTIOU-"));
 
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);

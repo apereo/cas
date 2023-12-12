@@ -20,7 +20,7 @@ const cas = require("../../cas.js");
     await page.waitForTimeout(2000);
 
     await cas.assertTicketParameter(page);
-    let result = new URL(page.url());
+    const result = new URL(page.url());
     assert(result.host === "apereo.github.io");
 
     await cas.gotoLogin(page);

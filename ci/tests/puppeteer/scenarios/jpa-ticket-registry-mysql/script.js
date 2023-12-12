@@ -6,11 +6,11 @@ const fs = require("fs");
 const YAML = require("yaml");
 
 (async () => {
-    let configFilePath = path.join(__dirname, "config.yml");
+    const configFilePath = path.join(__dirname, "config.yml");
     const file = fs.readFileSync(configFilePath, "utf8");
     const configFile = YAML.parse(file);
 
-    let leak = await cas.randomNumber() * 100;
+    const leak = await cas.randomNumber() * 100;
     await cas.log("Updating configuration and waiting for changes to reload...");
     updateConfig(configFile, configFilePath, leak);
     await cas.sleep(2000);
@@ -20,7 +20,7 @@ const YAML = require("yaml");
 
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
-    let response = await cas.gotoLogin(page);
+    const response = await cas.gotoLogin(page);
     await page.waitForTimeout(1000);
     await cas.log(`${response.status()} ${response.statusText()}`);
     assert(response.ok());
@@ -34,7 +34,7 @@ const YAML = require("yaml");
     await cas.gotoLogout(page);
 
     await cas.logPage(page);
-    let url = await page.url();
+    const url = await page.url();
     assert(url === "https://localhost:8443/cas/logout");
 
     await page.waitForTimeout(1000);
@@ -46,7 +46,7 @@ const YAML = require("yaml");
 
 
 function updateConfig(configFile, configFilePath, data) {
-    let config = {
+    const config = {
         cas: {
             ticket: {
                 registry: {

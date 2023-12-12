@@ -4,7 +4,7 @@ const cas = require("../../cas.js");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
-    let scratch = await cas.fetchGoogleAuthenticatorScratchCode();
+    const scratch = await cas.fetchGoogleAuthenticatorScratchCode();
     const page = await cas.newPage(browser);
     const service = "https://google.com";
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
@@ -24,7 +24,7 @@ const cas = require("../../cas.js");
     await page.waitForNavigation();
     await page.waitForTimeout(1000);
 
-    let ticket = await cas.assertTicketParameter(page);
+    const ticket = await cas.assertTicketParameter(page);
 
     await cas.log(`Validating ticket ${ticket} with service ${service}`);
     const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}`);

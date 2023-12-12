@@ -31,8 +31,8 @@ const cas = require("../../cas.js");
     });
 
 
-    let resourceUrl = "https://localhost:8443/cas/oauth2.0/resourceSet";
-    let resourceObject = {
+    const resourceUrl = "https://localhost:8443/cas/oauth2.0/resourceSet";
+    const resourceObject = {
         uri: "http://api.example.org/photos/**",
         type: "website",
         name: "Photos API",
@@ -40,7 +40,7 @@ const cas = require("../../cas.js");
     };
     let resourceRequest = JSON.stringify(resourceObject);
     await cas.log(`Creating resource ${resourceRequest}`);
-    let resource = JSON.parse(await cas.doRequest(resourceUrl, "POST",
+    const resource = JSON.parse(await cas.doRequest(resourceUrl, "POST",
         {
             "Authorization": `Bearer ${at}`,
             "Content-Length": resourceRequest.length,

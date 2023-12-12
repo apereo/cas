@@ -3,7 +3,7 @@ const cas = require("../../cas.js");
 const assert = require("assert");
 
 async function loginAndVerify(browser) {
-    let page = await cas.newPage(browser);
+    const page = await cas.newPage(browser);
     await cas.gotoLogout(page);
     await cas.gotoLogin(page);
     await cas.click(page, "#rememberMe");
@@ -18,7 +18,7 @@ async function loginAndVerify(browser) {
     now.setDate(now.getDate() + 1);
     assert(now.getDate() === date.getDate());
     
-    let page2 = await cas.newPage(browser);
+    const page2 = await cas.newPage(browser);
     await cas.gotoLogin(page2);
     tgc = await cas.assertCookie(page2);
     date = new Date(tgc.expires * 1000);
