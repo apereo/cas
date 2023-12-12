@@ -16,6 +16,7 @@ tasks.register("createOpenRewriteRecipe") {
 
     outputs.file(outputFile)
     outputs.cacheIf { true }
+    inputs.property("recipeName", recipeName)
     inputs.file(inputFile).withPropertyName("openrewrite-template").withPathSensitivity(PathSensitivity.RELATIVE)
 
     doFirst {
