@@ -1,12 +1,7 @@
 package org.apereo.cas.support.oauth.web.endpoints;
 
 import org.apereo.cas.AbstractOAuth20Tests;
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
-import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
-import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
-import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -30,8 +25,6 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -57,19 +50,6 @@ class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Tests {
     @Autowired
     @Qualifier("oauthProfileController")
     private OAuth20UserProfileEndpointController oAuth20ProfileController;
-
-    protected static Authentication getAuthentication(final Principal principal) {
-        val metadata = new BasicIdentifiableCredential(principal.getId());
-        val handlerResult = new DefaultAuthenticationHandlerExecutionResult(principal.getClass().getCanonicalName(),
-            metadata, principal, new ArrayList<>());
-
-        return DefaultAuthenticationBuilder.newInstance()
-            .setPrincipal(principal)
-            .addCredential(metadata)
-            .setAuthenticationDate(ZonedDateTime.now(ZoneId.systemDefault()))
-            .addSuccess(principal.getClass().getCanonicalName(), handlerResult)
-            .build();
-    }
 
     @Test
     void verifyNoGivenAccessToken() throws Throwable {

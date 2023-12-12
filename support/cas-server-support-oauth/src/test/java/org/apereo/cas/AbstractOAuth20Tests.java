@@ -393,8 +393,7 @@ public abstract class AbstractOAuth20Tests {
             UUID.randomUUID().toString(), UUID.randomUUID().toString(), Set.of(grantTypes));
     }
 
-    protected static OAuthRegisteredService getRegisteredService(final String clientId,
-                                                                 final String secret) {
+    protected static OAuthRegisteredService getRegisteredService(final String clientId, final String secret) {
         return getRegisteredService("https://oauth.example.org", clientId, secret, Set.of());
     }
 

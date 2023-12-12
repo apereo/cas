@@ -33,5 +33,12 @@
     "wait-on": "^7.0.1",
     "xml2js": "^0.6.2",
     "yaml": "^2.3.2"
+  },
+  "devDependencies": {
+    "eslint": "^8.55.0",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-import": "^2.29.0",
+    "eslint-plugin-n": "^16.4.0",
+    "eslint-plugin-promise": "^6.1.1"
   }
 }
