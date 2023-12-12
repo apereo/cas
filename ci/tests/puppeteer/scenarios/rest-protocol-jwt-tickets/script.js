@@ -29,7 +29,7 @@ const querystring = require('querystring');
 })();
 
 async function executeRequest(url, statusCode, requestBody = undefined) {
-    return await cas.doRequest(url, "POST",
+    return cas.doRequest(url, "POST",
     {
         'Accept': 'application/json',
         'Content-Length': requestBody !== undefined ? Buffer.byteLength(requestBody) : 0,
