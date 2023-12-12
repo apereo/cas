@@ -15,6 +15,7 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenCipherExecutor;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20RegisteredServiceJwtAccessTokenCipherExecutor;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
+import org.apereo.cas.ticket.accesstoken.OAuth20DefaultAccessToken;
 import org.apereo.cas.ticket.accesstoken.OAuth20DefaultAccessTokenFactory;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
@@ -127,6 +128,30 @@ class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Tests {
     @Test
     void verifyEndpoints() throws Throwable {
         assertFalse(oauth20ProtocolEndpointConfigurer.getIgnoredEndpoints().isEmpty());
+    }
+
+    @Test
+    void verifyBadJWTAccessToken() throws Throwable {
+        val principal = CoreAuthenticationTestUtils.getPrincipal(ID);
+        val authentication = getAuthentication(principal);
+        val code = addCode(principal, addRegisteredService());
+
+        val accessToken = (OAuth20DefaultAccessToken) accessTokenFactory.create(RegisteredServiceTestUtils.getService(), authentication,
+                new MockTicketGrantingTicket("casuser"), new ArrayList<>(), code.getId(), code.getClientId(), new HashMap<>(),
+                OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
+        val jwtAccessTokenWithBadPayload = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.xxxx.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
+        accessToken.setId(jwtAccessTokenWithBadPayload);
+        this.ticketRegistry.addTicket(accessToken);
+
+        val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.PROFILE_URL);
+        mockRequest.setParameter(OAuth20Constants.ACCESS_TOKEN, accessToken.getId());
+        val mockResponse = new MockHttpServletResponse();
+
+        val entity = oAuth20ProfileController.handleGetRequest(mockRequest, mockResponse);
+        assertEquals(HttpStatus.UNAUTHORIZED, entity.getStatusCode());
+        assertEquals(MediaType.APPLICATION_JSON_VALUE, mockResponse.getContentType());
+        assertNotNull(entity.getBody());
+        assertTrue(entity.getBody().toString().contains(OAuth20Constants.INVALID_REQUEST));
     }
 
     @Test
