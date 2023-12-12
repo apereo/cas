@@ -61,7 +61,7 @@ function inspect(text) {
 
 exports.log = async(text, ...args) => {
     const toLog = inspect(text);
-    await LOGGER.debug(`👉 ${toLog}`, args);
+    await LOGGER.debug(`💬 ${toLog}`, args);
 };
 
 exports.logy = async (text) => {
@@ -71,7 +71,7 @@ exports.logy = async (text) => {
 
 exports.logb = async (text) => {
     const toLog = inspect(text);
-    await LOGGER.debug(`ℹ️ ${toLog}`);
+    await LOGGER.debug(`💬 ${toLog}`);
 };
 
 exports.logg = async (text) => {
@@ -81,7 +81,7 @@ exports.logg = async (text) => {
 
 exports.logr = async (text) => {
     const toLog = inspect(text);
-    await LOGGER.error(`🔴 ${toLog}`);
+    await LOGGER.error(`📛 ${toLog}`);
 };
 
 exports.logPage = async(page) => {
