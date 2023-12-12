@@ -70,6 +70,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 import static org.junit.jupiter.api.Assertions.*;
@@ -128,13 +129,13 @@ import static org.junit.jupiter.api.Assertions.*;
 public abstract class BaseCasWebflowSessionContextConfigurationTests {
 
     @Test
-    void verifyExecutorsAreBeans() throws Throwable {
+    void verifyExecutorsAreBeans() {
         assertNotNull(getFlowExecutor());
     }
 
     @Test
     void verifyFlowExecutorByClient() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create().withLocale(Locale.ENGLISH);
         val map = new LocalAttributeMap<>();
         getFlowExecutor().launchExecution("login", map, context.getExternalContext());
     }
