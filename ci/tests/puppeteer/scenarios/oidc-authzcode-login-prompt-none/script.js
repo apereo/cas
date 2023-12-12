@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const assert = require("assert");
+const cas = require("../../cas.js");
 
 const state = "40W6nJCYWnnPplmAo13Icy";
 const nonce = "yYxIingpZy";
@@ -27,7 +27,7 @@ async function login(page, redirectUrl, params) {
     await cas.logPage(page);
     await page.waitForTimeout(2000);
     await cas.log("Waiting for page content body to render...");
-    await page.waitForSelector('body pre', { visible: true });
+    await page.waitForSelector("body pre", { visible: true });
     let content = await cas.textContent(page, "body pre");
     const payload = JSON.parse(content);
     assert(payload.args.error !== "login_required");

@@ -1,5 +1,5 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -10,14 +10,14 @@ const cas = require('../../cas.js');
     await cas.click(page, "#forgotPasswordLink");
     await page.waitForTimeout(2000);
 
-    await cas.type(page,'#username', "casuser");
+    await cas.type(page,"#username", "casuser");
     await cas.pressEnter(page);
     await page.waitForNavigation();
     await page.waitForTimeout(1000);
     await cas.screenshot(page);
 
-    await cas.assertVisibility(page, '#mfa-gauth');
-    await cas.assertVisibility(page, '#mfa-simple');
+    await cas.assertVisibility(page, "#mfa-gauth");
+    await cas.assertVisibility(page, "#mfa-simple");
 
     await cas.log("Selecting mfa-gauth");
     await cas.submitForm(page, "#mfa-gauth > form[name=fm-mfa-gauth]");
@@ -25,7 +25,7 @@ const cas = require('../../cas.js');
 
     let scratch = await cas.fetchGoogleAuthenticatorScratchCode();
     await cas.log(`Using scratch code ${scratch} to login...`);
-    await cas.type(page,'#token', scratch);
+    await cas.type(page,"#token", scratch);
     await cas.pressEnter(page);
     await page.waitForNavigation();
 

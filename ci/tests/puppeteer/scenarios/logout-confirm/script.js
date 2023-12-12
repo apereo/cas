@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const assert = require("assert");
+const cas = require("../../cas.js");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -17,9 +17,9 @@ const cas = require('../../cas.js');
     await cas.gotoLogout(page);
 
     await cas.assertInnerText(page, "#content h2", "Do you, casuser, want to log out completely?");
-    await cas.assertVisibility(page, '#logoutButton');
-    await cas.assertVisibility(page, '#divServices');
-    await cas.assertVisibility(page, '#servicesTable');
+    await cas.assertVisibility(page, "#logoutButton");
+    await cas.assertVisibility(page, "#divServices");
+    await cas.assertVisibility(page, "#servicesTable");
     await cas.submitForm(page, "#fm1");
 
     await cas.logPage(page);

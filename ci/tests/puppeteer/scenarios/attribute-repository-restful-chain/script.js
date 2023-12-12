@@ -1,11 +1,11 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const assert = require("assert");
+const cas = require("../../cas.js");
 
 (async () => {
     const attributes = {
         "mail": "casuser@example.org",
-        "category": "USER",
+        "category": "USER"
     };
     let payload = {
         "/": {

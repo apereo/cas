@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const assert = require("assert");
+const cas = require("../../cas.js");
 const YAML = require("yaml");
 const fs = require("fs");
 const path = require("path");
@@ -14,8 +14,8 @@ const path = require("path");
     await cas.assertInnerTextStartsWith(page, "#content div.banner p", "Authentication attempt has failed");
 
     await cas.log("Updating configuration and waiting for changes to reload...");
-    let configFilePath = path.join(__dirname, 'config.yml');
-    const file = fs.readFileSync(configFilePath, 'utf8');
+    let configFilePath = path.join(__dirname, "config.yml");
+    const file = fs.readFileSync(configFilePath, "utf8");
     const configFile = YAML.parse(file);
     await updateConfig(configFile, configFilePath, true);
     await page.waitForTimeout(5000);
@@ -31,13 +31,13 @@ const path = require("path");
         await cas.assertTextContent(page, "#status", "Login with FIDO2-enabled Device");
 
         await cas.log("Checking for presence of errors...");
-        let errorPanel = await page.$('#errorPanel');
+        let errorPanel = await page.$("#errorPanel");
         assert(await errorPanel == null);
 
         await cas.log("Checking page elements for visibility");
-        await cas.assertVisibility(page, '#messages');
-        await cas.assertInvisibility(page, '#deviceTable');
-        await cas.assertVisibility(page, '#authnButton');
+        await cas.assertVisibility(page, "#messages");
+        await cas.assertInvisibility(page, "#deviceTable");
+        await cas.assertVisibility(page, "#authnButton");
 
         const endpoints = ["health", "webAuthnDevices/casuser"];
         const baseUrl = "https://localhost:8443/cas/actuator/";
@@ -46,7 +46,7 @@ const path = require("path");
             await cas.log(`Checking response status from ${url}`);
             const response = await cas.goto(page, url);
             await cas.log(`${response.status()} ${response.statusText()}`);
-            assert(response.ok())
+            assert(response.ok());
         }
     } finally {
         await updateConfig(configFile, configFilePath, false);
@@ -61,7 +61,7 @@ async function updateConfig(configFile, configFilePath, data) {
         cas: {
             authn: {
                 mfa: {
-                    'web-authn': {
+                    "web-authn": {
                         core: {
                             enabled: data
                         }

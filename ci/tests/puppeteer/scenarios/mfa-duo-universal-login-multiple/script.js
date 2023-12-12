@@ -1,5 +1,5 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 const assert = require("assert");
 
 (async () => {
@@ -42,7 +42,7 @@ async function login(page, providerId, service = undefined) {
         assert(authenticationSuccess.attributes.authnContextClass === undefined);
     } else {
         await page.waitForSelector("#content", {visible: true});
-        await cas.assertInnerText(page, '#content div h2', "Log In Successful");
+        await cas.assertInnerText(page, "#content div h2", "Log In Successful");
         await cas.assertCookie(page);
         await cas.assertInnerTextContains(page, "#attribute-tab-1 table#attributesTable tbody", providerId);
     }

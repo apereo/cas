@@ -1,5 +1,5 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -13,8 +13,8 @@ const cas = require('../../cas.js');
     await cas.assertTicketParameter(page);
     await cas.gotoLogin(page);
     await cas.assertCookie(page, false);
-    await cas.assertVisibility(page, '#username');
-    await cas.assertVisibility(page, '#password');
+    await cas.assertVisibility(page, "#username");
+    await cas.assertVisibility(page, "#password");
 
     await browser.close();
 })();

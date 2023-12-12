@@ -1,13 +1,13 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 const assert = require("assert");
 const path = require("path");
 const fs = require("fs");
 const YAML = require("yaml");
 
 (async () => {
-    let configFilePath = path.join(__dirname, 'config.yml');
-    const file = fs.readFileSync(configFilePath, 'utf8');
+    let configFilePath = path.join(__dirname, "config.yml");
+    const file = fs.readFileSync(configFilePath, "utf8");
     const configFile = YAML.parse(file);
     
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -16,8 +16,8 @@ const YAML = require("yaml");
     await cas.loginWith(page, "unknown", "Mellon");
 
     await cas.doPost("https://localhost:8443/cas/actuator/auditLog", {}, {
-        'Content-Type': 'application/json'
-    }, res => assert(res.data.length === 0), error => {
+        "Content-Type": "application/json"
+    }, (res) => assert(res.data.length === 0), (error) => {
         throw(error);
     });
 
@@ -33,10 +33,10 @@ const YAML = require("yaml");
 
     try {
         await cas.doPost("https://localhost:8443/cas/actuator/auditLog", {}, {
-            'Content-Type': 'application/json'
-        }, res => assert(res.data.length === 2), error => {
+            "Content-Type": "application/json"
+        }, (res) => assert(res.data.length === 2), (error) => {
             throw(error);
-        })
+        });
     } finally {
         await updateConfig(configFile, configFilePath, "");
     }

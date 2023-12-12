@@ -1,7 +1,7 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
-const https = require('https');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const assert = require("assert");
+const https = require("https");
+const cas = require("../../cas.js");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -26,33 +26,33 @@ IssueInstant="2021-06-19T17:03:44.022Z">
 </SOAP-ENV:Envelope>`;
 
     let options = {
-        protocol: 'https:',
-        hostname: 'localhost',
+        protocol: "https:",
+        hostname: "localhost",
         port: 8443,
         path: `/cas/samlValidate?TARGET=${service}&SAMLart=${ticket}`,
-        method: 'POST',
+        method: "POST",
         rejectUnauthorized: false,
         headers: {
-            'Content-Length': request.length
+            "Content-Length": request.length
         }
     };
 
-    const post = options =>
+    const post = (options) =>
         new Promise((resolve, reject) => {
             let req = https
-                .request(options, res => {
-                    res.setEncoding('utf8');
+                .request(options, (res) => {
+                    res.setEncoding("utf8");
                     const body = [];
-                    res.on('data', chunk => body.push(chunk));
-                    res.on('end', () => resolve(body.join('')));
+                    res.on("data", (chunk) => body.push(chunk));
+                    res.on("end", () => resolve(body.join("")));
                 })
-                .on('error', reject);
+                .on("error", reject);
             req.write(request);
         });
     const body = await post(options);
     await cas.log(body);
-    assert(`body.contains("<saml1:NameIdentifier>casuser</saml1:NameIdentifier>")`);
-    assert(`body.contains("<saml1:AttributeValue>Static Credentials</saml1:AttributeValue>")`);
-    assert(`body.contains("<saml1:AttributeValue>urn:oasis:names:tc:SAML:1.0:am:password</saml1:AttributeValue>")`);
+    assert("body.contains(\"<saml1:NameIdentifier>casuser</saml1:NameIdentifier>\")");
+    assert("body.contains(\"<saml1:AttributeValue>Static Credentials</saml1:AttributeValue>\")");
+    assert("body.contains(\"<saml1:AttributeValue>urn:oasis:names:tc:SAML:1.0:am:password</saml1:AttributeValue>\")");
     await browser.close();
 })();

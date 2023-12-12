@@ -18,15 +18,15 @@ const cas = require("../../cas.js");
     await cas.assertInvisibility(page, "#username");
 
     await cas.log("Selecting mfa-gauth");
-    await cas.assertVisibility(page, '#mfa-gauth');
-    await cas.assertVisibility(page, '#mfa-yubikey');
+    await cas.assertVisibility(page, "#mfa-gauth");
+    await cas.assertVisibility(page, "#mfa-yubikey");
 
     await cas.submitForm(page, "#mfa-gauth > form[name=fm-mfa-gauth]");
     await page.waitForTimeout(500);
 
     let scratch = await cas.fetchGoogleAuthenticatorScratchCode();
     await cas.log(`Using scratch code ${scratch} to login...`);
-    await cas.type(page,'#token', scratch);
+    await cas.type(page,"#token", scratch);
     await cas.pressEnter(page);
     await page.waitForNavigation();
 
@@ -54,7 +54,7 @@ const cas = require("../../cas.js");
 
     scratch = await cas.fetchGoogleAuthenticatorScratchCode();
     await cas.log(`Using scratch code ${scratch} to login...`);
-    await cas.type(page,'#token', scratch);
+    await cas.type(page,"#token", scratch);
     await cas.pressEnter(page);
     await page.waitForNavigation();
 

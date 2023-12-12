@@ -1,5 +1,5 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -10,7 +10,7 @@ const cas = require('../../cas.js');
     await cas.screenshot(page);
     let scratch = await cas.fetchGoogleAuthenticatorScratchCode();
     await cas.log(`Using scratch code ${scratch} to login...`);
-    await cas.type(page,'#token', scratch);
+    await cas.type(page,"#token", scratch);
     await cas.pressEnter(page);
     await page.waitForNavigation();
 

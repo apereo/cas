@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const performance = require('perf_hooks').performance;
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const performance = require("perf_hooks").performance;
+const cas = require("../../cas.js");
 const path = require("path");
 
 (async () => {
@@ -32,7 +32,7 @@ const path = require("path");
     await sendRequest(page, entityIds);
     await cas.doRequest("https://localhost:8443/cas/actuator/samlIdPRegisteredServiceMetadataCache", "DELETE", {}, 204);
 
-    await cas.removeDirectoryOrFile(path.join(__dirname, '/saml-md'));
+    await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
     await browser.close();
 })();
 
@@ -58,8 +58,8 @@ async function sendRequest(page, entityIds) {
             }
 
             await page.waitForTimeout(1000);
-            await cas.assertVisibility(page, '#username');
-            await cas.assertVisibility(page, '#password');
+            await cas.assertVisibility(page, "#username");
+            await cas.assertVisibility(page, "#password");
             await cas.loginWith(page);
             await page.waitForTimeout(1000);
             count++;

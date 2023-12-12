@@ -1,17 +1,17 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 const assert = require("assert");
 
 async function fetchIdentityProviders() {
     await cas.doGet("https://localhost:8443/cas/actuator/delegatedClients",
-        res => {
+        (res) => {
             assert(res.status === 200);
             assert(res.data.CasClient !== null);
             assert(res.data.OidcClient !== null);
         },
-        error => {
+        (error) => {
             throw error;
-        })
+        });
 }
 
 (async () => {
@@ -35,9 +35,9 @@ async function fetchIdentityProviders() {
     const page = await cas.newPage(browser);
     await cas.gotoLogin(page);
     await page.waitForTimeout(3000);
-    await cas.assertVisibility(page, '#loginProviders');
-    await cas.assertVisibility(page, 'li #CasClient');
-    await cas.assertVisibility(page, 'li #OidcClient');
+    await cas.assertVisibility(page, "#loginProviders");
+    await cas.assertVisibility(page, "li #CasClient");
+    await cas.assertVisibility(page, "li #OidcClient");
     await cas.log("Wait for the cache to expire and reload providers again...");
     await page.waitForTimeout(3000);
     await cas.gotoLogin(page);

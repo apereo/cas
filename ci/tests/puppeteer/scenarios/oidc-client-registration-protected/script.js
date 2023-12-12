@@ -1,15 +1,15 @@
-const cas = require('../../cas.js');
-const assert = require('assert');
+const cas = require("../../cas.js");
+const assert = require("assert");
 
 (async () => {
-    let value = `casuser:Mellon`;
+    let value = "casuser:Mellon";
     let buff = Buffer.alloc(value.length, value);
-    let authzHeader = `Basic ${buff.toString('base64')}`;
+    let authzHeader = `Basic ${buff.toString("base64")}`;
     await cas.log(`Authorization header: ${authzHeader}`);
     let body = await cas.doRequest("https://localhost:8443/cas/oidc/initToken", "GET",
         {
-            'Authorization': authzHeader,
-            'Content-Type': 'application/json',
+            "Authorization": authzHeader,
+            "Content-Type": "application/json"
         }, 200);
     await cas.log(body);
     let tokenResponse = JSON.parse(body);
@@ -33,16 +33,16 @@ const assert = require('assert');
         "userinfo_encrypted_response_enc": "A128CBC-HS256",
         "contacts": ["sample@example.org", "user@example.org"],
         "grant_types": ["authorization_code"],
-        "response_types": ["code"],
+        "response_types": ["code"]
     };
 
     body = JSON.stringify(service, undefined, 2);
     await cas.log(`Sending ${body}`);
     let result = await cas.doRequest("https://localhost:8443/cas/oidc/register", "POST",
         {
-            'Authorization': `Bearer ${tokenResponse.access_token}`,
-            'Content-Length': body.length,
-            'Content-Type': 'application/json',
+            "Authorization": `Bearer ${tokenResponse.access_token}`,
+            "Content-Length": body.length,
+            "Content-Type": "application/json"
         }, 201, body);
     assert(result !== null);
     let entity = JSON.parse(result.toString());
@@ -57,7 +57,7 @@ const assert = require('assert');
     await cas.log(`Sending ${body}`);
     result = await cas.doRequest("https://localhost:8443/cas/oidc/register", "POST",
         {
-            'Content-Length': body.length,
-            'Content-Type': 'application/json',
+            "Content-Length": body.length,
+            "Content-Type": "application/json"
         }, 401, body);
 })();

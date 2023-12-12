@@ -1,5 +1,5 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 const assert = require("assert");
 
 (async () => {
@@ -13,18 +13,18 @@ const assert = require("assert");
     await browser.close();
 
     const baseUrl = "https://localhost:8443/cas/actuator/registeredServices";
-    await cas.doGet(baseUrl, res => {
+    await cas.doGet(baseUrl, (res) => {
         assert(res.status === 200);
         const length = res.data[1].length;
         cas.log(`Services found: ${length}`);
         assert(length === 1);
-        res.data[1].forEach(service => {
+        res.data[1].forEach((service) => {
             assert(service.id === 1);
             assert(service.name === "Sample");
         });
-    }, err => {
+    }, (err) => {
         throw err;
     }, {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json"
     });
 })();

@@ -1,15 +1,15 @@
-const assert = require('assert');
-const cas = require('../../cas.js');
+const assert = require("assert");
+const cas = require("../../cas.js");
 
 (async () => {
-    let url = `https://localhost:8443/cas/oauth2.0/.well-known/uma-configuration`;
-    await cas.doGet(url, async res => {
+    let url = "https://localhost:8443/cas/oauth2.0/.well-known/uma-configuration";
+    await cas.doGet(url, async (res) => {
         assert(res.data.issuer !== null);
         assert(res.data.rpt_endpoint !== null);
         assert(res.data.permission_registration_endpoint !== null);
         assert(res.data.resource_set_registration_endpoint !== null);
         assert(res.data.requesting_party_claims_endpoint !== null);
-    }, async error => {
+    }, async (error) => {
         throw `Operation failed: ${error}`;
     });
 
@@ -23,15 +23,15 @@ const cas = require('../../cas.js');
     let at = null;
     url = `https://localhost:8443/cas/oauth2.0/token?${params}`;
     await cas.doPost(url, params, {
-        'Content-Type': "application/json"
-    }, res => {
+        "Content-Type": "application/json"
+    }, (res) => {
         at = res.data.access_token;
-    }, error => {
+    }, (error) => {
         throw `Operation failed: ${error}`;
     });
 
 
-    let resourceUrl = `https://localhost:8443/cas/oauth2.0/resourceSet`;
+    let resourceUrl = "https://localhost:8443/cas/oauth2.0/resourceSet";
     let resourceObject = {
         uri: "http://api.example.org/photos/**",
         type: "website",
@@ -43,9 +43,9 @@ const cas = require('../../cas.js');
     let resource = JSON.parse(await cas.doRequest(resourceUrl, "POST",
         {
             "Authorization": `Bearer ${at}`,
-            'Content-Length': resourceRequest.length,
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
+            "Content-Length": resourceRequest.length,
+            "Accept": "application/json",
+            "Content-Type": "application/json"
         }, 200, resourceRequest));
     await cas.log(resource);
     assert(resource.entity.id !== null);
@@ -62,8 +62,8 @@ const cas = require('../../cas.js');
     let result = JSON.parse(await cas.doRequest(resourceUrl, "GET",
         {
             "Authorization": `Bearer ${at}`,
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
+            "Accept": "application/json",
+            "Content-Type": "application/json"
         }, 200, resourceRequest));
     await cas.log(result);
 
@@ -71,8 +71,8 @@ const cas = require('../../cas.js');
     result = JSON.parse(await cas.doRequest(resource.location, "GET",
         {
             "Authorization": `Bearer ${at}`,
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
+            "Accept": "application/json",
+            "Content-Type": "application/json"
         }, 200, resourceRequest));
     await cas.log(result);
 
@@ -83,9 +83,9 @@ const cas = require('../../cas.js');
     result = JSON.parse(await cas.doRequest(resource.location, "PUT",
         {
             "Authorization": `Bearer ${at}`,
-            'Accept': 'application/json',
-            'Content-Length': resourceRequest.length,
-            'Content-Type': 'application/json'
+            "Accept": "application/json",
+            "Content-Length": resourceRequest.length,
+            "Content-Type": "application/json"
         }, 200, resourceRequest));
     await cas.log(result);
     assert(result.entity.name === "Updated Photos API");
@@ -94,8 +94,8 @@ const cas = require('../../cas.js');
     result = JSON.parse(await cas.doRequest(resource.location, "GET",
         {
             "Authorization": `Bearer ${at}`,
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
+            "Accept": "application/json",
+            "Content-Type": "application/json"
         }, 200, resourceRequest));
     await cas.log(result);
 
@@ -103,8 +103,8 @@ const cas = require('../../cas.js');
     result = JSON.parse(await cas.doRequest(resource.location, "DELETE",
         {
             "Authorization": `Bearer ${at}`,
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
+            "Accept": "application/json",
+            "Content-Type": "application/json"
         }, 200, resourceRequest));
-    await cas.log(result)
+    await cas.log(result);
 })();

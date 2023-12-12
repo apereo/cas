@@ -1,5 +1,5 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 const assert = require("assert");
 
 (async () => {
@@ -33,8 +33,8 @@ const assert = require("assert");
 
     let accessToken = null;
     await cas.doPost(accessTokenUrl, "", {
-        'Content-Type': "application/json"
-    }, async res => {
+        "Content-Type": "application/json"
+    }, async (res) => {
         await cas.log(res.data);
         assert(res.data.access_token !== null);
 
@@ -53,8 +53,8 @@ const assert = require("assert");
         assert(decoded.client_id === "client");
         assert(decoded.auth_time != null);
         assert(decoded.preferred_username === "casuser");
-        assert(decoded.amr[0] === "Static Credentials")
-    }, error => {
+        assert(decoded.amr[0] === "Static Credentials");
+    }, (error) => {
         throw `Operation failed to obtain access token: ${error}`;
     });
 

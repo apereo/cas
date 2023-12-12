@@ -1,13 +1,13 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 const assert = require("assert");
 const path = require("path");
 const fs = require("fs");
 const YAML = require("yaml");
 
 (async () => {
-    let configFilePath = path.join(__dirname, 'config.yml');
-    const file = fs.readFileSync(configFilePath, 'utf8');
+    let configFilePath = path.join(__dirname, "config.yml");
+    const file = fs.readFileSync(configFilePath, "utf8");
     const configFile = YAML.parse(file);
 
     let leak = await cas.randomNumber() * 100;
@@ -29,7 +29,7 @@ const YAML = require("yaml");
     await page.waitForTimeout(1000);
     await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
-    await cas.assertInnerText(page, '#content div h2', "Log In Successful");
+    await cas.assertInnerText(page, "#content div h2", "Log In Successful");
 
     await cas.gotoLogout(page);
 

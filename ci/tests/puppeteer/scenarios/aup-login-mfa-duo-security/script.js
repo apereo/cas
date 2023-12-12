@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const assert = require("assert");
+const cas = require("../../cas.js");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -12,8 +12,8 @@ const cas = require('../../cas.js');
     
     await cas.assertTextContent(page, "#main-content #login #fm1 h3", "Acceptable Usage Policy");
 
-    await cas.assertVisibility(page, 'button[name=submit]');
-    await cas.assertVisibility(page, 'button[name=cancel]');
+    await cas.assertVisibility(page, "button[name=submit]");
+    await cas.assertVisibility(page, "button[name=cancel]");
 
     await cas.click(page, "#aupSubmit");
     await page.waitForNavigation();

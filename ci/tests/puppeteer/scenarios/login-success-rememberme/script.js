@@ -1,5 +1,5 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 const assert = require("assert");
 
 async function loginAndVerify(browser) {
@@ -29,7 +29,7 @@ async function loginAndVerify(browser) {
     now.setDate(now.getDate() + 1);
     assert(now.getDate() === date.getDate());
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
-    await cas.assertInnerText(page, '#content div h2', "Log In Successful");
+    await cas.assertInnerText(page, "#content div h2", "Log In Successful");
 }
 
 (async () => {

@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
-const assert = require('assert');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
+const assert = require("assert");
 
 (async () => {
     let browser = await puppeteer.launch(cas.browserOptions());
@@ -23,7 +23,7 @@ const assert = require('assert');
     await page.setCookie(tgc, cookie3);
     await cas.gotoLogin(page);
     await cas.assertCookie(page);
-    await cas.assertInnerText(page, '#content div h2', "Log In Successful");
+    await cas.assertInnerText(page, "#content div h2", "Log In Successful");
     await browser.close();
 })();
 
@@ -36,5 +36,5 @@ async function buildCookie(page, value, path, name = "TGC") {
         path: path,
         httpOnly: true,
         secure: true
-    }
+    };
 }

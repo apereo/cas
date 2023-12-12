@@ -1,5 +1,5 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 const assert = require("assert");
 const path = require("path");
 
@@ -40,7 +40,7 @@ async function startFlow(context, clientName) {
         await startFlow(context, provider);
         await context.close();
     }
-    await cas.removeDirectoryOrFile(path.join(__dirname, '/saml-md'));
+    await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
     await browser.close();
 })();
 

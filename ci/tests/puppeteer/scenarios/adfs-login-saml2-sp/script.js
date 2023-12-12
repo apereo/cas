@@ -1,5 +1,5 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -19,7 +19,7 @@ const cas = require('../../cas.js');
     await page.waitForTimeout(5000);
     await cas.screenshot(page);
     await cas.logPage(page);
-    await page.waitForSelector('#table_with_attributes', {visible: true});
+    await page.waitForSelector("#table_with_attributes", {visible: true});
     await cas.assertInnerTextContains(page, "#content p", "status page of SimpleSAMLphp");
     await cas.assertVisibility(page, "#table_with_attributes");
 

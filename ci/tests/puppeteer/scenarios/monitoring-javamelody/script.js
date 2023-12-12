@@ -1,5 +1,5 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 const assert = require("assert");
 
 (async () => {
@@ -7,7 +7,7 @@ const assert = require("assert");
     const page = await cas.newPage(browser);
     await cas.gotoLogin(page);
     await cas.loginWith(page);
-    await page.authenticate({'username':'javamelody', 'password': 'M3ll0n'});
+    await page.authenticate({"username":"javamelody", "password": "M3ll0n"});
     let response = await cas.goto(page, "https://localhost:8443/cas/monitoring");
     await cas.log(`${response.status()} ${response.statusText()}`);
     assert(response.ok());
@@ -17,12 +17,12 @@ const assert = require("assert");
     let entries = await cas.innerTexts(page, "td.wrappedText a");
     await cas.log(entries);
 
-    assert(entries.find(entry => entry === "ServicesManagerScheduledLoader") !== undefined);
-    assert(entries.find(entry => entry === "TicketRegistryCleanerScheduler") !== undefined);
-    assert(entries.find(entry => entry === "DefaultAuthenticationManager") !== undefined);
-    assert(entries.find(entry => entry === "DefaultAuthenticationManager") !== undefined);
-    assert(entries.find(entry => entry === "AcceptUsersAuthenticationHandler") !== undefined);
-    assert(entries.find(entry => entry === "DefaultTicketRegistry") !== undefined);
+    assert(entries.find((entry) => entry === "ServicesManagerScheduledLoader") !== undefined);
+    assert(entries.find((entry) => entry === "TicketRegistryCleanerScheduler") !== undefined);
+    assert(entries.find((entry) => entry === "DefaultAuthenticationManager") !== undefined);
+    assert(entries.find((entry) => entry === "DefaultAuthenticationManager") !== undefined);
+    assert(entries.find((entry) => entry === "AcceptUsersAuthenticationHandler") !== undefined);
+    assert(entries.find((entry) => entry === "DefaultTicketRegistry") !== undefined);
     await browser.close();
 })();
 

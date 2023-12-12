@@ -1,7 +1,7 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
+const puppeteer = require("puppeteer");
+const assert = require("assert");
 
-const cas = require('../../cas.js');
+const cas = require("../../cas.js");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -9,19 +9,19 @@ const cas = require('../../cas.js');
     
     await cas.gotoLogin(page);
 
-    let pswd = await page.$('#password');
+    let pswd = await page.$("#password");
     assert(pswd == null);
 
-    await cas.type(page,'#username', "user3+casuser");
+    await cas.type(page,"#username", "user3+casuser");
     await cas.pressEnter(page);
     await page.waitForNavigation();
 
     await page.waitForTimeout(2000);
 
-    await cas.assertInvisibility(page, '#username');
-    await cas.assertVisibility(page, '#password');
+    await cas.assertInvisibility(page, "#username");
+    await cas.assertVisibility(page, "#password");
 
-    await cas.type(page,'#password', "Mellon");
+    await cas.type(page,"#password", "Mellon");
     await cas.pressEnter(page);
     await page.waitForNavigation();
 

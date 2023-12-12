@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const assert = require("assert");
+const cas = require("../../cas.js");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -28,28 +28,28 @@ const cas = require('../../cas.js');
 
     let accessToken = null;
     await cas.doPost(accessTokenUrl, "", {
-        'Content-Type': "application/json"
-    }, res => {
+        "Content-Type": "application/json"
+    }, (res) => {
         cas.log(res.data);
         assert(res.data.access_token !== null);
 
         accessToken = res.data.access_token;
-    }, error => {
+    }, (error) => {
         throw `Operation failed to obtain access token: ${error}`;
     });
 
     assert(accessToken != null);
 
     const params = new URLSearchParams();
-    params.append('access_token', accessToken);
+    params.append("access_token", accessToken);
     
-    await cas.doPost('https://localhost:8443/cas/oauth2.0/profile', params, {},
-        res => {
+    await cas.doPost("https://localhost:8443/cas/oauth2.0/profile", params, {},
+        (res) => {
             let result = res.data;
             assert(result.id === "casuser");
             assert(result.client_id === "client");
             assert(result.service === "https://apereo.github.io");
-        }, error => {
+        }, (error) => {
             throw error;
         });
 

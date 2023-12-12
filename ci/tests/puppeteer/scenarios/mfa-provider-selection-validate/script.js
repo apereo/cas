@@ -13,13 +13,13 @@ const cas = require("../../cas.js");
     await page.waitForTimeout(500);
 
     await cas.log("Select mfa-gauth");
-    await cas.assertVisibility(page, '#mfa-gauth');
+    await cas.assertVisibility(page, "#mfa-gauth");
 
     await cas.submitForm(page, "#mfa-gauth > form[name=fm-mfa-gauth]");
     await page.waitForTimeout(1000);
 
     await cas.log(`Using scratch code ${scratch} to login...`);
-    await cas.type(page,'#token', scratch);
+    await cas.type(page,"#token", scratch);
     await cas.pressEnter(page);
     await page.waitForNavigation();
     await page.waitForTimeout(1000);

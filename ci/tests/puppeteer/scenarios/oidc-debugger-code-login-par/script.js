@@ -1,5 +1,5 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 const assert = require("assert");
 
 (async () => {
@@ -20,15 +20,15 @@ const assert = require("assert");
     await cas.log(`Status: ${response.status()} ${response.statusText()}`);
     assert(response.status() === 403);
 
-    let value = `client:secret`;
+    let value = "client:secret";
     let buff = Buffer.alloc(value.length, value);
-    let authzHeader = `Basic ${buff.toString('base64')}`;
+    let authzHeader = `Basic ${buff.toString("base64")}`;
     await cas.log(`Authorization header: ${authzHeader}`);
 
-    const body = await cas.doRequest(`https://localhost:8443/cas/oidc/oidcPushAuthorize?${params}`, 'POST', {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36',
-        'Authorization': authzHeader
+    const body = await cas.doRequest(`https://localhost:8443/cas/oidc/oidcPushAuthorize?${params}`, "POST", {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36",
+        "Authorization": authzHeader
     }, 201);
     let result = JSON.parse(body);
     await cas.log(result);

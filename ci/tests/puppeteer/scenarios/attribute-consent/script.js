@@ -1,7 +1,7 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
-const cas = require('../../cas.js');
-const fs = require('fs');
+const puppeteer = require("puppeteer");
+const assert = require("assert");
+const cas = require("../../cas.js");
+const fs = require("fs");
 const path = require("path");
 const os = require("os");
 
@@ -13,7 +13,7 @@ const os = require("os");
     await cas.loginWith(page);
 
     await cas.gotoLogin(page, "https://example.org");
-    await cas.assertTextContent(page, '#content h2', "Attribute Consent");
+    await cas.assertTextContent(page, "#content h2", "Attribute Consent");
     await cas.assertTextContent(page, "#appTitle", "The following attributes will be released to [https://example.org]:");
     await cas.assertTextContent(page, "#first-name", "first-name");
     await cas.assertTextContent(page, "#first-name-value", "[Apereo]");
@@ -27,22 +27,22 @@ const os = require("os");
     await page.waitForTimeout(2000);
 
     await cas.screenshot(page);
-    let opt = await page.$('#optionAlways');
+    let opt = await page.$("#optionAlways");
     assert(opt != null);
-    opt = await page.$('#optionAttributeName');
+    opt = await page.$("#optionAttributeName");
     assert(opt != null);
-    opt = await page.$('#optionAttributeValue');
+    opt = await page.$("#optionAttributeValue");
     assert(opt != null);
     await cas.assertTextContent(page, "#reminderTitle", "How often should I be reminded to consent again?");
 
-    opt = await page.$('#reminder');
+    opt = await page.$("#reminder");
     assert(opt != null);
-    opt = await page.$('#reminderTimeUnit');
+    opt = await page.$("#reminderTimeUnit");
     assert(opt != null);
-    opt = await page.$('#cancel');
+    opt = await page.$("#cancel");
     assert(opt != null);
 
-    let confirm = await page.$('#confirm');
+    let confirm = await page.$("#confirm");
     assert(confirm != null);
     await cas.click(page, "#confirm");
     await page.waitForNavigation();
@@ -55,23 +55,23 @@ const os = require("os");
     await cas.log(`${response.status()} ${response.statusText()}`);
     assert(response.ok());
 
-    let template = path.join(__dirname, 'consent-record.json');
-    let body = fs.readFileSync(template, 'utf8');
+    let template = path.join(__dirname, "consent-record.json");
+    let body = fs.readFileSync(template, "utf8");
     await cas.log(`Import consent record:\n${body}`);
     await cas.doRequest(`${baseUrl}/import`, "POST", {
-        'Accept': 'application/json',
-        'Content-Length': body.length,
-        'Content-Type': 'application/json'
+        "Accept": "application/json",
+        "Content-Length": body.length,
+        "Content-Type": "application/json"
     }, 201, body);
 
     await cas.doGet(`${baseUrl}/export`,
-        async res => {
+        async (res) => {
             const tempDir = os.tmpdir();
-            let exported = path.join(tempDir, 'consent.zip');
+            let exported = path.join(tempDir, "consent.zip");
             res.data.pipe(fs.createWriteStream(exported));
             cas.log(`Exported consent records are at ${exported}`);
         },
-        async error => {
+        async (error) => {
             throw error;
         }, {}, "stream");
 

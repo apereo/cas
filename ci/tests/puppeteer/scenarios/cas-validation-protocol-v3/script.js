@@ -1,16 +1,16 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
-const http = require('http');
-const httpCasClient = require('http-cas-client');
-const assert = require('assert');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
+const http = require("http");
+const httpCasClient = require("http-cas-client");
+const assert = require("assert");
 
 (async () => {
     let failed = false;
     try {
         const handler = httpCasClient({
             cas: 3,
-            casServerUrlPrefix: 'https://localhost:8443/cas',
-            serverName: 'http://localhost:8080'
+            casServerUrlPrefix: "https://localhost:8443/cas",
+            serverName: "http://localhost:8080"
         });
         await cas.log("Creating HTTP server for CAS client on port 8080");
         let server = await http.createServer(async (req, res) => {

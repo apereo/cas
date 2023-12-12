@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const assert = require("assert");
+const cas = require("../../cas.js");
 
 async function startAuthFlow(page, username) {
     await cas.log("Removing previous sessions and logging out");
@@ -8,10 +8,10 @@ async function startAuthFlow(page, username) {
     
     await cas.log(`Starting authentication flow for ${username}`);
     await cas.gotoLogin(page);
-    let pswd = await page.$('#password');
+    let pswd = await page.$("#password");
     assert(pswd == null);
     await cas.screenshot(page);
-    await cas.type(page, '#username', username);
+    await cas.type(page, "#username", username);
     await page.waitForTimeout(1000);
     await cas.pressEnter(page);
     await page.waitForNavigation();

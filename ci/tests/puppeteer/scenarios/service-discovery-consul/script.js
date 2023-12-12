@@ -1,5 +1,5 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 const assert = require("assert");
 
 (async () => {
@@ -10,7 +10,7 @@ const assert = require("assert");
     await cas.log(`${response.status()} ${response.statusText()}`);
     assert(response.ok());
     await cas.click(page, "div.header a");
-    await page.waitForResponse(response => response.status() === 200);
+    await page.waitForResponse((response) => response.status() === 200);
     await page.waitForTimeout(2000);
     await browser.close();
 })();

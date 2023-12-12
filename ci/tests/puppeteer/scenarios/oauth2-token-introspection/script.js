@@ -1,7 +1,7 @@
 // noinspection JSUnusedLocalSymbols
 
-const assert = require('assert');
-const cas = require('../../cas.js');
+const assert = require("assert");
+const cas = require("../../cas.js");
 
 (async () => {
 
@@ -14,9 +14,9 @@ const cas = require('../../cas.js');
     let accessToken = null;
     let refreshToken = null;
     await cas.doPost(url, "", {
-        'Content-Type': "application/json",
-        'Authorization': `Basic ${btoa('client:secret')}`
-    }, res => {
+        "Content-Type": "application/json",
+        "Authorization": `Basic ${btoa("client:secret")}`
+    }, (res) => {
         cas.log(res.data);
         assert(res.data.access_token !== null);
         assert(res.data.refresh_token !== null);
@@ -24,7 +24,7 @@ const cas = require('../../cas.js');
         introspect(res.data.access_token, successHandler);
         introspect(res.data.refresh_token, successHandler);
 
-    }, error => {
+    }, (error) => {
         throw `Operation failed: ${error}`;
     });
 
@@ -33,7 +33,7 @@ const cas = require('../../cas.js');
         assert(res.data.active === false);
         assert(res.data.scope === "CAS");
         assert(res.data.tokenType === undefined);
-        assert(res.data.client_id === undefined)
+        assert(res.data.client_id === undefined);
     });
 
 })();
@@ -48,22 +48,22 @@ function successHandler(res, token) {
     assert(res.data.sub === "client");
     assert(res.data.tokenType === "Bearer");
     assert(res.data.client_id === "client");
-    assert(res.data.token === token)
+    assert(res.data.token === token);
 }
 
 async function introspect(token, handlerOnSuccess) {
-    let value = `client:secret`;
+    let value = "client:secret";
     let buff = Buffer.alloc(value.length, value);
-    let authzHeader = `Basic ${buff.toString('base64')}`;
+    let authzHeader = `Basic ${buff.toString("base64")}`;
     await cas.log(`Authorization header: ${authzHeader}`);
 
     await cas.log(`Introspecting token ${token}`);
     await cas.doGet(`https://localhost:8443/cas/oauth2.0/introspect?token=${token}`,
-        res => handlerOnSuccess(res, token),
-        error => {
+        (res) => handlerOnSuccess(res, token),
+        (error) => {
             throw `Introspection operation failed: ${error}`;
         }, {
-            'Authorization': authzHeader,
-            'Content-Type': 'application/json'
+            "Authorization": authzHeader,
+            "Content-Type": "application/json"
         });
 }

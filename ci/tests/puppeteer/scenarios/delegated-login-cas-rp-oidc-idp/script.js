@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const assert = require("assert");
+const cas = require("../../cas.js");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -10,7 +10,7 @@ const cas = require('../../cas.js');
     const url = `https://localhost:8443/cas/login?service=${service}`;
     await cas.goto(page, url);
 
-    await cas.assertVisibility(page, 'li #Keycloak');
+    await cas.assertVisibility(page, "li #Keycloak");
     await cas.click(page, "li #Keycloak");
     await page.waitForNavigation();
     await page.waitForTimeout(3000);

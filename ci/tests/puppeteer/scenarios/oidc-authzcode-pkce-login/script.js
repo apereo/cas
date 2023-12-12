@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
-const assert = require('assert');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
+const assert = require("assert");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -11,9 +11,9 @@ const assert = require('assert');
     const codeVerifier = "zkuyfY0CcG1yuVojREYwtbnpjOsOleD.OWkBpNVTHKyABMJ0ly_ZKTeOi."
         + "STPvshXsHyShcyAzm6z4ThKr2Y91RKFLvmOkJEiBhaSzIp~YHH3wkrzlB6m~y8h~td_pPg";
 
-    let url = `https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=client&scope=`
+    let url = "https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=client&scope="
         + `openid%20email%20profile%20address%20phone&redirect_uri=${redirectUrl}&code_challenge=${codeChallenge}`
-        + `&code_challenge_method=S256&nonce=3d3a7457f9ad3&state=1735fd6c43c14`;
+        + "&code_challenge_method=S256&nonce=3d3a7457f9ad3&state=1735fd6c43c14";
 
     await cas.log(`Navigating to ${url}`);
     await cas.goto(page, url);
@@ -28,12 +28,12 @@ const assert = require('assert');
     let accessTokenUrl = `https://localhost:8443/cas/oidc/token?${accessTokenParams}&code=${code}`;
     await cas.log(`Calling ${accessTokenUrl} without a code verifier parameter`);
     await cas.doPost(accessTokenUrl, "", {
-        'Content-Type': "application/json"
-    }, async res => {
+        "Content-Type": "application/json"
+    }, async (res) => {
         throw `Operation should fail to obtain access token: ${res}`;
-    }, error => {
+    }, (error) => {
         cas.log(`Expected status code: ${error.response.status}`);
-        assert(error.response.status === 401)
+        assert(error.response.status === 401);
     });
 
     accessTokenParams = `client_id=client&code_verifier=${codeVerifier}&grant_type=authorization_code&redirect_uri=${redirectUrl}`;
@@ -42,8 +42,8 @@ const assert = require('assert');
 
     let accessToken = null;
     await cas.doPost(accessTokenUrl, "", {
-        'Content-Type': "application/json"
-    }, async res => {
+        "Content-Type": "application/json"
+    }, async (res) => {
         await cas.log(res.data);
         assert(res.data.access_token !== null);
 
@@ -57,8 +57,8 @@ const assert = require('assert');
         assert(decoded.state !== null);
         assert(decoded.nonce !== null);
         assert(decoded.client_id !== null);
-        assert(decoded["preferred_username"] == null)
-    }, error => {
+        assert(decoded["preferred_username"] == null);
+    }, (error) => {
         throw `Operation failed to obtain access token: ${error}`;
     });
 

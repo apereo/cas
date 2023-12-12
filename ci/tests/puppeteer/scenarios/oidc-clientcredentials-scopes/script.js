@@ -1,5 +1,5 @@
-const assert = require('assert');
-const cas = require('../../cas.js');
+const assert = require("assert");
+const cas = require("../../cas.js");
 
 (async () => {
 
@@ -14,8 +14,8 @@ const cas = require('../../cas.js');
     await cas.log(`Calling ${url}`);
 
     await cas.doPost(url, "", {
-        'Content-Type': "application/json"
-    }, async res => {
+        "Content-Type": "application/json"
+    }, async (res) => {
 
         await cas.log(res.data);
         assert(res.data.access_token !== null);
@@ -29,7 +29,7 @@ const cas = require('../../cas.js');
         assert(res.data.id_token !== null);
         assert(res.data.refresh_token !== null);
         assert(res.data.token_type !== null);
-        assert(res.data.scope === 'MyCustomScope openid');
+        assert(res.data.scope === "MyCustomScope openid");
         
         assert(decoded.sub === "casuser");
         assert(decoded["cn"] === undefined);
@@ -37,8 +37,8 @@ const cas = require('../../cas.js');
         assert(decoded["client_id"] === "client");
         assert(decoded["preferred_username"] === "casuser");
         assert(decoded["gender"] === "Female");
-        assert(decoded["given-name"] === undefined)
-    }, error => {
+        assert(decoded["given-name"] === undefined);
+    }, (error) => {
         throw `Operation failed: ${error}`;
     });
 })();

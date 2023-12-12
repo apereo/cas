@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const assert = require("assert");
+const cas = require("../../cas.js");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -8,19 +8,19 @@ const cas = require('../../cas.js');
     
     await cas.gotoLogin(page);
 
-    let pswd = await page.$('#password');
+    let pswd = await page.$("#password");
     assert(pswd == null);
 
     await cas.attributeValue(page, "#username", "autocapitalize", "none");
     await cas.attributeValue(page, "#username", "spellcheck", "false");
     await cas.attributeValue(page, "#username", "autocomplete", "username");
 
-    await cas.type(page,'#username', "casuser");
+    await cas.type(page,"#username", "casuser");
     await cas.pressEnter(page);
     await page.waitForNavigation();
     await cas.assertInnerText(page, "#login h3", "Provide Token");
     await cas.assertInnerTextStartsWith(page, "#login p", "Please provide the security token sent to you");
-    await cas.assertVisibility(page, '#token');
+    await cas.assertVisibility(page, "#token");
 
     const page2 = await browser.newPage();
     await page2.goto("http://localhost:8282");
@@ -43,11 +43,11 @@ const cas = require('../../cas.js');
     await page.waitForTimeout(1000);
     await cas.screenshot(page);
     
-    let surrogateEnabled = await page.$('#surrogateEnabled');
+    let surrogateEnabled = await page.$("#surrogateEnabled");
     assert(surrogateEnabled == null);
-    let surrogatePrincipal = await page.$('#surrogatePrincipal');
+    let surrogatePrincipal = await page.$("#surrogatePrincipal");
     assert(surrogatePrincipal == null);
-    let surrogateUser = await page.$('#surrogateUser');
+    let surrogateUser = await page.$("#surrogateUser");
     assert(surrogateUser == null);
     await page.waitForTimeout(1000);
 

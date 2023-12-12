@@ -1,5 +1,5 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 
 (async () => {
     const principal = {
@@ -9,10 +9,10 @@ const cas = require('../../cas.js');
 
     let payload = {
         "/new": {
-            "get": '514a61cc1518'
+            "get": "514a61cc1518"
         },
         "/": {
-            "post": '514a61cc1518'
+            "post": "514a61cc1518"
         },
         "/:id": {
             "get": principal
@@ -29,7 +29,7 @@ const cas = require('../../cas.js');
         await cas.goto(page, "https://localhost:8443/cas/login?authn_method=mfa-simple");
         await cas.loginWith(page);
         await page.waitForTimeout(1000);
-        await cas.assertVisibility(page, '#token');
+        await cas.assertVisibility(page, "#token");
 
         const page2 = await browser.newPage();
         await page2.goto("http://localhost:8282");
@@ -45,7 +45,7 @@ const cas = require('../../cas.js');
         await page.waitForTimeout(1000);
         await cas.submitForm(page, "#registerform");
         await page.waitForTimeout(1000);
-        await cas.assertInnerText(page, '#content div h2', "Log In Successful");
+        await cas.assertInnerText(page, "#content div h2", "Log In Successful");
         await cas.assertCookie(page);
     } finally {
         if (mockServer != null) {
