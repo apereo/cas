@@ -14,11 +14,10 @@ ext {
     ]
 }
 
-tasks.named("bootJar") {
-    notCompatibleWithConfigurationCache("bootJar is not supported by the Gradle configuration cache")
-}
-tasks.named("nativeCompile") {
-    notCompatibleWithConfigurationCache("nativeCompile is not supported by the Gradle configuration cache")
+["bootJar", "processAot", "nativeCompile"].each { name ->
+    tasks.named(name) { task ->
+        task.notCompatibleWithConfigurationCache("${name} is not supported by the Gradle configuration cache")
+    }
 }
 
 configurations {

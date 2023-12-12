@@ -53,7 +53,7 @@ tasks.register('jsonDependencies') {
             .stream()
             .map(dependency -> [group: dependency.module.id.group, name: dependency.module.id.name, version: dependency.module.id.version])
             .toList()
-        def jsonFile = new File("${buildDir}/dependencies.json")
+        def jsonFile = new File(project.layout.buildDirectory.getAsFile().get(), "dependencies.json")
         def output = new groovy.json.JsonBuilder(results).toPrettyString();
         jsonFile.delete()
         jsonFile << output
