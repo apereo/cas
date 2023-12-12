@@ -1,5 +1,5 @@
-const cas = require('../../cas.js');
-const assert = require('assert');
+const cas = require("../../cas.js");
+const assert = require("assert");
 
 (async () => {
     let body = await cas.doRequest("https://localhost:8443/cas/oidc/jwks", "GET", {}, 200);

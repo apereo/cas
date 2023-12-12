@@ -1,5 +1,5 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 const YAML = require("yaml");
 const fs = require("fs");
 const path = require("path");
@@ -7,27 +7,27 @@ const assert = require("assert");
 
 async function callRegisteredServices() {
     const baseUrl = "https://localhost:8443/cas/actuator/registeredServices";
-    await cas.doGet(baseUrl, async res => {
+    await cas.doGet(baseUrl, async (res) => {
         assert(res.status === 200);
         cas.log(`Services found: ${res.data[1].length}`);
-    }, async err => {
+    }, async (err) => {
         throw err;
     }, {
-        'Content-Type': 'application/json'
-    })
+        "Content-Type": "application/json"
+    });
 }
 
 async function callAuditLog() {
     await cas.doPost("https://localhost:8443/cas/actuator/auditLog", {}, {
-        'Content-Type': 'application/json'
-    }, res => cas.log(`Found ${res.data.length} audit records`), error => {
+        "Content-Type": "application/json"
+    }, (res) => cas.log(`Found ${res.data.length} audit records`), (error) => {
         throw(error);
-    })
+    });
 }
 
 (async () => {
-    let configFilePath = path.join(__dirname, 'config.yml');
-    const file = fs.readFileSync(configFilePath, 'utf8');
+    let configFilePath = path.join(__dirname, "config.yml");
+    const file = fs.readFileSync(configFilePath, "utf8");
     const configFile = YAML.parse(file);
 
     let browser = await puppeteer.launch(cas.browserOptions());
@@ -36,7 +36,7 @@ async function callAuditLog() {
     await cas.loginWith(page);
     await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
-    await cas.assertInnerText(page, '#content div h2', "Log In Successful");
+    await cas.assertInnerText(page, "#content div h2", "Log In Successful");
     await cas.gotoLogout(page);
     await page.waitForTimeout(6000);
     await browser.close();

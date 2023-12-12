@@ -1,15 +1,15 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
-const express = require('express');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
+const express = require("express");
 
-const auth = require('basic-auth');
+const auth = require("basic-auth");
 
 (async () => {
     const authenticate = (req, res, next) => {
         const credentials = auth(req);
-        if (!credentials || credentials.name !== 'restapi' || credentials.pass !== 'YdCP05HvuhOH^*Z') {
-            res.set('WWW-Authenticate', 'Basic realm="Authentication Required"');
-            res.status(401).send('Authentication Required');
+        if (!credentials || credentials.name !== "restapi" || credentials.pass !== "YdCP05HvuhOH^*Z") {
+            res.set("WWW-Authenticate", "Basic realm=\"Authentication Required\"");
+            res.status(401).send("Authentication Required");
         } else {
             cas.log("Authentication successful");
             next();
@@ -40,7 +40,7 @@ const auth = require('basic-auth');
     let server = app.listen(5432, async () => {
         let failed = false;
         try {
-            await cas.log(`Listening...`);
+            await cas.log("Listening...");
 
             const browser = await puppeteer.launch(cas.browserOptions());
             const page = await cas.newPage(browser);
@@ -49,7 +49,7 @@ const auth = require('basic-auth');
             await cas.assertCookie(page);
 
             server.close(() => {
-                cas.log('Exiting server...');
+                cas.log("Exiting server...");
                 browser.close();
             });
         } catch (e) {

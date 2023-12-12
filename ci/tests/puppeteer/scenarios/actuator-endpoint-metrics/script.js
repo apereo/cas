@@ -1,5 +1,5 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -17,7 +17,7 @@ const cas = require('../../cas.js');
     await browser.close();
     const baseUrl = "https://localhost:8443/cas/actuator";
     await cas.doRequest(`${baseUrl}/metrics`, "GET", {
-        'Accept': 'application/json', 'Content-Type': 'application/json'
+        "Accept": "application/json", "Content-Type": "application/json"
     }, 200);
     await cas.doRequest(`${baseUrl}/prometheus`, "GET", {}, 200);
 })();

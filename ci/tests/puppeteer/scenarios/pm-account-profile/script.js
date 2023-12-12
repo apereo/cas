@@ -1,5 +1,5 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 const assert = require("assert");
 const path = require("path");
 const fs = require("fs");
@@ -7,13 +7,13 @@ const fs = require("fs");
 
 (async () => {
 
-    let template = path.join(__dirname, 'device-record.json');
-    let body = fs.readFileSync(template, 'utf8');
+    let template = path.join(__dirname, "device-record.json");
+    let body = fs.readFileSync(template, "utf8");
     await cas.log(`Import device record:\n${body}`);
-    await cas.doRequest(`https://localhost:8443/cas/actuator/multifactorTrustedDevices/import`, "POST", {
-        'Accept': 'application/json',
-        'Content-Length': body.length,
-        'Content-Type': 'application/json'
+    await cas.doRequest("https://localhost:8443/cas/actuator/multifactorTrustedDevices/import", "POST", {
+        "Accept": "application/json",
+        "Content-Length": body.length,
+        "Content-Type": "application/json"
     }, 201, body);
     
     const browser = await puppeteer.launch(cas.browserOptions());

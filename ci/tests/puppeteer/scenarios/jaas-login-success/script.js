@@ -1,5 +1,5 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 
 async function execLogin(page, uid) {
     await cas.log(`Logging in with user ${uid}`);
@@ -8,7 +8,7 @@ async function execLogin(page, uid) {
     await cas.loginWith(page, uid, "Mellon");
     await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
-    await cas.assertInnerText(page, '#content div h2', "Log In Successful");
+    await cas.assertInnerText(page, "#content div h2", "Log In Successful");
 }
 
 (async () => {

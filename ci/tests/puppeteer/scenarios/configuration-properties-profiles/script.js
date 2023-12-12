@@ -1,4 +1,4 @@
-const cas = require('../../cas.js');
+const cas = require("../../cas.js");
 const assert = require("assert");
 
 (async () => {
@@ -8,13 +8,13 @@ const assert = require("assert");
     await sendRequest("cas.custom.properties.groovy2", "custom2");
     await sendRequest("cas.custom.properties.environment", "custom1");
     await sendRequest("cas.custom.properties.profile", "custom2");
-    await sendRequest("cas.custom.properties.source", "yaml")
+    await sendRequest("cas.custom.properties.source", "yaml");
 })();
 
 async function sendRequest(key, value) {
     await cas.logg(`Asking for property ${key}`);
     await cas.doGet(`https://localhost:8443/cas/actuator/env/${key}`,
-        res => {
+        (res) => {
             assert(res.status === 200);
 
             let found = false;
@@ -24,14 +24,14 @@ async function sendRequest(key, value) {
                 if (casSource.name === "bootstrapProperties-casCompositePropertySource") {
                     found = true;
                     cas.logg(`Comparing property source value ${casSource.property.value} with expected ${value}`);
-                    assert(casSource.property.value === value)
+                    assert(casSource.property.value === value);
                 }
             }
             if (!found) {
                 throw "Unable to locate CAS property source";
             }
         },
-        error => {
+        (error) => {
             throw error;
-        })
+        });
 }

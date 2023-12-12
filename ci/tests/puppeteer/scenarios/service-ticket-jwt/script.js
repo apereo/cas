@@ -1,7 +1,7 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 const path = require("path");
-const assert = require('assert');
+const assert = require("assert");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -12,7 +12,7 @@ const assert = require('assert');
     await page.waitForTimeout(2000);
     let ticket = await cas.assertTicketParameter(page);
 
-    const keyPath = path.join(__dirname, 'private.key');
+    const keyPath = path.join(__dirname, "private.key");
     const { payload } = await cas.decryptJwt(ticket, keyPath);
     assert(payload.iss === "https://localhost:8443/cas");
     assert(payload.aud === "https://localhost:9859/anything/1");

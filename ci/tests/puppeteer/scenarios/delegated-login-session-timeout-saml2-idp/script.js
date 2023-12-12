@@ -1,7 +1,7 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
-const path = require('path');
-const assert = require('assert');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
+const path = require("path");
+const assert = require("assert");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -10,8 +10,8 @@ const assert = require('assert');
     await cas.gotoLogin(page);
     await page.waitForTimeout(2000);
 
-    await cas.assertVisibility(page, '#loginProviders');
-    await cas.assertVisibility(page, 'li #SAML2Client');
+    await cas.assertVisibility(page, "#loginProviders");
+    await cas.assertVisibility(page, "li #SAML2Client");
     
     await cas.click(page, "li #SAML2Client");
     await page.waitForNavigation();
@@ -29,7 +29,7 @@ const assert = require('assert');
     assert(url.includes("https://localhost:8443/cas/login"));
     await cas.assertInnerText(page, "#content h2", "Application Not Authorized to Use CAS");
     
-    await cas.removeDirectoryOrFile(path.join(__dirname, '/saml-md'));
+    await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
     await browser.close();
 })();
 

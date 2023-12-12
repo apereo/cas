@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
-const assert = require('assert');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
+const assert = require("assert");
 
 async function testService(page, clientId, oidc = true) {
     await cas.log(`Testing application with client id ${clientId}`);
@@ -19,10 +19,8 @@ async function testService(page, clientId, oidc = true) {
     await cas.log(`Current code is ${code}`);
     const accessTokenUrl = `https://localhost:8443/cas/oidc/token?grant_type=authorization_code&client_id=${clientId}&client_secret=secret&redirect_uri=https://apereo.github.io&code=${code}`;
     let payload = await cas.doPost(accessTokenUrl, "", {
-        'Content-Type': "application/json"
-    }, res => {
-        return res.data;
-    }, error => {
+        "Content-Type": "application/json"
+    }, (res) => res.data, (error) => {
         throw `Operation failed to obtain access token: ${error}`;
     });
     assert(payload.access_token != null);
@@ -44,9 +42,9 @@ async function testService(page, clientId, oidc = true) {
         assert(decodedAccessToken.client_id === "oauth-clientid");
     }
     
-    await cas.goto(page, `https://localhost:8443/cas/logout`);
+    await cas.goto(page, "https://localhost:8443/cas/logout");
     await page.waitForTimeout(1000);
-    await cas.log("=========================================================")
+    await cas.log("=========================================================");
 }
 
 (async () => {

@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const assert = require("assert");
+const cas = require("../../cas.js");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -12,7 +12,7 @@ const cas = require('../../cas.js');
     await cas.goto(page, "https://localhost:8443/cas/actuator/health");
     await page.waitForTimeout(1000);
     await cas.doGet("https://localhost:8443/cas/actuator/health",
-        res => {
+        (res) => {
             assert(res.data.components.hazelcast !== null);
             assert(res.data.components.memory !== null);
             assert(res.data.components.ping !== null);
@@ -27,15 +27,15 @@ const cas = require('../../cas.js');
             assert(details.proxyTicketsCache !== null);
             assert(details.serviceTicketsCache !== null);
             assert(details.transientSessionTicketsCache !== null);
-        }, error => {
+        }, (error) => {
             throw error;
-        }, { 'Content-Type': "application/json" });
+        }, { "Content-Type": "application/json" });
 
 
     await cas.goto(page, "https://localhost:8444/cas/login");
     await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
-    await cas.assertInnerText(page, '#content div h2', "Log In Successful");
+    await cas.assertInnerText(page, "#content div h2", "Log In Successful");
 
     await browser.close();
 })();

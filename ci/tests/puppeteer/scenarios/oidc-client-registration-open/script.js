@@ -1,6 +1,6 @@
 
-const cas = require('../../cas.js');
-const assert = require('assert');
+const cas = require("../../cas.js");
+const assert = require("assert");
 
 (async () => {
     let service = {
@@ -27,8 +27,8 @@ const assert = require('assert');
     await cas.log(`Sending ${body}`);
     let result = await cas.doRequest("https://localhost:8443/cas/oidc/register", "POST",
         {
-            'Content-Length': body.length,
-            'Content-Type': 'application/json',
+            "Content-Length": body.length,
+            "Content-Type": "application/json"
         }, 201, body);
     assert(result !== null);
     let entity = JSON.parse(result.toString());
@@ -43,17 +43,17 @@ const assert = require('assert');
     await cas.log("==================================");
     
     await cas.doGet(entity.registration_client_uri,
-        res => {
+        (res) => {
             cas.log(`Registered entity: ${JSON.stringify(res.data)}`);
             assert(res.data.client_secret_expires_at > 0);
             assert(res.data.client_name === "My Example");
             assert(res.data.client_id === entity.client_id);
             assert(res.data.client_secret === entity.client_secret);
-            assert(res.status === 200)
-        }, error => {
+            assert(res.status === 200);
+        }, (error) => {
             throw error;
         },
         {
             "Authorization": `Bearer ${entity.registration_access_token}`
-        })
+        });
 })();

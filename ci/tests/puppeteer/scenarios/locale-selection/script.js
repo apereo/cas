@@ -1,11 +1,11 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions({ args: ['--lang=de'] }));
+    const browser = await puppeteer.launch(cas.browserOptions({ args: ["--lang=de"] }));
     const page = await cas.newPage(browser);
     await page.setExtraHTTPHeaders({
-        'Accept-Language': 'de'
+        "Accept-Language": "de"
     });
     await cas.gotoLogin(page);
     await page.waitForTimeout(1000);

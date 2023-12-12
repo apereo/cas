@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const assert = require("assert");
+const cas = require("../../cas.js");
 
 (async () => {
 
@@ -19,9 +19,9 @@ const cas = require('../../cas.js');
         let body = await validate(endpoint, service1, ticket, false);
 
         if (endpoint === "validate") {
-            assert(body === "yes\ncasuser\n")
+            assert(body === "yes\ncasuser\n");
         } else {
-            assert(body.includes("<cas:authenticationSuccess>"))
+            assert(body.includes("<cas:authenticationSuccess>"));
         }
 
         const service2 = "https://localhost:9859/get";
@@ -31,9 +31,9 @@ const cas = require('../../cas.js');
         body = await validate(endpoint, service2, ticket, true);
 
         if (endpoint === "validate") {
-            assert(body === "no\n\n")
+            assert(body === "no\n\n");
         } else {
-            assert(body.includes('<cas:authenticationFailure code="INVALID_TICKET">'))
+            assert(body.includes("<cas:authenticationFailure code=\"INVALID_TICKET\">"));
         }
         await browser.close();
     }

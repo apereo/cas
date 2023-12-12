@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
-const express = require('express');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
+const express = require("express");
 
 (async () => {
     let app = express();
@@ -15,7 +15,7 @@ const express = require('express');
         await page.waitForTimeout(2000);
         await cas.assertTextContent(page, "#content h2", "Authentication attempt is blocked.");
         server.close(() => {
-            cas.log('Exiting server...');
+            cas.log("Exiting server...");
             browser.close();
         });
     });

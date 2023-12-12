@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
-const assert = require('assert');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
+const assert = require("assert");
 
 async function fetchRefreshToken(page, clientId, redirectUrl) {
     let url = `https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=${clientId}&scope=openid%20offline_access&prompt=login&redirect_uri=${redirectUrl}&nonce=3d3a7457f9ad3&state=1735fd6c43c14`;
@@ -28,8 +28,8 @@ async function fetchRefreshToken(page, clientId, redirectUrl) {
     let refreshToken = null;
 
     let accessTokenUrl = `https://localhost:8443/cas/oidc/token?${accessTokenParams}&code=${code}`;
-    await cas.doPost(accessTokenUrl, "", {'Content-Type': "application/json"},
-        res => {
+    await cas.doPost(accessTokenUrl, "", {"Content-Type": "application/json"},
+        (res) => {
             
             assert(res.data.access_token !== null);
             assert(res.data.refresh_token !== null);
@@ -58,12 +58,12 @@ async function exchangeToken(refreshToken, clientId, successHandler, errorHandle
 
     let value = `${clientId}:secret`;
     let buff = Buffer.alloc(value.length, value);
-    let authzHeader = `Basic ${buff.toString('base64')}`;
+    let authzHeader = `Basic ${buff.toString("base64")}`;
     await cas.log(`Authorization header: ${authzHeader}`);
 
     await cas.doPost(accessTokenUrl, "", {
-        'Content-Type': "application/json",
-        'Authorization': authzHeader
+        "Content-Type": "application/json",
+        "Authorization": authzHeader
     }, successHandler, errorHandler);
 }
 
@@ -85,9 +85,9 @@ async function exchangeToken(refreshToken, clientId, successHandler, errorHandle
     await cas.logg(`Refresh Token 2: ${refreshToken2}`);
 
     await exchangeToken(refreshToken2, "client",
-        res => {
+        (res) => {
             throw `Operation should fail but instead produced: ${res.data}`;
-        }, error => {
+        }, (error) => {
             cas.log(`Status: ${error.response.status}`);
             assert(error.response.status === 400);
             cas.log(error.response.data);
@@ -95,9 +95,9 @@ async function exchangeToken(refreshToken, clientId, successHandler, errorHandle
         });
 
     await exchangeToken(refreshToken1, "client2",
-        res => {
+        (res) => {
             throw `Operation should fail but instead produced: ${res.data}`;
-        }, error => {
+        }, (error) => {
             cas.log(`Status: ${error.response.status}`);
             assert(error.response.status === 400);
             cas.log(error.response.data);
@@ -105,10 +105,10 @@ async function exchangeToken(refreshToken, clientId, successHandler, errorHandle
         });
 
     await exchangeToken(refreshToken1, "client",
-        res => {
+        (res) => {
             cas.log(res.data);
             assert(res.status === 200);
-        }, error => {
+        }, (error) => {
             throw `Operation should not fail but instead produced: ${error}`;
         });
 
@@ -116,19 +116,19 @@ async function exchangeToken(refreshToken, clientId, successHandler, errorHandle
     await page.waitForTimeout(5000);
 
     await exchangeToken(refreshToken1, "client",
-        res => {
+        (res) => {
             cas.log(res.data);
             assert(res.status === 200);
         }, () => {
-            throw `Operation should not fail`;
+            throw "Operation should not fail";
         });
 
     await exchangeToken(refreshToken2, "client2",
-        res => {
+        (res) => {
             cas.log(res.data);
             assert(res.status === 200);
         }, () => {
-            throw `Operation should not fail`;
+            throw "Operation should not fail";
         });
 
     await browser.close();

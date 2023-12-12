@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
-const path = require('path');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
+const path = require("path");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -19,8 +19,8 @@ const path = require('path');
 
     await cas.log(`Page url: ${ await page.url()}`);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
-    await cas.assertInnerText(page, '#content div h2', "Log In Successful");
+    await cas.assertInnerText(page, "#content div h2", "Log In Successful");
     await cas.assertCookie(page);
-    await cas.removeDirectoryOrFile(path.join(__dirname, '/saml-md'));
+    await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
     await browser.close();
 })();

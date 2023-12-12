@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const path = require('path');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const path = require("path");
+const cas = require("../../cas.js");
 const assert = require("assert");
 
 (async () => {
@@ -17,7 +17,7 @@ const assert = require("assert");
     await page.waitForTimeout(4000);
     await cas.loginWith(page);
     await page.waitForTimeout(2000);
-    await cas.assertTextContent(page, '#content h2', "Attribute Consent");
+    await cas.assertTextContent(page, "#content h2", "Attribute Consent");
     await cas.screenshot(page);
     await cas.submitForm(page, "#fm1");
     await page.waitForTimeout(6000);
@@ -29,7 +29,7 @@ const assert = require("assert");
     await cas.log(payload);
     assert(payload.form.RelayState != null);
     assert(payload.form.SAMLResponse != null);
-    await cas.removeDirectoryOrFile(path.join(__dirname, '/saml-md'));
+    await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
     await browser.close();
 })();
 

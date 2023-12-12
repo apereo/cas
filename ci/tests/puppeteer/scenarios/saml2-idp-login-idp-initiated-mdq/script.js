@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const performance = require('perf_hooks').performance;
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const performance = require("perf_hooks").performance;
+const cas = require("../../cas.js");
 const path = require("path");
 
 async function tryServiceProviders(entityIds, page, timeout) {
@@ -26,8 +26,8 @@ async function tryServiceProviders(entityIds, page, timeout) {
         }
 
         await page.waitForTimeout(2000);
-        await cas.assertVisibility(page, '#username');
-        await cas.assertVisibility(page, '#password');
+        await cas.assertVisibility(page, "#username");
+        await cas.assertVisibility(page, "#password");
         await cas.log("=====================================");
         count++;
     }
@@ -49,7 +49,7 @@ async function tryServiceProviders(entityIds, page, timeout) {
     await tryServiceProviders(entityIds, page, 15);
     await tryServiceProviders(entityIds, page, 5);
 
-    await cas.removeDirectoryOrFile(path.join(__dirname, '/saml-md'));
+    await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
     await browser.close();
 })();
 

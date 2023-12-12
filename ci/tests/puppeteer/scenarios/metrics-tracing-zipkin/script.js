@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
+const puppeteer = require("puppeteer");
 
-const cas = require('../../cas.js');
+const cas = require("../../cas.js");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -15,8 +15,8 @@ const cas = require('../../cas.js');
         let url = `${baseUrl}/metrics/org.springframework.webflow.executor.FlowExecutor.${webflowMetrics[i]}`;
         await cas.log(`Trying ${url}`);
         await cas.doRequest(url, "GET", {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
+            "Accept": "application/json",
+            "Content-Type": "application/json"
         }, 200);
     }
     await cas.goto(page, "http://localhost:9411/zipkin");

@@ -1,11 +1,11 @@
-const puppeteer = require('puppeteer');
-const path = require('path');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const path = require("path");
+const cas = require("../../cas.js");
 const assert = require("assert");
 
 async function cleanUp() {
-    await cas.removeDirectoryOrFile(path.join(__dirname, '/saml-md'));
-    await cas.log('Cleanup done');
+    await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
+    await cas.log("Cleanup done");
 }
 
 (async () => {
@@ -25,7 +25,7 @@ async function cleanUp() {
     await cas.screenshot(page);
     await page.waitForTimeout(3000);
 
-    await page.waitForSelector('#table_with_attributes', {visible: true});
+    await page.waitForSelector("#table_with_attributes", {visible: true});
     await cas.assertInnerTextContains(page, "#content p", "status page of SimpleSAMLphp");
     await cas.assertVisibility(page, "#table_with_attributes");
     let authData = JSON.parse(await cas.innerHTML(page, "details pre"));

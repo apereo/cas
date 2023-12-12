@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
-const assert = require('assert');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
+const assert = require("assert");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -30,8 +30,8 @@ const assert = require('assert');
 
     let accessToken = null;
     await cas.doPost(accessTokenUrl, "", {
-        'Content-Type': "application/json"
-    }, async res => {
+        "Content-Type": "application/json"
+    }, async (res) => {
         await cas.log(res.data);
         assert(res.data.access_token !== null);
 
@@ -42,8 +42,8 @@ const assert = require('assert');
         let decoded = await cas.decodeJwt(res.data.id_token);
 
         assert(decoded.sub !== null);
-        assert(decoded["preferred_username"] == null)
-    }, error => {
+        assert(decoded["preferred_username"] == null);
+    }, (error) => {
         throw `Operation failed to obtain access token: ${error}`;
     });
 
@@ -52,11 +52,11 @@ const assert = require('assert');
     let profileUrl = `https://localhost:8443/cas/oidc/profile?access_token=${accessToken}`;
     await cas.log(`Calling user profile ${profileUrl}`);
     await cas.doPost(profileUrl, "", {
-        'Accept': "application/jwt"
-    }, res => {
+        "Accept": "application/jwt"
+    }, (res) => {
         cas.log(res.data);
-        assert(res.data != null)
-    }, error => {
+        assert(res.data != null);
+    }, (error) => {
         throw `Operation failed: ${error}`;
     });
 

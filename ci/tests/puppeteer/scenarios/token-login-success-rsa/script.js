@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
-const assert = require('assert');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
+const assert = require("assert");
 
 async function loginWithToken(page, service, token) {
     await cas.log(`Logging in with SSO token to service ${service}`);
@@ -10,12 +10,12 @@ async function loginWithToken(page, service, token) {
     await cas.assertTicketParameter(page);
     await cas.gotoLogin(page);
     await cas.assertCookie(page);
-    await cas.assertInnerText(page, '#content div h2', "Log In Successful");
+    await cas.assertInnerText(page, "#content div h2", "Log In Successful");
     await cas.logg("Login is successful");
 }
 
 (async () => {
-    const service = `https://apereo.github.io`;
+    const service = "https://apereo.github.io";
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.gotoLogout(page);
@@ -23,8 +23,8 @@ async function loginWithToken(page, service, token) {
     await cas.log("Generating SSO token");
     const response = await cas.doRequest(`https://localhost:8443/cas/actuator/tokenAuth/casuser?service=${service}`,
         "POST", {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
+            "Content-Type": "application/json",
+            "Accept": "application/json"
         });
     let body = JSON.parse(response);
     console.dir(body, {depth: null, colors: true});

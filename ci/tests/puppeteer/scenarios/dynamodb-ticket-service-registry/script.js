@@ -1,5 +1,5 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -11,8 +11,8 @@ const cas = require('../../cas.js');
     await cas.doGet("https://localhost:8443/cas/actuator/health",
         () => {
 
-        }, error => {
+        }, (error) => {
             throw error;
-        }, { 'Content-Type': "application/json" });
+        }, { "Content-Type": "application/json" });
     await browser.close();
 })();

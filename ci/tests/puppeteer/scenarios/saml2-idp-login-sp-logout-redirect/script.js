@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
-const assert = require('assert');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
+const assert = require("assert");
 const path = require("path");
 const os = require("os");
 const fs = require("fs");
@@ -45,7 +45,7 @@ const fs = require("fs");
         await cas.assertVisibility(page, "#logoutRedirectButton");
         await cas.click(page, "#logoutRedirectButton");
     } finally {
-        await cas.removeDirectoryOrFile(path.join(__dirname, '/saml-md'));
+        await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
         await browser.close();
     }
 })();

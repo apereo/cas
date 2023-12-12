@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
-const assert = require('assert');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
+const assert = require("assert");
 
 async function fetchIdToken(page, maxAge, successHandler) {
     const redirectUrl = "https://github.com/apereo/cas";
@@ -33,8 +33,8 @@ async function fetchIdToken(page, maxAge, successHandler) {
 
     let accessToken = null;
     await cas.doPost(accessTokenUrl, "", {
-        'Content-Type': "application/json"
-    }, async res => {
+        "Content-Type": "application/json"
+    }, async (res) => {
         await cas.log(res.data);
         assert(res.data.access_token !== null);
 
@@ -44,7 +44,7 @@ async function fetchIdToken(page, maxAge, successHandler) {
         await cas.log("Decoding ID token...");
         let decoded = await cas.decodeJwt(res.data.id_token);
         successHandler(decoded);
-    }, error => {
+    }, (error) => {
         throw `Operation failed to obtain access token: ${error}`;
     });
 }
@@ -56,11 +56,11 @@ async function fetchIdToken(page, maxAge, successHandler) {
     let time1 = null;
     let time2 = null;
 
-    await fetchIdToken(page, -1, idToken => {
-        time1 = idToken.auth_time
+    await fetchIdToken(page, -1, (idToken) => {
+        time1 = idToken.auth_time;
     });
     await page.waitForTimeout(2000);
-    await fetchIdToken(page, 1, idToken => {
+    await fetchIdToken(page, 1, (idToken) => {
         time2 = idToken.auth_time;
     });
 

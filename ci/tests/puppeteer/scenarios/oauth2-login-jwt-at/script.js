@@ -27,12 +27,12 @@ async function executeFlow(browser, redirectUri, clientId, accessTokenSecret) {
     let accessToken = null;
     await cas.doPost(accessTokenUrl, "", {
         "Content-Type": "application/json"
-    }, res => {
+    }, (res) => {
         cas.log(res.data);
         assert(res.data.access_token !== null);
 
         accessToken = res.data.access_token;
-    }, error => {
+    }, (error) => {
         throw `Operation failed to obtain access token: ${error}`;
     });
 
@@ -54,12 +54,12 @@ async function executeFlow(browser, redirectUri, clientId, accessTokenSecret) {
     params.append("access_token", accessToken);
 
     await cas.doPost("https://localhost:8443/cas/oauth2.0/profile", params, {},
-        res => {
+        (res) => {
             let result = res.data;
             assert(result.id === "casuser");
             assert(result.client_id === clientId);
             assert(result.service === "https://apereo.github.io");
-        }, error => {
+        }, (error) => {
             throw error;
         });
 
@@ -79,10 +79,10 @@ async function executeFlow(browser, redirectUri, clientId, accessTokenSecret) {
     badParams.append("access_token", badAccessToken);
 
     await cas.doPost("https://localhost:8443/cas/oauth2.0/profile", badParams, {},
-        res => {
+        (res) => {
             console.log(res.data);
             throw "Operation must fail to get the profile with a bad access token";
-        }, error => {
+        }, (error) => {
             assert(error.response.status === 401);
             assert(error.response.data.error === "invalid_request");
         });

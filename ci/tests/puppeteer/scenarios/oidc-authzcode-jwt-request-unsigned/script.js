@@ -1,5 +1,5 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 const assert = require("assert");
 
 (async () => {
@@ -35,8 +35,8 @@ const assert = require("assert");
 
     let accessToken = null;
     await cas.doPost(accessTokenUrl, "", {
-        'Content-Type': "application/json"
-    }, async res => {
+        "Content-Type": "application/json"
+    }, async (res) => {
         await cas.log(res.data);
         assert(res.data.access_token !== null);
 
@@ -51,8 +51,8 @@ const assert = require("assert");
         assert(decoded.sid != null);
         assert(decoded.iss != null);
         assert(decoded.state != null);
-        assert(decoded.nonce != null)
-    }, error => {
+        assert(decoded.nonce != null);
+    }, (error) => {
         throw `Operation failed to obtain access token: ${error}`;
     });
 

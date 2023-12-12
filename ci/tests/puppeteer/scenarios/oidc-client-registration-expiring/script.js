@@ -1,19 +1,19 @@
-const cas = require('../../cas.js');
-const assert = require('assert');
+const cas = require("../../cas.js");
+const assert = require("assert");
 
 (async () => {
     let service = {
         "redirect_uris": ["https://apereo.github.io"],
         "client_name": "Apereo Blog",
         "contacts": ["cas@example.org"],
-        "grant_types": ["client_credentials"],
+        "grant_types": ["client_credentials"]
     };
     let body = JSON.stringify(service, undefined, 2);
     await cas.log(`Sending ${body}`);
     let result = await cas.doRequest("https://localhost:8443/cas/oidc/register", "POST",
         {
-            'Content-Length': body.length,
-            'Content-Type': 'application/json'
+            "Content-Length": body.length,
+            "Content-Type": "application/json"
         }, 201, body);
     assert(result !== null);
     let entity = JSON.parse(result.toString());
@@ -32,15 +32,15 @@ const assert = require('assert');
         "redirect_uris": ["https://apereo.github.io"],
         "client_name": "Apereo Blog Updated Now",
         "contacts": ["cas@example.org", "new@example.org"],
-        "grant_types": ["client_credentials"],
+        "grant_types": ["client_credentials"]
     };
     body = JSON.stringify(service, undefined, 2);
     await cas.log(`Sending ${body}`);
 
     result = await cas.doRequest(entity.registration_client_uri, "PATCH", {
         "Authorization": `Bearer ${entity.registration_access_token}`,
-        'Content-Length': body.length,
-        'Content-Type': 'application/json'
+        "Content-Length": body.length,
+        "Content-Type": "application/json"
     }, 200, body);
     let updatedEntity = JSON.parse(result.toString());
     await cas.log(updatedEntity);
@@ -57,9 +57,9 @@ async function executeRequest(clientId, clientSecret, expectFailure) {
     await cas.log(`Calling ${url}`);
 
     await cas.doPost(url, "", {
-        'Content-Type': "application/json",
-        'Authorization': `Basic ${btoa(`${clientId}:${clientSecret}`)}`
-    }, async res => await cas.log(res.data), error => {
+        "Content-Type": "application/json",
+        "Authorization": `Basic ${btoa(`${clientId}:${clientSecret}`)}`
+    }, async (res) => await cas.log(res.data), (error) => {
         if (expectFailure) {
             cas.logr(`Operation has correctly failed with status: ${error.response.status}`);
         } else {

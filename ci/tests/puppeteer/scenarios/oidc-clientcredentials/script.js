@@ -1,19 +1,19 @@
-const assert = require('assert');
-const cas = require('../../cas.js');
+const assert = require("assert");
+const cas = require("../../cas.js");
 
 async function sendRequest(url, clientid, clientsecret) {
     let headers;
     if (clientsecret !== "") {
         headers = {
-            'Content-Type': "application/json",
-            'Authorization': `Basic ${btoa(`${clientid}:${clientsecret}`)}`
+            "Content-Type": "application/json",
+            "Authorization": `Basic ${btoa(`${clientid}:${clientsecret}`)}`
         };
     } else {
         headers = {
-            'Content-Type': "application/json"
+            "Content-Type": "application/json"
         };
     }
-    await cas.doPost(url, "", headers, async res => {
+    await cas.doPost(url, "", headers, async (res) => {
         await cas.log(res.data);
         assert(res.data.access_token !== null);
 
@@ -33,9 +33,9 @@ async function sendRequest(url, clientid, clientsecret) {
         assert(res.data.id_token !== null);
         assert(res.data.refresh_token !== null);
         assert(res.data.token_type !== null);
-        assert(res.data.scope.includes('MyCustomScope'));
-        assert(res.data.scope.includes('profile'));
-        assert(res.data.scope.includes('openid'));
+        assert(res.data.scope.includes("MyCustomScope"));
+        assert(res.data.scope.includes("profile"));
+        assert(res.data.scope.includes("openid"));
 
         assert(idToken.sub === "casuser");
         assert(idToken["cn"] === undefined);
@@ -47,7 +47,7 @@ async function sendRequest(url, clientid, clientsecret) {
         assert(idToken["given-name"] === undefined);
         assert(idToken["given_name"] === "CAS");
         assert(idToken["organization"] === "ApereoFoundation");
-    }, error => {
+    }, (error) => {
         throw `Operation failed: ${error}`;
     });
 }

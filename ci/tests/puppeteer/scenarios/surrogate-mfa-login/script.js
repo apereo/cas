@@ -1,5 +1,5 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 
 async function getOneTimeCode(browser) {
     const page = await browser.newPage();
@@ -13,7 +13,7 @@ async function getOneTimeCode(browser) {
 async function impersonatePreSelected(page, browser) {
     await cas.gotoLogin(page);
     await cas.loginWith(page, "user3+casuser", "Mellon");
-    await cas.assertVisibility(page, '#token');
+    await cas.assertVisibility(page, "#token");
     await page.waitForTimeout(1000);
     let code = await getOneTimeCode(browser);
     await page.bringToFront();
@@ -30,14 +30,14 @@ async function impersonateWithMenu(page, browser) {
     await cas.gotoLogin(page);
     await cas.loginWith(page, "+casuser", "Mellon");
     await page.waitForTimeout(1000);
-    await cas.assertVisibility(page, '#token');
+    await cas.assertVisibility(page, "#token");
     let code = await getOneTimeCode(browser);
     await page.bringToFront();
     await cas.type(page, "#token", code);
     await cas.submitForm(page, "#fm1");
     await page.waitForTimeout(1000);
     await cas.assertTextContentStartsWith(page, "#surrogateInfo", "You are provided with a list of accounts");
-    await page.select('#surrogateTarget', 'user3');
+    await page.select("#surrogateTarget", "user3");
     await cas.click(page, "#submit");
     await page.waitForNavigation();
     await page.waitForTimeout(1000);

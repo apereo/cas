@@ -1,5 +1,5 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 const assert = require("assert");
 
 (async () => {
@@ -8,15 +8,15 @@ const assert = require("assert");
     await cas.gotoLogin(page, "https://example.com");
     await cas.loginWith(page);
     await page.waitForTimeout(1000);
-    await cas.assertVisibility(page, '#mfa-gauth');
-    await cas.assertVisibility(page, '#mfa-yubikey');
+    await cas.assertVisibility(page, "#mfa-gauth");
+    await cas.assertVisibility(page, "#mfa-yubikey");
     await cas.click(page, "#btn-mfa-gauth");
     await page.waitForTimeout(2000);
     await cas.screenshot(page);
     await cas.log("Fetching Scratch codes from /cas/actuator...");
     let scratch = await cas.fetchGoogleAuthenticatorScratchCode();
     await cas.log(`Using scratch code ${scratch} to login...`);
-    await cas.type(page,'#token', scratch);
+    await cas.type(page,"#token", scratch);
     await cas.pressEnter(page);
     await page.waitForNavigation();
     await cas.screenshot(page);
@@ -46,8 +46,8 @@ const assert = require("assert");
     await cas.loginWith(page);
     await page.waitForTimeout(1000);
     await cas.screenshot(page);
-    await cas.assertVisibility(page, '#mfa-gauth');
-    await cas.assertVisibility(page, '#mfa-yubikey');
+    await cas.assertVisibility(page, "#mfa-gauth");
+    await cas.assertVisibility(page, "#mfa-yubikey");
     
     await browser.close();
 })();

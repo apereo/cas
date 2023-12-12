@@ -1,5 +1,5 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 const assert = require("assert");
 
 async function gotoPage(page, instanceId, pageId) {
@@ -23,7 +23,7 @@ async function gotoPage(page, instanceId, pageId) {
     await page.waitForTimeout(3000);
     await cas.logPage(page);
     let url = await page.url();
-    const pathArray = url.split('/');
+    const pathArray = url.split("/");
     const instanceId = pathArray[pathArray.length - 2];
     await cas.log(`Instance ID ${instanceId}`);
 

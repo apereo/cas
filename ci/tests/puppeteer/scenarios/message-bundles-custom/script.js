@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
-const propertiesReader = require('properties-reader');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
+const propertiesReader = require("properties-reader");
 const path = require("path");
 
 async function updateProperty(properties, propertiesFile, value) {
@@ -14,8 +14,8 @@ async function updateProperty(properties, propertiesFile, value) {
 
 (async () => {
     let browser = await puppeteer.launch(cas.browserOptions());
-    let propertiesFile = path.join(__dirname, 'custom_messages.properties');
-    let properties = propertiesReader(propertiesFile, 'utf-8', {writer: { saveSections: false }});
+    let propertiesFile = path.join(__dirname, "custom_messages.properties");
+    let properties = propertiesReader(propertiesFile, "utf-8", {writer: { saveSections: false }});
     try {
         await cas.log(`Loading properties file ${propertiesFile}`);
         const page = await cas.newPage(browser);

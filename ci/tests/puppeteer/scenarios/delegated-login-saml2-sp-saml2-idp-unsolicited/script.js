@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
-const path = require('path');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
+const path = require("path");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -10,8 +10,8 @@ const path = require('path');
         await cas.gotoLogin(page);
         await page.waitForTimeout(1000);
 
-        await cas.doRequest('https://localhost:8443/cas/sp/metadata', "GET", {}, 200);
-        await cas.doRequest('https://localhost:8443/cas/sp/idp/metadata', "GET", {}, 200);
+        await cas.doRequest("https://localhost:8443/cas/sp/metadata", "GET", {}, 200);
+        await cas.doRequest("https://localhost:8443/cas/sp/idp/metadata", "GET", {}, 200);
 
         const spEntityId = "cas:apereo:pac4j:saml";
         await cas.goto(page, `http://localhost:9443/simplesaml/saml2/idp/SSOService.php?spentityid=${spEntityId}`);
@@ -30,7 +30,7 @@ const path = require('path');
         await cas.gotoLogin(page);
         await cas.assertCookie(page);
 
-        await cas.removeDirectoryOrFile(path.join(__dirname, '/saml-md'));
+        await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
     } finally {
         await browser.close();
     }

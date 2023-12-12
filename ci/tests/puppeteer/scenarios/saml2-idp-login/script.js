@@ -1,7 +1,7 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
-const path = require('path');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const assert = require("assert");
+const path = require("path");
+const cas = require("../../cas.js");
 
 async function normalAuthenticationFlow(context) {
     const page = await cas.newPage(context);
@@ -11,7 +11,7 @@ async function normalAuthenticationFlow(context) {
     await cas.screenshot(page);
     await cas.loginWith(page);
     await page.waitForTimeout(3000);
-    await page.waitForSelector('#table_with_attributes', {visible: true});
+    await page.waitForSelector("#table_with_attributes", {visible: true});
     await cas.assertInnerTextContains(page, "#content p", "status page of SimpleSAMLphp");
     await cas.assertVisibility(page, "#table_with_attributes");
 
@@ -28,11 +28,11 @@ async function normalAuthenticationFlow(context) {
         let url = baseUrl + endpoints[i];
         const response = await cas.goto(page, url);
         await cas.log(`${response.status()} ${response.statusText()}`);
-        assert(response.ok())
+        assert(response.ok());
     }
     const response = await cas.goto(page, "https://localhost:8443/cas/idp/error");
     assert(response.ok());
-    await cas.assertInnerText(page, '#content h2', "SAML2 Identity Provider Error");
+    await cas.assertInnerText(page, "#content h2", "SAML2 Identity Provider Error");
 
     await cas.gotoLogout(page);
 }
@@ -54,7 +54,7 @@ async function staleAuthenticationFlow(context) {
     await page2.waitForTimeout(2000);
     await cas.loginWith(page2);
     await page2.waitForTimeout(3000);
-    await page2.waitForSelector('#table_with_attributes', {visible: true});
+    await page2.waitForSelector("#table_with_attributes", {visible: true});
     await cas.assertInnerTextContains(page2, "#content p", "status page of SimpleSAMLphp");
     await cas.assertVisibility(page2, "#table_with_attributes");
     let authData = JSON.parse(await cas.innerHTML(page2, "details pre"));
@@ -70,17 +70,17 @@ async function staleAuthenticationFlow(context) {
         const context = await browser.createIncognitoBrowserContext();
         await cas.log(`Running test scenario ${i}`);
         switch (i) {
-            case 1:
-                await cas.log("Running test for normal authentication flow");
-                await normalAuthenticationFlow(context);
-                break;
-            case 2:
-                await cas.log("Running test for stale authentication flow");
-                await staleAuthenticationFlow(context);
-                break;
+        case 1:
+            await cas.log("Running test for normal authentication flow");
+            await normalAuthenticationFlow(context);
+            break;
+        case 2:
+            await cas.log("Running test for stale authentication flow");
+            await staleAuthenticationFlow(context);
+            break;
         }
         await context.close();
-        await cas.log(`=======================================`);
+        await cas.log("=======================================");
     }
 
 
@@ -93,12 +93,12 @@ async function staleAuthenticationFlow(context) {
         let url = `${baseUrl}metrics/org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver.${samlMetrics[i]}`;
         await cas.log(`Trying ${url}`);
         await cas.doRequest(url, "GET", {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
+            "Accept": "application/json",
+            "Content-Type": "application/json"
         }, 200);
     }
     
-    await cas.removeDirectoryOrFile(path.join(__dirname, '/saml-md'));
+    await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
     await browser.close();
 })();
 

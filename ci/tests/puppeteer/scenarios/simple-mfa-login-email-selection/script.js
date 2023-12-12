@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
+const puppeteer = require("puppeteer");
 const assert = require("assert");
-const cas = require('../../cas.js');
+const cas = require("../../cas.js");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -10,11 +10,11 @@ const cas = require('../../cas.js');
     await page.waitForTimeout(1000);
     await cas.screenshot(page);
 
-    await cas.assertVisibility(page, '#continueButton');
+    await cas.assertVisibility(page, "#continueButton");
     await cas.log("Checking all emails");
     await page.evaluate(() => {
         const emails = document.querySelectorAll("input[type=checkbox]");
-        emails.forEach(lnk => {
+        emails.forEach((lnk) => {
             const id = lnk.getAttribute("id");
             console.log(id);
             lnk.click();
@@ -23,7 +23,7 @@ const cas = require('../../cas.js');
     await cas.screenshot(page);
     await cas.submitForm(page, "#fm1");
 
-    await cas.assertVisibility(page, '#token');
+    await cas.assertVisibility(page, "#token");
 
     const page2 = await browser.newPage();
     await page2.goto("http://localhost:8282");
@@ -40,7 +40,7 @@ const cas = require('../../cas.js');
     await cas.type(page, "#token", code);
     await cas.submitForm(page, "#fm1");
     await page.waitForTimeout(1000);
-    await cas.assertInnerText(page, '#content div h2', "Log In Successful");
+    await cas.assertInnerText(page, "#content div h2", "Log In Successful");
     await page.waitForTimeout(1000);
     await cas.assertCookie(page);
     await browser.close();

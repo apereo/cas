@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
-const assert = require('assert');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
+const assert = require("assert");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -30,8 +30,8 @@ const assert = require('assert');
 
     let accessToken = null;
     await cas.doPost(accessTokenUrl, "", {
-        'Content-Type': "application/json"
-    }, async res => {
+        "Content-Type": "application/json"
+    }, async (res) => {
         assert(res.data.access_token !== null);
 
         accessToken = res.data.access_token;
@@ -41,8 +41,8 @@ const assert = require('assert');
         let decoded = await cas.decodeJwt(res.data.id_token);
 
         assert(decoded.sub !== null);
-        assert(decoded["preferred_username"] == null)
-    }, error => {
+        assert(decoded["preferred_username"] == null);
+    }, (error) => {
         throw `Operation failed to obtain access token: ${error}`;
     });
 
@@ -51,34 +51,34 @@ const assert = require('assert');
     let profileUrl = `https://localhost:8443/cas/oidc/profile?access_token=${accessToken}`;
     await cas.log(`Calling user profile ${profileUrl}`);
     await cas.doPost(profileUrl, "", {
-        'Content-Type': "application/json"
-    }, res => {
+        "Content-Type": "application/json"
+    }, (res) => {
         assert(res.data.email != null);
         assert(res.data.gender != null);
         assert(res.data.name != null);
-        assert(res.data["preferred_username"] != null)
-    }, error => {
+        assert(res.data["preferred_username"] != null);
+    }, (error) => {
         throw `Operation failed: ${error}`;
     });
 
     await cas.log(`Trying to re-use OAuth code ${accessTokenUrl}`);
     await cas.doPost(accessTokenUrl, "", {
-        'Content-Type': "application/json"
+        "Content-Type": "application/json"
     }, () => {
         throw `OAuth code ${code} cannot be used again`;
-    }, error => {
+    }, (error) => {
         cas.log(error.response.data);
-        assert(error.response.data.error === 'invalid_grant')
+        assert(error.response.data.error === "invalid_grant");
     });
 
     await cas.log(`Reusing OAuth code ${code} should have revoked access token ${accessToken}`);
     await cas.log(`Calling user profile again with revoked access token: ${profileUrl}`);
 
     await cas.doPost(profileUrl, "", {
-        'Content-Type': "application/json"
+        "Content-Type": "application/json"
     }, () => {
         throw `Access token ${accessToken} should have been removed and rejected with code reused`;
-    }, error => {
+    }, (error) => {
         assert(error.response.status === 401);
         cas.log(error.response.data);
         assert(error.response.data.error === "expired_accessToken");

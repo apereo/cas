@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
-const assert = require('assert');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
+const assert = require("assert");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -42,7 +42,7 @@ const assert = require('assert');
     assert(url.includes(service));
     await cas.assertTicketParameter(page);
 
-    await cas.goto(page, `https://localhost:8443/cas/login`);
+    await cas.goto(page, "https://localhost:8443/cas/login");
     await cas.assertCookie(page);
     await cas.click(page, "#auth-tab");
     await page.waitForTimeout(1000);

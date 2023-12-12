@@ -1,9 +1,9 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
-const assert = require('assert');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
+const assert = require("assert");
 
 (async () => {
-    const service = `https://localhost:9859/anything/sample1`;
+    const service = "https://localhost:9859/anything/sample1";
     let token = "eyJjdHkiOiJKV1QiLCJlbmMiOiJBMTkyQ0JDLUhTMzg0IiwiYWxnIjoiZGlyIn0..zTe4qLwuyvVi6gHmSL4VcQ.NAmUxtxfEc-xJ0BO1DIUtxRN05-XTiB4bFVqN4YFvBPtVUrppTR5oXVKszWYQD_jWuhHnUBCVcvOBri9n-q6rKXQBkMnW9TLXQ4d9waJUOKpxORvgX3T56qoVfYTbUkVxe-5VchX000JWy8GdhpyWawldG0au03GhU7jhVnQeMlb7WWaNFOGXQwx6wvF0B30UL-6wgZO1nWD7InaQXJiFZazE0HK0DX61DUbP6PFYJKOBkbSWg9vSSzCeTxVFx9uJXMSAg9_vacpAYmq02ixV8e73CU9_hHhiCqEOYGunzwO4mEm6mn3fhPz6Q5azzPhZTc-lROKc66bmo_Y7jtMRmwgwBTq4diY9bIhw0x_qMsLLEdk1qk-dH9_FhBcunW2PkM8rCyGyDQ2slL-Axs_zg.HgP2g-UNsljcDhO74OMFWKxkYiSo4mbK";
 
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -21,13 +21,11 @@ const assert = require('assert');
     }
     let code = await cas.assertParameter(page, "code");
     await cas.log(`Current code is ${code}`);
-    const accessTokenUrl = `https://localhost:8443/cas/oidc/token?grant_type=authorization_code`
+    const accessTokenUrl = "https://localhost:8443/cas/oidc/token?grant_type=authorization_code"
         + `&client_id=client1&client_secret=secret1&redirect_uri=${service}&code=${code}`;
     let payload = await cas.doPost(accessTokenUrl, "", {
-        'Content-Type': "application/json"
-    }, res => {
-        return res.data;
-    }, error => {
+        "Content-Type": "application/json"
+    }, (res) => res.data, (error) => {
         throw `Operation failed to obtain access token: ${error}`;
     });
     assert(payload.access_token != null);
@@ -41,20 +39,20 @@ const assert = require('assert');
     await cas.log(`Calling user profile ${profileUrl}`);
 
     let ssoToken = await cas.doPost(profileUrl, "", {
-        'Content-Type': "application/json"
-    }, res => {
+        "Content-Type": "application/json"
+    }, (res) => {
         assert(res.data.sub === "casuser");
         assert(res.data.attributes["email"] === "cas@example.org");
         assert(res.data.attributes["given_name"] === "CAS");
         return res.data.attributes["token"];
-    }, error => {
+    }, (error) => {
         throw `Operation failed: ${error}`;
     });
 
     const response = await cas.doRequest(`https://localhost:8443/cas/actuator/tokenAuth/${ssoToken}?service=1`,
         "GET", {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
+            "Content-Type": "application/json",
+            "Accept": "application/json"
         });
     let body = JSON.parse(response);
     console.dir(body, {depth: null, colors: true});

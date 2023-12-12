@@ -1,8 +1,8 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
-const YAML = require('yaml');
-const fs = require('fs');
-const path = require('path');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
+const YAML = require("yaml");
+const fs = require("fs");
+const path = require("path");
 
 (async () => {
 
@@ -15,8 +15,8 @@ const path = require('path');
     await cas.assertCookie(page);
     await cas.gotoLogout(page);
 
-    let configFilePath = path.join(__dirname, 'config.yml');
-    const file = fs.readFileSync(configFilePath, 'utf8');
+    let configFilePath = path.join(__dirname, "config.yml");
+    const file = fs.readFileSync(configFilePath, "utf8");
     const configFile = YAML.parse(file);
     const users = configFile.cas.authn.accept.users;
     await cas.log(`Current users: ${users}`);

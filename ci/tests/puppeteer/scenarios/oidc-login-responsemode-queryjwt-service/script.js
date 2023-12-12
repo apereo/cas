@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
-const assert = require('assert');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
+const assert = require("assert");
 const fs = require("fs");
 const path = require("path");
 
@@ -18,11 +18,11 @@ const path = require("path");
     await cas.log(`Page url: ${await page.url()}\n`);
     let response = await cas.assertParameter(page, "response");
 
-    let configFilePath = path.join(__dirname, 'services/Sample-1.jwks');
+    let configFilePath = path.join(__dirname, "services/Sample-1.jwks");
     await cas.log(`Reading keystore from ${configFilePath}`);
-    const keyContent = JSON.parse(fs.readFileSync(configFilePath, 'utf8'));
+    const keyContent = JSON.parse(fs.readFileSync(configFilePath, "utf8"));
 
-    cas.decryptJwtWithJwk(response, keyContent.keys[1], "RS256").then(verified => {
+    cas.decryptJwtWithJwk(response, keyContent.keys[1], "RS256").then((verified) => {
         assert(verified.payload.aud === "client");
         assert(verified.payload.iss === "https://localhost:8443/cas/oidc");
         assert(verified.payload.state === "1001");

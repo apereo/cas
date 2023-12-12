@@ -1,10 +1,10 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
-const path = require('path');
-const assert = require('assert');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
+const path = require("path");
+const assert = require("assert");
 
 (async () => {
-    let ssoSessionsUrl = `https://localhost:8443/cas/actuator/ssoSessions`;
+    let ssoSessionsUrl = "https://localhost:8443/cas/actuator/ssoSessions";
     await cas.logg("Removing all SSO Sessions");
     await cas.doRequest(`${ssoSessionsUrl}`, "DELETE", {});
 
@@ -21,8 +21,8 @@ const assert = require('assert');
     await page.waitForTimeout(2000);
     await cas.screenshot(page);
 
-    await cas.assertVisibility(page, '#loginProviders');
-    await cas.assertVisibility(page, 'li #SAML2Client');
+    await cas.assertVisibility(page, "#loginProviders");
+    await cas.assertVisibility(page, "li #SAML2Client");
 
     await cas.log("Choosing SAML2 identity provider for login...");
     await cas.click(page, "li #SAML2Client");
@@ -43,7 +43,7 @@ const assert = require('assert');
     await cas.screenshot(page);
     await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
-    await cas.assertInnerText(page, '#content div h2', "Log In Successful");
+    await cas.assertInnerText(page, "#content div h2", "Log In Successful");
 
     await cas.log(`Navigating to ${ssoSessionsUrl}`);
     await page.goto(ssoSessionsUrl);
@@ -66,11 +66,11 @@ const assert = require('assert');
     await page.waitForTimeout(3000);
     let logoutUrl = `https://localhost:8443/cas/login?client_name=SAML2Client&SAMLRequest=${logoutRequest}&RelayState=_e0d9e4dddf88cc6a4979d677aefdca4881954e8102`;
     await cas.doPost(logoutUrl, {}, {
-        'Content-Type': "text/xml"
-    }, res => {
+        "Content-Type": "text/xml"
+    }, (res) => {
         cas.log(res.status);
         assert(res.status === 200);
-    }, err => {
+    }, (err) => {
         throw err;
     });
     
@@ -96,7 +96,7 @@ const assert = require('assert');
 
     assert(url.startsWith("https://localhost:8443/cas/login"));
     await cas.assertCookie(page, false);
-    await cas.removeDirectoryOrFile(path.join(__dirname, '/saml-md'));
+    await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
     
     await browser.close();
 })();

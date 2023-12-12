@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const assert = require("assert");
+const cas = require("../../cas.js");
 
 async function ensureNoSsoSessionsExistAfterLogout(page, port) {
     const url = `https://localhost:${port}/cas/actuator/ssoSessions?type=ALL`;
@@ -32,15 +32,15 @@ async function testBasicLoginLogout(browser) {
 }
 
 async function logoutEverywhere(page) {
-    await cas.goto(page, `https://localhost:8443/cas/logout`);
-    await cas.goto(page, `https://localhost:8444/cas/logout`);
+    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.goto(page, "https://localhost:8444/cas/logout");
 }
 
 async function checkTicketValidationAcrossNodes(browser) {
     const page = await cas.newPage(browser);
     await logoutEverywhere(page);
 
-    const service = `https://localhost:9859/anything/100`;
+    const service = "https://localhost:9859/anything/100";
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
     await page.waitForTimeout(1000);
     await cas.loginWith(page);
@@ -86,9 +86,9 @@ async function checkSessionsAreSynced(browser) {
     const page = await cas.newPage(browser);
     await logoutEverywhere(page);
 
-    const s1 = `https://localhost:9859/anything/1`;
-    const s2 = `https://apereo.github.io`;
-    const s3 = `https://example.org`;
+    const s1 = "https://localhost:9859/anything/1";
+    const s2 = "https://apereo.github.io";
+    const s3 = "https://example.org";
 
     await cas.log("Getting first ticket");
     await cas.goto(page, `https://localhost:8443/cas/login?service=${s1}`);

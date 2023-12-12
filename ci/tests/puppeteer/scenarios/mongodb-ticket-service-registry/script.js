@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const assert = require("assert");
+const cas = require("../../cas.js");
 
 (async () => {
     const baseUrl = "https://localhost:8443/cas/actuator";
@@ -16,7 +16,7 @@ const cas = require('../../cas.js');
     await browser.close();
     
     await cas.doGet("https://localhost:8443/cas/actuator/health",
-        async res => {
+        async (res) => {
             assert(res.data.components.mongo !== null);
             assert(res.data.components.memory !== null);
             assert(res.data.components.ping !== null);
@@ -36,20 +36,20 @@ const cas = require('../../cas.js');
             details = res.data.components.mongo.details["MongoDbHealthIndicator-service-registry"];
             assert(details.name === "MongoDbHealthIndicator-service-registry");
 
-        }, async error => {
+        }, async (error) => {
             throw error;
-        }, { 'Content-Type': "application/json" });
+        }, { "Content-Type": "application/json" });
 
 
     await cas.logg("Querying registry for all ticket-granting tickets");
-    await cas.doGet(`${baseUrl}/ticketRegistry/query?prefix=TGT&count=10`, async res => {
+    await cas.doGet(`${baseUrl}/ticketRegistry/query?prefix=TGT&count=10`, async (res) => {
         assert(res.status === 200);
         assert(res.data.length === 1);
-    }, async err => {
+    }, async (err) => {
         throw err;
     }, {
-        'Accept': 'application/json',
-        'Content-Type': "application/x-www-form-urlencoded"
+        "Accept": "application/json",
+        "Content-Type": "application/x-www-form-urlencoded"
     });
 
     // await cas.logg("Querying registry for all decoded ticket-granting tickets");

@@ -1,8 +1,8 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
-const cas = require('../../cas.js');
-const fs = require('fs');
-const request = require('request');
+const puppeteer = require("puppeteer");
+const assert = require("assert");
+const cas = require("../../cas.js");
+const fs = require("fs");
+const request = require("request");
 
 (async () => {
     let browser = await puppeteer.launch(cas.browserOptions());
@@ -10,8 +10,8 @@ const request = require('request');
     await cas.gotoLogin(page);
     await cas.loginWith(page, "aburr", "P@ssw0rd");
     await cas.assertCookie(page);
-    await cas.assertInnerText(page, '#content div h2', "Log In Successful");
-    const attributesldap = await cas.innerText(page, '#attribute-tab-0 table#attributesTable tbody');
+    await cas.assertInnerText(page, "#content div h2", "Log In Successful");
+    const attributesldap = await cas.innerText(page, "#attribute-tab-0 table#attributesTable tbody");
     assert(attributesldap.includes("aburr"));
     assert(attributesldap.includes("someattribute"));
     assert(attributesldap.includes("ldap-dn"));
@@ -31,7 +31,7 @@ const request = require('request');
     const cert = fs.readFileSync(config.trustStoreCertificateFile);
     const key = fs.readFileSync(config.trustStorePrivateKeyFile);
 
-    page.on('request', interceptedRequest => {
+    page.on("request", (interceptedRequest) => {
         const options = {
             uri: interceptedRequest.url(),
             method: interceptedRequest.method(),
@@ -44,12 +44,12 @@ const request = require('request');
         request(options, (err, resp, body) => {
             if (err) {
                 cas.logr(`Unable to call ${options.uri}`, err);
-                return interceptedRequest.abort('connectionrefused');
+                return interceptedRequest.abort("connectionrefused");
             }
 
             interceptedRequest.respond({
                 status: resp.statusCode,
-                contentType: resp.headers['content-type'],
+                contentType: resp.headers["content-type"],
                 headers: resp.headers,
                 body: body
             });
@@ -60,7 +60,7 @@ const request = require('request');
     await cas.gotoLogin(page);
     await page.waitForTimeout(5000);
 
-    await cas.assertInnerText(page, '#content div h2', "Log In Successful");
+    await cas.assertInnerText(page, "#content div h2", "Log In Successful");
     await cas.assertInnerTextContains(page, "#content div p", "1234567890@college.edu");
 
     await cas.assertInnerTextContains(page, "#attribute-tab-0 table#attributesTable tbody", "casuserx509");

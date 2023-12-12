@@ -1,18 +1,18 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 const assert = require("assert");
-const archiver = require('archiver');
-const fs = require('fs');
+const archiver = require("archiver");
+const fs = require("fs");
 
 async function getAllEvents() {
-    return JSON.parse(await cas.doRequest("https://localhost:8443/cas/actuator/events", "GET", {'Content-Type': "application/json"}, 200));
+    return JSON.parse(await cas.doRequest("https://localhost:8443/cas/actuator/events", "GET", {"Content-Type": "application/json"}, 200));
 }
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     let page = await cas.newPage(browser);
     const context = browser.defaultBrowserContext();
-    await context.overridePermissions("https://localhost:8443/cas/login", ['geolocation']);
+    await context.overridePermissions("https://localhost:8443/cas/login", ["geolocation"]);
     await page.setGeolocation({latitude: 90, longitude: 20});
 
     await cas.log("Deleting all startup events...");
@@ -39,11 +39,11 @@ async function getAllEvents() {
 
     fs.rmSync(`${__dirname}/events.zip`, {force: true});
     const zip = fs.createWriteStream(`${__dirname}/events.zip`);
-    const archive = archiver('zip', {
+    const archive = archiver("zip", {
         zlib: { level: 9 }
     });
     archive.pipe(zip);
-    body[1].forEach(entry => archive.append(JSON.stringify(entry), { name: `event-${entry.id}.json`}));
+    body[1].forEach((entry) => archive.append(JSON.stringify(entry), { name: `event-${entry.id}.json`}));
     await archive.finalize();
     
     await cas.log("Deleting all events...");
@@ -56,8 +56,8 @@ async function getAllEvents() {
     const zipFileContent = fs.readFileSync(`${__dirname}/events.zip`);
     await cas.doRequest("https://localhost:8443/cas/actuator/events", "POST",
         {
-            'Content-Length': zipFileContent.length,
-            'Content-Type': 'application/octet-stream'
+            "Content-Length": zipFileContent.length,
+            "Content-Type": "application/octet-stream"
         }, 200,
         zipFileContent);
 

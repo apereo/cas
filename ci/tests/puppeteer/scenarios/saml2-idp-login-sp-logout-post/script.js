@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
-const assert = require('assert');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
+const assert = require("assert");
 const path = require("path");
 const fs = require("fs");
 const os = require("os");
@@ -24,8 +24,8 @@ async function getActuatorEndpoint(entityId) {
 
         const endpoint = await getActuatorEndpoint("http://localhost:9443/simplesaml/module.php/saml/sp/metadata.php/default-sp");
         let sloPage = await cas.doPost(endpoint, {}, {
-            'Content-Type': 'application/json'
-        }, res => res.data, error => {
+            "Content-Type": "application/json"
+        }, (res) => res.data, (error) => {
             throw (error);
         });
         const tempDir = os.tmpdir();
@@ -40,7 +40,7 @@ async function getActuatorEndpoint(entityId) {
         await page.waitForTimeout(1000);
         assert(url === "http://localhost:9443/simplesaml/module.php/saml/sp/saml2-logout.php/default-sp");
     } finally {
-        await cas.removeDirectoryOrFile(path.join(__dirname, '/saml-md'));
+        await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
         await browser.close();
     }
 })();

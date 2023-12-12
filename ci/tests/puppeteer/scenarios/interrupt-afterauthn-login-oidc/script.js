@@ -1,5 +1,5 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 const assert = require("assert");
 
 (async () => {
@@ -16,7 +16,7 @@ const assert = require("assert");
 
     if (await cas.isVisible(page, "#username")) {
         await cas.loginWith(page);
-        await page.waitForTimeout(1000)
+        await page.waitForTimeout(1000);
     }
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
@@ -41,12 +41,12 @@ const assert = require("assert");
     await cas.assertTextContentStartsWith(page, "#content p", "The authentication flow has been interrupted");
     await cas.assertCookie(page, false);
     await cas.assertTextContentStartsWith(page, "#interruptMessage", "We interrupted your login");
-    await cas.assertVisibility(page, '#interruptLinks');
-    await cas.assertVisibility(page, '#attributesTable');
-    await cas.assertVisibility(page, '#field1');
-    await cas.assertVisibility(page, '#field1-value');
-    await cas.assertVisibility(page, '#field2');
-    await cas.assertVisibility(page, '#field2-value');
+    await cas.assertVisibility(page, "#interruptLinks");
+    await cas.assertVisibility(page, "#attributesTable");
+    await cas.assertVisibility(page, "#field1");
+    await cas.assertVisibility(page, "#field1-value");
+    await cas.assertVisibility(page, "#field2");
+    await cas.assertVisibility(page, "#field2-value");
     await cas.submitForm(page, "#fm1");
     await page.waitForTimeout(3000);
     await cas.screenshot(page);
@@ -54,13 +54,11 @@ const assert = require("assert");
     code = await cas.assertParameter(page, "code");
     await cas.log(`Current code is ${code}`);
 
-    const accessTokenUrl = `https://localhost:8443/cas/oidc/token?grant_type=authorization_code`
+    const accessTokenUrl = "https://localhost:8443/cas/oidc/token?grant_type=authorization_code"
         + `&client_id=client&client_secret=secret&redirect_uri=${redirectUri}&code=${code}`;
     let accessToken = await cas.doPost(accessTokenUrl, "", {
-        'Content-Type': "application/json"
-    }, res => {
-        return res.data;
-    }, error => {
+        "Content-Type": "application/json"
+    }, (res) => res.data, (error) => {
         throw `Operation failed to obtain access token: ${error}`;
     });
     let decoded = await cas.decodeJwt(accessToken.id_token);

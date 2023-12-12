@@ -1,5 +1,5 @@
-const assert = require('assert');
-const cas = require('../../cas.js');
+const assert = require("assert");
+const cas = require("../../cas.js");
 
 
 (async () => {
@@ -22,12 +22,12 @@ const cas = require('../../cas.js');
 
     let url = `https://localhost:8443/cas/oidc/token?${params}`;
     await cas.doPost(url, "", {
-        'Content-Type': "application/json"
-    }, res => {
+        "Content-Type": "application/json"
+    }, (res) => {
         assert(res.data.access_token !== null);
         assert(res.data.refresh_token !== null);
         assert(res.data.id_token !== null);
-    }, error => {
+    }, (error) => {
         throw `Operation failed: ${error}`;
     });
 

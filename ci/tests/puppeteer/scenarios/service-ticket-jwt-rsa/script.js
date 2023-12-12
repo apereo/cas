@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
-const assert = require('assert');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
+const assert = require("assert");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -12,7 +12,7 @@ const assert = require('assert');
     let ticket = await cas.assertTicketParameter(page);
 
     await cas.doGet(`https://localhost:8443/cas/actuator/jwtTicketSigningPublicKey?service=${service}`,
-        res => {
+        (res) => {
             let publickey = res.data;
 
             // const keyPath = path.join(__dirname, 'public.key');
@@ -21,7 +21,7 @@ const assert = require('assert');
             cas.verifyJwt(ticket, publickey, {
                 algorithms: ["RS512"],
                 complete: true
-            }).then(decoded => {
+            }).then((decoded) => {
                 let payload = decoded.payload;
                 
                 assert(payload.successfulAuthenticationHandlers === "Static Credentials");
@@ -35,10 +35,10 @@ const assert = require('assert');
                 assert(payload.gender === "female");
                 assert(payload.jti.startsWith("ST-"));
             });
-        }, error => {
+        }, (error) => {
             throw `Introspection operation failed: ${error}`;
         }, {
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json"
         });
     
     await browser.close();

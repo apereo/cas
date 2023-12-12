@@ -1,5 +1,5 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 const fs = require("fs");
 const assert = require("assert");
 const request = require("request");
@@ -22,7 +22,7 @@ const request = require("request");
     const cert = fs.readFileSync(config.trustStoreCertificateFile);
     const key = fs.readFileSync(config.trustStorePrivateKeyFile);
 
-    page.on('request', interceptedRequest => {
+    page.on("request", (interceptedRequest) => {
         const options = {
             uri: interceptedRequest.url(),
             method: interceptedRequest.method(),
@@ -35,12 +35,12 @@ const request = require("request");
         request(options, (err, resp, body) => {
             if (err) {
                 cas.logr(`Unable to call ${options.uri}`, err);
-                return interceptedRequest.abort('connectionrefused');
+                return interceptedRequest.abort("connectionrefused");
             }
 
             interceptedRequest.respond({
                 status: resp.statusCode,
-                contentType: resp.headers['content-type'],
+                contentType: resp.headers["content-type"],
                 headers: resp.headers,
                 body: body
             });
@@ -50,7 +50,7 @@ const request = require("request");
     
     await cas.click(page, "#x509LoginLink");
     await page.waitForTimeout(5000);
-    await cas.assertInnerText(page, '#content div h2', "Log In Successful");
+    await cas.assertInnerText(page, "#content div h2", "Log In Successful");
     await cas.assertInnerTextContains(page, "#content div p", "CN=mmoayyed, OU=dev, O=bft, L=mt, C=world");
     await browser.close();
 })();

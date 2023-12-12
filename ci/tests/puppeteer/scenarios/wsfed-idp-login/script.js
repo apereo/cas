@@ -1,5 +1,5 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 
 (async () => {
     let failed = false;
@@ -11,13 +11,13 @@ const cas = require('../../cas.js');
         await cas.goto(page, "https://localhost:9876/fediz");
         await page.waitForTimeout(2000);
         await cas.screenshot(page);
-        await page.waitForSelector('#logincas', {visible: true});
+        await page.waitForSelector("#logincas", {visible: true});
         await cas.click(page, "#logincas");
         await page.waitForTimeout(2000);
         await cas.screenshot(page);
-        await page.waitForSelector('#username', {visible: true});
+        await page.waitForSelector("#username", {visible: true});
         await cas.loginWith(page);
-        await page.waitForResponse(response => response.status() === 200);
+        await page.waitForResponse((response) => response.status() === 200);
         await page.waitForTimeout(2000);
         await cas.screenshot(page);
         await cas.logPage(page);
@@ -35,7 +35,7 @@ const cas = require('../../cas.js');
         await cas.assertCookie(page);
         await cas.goto(page, "https://localhost:9876/fediz");
         await page.waitForTimeout(2000);
-        await page.waitForSelector('#logincas', {visible: true});
+        await page.waitForSelector("#logincas", {visible: true});
         await cas.click(page, "#logincas");
         await page.waitForTimeout(2000);
         await cas.logPage(page);

@@ -1,5 +1,5 @@
-const assert = require('assert');
-const cas = require('../../cas.js');
+const assert = require("assert");
+const cas = require("../../cas.js");
 
 (async () => {
 
@@ -10,9 +10,9 @@ const cas = require('../../cas.js');
     await cas.log(`Calling ${url}`);
 
     await cas.doPost(url, "", {
-        'Content-Type': "application/json",
-        'Authorization': `Basic ${btoa('client' + ':' + 'secret')}`
-    }, async res => {
+        "Content-Type": "application/json",
+        "Authorization": `Basic ${btoa("client" + ":" + "secret")}`
+    }, async (res) => {
 
         await cas.log(res.data);
         assert(res.data.access_token !== null);
@@ -28,8 +28,8 @@ const cas = require('../../cas.js');
         assert(decoded.cn !== null);
         assert(decoded.name !== null);
         assert(decoded["preferred_username"] !== null);
-        assert(decoded["given-name"] !== null)
-    }, error => {
+        assert(decoded["given-name"] !== null);
+    }, (error) => {
         throw `Operation failed: ${error}`;
     });
 })();

@@ -1,7 +1,7 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
-const path = require('path');
-const assert = require('assert');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
+const path = require("path");
+const assert = require("assert");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -17,8 +17,8 @@ const assert = require('assert');
     await page.waitForTimeout(2000);
     await cas.screenshot(page);
 
-    await cas.assertVisibility(page, '#loginProviders');
-    await cas.assertVisibility(page, 'li #SAML2Client');
+    await cas.assertVisibility(page, "#loginProviders");
+    await cas.assertVisibility(page, "li #SAML2Client");
 
     await cas.log("Choosing SAML2 identity provider for login...");
     await cas.click(page, "li #SAML2Client");
@@ -39,7 +39,7 @@ const assert = require('assert');
     await cas.screenshot(page);
     await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
-    await cas.assertInnerText(page, '#content div h2', "Log In Successful");
+    await cas.assertInnerText(page, "#content div h2", "Log In Successful");
     await cas.assertCookie(page, true, "Pac4jCookie");
     await page.waitForTimeout(3000);
 
@@ -67,12 +67,12 @@ const assert = require('assert');
     await cas.logPage(page);
     await cas.screenshot(page);
     assert(url.startsWith("http://localhost:9443/simplesaml"));
-    await cas.assertVisibility(page, '#username');
-    await cas.assertVisibility(page, '#password');
+    await cas.assertVisibility(page, "#username");
+    await cas.assertVisibility(page, "#password");
     const title = await page.title();
     await cas.log(title);
     assert(title === "Enter your username and password");
-    await cas.removeDirectoryOrFile(path.join(__dirname, '/saml-md'));
+    await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
     await browser.close();
 })();
 

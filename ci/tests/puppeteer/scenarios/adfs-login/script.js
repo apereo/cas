@@ -1,12 +1,12 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const assert = require("assert");
+const cas = require("../../cas.js");
 
 (async () => {
     let body = {"configuredLevel": "WARN"};
-    await ["org.apereo.cas", "org.apereo.cas.web", "org.apereo.cas.web.flow"].forEach(p =>
+    await ["org.apereo.cas", "org.apereo.cas.web", "org.apereo.cas.web.flow"].forEach((p) =>
         cas.doRequest(`https://localhost:8443/cas/actuator/loggers/${p}`, "POST",
-            {'Content-Type': 'application/json'}, 204, JSON.stringify(body, undefined, 2)));
+            {"Content-Type": "application/json"}, 204, JSON.stringify(body, undefined, 2)));
     const service = "https://apereo.github.io";
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);

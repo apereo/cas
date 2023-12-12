@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const assert = require("assert");
+const cas = require("../../cas.js");
 
 async function validateTicket(service, ticket, format = "JSON") {
     const body = await cas.doRequest(`https://localhost:8443/cas/p3/proxyValidate?service=${service}&ticket=${ticket}&format=${format}&pgtUrl=https://github.com/apereo/cas`);
@@ -27,10 +27,10 @@ async function validateTicket(service, ticket, format = "JSON") {
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
     ticket = await cas.assertTicketParameter(page);
     body = await validateTicket(service, ticket, "XML");
-    assert(body.includes('<cas:proxyGrantingTicket>'));
-    assert(body.includes('<cas:userAgent>'));
-    assert(body.includes('<cas:authenticationMethod>STATIC</cas:authenticationMethod>'));
-    assert(body.includes('<cas:credentialType>UsernamePasswordCredential</cas:credentialType>'));
-    assert(body.includes('<cas:user>casuser</cas:user>'));
+    assert(body.includes("<cas:proxyGrantingTicket>"));
+    assert(body.includes("<cas:userAgent>"));
+    assert(body.includes("<cas:authenticationMethod>STATIC</cas:authenticationMethod>"));
+    assert(body.includes("<cas:credentialType>UsernamePasswordCredential</cas:credentialType>"));
+    assert(body.includes("<cas:user>casuser</cas:user>"));
     await browser.close();
 })();

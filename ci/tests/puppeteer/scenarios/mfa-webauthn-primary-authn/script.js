@@ -1,5 +1,5 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -7,7 +7,7 @@ const cas = require('../../cas.js');
     await cas.gotoLogin(page);
 
     await page.waitForTimeout(1000);
-    await cas.assertVisibility(page, '#webauthnLoginPanel div h2#status');
+    await cas.assertVisibility(page, "#webauthnLoginPanel div h2#status");
     await cas.assertTextContent(page, "#webauthnLoginPanel div h2#status","Login with FIDO2-enabled Device");
     await browser.close();
 })();

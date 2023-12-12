@@ -1,8 +1,8 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
-const cas = require('../../cas.js');
-const fs = require('fs');
-const request = require('request');
+const puppeteer = require("puppeteer");
+const assert = require("assert");
+const cas = require("../../cas.js");
+const fs = require("fs");
+const request = require("request");
 
 (async () => {
 
@@ -19,7 +19,7 @@ const request = require('request');
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     await page.setRequestInterception(true);
-    page.on('request', interceptedRequest => {
+    page.on("request", (interceptedRequest) => {
         if (interceptedRequest.isInterceptResolutionHandled()) {
             return;
         }
@@ -44,13 +44,13 @@ const request = require('request');
         request(options, (err, resp, body) => {
             if (err) {
                 cas.logr(`Unable to call ${options.uri}`, err);
-                return interceptedRequest.abort('connectionrefused');
+                return interceptedRequest.abort("connectionrefused");
             }
 
             cas.logb(`Responding with X.509 client certificate ${url}`);
             interceptedRequest.respond({
                 status: resp.statusCode,
-                contentType: resp.headers['content-type'],
+                contentType: resp.headers["content-type"],
                 headers: resp.headers,
                 body: body
             });
@@ -72,13 +72,11 @@ const request = require('request');
     await cas.assertPageUrlStartsWith(page, "https://localhost:9859/anything/oidc");
     let code = await cas.assertParameter(page, "code");
     await cas.log(`Current code is ${code}`);
-    const accessTokenUrl = `https://localhost:8443/cas/oidc/token?grant_type=authorization_code`
+    const accessTokenUrl = "https://localhost:8443/cas/oidc/token?grant_type=authorization_code"
         + `&client_id=client&client_secret=secret&redirect_uri=${redirectUri}&code=${code}`;
     let payload = await cas.doPost(accessTokenUrl, "", {
-        'Content-Type': "application/json"
-    }, res => {
-        return res.data;
-    }, error => {
+        "Content-Type": "application/json"
+    }, (res) => res.data, (error) => {
         throw `Operation failed to obtain access token: ${error}`;
     });
     assert(payload.access_token != null);

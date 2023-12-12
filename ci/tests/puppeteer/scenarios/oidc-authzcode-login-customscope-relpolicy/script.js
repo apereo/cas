@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
-const assert = require('assert');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
+const assert = require("assert");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -20,13 +20,11 @@ const assert = require('assert');
 
     let code = await cas.assertParameter(page, "code");
     await cas.log(`Current code is ${code}`);
-    const accessTokenUrl = `https://localhost:8443/cas/oidc/token?grant_type=authorization_code`
+    const accessTokenUrl = "https://localhost:8443/cas/oidc/token?grant_type=authorization_code"
         + `&client_id=client&client_secret=secret&redirect_uri=https://apereo.github.io&code=${code}`;
     let payload = await cas.doPost(accessTokenUrl, "", {
-        'Content-Type': "application/json"
-    }, res => {
-        return res.data;
-    }, error => {
+        "Content-Type": "application/json"
+    }, (res) => res.data, (error) => {
         throw `Operation failed to obtain access token: ${error}`;
     });
     assert(payload.access_token != null);
@@ -40,12 +38,12 @@ const assert = require('assert');
     assert(decoded["preferred_username"] !== null);
     assert(decoded["name"] !== null);
 
-    assert(decoded["entitlements"].includes('ent-A'));
-    assert(decoded["entitlements"].includes('ent-B'));
+    assert(decoded["entitlements"].includes("ent-A"));
+    assert(decoded["entitlements"].includes("ent-B"));
 
-    assert(decoded["aud"].includes('cas'));
+    assert(decoded["aud"].includes("cas"));
     assert(decoded["aud"].includes(decoded.client_id));
-    assert(decoded["aud"].includes('apereo'));
+    assert(decoded["aud"].includes("apereo"));
 
     await browser.close();
 })();

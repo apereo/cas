@@ -1,9 +1,9 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
-const fs = require('fs');
-const os = require('os');
-const assert = require('assert');
-const path = require('path');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
+const fs = require("fs");
+const os = require("os");
+const assert = require("assert");
+const path = require("path");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());

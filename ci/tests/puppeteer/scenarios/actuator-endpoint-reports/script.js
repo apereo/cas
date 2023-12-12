@@ -1,8 +1,8 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions({args: ['--incognito']}));
+    const browser = await puppeteer.launch(cas.browserOptions({args: ["--incognito"]}));
     const page = await cas.newPage(browser);
 
     await cas.gotoLogin(page);
@@ -49,9 +49,9 @@ const cas = require('../../cas.js');
         await cas.log("===================================");
         await cas.log(`Trying ${url}`);
         let body = await cas.doRequest(url, "GET", {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36'
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36"
         }, 200);
         await cas.log(body);
         await cas.log("===================================");
@@ -66,8 +66,8 @@ const cas = require('../../cas.js');
         let url = `${baseUrl}metrics/org.apereo.cas.ticket.registry.TicketRegistry.${ticketMetrics[i]}`;
         await cas.log(`Trying ${url}`);
         await cas.doRequest(url, "GET", {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
+            "Accept": "application/json",
+            "Content-Type": "application/json"
         }, 200);
     }
 
@@ -80,8 +80,8 @@ const cas = require('../../cas.js');
         let url = `${baseUrl}metrics/org.apereo.cas.services.ServicesManager.${servicesMetrics[i]}`;
         await cas.log(`Trying ${url}`);
         await cas.doRequest(url, "GET", {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
+            "Accept": "application/json",
+            "Content-Type": "application/json"
         }, 200);
     }
 
@@ -93,8 +93,8 @@ const cas = require('../../cas.js');
         let url = `${baseUrl}metrics/org.apereo.cas.authentication.AuthenticationManager.${authnMetrics[i]}`;
         await cas.log(`Trying ${url}`);
         await cas.doRequest(url, "GET", {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
+            "Accept": "application/json",
+            "Content-Type": "application/json"
         }, 200);
     }
 
@@ -108,8 +108,8 @@ const cas = require('../../cas.js');
         let url = `${baseUrl}metrics/org.springframework.webflow.executor.FlowExecutor.${webflowMetrics[i]}`;
         await cas.log(`Trying ${url}`);
         await cas.doRequest(url, "GET", {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
+            "Accept": "application/json",
+            "Content-Type": "application/json"
         }, 200);
     }
     await browser.close();

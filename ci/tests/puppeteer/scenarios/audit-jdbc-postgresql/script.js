@@ -1,13 +1,13 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 const assert = require("assert");
 const YAML = require("yaml");
 const fs = require("fs");
 const path = require("path");
 
 (async () => {
-    let configFilePath = path.join(__dirname, 'config.yml');
-    const file = fs.readFileSync(configFilePath, 'utf8');
+    let configFilePath = path.join(__dirname, "config.yml");
+    const file = fs.readFileSync(configFilePath, "utf8");
     const configFile = YAML.parse(file);
     
     let browser = await puppeteer.launch(cas.browserOptions());
@@ -16,13 +16,13 @@ const path = require("path");
     await cas.loginWith(page);
     await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
-    await cas.assertInnerText(page, '#content div h2', "Log In Successful");
+    await cas.assertInnerText(page, "#content div h2", "Log In Successful");
     await cas.gotoLogout(page);
     await browser.close();
 
     await cas.doPost("https://localhost:8443/cas/actuator/auditLog", {}, {
-        'Content-Type': 'application/json'
-    }, res => {
+        "Content-Type": "application/json"
+    }, (res) => {
         cas.log(`Found ${res.data.length} audit records`);
         assert(res.data.length >= 4);
         assert(res.data[0].principal !== null);
@@ -30,20 +30,20 @@ const path = require("path");
         assert(res.data[0].applicationCode !== null);
         assert(res.data[0].clientIpAddress !== null);
         assert(res.data[0].serverIpAddress !== null);
-        assert(res.data[0].resourceOperatedUpon !== null)
-    }, error => {
+        assert(res.data[0].resourceOperatedUpon !== null);
+    }, (error) => {
         throw(error);
     });
 
     await cas.doGet("https://localhost:8443/cas/actuator/auditevents",
-        async res => {
+        async (res) => {
             cas.log(`Found ${res.data.events.length} audit records`);
             assert(res.data.events.length >= 4);
             assert(res.data.events[0].principal !== null);
             assert(res.data.events[0].timestamp !== null);
             assert(res.data.events[0].type !== null);
-            assert(res.data.events[0].data.source !== null)
-        }, async err => {
+            assert(res.data.events[0].data.source !== null);
+        }, async (err) => {
             throw(err);
         });
 

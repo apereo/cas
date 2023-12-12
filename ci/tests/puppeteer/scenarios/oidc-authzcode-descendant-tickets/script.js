@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
-const assert = require('assert');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
+const assert = require("assert");
 
 const redirectUrl = "https://github.com/apereo/cas";
 
@@ -33,8 +33,8 @@ async function exchangeCode(page, code, clientId) {
     let refreshToken = null;
 
     let accessTokenUrl = `https://localhost:8443/cas/oidc/token?${accessTokenParams}&code=${code}`;
-    await cas.doPost(accessTokenUrl, "", {'Content-Type': "application/json"},
-        res => {
+    await cas.doPost(accessTokenUrl, "", {"Content-Type": "application/json"},
+        (res) => {
             cas.log(res.data);
             assert(res.data.access_token !== null);
             assert(res.data.refresh_token !== null);
@@ -45,7 +45,7 @@ async function exchangeCode(page, code, clientId) {
             cas.logg(`Received access token ${accessToken}`);
             cas.logg(`Received refresh token ${refreshToken}`);
         },
-        error => {
+        (error) => {
             throw `Operation failed to obtain access token: ${error}`;
         });
 
@@ -59,14 +59,14 @@ async function exchangeCode(page, code, clientId) {
 
 async function fetchProfile(accessToken) {
     const params = new URLSearchParams();
-    params.append('access_token', accessToken);
+    params.append("access_token", accessToken);
 
-    await cas.doPost('https://localhost:8443/cas/oauth2.0/profile', params, {},
-        res => {
+    await cas.doPost("https://localhost:8443/cas/oauth2.0/profile", params, {},
+        (res) => {
             let result = res.data;
             assert(result.id === "casuser");
             assert(result.client_id === "client");
-        }, error => {
+        }, (error) => {
             throw error;
         });
 }
@@ -80,12 +80,12 @@ async function refreshTokens(refreshToken, clientId, successHandler, errorHandle
 
     let value = `${clientId}:secret`;
     let buff = Buffer.alloc(value.length, value);
-    let authzHeader = `Basic ${buff.toString('base64')}`;
+    let authzHeader = `Basic ${buff.toString("base64")}`;
     await cas.log(`Authorization header: ${authzHeader}`);
 
     await cas.doPost(accessTokenUrl, "", {
-        'Content-Type': "application/json",
-        'Authorization': authzHeader
+        "Content-Type": "application/json",
+        "Authorization": authzHeader
     }, successHandler, errorHandler);
 }
 
@@ -97,7 +97,7 @@ async function refreshTokens(refreshToken, clientId, successHandler, errorHandle
     let tokens = await exchangeCode(page, code, "client");
     await fetchProfile(tokens.accessToken);
     await refreshTokens(tokens.refreshToken, "client",
-        res => assert(res.status === 200), error => {
+        (res) => assert(res.status === 200), (error) => {
             throw `Operation should fail but instead produced: ${error}`;
         });
 
@@ -106,21 +106,21 @@ async function refreshTokens(refreshToken, clientId, successHandler, errorHandle
     await cas.gotoLogout(page);
     try {
         await exchangeCode(page, code, "client");
-        throw `Request should not pass; ${code} is expired`
+        throw `Request should not pass; ${code} is expired`;
     } catch(e) {
-        await cas.logg("Access token request has failed, correctly.")
+        await cas.logg("Access token request has failed, correctly.");
     }
 
     try {
         await fetchProfile(tokens.accessToken);
-        throw `Profile request should not pass; ${tokens.accessToken} is expired`
+        throw `Profile request should not pass; ${tokens.accessToken} is expired`;
     } catch (e) {
-        await cas.logg("User profile request has failed, correctly.")
+        await cas.logg("User profile request has failed, correctly.");
     }
 
     await refreshTokens(tokens.refreshToken, "client",
         () => {
-            throw `Refresh Token request should not pass; ${tokens.accessToken} is expired`
+            throw `Refresh Token request should not pass; ${tokens.accessToken} is expired`;
         }, () => cas.logg("Refresh Token request has failed, correctly."));
 
     await browser.close();

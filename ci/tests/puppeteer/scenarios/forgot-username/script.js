@@ -1,5 +1,5 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -11,9 +11,9 @@ const cas = require('../../cas.js');
     await page.waitForTimeout(1000);
 
     await cas.assertTextContent(page, "#reset #fm1 h3",  "Forgot your username?");
-    await cas.assertVisibility(page, '#email');
+    await cas.assertVisibility(page, "#email");
 
-    await cas.type(page,'#email', "casuser@example.org");
+    await cas.type(page,"#email", "casuser@example.org");
     await cas.pressEnter(page);
     await page.waitForNavigation();
     await cas.assertInnerTextStartsWith(page, "#content h2", "Instructions Sent Successfully.");

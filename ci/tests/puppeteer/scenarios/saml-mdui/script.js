@@ -1,5 +1,5 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -33,7 +33,7 @@ async function verify(page, hasInfoUrl) {
     await cas.assertVisibility(page, "#serviceUIMetadataDisplayName");
     await cas.assertVisibility(page, "#serviceUIMetadataDescription");
     if (hasInfoUrl) {
-        await cas.assertVisibility(page, "#serviceUIMetadataInformationUrl")
+        await cas.assertVisibility(page, "#serviceUIMetadataInformationUrl");
     }
-    await cas.assertVisibility(page, "#serviceUIMetadataPrivacyUrl")
+    await cas.assertVisibility(page, "#serviceUIMetadataPrivacyUrl");
 }
