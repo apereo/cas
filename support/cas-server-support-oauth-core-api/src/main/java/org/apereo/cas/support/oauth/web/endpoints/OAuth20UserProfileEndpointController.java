@@ -72,7 +72,11 @@ public class OAuth20UserProfileEndpointController<T extends OAuth20Configuration
     public ResponseEntity<String> handleGetRequest(final HttpServletRequest request,
                                                    final HttpServletResponse response) throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        val accessTokenResult = getAccessTokenFromRequest(request);
+        val accessTokenResult = FunctionUtils.doAndHandle(() -> getAccessTokenFromRequest(request));
+        if (accessTokenResult == null) {
+            LOGGER.error("Unable to get the access token from the request");
+            return buildUnauthorizedResponseEntity(OAuth20Constants.INVALID_REQUEST);
+        }
 
         val decodedAccessTokenId = accessTokenResult.getValue();
         if (StringUtils.isBlank(decodedAccessTokenId)) {
