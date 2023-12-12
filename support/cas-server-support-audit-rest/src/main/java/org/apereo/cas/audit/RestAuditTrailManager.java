@@ -91,10 +91,12 @@ public class RestAuditTrailManager extends AbstractAuditTrailManager {
                 .build();
             response = HttpUtils.execute(exec);
             if (response != null && response.getCode() == HttpStatus.SC_OK) {
-                val result = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
-                val values = new TypeReference<Set<AuditActionContext>>() {
-                };
-                return MAPPER.readValue(JsonValue.readHjson(result).toString(), values);
+                try (val content = ((HttpEntityContainer) response).getEntity().getContent()) {
+                    val result = IOUtils.toString(content, StandardCharsets.UTF_8);
+                    val values = new TypeReference<Set<AuditActionContext>>() {
+                    };
+                    return MAPPER.readValue(JsonValue.readHjson(result).toString(), values);
+                }
             }
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
