@@ -309,6 +309,8 @@ export SCENARIO="${scenarioName}"
 export SCENARIO_PATH="${scenario}"
 export SCENARIO_FOLDER=$( cd -- "${SCENARIO_PATH}" &> /dev/null && pwd )
 
+scriptPath="${scenario}/script.js"
+
 if [[ "${CI}" == "true" ]]; then
   printgreen "DEBUG flag is turned off while running CI"
   DEBUG=""
@@ -347,6 +349,14 @@ if [[ ! -d "${PUPPETEER_DIR}/node_modules/puppeteer" || "${INSTALL_PUPPETEER}" =
   cd -
 else
   printgreen "Using existing Puppeteer modules..."
+fi
+
+printgreen "Running ESLint on scenario [${scenarioName}]..."
+npx eslint "${scriptPath}"
+if [ $? -ne 0 ]; then
+  printred "Founding linting errors; unable to run the scenario [${scenarioName}]"
+  printred "Please run: npx eslint --fix ${scriptPath}"
+  exit 1
 fi
 
 if [[ "${RERUN}" != "true" ]]; then
@@ -740,7 +750,6 @@ if [[ "${DRYRUN}" != "true" && ("${NATIVE_BUILD}" == "false" || "${NATIVE_RUN}" 
   if [[ "${CLEAR}" == "true" ]]; then
     clear
   fi
-  scriptPath="${scenario}/script.js"
   echo -e "**************************************************************************"
   echo -e "Running ${scriptPath}\n"
   export NODE_TLS_REJECT_UNAUTHORIZED=0
