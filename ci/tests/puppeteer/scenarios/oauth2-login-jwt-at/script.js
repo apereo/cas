@@ -63,6 +63,27 @@ async function executeFlow(browser, redirectUri, clientId, accessTokenSecret) {
             throw error;
         });
 
+    // we create a new JWT access token from the good one with a bad payload to make the JWT parsing internally fails
+    const parts = accessToken.split('.');
+    let badAccessToken;
+    if (parts.length === 3) {
+        badAccessToken = parts[0] + '.Z' + parts[1] + '.' + parts[2];
+    } else {
+        badAccessToken = parts[0] + '.' + parts[1] + '.Z' + parts[2] + '.' + parts[3] + '.' + parts[4];
+    }
+
+    const badParams = new URLSearchParams();
+    badParams.append('access_token', badAccessToken);
+
+    await cas.doPost('https://localhost:8443/cas/oauth2.0/profile', badParams, {},
+        res => {
+            console.log(res.data);
+            throw 'Operation must fail to get the profile with a bad access token';
+        }, error => {
+            assert(error.response.status === 401);
+            assert(error.response.data.error === 'invalid_request');
+        });
+
     await cas.gotoLogout(page);
 }
 
