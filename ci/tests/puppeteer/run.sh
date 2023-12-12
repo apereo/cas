@@ -354,7 +354,7 @@ fi
 printgreen "Running ESLint on scenario [${scenarioName}]..."
 npx eslint "${scriptPath}"
 if [ $? -ne 0 ]; then
-  printred "Founding linting errors; unable to run the scenario [${scenarioName}]"
+  printred "Found linting errors; unable to run the scenario [${scenarioName}]"
   printred "Please run: npx eslint --fix ${scriptPath}"
   exit 1
 fi
