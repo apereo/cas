@@ -47,10 +47,10 @@ async function sendRequest(page, entityIds) {
             url += "&target=https%3A%2F%2Flocalhost%3A8443%2Fcas%2Flogin";
 
             await cas.log(`Navigating to ${url}`);
-            let s = performance.now();
+            const s = performance.now();
             await cas.goto(page, url);
-            let e = performance.now();
-            let duration = (e - s) / 1000;
+            const e = performance.now();
+            const duration = (e - s) / 1000;
             await cas.log(`Request took ${duration} seconds.`);
 
             if (count > 1 && duration > 15) {

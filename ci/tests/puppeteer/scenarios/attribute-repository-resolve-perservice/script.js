@@ -21,7 +21,7 @@ const path = require("path");
 
     await cas.loginWith(page);
     await cas.logPage(page);
-    let ticket = await cas.assertTicketParameter(page);
+    const ticket = await cas.assertTicketParameter(page);
     let body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
     await cas.log(body);
     let json = JSON.parse(body).serviceResponse.authenticationSuccess.attributes;
@@ -30,10 +30,10 @@ const path = require("path");
     assert(json.firstName[0] !== null);
     assert(json.displayName === undefined);
     
-    let newFirstName = (Math.random() + 1).toString(36).substring(4);
+    const newFirstName = (Math.random() + 1).toString(36).substring(4);
     await cas.log(`Generated new first name ${newFirstName}`);
-    let configFilePath = path.join(__dirname, "/attribute-repository.json");
-    let config = JSON.parse(fs.readFileSync(configFilePath));
+    const configFilePath = path.join(__dirname, "/attribute-repository.json");
+    const config = JSON.parse(fs.readFileSync(configFilePath));
     config.casuser.firstName[0] = newFirstName;
     await fs.writeFileSync(configFilePath, JSON.stringify(config, undefined, 2));
     await cas.sleep(2000);

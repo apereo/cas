@@ -21,7 +21,7 @@ const cas = require("../../cas.js");
     await cas.click(page, "#CASClient");
     await page.waitForNavigation();
     await page.waitForTimeout(1000);
-    let response = await cas.loginWith(page);
+    const response = await cas.loginWith(page);
     await cas.log(`${response.status()} ${response.statusText()}`);
     await page.waitForTimeout(1000);
     await cas.screenshot(page);

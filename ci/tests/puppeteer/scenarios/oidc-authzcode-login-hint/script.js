@@ -11,7 +11,7 @@ const assert = require("assert");
     await cas.log(`Navigating to ${url}`);
     await cas.goto(page, url);
 
-    let hint = await cas.inputValue(page, "#username");
+    const hint = await cas.inputValue(page, "#username");
     assert(hint === "casuser@localhost");
     await browser.close();
 })();

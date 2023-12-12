@@ -6,7 +6,7 @@ const cas = require("../../cas.js");
     let params = "grant_type=client_credentials&";
     params += "scope=openid";
 
-    let url = `https://localhost:8443/cas/oidc/token?${params}`;
+    const url = `https://localhost:8443/cas/oidc/token?${params}`;
     await cas.log(`Calling ${url}`);
 
 
@@ -29,9 +29,9 @@ const cas = require("../../cas.js");
 })();
 
 async function introspect(token) {
-    let value = "client:secret";
-    let buff = Buffer.alloc(value.length, value);
-    let authzHeader = `Basic ${buff.toString("base64")}`;
+    const value = "client:secret";
+    const buff = Buffer.alloc(value.length, value);
+    const authzHeader = `Basic ${buff.toString("base64")}`;
     await cas.log(`Authorization header: ${authzHeader}`);
 
     await cas.log(`Introspecting token ${token}`);
@@ -51,7 +51,7 @@ async function introspect(token) {
         });
 
     await cas.log(`Introspecting token ${token} as JWT`);
-    let jwt = await cas.doGet(`https://localhost:8443/cas/oidc/introspect?token=${token}`,
+    const jwt = await cas.doGet(`https://localhost:8443/cas/oidc/introspect?token=${token}`,
         (res) => res.data, (error) => {
             throw `Introspection operation failed: ${error}`;
         }, {
@@ -59,7 +59,7 @@ async function introspect(token) {
             "Content-Type": "application/json",
             "Accept": "application/token-introspection+jwt"
         });
-    let decoded = await cas.decodeJwt(jwt);
+    const decoded = await cas.decodeJwt(jwt);
     assert(decoded.iss === "https://localhost:8443/cas/oidc");
     assert(decoded.aud === "client");
     assert(decoded.iat !== undefined);

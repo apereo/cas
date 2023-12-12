@@ -18,7 +18,7 @@ async function fetchCode(page, acr, params) {
         await page.waitForTimeout(3000);
     }
 
-    let scratch = await cas.fetchGoogleAuthenticatorScratchCode();
+    const scratch = await cas.fetchGoogleAuthenticatorScratchCode();
     await cas.log(`Using scratch code ${scratch} to login...`);
     await cas.screenshot(page);
     await page.waitForTimeout(2000);
@@ -37,7 +37,7 @@ async function fetchCode(page, acr, params) {
         await page.waitForTimeout(2000);
     }
 
-    let code = await cas.assertParameter(page, "code");
+    const code = await cas.assertParameter(page, "code");
     await cas.log(`OAuth code ${code}`);
     return code;
 }
@@ -48,7 +48,7 @@ async function exchangeCode(page, code, successHandler) {
     accessTokenParams += "grant_type=authorization_code&";
     accessTokenParams += `redirect_uri=${redirectUrl}`;
 
-    let accessTokenUrl = `https://localhost:8443/cas/oidc/token?${accessTokenParams}&code=${code}`;
+    const accessTokenUrl = `https://localhost:8443/cas/oidc/token?${accessTokenParams}&code=${code}`;
     await cas.log(`Calling ${accessTokenUrl}`);
 
     let accessToken = null;
@@ -62,7 +62,7 @@ async function exchangeCode(page, code, successHandler) {
         await cas.log(`Received access token ${accessToken}`);
 
         await cas.log("Decoding ID token...");
-        let decoded = await cas.decodeJwt(res.data.id_token);
+        const decoded = await cas.decodeJwt(res.data.id_token);
 
         successHandler(decoded);
     }, (error) => {

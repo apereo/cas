@@ -4,7 +4,7 @@ const cas = require("../../cas.js");
 (async () => {
     let params = "scope=example&";
     params += "grant_type=client_credentials&";
-    let url = `https://localhost:8443/cas/oauth2.0/token?${params}`;
+    const url = `https://localhost:8443/cas/oauth2.0/token?${params}`;
     await cas.doPost(url, params, {
         "Content-Type": "application/json",
         "Authorization": `Basic ${btoa("client:secret")}`

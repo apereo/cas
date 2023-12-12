@@ -18,6 +18,6 @@ const querystring = require("querystring");
         200,
         postData);
     await cas.log(body);
-    let result = JSON.parse(body);
+    const result = JSON.parse(body);
     assert(result.authentication.principal.id === "casuser");
 })();

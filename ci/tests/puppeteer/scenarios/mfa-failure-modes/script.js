@@ -43,7 +43,7 @@ const cas = require("../../cas.js");
     authenticationSuccess = json.serviceResponse.authenticationSuccess;
     assert(authenticationSuccess.attributes.bypassMultifactorAuthentication[0] === true);
     assert(authenticationSuccess.attributes.bypassedMultifactorAuthenticationProviderId[0] === "mfa-yubikey");
-    assert(authenticationSuccess.attributes.authenticationContext == null);
+    assert(authenticationSuccess.attributes.authenticationContext === null);
 
     await cas.goto(page, "https://localhost:8443/cas/logout");
 

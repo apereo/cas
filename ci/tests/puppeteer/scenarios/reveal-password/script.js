@@ -10,7 +10,7 @@ const cas = require("../../cas.js");
     await cas.type(page, "#username", "casuser");
     await cas.type(page, "#password", "Mellon");
   
-    let pwd = await page.$(".pwd");
+    const pwd = await page.$(".pwd");
     let pwdType = await page.evaluate((pwd) => pwd.type, pwd);
     await cas.log(`password input type is ${pwdType}`);
     assert(pwdType === "password");

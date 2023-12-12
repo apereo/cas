@@ -28,11 +28,11 @@ const assert = require("assert");
 
     const service = "https://localhost:9859/anything/sample1";
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
-    let ticket = await cas.assertTicketParameter(page);
-    let body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
+    const ticket = await cas.assertTicketParameter(page);
+    const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
     await cas.log(body);
-    let json = JSON.parse(body);
-    let authenticationSuccess = json.serviceResponse.authenticationSuccess;
+    const json = JSON.parse(body);
+    const authenticationSuccess = json.serviceResponse.authenticationSuccess;
     assert(authenticationSuccess.attributes.email[0] === "Hello-user1@example.com");
 
     await cas.log("Testing auto-redirection via configured cookie...");
@@ -40,7 +40,7 @@ const assert = require("assert");
     await page.waitForTimeout(3000);
     await cas.gotoLogin(page);
     await page.waitForTimeout(2000);
-    let url = await page.url();
+    const url = await page.url();
     await cas.logPage(page);
     await page.waitForTimeout(3000);
     assert(url.startsWith("http://localhost:9443/simplesaml/"));

@@ -6,9 +6,9 @@ const request = require("request");
 
 (async () => {
 
-    let args = process.argv.slice(2);
-    let config = JSON.parse(fs.readFileSync(args[0]));
-    assert(config != null);
+    const args = process.argv.slice(2);
+    const config = JSON.parse(fs.readFileSync(args[0]));
+    assert(config !== null);
 
     await cas.log(`Certificate file: ${config.trustStoreCertificateFile}`);
     await cas.log(`Private key file: ${config.trustStorePrivateKeyFile}`);
@@ -50,12 +50,12 @@ const request = require("request");
         });
     });
 
-    let params = "grant_type=client_credentials&scope=openid&client_id=client";
-    let url = `https://localhost:8443/cas/oidc/token?${params}`;
-    let response = await cas.goto(page, url);
+    const params = "grant_type=client_credentials&scope=openid&client_id=client";
+    const url = `https://localhost:8443/cas/oidc/token?${params}`;
+    const response = await cas.goto(page, url);
     await cas.log(`${response.status()} ${response.statusText()}`);
     assert(response.ok());
-    let tokenResponse = JSON.parse(await cas.innerText(page, "body pre"));
+    const tokenResponse = JSON.parse(await cas.innerText(page, "body pre"));
     await cas.logb(tokenResponse);
     assert(tokenResponse.access_token !== undefined);
     assert(tokenResponse.id_token !== undefined);
@@ -63,7 +63,7 @@ const request = require("request");
     assert(tokenResponse.token_type === "Bearer");
     assert(tokenResponse.scope === "openid");
     assert(tokenResponse.expires_in === 28800);
-    let decoded = await cas.decodeJwt(tokenResponse.id_token);
+    const decoded = await cas.decodeJwt(tokenResponse.id_token);
     assert(decoded["sub"] === "mmoayyed");
     assert(decoded["sub"] === decoded["preferred_username"]);
     assert(decoded["txn"] !== undefined);

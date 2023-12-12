@@ -8,8 +8,8 @@ async function startAuthFlow(page, username) {
     
     await cas.log(`Starting authentication flow for ${username}`);
     await cas.gotoLogin(page);
-    let pswd = await page.$("#password");
-    assert(pswd == null);
+    const pswd = await page.$("#password");
+    assert(pswd === null);
     await cas.screenshot(page);
     await cas.type(page, "#username", username);
     await page.waitForTimeout(1000);

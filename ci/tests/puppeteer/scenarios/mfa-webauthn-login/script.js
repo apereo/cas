@@ -11,15 +11,15 @@ const cas = require("../../cas.js");
     await cas.screenshot(page);
     await cas.assertTextContent(page, "#status", "Login with FIDO2-enabled Device");
 
-    let errorPanel = await page.$("#errorPanel");
-    assert(await errorPanel == null);
+    const errorPanel = await page.$("#errorPanel");
+    assert(await errorPanel === null);
 
     await cas.assertVisibility(page, "#messages");
     await cas.assertInvisibility(page, "#deviceTable");
     await cas.assertVisibility(page, "#authnButton");
 
     await page.on("response", (response) => {
-        let url = response.url();
+        const url = response.url();
         cas.log(`URL: ${url}`);
         if (url.endsWith("webauthn/authenticate")) {
             assert(response.status() === 200);
@@ -28,7 +28,7 @@ const cas = require("../../cas.js");
     await page.click("#authnButton");
     await page.waitForTimeout(1000);
 
-    let urls = [
+    const urls = [
         "https://localhost:8443/cas/webauthn/authenticate",
         "https://localhost:8443/cas/webauthn/register"];
 
@@ -49,7 +49,7 @@ const cas = require("../../cas.js");
     const endpoints = ["health", "webAuthnDevices/casuser"];
     const baseUrl = "https://localhost:8443/cas/actuator/";
     for (let i = 0; i < endpoints.length; i++) {
-        let url = baseUrl + endpoints[i];
+        const url = baseUrl + endpoints[i];
         const response = await cas.goto(page, url);
         await cas.log(`${response.status()} ${response.statusText()}`);
         assert(response.ok());

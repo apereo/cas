@@ -8,8 +8,8 @@ const cas = require("../../cas.js");
     
     await cas.gotoLogin(page);
 
-    let pswd = await page.$("#password");
-    assert(pswd == null);
+    const pswd = await page.$("#password");
+    assert(pswd === null);
 
     await cas.attributeValue(page, "#username", "autocapitalize", "none");
     await cas.attributeValue(page, "#username", "spellcheck", "false");
@@ -27,7 +27,7 @@ const cas = require("../../cas.js");
     await page2.waitForTimeout(1000);
     await cas.click(page2, "table tbody td a");
     await page2.waitForTimeout(1000);
-    let code = await cas.textContent(page2, "div[name=bodyPlainText] .well");
+    const code = await cas.textContent(page2, "div[name=bodyPlainText] .well");
     await page2.close();
 
     await page.bringToFront();

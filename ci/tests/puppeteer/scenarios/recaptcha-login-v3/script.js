@@ -10,8 +10,8 @@ const cas = require("../../cas.js");
 
     await cas.assertVisibility(page, "#recaptchaV3Section");
 
-    let grecaptcha = await page.$("#g-recaptcha-token");
-    assert(await grecaptcha != null);
+    const grecaptcha = await page.$("#g-recaptcha-token");
+    assert(await grecaptcha !== null);
 
     await browser.close();
 })();

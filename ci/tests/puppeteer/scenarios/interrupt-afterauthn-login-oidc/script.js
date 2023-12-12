@@ -6,7 +6,7 @@ const assert = require("assert");
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
 
-    let redirectUri = "https://localhost:9859/anything/sample1";
+    const redirectUri = "https://localhost:9859/anything/sample1";
     await cas.logg(`Trying with URL ${redirectUri}`);
 
     const url = `https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=client&scope=openid%20profile&redirect_uri=${redirectUri}`;
@@ -56,12 +56,12 @@ const assert = require("assert");
 
     const accessTokenUrl = "https://localhost:8443/cas/oidc/token?grant_type=authorization_code"
         + `&client_id=client&client_secret=secret&redirect_uri=${redirectUri}&code=${code}`;
-    let accessToken = await cas.doPost(accessTokenUrl, "", {
+    const accessToken = await cas.doPost(accessTokenUrl, "", {
         "Content-Type": "application/json"
     }, (res) => res.data, (error) => {
         throw `Operation failed to obtain access token: ${error}`;
     });
-    let decoded = await cas.decodeJwt(accessToken.id_token);
+    const decoded = await cas.decodeJwt(accessToken.id_token);
     assert(decoded.sub !== null);
     assert(decoded.aud === "client");
     assert(decoded.client_id !== null);

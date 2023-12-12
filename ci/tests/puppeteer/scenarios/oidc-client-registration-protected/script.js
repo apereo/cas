@@ -2,9 +2,9 @@ const cas = require("../../cas.js");
 const assert = require("assert");
 
 (async () => {
-    let value = "casuser:Mellon";
-    let buff = Buffer.alloc(value.length, value);
-    let authzHeader = `Basic ${buff.toString("base64")}`;
+    const value = "casuser:Mellon";
+    const buff = Buffer.alloc(value.length, value);
+    const authzHeader = `Basic ${buff.toString("base64")}`;
     await cas.log(`Authorization header: ${authzHeader}`);
     let body = await cas.doRequest("https://localhost:8443/cas/oidc/initToken", "GET",
         {
@@ -12,9 +12,9 @@ const assert = require("assert");
             "Content-Type": "application/json"
         }, 200);
     await cas.log(body);
-    let tokenResponse = JSON.parse(body);
+    const tokenResponse = JSON.parse(body);
 
-    let service = {
+    const service = {
         "application_type": "web",
         "default_acr_values": ["mfa-duo", "mfa-gauth"],
         "redirect_uris": ["https://apereo.github.io", "https://github.com/apereo/cas"],
@@ -45,7 +45,7 @@ const assert = require("assert");
             "Content-Type": "application/json"
         }, 201, body);
     assert(result !== null);
-    let entity = JSON.parse(result.toString());
+    const entity = JSON.parse(result.toString());
     await cas.log(entity);
     assert(entity.client_id !== null);
     assert(entity.client_secret !== null);

@@ -13,7 +13,7 @@ async function executeFlow(browser, redirectUri, clientId, accessTokenSecret) {
     await cas.loginWith(page);
     await page.waitForTimeout(1000);
 
-    let code = await cas.assertParameter(page, "code");
+    const code = await cas.assertParameter(page, "code");
     await cas.log(`OAuth code ${code}`);
 
     let accessTokenParams = `client_id=${clientId}&`;
@@ -21,7 +21,7 @@ async function executeFlow(browser, redirectUri, clientId, accessTokenSecret) {
     accessTokenParams += "grant_type=authorization_code&";
     accessTokenParams += `redirect_uri=${encodeURIComponent(redirectUri)}`;
 
-    let accessTokenUrl = `https://localhost:8443/cas/oauth2.0/token?${accessTokenParams}&code=${code}`;
+    const accessTokenUrl = `https://localhost:8443/cas/oauth2.0/token?${accessTokenParams}&code=${code}`;
     await cas.log(`Calling ${accessTokenUrl}`);
 
     let accessToken = null;
@@ -36,7 +36,7 @@ async function executeFlow(browser, redirectUri, clientId, accessTokenSecret) {
         throw `Operation failed to obtain access token: ${error}`;
     });
 
-    assert(accessToken != null);
+    assert(accessToken !== null);
 
     if (clientId === "client") {
         await cas.verifyJwt(accessToken, accessTokenSecret, {
@@ -55,7 +55,7 @@ async function executeFlow(browser, redirectUri, clientId, accessTokenSecret) {
 
     await cas.doPost("https://localhost:8443/cas/oauth2.0/profile", params, {},
         (res) => {
-            let result = res.data;
+            const result = res.data;
             assert(result.id === "casuser");
             assert(result.client_id === clientId);
             assert(result.service === "https://apereo.github.io");

@@ -6,7 +6,7 @@ const fs = require("fs");
 const path = require("path");
 
 (async () => {
-    let configFilePath = path.join(__dirname, "config.yml");
+    const configFilePath = path.join(__dirname, "config.yml");
     const file = fs.readFileSync(configFilePath, "utf8");
     const configFile = YAML.parse(file);
     
@@ -48,7 +48,7 @@ const path = require("path");
         });
 
     await cas.log("Updating configuration...");
-    let number = await cas.randomNumber();
+    const number = await cas.randomNumber();
     await updateConfig(configFile, configFilePath, number);
     await cas.sleep(6000);
     await cas.refreshContext();
@@ -66,7 +66,7 @@ const path = require("path");
 })();
 
 async function updateConfig(configFile, configFilePath, data) {
-    let config = {
+    const config = {
         cas: {
             audit: {
                 jdbc: {

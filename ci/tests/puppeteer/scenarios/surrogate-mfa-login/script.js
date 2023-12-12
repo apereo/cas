@@ -7,7 +7,7 @@ async function getOneTimeCode(browser) {
     await page.waitForTimeout(1000);
     await cas.click(page, "table tbody td a");
     await page.waitForTimeout(3000);
-    return await cas.textContent(page, "div[name=bodyPlainText] .well");
+    return cas.textContent(page, "div[name=bodyPlainText] .well");
 }
 
 async function impersonatePreSelected(page, browser) {
@@ -15,7 +15,7 @@ async function impersonatePreSelected(page, browser) {
     await cas.loginWith(page, "user3+casuser", "Mellon");
     await cas.assertVisibility(page, "#token");
     await page.waitForTimeout(1000);
-    let code = await getOneTimeCode(browser);
+    const code = await getOneTimeCode(browser);
     await page.bringToFront();
     await cas.type(page, "#token", code);
     await cas.submitForm(page, "#fm1");
@@ -31,7 +31,7 @@ async function impersonateWithMenu(page, browser) {
     await cas.loginWith(page, "+casuser", "Mellon");
     await page.waitForTimeout(1000);
     await cas.assertVisibility(page, "#token");
-    let code = await getOneTimeCode(browser);
+    const code = await getOneTimeCode(browser);
     await page.bringToFront();
     await cas.type(page, "#token", code);
     await cas.submitForm(page, "#fm1");

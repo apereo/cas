@@ -20,20 +20,20 @@ const path = require("path");
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
 
     await cas.loginWith(page);
-    let ticket = await cas.assertTicketParameter(page);
+    const ticket = await cas.assertTicketParameter(page);
     let body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
     await cas.log(body);
     let json = JSON.parse(body).serviceResponse.authenticationSuccess.attributes;
     assert(json.lastName[0] === "Johnson");
     assert(json.employeeNumber[0] === "123456");
-    let originalFirstName = json.firstName[0];
+    const originalFirstName = json.firstName[0];
     assert(originalFirstName !== null);
     assert(json.displayName === undefined);
 
-    let newFirstName = (Math.random() + 1).toString(36).substring(4);
+    const newFirstName = (Math.random() + 1).toString(36).substring(4);
     await cas.logg(`Generated new first name ${newFirstName}`);
-    let configFilePath = path.join(__dirname, "/attribute-repository.json");
-    let config = JSON.parse(fs.readFileSync(configFilePath));
+    const configFilePath = path.join(__dirname, "/attribute-repository.json");
+    const config = JSON.parse(fs.readFileSync(configFilePath));
     config.casuser.firstName[0] = newFirstName;
     await fs.writeFileSync(configFilePath, JSON.stringify(config, undefined, 2));
     await cas.sleep(2000);

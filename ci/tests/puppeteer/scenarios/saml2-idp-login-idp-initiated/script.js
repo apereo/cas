@@ -3,7 +3,7 @@ const path = require("path");
 const cas = require("../../cas.js");
 
 async function getActuatorEndpoint(entityId, password = "Mellon") {
-    let baseEndpoint = "https://localhost:8443/cas/actuator/samlPostProfileResponse";
+    const baseEndpoint = "https://localhost:8443/cas/actuator/samlPostProfileResponse";
     let actuator = `${baseEndpoint}?username=casuser&entityId=${entityId}&encrypt=false`;
     if (password !== undefined && password !== "") {
         actuator = `${actuator}&password=${password}`;

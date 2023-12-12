@@ -15,24 +15,24 @@ async function testService(page, clientId, oidc = true) {
         await page.waitForNavigation();
     }
 
-    let code = await cas.assertParameter(page, "code");
+    const code = await cas.assertParameter(page, "code");
     await cas.log(`Current code is ${code}`);
     const accessTokenUrl = `https://localhost:8443/cas/oidc/token?grant_type=authorization_code&client_id=${clientId}&client_secret=secret&redirect_uri=https://apereo.github.io&code=${code}`;
-    let payload = await cas.doPost(accessTokenUrl, "", {
+    const payload = await cas.doPost(accessTokenUrl, "", {
         "Content-Type": "application/json"
     }, (res) => res.data, (error) => {
         throw `Operation failed to obtain access token: ${error}`;
     });
-    assert(payload.access_token != null);
+    assert(payload.access_token !== null);
 
     await cas.log("Decoding access token...");
-    let decodedAccessToken = await cas.decodeJwt(payload.access_token);
+    const decodedAccessToken = await cas.decodeJwt(payload.access_token);
 
     if (oidc) {
         assert(decodedAccessToken.iss === "https://sso.example.org/cas/oidc");
         await cas.log("Decoding ID token...");
-        assert(payload.id_token != null);
-        let decodedIdToken = await cas.decodeJwt(payload.id_token);
+        assert(payload.id_token !== null);
+        const decodedIdToken = await cas.decodeJwt(payload.id_token);
         assert(decodedIdToken.sub !== null);
         assert(decodedIdToken.client_id !== null);
         assert(decodedIdToken.iss === "https://sso.example.org/cas/oidc");

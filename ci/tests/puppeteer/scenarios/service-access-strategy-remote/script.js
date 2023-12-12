@@ -4,7 +4,7 @@ const express = require("express");
 const assert = require("assert");
 
 (async () => {
-    let app = express();
+    const app = express();
     app.get("/gateway", (req, res) => {
         console.log(req.query);
         const username = req.query.username;
@@ -16,11 +16,11 @@ const assert = require("assert");
         }
     });
 
-    let server = app.listen(5566, async () => {
+    const server = app.listen(5566, async () => {
         const browser = await puppeteer.launch(cas.browserOptions());
         const page = await cas.newPage(browser);
         await cas.gotoLogin(page, "https://localhost:9859/anything/deny");
-        let response = await cas.loginWith(page, "casblock");
+        const response = await cas.loginWith(page, "casblock");
         await page.waitForTimeout(1000);
         await cas.assertInnerText(page, "#loginErrorsPanel p", "Service access denied due to missing privileges.");
         assert(response.status() === 401);

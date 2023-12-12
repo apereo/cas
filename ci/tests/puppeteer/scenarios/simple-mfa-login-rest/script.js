@@ -7,7 +7,7 @@ const cas = require("../../cas.js");
         "id": "casuser"
     };
 
-    let payload = {
+    const payload = {
         "/new": {
             "get": "514a61cc1518"
         },
@@ -36,7 +36,7 @@ const cas = require("../../cas.js");
         await page2.waitForTimeout(1000);
         await cas.click(page2, "table tbody td a");
         await page2.waitForTimeout(1000);
-        let code = await cas.textContent(page2, "div[name=bodyPlainText] .well");
+        const code = await cas.textContent(page2, "div[name=bodyPlainText] .well");
         await page2.close();
 
         await page.bringToFront();
@@ -48,7 +48,7 @@ const cas = require("../../cas.js");
         await cas.assertInnerText(page, "#content div h2", "Log In Successful");
         await cas.assertCookie(page);
     } finally {
-        if (mockServer != null) {
+        if (mockServer !== null) {
             mockServer.stop();
         }
         await browser.close();

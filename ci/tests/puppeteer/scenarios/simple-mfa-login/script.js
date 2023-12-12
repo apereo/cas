@@ -1,5 +1,4 @@
 const puppeteer = require("puppeteer");
-const assert = require("assert");
 const cas = require("../../cas.js");
 
 (async () => {
@@ -17,12 +16,11 @@ const cas = require("../../cas.js");
     await page2.waitForTimeout(1000);
     await cas.click(page2, "table tbody td a");
     await page2.waitForTimeout(1000);
-    let code = await cas.textContent(page2, "div[name=bodyPlainText] .well");
+    const code = await cas.textContent(page2, "div[name=bodyPlainText] .well");
     await page2.close();
 
     await page.bringToFront();
-    node = await page.$("html");
-    assert("en" === await node.evaluate((el) => el.getAttribute("lang")));
+    await cas.attributeValue(page, "html", "lang", "en");
     await cas.type(page, "#token", code);
     await cas.submitForm(page, "#fm1");
     await page.waitForTimeout(3000);

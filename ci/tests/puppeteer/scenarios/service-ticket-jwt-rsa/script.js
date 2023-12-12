@@ -9,11 +9,11 @@ const assert = require("assert");
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
     await cas.loginWith(page);
     await page.waitForTimeout(2000);
-    let ticket = await cas.assertTicketParameter(page);
+    const ticket = await cas.assertTicketParameter(page);
 
     await cas.doGet(`https://localhost:8443/cas/actuator/jwtTicketSigningPublicKey?service=${service}`,
         (res) => {
-            let publickey = res.data;
+            const publickey = res.data;
 
             // const keyPath = path.join(__dirname, 'public.key');
             // let publickey = fs.readFileSync(keyPath);
@@ -22,7 +22,7 @@ const assert = require("assert");
                 algorithms: ["RS512"],
                 complete: true
             }).then((decoded) => {
-                let payload = decoded.payload;
+                const payload = decoded.payload;
                 
                 assert(payload.successfulAuthenticationHandlers === "Static Credentials");
                 assert(payload.authenticationMethod === "Static Credentials");

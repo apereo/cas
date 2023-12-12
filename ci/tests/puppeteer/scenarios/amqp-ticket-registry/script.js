@@ -7,7 +7,7 @@ const path = require("path");
     const browser = await puppeteer.launch(cas.browserOptions());
     try {
         const page = await cas.newPage(browser);
-        let response = await cas.gotoLogin(page);
+        const response = await cas.gotoLogin(page);
         await page.waitForTimeout(3000);
         await cas.log(`${response.status()} ${response.statusText()}`);
         assert(response.ok());
@@ -20,7 +20,7 @@ const path = require("path");
 
         await cas.gotoLogout(page);
         await cas.logPage(page);
-        let url = await page.url();
+        const url = await page.url();
         assert(url === "https://localhost:8443/cas/logout");
         await page.waitForTimeout(1000);
         await cas.assertCookie(page, false);

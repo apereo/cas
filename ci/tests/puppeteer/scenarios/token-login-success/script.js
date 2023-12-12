@@ -23,7 +23,7 @@ async function loginWithToken(page, service, token) {
     await cas.gotoLogout(page);
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
     await cas.loginWith(page);
-    let ticket = await cas.assertTicketParameter(page);
+    const ticket = await cas.assertTicketParameter(page);
     let body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}`);
     await cas.log(body);
     token = body.match(/<cas:token>(.+)<\/cas:token>/)[1];

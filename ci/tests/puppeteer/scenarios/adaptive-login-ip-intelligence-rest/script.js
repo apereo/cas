@@ -3,9 +3,9 @@ const cas = require("../../cas.js");
 const express = require("express");
 
 (async () => {
-    let app = express();
+    const app = express();
     app["get"]("/ip", (req, res) => res.status(502).send("1"));
-    let server = app.listen(5423, async () => {
+    const server = app.listen(5423, async () => {
         const browser = await puppeteer.launch(cas.browserOptions());
         const page = await cas.newPage(browser);
 

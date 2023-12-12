@@ -20,7 +20,7 @@ const cas = require("../../cas.js");
             assert(res.data.components.hazelcast.status !== null);
             assert(res.data.components.hazelcast.details !== null);
 
-            let details = res.data.components.hazelcast.details;
+            const details = res.data.components.hazelcast.details;
             assert(details.name === "HazelcastHealthIndicator");
             assert(details.proxyGrantingTicketsCache !== null);
             assert(details.ticketGrantingTicketsCache !== null);

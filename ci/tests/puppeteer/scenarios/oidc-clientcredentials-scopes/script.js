@@ -10,7 +10,7 @@ const cas = require("../../cas.js");
     params += "password=Mellon&";
     params += "scope=openid%20MyCustomScope%20email";
 
-    let url = `https://localhost:8443/cas/oidc/token?${params}`;
+    const url = `https://localhost:8443/cas/oidc/token?${params}`;
     await cas.log(`Calling ${url}`);
 
     await cas.doPost(url, "", {
@@ -24,7 +24,7 @@ const cas = require("../../cas.js");
         await cas.decodeJwt(res.data.access_token);
 
         await cas.log("Decoding JWT ID token...");
-        let decoded = await cas.decodeJwt(res.data.id_token);
+        const decoded = await cas.decodeJwt(res.data.id_token);
 
         assert(res.data.id_token !== null);
         assert(res.data.refresh_token !== null);

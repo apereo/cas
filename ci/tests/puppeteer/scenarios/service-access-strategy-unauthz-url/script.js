@@ -12,7 +12,7 @@ const assert = require("assert");
     await cas.logPage(page);
     await cas.assertInnerText(page, "#content h2", "Application Not Authorized to Use CAS");
     await page.waitForTimeout(4000);
-    let url = await page.url();
+    const url = await page.url();
     assert(url === "https://localhost:9859/anything/info");
     await browser.close();
 })();

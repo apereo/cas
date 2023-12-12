@@ -18,7 +18,7 @@ const assert = require("assert");
         return value.name === "SESSION";
     })[0];
     await cas.log(`Found session cookie ${sessionCookie.name}`);
-    let cookieValue = await cas.base64Decode(sessionCookie.value);
+    const cookieValue = await cas.base64Decode(sessionCookie.value);
     await cas.log(`Session cookie value ${cookieValue}`);
     await page.waitForTimeout(1000);
     await cas.doGet(`https://localhost:8443/cas/actuator/sessions/${cookieValue}`,

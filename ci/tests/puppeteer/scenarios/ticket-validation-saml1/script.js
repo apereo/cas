@@ -11,9 +11,9 @@ const cas = require("../../cas.js");
     await cas.goto(page, `https://localhost:8443/cas/login?TARGET=${service}`);
     await cas.loginWith(page);
 
-    let ticket = await cas.assertParameter(page, "SAMLart");
+    const ticket = await cas.assertParameter(page, "SAMLart");
 
-    let request = `<?xml version="1.0" encoding="UTF-8"?>
+    const request = `<?xml version="1.0" encoding="UTF-8"?>
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
 <SOAP-ENV:Header/>
 <SOAP-ENV:Body>
@@ -25,7 +25,7 @@ IssueInstant="2021-06-19T17:03:44.022Z">
 </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>`;
 
-    let options = {
+    const options = {
         protocol: "https:",
         hostname: "localhost",
         port: 8443,
@@ -39,7 +39,7 @@ IssueInstant="2021-06-19T17:03:44.022Z">
 
     const post = (options) =>
         new Promise((resolve, reject) => {
-            let req = https
+            const req = https
                 .request(options, (res) => {
                     res.setEncoding("utf8");
                     const body = [];

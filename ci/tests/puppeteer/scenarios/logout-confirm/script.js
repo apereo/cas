@@ -37,7 +37,7 @@ const cas = require("../../cas.js");
     assert(url === "https://github.com/apereo/cas");
 
     await cas.log("Logout with unauthorized redirect...");
-    let response = await cas.goto(page, "https://localhost:8443/cas/logout?url=https://google.com");
+    const response = await cas.goto(page, "https://localhost:8443/cas/logout?url=https://google.com");
     await cas.log(`${response.status()} ${response.statusText()}`);
     assert(response.status() === 403);
     

@@ -6,7 +6,7 @@ const express = require("express");
 (async () => {
     let aupAccepted = false;
 
-    let app = express();
+    const app = express();
     app.post("/aup", (req, res) => {
         cas.log("Accepting AUP...");
         aupAccepted = true;
@@ -21,20 +21,16 @@ const express = require("express");
         }
     });
     app.get("/aup/policy", (req, res) => {
-        try {
-            cas.log("Received AUP policy terms request");
-            const data = {
-                "@class": "org.apereo.cas.aup.AcceptableUsagePolicyTerms",
-                "code": "screen.aup.policyterms.some.key",
-                "defaultText": "Default policy text"
-            };
-            res.json(data);
-        } catch (e) {
-            throw e;
-        }
+        cas.log("Received AUP policy terms request");
+        const data = {
+            "@class": "org.apereo.cas.aup.AcceptableUsagePolicyTerms",
+            "code": "screen.aup.policyterms.some.key",
+            "defaultText": "Default policy text"
+        };
+        res.json(data);
     });
     
-    let server = app.listen(5544, async () => {
+    const server = app.listen(5544, async () => {
         const browser = await puppeteer.launch(cas.browserOptions());
         const page = await cas.newPage(browser);
         const service = "http://localhost:9889/anything/app1";
@@ -46,10 +42,10 @@ const express = require("express");
         await page.waitForTimeout(1000);
         await cas.click(page, "#aupSubmit");
         await page.waitForNavigation();
-        let ticket = await cas.assertTicketParameter(page);
-        let body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
+        const ticket = await cas.assertTicketParameter(page);
+        const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
         await cas.logg(body);
-        let authenticationSuccess = JSON.parse(body).serviceResponse.authenticationSuccess;
+        const authenticationSuccess = JSON.parse(body).serviceResponse.authenticationSuccess;
         assert(authenticationSuccess.user === "casuser");
 
         await cas.log("Logging in again, now with SSO");

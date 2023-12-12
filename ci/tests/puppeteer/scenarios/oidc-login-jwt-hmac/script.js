@@ -20,7 +20,7 @@ const cas = require("../../cas.js");
     params += "grant_type=client_credentials&";
     params += "scope=openid";
 
-    let url = `https://localhost:8443/cas/oidc/token?${params}`;
+    const url = `https://localhost:8443/cas/oidc/token?${params}`;
     await cas.doPost(url, "", {
         "Content-Type": "application/json"
     }, (res) => {

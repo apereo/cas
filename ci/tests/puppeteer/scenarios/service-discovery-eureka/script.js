@@ -9,9 +9,9 @@ const assert = require("assert");
     await cas.loginWith(page);
     await cas.assertCookie(page);
     await cas.goto(page, "https://localhost:8761");
-    let app = await page.evaluate((element) => {
-        let elements = document.querySelectorAll(element);
-        let btn = elements[elements.length - 1];
+    const app = await page.evaluate((element) => {
+        const elements = document.querySelectorAll(element);
+        const btn = elements[elements.length - 1];
         return btn.querySelectorAll(":scope > tbody tr td")[0].innerText;
     }, "table#instances");
     assert(app === "CAS");

@@ -2,7 +2,7 @@ const assert = require("assert");
 const cas = require("../../cas.js");
 
 (async () => {
-    let params = new URLSearchParams();
+    const params = new URLSearchParams();
     params.append("username", "user1+casuser");
     params.append("password", "Mellon");
     await cas.doPost("https://localhost:8443/cas/v1/users",
@@ -12,9 +12,9 @@ const cas = require("../../cas.js");
         },
         (res) => {
             cas.log(res.data.authentication.attributes);
-            assert(res.data.authentication.attributes.surrogateUser != null);
-            assert(res.data.authentication.attributes.surrogateEnabled != null);
-            assert(res.data.authentication.attributes.surrogatePrincipal != null);
+            assert(res.data.authentication.attributes.surrogateUser !== null);
+            assert(res.data.authentication.attributes.surrogateEnabled !== null);
+            assert(res.data.authentication.attributes.surrogatePrincipal !== null);
         },
         (error) => {
             throw error;
@@ -28,9 +28,9 @@ const cas = require("../../cas.js");
         },
         (res) => {
             cas.log(res.data.authentication.attributes);
-            assert(res.data.authentication.attributes.surrogateUser != null);
-            assert(res.data.authentication.attributes.surrogateEnabled != null);
-            assert(res.data.authentication.attributes.surrogatePrincipal != null);
+            assert(res.data.authentication.attributes.surrogateUser !== null);
+            assert(res.data.authentication.attributes.surrogateEnabled !== null);
+            assert(res.data.authentication.attributes.surrogatePrincipal !== null);
         },
         (error) => {
             throw error;
@@ -62,10 +62,10 @@ const cas = require("../../cas.js");
         });
     await cas.log(`Received service ticket ${st}`);
 
-    let body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${st}&format=JSON`);
+    const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${st}&format=JSON`);
     await cas.logg(body);
-    let json = JSON.parse(body.toString());
-    let authenticationSuccess = json.serviceResponse.authenticationSuccess;
+    const json = JSON.parse(body.toString());
+    const authenticationSuccess = json.serviceResponse.authenticationSuccess;
     assert(authenticationSuccess.attributes.employeeNumber !== undefined);
     assert(authenticationSuccess.attributes["fname"] === undefined);
     assert(authenticationSuccess.attributes["lname"] === undefined);

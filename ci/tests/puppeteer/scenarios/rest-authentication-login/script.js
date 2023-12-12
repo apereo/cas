@@ -16,28 +16,24 @@ const auth = require("basic-auth");
         }
     };
 
-    let app = express();
+    const app = express();
     app.post(/^(.+)$/, authenticate, (req, res) => {
-        try {
-            cas.log("Received request");
-            const data = {
-                "@class": "org.apereo.cas.authentication.principal.SimplePrincipal",
-                "id": "casuser",
-                "attributes": {
-                    "@class": "java.util.LinkedHashMap",
-                    "names": [
-                        "java.util.List", ["cas", "user"]
-                    ]
-                }
-            };
-            res.json(data);
-        } catch (e) {
-            throw e;
-        }
+        cas.log("Received request");
+        const data = {
+            "@class": "org.apereo.cas.authentication.principal.SimplePrincipal",
+            "id": "casuser",
+            "attributes": {
+                "@class": "java.util.LinkedHashMap",
+                "names": [
+                    "java.util.List", ["cas", "user"]
+                ]
+            }
+        };
+        res.json(data);
     });
     app.use(authenticate);
     
-    let server = app.listen(5432, async () => {
+    const server = app.listen(5432, async () => {
         let failed = false;
         try {
             await cas.log("Listening...");

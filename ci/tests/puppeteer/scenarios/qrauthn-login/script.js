@@ -16,23 +16,23 @@ const querystring = require("querystring");
     await cas.assertVisibility(page, "#qrlogin .card-text img");
     await cas.assertVisibility(page, "#qrchannel");
 
-    let src = await page.$eval("#qrcode", (element) => element.getAttribute("src"));
-    let data = src.replace(/^data:image\/jpeg;base64,/, "");
+    const src = await page.$eval("#qrcode", (element) => element.getAttribute("src"));
+    const data = src.replace(/^data:image\/jpeg;base64,/, "");
 
     await cas.removeDirectoryOrFile(`${__dirname}/out.ignore`);
     await fs.writeFileSync(`${__dirname}/out.ignore`, data, "base64");
-    let buffer = fs.readFileSync(`${__dirname}/out.ignore`);
+    const buffer = fs.readFileSync(`${__dirname}/out.ignore`);
 
     await jimp.read(buffer, (err, image) => {
         if (err) {
             cas.logr(err);
         }
-        let qrcode = new qrCode();
+        const qrcode = new qrCode();
         qrcode.callback = (err, channelIdResult) => {
             if (err) {
                 cas.logr(err);
             }
-            let channelId = channelIdResult.result;
+            const channelId = channelIdResult.result;
             cas.logg(`QR channel code is ${channelId}`);
             connectAndLogin(channelId, page);
         };
@@ -59,17 +59,17 @@ async function connectAndLogin(channelId, page) {
         const deviceId = "QRDevicePuppeteer";
         cas.logg(`We have now connected ${frame.headers["message"]}`);
 
-        let formData = {
+        const formData = {
             username: "casuser",
             password: "Mellon",
             token: true,
             QR_AUTHENTICATION_DEVICE_ID: deviceId
         };
-        let postData = querystring.stringify(formData);
+        const postData = querystring.stringify(formData);
         executeRequest("https://localhost:8443/cas/v1/tickets", 201, postData)
             .then((token) => {
                 cas.log(`Received token ${token}`);
-                let payload = JSON.stringify({"token": token});
+                const payload = JSON.stringify({"token": token});
                 client.publish({
                     destination: "/qr/accept",
                     headers: {
@@ -96,7 +96,7 @@ async function connectAndLogin(channelId, page) {
 
 
 async function executeRequest(url, statusCode, requestBody) {
-    return await cas.doRequest(url, "POST", {
+    return cas.doRequest(url, "POST", {
         "Accept": "application/json",
         "Content-Length": Buffer.byteLength(requestBody),
         "Content-Type": "application/x-www-form-urlencoded"

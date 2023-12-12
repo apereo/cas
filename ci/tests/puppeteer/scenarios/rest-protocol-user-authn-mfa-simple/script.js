@@ -4,11 +4,11 @@ const querystring = require("querystring");
 
 (async () => {
     const service = "https://apereo.github.io";
-    let value = "casuser:Mellon";
-    let buff = Buffer.alloc(value.length, value);
-    let authzHeader = buff.toString("base64");
+    const value = "casuser:Mellon";
+    const buff = Buffer.alloc(value.length, value);
+    const authzHeader = buff.toString("base64");
 
-    let body = JSON.parse(await cas.doRequest(`https://localhost:8443/cas/actuator/mfaSimple?service=${service}`, "GET",
+    const body = JSON.parse(await cas.doRequest(`https://localhost:8443/cas/actuator/mfaSimple?service=${service}`, "GET",
         {
             "Credential": authzHeader,
             "Accept": "application/json",
@@ -21,14 +21,14 @@ const querystring = require("querystring");
     assert(body.principal === "casuser");
     assert(body.service === service);
     
-    let formData = {
+    const formData = {
         username: "casuser",
         password: "Mellon",
         sotp: body.id
     };
-    let postData = querystring.stringify(formData);
+    const postData = querystring.stringify(formData);
     await cas.log(`Authenticating user via ${postData}`);
-    let result = JSON.parse(await cas.doRequest("https://localhost:8443/cas/v1/users", "POST",
+    const result = JSON.parse(await cas.doRequest("https://localhost:8443/cas/v1/users", "POST",
         {
             "Content-Length": Buffer.byteLength(postData),
             "Accept": "application/json",

@@ -28,22 +28,22 @@ const os = require("os");
 
     await cas.screenshot(page);
     let opt = await page.$("#optionAlways");
-    assert(opt != null);
+    assert(opt !== null);
     opt = await page.$("#optionAttributeName");
-    assert(opt != null);
+    assert(opt !== null);
     opt = await page.$("#optionAttributeValue");
-    assert(opt != null);
+    assert(opt !== null);
     await cas.assertTextContent(page, "#reminderTitle", "How often should I be reminded to consent again?");
 
     opt = await page.$("#reminder");
-    assert(opt != null);
+    assert(opt !== null);
     opt = await page.$("#reminderTimeUnit");
-    assert(opt != null);
+    assert(opt !== null);
     opt = await page.$("#cancel");
-    assert(opt != null);
+    assert(opt !== null);
 
-    let confirm = await page.$("#confirm");
-    assert(confirm != null);
+    const confirm = await page.$("#confirm");
+    assert(confirm !== null);
     await cas.click(page, "#confirm");
     await page.waitForNavigation();
     await cas.assertTicketParameter(page);
@@ -51,12 +51,12 @@ const os = require("os");
     const baseUrl = "https://localhost:8443/cas/actuator/attributeConsent";
     const url = `${baseUrl}/casuser`;
     await cas.log(`Trying ${url}`);
-    let response = await cas.goto(page, url);
+    const response = await cas.goto(page, url);
     await cas.log(`${response.status()} ${response.statusText()}`);
     assert(response.ok());
 
-    let template = path.join(__dirname, "consent-record.json");
-    let body = fs.readFileSync(template, "utf8");
+    const template = path.join(__dirname, "consent-record.json");
+    const body = fs.readFileSync(template, "utf8");
     await cas.log(`Import consent record:\n${body}`);
     await cas.doRequest(`${baseUrl}/import`, "POST", {
         "Accept": "application/json",
@@ -67,7 +67,7 @@ const os = require("os");
     await cas.doGet(`${baseUrl}/export`,
         async (res) => {
             const tempDir = os.tmpdir();
-            let exported = path.join(tempDir, "consent.zip");
+            const exported = path.join(tempDir, "consent.zip");
             res.data.pipe(fs.createWriteStream(exported));
             cas.log(`Exported consent records are at ${exported}`);
         },

@@ -33,7 +33,7 @@ const path = require("path");
     await cas.log("Allowing release of scopes and claims...");
     await cas.logPage(page);
     
-    let result = new URL(page.url());
+    const result = new URL(page.url());
     await cas.log(result.searchParams.toString());
 
     assert(result.searchParams.has("ticket") === false);

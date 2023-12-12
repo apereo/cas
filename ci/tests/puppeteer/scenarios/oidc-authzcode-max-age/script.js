@@ -20,7 +20,7 @@ async function fetchIdToken(page, maxAge, successHandler) {
     }
     await page.waitForTimeout(2000);
     await cas.screenshot(page);
-    let code = await cas.assertParameter(page, "code");
+    const code = await cas.assertParameter(page, "code");
     await cas.log(`OAuth code ${code}`);
 
     let accessTokenParams = "client_id=client&";
@@ -28,7 +28,7 @@ async function fetchIdToken(page, maxAge, successHandler) {
     accessTokenParams += "grant_type=authorization_code&";
     accessTokenParams += `redirect_uri=${redirectUrl}`;
 
-    let accessTokenUrl = `https://localhost:8443/cas/oidc/token?${accessTokenParams}&code=${code}`;
+    const accessTokenUrl = `https://localhost:8443/cas/oidc/token?${accessTokenParams}&code=${code}`;
     await cas.log(`Calling ${accessTokenUrl}`);
 
     let accessToken = null;
@@ -42,7 +42,7 @@ async function fetchIdToken(page, maxAge, successHandler) {
         await cas.log(`Received access token ${accessToken}`);
 
         await cas.log("Decoding ID token...");
-        let decoded = await cas.decodeJwt(res.data.id_token);
+        const decoded = await cas.decodeJwt(res.data.id_token);
         successHandler(decoded);
     }, (error) => {
         throw `Operation failed to obtain access token: ${error}`;

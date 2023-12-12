@@ -13,7 +13,7 @@ const assert = require("assert");
             serverName: "http://localhost:8080"
         });
         await cas.log("Creating HTTP server for CAS client on port 8080");
-        let server = await http.createServer(async (req, res) => {
+        const server = await http.createServer(async (req, res) => {
             if (!await handler(req, res)) {
                 return res.end();
             }

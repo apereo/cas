@@ -10,7 +10,7 @@ const cas = require("../../cas.js");
     params += "grant_type=password";
 
     let at = null;
-    let url = `https://localhost:8443/cas/oauth2.0/token?${params}`;
+    const url = `https://localhost:8443/cas/oauth2.0/token?${params}`;
     await cas.doPost(url, params, {
         "Content-Type": "application/json"
     }, (res) => {
@@ -20,16 +20,16 @@ const cas = require("../../cas.js");
     });
 
 
-    let resourceUrl = "https://localhost:8443/cas/oauth2.0/resourceSet";
-    let resourceObject = {
+    const resourceUrl = "https://localhost:8443/cas/oauth2.0/resourceSet";
+    const resourceObject = {
         uri: "http://api.example.org/photos/**",
         type: "website",
         name: "Photos API",
         resource_scopes: ["create", "read"]
     };
-    let resourceRequest = JSON.stringify(resourceObject);
+    const resourceRequest = JSON.stringify(resourceObject);
     await cas.log(`Creating resource ${resourceRequest}`);
-    let resource = JSON.parse(await cas.doRequest(resourceUrl, "POST",
+    const resource = JSON.parse(await cas.doRequest(resourceUrl, "POST",
         {
             "Authorization": `Bearer ${at}`,
             "Content-Length": resourceRequest.length,
@@ -39,7 +39,7 @@ const cas = require("../../cas.js");
     await cas.log(resource);
 
     const policyUrl = `https://localhost:8443/cas/oauth2.0/${resource.resourceId}/policy`;
-    let policyObject = {
+    const policyObject = {
         id: 1234,
         permissions: [
             {
@@ -62,7 +62,7 @@ const cas = require("../../cas.js");
             }
         ]
     };
-    let policyRequest = JSON.stringify(policyObject);
+    const policyRequest = JSON.stringify(policyObject);
     await cas.log(`Creating policy ${policyRequest}`);
     let result = JSON.parse(await cas.doRequest(policyUrl, "POST",
         {
@@ -73,7 +73,7 @@ const cas = require("../../cas.js");
         }, 200, policyRequest));
     await cas.log(result);
 
-    let permissionObject = {
+    const permissionObject = {
         resource_id: resource.resourceId,
         resource_scopes: ["read"],
         claims: {
@@ -81,7 +81,7 @@ const cas = require("../../cas.js");
         }
     };
 
-    let permissionRequest = JSON.stringify(permissionObject);
+    const permissionRequest = JSON.stringify(permissionObject);
     await cas.log(`Creating permission ${permissionRequest}`);
     result = JSON.parse(await cas.doRequest("https://localhost:8443/cas/oauth2.0/permission", "POST",
         {

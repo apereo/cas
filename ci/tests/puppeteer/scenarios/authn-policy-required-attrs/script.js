@@ -31,7 +31,7 @@ async function authenticateWithRestApi(username, status = 200) {
     await cas.gotoLogout(page);
 
     await cas.gotoLogin(page);
-    let response = await cas.loginWith(page, "casrest", "p@ssw0rd");
+    const response = await cas.loginWith(page, "casrest", "p@ssw0rd");
     await page.waitForTimeout(2000);
     assert(response.status() === 401);
     await cas.screenshot(page);

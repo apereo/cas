@@ -8,8 +8,8 @@ async function startAuthFlow(page, username) {
     await cas.log(`Starting authentication flow for ${username}`);
     await cas.gotoLogin(page);
     await page.waitForTimeout(1000);
-    let pswd = await page.$("#password");
-    assert(pswd == null);
+    const pswd = await page.$("#password");
+    assert(pswd === null);
     await cas.type(page, "#username", username);
     await cas.pressEnter(page);
     await page.waitForNavigation();
@@ -31,12 +31,12 @@ async function startAuthFlow(page, username) {
     await page.waitForTimeout(1000);
     await cas.screenshot(page);
 
-    let surrogateEnabled = await page.$("#surrogateEnabled");
-    assert(surrogateEnabled == null);
-    let surrogatePrincipal = await page.$("#surrogatePrincipal");
-    assert(surrogatePrincipal == null);
-    let surrogateUser = await page.$("#surrogateUser");
-    assert(surrogateUser == null);
+    const surrogateEnabled = await page.$("#surrogateEnabled");
+    assert(surrogateEnabled === null);
+    const surrogatePrincipal = await page.$("#surrogatePrincipal");
+    assert(surrogatePrincipal === null);
+    const surrogateUser = await page.$("#surrogateUser");
+    assert(surrogateUser === null);
     await page.waitForTimeout(1000);
 }
 

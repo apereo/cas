@@ -16,7 +16,7 @@ const cas = require("../../cas.js");
     await page.waitForTimeout(4000);
     await cas.screenshot(page);
 
-    let username = `castest@${process.env.AZURE_AD_DOMAIN}`;
+    const username = `castest@${process.env.AZURE_AD_DOMAIN}`;
     await cas.type(page, "input[name=loginfmt]", username, true);
     await cas.pressEnter(page);
     
@@ -29,14 +29,14 @@ const cas = require("../../cas.js");
     await page.waitForTimeout(7000);
 
     await cas.logPage(page);
-    let result = new URL(page.url());
+    const result = new URL(page.url());
     await cas.log(result.searchParams.toString());
     assert(result.searchParams.has("ticket") === true);
-    let ticket = result.searchParams.get("ticket");
-    let body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
+    const ticket = result.searchParams.get("ticket");
+    const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
     await cas.log(body);
-    let json = JSON.parse(body);
-    let authenticationSuccess = json.serviceResponse.authenticationSuccess;
+    const json = JSON.parse(body);
+    const authenticationSuccess = json.serviceResponse.authenticationSuccess;
     assert(authenticationSuccess.attributes.name[0] === "CAS Test");
     assert(authenticationSuccess.attributes.preferred_username[0] === username);
 

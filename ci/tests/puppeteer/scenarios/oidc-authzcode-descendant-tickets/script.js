@@ -5,7 +5,7 @@ const assert = require("assert");
 const redirectUrl = "https://github.com/apereo/cas";
 
 async function fetchCode(page) {
-    let url = `https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=client&scope=openid%20offline_access&prompt=login&redirect_uri=${redirectUrl}`;
+    const url = `https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=client&scope=openid%20offline_access&prompt=login&redirect_uri=${redirectUrl}`;
 
     await cas.log(`Navigating to ${url}`);
     await cas.goto(page, url);
@@ -18,7 +18,7 @@ async function fetchCode(page) {
         await page.waitForNavigation();
     }
 
-    let code = await cas.assertParameter(page, "code");
+    const code = await cas.assertParameter(page, "code");
     await cas.logg(`OAuth code ${code}`);
     return code;
 }
@@ -32,7 +32,7 @@ async function exchangeCode(page, code, clientId) {
     let accessToken = null;
     let refreshToken = null;
 
-    let accessTokenUrl = `https://localhost:8443/cas/oidc/token?${accessTokenParams}&code=${code}`;
+    const accessTokenUrl = `https://localhost:8443/cas/oidc/token?${accessTokenParams}&code=${code}`;
     await cas.doPost(accessTokenUrl, "", {"Content-Type": "application/json"},
         (res) => {
             cas.log(res.data);
@@ -49,8 +49,8 @@ async function exchangeCode(page, code, clientId) {
             throw `Operation failed to obtain access token: ${error}`;
         });
 
-    assert(accessToken != null, "Access Token cannot be null");
-    assert(refreshToken != null, "Refresh Token cannot be null");
+    assert(accessToken !== null, "Access Token cannot be null");
+    assert(refreshToken !== null, "Refresh Token cannot be null");
     return {
         accessToken: accessToken,
         refreshToken: refreshToken
@@ -63,7 +63,7 @@ async function fetchProfile(accessToken) {
 
     await cas.doPost("https://localhost:8443/cas/oauth2.0/profile", params, {},
         (res) => {
-            let result = res.data;
+            const result = res.data;
             assert(result.id === "casuser");
             assert(result.client_id === "client");
         }, (error) => {
@@ -75,12 +75,12 @@ async function refreshTokens(refreshToken, clientId, successHandler, errorHandle
     let accessTokenParams = "scope=openid%offline_access";
     accessTokenParams += `&grant_type=refresh_token&refresh_token=${refreshToken}`;
 
-    let accessTokenUrl = `https://localhost:8443/cas/oidc/token?${accessTokenParams}`;
+    const accessTokenUrl = `https://localhost:8443/cas/oidc/token?${accessTokenParams}`;
     await cas.log(`Calling endpoint: ${accessTokenUrl}`);
 
-    let value = `${clientId}:secret`;
-    let buff = Buffer.alloc(value.length, value);
-    let authzHeader = `Basic ${buff.toString("base64")}`;
+    const value = `${clientId}:secret`;
+    const buff = Buffer.alloc(value.length, value);
+    const authzHeader = `Basic ${buff.toString("base64")}`;
     await cas.log(`Authorization header: ${authzHeader}`);
 
     await cas.doPost(accessTokenUrl, "", {
@@ -93,8 +93,8 @@ async function refreshTokens(refreshToken, clientId, successHandler, errorHandle
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
 
-    let code = await fetchCode(page);
-    let tokens = await exchangeCode(page, code, "client");
+    const code = await fetchCode(page);
+    const tokens = await exchangeCode(page, code, "client");
     await fetchProfile(tokens.accessToken);
     await refreshTokens(tokens.refreshToken, "client",
         (res) => assert(res.status === 200), (error) => {

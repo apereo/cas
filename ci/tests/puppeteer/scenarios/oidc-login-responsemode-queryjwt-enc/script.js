@@ -15,7 +15,7 @@ const fs = require("fs");
     await cas.click(page, "#allow");
     await page.waitForNavigation();
     await cas.log(`Page url: ${await page.url()}\n`);
-    let response = await cas.assertParameter(page, "response");
+    const response = await cas.assertParameter(page, "response");
 
     await cas.log(`Reading keystore from ${process.env.OIDC_KEYSTORE}`);
     const keyContent = JSON.parse(fs.readFileSync(process.env.OIDC_KEYSTORE, "utf8"));

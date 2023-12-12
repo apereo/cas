@@ -20,16 +20,16 @@ const cas = require("../../cas.js");
     });
 
 
-    let resourceUrl = "https://localhost:8443/cas/oauth2.0/resourceSet";
-    let resourceObject = {
+    const resourceUrl = "https://localhost:8443/cas/oauth2.0/resourceSet";
+    const resourceObject = {
         uri: "http://api.example.org/photos/**",
         type: "website",
         name: "Photos API",
         resource_scopes: ["create", "read"]
     };
-    let resourceRequest = JSON.stringify(resourceObject);
+    const resourceRequest = JSON.stringify(resourceObject);
     await cas.log(`Creating resource ${resourceRequest}`);
-    let resource = JSON.parse(await cas.doRequest(resourceUrl, "POST",
+    const resource = JSON.parse(await cas.doRequest(resourceUrl, "POST",
         {
             "Authorization": `Bearer ${protectionToken}`,
             "Content-Length": resourceRequest.length,
@@ -39,7 +39,7 @@ const cas = require("../../cas.js");
     await cas.log(resource);
 
     const policyUrl = `https://localhost:8443/cas/oauth2.0/${resource.resourceId}/policy`;
-    let policyObject = {
+    const policyObject = {
         id: 1234,
         permissions: [
             {
@@ -62,7 +62,7 @@ const cas = require("../../cas.js");
             }
         ]
     };
-    let policyRequest = JSON.stringify(policyObject);
+    const policyRequest = JSON.stringify(policyObject);
     await cas.log(`Creating policy ${policyRequest}`);
     let result = JSON.parse(await cas.doRequest(policyUrl, "POST",
         {
@@ -73,7 +73,7 @@ const cas = require("../../cas.js");
         }, 200, policyRequest));
     await cas.log(result);
 
-    let permissionObject = {
+    const permissionObject = {
         resource_id: resource.resourceId,
         resource_scopes: ["read", "create"],
         claims: {
@@ -81,7 +81,7 @@ const cas = require("../../cas.js");
         }
     };
 
-    let permissionRequest = JSON.stringify(permissionObject);
+    const permissionRequest = JSON.stringify(permissionObject);
     await cas.log(`Creating permission ${permissionRequest}`);
     result = JSON.parse(await cas.doRequest("https://localhost:8443/cas/oauth2.0/permission", "POST",
         {
@@ -94,7 +94,7 @@ const cas = require("../../cas.js");
     assert(result.ticket !== null);
     assert(result.code !== null);
 
-    let permissionTicket = result.ticket;
+    const permissionTicket = result.ticket;
     await cas.log(`Found UMA permission ticket ${permissionTicket}`);
 
     await cas.log("Checking for UMA JWKS");
@@ -167,9 +167,9 @@ const cas = require("../../cas.js");
     await cas.log(result);
     assert(result.rpt !== null);
 
-    let value = "client:secret";
-    let buff = Buffer.alloc(value.length, value);
-    let authzHeader = `Basic ${buff.toString("base64")}`;
+    const value = "client:secret";
+    const buff = Buffer.alloc(value.length, value);
+    const authzHeader = `Basic ${buff.toString("base64")}`;
     await cas.log(`Authorization header: ${authzHeader}`);
     await cas.doPost(`https://localhost:8443/cas/oauth2.0/introspect?token=${result.rpt}`,
         {},

@@ -30,8 +30,8 @@ const cas = require("../../cas.js");
     await cas.log(`${response.status()} ${response.statusText()}`);
     await cas.screenshot(page);
     const content = await page.content();
-    let json = await cas.substring(content, "<pre>", "</pre>");
-    let payload = JSON.parse(json);
+    const json = await cas.substring(content, "<pre>", "</pre>");
+    const payload = JSON.parse(json);
     await cas.log(payload);
 
     await browser.close();

@@ -3,7 +3,7 @@ const cas = require("../../cas.js");
 const assert = require("assert");
 
 (async () => {
-    let secret = process.env.DUO_REGISTRATION_SIGNING_KEY;
+    const secret = process.env.DUO_REGISTRATION_SIGNING_KEY;
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.goto(page, "https://localhost:8443/cas/login?authn_method=mfa-duo");
@@ -11,16 +11,16 @@ const assert = require("assert");
     await page.waitForTimeout(3000);
     await cas.screenshot(page);
     await cas.logPage(page);
-    let url = await page.url();
+    const url = await page.url();
     assert(url.startsWith("https://localhost:9859/anything/1"));
 
-    let content = await cas.textContent(page, "body pre");
-    let payload = JSON.parse(content);
+    const content = await cas.textContent(page, "body pre");
+    const payload = JSON.parse(content);
     await cas.log(payload);
     // remove the last character encoded as a "?"
-    let principal = payload.args.principal.slice(0, -1);
+    const principal = payload.args.principal.slice(0, -1);
     await cas.log(`Using principal ${principal}`);
-    let decoded = await cas.verifyJwt(principal, secret, {
+    const decoded = await cas.verifyJwt(principal, secret, {
         algorithms: ["HS512"],
         complete: false
     });

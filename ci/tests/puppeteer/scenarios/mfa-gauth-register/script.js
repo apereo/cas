@@ -12,9 +12,9 @@ const cas = require("../../cas.js");
     await cas.assertVisibility(page, "img#imageQRCode");
     await cas.assertVisibility(page, "#seckeypanel pre");
     await cas.assertVisibility(page, "#scratchcodes");
-    assert(5 === (await page.$$("#scratchcodes div.mdc-chip")).length);
+    assert((await page.$$("#scratchcodes div.mdc-chip")).length === 5);
 
-    let confirm = await page.$("#confirm");
+    const confirm = await page.$("#confirm");
     await confirm.click();
     await cas.assertVisibility(page, "#confirm-reg-dialog #notif-dialog-title");
     await cas.assertVisibility(page, "#token");

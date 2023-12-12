@@ -6,7 +6,7 @@ const fs = require("fs");
 const YAML = require("yaml");
 
 (async () => {
-    let configFilePath = path.join(__dirname, "config.yml");
+    const configFilePath = path.join(__dirname, "config.yml");
     const file = fs.readFileSync(configFilePath, "utf8");
     const configFile = YAML.parse(file);
     
@@ -21,7 +21,7 @@ const YAML = require("yaml");
         throw(error);
     });
 
-    let name = (Math.random() + 1).toString(36).substring(4);
+    const name = (Math.random() + 1).toString(36).substring(4);
     await cas.log("Updating configuration and waiting for changes to reload...");
     await updateConfig(configFile, configFilePath, `jdbc:hsqldb:file:/tmp/db/${name}`);
     await page.waitForTimeout(5000);
@@ -45,7 +45,7 @@ const YAML = require("yaml");
 
 
 async function updateConfig(configFile, configFilePath, data) {
-    let config = {
+    const config = {
         cas: {
             audit: {
                 jdbc: {

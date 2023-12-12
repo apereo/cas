@@ -21,7 +21,7 @@ const cas = require("../../cas.js");
     await cas.loginWith(page);
     await page.waitForTimeout(1000);
 
-    let result = new URL(page.url());
+    const result = new URL(page.url());
     await cas.log(result.searchParams.toString());
 
     await cas.gotoLogin(page);

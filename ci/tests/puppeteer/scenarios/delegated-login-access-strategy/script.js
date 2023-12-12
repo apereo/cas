@@ -9,8 +9,8 @@ const cas = require("../../cas.js");
     await cas.gotoLogin(page, "https://github.com");
     await page.waitForTimeout(1000);
 
-    let loginProviders = await page.$("#loginProviders");
-    assert(loginProviders == null);
+    const loginProviders = await page.$("#loginProviders");
+    assert(loginProviders === null);
 
     await cas.gotoLogin(page, "https://google.com");
     await page.waitForTimeout(1000);
