@@ -1,6 +1,5 @@
 const puppeteer = require("puppeteer");
 const assert = require("assert");
-
 const cas = require("../../cas.js");
 
 (async () => {
@@ -13,8 +12,7 @@ const cas = require("../../cas.js");
     await cas.assertVisibility(page, "#youtube-link");
     await cas.assertInvisibility(page, "#pmlinks");
 
-    const imgs = await page.$$eval("#cas-logo",
-        (imgs) => imgs.map((img) => img.getAttribute("src")));
+    const imgs = await page.$$eval("#cas-logo", (imgs) => imgs.map((img) => img.getAttribute("src")));
     const logo = imgs.pop();
     await cas.log(logo);
     assert(logo === "/cas/themes/example/images/logo.png");

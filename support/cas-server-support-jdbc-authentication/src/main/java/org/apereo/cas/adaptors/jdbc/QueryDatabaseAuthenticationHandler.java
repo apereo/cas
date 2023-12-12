@@ -15,6 +15,7 @@ import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
@@ -105,7 +106,7 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
                 throw new AccountNotFoundException(username + " not found with SQL query");
             }
             throw new FailedLoginException("Multiple records found for " + username);
-        } catch (final Exception e) {
+        } catch (final DataAccessException e) {
             throw new PreventedException(e);
         }
     }
