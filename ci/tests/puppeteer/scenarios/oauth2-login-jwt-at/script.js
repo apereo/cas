@@ -51,8 +51,10 @@ async function executeFlow(browser, redirectUri, clientId, accessTokenSecret) {
             throw error;
         });
 
+    // we create a new JWT access token from the good one with a bad payload to make the JWT parsing internally fails
     const parts = accessToken.split('.');
     const badAccessToken = parts[0] + '.Z' + parts[1] + '.' + parts[2];
+
     const badParams = new URLSearchParams();
     badParams.append('access_token', badAccessToken);
 
