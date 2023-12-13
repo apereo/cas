@@ -41,7 +41,7 @@ const assert = require("assert");
         const decoded = await cas.decodeJwt(res.data.id_token);
 
         assert(decoded.sub !== null);
-        assert(decoded["preferred_username"] === null);
+        assert(decoded["preferred_username"] === undefined);
     }, (error) => {
         throw `Operation failed to obtain access token: ${error}`;
     });

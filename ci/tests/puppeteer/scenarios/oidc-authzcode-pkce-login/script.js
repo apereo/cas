@@ -57,7 +57,7 @@ const assert = require("assert");
         assert(decoded.state !== null);
         assert(decoded.nonce !== null);
         assert(decoded.client_id !== null);
-        assert(decoded["preferred_username"] === null);
+        assert(decoded["preferred_username"] === undefined);
     }, (error) => {
         throw `Operation failed to obtain access token: ${error}`;
     });
