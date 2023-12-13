@@ -5,6 +5,7 @@ import lombok.val;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.TypeReference;
+import javax.sql.DataSource;
 import java.sql.Driver;
 import java.util.Collection;
 import java.util.List;
@@ -33,6 +34,8 @@ public class JdbcDriversRuntimeHints implements CasRuntimeHintsRegistrar {
             .registerResourceBundle("org/hsqldb/resources/sql-state-messages")
             .registerPattern("org/hsqldb/resources/*.sql")
             .registerPattern("org/hsqldb/resources/*.properties");
+
+        registerReflectionHints(hints, List.of(DataSource.class));
     }
 
     private static void registerReflectionHints(final RuntimeHints hints, final Collection entries) {
