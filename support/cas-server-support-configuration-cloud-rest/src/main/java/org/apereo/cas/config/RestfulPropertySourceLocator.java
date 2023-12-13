@@ -77,10 +77,12 @@ public class RestfulPropertySourceLocator implements PropertySourceLocator {
                 .build();
             response = HttpUtils.execute(exec);
             if (response != null && ((HttpEntityContainer) response).getEntity() != null) {
-                val results = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
-                LOGGER.trace("Received response from endpoint [{}] as [{}]", url, results);
-                val payload = MAPPER.readValue(results, Map.class);
-                props.putAll(payload);
+                try (val content = ((HttpEntityContainer) response).getEntity().getContent()) {
+                    val results = IOUtils.toString(content, StandardCharsets.UTF_8);
+                    LOGGER.trace("Received response from endpoint [{}] as [{}]", url, results);
+                    val payload = MAPPER.readValue(results, Map.class);
+                    props.putAll(payload);
+                }
             }
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);

@@ -65,8 +65,10 @@ public class OidcRestfulWebFingerUserInfoRepository implements OidcWebFingerUser
                 .build();
             response = HttpUtils.execute(exec);
             if (response != null && ((HttpEntityContainer) response).getEntity() != null && response.getCode() == HttpStatus.SC_OK) {
-                val result = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
-                return MAPPER.readValue(JsonValue.readHjson(result).toString(), Map.class);
+                try (val content = ((HttpEntityContainer) response).getEntity().getContent()) {
+                    val result = IOUtils.toString(content, StandardCharsets.UTF_8);
+                    return MAPPER.readValue(JsonValue.readHjson(result).toString(), Map.class);
+                }
             }
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);

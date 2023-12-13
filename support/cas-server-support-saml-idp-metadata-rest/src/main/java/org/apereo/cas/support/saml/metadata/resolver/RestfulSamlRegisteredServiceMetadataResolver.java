@@ -69,10 +69,12 @@ public class RestfulSamlRegisteredServiceMetadataResolver extends BaseSamlRegist
                 .build();
             response = HttpUtils.execute(exec);
             if (response != null && response.getCode() == HttpStatus.SC_OK) {
-                val result = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
-                val doc = MAPPER.readValue(JsonValue.readHjson(result).toString(), SamlMetadataDocument.class);
-                val resolver = buildMetadataResolverFrom(service, doc);
-                return CollectionUtils.wrapList(resolver);
+                try (val content = ((HttpEntityContainer) response).getEntity().getContent()) {
+                    val result = IOUtils.toString(content, StandardCharsets.UTF_8);
+                    val doc = MAPPER.readValue(JsonValue.readHjson(result).toString(), SamlMetadataDocument.class);
+                    val resolver = buildMetadataResolverFrom(service, doc);
+                    return CollectionUtils.wrapList(resolver);
+                }
             }
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
