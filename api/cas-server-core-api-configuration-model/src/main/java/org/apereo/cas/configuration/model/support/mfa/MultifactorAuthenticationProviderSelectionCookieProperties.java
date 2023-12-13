@@ -32,6 +32,7 @@ public class MultifactorAuthenticationProviderSelectionCookieProperties extends 
      * path is not configured.
      */
     private boolean autoConfigureCookiePath = true;
+    
     /**
      * Whether MFA selection should be remembered with cookies.
      */
