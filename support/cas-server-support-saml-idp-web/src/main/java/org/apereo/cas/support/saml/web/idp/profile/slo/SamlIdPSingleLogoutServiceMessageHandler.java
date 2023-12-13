@@ -144,9 +144,11 @@ public class SamlIdPSingleLogoutServiceMessageHandler extends BaseSingleLogoutSe
                 response = HttpUtils.execute(exec);
             }
             if (response != null && response.getCode() == HttpStatus.OK.value()) {
-                val result = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
-                LOGGER.trace("Received logout response as [{}]", result);
-                return true;
+                try (val content = ((HttpEntityContainer) response).getEntity().getContent()) {
+                    val result = IOUtils.toString(content, StandardCharsets.UTF_8);
+                    LOGGER.trace("Received logout response as [{}]", result);
+                    return true;
+                }
             }
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
