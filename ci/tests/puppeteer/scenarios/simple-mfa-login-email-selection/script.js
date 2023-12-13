@@ -15,8 +15,8 @@ const cas = require("../../cas.js");
     await page.evaluate(() => {
         const emails = document.querySelectorAll("input[type=checkbox]");
         emails.forEach((lnk) => {
-            // const id = lnk.getAttribute("id");
-            // console.log(id);
+            const id = lnk.getAttribute("id");
+            console.log(id);
             lnk.click();
         });
     });
