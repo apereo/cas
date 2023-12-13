@@ -65,11 +65,13 @@ public class RestfulDelegatedIdentityProviderFactory extends BaseDelegatedIdenti
         val response = HttpUtils.execute(exec);
         try {
             if (response != null && HttpStatus.valueOf(response.getCode()).is2xxSuccessful()) {
-                val result = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
-                if ("cas".equalsIgnoreCase(restProperties.getType())) {
-                    return buildClientsBasedCasProperties(result);
+                try (val content = ((HttpEntityContainer) response).getEntity().getContent()) {
+                    val result = IOUtils.toString(content, StandardCharsets.UTF_8);
+                    if ("cas".equalsIgnoreCase(restProperties.getType())) {
+                        return buildClientsBasedCasProperties(result);
+                    }
+                    return buildClientsBasedPac4jProperties(result);
                 }
-                return buildClientsBasedPac4jProperties(result);
             }
             return new ArrayList<>();
         } finally {
