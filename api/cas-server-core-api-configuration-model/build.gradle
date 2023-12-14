@@ -40,7 +40,10 @@ if (!skipConfigurationMetadata) {
                     "at [$project.layout.buildDirectory] for the CAS configuration module at [$projectPath].\n"
         }
         mainClass.set("org.apereo.cas.configuration.metadata.ConfigurationMetadataGenerator")
-        classpath = sourceSets.main.compileClasspath + sourceSets.main.runtimeClasspath + sourceSets.configurationMetadata.runtimeClasspath
+
+        def sortedClasspath = sourceSets.main.compileClasspath + sourceSets.main.runtimeClasspath + sourceSets.configurationMetadata.runtimeClasspath
+        classpath = sortedClasspath.sort()
+
         args project.layout.buildDirectory.getAsFile().get().path, projectDir.canonicalPath
     }
 
