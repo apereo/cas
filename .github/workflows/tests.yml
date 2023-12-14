@@ -167,7 +167,7 @@ jobs:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
       - name: "Download coverage files"
-        uses: "actions/download-artifact@v3"
+        uses: "actions/download-artifact@v4"
         with:
           path: "reports"
       - name: "Collect Files for SonarCloud"
