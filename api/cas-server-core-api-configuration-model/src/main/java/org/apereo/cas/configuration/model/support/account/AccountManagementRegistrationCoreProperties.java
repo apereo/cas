@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.account;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.DurationCapable;
@@ -30,7 +31,7 @@ import java.io.Serializable;
 @Setter
 @Accessors(chain = true)
 @JsonFilter("AccountManagementRegistrationCoreProperties")
-public class AccountManagementRegistrationCoreProperties implements Serializable {
+public class AccountManagementRegistrationCoreProperties implements CasFeatureModule, Serializable {
     @Serial
     private static final long serialVersionUID = -4679683905941523034L;
 

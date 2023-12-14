@@ -456,6 +456,7 @@ ext.libraries = [
                 },
                 dependencies.create("commons-beanutils:commons-beanutils:$commonsBeansVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "commons-collections", module: "commons-collections")
                 },
                 dependencies.create("commons-validator:commons-validator:$commonsValidatorVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")

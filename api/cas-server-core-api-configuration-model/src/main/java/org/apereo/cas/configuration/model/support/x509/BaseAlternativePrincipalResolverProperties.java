@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.x509;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -20,7 +21,7 @@ import java.io.Serializable;
 @Setter
 @Accessors(chain = true)
 @JsonFilter("BaseAlternativePrincipalResolverProperties")
-public abstract class BaseAlternativePrincipalResolverProperties implements Serializable {
+public abstract class BaseAlternativePrincipalResolverProperties implements CasFeatureModule, Serializable {
     @Serial
     private static final long serialVersionUID = 4770829035414038072L;
 

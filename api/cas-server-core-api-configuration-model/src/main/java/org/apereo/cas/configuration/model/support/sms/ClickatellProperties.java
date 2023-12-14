@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.sms;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -20,7 +21,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class ClickatellProperties implements Serializable {
+public class ClickatellProperties implements CasFeatureModule, Serializable {
 
     @Serial
     private static final long serialVersionUID = -2147844690349952176L;
