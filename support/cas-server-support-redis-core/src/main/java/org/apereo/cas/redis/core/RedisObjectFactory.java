@@ -256,15 +256,14 @@ public class RedisObjectFactory {
 
     private static ClientOptions.Builder initializeClientOptionsBuilder(final BaseRedisProperties redis, final boolean cluster) {
         if (cluster) {
-            ClusterTopologyRefreshOptions.Builder refreshBuilder = ClusterTopologyRefreshOptions.builder()
-                .dynamicRefreshSources(redis.getCluster().isDynamicRefreshSources());
+            val refreshBuilder = ClusterTopologyRefreshOptions.builder().dynamicRefreshSources(redis.getCluster().isDynamicRefreshSources());
             if (StringUtils.hasText(redis.getCluster().getTopologyRefreshPeriod())) {
                 refreshBuilder.enablePeriodicRefresh(Beans.newDuration(redis.getCluster().getTopologyRefreshPeriod()));
             }
             if (redis.getCluster().isAdaptiveTopologyRefresh()) {
                 refreshBuilder.enableAllAdaptiveRefreshTriggers();
             }
-            ClusterClientOptions.Builder clusterClientOptionsBuilder = ClusterClientOptions.builder();
+            val clusterClientOptionsBuilder = ClusterClientOptions.builder();
             return clusterClientOptionsBuilder.topologyRefreshOptions(refreshBuilder.build());
         }
         return ClientOptions.builder();
