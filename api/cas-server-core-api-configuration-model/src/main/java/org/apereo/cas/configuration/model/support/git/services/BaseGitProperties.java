@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.git.services;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
@@ -24,7 +25,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-public abstract class BaseGitProperties implements Serializable {
+public abstract class BaseGitProperties implements CasFeatureModule, Serializable {
     @Serial
     private static final long serialVersionUID = 4194689836396653458L;
 

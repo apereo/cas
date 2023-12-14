@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.pm;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
@@ -27,7 +28,7 @@ import java.io.Serializable;
 @Setter
 @JsonFilter("ResetPasswordManagementProperties")
 @Accessors(chain = true)
-public class ResetPasswordManagementProperties implements Serializable {
+public class ResetPasswordManagementProperties implements CasFeatureModule, Serializable {
 
     @Serial
     private static final long serialVersionUID = 3453970349530670459L;

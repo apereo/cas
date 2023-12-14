@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -25,7 +26,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @ToString
 @JsonFilter("SpringResourceProperties")
-public class SpringResourceProperties implements Serializable {
+public class SpringResourceProperties implements CasFeatureModule, Serializable {
     @Serial
     private static final long serialVersionUID = 4142130961445546358L;
 

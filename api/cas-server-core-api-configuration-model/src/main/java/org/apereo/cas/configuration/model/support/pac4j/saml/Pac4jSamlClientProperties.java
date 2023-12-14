@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.support.pac4j.saml;
 
-import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jBaseClientProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.DurationCapable;
@@ -30,7 +29,7 @@ import java.util.stream.Stream;
 @Setter
 @Accessors(chain = true)
 @JsonFilter("Pac4jSamlClientProperties")
-public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties implements CasFeatureModule {
+public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties {
 
     @Serial
     private static final long serialVersionUID = -862819796533384951L;

@@ -15,10 +15,10 @@ const cas = require("../../cas.js");
         assert(res.status === 200);
         const index = Object.keys(res.data.activeSsoSessions).length - 1;
         const activeSession = res.data.activeSsoSessions[index];
-        cas.log(JSON.stringify(activeSession.authenticated_services));
+        await cas.log(JSON.stringify(activeSession.authenticated_services));
         assert(activeSession.number_of_uses === 4);
         const services = activeSession.authenticated_services;
-        assert(Object.keys(services).length) === 1;
+        assert(Object.keys(services).length === 1);
     }, async (err) => {
         throw err;
     });

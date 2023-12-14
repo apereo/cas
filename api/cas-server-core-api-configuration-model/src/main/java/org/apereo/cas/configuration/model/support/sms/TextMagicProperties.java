@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.sms;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -22,7 +23,7 @@ import java.io.Serializable;
 @Setter
 @Accessors(chain = true)
 @JsonFilter("TextMagicProperties")
-public class TextMagicProperties implements Serializable {
+public class TextMagicProperties implements CasFeatureModule, Serializable {
 
     @Serial
     private static final long serialVersionUID = 5645993472155203013L;

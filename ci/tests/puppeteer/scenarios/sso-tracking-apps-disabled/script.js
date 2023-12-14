@@ -18,7 +18,7 @@ const cas = require("../../cas.js");
         cas.log(JSON.stringify(activeSession.authenticated_services));
         assert(activeSession.number_of_uses === 4);
         const services = activeSession.authenticated_services;
-        assert(Object.keys(services).length) === 4;
+        assert(Object.keys(services).length === 4);
     }, async (err) => {
         throw err;
     });
