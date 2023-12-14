@@ -19,12 +19,12 @@ dependencies {
 
     api project(":api:cas-server-core-api-util")
     api project(":api:cas-server-core-api-protocol")
-    
+
     testImplementation libraries.springbootconfigmetadata
-    
+
     compileOnly libraries.javaparser
     compileOnly libraries.log4j
-    
+
     if (!skipConfigurationMetadata) {
         annotationProcessor libraries.springbootconfigmetadata
     }
