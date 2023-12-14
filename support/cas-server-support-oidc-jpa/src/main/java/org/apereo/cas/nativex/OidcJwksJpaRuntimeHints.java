@@ -5,7 +5,6 @@ import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
-import org.springframework.beans.factory.DisposableBean;
 import java.util.Collection;
 import java.util.List;
 
@@ -18,7 +17,7 @@ import java.util.List;
 public class OidcJwksJpaRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
-        registerSpringProxy(hints, OidcJsonWebKeystoreGeneratorService.class, JpaPersistenceUnitProvider.class, DisposableBean.class);
+        registerSpringProxy(hints, OidcJsonWebKeystoreGeneratorService.class, JpaPersistenceUnitProvider.class);
         registerReflectionHints(hints, List.of(JpaPersistenceUnitProvider.class));
     }
 
