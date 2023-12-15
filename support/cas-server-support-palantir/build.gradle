@@ -87,7 +87,8 @@ tasks.named("yarn", YarnTask) {
         'client/package.json',
         'client/vite.config.js'
     )
-    outputs.file('client/yarn.lock')
+    inputs.file('client/yarn.lock')
+    outputs.dir(file("client/node_modules"))
 }
 
 tasks.register("build-ui", NpxTask) {
