@@ -1,12 +1,11 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.util.model.TriStateBoolean;
+import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.apereo.cas.util.serialization.ComponentSerializationPlan;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 import org.apereo.cas.util.serialization.DefaultComponentSerializationPlan;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
@@ -15,7 +14,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
-
 import java.util.List;
 
 /**

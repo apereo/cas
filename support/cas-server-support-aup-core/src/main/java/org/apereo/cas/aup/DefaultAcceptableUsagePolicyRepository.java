@@ -1,14 +1,12 @@
 package org.apereo.cas.aup;
 
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
+import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.apereo.cas.util.model.TriStateBoolean;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.webflow.execution.RequestContext;
-
 import java.io.Serial;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

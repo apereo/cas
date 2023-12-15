@@ -2,12 +2,10 @@ package org.apereo.cas.configuration.model.core.util;
 
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
-
 import java.io.Serial;
 import java.io.Serializable;
 
@@ -23,6 +21,11 @@ import java.io.Serializable;
 @Accessors(chain = true)
 public class SigningJwtCryptoProperties implements Serializable {
 
+    /**
+     * Signing key size for text data and ciphers.
+     */
+    public static final int DEFAULT_STRINGABLE_SIGNING_KEY_SIZE = 512;
+
     @Serial
     private static final long serialVersionUID = -552544781333015532L;
 
@@ -35,5 +38,5 @@ public class SigningJwtCryptoProperties implements Serializable {
     /**
      * The signing key size.
      */
-    private int keySize = 512;
+    private int keySize = DEFAULT_STRINGABLE_SIGNING_KEY_SIZE;
 }
