@@ -41,7 +41,11 @@ public interface CasSSLContext {
         return new CasSSLContext() {
             @Override
             public KeyManagerFactory getKeyManagerFactory() {
-                return Unchecked.supplier(() -> KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm())).get();
+                return Unchecked.supplier(() -> {
+                    val factory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+                    factory.init(null, null);
+                    return factory;
+                }).get();
             }
 
             @Override
@@ -161,7 +165,11 @@ public interface CasSSLContext {
 
         @Override
         public KeyManagerFactory getKeyManagerFactory() {
-            return Unchecked.supplier(() -> KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm())).get();
+            return Unchecked.supplier(() -> {
+                val factory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+                factory.init(null, null);
+                return factory;
+            }).get();
         }
 
         @Override
