@@ -13,11 +13,11 @@ knows the OP's Issuer location through an out-of-band mechanism, it can skip thi
 
 Issuer discovery requires the following information to make a discovery request:
 
-| Parameter  | Description                                                                                                        |
-|------------|--------------------------------------------------------------------------------------------------------------------|
-| `resource` | Required. Identifier for the target End-User that is the subject of the discovery request.                         |
-| `host`     | Server where a WebFinger service is hosted.                                                                        |
-| `rel`      | URI identifying the type of service whose location is being requested:`http://openid.net/specs/connect/1.0/issuer` |
+| Parameter  | Description                                                                                                         |
+|------------|---------------------------------------------------------------------------------------------------------------------|
+| `resource` | Required. Identifier for the target End-User that is the subject of the discovery request.                          |
+| `host`     | Server where a WebFinger service is hosted.                                                                         |
+| `rel`      | URI identifying the type of service whose location is being requested: `http://openid.net/specs/connect/1.0/issuer` |
 
 To start discovery of OpenID endpoints, the End-User supplies an Identifier to 
 the Relying Party. The RP applies normalization rules to the Identifier to
