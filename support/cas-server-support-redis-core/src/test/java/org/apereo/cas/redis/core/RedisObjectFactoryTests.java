@@ -69,6 +69,18 @@ class RedisObjectFactoryTests {
     }
 
     @Test
+    void verifyConnectionWithTls() throws Throwable {
+        val props = new BaseRedisProperties();
+        props.setHost("localhost");
+        props.setPort(16669);
+        props.setUsername("default");
+        props.setPassword("pAssw0rd123");
+        props.setUseSsl(true);
+        val connection = RedisObjectFactory.newRedisConnectionFactory(props, true, CasSSLContext.system());
+        assertNotNull(connection);
+    }
+
+    @Test
     void verifyConnectionWithPassword() throws Throwable {
         val props = new BaseRedisProperties();
         props.setHost("localhost");
