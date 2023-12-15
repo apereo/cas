@@ -65,8 +65,10 @@ public class DynamicMetadataResolverAdapter extends AbstractMetadataResolverAdap
                     .build();
                 response = HttpUtils.execute(exec);
                 if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                    val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
-                    return new ByteArrayInputStream(result.getBytes(StandardCharsets.UTF_8));
+                    try (val content = response.getEntity().getContent()) {
+                        val result = IOUtils.toString(content, StandardCharsets.UTF_8);
+                        return new ByteArrayInputStream(result.getBytes(StandardCharsets.UTF_8));
+                    }
                 }
             } catch (final Exception e) {
                 LoggingUtils.error(LOGGER, e);

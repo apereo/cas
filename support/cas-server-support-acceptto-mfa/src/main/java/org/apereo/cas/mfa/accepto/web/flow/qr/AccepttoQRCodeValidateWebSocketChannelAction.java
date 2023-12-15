@@ -83,23 +83,25 @@ public class AccepttoQRCodeValidateWebSocketChannelAction extends BaseCasWebflow
                 LOGGER.debug("Response API status code is [{}]", status);
 
                 if (status == HttpStatus.SC_OK) {
-                    val result = IOUtils.toString(apiResponse.getEntity().getContent(), StandardCharsets.UTF_8);
-                    val results = MAPPER.readValue(JsonValue.readHjson(result).toString(), Map.class);
-                    LOGGER.debug("Received API results for channel [{}] as [{}]", channel, results);
-                    if (results.isEmpty()) {
-                        throw new AuthenticationException("No API results were returned for channel " + channel);
+                    try (val content = apiResponse.getEntity().getContent()) {
+                        val result = IOUtils.toString(content, StandardCharsets.UTF_8);
+                        val results = MAPPER.readValue(JsonValue.readHjson(result).toString(), Map.class);
+                        LOGGER.debug("Received API results for channel [{}] as [{}]", channel, results);
+                        if (results.isEmpty()) {
+                            throw new AuthenticationException("No API results were returned for channel " + channel);
+                        }
+                        val success = BooleanUtils.toBoolean(results.get("success").toString());
+                        if (success) {
+                            val email = results.get("user_email").toString();
+                            LOGGER.trace("Storing channel [{}] in http session", channel);
+                            AccepttoWebflowUtils.storeChannelInSessionStore(channel, webContext, sessionStore);
+                            WebUtils.putCredential(requestContext, new AccepttoEmailCredential(email));
+                            return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_FINALIZE);
+                        }
+                        val message = results.get("message").toString();
+                        LOGGER.error(message);
+                        return returnError(message);
                     }
-                    val success = BooleanUtils.toBoolean(results.get("success").toString());
-                    if (success) {
-                        val email = results.get("user_email").toString();
-                        LOGGER.trace("Storing channel [{}] in http session", channel);
-                        AccepttoWebflowUtils.storeChannelInSessionStore(channel, webContext, sessionStore);
-                        WebUtils.putCredential(requestContext, new AccepttoEmailCredential(email));
-                        return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_FINALIZE);
-                    }
-                    val message = results.get("message").toString();
-                    LOGGER.error(message);
-                    return returnError(message);
                 }
                 if (status == HttpStatus.SC_FORBIDDEN) {
                     return returnError("Invalid uid and secret combination; application not found");

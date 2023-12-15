@@ -99,27 +99,29 @@ public class AccepttoMultifactorAuthenticationHandler extends AbstractPreAndPost
                 if (response != null) {
                     val status = response.getStatusLine().getStatusCode();
                     if (status == HttpStatus.SC_OK) {
-                        val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
-                        val results = MAPPER.readValue(JsonValue.readHjson(result).toString(), Map.class);
-                        LOGGER.debug("Received results as [{}]", results);
+                        try (val content = response.getEntity().getContent()) {
+                            val result = IOUtils.toString(content, StandardCharsets.UTF_8);
+                            val results = MAPPER.readValue(JsonValue.readHjson(result).toString(), Map.class);
+                            LOGGER.debug("Received results as [{}]", results);
 
-                        val channelStatus = results.get("status").toString();
+                            val channelStatus = results.get("status").toString();
 
-                        if ("expired".equalsIgnoreCase(channelStatus)) {
-                            throw new AccountExpiredException("Authentication request has expired");
-                        }
-                        if ("declined".equalsIgnoreCase(channelStatus)) {
-                            throw new FailedLoginException("Acceptto authentication has been declined");
-                        }
+                            if ("expired".equalsIgnoreCase(channelStatus)) {
+                                throw new AccountExpiredException("Authentication request has expired");
+                            }
+                            if ("declined".equalsIgnoreCase(channelStatus)) {
+                                throw new FailedLoginException("Acceptto authentication has been declined");
+                            }
 
-                        if ("approved".equalsIgnoreCase(channelStatus)) {
-                            val deviceId = results.get("device_id").toString();
-                            val attr = CollectionUtils.<String, List<Object>>wrap(
-                                "accepttoChannel", CollectionUtils.wrapList(tokenCredential.getId()),
-                                "accepttoDeviceId", CollectionUtils.wrapList(deviceId),
-                                "accepttoStatus", CollectionUtils.wrapList(channelStatus));
-                            val principal = this.principalFactory.createPrincipal(email, attr);
-                            return createHandlerResult(tokenCredential, principal);
+                            if ("approved".equalsIgnoreCase(channelStatus)) {
+                                val deviceId = results.get("device_id").toString();
+                                val attr = CollectionUtils.<String, List<Object>>wrap(
+                                        "accepttoChannel", CollectionUtils.wrapList(tokenCredential.getId()),
+                                        "accepttoDeviceId", CollectionUtils.wrapList(deviceId),
+                                        "accepttoStatus", CollectionUtils.wrapList(channelStatus));
+                                val principal = this.principalFactory.createPrincipal(email, attr);
+                                return createHandlerResult(tokenCredential, principal);
+                            }
                         }
                     }
                     if (status == HttpStatus.SC_FORBIDDEN) {

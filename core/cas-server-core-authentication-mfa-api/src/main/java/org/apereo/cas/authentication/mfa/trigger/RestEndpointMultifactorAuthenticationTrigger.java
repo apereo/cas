@@ -131,8 +131,9 @@ public class RestEndpointMultifactorAuthenticationTrigger implements Multifactor
             response = HttpUtils.execute(exec);
             val status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
             if (status.is2xxSuccessful()) {
-                val content = response.getEntity().getContent();
-                return IOUtils.toString(content, StandardCharsets.UTF_8);
+                try (val content = response.getEntity().getContent()) {
+                    return IOUtils.toString(content, StandardCharsets.UTF_8);
+                }
             }
         } finally {
             HttpUtils.close(response);
