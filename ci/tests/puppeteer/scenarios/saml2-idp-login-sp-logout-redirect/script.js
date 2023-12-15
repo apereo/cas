@@ -32,7 +32,7 @@ const fs = require("fs");
 
         const tempDir = os.tmpdir();
         let sloFile = `${tempDir}/saml2slo.html`;
-        
+
         await fs.writeFileSync(sloFile, sloPage);
         await cas.log(`Logout page is written to ${sloFile}`);
 
@@ -41,7 +41,7 @@ const fs = require("fs");
 
         await cas.logPage(page);
         await cas.screenshot(page);
-        await cas.assertInnerText(page, "div h2", "Logout successful");
+        await cas.assertInnerText(page, "#main-content h2", "Logout successful");
         await cas.assertVisibility(page, "#logoutRedirectButton");
         await cas.click(page, "#logoutRedirectButton");
     } finally {

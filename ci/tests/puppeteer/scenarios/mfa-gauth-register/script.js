@@ -8,7 +8,7 @@ const cas = require('../../cas.js');
     await cas.goto(page, "https://localhost:8443/cas/login?authn_method=mfa-gauth&locale=en");
     await cas.loginWith(page);
 
-    await cas.assertInnerTextStartsWith(page, "#login h4", "Your account is not registered");
+    await cas.assertInnerTextStartsWith(page, "#login h2", "Your account is not registered");
     await cas.assertVisibility(page, 'img#imageQRCode');
     await cas.assertVisibility(page, '#seckeypanel pre');
     await cas.assertVisibility(page, '#scratchcodes');
