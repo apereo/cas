@@ -111,6 +111,7 @@ public class ScriptingUtils {
             "org.apereo.cas.authentication.services",
             "org.apereo.cas.authentication.credential",
             "org.apereo.cas.authentication.principal",
+            "org.apereo.cas.configuration.support",
             "org.apereo.cas.util",
             "org.apereo.cas.util.model",
             "org.apereo.cas.web",

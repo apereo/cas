@@ -8,12 +8,10 @@ import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.LinkedHashMap;
-import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -38,33 +36,40 @@ public class OAuth20DefaultUserProfileViewRenderer implements OAuth20UserProfile
     }
 
     protected ResponseEntity renderProfileForModel(final Map<String, Object> userProfile,
-                                                   final OAuth20AccessToken accessToken, final HttpServletResponse response) {
+                                                   final OAuth20AccessToken accessToken,
+                                                   final HttpServletResponse response) {
         return new ResponseEntity<>(userProfile, HttpStatus.OK);
     }
 
     protected Map<String, Object> getRenderedUserProfile(final Map<String, Object> model,
                                                          final OAuth20AccessToken accessToken,
                                                          final HttpServletResponse response) {
-        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, accessToken.getClientId());
-        var type = oauthProperties.getCore().getUserProfileViewType();
-        if (registeredService != null && StringUtils.isNotBlank(registeredService.getUserProfileViewType())) {
-            type = OAuthCoreProperties.UserProfileViewTypes.valueOf(registeredService.getUserProfileViewType().toUpperCase(Locale.ENGLISH));
-        }
+        val type = determineUserProfileType(accessToken);
         LOGGER.debug("User profile view type for client [{}] is set to [{}]", accessToken.getClientId(), type);
-
         if (type == OAuthCoreProperties.UserProfileViewTypes.FLAT) {
-            val flattened = new LinkedHashMap<String, Object>();
-            if (model.containsKey(MODEL_ATTRIBUTE_ATTRIBUTES)) {
-                val attributes = (Map) model.get(MODEL_ATTRIBUTE_ATTRIBUTES);
-                flattened.putAll(attributes);
-            }
-            model.keySet()
-                .stream()
-                .filter(attributeName -> !attributeName.equalsIgnoreCase(MODEL_ATTRIBUTE_ATTRIBUTES))
-                .forEach(attributeName -> flattened.put(attributeName, model.get(attributeName)));
-            LOGGER.trace("Flattened user profile attributes with the final model as [{}]", model);
-            return flattened;
+            return flattenUserProfile(model);
         }
         return model;
+    }
+
+    protected OAuthCoreProperties.UserProfileViewTypes determineUserProfileType(final OAuth20AccessToken accessToken) {
+        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, accessToken.getClientId());
+        return registeredService != null && registeredService.getUserProfileViewType() != null
+            ? registeredService.getUserProfileViewType()
+            : oauthProperties.getCore().getUserProfileViewType();
+    }
+
+    protected Map<String, Object> flattenUserProfile(final Map<String, Object> model) {
+        val flattened = new LinkedHashMap<String, Object>();
+        if (model.containsKey(MODEL_ATTRIBUTE_ATTRIBUTES)) {
+            val attributes = (Map) model.get(MODEL_ATTRIBUTE_ATTRIBUTES);
+            flattened.putAll(attributes);
+        }
+        model.keySet()
+            .stream()
+            .filter(attributeName -> !attributeName.equalsIgnoreCase(MODEL_ATTRIBUTE_ATTRIBUTES))
+            .forEach(attributeName -> flattened.put(attributeName, model.get(attributeName)));
+        LOGGER.trace("Flattened user profile attributes with the final model as [{}]", model);
+        return flattened;
     }
 }
