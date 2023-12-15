@@ -144,7 +144,7 @@ jobs:
           verbose: false
           fail_ci_if_error: false
       - name: "Upload Coverage Report"
-        uses: "actions/upload-artifact@v3"
+        uses: "actions/upload-artifact@v4"
         with:
           name: "cas-tests-${{ matrix.category }}.coverage"
           path: "./build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
