@@ -1,11 +1,11 @@
 package org.apereo.cas.nativex;
 
+import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.apereo.cas.util.CasVersion;
 import org.apereo.cas.util.LogMessageSummarizer;
 import org.apereo.cas.util.cipher.JsonWebKeySetStringCipherExecutor;
 import org.apereo.cas.util.cipher.RsaKeyPairCipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.model.TriStateBoolean;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 import org.apereo.cas.util.thread.Cleanable;

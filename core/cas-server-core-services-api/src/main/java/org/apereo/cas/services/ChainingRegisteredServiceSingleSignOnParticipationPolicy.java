@@ -1,8 +1,7 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
-import org.apereo.cas.util.model.TriStateBoolean;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -13,7 +12,6 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.val;
-
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Arrays;

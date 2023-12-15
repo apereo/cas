@@ -1,8 +1,8 @@
 package org.apereo.cas.web.flow.delegation;
 
 import org.apereo.cas.api.PasswordlessUserAccount;
+import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.apereo.cas.util.MockRequestContext;
-import org.apereo.cas.util.model.TriStateBoolean;
 import org.apereo.cas.web.flow.BasePasswordlessAuthenticationActionTests;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;

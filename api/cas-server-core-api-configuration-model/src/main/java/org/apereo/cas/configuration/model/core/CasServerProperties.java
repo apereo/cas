@@ -1,11 +1,9 @@
 package org.apereo.cas.configuration.model.core;
 
-import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatProperties;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
@@ -13,7 +11,6 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
 import java.io.Serial;
 import java.io.Serializable;
 
@@ -68,11 +65,11 @@ public class CasServerProperties implements Serializable {
 
     @JsonIgnore
     public String getLoginUrl() {
-        return getPrefix().concat(CasProtocolConstants.ENDPOINT_LOGIN);
+        return getPrefix().concat("login");
     }
 
     @JsonIgnore
     public String getLogoutUrl() {
-        return getPrefix().concat(CasProtocolConstants.ENDPOINT_LOGOUT);
+        return getPrefix().concat("logout");
     }
 }

@@ -385,9 +385,9 @@ public class ConfigurationMetadataGenerator {
 
         removeNestedConfigurationPropertyGroups(properties, groups);
 
-        jsonMap.put("properties", properties.stream().sorted(Comparator.comparing(ConfigurationMetadataProperty::getName)).collect(Collectors.toCollection(LinkedHashSet::new)));
-        jsonMap.put("groups", groups.stream().sorted(Comparator.comparing(ConfigurationMetadataProperty::getName)).collect(Collectors.toCollection(LinkedHashSet::new)));
-        jsonMap.put("hints", hints.stream().sorted(Comparator.comparing(ConfigurationMetadataHint::getName)).collect(Collectors.toCollection(LinkedHashSet::new)));
+        jsonMap.put("properties", properties.parallelStream().sorted(Comparator.comparing(ConfigurationMetadataProperty::getName)).collect(Collectors.toCollection(LinkedHashSet::new)));
+        jsonMap.put("groups", groups.parallelStream().sorted(Comparator.comparing(ConfigurationMetadataProperty::getName)).collect(Collectors.toCollection(LinkedHashSet::new)));
+        jsonMap.put("hints", hints.parallelStream().sorted(Comparator.comparing(ConfigurationMetadataHint::getName)).collect(Collectors.toCollection(LinkedHashSet::new)));
         
         val destinationFile = new File(buildDir, "generated/spring-configuration-metadata/META-INF/spring-configuration-metadata.json");
         destinationFile.getParentFile().mkdirs();
@@ -399,7 +399,7 @@ public class ConfigurationMetadataGenerator {
             var typePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(this.sourcePath, property.getType());
             var typeFile = new File(typePath);
             if (!typeFile.exists() && !property.getType().contains(".")) {
-                val clazz = org.apereo.cas.util.ReflectionUtils.findClassBySimpleNameInPackage(property.getType(), "org.apereo.cas");
+                val clazz = ConfigurationMetadataClassSourceLocator.findClassBySimpleNameInPackage(property.getType(), "org.apereo.cas");
                 if (clazz.isPresent()) {
                     typePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(this.sourcePath, clazz.get().getName());
                     typeFile = new File(typePath);
@@ -436,8 +436,7 @@ public class ConfigurationMetadataGenerator {
                     val matcher = NESTED_TYPE_PATTERN2.matcher(p.getType());
                     indexBrackets = matcher.matches();
                     typeName = matcher.group(2);
-
-                    val result = org.apereo.cas.util.ReflectionUtils.findClassBySimpleNameInPackage(typeName, "org.apereo.cas");
+                    val result = ConfigurationMetadataClassSourceLocator.findClassBySimpleNameInPackage(typeName, "org.apereo.cas");
                     if (result.isPresent()) {
                         typeName = result.get().getName();
                     }
