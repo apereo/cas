@@ -92,7 +92,7 @@ jobs:
             ${{ runner.os }}-gradle-
       - name: Build with Gradle
         run: ./gradlew build ${{ env.GRADLE_BUILD_OPTIONS }}
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: binary-artifacts
           path: ./**/build/libs/*.*
