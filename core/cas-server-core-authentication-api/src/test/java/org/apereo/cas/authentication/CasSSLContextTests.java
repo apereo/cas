@@ -41,6 +41,7 @@ class CasSSLContextTests {
         assertNotNull(system.getHostnameVerifier());
         assertNotNull(system.getTrustManagerFactory());
         assertNotNull(system.getKeyManagerFactory());
+        assertNotNull(system.getKeyManagers());
         assertThrows(Exception.class, () -> contactUrl("https://expired.badssl.com/", system));
         assertThrows(Exception.class, () -> contactUrl("https://self-signed.badssl.com/", system));
     }
