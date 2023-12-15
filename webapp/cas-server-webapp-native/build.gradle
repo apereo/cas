@@ -213,12 +213,11 @@ processAot {
     list.add("-Xrunjdwp:transport=dt_socket,address=*:5005,server=y,suspend=n")
 
     jvmArgs = list
-    systemProperties System.properties
+//    systemProperties System.properties
 
     def aotSpringActiveProfiles = providers.systemProperty("aotSpringActiveProfiles").getOrElse("native")
     logger.info "AOT processing spring active profile: ${aotSpringActiveProfiles}"
-
-
+    
     args(
         "--spring.profiles.active=${aotSpringActiveProfiles}",
         "--spring.main.lazy-initialization=false",
