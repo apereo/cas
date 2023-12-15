@@ -63,7 +63,7 @@ public class JpaPersistenceUnitProviderTests {
 
     @Getter
     @RequiredArgsConstructor
-    private static class DummyJpaPersistenceUnitProvider implements JpaPersistenceUnitProvider {
+    private static final class DummyJpaPersistenceUnitProvider implements JpaPersistenceUnitProvider {
         private final ConfigurableApplicationContext applicationContext;
         private final EntityManager entityManager;
     }

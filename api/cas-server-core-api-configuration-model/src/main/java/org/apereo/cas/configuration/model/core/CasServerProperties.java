@@ -65,11 +65,11 @@ public class CasServerProperties implements Serializable {
 
     @JsonIgnore
     public String getLoginUrl() {
-        return getPrefix().concat("login");
+        return getPrefix().concat("/login");
     }
 
     @JsonIgnore
     public String getLogoutUrl() {
-        return getPrefix().concat("logout");
+        return getPrefix().concat("/logout");
     }
 }
