@@ -18,6 +18,7 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import javax.sql.DataSource;
 import java.sql.Driver;
 import java.util.Properties;
+import java.util.UUID;
 
 /**
  * This is {@link JpaBeans}.
@@ -104,7 +105,7 @@ public class JpaBeans {
         bean.setAutoCommit(jpaProperties.isAutocommit());
         bean.setValidationTimeout(jpaProperties.getPool().getTimeoutMillis());
         bean.setReadOnly(jpaProperties.isReadOnly());
-        bean.setPoolName(jpaProperties.getPool().getName());
+        bean.setPoolName(StringUtils.defaultIfBlank(jpaProperties.getPool().getName(), UUID.randomUUID().toString()));
         bean.setKeepaliveTime(Beans.newDuration(jpaProperties.getPool().getKeepAliveTime()).toMillis());
         bean.setMaxLifetime(Beans.newDuration(jpaProperties.getPool().getMaximumLifetime()).toMillis());
         bean.setSchema(jpaProperties.getDefaultSchema());

@@ -301,8 +301,10 @@ public class CasConfigurationProperties implements Serializable {
 
     /**
      * Google Apps integration settings.
+     * @deprecated Since 6.2.0
      */
     @NestedConfigurationProperty
+    @Deprecated(since = "6.2.0")
     private GoogleAppsProperties googleApps = new GoogleAppsProperties();
 
     /**
@@ -370,21 +372,4 @@ public class CasConfigurationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private CasServerCoreProperties core = new CasServerCoreProperties();
-
-    /**
-     * Hold configuration settings in a parent
-     * field mainly used for serialization.
-     *
-     * @return the serializable
-     */
-    public Serializable withHolder() {
-        return new Holder(this);
-    }
-
-    @SuppressWarnings({"UnusedMethod", "UnusedVariable"})
-    private record Holder(CasConfigurationProperties cas) implements Serializable {
-        @Serial
-        private static final long serialVersionUID = -3129941286238115568L;
-
-    }
 }

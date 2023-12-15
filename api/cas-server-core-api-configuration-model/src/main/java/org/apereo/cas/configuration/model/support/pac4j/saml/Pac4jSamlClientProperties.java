@@ -1,7 +1,6 @@
 package org.apereo.cas.configuration.model.support.pac4j.saml;
 
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jBaseClientProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -68,7 +67,7 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties {
      * Location of the keystore to use and generate the SP/CAS keystore.
      */
     @RequiredProperty
-    private String keystorePath = Beans.getTempFilePath("samlSpKeystore", ".jks");
+    private String keystorePath;
 
     /**
      * Once you have an authenticated session on the identity provider, usually it won't prompt you again to enter your

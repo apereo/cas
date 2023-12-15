@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.support.pac4j.saml;
 
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -33,5 +32,5 @@ public class Pac4jSamlServiceProviderMetadataFileSystemProperties implements Ser
      * it will be ignored and reused.
      */
     @RequiredProperty
-    private String location = Beans.getTempFilePath("samlSpMetadata", ".xml");
+    private String location;
 }
