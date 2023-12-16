@@ -88,6 +88,7 @@ NATIVE_BUILD="false"
 NATIVE_RUN="false"
 BUILD_SPAWN="background"
 QUIT_QUIETLY="false"
+DISABLE_LINTER="false"
 
 while (( "$#" )); do
   case "$1" in
@@ -216,6 +217,10 @@ while (( "$#" )); do
     DRYRUN="true"
     INITONLY="true"
     export HEADLESS="true"
+    shift 1;
+    ;;
+  --nolint|--no-lint)
+    DISABLE_LINTER="true"
     shift 1;
     ;;
   --noclear|--nc|--ncl|--no-clear)
@@ -351,12 +356,14 @@ else
   printgreen "Using existing Puppeteer modules..."
 fi
 
-printgreen "Running ESLint on scenario [${scenarioName}]..."
-npx eslint "${scriptPath}"
-if [ $? -ne 0 ]; then
-  printred "Found linting errors; unable to run the scenario [${scenarioName}]"
-  printred "Please run: npx eslint --fix ${scriptPath}"
-  exit 1
+if [[ "${DISABLE_LINTER}" == "false" ]]; then
+  printgreen "Running ESLint on scenario [${scenarioName}]..."
+  npx eslint "${scriptPath}"
+  if [ $? -ne 0 ]; then
+    printred "Found linting errors; unable to run the scenario [${scenarioName}]"
+    printred "Please run: npx eslint --fix ${scriptPath}"
+    exit 1
+  fi
 fi
 
 if [[ "${RERUN}" != "true" ]]; then
