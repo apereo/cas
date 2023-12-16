@@ -102,6 +102,7 @@ function finished {
 git diff --quiet
 if [ $? -ne 0 ]; then
   printred "Git repository has modified or untracked files. Commit or discard all changes and try again."
+  git status
   exit 1
 fi
 
