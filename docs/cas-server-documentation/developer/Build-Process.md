@@ -78,7 +78,7 @@ The following commandline boolean flags are supported by the build and can be pa
 | `ignoreJavadocFailures`       | Ignore javadoc failures and let the build resume.                                                    |
 | `ignoreFindbugsFailures`      | Ignore Findbugs failures and let the build resume.                                                   |
 | `ignoreTestFailures`          | Ignore test failures and let the build resume.                                                       |
-| `casModules`                  | Build property; Comma separated list of modules without the `cas-server-[support                     |
+| `casModules`                  | Build property; Comma separated list of modules without the `cas-server-[support/api/core]`          |
 | `buildScript`                 | Build fragment to include when building the project. Typically used by and during integration tests. |
 | `aotSpringActiveProfiles`     | List of spring active profiles to use when building Graal VM native images.                          |
 
