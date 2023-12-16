@@ -445,9 +445,16 @@ ul.tab-content li.active:not(.property-name):not(.property-tab)  {
 }
 
 #sidebarNavButton {
-  font-size: 32px;
+  //font-size: 32px;
   cursor: pointer;
   background-color: inherit;
   border: none;
   padding-left: 1.25rem;
 }
+
+@media (max-width: 850px) {
+  #sidebarNavButton, #navigationNavButton {
+    display: none;
+  }
+}
+
