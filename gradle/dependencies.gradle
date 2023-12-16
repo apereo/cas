@@ -2561,9 +2561,6 @@ ext.libraries = [
                 },
                 dependencies.create("org.apache.tomcat.embed:tomcat-embed-el:$tomcatVersion") {
                     exclude(group: "org.apache.tomcat", module: "tomcat-annotations-api")
-                },
-                dependencies.create("org.apache.tomcat:jakartaee-migration:1.0.7") {
-                    exclude(group: "commons-io", module: "commons-io")
                 }
         ],
         springbootjetty            : [
