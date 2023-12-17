@@ -81,9 +81,7 @@ configurations.configureEach {
                     details.useVersion("${undertowVersion}")
                 }
                 if (requested.group.startsWith( "org.apache.tomcat")) {
-                    if (requested.name != "jakartaee-migration") {
-                        details.useVersion("${tomcatVersion}")
-                    }
+                    details.useVersion("${tomcatVersion}")
                 }
                 if (requested.group == "org.hsqldb")  {
                     details.useVersion("${hsqlVersion}")
