@@ -89,7 +89,14 @@ jobs:
            restore-keys: ${{ runner.os }}-gradle-
        - name: Publish SNAPSHOTs
          if: ${{ env.REPOSITORY_USER != null && env.REPOSITORY_PWD != null }}
-         run: ./ci/release.sh
+         uses: nick-fields/retry@v2
+         with:
+           max_attempts: 3
+           retry_on: error
+           retry_wait_seconds: 10
+           timeout_minutes: 50
+           shell: bash
+           command: ./ci/release.sh
   ##########################################################################
 
   publish-modules-metadata:
