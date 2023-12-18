@@ -36,16 +36,17 @@ import java.util.List;
 public class CasCoreWebflowRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
-        hints.proxies()
-            .registerJdkProxy(Action.class)
-            .registerJdkProxy(TransitionDefinition.class)
-            .registerJdkProxy(StateDefinition.class)
-            .registerJdkProxy(CasWebflowConfigurer.class)
-            .registerJdkProxy(CasWebflowCustomizer.class)
-            .registerJdkProxy(CasWebflowEventResolver.class)
-            .registerJdkProxy(WebflowDecorator.class)
-            .registerJdkProxy(CasWebflowExecutionPlanConfigurer.class)
-            .registerJdkProxy(CasWebflowExceptionHandler.class);
+        registerProxyHints(hints, List.of(
+            Action.class,
+            TransitionDefinition.class,
+            StateDefinition.class,
+            CasWebflowConfigurer.class,
+            CasWebflowCustomizer.class,
+            CasWebflowEventResolver.class,
+            WebflowDecorator.class,
+            CasWebflowExecutionPlanConfigurer.class,
+            CasWebflowExceptionHandler.class
+        ));
 
         hints.serialization()
             .registerType(ClientFlowExecutionRepository.SerializedFlowExecutionState.class)

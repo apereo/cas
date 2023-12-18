@@ -20,13 +20,8 @@ public class DelegatedClientsRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
         hints.resources().registerPattern("META-INF/services/com.fasterxml.jackson.databind.Module");
-        
-        hints.proxies()
-            .registerJdkProxy(DelegatedClientFactoryCustomizer.class)
-            .registerJdkProxy(DelegatedIdentityProviderFactory.class);
-
-        registerReflectionHints(hints,
-            findSubclassesInPackage(DelegatedIdentityProviderFactory.class, CentralAuthenticationService.NAMESPACE));
+        registerProxyHints(hints, DelegatedClientFactoryCustomizer.class, DelegatedIdentityProviderFactory.class);
+        registerReflectionHints(hints, findSubclassesInPackage(DelegatedIdentityProviderFactory.class, CentralAuthenticationService.NAMESPACE));
     }
 
     private static void registerReflectionHints(final RuntimeHints hints, final Collection clazzes) {

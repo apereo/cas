@@ -16,8 +16,7 @@ import org.springframework.aot.hint.RuntimeHints;
 public class CasPersonDirectoryRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
-        hints.proxies().registerJdkProxy(PersonDirectoryAttributeRepositoryPlanConfigurer.class);
-
+        registerProxyHints(hints, PersonDirectoryAttributeRepositoryPlanConfigurer.class);
         hints.reflection().registerType(PersonDirectoryPrincipalResolver.class, MemberCategory.INVOKE_DECLARED_CONSTRUCTORS);
     }
 }

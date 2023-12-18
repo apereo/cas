@@ -24,7 +24,7 @@ import java.util.List;
 public class CasCoreAuditRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
-        hints.proxies().registerJdkProxy(AuditTrailExecutionPlanConfigurer.class);
+        registerProxyHints(hints, List.of(AuditTrailExecutionPlanConfigurer.class));
 
         registerReflectionHints(hints, List.of(
             AuditTrailExecutionPlan.class,
@@ -41,10 +41,6 @@ public class CasCoreAuditRuntimeHints implements CasRuntimeHintsRegistrar {
             AuditTrailExecutionPlanConfigurer.class,
             AuditTrailRecordResolutionPlanConfigurer.class,
             AuditEventRepository.class));
-    }
-
-    private static void registerProxyHints(final RuntimeHints hints, final Collection<Class> subclassesInPackage) {
-        subclassesInPackage.forEach(clazz -> hints.proxies().registerJdkProxy(clazz));
     }
 
     private static void registerReflectionHints(final RuntimeHints hints, final Collection entries) {

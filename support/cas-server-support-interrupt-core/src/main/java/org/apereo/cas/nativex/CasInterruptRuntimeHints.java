@@ -17,11 +17,7 @@ public class CasInterruptRuntimeHints implements CasRuntimeHintsRegistrar {
 
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
-        hints.proxies()
-            .registerJdkProxy(InterruptInquiryExecutionPlan.class)
-            .registerJdkProxy(InterruptInquiryExecutionPlanConfigurer.class)
-            .registerJdkProxy(InterruptInquirer.class);
-
+        registerProxyHints(hints, InterruptInquiryExecutionPlan.class, InterruptInquiryExecutionPlanConfigurer.class, InterruptInquirer.class);
         hints.serialization().registerType(InterruptResponse.class);
     }
 }

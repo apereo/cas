@@ -37,4 +37,6 @@ public class CasHibernateRuntimeHints implements CasRuntimeHintsRegistrar {
             MemberCategory.PUBLIC_FIELDS};
         entries.forEach(el -> hints.reflection().registerType((Class) el, memberCategories));
     }
+
+
 }

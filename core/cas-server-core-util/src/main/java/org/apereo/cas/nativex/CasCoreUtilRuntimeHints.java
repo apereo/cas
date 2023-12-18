@@ -96,7 +96,17 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
         hints.resources().registerType(CasVersion.class);
 
-        registerProxiesHints(hints);
+        registerProxyHints(hints, List.of(
+            ComponentSerializationPlanConfigurer.class,
+            InitializingBean.class,
+            Supplier.class,
+            Runnable.class,
+            Function.class,
+            Consumer.class,
+            Cleanable.class,
+            CorsConfigurationSource.class
+        ));
+        
         registerSerializationHints(hints);
 
         registerDeclaredMethod(hints, Map.Entry.class, "getKey");
@@ -296,17 +306,6 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
             .registerType(TypeReference.of("java.lang.String$CaseInsensitiveComparator"));
     }
 
-    private static void registerProxiesHints(final RuntimeHints hints) {
-        hints.proxies()
-            .registerJdkProxy(ComponentSerializationPlanConfigurer.class)
-            .registerJdkProxy(InitializingBean.class)
-            .registerJdkProxy(Supplier.class)
-            .registerJdkProxy(Runnable.class)
-            .registerJdkProxy(Function.class)
-            .registerJdkProxy(Consumer.class)
-            .registerJdkProxy(Cleanable.class)
-            .registerJdkProxy(CorsConfigurationSource.class);
-    }
 
     private static void registerReflectionHintForConstructors(final RuntimeHints hints, final Collection clazzes) {
         clazzes.forEach(clazz ->
