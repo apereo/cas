@@ -16,7 +16,6 @@ import org.pac4j.core.client.config.BaseClientConfiguration;
 import org.pac4j.core.credentials.Credentials;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
-
 import java.util.Collection;
 import java.util.List;
 
@@ -39,16 +38,17 @@ public class Pac4jCoreRuntimeHints implements CasRuntimeHintsRegistrar {
             findSubclassesInPackage(IndirectClient.class, "org.pac4j"));
         registerReflectionHints(hints,
             List.of(DelegatedClientIdentityProviderConfiguration.class));
-        hints.proxies()
-            .registerJdkProxy(DelegatedClientUserProfileProvisioner.class)
-            .registerJdkProxy(DelegatedClientAuthenticationCredentialResolver.class)
-            .registerJdkProxy(DelegatedAuthenticationDynamicDiscoveryProviderLocator.class)
-            .registerJdkProxy(DelegatedClientAuthenticationFailureEvaluator.class)
-            .registerJdkProxy(DelegatedClientAuthenticationRequestCustomizer.class)
-            .registerJdkProxy(DelegatedClientNameExtractor.class)
-            .registerJdkProxy(DelegatedAuthenticationCredentialExtractor.class)
-            .registerJdkProxy(DelegatedAuthenticationPreProcessor.class)
-            .registerJdkProxy(DelegatedClientAuthenticationRequestCustomizer.class);
+
+        registerProxyHints(hints, DelegatedClientUserProfileProvisioner.class,
+            DelegatedClientAuthenticationCredentialResolver.class,
+            DelegatedAuthenticationDynamicDiscoveryProviderLocator.class,
+            DelegatedClientAuthenticationFailureEvaluator.class,
+            DelegatedClientAuthenticationRequestCustomizer.class,
+            DelegatedClientNameExtractor.class,
+            DelegatedAuthenticationCredentialExtractor.class,
+            DelegatedAuthenticationPreProcessor.class,
+            DelegatedClientAuthenticationRequestCustomizer.class);
+
     }
 
     private static void registerReflectionHints(final RuntimeHints hints, final Collection entries) {
