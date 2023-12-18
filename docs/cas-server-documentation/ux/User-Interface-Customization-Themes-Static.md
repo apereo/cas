@@ -1,0 +1,57 @@
+---
+layout: default
+title: Dynamic Themes - User Interface Customization - CAS
+category: User Interface
+---
+
+{% include variables.html %}
+
+# Static Themes
+
+CAS is configured to decorate views based on the `theme` property of a given 
+registered service in the Service Registry. The theme that is activated via 
+this method will still preserve the default views for CAS but will apply 
+decorations such as CSS and Javascript to the views. The physical structure 
+of views cannot be modified via this method.
+
+{% include_cached casproperties.html properties="cas.theme." %}
+                       
+To create a theme, please follow the below instructions:
+
+- Add a `[theme_name].properties` placed to the root of `src/main/resources` folder. 
+Contents of this file may contain the following settings:
+
+| Setting                                   | Description                                                                             | Value                                |
+|-------------------------------------------|-----------------------------------------------------------------------------------------|--------------------------------------|
+| `cas.standard.css.file`                   | Path to theme CSS file; Multiple files may be comma-separated.                          | `/themes/[theme_name]/css/cas.css`   |
+| `cas.standard.js.file`                    | Path to theme Javascript file; Multiple files may be comma-separated.                   | `/themes/[theme_name]/js/js/css`     |
+| `cas.standard.fragments.head`             | Names of fragments found in `custom.html` fragment, included in the layout `<head>` tag | Blank                                |
+| `cas.logo.file`                           | Path to theme logo to display via the common layout.                                    | `/images/logo.png`                   |
+| `cas.drawer-menu.enabled`                 | Decide whether drawer menu should be displayed.                                         | `true`                               |
+| `cas.theme.name`                          | Theme name used in various titles/captions.                                             | `Example Theme`                      |
+| `cas.theme.description`                   | Theme description used in various titles/captions.                                      | `Example Theme Description`          |
+| `cas.pm-links.enabled`                    | Whether password management/reset links should be displayed.                            | `true`                               |
+| `cas.login-form.enabled`                  | When the CAS login form should be displayed.                                            | `true`                               |
+| `cas.notifications-menu.enabled`          | Enable and display the notifications menu.                                              | `true`                               |
+| `cas.favicon.file`                        | Path to theme favicon file.                                                             | `/themes/example/images/favicon.ico` |
+| `cas.hero-banner.file`                    | Path to a "hero" styled image/logo on the login form.                                   | `/themes/example/images/hero.png`    |
+| `cas.js.core.enabled`                     | Whether core/default Javascript libraries should be included.                           | `/themes/example/images/hero.png`    |
+| `cas.successful-login.display-attributes` | Whether attributes/applications should be displayed on login.                           | `/themes/example/images/hero.png`    |
+| `cas.public-workstation.enabled`          | Whether user can indicate a public workstation option on login.                         | `false`                              |
+| `cas.warn-on-redirect`                    | Whether user should be warned prior to redirects to applications.                       | `false`                              |
+
+- Create the directory `src/main/resources/static/themes/[theme_name]`. Put the 
+  theme-specific `cas.css` and `cas.js` inside the appropriate directories for `css` and `js`.
+- Specify `[theme_name]` for the service definition under the `theme` property.
+
+```json
+{
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
+  "serviceId" : "^https://www.example.org",
+  "name" : "MyTheme",
+  "theme" : "[theme_name]",
+  "id" : 1000
+}
+```
+
+Values can use the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax.

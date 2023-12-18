@@ -104,6 +104,36 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
     }
 
     /**
+     * Register proxy hints together.
+     *
+     * @param hints               the hints
+     * @param subclassesInPackage the subclasses in package
+     */
+    default void registerChainedProxyHints(final RuntimeHints hints, final Class... subclassesInPackage) {
+        hints.proxies().registerJdkProxy(subclassesInPackage);
+    }
+
+    /**
+     * Register proxy hints.
+     *
+     * @param hints               the hints
+     * @param subclassesInPackage the subclasses in package
+     */
+    default void registerProxyHints(final RuntimeHints hints, final Class... subclassesInPackage) {
+        Arrays.stream(subclassesInPackage).forEach(clazz -> hints.proxies().registerJdkProxy(clazz));
+    }
+
+    /**
+     * Register proxy hints.
+     *
+     * @param hints               the hints
+     * @param subclassesInPackage the subclasses in package
+     */
+    default void registerProxyHints(final RuntimeHints hints, final Collection<Class> subclassesInPackage) {
+        subclassesInPackage.forEach(clazz -> hints.proxies().registerJdkProxy(clazz));
+    }
+
+    /**
      * Find subclasses in packages and exclude tests.
      *
      * @param superClass the parent class

@@ -28,18 +28,14 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
 
     @Override
     public OidcServerDiscoverySettings getObject() {
-        val discovery = createDiscovery();
-
-        populateDiscovery(discovery);
-
-        return discovery;
+        return populateDiscovery(createDiscovery());
     }
 
     protected OidcServerDiscoverySettings createDiscovery() {
         return new OidcServerDiscoverySettings(issuerService.determineIssuer(Optional.empty()));
     }
 
-    protected void populateDiscovery(final OidcServerDiscoverySettings discovery) {
+    protected OidcServerDiscoverySettings populateDiscovery(final OidcServerDiscoverySettings discovery) {
         val oidc = casProperties.getAuthn().getOidc();
         val discoveryConfig = oidc.getDiscovery();
 
@@ -115,6 +111,8 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
         discovery.setDocumentsVerificationMethodsSupported(discoveryConfig.getDocumentsVerificationMethodsSupported());
         discovery.setElectronicRecordsSupported(discoveryConfig.getElectronicRecordsSupported());
         discovery.setClaimsInVerifiedClaimsSupported(discoveryConfig.getClaimsInVerifiedClaimsSupported());
+
+        return discovery;
     }
 
     @Override

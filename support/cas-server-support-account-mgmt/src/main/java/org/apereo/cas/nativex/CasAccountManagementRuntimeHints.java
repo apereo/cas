@@ -22,10 +22,6 @@ public class CasAccountManagementRuntimeHints implements CasRuntimeHintsRegistra
         registerReflectionHints(hints, entries);
     }
 
-    private static void registerProxyHints(final RuntimeHints hints, final Collection<Class> subclassesInPackage) {
-        subclassesInPackage.forEach(clazz -> hints.proxies().registerJdkProxy(clazz));
-    }
-
     private static void registerReflectionHints(final RuntimeHints hints, final Collection entries) {
         entries.forEach(el -> hints.reflection().registerType((Class) el,
             MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,

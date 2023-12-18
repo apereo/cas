@@ -1,10 +1,10 @@
-const assert = require('assert');
-const cas = require('../../cas.js');
+const assert = require("assert");
+const cas = require("../../cas.js");
 
 async function throttleTokenEndpoint() {
     let params = "grant_type=client_credentials&";
     params += "scope=openid";
-    let url = `https://localhost:8443/cas/oauth2.0/token?${params}`;
+    const url = `https://localhost:8443/cas/oauth2.0/token?${params}`;
 
     await cas.log(`Log in attempt: #1 ${new Date().toISOString()}`);
     await submitRequest(url, 401);
@@ -16,7 +16,7 @@ async function throttleTokenEndpoint() {
 }
 
 async function throttleUserInfoEndpoint() {
-    let url = 'https://localhost:8443/cas/oauth2.0/profile?access_token=1234567890';
+    const url = "https://localhost:8443/cas/oauth2.0/profile?access_token=1234567890";
     await cas.log(`Log in attempt: #1 ${new Date().toISOString()}`);
     await submitRequest(url, 401);
     await cas.log(`Log in attempt: #2 ${new Date().toISOString()}`);
@@ -35,12 +35,12 @@ async function throttleUserInfoEndpoint() {
 async function submitRequest(url, status) {
     await cas.log(`Calling ${url}`);
     await cas.doPost(url, "", {
-        'Content-Type': "application/json",
-        'Authorization': 'Basic ' + btoa('unknown:unknown')
-    }, res => {
-        throw `Operation should not have passed: ${res}`
-    }, error => {
+        "Content-Type": "application/json",
+        "Authorization": `Basic ${btoa("unknown:unknown")}`
+    }, (res) => {
+        throw `Operation should not have passed: ${res}`;
+    }, (error) => {
         cas.log(`Expecting ${status}, Current status: ${error.response.status}`);
-        assert(status === error.response.status)
+        assert(status === error.response.status);
     });
 }

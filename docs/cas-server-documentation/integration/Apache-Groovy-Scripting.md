@@ -11,7 +11,7 @@ category: Installation
 for the Java platform aimed at improving developer productivity thanks to a concise, familiar and easy to learn syntax. CAS takes advantage of Groovy in 
 forms of either embedded or external scripts that allow one to, by default, dynamically build constructs, attributes, access strategies and a lot more.
 
-As an example, the following construct is what's referred to in CAS as an *embedded Groovy script**:
+As an example, the following construct is what's referred to in CAS as an *embedded* or *inline* Groovy script:
 
 ```json
 {
@@ -29,7 +29,7 @@ As an example, the following construct is what's referred to in CAS as an *embed
 }
 ```
 
-By default, all such scripts are evaluated and executed *dynamically* using Groovy meta object protocol. There is also support for the
+By default, all such scripts are evaluated and executed *dynamically* using the Groovy meta object protocol. There is also support for the
 alternative that allows CAS to tune the Groovy compiler for static compilation. In this mode, all methods, properties, files, 
 inner classes, etc. found in scripts will be type checked. If you wish to always compile Groovy scripts using `CompileStatic`, 
 you may specify the following **system property** when you run CAS:

@@ -14,8 +14,6 @@ import org.springframework.aot.hint.RuntimeHints;
 public class CasCaptchaRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
-        hints.proxies()
-            .registerJdkProxy(CaptchaValidator.class)
-            .registerJdkProxy(CaptchaActivationStrategy.class);
+        registerProxyHints(hints, CaptchaValidator.class, CaptchaActivationStrategy.class);
     }
 }

@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.radius;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -21,7 +22,7 @@ import java.io.Serializable;
 @Setter
 @Accessors(chain = true)
 @JsonFilter("RadiusServerProperties")
-public class RadiusServerProperties implements Serializable {
+public class RadiusServerProperties implements CasFeatureModule, Serializable {
 
     @Serial
     private static final long serialVersionUID = -3911282132573730184L;

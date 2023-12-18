@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.cookie;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -22,7 +23,7 @@ import java.io.Serializable;
 @Setter
 @Accessors(chain = true)
 @JsonFilter("CookieProperties")
-public class CookieProperties implements Serializable {
+public class CookieProperties implements CasFeatureModule, Serializable {
 
     @Serial
     private static final long serialVersionUID = 6804770601645126835L;

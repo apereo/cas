@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.syncope;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -23,7 +24,7 @@ import java.io.Serializable;
 @Setter
 @Accessors(chain = true)
 @JsonFilter("AbstractSyncopeProperties")
-public abstract class BaseSyncopeProperties implements Serializable {
+public abstract class BaseSyncopeProperties implements CasFeatureModule, Serializable {
 
     @Serial
     private static final long serialVersionUID = 98513672245088L;

@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.captcha;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -23,7 +24,7 @@ import java.io.Serializable;
 @Setter
 @Accessors(chain = true)
 @JsonFilter("GoogleRecaptchaProperties")
-public class GoogleRecaptchaProperties implements Serializable {
+public class GoogleRecaptchaProperties implements CasFeatureModule, Serializable {
 
     @Serial
     private static final long serialVersionUID = -8955074129123813915L;

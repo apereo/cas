@@ -3,6 +3,7 @@ package org.apereo.cas;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
@@ -18,15 +19,10 @@ import org.springframework.binding.expression.support.LiteralExpression;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.DefaultTransitionCriteria;
-import org.springframework.webflow.test.MockRequestContext;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -52,18 +48,15 @@ class TimedMultifactorAuthenticationPolicyEventResolverTests extends BaseCasWebf
     private MockRequestContext context;
 
     @BeforeEach
-    public void initialize() {
-        this.context = new MockRequestContext();
+    public void initialize() throws Exception {
+        this.context = MockRequestContext.create();
 
-        val request = new MockHttpServletRequest();
+        val request = context.getHttpServletRequest();
         request.setRemoteAddr("185.86.151.11");
         request.setLocalAddr("195.88.151.11");
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
         ClientInfoHolder.setClientInfo(ClientInfo.from(request));
-
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-
+        
         val targetResolver = new DefaultTargetStateResolver(TestMultifactorAuthenticationProvider.ID);
         val transition = new Transition(new DefaultTransitionCriteria(
             new LiteralExpression(TestMultifactorAuthenticationProvider.ID)), targetResolver);

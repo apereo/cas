@@ -1,5 +1,5 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 const assert = require("assert");
 
 (async () => {
@@ -32,17 +32,17 @@ async function login(page, providerId, service = undefined) {
     await cas.screenshot(page);
     if (service !== undefined) {
         await page.waitForTimeout(4000);
-        const url = await page.url();
+        await page.url();
         await cas.logPage(page);
-        let ticket = await cas.assertTicketParameter(page);
-        let body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
+        const ticket = await cas.assertTicketParameter(page);
+        const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
         await cas.log(body);
-        let json = JSON.parse(body);
-        let authenticationSuccess = json.serviceResponse.authenticationSuccess;
+        const json = JSON.parse(body);
+        const authenticationSuccess = json.serviceResponse.authenticationSuccess;
         assert(authenticationSuccess.attributes.authnContextClass === undefined);
     } else {
         await page.waitForSelector("#content", {visible: true});
-        await cas.assertInnerText(page, '#content div h2', "Log In Successful");
+        await cas.assertInnerText(page, "#content div h2", "Log In Successful");
         await cas.assertCookie(page);
         await cas.assertInnerTextContains(page, "#attribute-tab-1 table#attributesTable tbody", providerId);
     }

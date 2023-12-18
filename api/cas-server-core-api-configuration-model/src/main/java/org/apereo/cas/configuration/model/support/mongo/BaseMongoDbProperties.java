@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.mongo;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -23,7 +24,7 @@ import java.io.Serializable;
 @Setter
 @RequiresModule(name = "cas-server-support-mongo-core")
 @Accessors(chain = true)
-public abstract class BaseMongoDbProperties implements Serializable {
+public abstract class BaseMongoDbProperties implements CasFeatureModule, Serializable {
 
     @Serial
     private static final long serialVersionUID = -2471243083598934186L;

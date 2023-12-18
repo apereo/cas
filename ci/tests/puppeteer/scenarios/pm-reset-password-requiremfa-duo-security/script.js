@@ -1,5 +1,5 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -9,7 +9,7 @@ const cas = require('../../cas.js');
     await cas.assertInnerText(page, "#forgotPasswordLink", "Reset your password");
     await cas.click(page, "#forgotPasswordLink");
     await page.waitForTimeout(2000);
-    await cas.type(page,'#username', "duobypass");
+    await cas.type(page,"#username", "duobypass");
     await cas.pressEnter(page);
     await page.waitForNavigation();
     await page.waitForTimeout(8000);

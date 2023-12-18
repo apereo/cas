@@ -1,11 +1,10 @@
 package org.apereo.cas.util;
 
-import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.configuration.model.core.util.EncryptionJwtCryptoProperties;
 import org.apereo.cas.util.crypto.DecryptionException;
 import org.apereo.cas.util.crypto.IdentifiableKey;
 import org.apereo.cas.util.jwt.JsonWebTokenEncryptor;
 import org.apereo.cas.util.jwt.JsonWebTokenSigner;
-
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -22,7 +21,6 @@ import org.jose4j.jwk.OctJwkGenerator;
 import org.jose4j.jwk.RsaJwkGenerator;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
-
 import java.io.Serializable;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -441,7 +439,7 @@ public class EncodingUtils {
         return JsonWebTokenEncryptor.builder()
             .key(key)
             .algorithm(KeyManagementAlgorithmIdentifiers.DIRECT)
-            .encryptionMethod(CipherExecutor.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM)
+            .encryptionMethod(EncryptionJwtCryptoProperties.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM)
             .build()
             .encrypt(value);
     }
@@ -457,7 +455,7 @@ public class EncodingUtils {
         return JsonWebTokenEncryptor.builder()
             .key(key)
             .algorithm(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256)
-            .encryptionMethod(CipherExecutor.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM)
+            .encryptionMethod(EncryptionJwtCryptoProperties.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM)
             .build()
             .encrypt(value);
     }

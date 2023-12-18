@@ -1,5 +1,5 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -18,6 +18,6 @@ const cas = require('../../cas.js');
     await page.waitForTimeout(1000);
 
     // the TGT being expired (while the web session is not), the login page is displayed
-    await cas.assertVisibility(page, '#username');
+    await cas.assertVisibility(page, "#username");
     await browser.close();
 })();

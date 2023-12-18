@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.Locale;
 
 /**
@@ -29,12 +29,12 @@ public class CasReloadableMessageBundle extends ReloadableResourceBundleMessageS
 
     @Override
     protected String getMessageInternal(final String code, final Object[] args, final Locale locale) {
-        if (!locale.equals(Locale.ENGLISH)) {
+        if (locale != null && !locale.equals(Locale.ENGLISH)) {
             val foundCode = getBasenameSet().stream().anyMatch(basename -> {
                 val filename = basename + '_' + locale;
                 LOGGER.trace("Examining bundle [{}] for the key [{}]", filename, code);
-                val holder = this.getProperties(filename);
-                return holder != null && holder.getProperties() != null && holder.getProperty(code) != null;
+                val holder = getProperties(filename);
+                return holder.getProperties() != null && holder.getProperty(code) != null;
             });
             if (!foundCode) {
                 LOGGER.trace("The key [{}] cannot be found in the bundle for the locale [{}]", code, locale);
@@ -44,8 +44,7 @@ public class CasReloadableMessageBundle extends ReloadableResourceBundleMessageS
     }
 
     @Override
-    protected String getDefaultMessage(
-        @Nonnull final String code) {
+    protected String getDefaultMessage(@Nonnull final String code) {
         val messageToReturn = super.getDefaultMessage(code);
         if (StringUtils.isNotBlank(messageToReturn) && messageToReturn.equals(code)) {
             LOGGER.trace("The code [{}] cannot be found in the default language bundle and will be used as the message itself.", code);

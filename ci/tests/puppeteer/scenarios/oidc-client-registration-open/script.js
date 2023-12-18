@@ -1,9 +1,9 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
-const assert = require('assert');
+
+const cas = require("../../cas.js");
+const assert = require("assert");
 
 (async () => {
-    let service = {
+    const service = {
         "application_type": "web",
         "default_acr_values": ["mfa-duo", "mfa-gauth"],
         "redirect_uris": ["https://apereo.github.io", "https://github.com/apereo/cas"],
@@ -23,15 +23,15 @@ const assert = require('assert');
         "contacts": ["sample@example.org", "user@example.org"]
     };
 
-    let body = JSON.stringify(service, undefined, 2);
+    const body = JSON.stringify(service, undefined, 2);
     await cas.log(`Sending ${body}`);
-    let result = await cas.doRequest("https://localhost:8443/cas/oidc/register", "POST",
+    const result = await cas.doRequest("https://localhost:8443/cas/oidc/register", "POST",
         {
-            'Content-Length': body.length,
-            'Content-Type': 'application/json',
+            "Content-Length": body.length,
+            "Content-Type": "application/json"
         }, 201, body);
     assert(result !== null);
-    let entity = JSON.parse(result.toString());
+    const entity = JSON.parse(result.toString());
     await cas.log(entity);
     assert(entity.client_id !== null);
     assert(entity.client_secret !== null);
@@ -43,17 +43,17 @@ const assert = require('assert');
     await cas.log("==================================");
     
     await cas.doGet(entity.registration_client_uri,
-        res => {
+        (res) => {
             cas.log(`Registered entity: ${JSON.stringify(res.data)}`);
             assert(res.data.client_secret_expires_at > 0);
             assert(res.data.client_name === "My Example");
             assert(res.data.client_id === entity.client_id);
             assert(res.data.client_secret === entity.client_secret);
-            assert(res.status === 200)
-        }, error => {
+            assert(res.status === 200);
+        }, (error) => {
             throw error;
         },
         {
             "Authorization": `Bearer ${entity.registration_access_token}`
-        })
+        });
 })();

@@ -9,8 +9,6 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.io.Serial;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is {@link QueryJdbcAuthenticationProperties}.
@@ -49,9 +47,4 @@ public class QueryJdbcAuthenticationProperties extends BaseJdbcAuthenticationPro
      * Boolean field that should indicate whether the account is disabled.
      */
     private String fieldDisabled;
-
-    /**
-     * List of column names to fetch as user attributes.
-     */
-    private List<String> principalAttributeList = new ArrayList<>(0);
 }

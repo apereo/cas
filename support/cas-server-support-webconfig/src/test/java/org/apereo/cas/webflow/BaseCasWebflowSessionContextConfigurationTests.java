@@ -42,6 +42,7 @@ import org.apereo.cas.config.CasWebAppConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CasWebflowContextConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
@@ -60,20 +61,16 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.executor.FlowExecutor;
-import org.springframework.webflow.test.MockRequestContext;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 import static org.junit.jupiter.api.Assertions.*;
@@ -130,25 +127,17 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 public abstract class BaseCasWebflowSessionContextConfigurationTests {
-    private static MockRequestContext getMockRequestContext() {
-        val ctx = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        val sCtx = new MockServletContext();
-        ctx.setExternalContext(new ServletExternalContext(sCtx, request, response));
-        return ctx;
-    }
 
     @Test
-    void verifyExecutorsAreBeans() throws Throwable {
+    void verifyExecutorsAreBeans() {
         assertNotNull(getFlowExecutor());
     }
 
     @Test
     void verifyFlowExecutorByClient() throws Throwable {
-        val ctx = getMockRequestContext();
+        val context = MockRequestContext.create().withLocale(Locale.ENGLISH);
         val map = new LocalAttributeMap<>();
-        getFlowExecutor().launchExecution("login", map, ctx.getExternalContext());
+        getFlowExecutor().launchExecution("login", map, context.getExternalContext());
     }
 
     public abstract FlowExecutor getFlowExecutor();

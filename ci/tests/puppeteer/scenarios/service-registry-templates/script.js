@@ -1,5 +1,5 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 const assert = require("assert");
 
 (async () => {
@@ -8,26 +8,26 @@ const assert = require("assert");
 
     await cas.gotoLogin(page, "https://apereo.github.io");
     await cas.loginWith(page);
-    const url = await page.url();
+    await page.url();
     await cas.logPage(page);
     await cas.assertTicketParameter(page);
 
     const baseUrl = "https://localhost:8443/cas/actuator/registeredServices";
-    await cas.doGet(baseUrl, res => {
+    await cas.doGet(baseUrl, (res) => {
         assert(res.status === 200);
         cas.log(`Services found: ${res.data[1].length}`);
 
-        res.data[1].forEach(svc => {
+        res.data[1].forEach((svc) => {
             cas.log(`Checking service ${svc.name}-${svc.id}`);
             assert(svc.description === "My Application");
             assert(svc.attributeReleasePolicy.allowedAttributes[1].includes("email"));
-            assert(svc.attributeReleasePolicy.allowedAttributes[1].includes("username"))
-        })
+            assert(svc.attributeReleasePolicy.allowedAttributes[1].includes("username"));
+        });
         
-    }, err => {
+    }, (err) => {
         throw err;
     }, {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json"
     });
     
     await browser.close();

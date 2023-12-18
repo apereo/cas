@@ -1,7 +1,7 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
 import org.apereo.cas.configuration.support.RequiresModule;
-import org.apereo.cas.util.model.TriStateBoolean;
+import org.apereo.cas.configuration.support.TriStateBoolean;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;

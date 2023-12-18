@@ -14,37 +14,43 @@ sourceSets {
 dependencies {
     implementation libraries.jasypt
     implementation libraries.bouncycastle
-
     implementation libraries.springbootconfigmetadata
-
-    api project(":api:cas-server-core-api-util")
-    api project(":api:cas-server-core-api-protocol")
-
+    implementation libraries.jose4j
+    implementation libraries.classgraph
+    
     testImplementation libraries.springbootconfigmetadata
 
     compileOnly libraries.javaparser
     compileOnly libraries.log4j
-
+    
     if (!skipConfigurationMetadata) {
         annotationProcessor libraries.springbootconfigmetadata
     }
 }
 
 if (!skipConfigurationMetadata) {
+    def outputFile = project.layout.buildDirectory.file("generated/spring-configuration-metadata/META-INF/spring-configuration-metadata.json")
+
     tasks.register('generateConfigurationMetadata', JavaExec) {
-        def projectPath = projectDir.canonicalPath
-        doFirst {
-            logger.info "\nRunning CAS Spring configuration metadata processor in addition to the native " +
-                    "Spring Boot metadata processor, to create configuration " +
-                    "metadata for nested and indexed properties. The process starts with the build directory " +
-                    "at [$buildDir] for the CAS configuration module at [$projectPath].\n"
-        }
+        inputs.files(tasks.named('processResources'), tasks.named('compileJava'))
+
+        outputs.cacheIf { true }
+        outputs.file(outputFile)
+
         mainClass.set("org.apereo.cas.configuration.metadata.ConfigurationMetadataGenerator")
-        classpath = sourceSets.main.compileClasspath + sourceSets.main.runtimeClasspath + sourceSets.configurationMetadata.runtimeClasspath
-        args buildDir, projectDir.canonicalPath
+
+        def sortedClasspath = sourceSets.main.compileClasspath + sourceSets.main.runtimeClasspath + sourceSets.configurationMetadata.runtimeClasspath
+        classpath = files(sortedClasspath.sort())
+        
+        args project.layout.buildDirectory.getAsFile().get().path, projectDir.canonicalPath
+    }
+    sourceSets.main.output.dir project.layout.buildDirectory.file("generated/spring-configuration-metadata"), builtBy: "generateConfigurationMetadata"
+    
+    tasks.named('compileJava') {
+        inputs.files(tasks.named('processResources'))
     }
 
-    compileJava.inputs.files(processResources).withPropertyName("processResources")
-        .withPathSensitivity(PathSensitivity.RELATIVE).ignoreEmptyDirectories()
-    jar.dependsOn(generateConfigurationMetadata)
+    jar {
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    }
 }

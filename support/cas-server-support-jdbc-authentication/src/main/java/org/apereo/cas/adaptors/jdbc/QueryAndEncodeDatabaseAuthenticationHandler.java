@@ -37,9 +37,8 @@ import java.util.Map;
  * @since 4.1.0
  */
 @Monitorable
-public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
+public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler<QueryEncodeJdbcAuthenticationProperties> {
 
-    private final QueryEncodeJdbcAuthenticationProperties properties;
     private final DatabasePasswordEncoder databasePasswordEncoder;
 
     public QueryAndEncodeDatabaseAuthenticationHandler(final QueryEncodeJdbcAuthenticationProperties properties,
@@ -47,8 +46,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
                                                        final PrincipalFactory principalFactory,
                                                        final DataSource dataSource,
                                                        final DatabasePasswordEncoder databasePasswordEncoder) {
-        super(properties.getName(), servicesManager, principalFactory, properties.getOrder(), dataSource);
-        this.properties = properties;
+        super(properties, servicesManager, principalFactory, dataSource);
         this.databasePasswordEncoder = databasePasswordEncoder;
     }
 
@@ -57,25 +55,26 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
         final UsernamePasswordCredential transformedCredential, final String originalPassword) throws Throwable {
         val username = transformedCredential.getUsername();
         try {
-            val values = performSqlQuery(username);
-            val digestedPassword = databasePasswordEncoder.encode(transformedCredential.toPassword(), values);
+            val sqlQueryResults = performSqlQuery(username);
+            val digestedPassword = databasePasswordEncoder.encode(transformedCredential.toPassword(), sqlQueryResults);
 
-            if (!values.get(properties.getPasswordFieldName()).equals(digestedPassword)) {
+            if (!sqlQueryResults.get(properties.getPasswordFieldName()).equals(digestedPassword)) {
                 throw new FailedLoginException("Password does not match value on record.");
             }
-            if (StringUtils.isNotBlank(properties.getExpiredFieldName()) && values.containsKey(properties.getExpiredFieldName())) {
-                val dbExpired = values.get(properties.getExpiredFieldName()).toString();
+            if (StringUtils.isNotBlank(properties.getExpiredFieldName()) && sqlQueryResults.containsKey(properties.getExpiredFieldName())) {
+                val dbExpired = sqlQueryResults.get(properties.getExpiredFieldName()).toString();
                 if (BooleanUtils.toBoolean(dbExpired) || "1".equals(dbExpired)) {
                     throw new AccountPasswordMustChangeException("Password has expired");
                 }
             }
-            if (StringUtils.isNotBlank(properties.getDisabledFieldName()) && values.containsKey(properties.getDisabledFieldName())) {
-                val dbDisabled = values.get(properties.getDisabledFieldName()).toString();
+            if (StringUtils.isNotBlank(properties.getDisabledFieldName()) && sqlQueryResults.containsKey(properties.getDisabledFieldName())) {
+                val dbDisabled = sqlQueryResults.get(properties.getDisabledFieldName()).toString();
                 if (BooleanUtils.toBoolean(dbDisabled) || "1".equals(dbDisabled)) {
                     throw new AccountDisabledException("Account has been disabled");
                 }
             }
-            val principal = principalFactory.createPrincipal(username);
+            val attributes = collectPrincipalAttributes(sqlQueryResults);
+            val principal = principalFactory.createPrincipal(username, attributes);
             return createHandlerResult(transformedCredential, principal, new ArrayList<>(0));
         } catch (final IncorrectResultSizeDataAccessException e) {
             if (e.getActualSize() == 0) {

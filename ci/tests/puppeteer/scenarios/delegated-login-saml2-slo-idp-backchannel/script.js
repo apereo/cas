@@ -1,10 +1,10 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
-const path = require('path');
-const assert = require('assert');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
+const path = require("path");
+const assert = require("assert");
 
 (async () => {
-    let ssoSessionsUrl = `https://localhost:8443/cas/actuator/ssoSessions`;
+    const ssoSessionsUrl = "https://localhost:8443/cas/actuator/ssoSessions";
     await cas.logg("Removing all SSO Sessions");
     await cas.doRequest(`${ssoSessionsUrl}`, "DELETE", {});
 
@@ -21,8 +21,8 @@ const assert = require('assert');
     await page.waitForTimeout(2000);
     await cas.screenshot(page);
 
-    await cas.assertVisibility(page, '#loginProviders');
-    await cas.assertVisibility(page, 'li #SAML2Client');
+    await cas.assertVisibility(page, "#loginProviders");
+    await cas.assertVisibility(page, "li #SAML2Client");
 
     await cas.log("Choosing SAML2 identity provider for login...");
     await cas.click(page, "li #SAML2Client");
@@ -43,17 +43,17 @@ const assert = require('assert');
     await cas.screenshot(page);
     await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
-    await cas.assertInnerText(page, '#content div h2', "Log In Successful");
+    await cas.assertInnerText(page, "#content div h2", "Log In Successful");
 
     await cas.log(`Navigating to ${ssoSessionsUrl}`);
     await page.goto(ssoSessionsUrl);
-    let content = await cas.textContent(page, "body");
+    const content = await cas.textContent(page, "body");
     const payload = JSON.parse(content);
     await cas.log(payload);
-    let sessionIndex = payload.activeSsoSessions[0].principal_attributes.sessionindex;
+    const sessionIndex = payload.activeSsoSessions[0].principal_attributes.sessionindex;
     await cas.log(`Session index captured is ${sessionIndex}`);
     
-    let logoutRequest = `
+    const logoutRequest = `
     <samlp:LogoutRequest xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" 
         ID="_21df91a89767879fc0f7df6a1490c6000c81644d" 
         Version="2.0" IssueInstant="2023-07-18T01:13:06Z" Destination="http://localhost:8443/cas/login?client_name=SAML2Client">
@@ -64,13 +64,13 @@ const assert = require('assert');
 
     await cas.log("Sending back-channel logout request via POST");
     await page.waitForTimeout(3000);
-    let logoutUrl = `https://localhost:8443/cas/login?client_name=SAML2Client&SAMLRequest=${logoutRequest}&RelayState=_e0d9e4dddf88cc6a4979d677aefdca4881954e8102`;
+    const logoutUrl = `https://localhost:8443/cas/login?client_name=SAML2Client&SAMLRequest=${logoutRequest}&RelayState=_e0d9e4dddf88cc6a4979d677aefdca4881954e8102`;
     await cas.doPost(logoutUrl, {}, {
-        'Content-Type': "text/xml"
-    }, res => {
+        "Content-Type": "text/xml"
+    }, (res) => {
         cas.log(res.status);
         assert(res.status === 200);
-    }, err => {
+    }, (err) => {
         throw err;
     });
     
@@ -96,7 +96,7 @@ const assert = require('assert');
 
     assert(url.startsWith("https://localhost:8443/cas/login"));
     await cas.assertCookie(page, false);
-    await cas.removeDirectoryOrFile(path.join(__dirname, '/saml-md'));
+    await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
     
     await browser.close();
 })();

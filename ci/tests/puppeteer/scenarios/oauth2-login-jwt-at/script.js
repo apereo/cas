@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const assert = require("assert");
+const cas = require("../../cas.js");
 
 async function executeFlow(browser, redirectUri, clientId, accessTokenSecret) {
     const page = await cas.newPage(browser);
@@ -13,7 +13,7 @@ async function executeFlow(browser, redirectUri, clientId, accessTokenSecret) {
     await cas.loginWith(page);
     await page.waitForTimeout(1000);
 
-    let code = await cas.assertParameter(page, "code");
+    const code = await cas.assertParameter(page, "code");
     await cas.log(`OAuth code ${code}`);
 
     let accessTokenParams = `client_id=${clientId}&`;
@@ -21,22 +21,22 @@ async function executeFlow(browser, redirectUri, clientId, accessTokenSecret) {
     accessTokenParams += "grant_type=authorization_code&";
     accessTokenParams += `redirect_uri=${encodeURIComponent(redirectUri)}`;
 
-    let accessTokenUrl = `https://localhost:8443/cas/oauth2.0/token?${accessTokenParams}&code=${code}`;
+    const accessTokenUrl = `https://localhost:8443/cas/oauth2.0/token?${accessTokenParams}&code=${code}`;
     await cas.log(`Calling ${accessTokenUrl}`);
 
     let accessToken = null;
     await cas.doPost(accessTokenUrl, "", {
-        'Content-Type': "application/json"
-    }, res => {
+        "Content-Type": "application/json"
+    }, (res) => {
         cas.log(res.data);
         assert(res.data.access_token !== null);
 
         accessToken = res.data.access_token;
-    }, error => {
+    }, (error) => {
         throw `Operation failed to obtain access token: ${error}`;
     });
 
-    assert(accessToken != null);
+    assert(accessToken !== null);
 
     if (clientId === "client") {
         await cas.verifyJwt(accessToken, accessTokenSecret, {
@@ -51,37 +51,40 @@ async function executeFlow(browser, redirectUri, clientId, accessTokenSecret) {
     }
     
     const params = new URLSearchParams();
-    params.append('access_token', accessToken);
+    params.append("access_token", accessToken);
 
-    await cas.doPost('https://localhost:8443/cas/oauth2.0/profile', params, {},
-        res => {
-            let result = res.data;
+    await cas.doPost("https://localhost:8443/cas/oauth2.0/profile", params, {},
+        (res) => {
+            const result = res.data;
             assert(result.id === "casuser");
             assert(result.client_id === clientId);
             assert(result.service === "https://apereo.github.io");
-        }, error => {
+        }, (error) => {
             throw error;
         });
 
-    // we create a new JWT access token from the good one with a bad payload to make the JWT parsing internally fails
-    const parts = accessToken.split('.');
+    /*
+        We create a new JWT access token from the good one with a bad payload
+        to make the JWT parsing internally fail.
+     */
+    const parts = accessToken.split(".");
     let badAccessToken;
     if (parts.length === 3) {
-        badAccessToken = parts[0] + '.Z' + parts[1] + '.' + parts[2];
+        badAccessToken = `${parts[0]}.Z${parts[1]}.${parts[2]}`;
     } else {
-        badAccessToken = parts[0] + '.' + parts[1] + '.Z' + parts[2] + '.' + parts[3] + '.' + parts[4];
+        badAccessToken = `${parts[0]}.${parts[1]}.Z${parts[2]}.${parts[3]}.${parts[4]}`;
     }
 
     const badParams = new URLSearchParams();
-    badParams.append('access_token', badAccessToken);
+    badParams.append("access_token", badAccessToken);
 
-    await cas.doPost('https://localhost:8443/cas/oauth2.0/profile', badParams, {},
-        res => {
+    await cas.doPost("https://localhost:8443/cas/oauth2.0/profile", badParams, {},
+        (res) => {
             console.log(res.data);
-            throw 'Operation must fail to get the profile with a bad access token';
-        }, error => {
+            throw "Operation must fail to get the profile with a bad access token";
+        }, (error) => {
             assert(error.response.status === 401);
-            assert(error.response.data.error === 'invalid_request');
+            assert(error.response.data.error === "invalid_request");
         });
 
     await cas.gotoLogout(page);
@@ -90,6 +93,6 @@ async function executeFlow(browser, redirectUri, clientId, accessTokenSecret) {
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     await executeFlow(browser, "https://apereo.github.io","client", process.env.OAUTH_ACCESS_TOKEN_SIGNING_KEY);
-    await executeFlow(browser, "https://apereo.github.io","client2",process.env.OAUTH_ACCESS_TOKEN_ENCRYPTION_KEY);
+    await executeFlow(browser, "https://apereo.github.io","client2", process.env.OAUTH_ACCESS_TOKEN_ENCRYPTION_KEY);
     await browser.close();
 })();
