@@ -698,7 +698,7 @@ layout: null
     *   [Localization](/cas/{{ version }}/ux/User-Interface-Customization-Localization.html)
     *   [Themes](#uithemes)
         *   [Overview](/cas/{{ version }}/ux/User-Interface-Customization-Themes.html) 
-        *   [Static](/cas/{{ version }}/ux/User-Interface-Themes-Static.html) 
+        *   [Static](/cas/{{ version }}/ux/User-Interface-Customization-Themes-Static.html) 
         *   [Views](/cas/{{ version }}/ux/User-Interface-Customization-ThemedViews.html) 
         *   [Collections](/cas/{{ version }}/ux/User-Interface-Customization-ThemeCollections.html) 
         *   [Groovy](/cas/{{ version }}/ux/User-Interface-Customization-Themes-Groovy.html) 
