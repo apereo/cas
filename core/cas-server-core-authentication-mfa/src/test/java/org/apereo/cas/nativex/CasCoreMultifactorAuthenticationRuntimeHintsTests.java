@@ -21,7 +21,6 @@ class CasCoreMultifactorAuthenticationRuntimeHintsTests {
     void verifyHints() throws Throwable {
         val hints = new RuntimeHints();
         new CasCoreMultifactorAuthenticationRuntimeHints().registerHints(hints, getClass().getClassLoader());
-        assertTrue(RuntimeHintsPredicates.proxies()
-            .forInterfaces(MultifactorAuthenticationTrigger.class).test(hints));
+        assertTrue(RuntimeHintsPredicates.proxies().forInterfaces(MultifactorAuthenticationTrigger.class).test(hints));
     }
 }
