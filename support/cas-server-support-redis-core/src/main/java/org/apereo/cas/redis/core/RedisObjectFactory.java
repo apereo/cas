@@ -127,7 +127,8 @@ public class RedisObjectFactory {
         val uriBuilder = RedisURI.builder()
             .withHost(redis.getHost())
             .withPort(redis.getPort())
-            .withDatabase(redis.getDatabase());
+            .withDatabase(redis.getDatabase())
+            .ssl(redis.isUseSsl());
         
         if (StringUtils.hasText(redis.getUsername()) && StringUtils.hasText(redis.getPassword())) {
             uriBuilder.withAuthentication(redis.getUsername(), redis.getPassword());
