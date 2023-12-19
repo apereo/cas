@@ -14,7 +14,7 @@ docker-compose -f $COMPOSE_FILE logs &
 sleep 15
 docker ps
 COUNT_REDIS=$(docker ps | grep "redis_" | wc -l)
-if [ "$COUNT_REDIS" -eq 5 ]; then
+if [ "$COUNT_REDIS" -eq 6 ]; then
     echo "Redis + sentinel docker images are running."
 else
     echo "Redis + sentinel docker images failed to start."

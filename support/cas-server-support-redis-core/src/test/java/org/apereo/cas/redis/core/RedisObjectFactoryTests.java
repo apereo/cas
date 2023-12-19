@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
 import org.apereo.cas.configuration.model.support.redis.RedisClusterNodeProperties;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import com.redis.lettucemod.search.Field;
 import io.lettuce.core.ReadFrom;
 import io.lettuce.core.RedisConnectionException;
@@ -12,10 +11,9 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
+import java.io.File;
 import java.util.UUID;
 import java.util.stream.Stream;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -69,15 +67,22 @@ class RedisObjectFactoryTests {
     }
 
     @Test
-    void verifyConnectionWithTls() throws Throwable {
-        val props = new BaseRedisProperties();
-        props.setHost("localhost");
-        props.setPort(16669);
-        props.setUsername("default");
-        props.setPassword("pAssw0rd123");
-        props.setUseSsl(true);
-        val connection = RedisObjectFactory.newRedisConnectionFactory(props, true, CasSSLContext.system());
+    void verifyConnectionWithSSL() throws Throwable {
+        val props = new BaseRedisProperties()
+            .setHost("localhost")
+            .setPort(16669)
+            .setUsername("default")
+            .setPassword("pAssw0rd123")
+            .setUseSsl(true)
+            .setVerifyPeer(false)
+            .setKeyCertificateChainFile(new File("../../ci/tests/redis/certs/redis.crt"))
+            .setKeyFile(new File("../../ci/tests/redis/certs/redis.key"))
+            .setShareNativeConnections(Boolean.FALSE);
+        val connection = RedisObjectFactory.newRedisConnectionFactory(props, true, CasSSLContext.disabled());
         assertNotNull(connection);
+        try (val con = connection.getConnection()) {
+            con.select(0);
+        }
     }
 
     @Test

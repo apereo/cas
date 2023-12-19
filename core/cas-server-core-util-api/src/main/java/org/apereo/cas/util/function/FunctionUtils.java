@@ -436,6 +436,17 @@ public class FunctionUtils {
     }
 
     /**
+     * Do if condition holds.
+     *
+     * @param <T>          the type parameter
+     * @param condition    the condition
+     * @param trueFunction the true function
+     */
+    public static <T> void doWhen(final boolean condition, final Consumer<T> trueFunction) {
+        doIf(condition, trueFunction, __ -> {}).accept(null);
+    }
+    
+    /**
      * Do without throws and return status.
      *
      * @param func   the func
