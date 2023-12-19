@@ -41,7 +41,6 @@ if (!skipConfigurationMetadata) {
 
         def sortedClasspath = sourceSets.main.compileClasspath + sourceSets.main.runtimeClasspath + sourceSets.configurationMetadata.runtimeClasspath
         classpath = files(sortedClasspath.sort())
-        
         args project.layout.buildDirectory.getAsFile().get().path, projectDir.canonicalPath
     }
     sourceSets.main.output.dir project.layout.buildDirectory.file("generated/spring-configuration-metadata"), builtBy: "generateConfigurationMetadata"
