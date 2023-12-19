@@ -44,7 +44,7 @@
         <div th:unless="${serviceUIMetadata}" class="d-flex align-items-center p-2">
             <img th:if="${registeredService.logo}" th:src="${registeredService.logo}"/>
             <div id="servicedesc" class="ml-2">
-                <h5><i class="mdi mdi-web"></i>[[${registeredService.name}]]</h5>
+                <strong><i class="mdi mdi-web" aria-hidden="true"></i>[[${registeredService.name}]]</strong>
                 <p th:text="${registeredService.description}">Registered Service Description</p>
                 <div id="wildcardService" th:if="${wildcardedRegisteredService}">
                     <p><i class="mdi mdi-information-slab-box"></i><span th:utext="#{screen.service.wildcard.message}" /></p>
