@@ -13,10 +13,9 @@ const cas = require("../../cas.js");
     await cas.assertInnerText(page, "#content form[name=fm1] h3", "Enter Username & Password");
     await cas.assertVisibility(page, "#username");
 
-    let uid = await page.$("#username");
-    assert("none" === await uid.evaluate(el => el.getAttribute("autocapitalize")));
-    assert("false" === await uid.evaluate(el => el.getAttribute("spellcheck")));
-    assert("username" === await uid.evaluate(el => el.getAttribute("autocomplete")));
+    await cas.attributeValue(page, "#username", "autocapitalize", "none");
+    await cas.attributeValue(page, "#username", "spellcheck", "false");
+    await cas.attributeValue(page, "#username", "autocomplete", "username");
     await cas.assertVisibility(page, "#password");
 
     let response = await cas.loginWith(page, "unknown", "badpassword");
@@ -31,8 +30,8 @@ const cas = require("../../cas.js");
     await cas.log(`${response.status()} ${response.statusText()}`);
     await cas.screenshot(page);
     const content = await page.content();
-    let json = await cas.substring(content, "<pre>", "</pre>");
-    let payload = JSON.parse(json);
+    const json = await cas.substring(content, "<pre>", "</pre>");
+    const payload = JSON.parse(json);
     await cas.log(payload);
 
     await browser.close();
