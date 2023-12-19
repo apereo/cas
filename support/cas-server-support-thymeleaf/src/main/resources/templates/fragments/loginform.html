@@ -49,13 +49,13 @@
                         <span id="existingSsoMsg" th:unless="${registeredService}" class="mdc-button__label"
                               th:utext="#{screen.welcome.forcedsso(${existingSingleSignOnSessionPrincipal?.id}, 'CAS')}"/>
                     </div>
-                    <h3 th:unless="${existingSingleSignOnSessionAvailable}" class="text-center">
-                        <i class="mdi mdi-security fas fa-shield-alt"></i>
+                    <h2 th:unless="${existingSingleSignOnSessionAvailable}" class="text-center">
+                        <i class="mdi mdi-security fas fa-shield-alt" aria-hidden="true"></i>
                         <span th:utext="#{screen.welcome.instructions}">Enter your Username and Password:</span>
-                    </h3>
+                    </h2>
 
                     <div id="loginErrorsPanel" class="banner banner-danger alert alert-danger banner-dismissible"
-                         th:if="${#fields.hasErrors('*')}">
+                         th:if="${#fields.hasErrors('*')}" role="alert">
                         <p th:each="err : ${#fields.errors('*')}" th:utext="${err + ' '}">Example error</p>
                         <!--<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>-->
                     </div>
@@ -363,12 +363,12 @@
             </span>
 
 
-            <span th:if="${loginFormViewable and loginFormEnabled}">
+            <div th:if="${loginFormViewable and loginFormEnabled}">
                 <span th:remove="tag"
                       th:if="${'true' == #strings.defaultString(#themes.code('cas.pm-links.enabled'), 'true')}">
                     <div th:replace="~{fragments/pmlinks :: pmlinks}"/>
                 </span>
-            </span>
+            </div>
 
             <script type="text/javascript" th:inline="javascript">
                 /*<![CDATA[*/
@@ -389,9 +389,9 @@
             </script>
         </div>
 
-        <span th:if="${loginFormViewable and loginFormEnabled}">
+        <div th:if="${loginFormViewable and loginFormEnabled}">
             <div th:replace="~{fragments/loginsidebar :: loginsidebar}"/>
-        </span>
+        </div>
     </div>
 </main>
 </body>
