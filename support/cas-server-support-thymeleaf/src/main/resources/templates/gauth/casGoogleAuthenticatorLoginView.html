@@ -107,7 +107,7 @@
                             <div class="mdc-dialog__content" id="notif-dialog-content">
                                 <div class="mdc-typography--body1">
                                     <div class="banner banner-danger alert alert-danger banner-dismissible"
-                                         style="display: none" id="errorPanel">
+                                         role="alert" style="display: none" id="errorPanel">
                                         <h3>Failure</h3>
                                         <p th:utext="#{screen.authentication.gauth.invalidtoken}">
                                     </div>
@@ -139,11 +139,11 @@
                                                            aria-required="true"
                                                            autocomplete="off"
                                                            required />
-                                                    <div class="mdc-text-field-helper-line invalid-feedback">
-                                                        <div class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg" aria-hidden="true">
+                                                    <span class="mdc-text-field-helper-line invalid-feedback">
+                                                        <span class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg" aria-hidden="true">
                                                             <span th:utext="#{username.required}"></span>
-                                                        </div>
-                                                    </div>
+                                                        </span>
+                                                    </span>
                                                 </label>
                                                 <button class="reveal-password align-self-end mdc-button mdc-button--raised btn btn-primary mdc-input-group-append mdc-icon-button"
                                                         tabindex="-1"
