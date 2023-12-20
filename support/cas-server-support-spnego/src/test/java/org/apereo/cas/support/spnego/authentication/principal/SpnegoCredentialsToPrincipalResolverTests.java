@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordA
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
+import org.apereo.cas.persondir.AttributeRepositoryResolver;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -48,11 +49,15 @@ class SpnegoCredentialsToPrincipalResolverTests {
     @Mock
     private AttributeDefinitionStore attributeDefinitionStore;
 
+    @Mock
+    private AttributeRepositoryResolver attributeRepositoryResolver;
+
     @BeforeEach
     public void initialize() throws Exception {
         MockitoAnnotations.openMocks(this).close();
         val context = PrincipalResolutionContext.builder()
             .servicesManager(servicesManager)
+            .attributeRepositoryResolver(attributeRepositoryResolver)
             .attributeDefinitionStore(attributeDefinitionStore)
             .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.REPLACE))
             .attributeRepository(CoreAuthenticationTestUtils.getAttributeRepository())

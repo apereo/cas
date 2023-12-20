@@ -23,6 +23,7 @@ import org.apereo.cas.authentication.principal.resolvers.EchoingPrincipalResolve
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.persondir.AttributeRepositoryResolver;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -92,6 +93,8 @@ public class TrustedAuthenticationConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "trustedPrincipalResolver")
         public PrincipalResolver trustedPrincipalResolver(
+            @Qualifier(AttributeRepositoryResolver.BEAN_NAME)
+            final AttributeRepositoryResolver attributeRepositoryResolver,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(AttributeDefinitionStore.BEAN_NAME)
             final AttributeDefinitionStore attributeDefinitionStore,
@@ -111,7 +114,7 @@ public class TrustedAuthenticationConfiguration {
             val bearingPrincipalResolver = PersonDirectoryPrincipalResolver.newPersonDirectoryPrincipalResolver(
                 applicationContext, trustedPrincipalFactory,
                 attributeRepository, attributeMerger, PrincipalBearingPrincipalResolver.class,
-                servicesManager, attributeDefinitionStore, trusted, personDirectory);
+                servicesManager, attributeDefinitionStore, attributeRepositoryResolver, trusted, personDirectory);
             resolver.setChain(CollectionUtils.wrapList(new EchoingPrincipalResolver(), bearingPrincipalResolver));
             return resolver;
         }

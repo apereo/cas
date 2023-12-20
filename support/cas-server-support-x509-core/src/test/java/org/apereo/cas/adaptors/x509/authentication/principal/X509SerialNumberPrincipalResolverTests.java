@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordA
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
+import org.apereo.cas.persondir.AttributeRepositoryResolver;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
@@ -53,12 +54,16 @@ class X509SerialNumberPrincipalResolverTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
+    @Mock
+    private AttributeRepositoryResolver attributeRepositoryResolver;
+
     @BeforeEach
     public void setup() throws Exception {
         MockitoAnnotations.openMocks(this).close();
         resolutionContext = PrincipalResolutionContext.builder()
             .servicesManager(servicesManager)
             .attributeDefinitionStore(attributeDefinitionStore)
+            .attributeRepositoryResolver(attributeRepositoryResolver)
             .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.REPLACE))
             .attributeRepository(CoreAuthenticationTestUtils.getAttributeRepository())
             .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())

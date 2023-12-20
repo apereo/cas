@@ -75,6 +75,8 @@ public class CasPersonDirectoryConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "personDirectoryAttributeRepositoryPrincipalResolver")
         public PrincipalResolver personDirectoryAttributeRepositoryPrincipalResolver(
+            @Qualifier(AttributeRepositoryResolver.BEAN_NAME)
+            final AttributeRepositoryResolver attributeRepositoryResolver,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(AttributeDefinitionStore.BEAN_NAME)
             final AttributeDefinitionStore attributeDefinitionStore,
@@ -91,7 +93,7 @@ public class CasPersonDirectoryConfiguration {
             return PersonDirectoryPrincipalResolver.newPersonDirectoryPrincipalResolver(
                 applicationContext, personDirectoryPrincipalFactory,
                 attributeRepository, attributeRepositoryAttributeMerger,
-                servicesManager, attributeDefinitionStore, personDirectory);
+                servicesManager, attributeDefinitionStore, attributeRepositoryResolver, personDirectory);
         }
 
         @ConditionalOnMissingBean(name = "principalResolutionExecutionPlanConfigurer")
@@ -150,12 +152,13 @@ public class CasPersonDirectoryConfiguration {
             }
         }
 
-
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = AttributeRepositoryResolver.BEAN_NAME)
-        public AttributeRepositoryResolver attributeRepositoryResolver(@Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
-            return new DefaultAttributeRepositoryResolver(servicesManager);
+        public AttributeRepositoryResolver attributeRepositoryResolver(
+            final CasConfigurationProperties casProperties,
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
+            return new DefaultAttributeRepositoryResolver(servicesManager, casProperties);
         }
 
         @Bean(name = {"cachingAttributeRepository", PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY})

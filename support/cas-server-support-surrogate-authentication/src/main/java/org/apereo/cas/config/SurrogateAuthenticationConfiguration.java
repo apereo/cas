@@ -28,6 +28,7 @@ import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.notifications.CommunicationsManager;
+import org.apereo.cas.persondir.AttributeRepositoryResolver;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.expiration.builder.TicketGrantingTicketExpirationPolicyBuilder;
@@ -223,14 +224,16 @@ public class SurrogateAuthenticationConfiguration {
             @Qualifier(SurrogateAuthenticationPrincipalBuilder.BEAN_NAME)
             final SurrogateAuthenticationPrincipalBuilder surrogatePrincipalBuilder,
             @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
-            final IPersonAttributeDao attributeRepository) {
+            final IPersonAttributeDao attributeRepository,
+            @Qualifier(AttributeRepositoryResolver.BEAN_NAME)
+            final AttributeRepositoryResolver attributeRepositoryResolver) {
             val principal = casProperties.getAuthn().getSurrogate().getPrincipal();
             val personDirectory = casProperties.getPersonDirectory();
             val attributeMerger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
             val resolver = PersonDirectoryPrincipalResolver.newPersonDirectoryPrincipalResolver(
                 applicationContext, surrogatePrincipalFactory,
                 attributeRepository, attributeMerger, SurrogatePrincipalResolver.class,
-                servicesManager, attributeDefinitionStore,
+                servicesManager, attributeDefinitionStore, attributeRepositoryResolver,
                 principal, personDirectory);
             resolver.setSurrogatePrincipalBuilder(surrogatePrincipalBuilder);
             return resolver;

@@ -10,6 +10,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.persondir.AttributeRepositoryResolver;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
@@ -72,6 +73,10 @@ class PersonDirectoryPrincipalResolverOpenLdapTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
+    @Autowired
+    @Qualifier(AttributeRepositoryResolver.BEAN_NAME)
+    private AttributeRepositoryResolver attributeRepositoryResolver;
+
     @Test
     void verifyResolverWithTags() throws Throwable {
         val bindInit = new BindConnectionInitializer("cn=admin,dc=example,dc=org", new Credential("P@ssw0rd"));
@@ -89,7 +94,7 @@ class PersonDirectoryPrincipalResolverOpenLdapTests {
             this.attributeRepository,
             CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
             servicesManager, attributeDefinitionStore,
-            casProperties.getPersonDirectory());
+            attributeRepositoryResolver, casProperties.getPersonDirectory());
         val principal = resolver.resolve(new UsernamePasswordCredential(uid, "password"),
             Optional.of(CoreAuthenticationTestUtils.getPrincipal(uid)),
             Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()),

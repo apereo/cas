@@ -8,6 +8,8 @@ import org.apereo.cas.authentication.principal.PrincipalResolutionExecutionPlanC
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.persondir.AttributeRepositoryResolver;
+import org.apereo.cas.persondir.DefaultAttributeRepositoryResolver;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
@@ -61,6 +63,14 @@ public class CasPersonDirectoryTestConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = AttributeRepositoryResolver.BEAN_NAME)
+    public AttributeRepositoryResolver attributeRepositoryResolver(
+        final CasConfigurationProperties casProperties,
+        @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
+        return new DefaultAttributeRepositoryResolver(servicesManager, casProperties);
+    }
+
+    @Bean
     public PrincipalResolutionExecutionPlanConfigurer testPersonDirectoryPrincipalResolutionExecutionPlanConfigurer(
         final ConfigurableApplicationContext applicationContext,
         @Qualifier(AttributeDefinitionStore.BEAN_NAME)
@@ -69,17 +79,18 @@ public class CasPersonDirectoryTestConfiguration {
         final ServicesManager servicesManager,
         final CasConfigurationProperties casProperties,
         @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
-        final IPersonAttributeDao attributeRepository) {
+        final IPersonAttributeDao attributeRepository,
+        @Qualifier(AttributeRepositoryResolver.BEAN_NAME)
+        final AttributeRepositoryResolver attributeRepositoryResolver) {
         return plan -> {
             val personDirectory = casProperties.getPersonDirectory();
             val attributeMerger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
             val resolver = PersonDirectoryPrincipalResolver.newPersonDirectoryPrincipalResolver(
                 applicationContext,
                 PrincipalFactoryUtils.newPrincipalFactory(),
-                attributeRepository,
-                attributeMerger,
+                attributeRepository, attributeMerger,
                 servicesManager, attributeDefinitionStore,
-                personDirectory);
+                attributeRepositoryResolver, personDirectory);
             plan.registerPrincipalResolver(resolver);
         };
     }

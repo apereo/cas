@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipa
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.persondir.AttributeRepositoryResolver;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.spnego.authentication.handler.support.JcifsConfig;
 import org.apereo.cas.support.spnego.authentication.handler.support.JcifsSpnegoAuthenticationHandler;
@@ -127,7 +128,9 @@ public class SpnegoConfiguration {
         final PrincipalFactory spnegoPrincipalFactory,
         @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
         final IPersonAttributeDao attributeRepository,
-        final CasConfigurationProperties casProperties) {
+        final CasConfigurationProperties casProperties,
+        @Qualifier(AttributeRepositoryResolver.BEAN_NAME)
+        final AttributeRepositoryResolver attributeRepositoryResolver) {
         val personDirectory = casProperties.getPersonDirectory();
         val spnegoPrincipal = casProperties.getAuthn().getSpnego().getPrincipal();
         val attributeMerger = CoreAuthenticationUtils.getAttributeMerger(
@@ -135,7 +138,7 @@ public class SpnegoConfiguration {
         return PersonDirectoryPrincipalResolver.newPersonDirectoryPrincipalResolver(
             applicationContext, spnegoPrincipalFactory,
             attributeRepository, attributeMerger, SpnegoPrincipalResolver.class,
-            servicesManager, attributeDefinitionStore,
+            servicesManager, attributeDefinitionStore, attributeRepositoryResolver,
             spnegoPrincipal, personDirectory);
     }
 
