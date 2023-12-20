@@ -128,9 +128,13 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.dataformat", module: "jackson-dataformat-yaml")
+                    exclude(group: "com.fasterxml.jackson.dataformat", module: "jackson-dataformat-cbor")
                     exclude(group: "javax.ws.rs", module: "javax.ws.rs-api")
                     exclude(group: "org.eclipse.jetty", module: "jetty-eclipse")
                     exclude(group: "org.glassfish.jersey.containers", module: "jersey-container-servlet-core")
+                },
+                dependencies.create("com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:$jacksonVersion") {
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                 }
         ],
         semver                  : [
