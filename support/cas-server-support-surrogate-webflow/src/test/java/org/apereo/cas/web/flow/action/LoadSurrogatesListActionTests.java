@@ -16,12 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
-
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -57,7 +52,7 @@ class LoadSurrogatesListActionTests extends BaseSurrogateAuthenticationTests {
 
     @Test
     void verifyAuthenticate() throws Throwable {
-        val context = new MockRequestContext();
+        val context = MockRequestContext.create();
         WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
 
         val attributes = new LinkedHashMap<String, List<Object>>();
@@ -66,9 +61,6 @@ class LoadSurrogatesListActionTests extends BaseSurrogateAuthenticationTests {
 
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser", attributes);
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(principal), context);
-
-        val request = new MockHttpServletRequest();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
         val creds = new UsernamePasswordCredential();
         creds.assignPassword("Mellon");
@@ -86,7 +78,7 @@ class LoadSurrogatesListActionTests extends BaseSurrogateAuthenticationTests {
 
     @Test
     void verifyAuthenticateNotAuthorized() throws Throwable {
-        val context = new MockRequestContext();
+        val context = MockRequestContext.create();
         WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
 
         val attributes = new LinkedHashMap<String, List<Object>>();
@@ -95,9 +87,6 @@ class LoadSurrogatesListActionTests extends BaseSurrogateAuthenticationTests {
 
         val p = CoreAuthenticationTestUtils.getPrincipal("casuser", attributes);
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(p), context);
-
-        val request = new MockHttpServletRequest();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
         val creds = new UsernamePasswordCredential();
         creds.assignPassword("Mellon");
@@ -115,7 +104,7 @@ class LoadSurrogatesListActionTests extends BaseSurrogateAuthenticationTests {
 
     @Test
     void verifySkipAuthenticate() throws Throwable {
-        val context = new MockRequestContext();
+        val context = MockRequestContext.create();
         WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
         WebUtils.putSurrogateAuthenticationRequest(context, Boolean.TRUE);
 
@@ -125,9 +114,6 @@ class LoadSurrogatesListActionTests extends BaseSurrogateAuthenticationTests {
 
         val p = CoreAuthenticationTestUtils.getPrincipal("someuser", attributes);
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(p), context);
-
-        val request = new MockHttpServletRequest();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
         val creds = new UsernamePasswordCredential();
         creds.assignPassword("Mellon");

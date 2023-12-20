@@ -19,8 +19,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockCookie;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.*;
@@ -172,14 +170,13 @@ class CookieRetrievingCookieGeneratorTests {
         val ctx = getCookieGenerationContext();
 
         val gen = CookieUtils.buildCookieRetrievingGenerator(ctx);
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        request.addParameter(RememberMeCredential.REQUEST_PARAMETER_REMEMBER_ME, "true");
+        val context = MockRequestContext.create();
+        context.setParameter(RememberMeCredential.REQUEST_PARAMETER_REMEMBER_ME, "true");
         WebUtils.putRememberMeAuthenticationEnabled(context, Boolean.TRUE);
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        gen.addCookie(request, response, CookieRetrievingCookieGenerator.isRememberMeAuthentication(context), "CAS-Cookie-Value");
-        val cookie = response.getCookie(ctx.getName());
+
+        gen.addCookie(context.getHttpServletRequest(), context.getHttpServletResponse(),
+            CookieRetrievingCookieGenerator.isRememberMeAuthentication(context), "CAS-Cookie-Value");
+        val cookie = context.getHttpServletResponse().getCookie(ctx.getName());
         assertNotNull(cookie);
         assertEquals(ctx.getRememberMeMaxAge(), cookie.getMaxAge());
     }

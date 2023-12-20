@@ -3,6 +3,7 @@ package org.apereo.cas.nativex;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
+import org.springframework.security.web.access.HandlerMappingIntrospectorRequestTransformer;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.DefaultCsrfToken;
@@ -19,8 +20,7 @@ public class CasWebAppRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
         hints.serialization().registerType(DefaultCsrfToken.class);
-        hints.proxies().registerJdkProxy(CsrfToken.class);
-        registerReflectionHints(hints, List.of(BasicAuthenticationFilter.class));
+        registerReflectionHints(hints, List.of(DefaultCsrfToken.class, BasicAuthenticationFilter.class, HandlerMappingIntrospectorRequestTransformer.class));
         registerReflectionHints(hints, findSubclassesInPackage(CsrfToken.class, CsrfToken.class.getPackageName()));
     }
 

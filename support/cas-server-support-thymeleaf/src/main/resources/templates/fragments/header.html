@@ -27,15 +27,15 @@
                     </button>
                 </section>
                 <section class="mdc-top-app-bar__section">
-                    <span class="cas-brand mx-auto">
-                        <span class="visually-hidden" th:text="${#strings.defaultString(#themes.code('cas.theme.name'), 'CAS')}">CAS</span>
+                    <div class="cas-brand mx-auto">
+                        <h1 class="visually-hidden" th:text="${#strings.defaultString(#themes.code('cas.theme.name'), 'CAS')}">CAS</h1>
                         <a th:href="@{/}">
                             <img id="cas-logo" class="cas-logo"
-                                 th:title="${#strings.defaultString(#themes.code('cas.theme.name'), 'CAS')}"
+                                 th:alt="${#strings.defaultString(#themes.code('cas.theme.name'), 'CAS')}"
                                  th:src="@{${#strings.defaultString(#themes.code('cas.logo.file'), '/images/cas-logo.png')}}"
                             />
                         </a>
-                    </span>
+                    </div>
                 </section>
                 <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end">
                     <button id="cas-notifications-menu"
@@ -75,13 +75,13 @@
             aria-describedby="notif-dialog-content">
         <div class="mdc-dialog__container modal-dialog">
             <div class="mdc-dialog__surface modal-content">
-                <h1 class="mdc-dialog__title mt-lg-2 modal-header modal-title" id="notif-dialog-title">
+                <h2 class="mdc-dialog__title mt-lg-2 modal-header modal-title" id="notif-dialog-title">
                     Notifications
-                </h1>
+                </h2>
                 <div class="mdc-dialog__content modal-body" id="notif-dialog-content">
                     <div class="cas-notification-message mdc-typography--body1" th:if="${staticAuthentication}">
                         <script>countMessages++;</script>
-                        <h6 class="mdc-typography--headline6 mdi mdi-alert-circle fas fa-exclamation-circle"
+                        <h3 class="mdc-typography--headline6 mdi mdi-alert-circle fas fa-exclamation-circle"
                             th:utext="#{screen.defaultauthn.title}"/>
                         <p class="text text-wrap small" th:utext="#{screen.defaultauthn.heading}">
                             <i class="mdi mdi-google fas fa-google"></i>
@@ -93,7 +93,7 @@
                     </div>
                     <div class="cas-notification-message mdc-typography--body1"
                          th:unless="${httpRequestSecure}">
-                        <h6 class="mdc-typography--headline6 mdi mdi-alert-circle fas fa-exclamation-circle"
+                        <h3 class="mdc-typography--headline6 mdi mdi-alert-circle fas fa-exclamation-circle"
                             th:utext="#{screen.nonsecure.title}"/>
                         <script>countMessages++;</script>
                         <p class="text-wrap small" th:utext="#{screen.nonsecure.message}">
@@ -102,8 +102,8 @@
                     </div>
 
                     <div id="cookiesSupportedDiv" class="cas-notification-message mdc-typography--body1" style="display: none">
-                        <h6 class="mdc-typography--headline6 mdi mdi-alert-circle fas fa-exclamation-circle"
-                            th:utext="#{screen.cookies.disabled.title}"></h6>
+                        <h3 class="mdc-typography--headline6 mdi mdi-alert-circle fas fa-exclamation-circle"
+                            th:utext="#{screen.cookies.disabled.title}"></h3>
                         <p class="text-wrap small" th:utext="#{screen.cookies.disabled.message}">
                             Cookies are not supported by this browser.
                         </p>

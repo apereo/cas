@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.jpa;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
@@ -30,7 +31,7 @@ import java.util.Map;
 @Accessors(chain = true)
 @JsonFilter("AbstractJpaProperties")
 @SuppressWarnings("UnescapedEntity")
-public abstract class AbstractJpaProperties implements Serializable {
+public abstract class AbstractJpaProperties implements CasFeatureModule, Serializable {
 
     @Serial
     private static final long serialVersionUID = 761486823496930920L;

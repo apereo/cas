@@ -1,17 +1,16 @@
 package org.apereo.cas.authentication.principal.resolvers;
 
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
+import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
-
 import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.merger.IAttributeMerger;
 import org.springframework.context.ApplicationContext;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -73,4 +72,6 @@ public class PrincipalResolutionContext {
     private final AttributeDefinitionStore attributeDefinitionStore;
 
     private final ApplicationContext applicationContext;
+
+    private final AttributeRepositoryResolver attributeRepositoryResolver;
 }

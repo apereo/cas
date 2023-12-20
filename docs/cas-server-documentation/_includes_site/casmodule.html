@@ -5,31 +5,40 @@
 
 <script type="text/javascript">
 
-    function tabClicked(idx) {
+    function tabClicked(element) {
         let radius = "0px 5px 5px 5px";
-        if (idx != 0) {
+        let href = $(element).attr("href");
+        if (!href.startsWith("#maven")) {
             radius = "5px 5px 5px 5px";
         }
         $(".tab-pane .highlight>pre.highlight").css("border-radius", radius);
-        switch (idx) {
-            case 0:
-                $("div #mavenorgapereocascasserversupportreports").addClass("active").addClass("show");
-                $("div #gradleorgapereocascasserversupportreports").removeClass("active").removeClass("show");
-                $("div #bomorgapereocascasserversupportreports").removeClass("active").removeClass("show");
-                break;
-            case 1:
-                $("div #gradleorgapereocascasserversupportreports").addClass("active").addClass("show");
-                $("div #mavenorgapereocascasserversupportreports").removeClass("active").removeClass("show");
-                $("div #bomorgapereocascasserversupportreports").removeClass("active").removeClass("show");
-                break;
-            case 2:
-                $("div #bomorgapereocascasserversupportreports").addClass("active").addClass("show");
-                $("div #gradleorgapereocascasserversupportreports").removeClass("active").removeClass("show");
-                $("div #mavenorgapereocascasserversupportreports").removeClass("active").removeClass("show");
-                break;
+
+        let label = $(element).text();
+
+        function updateTab(targetId, idsToDeactivate) {
+            $(`div #${targetId}{{ casModuleRandomNumber }}`).addClass("active").addClass("show");
+            idsToDeactivate.forEach(id => $(`div #${id}{{ casModuleRandomNumber }}`).removeClass("active").removeClass("show"));
+        }
+
+        switch (label) {
+        case "Apache Maven":
+            updateTab("maven", ["gradle", "bom", "bomGradle"]);
+            break;
+        case "Gradle":
+            updateTab("gradle", ["maven", "bom", "bomGradle"]);
+            break;
+        case "BOM - Spring":
+            updateTab("bom", ["maven", "gradle", "bomGradle"]);
+            break;
+        case "BOM - Gradle":
+            updateTab("bomGradle", ["maven", "bom", "gradle"]);
+            break;
         }
     }
 
+    window.onload = () => {
+        $("ul.cas-modules li.cas-module a.nav-link.active").first().click();
+    }
 </script>
 
 {%- assign displayClass = "block" -%}
@@ -40,23 +49,24 @@
 
 <div style="display: {{ displayClass }}">
 
-    <ul class='nav nav-pills'>
-        <li class='nav-item cas-module'><a class='nav-link' onclick="javascript:tabClicked(0)" data-bs-toggle='tab' href='#maven{{ casModuleRandomNumber }}'>Apache Maven</a></li>
-        <li class='nav-item cas-module'><a class='nav-link' onclick="javascript:tabClicked(1)" data-bs-toggle='tab' href='#gradle{{ casModuleRandomNumber }}'>Gradle</a></li>
+    <ul class='nav nav-pills cas-modules'>
+        <li class='nav-item cas-module'><a class='nav-link' onclick="tabClicked(this)" data-bs-toggle='tab' href='#maven{{ casModuleRandomNumber }}'>Apache Maven</a></li>
+        <li class='nav-item cas-module'><a class='nav-link' onclick="tabClicked(this)" data-bs-toggle='tab' href='#gradle{{ casModuleRandomNumber }}'>Gradle</a></li>
 
         {%- unless include.ignoreBOM == "true" -%}
-        <li class='nav-item cas-module'><a class='nav-link' onclick="javascript:tabClicked(2)" data-bs-toggle='tab' 
-            href='#bom{{ casModuleRandomNumber }}'>BOM - Spring</a></li>
+        <li class='nav-item cas-module'><a class='nav-link' onclick="tabClicked(this)" data-bs-toggle='tab'
+                                           href='#bom{{ casModuleRandomNumber }}'>BOM - Spring</a></li>
 
-        <li class='nav-item cas-module'><a class='nav-link active' onclick="javascript:tabClicked(2)" data-bs-toggle='tab'
-            href='#bomGradle{{ casModuleRandomNumber }}'>BOM - Gradle</a></li>
+        <li class='nav-item cas-module'>
+            <a class='nav-link active' onclick="tabClicked(this)" data-bs-toggle='tab' href='#bomGradle{{ casModuleRandomNumber }}'>BOM - Gradle</a>
+        </li>
         {%- endunless -%}
 
         <li role='presentation' class='nav-item dropdown cas-module'>
-            <a class='nav-link dropdown-toggle' onclick="javascript:tabClicked(3)" data-bs-toggle='dropdown' href='#' role='button'>Resources
-                <span class='caret'></span>
+            <a class='nav-link dropdown-toggle' onclick="tabClicked(this)" data-bs-toggle='dropdown' href='#' role='button'>Resources<span class='caret'></span>
             </a>
             <div class='dropdown-menu'>
+                <a class='dropdown-item' href="javascript:showOverlay('{{include.module}}', 'cas-overlay');">Show in CAS Initializr</a>
                 <a class='dropdown-item' href="javascript:generateOverlay('{{include.module}}', 'cas-overlay');">Generate CAS Server WAR Overlay</a>
                 <a class='dropdown-item' href="javascript:generateOverlay('{{include.module}}', 'cas-config-server-overlay');">Generate CAS Configuration Server WAR Overlay</a>
             </div>

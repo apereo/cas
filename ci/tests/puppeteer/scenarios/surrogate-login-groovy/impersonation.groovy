@@ -1,9 +1,7 @@
-import org.apereo.cas.authentication.principal.*
-
 def isWildcardAuthorized(Object... args) {
     def surrogate = args[0].toString()
     def principal = args[1] as Principal
-    def logger = args[2]
+    def logger = args[2] as Logger
 
     logger.info("Checking wildcard access {}", surrogate)
     return principal.id.equals("casuser4")
@@ -13,7 +11,7 @@ def canAuthenticate(Object... args) {
     def surrogate = args[0].toString()
     def principal = args[1] as Principal
     def service = args[2] as Service
-    def logger = args[3]
+    def logger = args[3] as Logger
 
     logger.info("Checking surrogate access {}", surrogate)
     def accounts = getAccounts(principal.id, logger)
@@ -21,9 +19,9 @@ def canAuthenticate(Object... args) {
 }
 
 
-def getAccounts(Object... args) {
+List getAccounts(Object... args) {
     def user = args[0].toString()
-    def logger = args[1]
+    def logger = args[1] as Logger
 
     logger.info("Getting accounts for {}", user)
     switch (user) {

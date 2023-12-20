@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.support.syncope;
 
-import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationHandlerStates;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
@@ -28,7 +27,7 @@ import java.util.Map;
 @Setter
 @Accessors(chain = true)
 @JsonFilter("SyncopeAuthenticationProperties")
-public class SyncopeAuthenticationProperties extends BaseSyncopeProperties implements CasFeatureModule {
+public class SyncopeAuthenticationProperties extends BaseSyncopeProperties {
 
     @Serial
     private static final long serialVersionUID = -2446926316502297496L;

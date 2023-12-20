@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
-const assert = require('assert');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
+const assert = require("assert");
 
 (async () => {
     
@@ -21,7 +21,7 @@ const assert = require('assert');
     await cas.click(page, "#allow");
     await page.waitForNavigation();
     await cas.log(`Page url: ${await page.url()}`);
-    let result = await page.evaluate(() => window.location.hash);
+    const result = await page.evaluate(() => window.location.hash);
     assert(result.includes("code="));
     assert(result.includes("nonce="));
     await page.waitForTimeout(1000);

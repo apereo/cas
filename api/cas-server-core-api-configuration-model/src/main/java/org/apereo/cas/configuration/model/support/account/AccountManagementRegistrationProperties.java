@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.account;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.core.web.flow.WebflowAutoConfigurationProperties;
 import org.apereo.cas.configuration.model.support.account.provision.AccountManagementRegistrationProvisioningProperties;
 import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
@@ -27,7 +28,7 @@ import java.io.Serializable;
 @Setter
 @Accessors(chain = true)
 @JsonFilter("AccountManagementRegistrationProperties")
-public class AccountManagementRegistrationProperties implements Serializable {
+public class AccountManagementRegistrationProperties implements CasFeatureModule, Serializable {
     @Serial
     private static final long serialVersionUID = -4679683905941523034L;
 

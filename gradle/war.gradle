@@ -8,10 +8,9 @@ description = "Apereo CAS Web Application"
 sourceSets {
     main {
         resources {
-            srcDirs "${project.buildDir}/generated-src/main/resources"
+            srcDirs "${project.layout.buildDirectory.getAsFile().get().path}/generated-src/main/resources"
         }
     }
-
 }
 
 apply from: rootProject.file("gradle/springboot.gradle")

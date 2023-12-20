@@ -263,17 +263,6 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
         return result;
     }
 
-    /**
-     * Build access token request context.
-     *
-     * @param authzRequest      the authz request
-     * @param registeredService the registered service
-     * @param context           the context
-     * @param service           the service
-     * @param authentication    the authentication
-     * @return the access token request context
-     * @throws Exception the exception
-     */
     protected AccessTokenRequestContext prepareAccessTokenRequestContext(
         final OAuth20AuthorizationRequest authzRequest,
         final OAuthRegisteredService registeredService,
@@ -286,14 +275,16 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
             val tgt = getConfigurationContext().fetchTicketGrantingTicketFrom(context);
             payloadBuilder = payloadBuilder.ticketGrantingTicket(tgt);
         }
-        val redirectUri = getConfigurationContext().getRequestParameterResolver().resolveRequestParameter(context, OAuth20Constants.REDIRECT_URI)
+        val requestParameterResolver = getConfigurationContext().getRequestParameterResolver();
+        val redirectUri = requestParameterResolver
+            .resolveRequestParameter(context, OAuth20Constants.REDIRECT_URI)
             .map(String::valueOf)
             .orElse(StringUtils.EMPTY);
         val grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE)
             .map(String::valueOf)
             .orElseGet(OAuth20GrantTypes.AUTHORIZATION_CODE::getType)
             .toUpperCase(Locale.ENGLISH);
-        val scopes = getConfigurationContext().getRequestParameterResolver().resolveRequestScopes(context);
+        val scopes = requestParameterResolver.resolveRequestScopes(context);
         val codeChallenge = context.getRequestParameter(OAuth20Constants.CODE_CHALLENGE)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
 
@@ -305,13 +296,13 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
             .toUpperCase(Locale.ENGLISH);
 
         val userProfile = OAuth20Utils.getAuthenticatedUserProfile(context, getConfigurationContext().getSessionStore());
-        val claims = getConfigurationContext().getRequestParameterResolver().resolveRequestClaims(context);
+        val claims = requestParameterResolver.resolveRequestClaims(context);
         val holder = payloadBuilder
             .service(service)
             .authentication(authentication)
             .registeredService(registeredService)
-            .grantType(getConfigurationContext().getRequestParameterResolver().resolveGrantType(context))
-            .responseType(getConfigurationContext().getRequestParameterResolver().resolveResponseType(context))
+            .grantType(requestParameterResolver.resolveGrantType(context))
+            .responseType(requestParameterResolver.resolveResponseType(context))
             .codeChallenge(codeChallenge)
             .codeChallengeMethod(codeChallengeMethod)
             .scopes(scopes)
@@ -319,7 +310,7 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
             .redirectUri(redirectUri)
             .userProfile(userProfile)
             .claims(claims)
-            .responseMode(getConfigurationContext().getRequestParameterResolver().resolveResponseModeType(context))
+            .responseMode(requestParameterResolver.resolveResponseModeType(context))
             .build();
         context.getRequestParameters().keySet()
             .forEach(key -> context.getRequestParameter(key).ifPresent(value -> holder.getParameters().put(key, value)));

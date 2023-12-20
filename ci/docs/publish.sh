@@ -336,7 +336,11 @@ if [[ ${buildDocs} == "true" ]]; then
   fi
 
   cd "$PWD/gh-pages" || exit
-  
+
+  printgreen "Enabling YJIT compiler"
+  export RUBY_YJIT_ENABLE=1
+  ruby --version
+
   printgreen "Installing documentation dependencies...\n"
   bundle config set force_ruby_platform true
   bundle install

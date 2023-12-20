@@ -1,7 +1,6 @@
 package org.apereo.cas.adaptors.jdbc;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
@@ -9,9 +8,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.jdbc.authn.QueryJdbcAuthenticationProperties;
 import org.apereo.cas.jpa.JpaPersistenceProviderContext;
-import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,7 +20,6 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -32,10 +28,8 @@ import jakarta.persistence.Id;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import javax.sql.DataSource;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -95,7 +89,7 @@ class QueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthentication
     void verifyAuthenticationFailsToFindUser() throws Throwable {
         val properties = new QueryJdbcAuthenticationProperties().setSql(SQL).setFieldPassword(PASSWORD_FIELD);
         val handler = new QueryDatabaseAuthenticationHandler(properties, null, PrincipalFactoryUtils.newPrincipalFactory(),
-            this.dataSource, new HashMap<>(0));
+            this.dataSource);
         assertThrows(AccountNotFoundException.class,
             () -> handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("usernotfound", "psw1"), mock(Service.class)));
     }
@@ -104,7 +98,7 @@ class QueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthentication
     void verifyPasswordInvalid() throws Throwable {
         val properties = new QueryJdbcAuthenticationProperties().setSql(SQL).setFieldPassword(PASSWORD_FIELD);
         val handler = new QueryDatabaseAuthenticationHandler(properties, null, PrincipalFactoryUtils.newPrincipalFactory(),
-            this.dataSource, new HashMap<>(0));
+            this.dataSource);
         assertThrows(FailedLoginException.class,
             () -> handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user1", "psw11"), mock(Service.class)));
     }
@@ -113,7 +107,7 @@ class QueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthentication
     void verifyMultipleRecords() throws Throwable {
         val properties = new QueryJdbcAuthenticationProperties().setSql(SQL).setFieldPassword(PASSWORD_FIELD);
         val handler = new QueryDatabaseAuthenticationHandler(properties, null, PrincipalFactoryUtils.newPrincipalFactory(),
-            this.dataSource, new HashMap<>(0));
+            this.dataSource);
         assertThrows(FailedLoginException.class,
             () -> handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0"), mock(Service.class)));
     }
@@ -122,17 +116,16 @@ class QueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthentication
     void verifyBadQuery() throws Throwable {
         val properties = new QueryJdbcAuthenticationProperties().setSql(SQL.replace("*", "error")).setFieldPassword(PASSWORD_FIELD);
         val handler = new QueryDatabaseAuthenticationHandler(properties, null, PrincipalFactoryUtils.newPrincipalFactory(),
-            this.dataSource, new HashMap<>(0));
+            this.dataSource);
         assertThrows(PreventedException.class,
             () -> handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0"), mock(Service.class)));
     }
 
     @Test
     void verifySuccess() throws Throwable {
-        val map = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(List.of("phone:phoneNumber"));
         val properties = new QueryJdbcAuthenticationProperties().setSql(SQL).setFieldPassword(PASSWORD_FIELD);
-        val handler = new QueryDatabaseAuthenticationHandler(properties, null, PrincipalFactoryUtils.newPrincipalFactory(),
-            this.dataSource, CollectionUtils.wrap(map));
+        properties.setPrincipalAttributeList(List.of("phone:phoneNumber"));
+        val handler = new QueryDatabaseAuthenticationHandler(properties, null, PrincipalFactoryUtils.newPrincipalFactory(), dataSource);
         val result = handler.authenticate(
             CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user3", "psw3"), mock(Service.class));
         assertNotNull(result);
@@ -144,7 +137,7 @@ class QueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthentication
     void verifyFindUserAndExpired() throws Throwable {
         val properties = new QueryJdbcAuthenticationProperties().setSql(SQL).setFieldPassword(PASSWORD_FIELD).setFieldExpired("expired");
         val handler = new QueryDatabaseAuthenticationHandler(properties, null, PrincipalFactoryUtils.newPrincipalFactory(),
-            this.dataSource, new HashMap<>(0));
+            this.dataSource);
         assertThrows(AccountPasswordMustChangeException.class,
             () -> handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user20", "psw20"), mock(Service.class)));
     }
@@ -152,8 +145,7 @@ class QueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthentication
     @Test
     void verifyFindUserAndDisabled() throws Throwable {
         val properties = new QueryJdbcAuthenticationProperties().setSql(SQL).setFieldPassword(PASSWORD_FIELD).setFieldDisabled("disabled");
-        val handler = new QueryDatabaseAuthenticationHandler(properties, null, PrincipalFactoryUtils.newPrincipalFactory(),
-            this.dataSource, new HashMap<>(0));
+        val handler = new QueryDatabaseAuthenticationHandler(properties, null, PrincipalFactoryUtils.newPrincipalFactory(), dataSource);
         assertThrows(AccountDisabledException.class,
             () -> handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user21", "psw21"), mock(Service.class)));
     }
@@ -167,8 +159,7 @@ class QueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthentication
         val encoder = new BCryptPasswordEncoder(8, RandomUtils.getNativeInstance());
         val sql = SQL.replace("*", '\'' + encoder.encode("pswbc1") + "' password");
         val properties = new QueryJdbcAuthenticationProperties().setSql(sql).setFieldPassword(PASSWORD_FIELD);
-        val handler = new QueryDatabaseAuthenticationHandler(properties, null, PrincipalFactoryUtils.newPrincipalFactory(),
-            this.dataSource, new HashMap<>(0));
+        val handler = new QueryDatabaseAuthenticationHandler(properties, null, PrincipalFactoryUtils.newPrincipalFactory(), dataSource);
         handler.setPasswordEncoder(encoder);
         assertThrows(FailedLoginException.class,
             () -> handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "pswbc1"), mock(Service.class)));
@@ -183,8 +174,7 @@ class QueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthentication
         val encoder = new BCryptPasswordEncoder(6, RandomUtils.getNativeInstance());
         val sql = SQL.replace("*", '\'' + encoder.encode("pswbc2") + "' password");
         val properties = new QueryJdbcAuthenticationProperties().setSql(sql).setFieldPassword(PASSWORD_FIELD);
-        val handler = new QueryDatabaseAuthenticationHandler(properties, null, PrincipalFactoryUtils.newPrincipalFactory(),
-            this.dataSource, new HashMap<>(0));
+        val handler = new QueryDatabaseAuthenticationHandler(properties, null, PrincipalFactoryUtils.newPrincipalFactory(), dataSource);
 
         handler.setPasswordEncoder(encoder);
         assertNotNull(handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user3", "pswbc2"), mock(Service.class)));

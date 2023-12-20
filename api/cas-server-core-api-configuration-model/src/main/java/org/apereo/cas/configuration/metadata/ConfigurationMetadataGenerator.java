@@ -9,7 +9,7 @@ import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,12 +32,14 @@ import org.springframework.util.ReflectionUtils;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -63,7 +65,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ConfigurationMetadataGenerator {
     private static final ObjectMapper MAPPER = new ObjectMapper()
-        .setDefaultPrettyPrinter(new MinimalPrettyPrinter())
+        .setDefaultPrettyPrinter(new DefaultPrettyPrinter())
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         .setSerializationInclusion(JsonInclude.Include.NON_NULL)
         .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)
@@ -128,7 +130,11 @@ public class ConfigurationMetadataGenerator {
                             .orElseThrow(() -> new RuntimeException(clazz.getCanonicalName() + " is missing @RequiresModule"));
 
                         val valueHint = new ValueHint();
-                        valueHint.setValue(toJson(Map.of("module", annotation.name(), "automated", annotation.automated())));
+
+                        val hintsMap = new TreeMap<>();
+                        hintsMap.put("module", annotation.name());
+                        hintsMap.put("automated", annotation.automated());
+                        valueHint.setValue(toJson(hintsMap));
                         valueHint.setDescription(RequiresModule.class.getName());
                         hint.getValues().add(valueHint);
 
@@ -179,17 +185,17 @@ public class ConfigurationMetadataGenerator {
         return hints;
     }
 
-    private static void processDeprecatedProperties(final Set<ConfigurationMetadataProperty> properties) {
+    protected static void processDeprecatedProperties(final Set<ConfigurationMetadataProperty> properties) {
         properties.stream()
             .filter(p -> p.getDeprecation() != null)
             .forEach(property -> property.getDeprecation().setLevel(Deprecation.Level.ERROR));
     }
 
-    private static String toJson(final Object value) throws Exception {
+    protected static String toJson(final Object value) throws Exception {
         return MAPPER.writeValueAsString(value);
     }
 
-    private static void removeNestedConfigurationPropertyGroups(final Set<ConfigurationMetadataProperty> properties,
+    protected static void removeNestedConfigurationPropertyGroups(final Set<ConfigurationMetadataProperty> properties,
                                                                 final Set<ConfigurationMetadataProperty> groups) {
         var it = properties.iterator();
         while (it.hasNext()) {
@@ -358,12 +364,7 @@ public class ConfigurationMetadataGenerator {
         }
     }
 
-    /**
-     * Execute.
-     *
-     * @throws Exception the exception
-     */
-    private void adjustConfigurationMetadata() throws Exception {
+    protected void adjustConfigurationMetadata() throws Exception {
         val jsonFile = new File(buildDir, "classes/java/main/META-INF/spring-configuration-metadata.json");
         if (!jsonFile.exists()) {
             throw new RuntimeException("Could not locate file " + jsonFile.getCanonicalPath());
@@ -384,24 +385,21 @@ public class ConfigurationMetadataGenerator {
 
         removeNestedConfigurationPropertyGroups(properties, groups);
 
-        jsonMap.put("properties", properties);
-        jsonMap.put("groups", groups);
-        jsonMap.put("hints", hints);
-
-        LOGGER.info("Final results is written to [{}]", jsonFile.getAbsolutePath());
-        MAPPER.writeValue(jsonFile, jsonMap);
-
-        val copy = new File(buildDir, jsonFile.getName());
-        LOGGER.info("A copy of the results is written to [{}]", copy.getAbsolutePath());
-        MAPPER.writeValue(copy, jsonMap);
+        jsonMap.put("properties", properties.parallelStream().sorted(Comparator.comparing(ConfigurationMetadataProperty::getName)).collect(Collectors.toCollection(LinkedHashSet::new)));
+        jsonMap.put("groups", groups.parallelStream().sorted(Comparator.comparing(ConfigurationMetadataProperty::getName)).collect(Collectors.toCollection(LinkedHashSet::new)));
+        jsonMap.put("hints", hints.parallelStream().sorted(Comparator.comparing(ConfigurationMetadataHint::getName)).collect(Collectors.toCollection(LinkedHashSet::new)));
+        
+        val destinationFile = new File(buildDir, "generated/spring-configuration-metadata/META-INF/spring-configuration-metadata.json");
+        destinationFile.getParentFile().mkdirs();
+        MAPPER.writerWithDefaultPrettyPrinter().writeValue(destinationFile, jsonMap);
     }
 
-    private void processTopLevelEnumTypes(final Set<ConfigurationMetadataProperty> properties) throws Exception {
+    protected void processTopLevelEnumTypes(final Set<ConfigurationMetadataProperty> properties) throws Exception {
         for (val property : properties) {
             var typePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(this.sourcePath, property.getType());
             var typeFile = new File(typePath);
             if (!typeFile.exists() && !property.getType().contains(".")) {
-                val clazz = org.apereo.cas.util.ReflectionUtils.findClassBySimpleNameInPackage(property.getType(), "org.apereo.cas");
+                val clazz = ConfigurationMetadataClassSourceLocator.findClassBySimpleNameInPackage(property.getType(), "org.apereo.cas");
                 if (clazz.isPresent()) {
                     typePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(this.sourcePath, clazz.get().getName());
                     typeFile = new File(typePath);
@@ -421,7 +419,7 @@ public class ConfigurationMetadataGenerator {
         }
     }
 
-    private void processNestedTypes(final Set<ConfigurationMetadataProperty> properties, final Set<ConfigurationMetadataProperty> groups) {
+    protected void processNestedTypes(final Set<ConfigurationMetadataProperty> properties, final Set<ConfigurationMetadataProperty> groups) {
         val collectedProps = new HashSet<ConfigurationMetadataProperty>(0);
         val collectedGroups = new HashSet<ConfigurationMetadataProperty>(0);
         LOGGER.trace("Processing nested configuration types...");
@@ -438,8 +436,7 @@ public class ConfigurationMetadataGenerator {
                     val matcher = NESTED_TYPE_PATTERN2.matcher(p.getType());
                     indexBrackets = matcher.matches();
                     typeName = matcher.group(2);
-
-                    val result = org.apereo.cas.util.ReflectionUtils.findClassBySimpleNameInPackage(typeName, "org.apereo.cas");
+                    val result = ConfigurationMetadataClassSourceLocator.findClassBySimpleNameInPackage(typeName, "org.apereo.cas");
                     if (result.isPresent()) {
                         typeName = result.get().getName();
                     }

@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
+const puppeteer = require("puppeteer");
 const assert = require("assert");
-const cas = require('../../cas.js');
+const cas = require("../../cas.js");
 
 (async () => {
     await cas.refreshContext();
@@ -10,7 +10,7 @@ const cas = require('../../cas.js');
     await cas.goto(page, "https://localhost:8443/cas/login?authn_method=mfa-simple&locale=de");
     await cas.loginWith(page);
     await page.waitForTimeout(1000);
-    await cas.assertVisibility(page, '#token');
+    await cas.assertVisibility(page, "#token");
 
     const page2 = await browser.newPage();
     await page2.goto("http://localhost:8282");
@@ -29,7 +29,7 @@ const cas = require('../../cas.js');
     await page.waitForTimeout(1000);
     await cas.submitForm(page, "#registerform");
     await page.waitForTimeout(1000);
-    await cas.assertInnerText(page, '#content div h2', "Anmeldung erfolgreich");
+    await cas.assertInnerText(page, "#content div h2", "Anmeldung erfolgreich");
     await cas.assertCookie(page);
 
     await browser.close();

@@ -1,11 +1,12 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
-const propertiesReader = require('properties-reader');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
+const propertiesReader = require("properties-reader");
 const path = require("path");
 
-function updateProperty(properties, propertiesFile, value) {
-    properties.set("screen.welcome.security", value);
-    properties.save(propertiesFile, (err, data) => {
+async function updateProperty(properties, propertiesFile, value) {
+    await properties.set("screen.welcome.security", value);
+    await properties.save(propertiesFile, (err, data) => {
+        cas.logb(`Saving ${data}`);
         if (err) {
             throw err;
         }
@@ -13,24 +14,24 @@ function updateProperty(properties, propertiesFile, value) {
 }
 
 (async () => {
-    let browser = await puppeteer.launch(cas.browserOptions());
-    let propertiesFile = path.join(__dirname, 'custom_messages.properties');
-    let properties = propertiesReader(propertiesFile, 'utf-8', {writer: { saveSections: false }});
+    const browser = await puppeteer.launch(cas.browserOptions());
+    const propertiesFile = path.join(__dirname, "custom_messages.properties");
+    const properties = propertiesReader(propertiesFile, "utf-8", {writer: { saveSections: false }});
     try {
         await cas.log(`Loading properties file ${propertiesFile}`);
         const page = await cas.newPage(browser);
         await cas.gotoLogin(page);
         await page.waitForTimeout(1000);
         await cas.assertInnerText(page, "#sidebar div p", "Stay safe!");
-        await cas.assertInnerText(page, "#login-form-controls h3 span", "Welcome to CAS");
+        await cas.assertInnerText(page, "#login-form-controls h2 span", "Welcome to CAS");
 
-        updateProperty(properties, propertiesFile, "Hello World!");
+        await updateProperty(properties, propertiesFile, "Hello World!");
 
         await page.waitForTimeout(2000);
         await page.reload("https://localhost:8443/cas/login");
         await cas.assertInnerText(page, "#sidebar div p", "Hello World!");
     } finally {
-        updateProperty(properties, propertiesFile, "Stay safe!");
+        await updateProperty(properties, propertiesFile, "Stay safe!");
         await browser.close();
     }
 })();

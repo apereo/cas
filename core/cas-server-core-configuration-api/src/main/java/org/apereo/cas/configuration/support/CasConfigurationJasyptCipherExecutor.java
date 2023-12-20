@@ -1,7 +1,6 @@
 package org.apereo.cas.configuration.support;
 
 import org.apereo.cas.util.crypto.CipherExecutor;
-
 import lombok.Getter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -12,7 +11,6 @@ import org.jasypt.iv.IvGenerator;
 import org.jasypt.iv.NoIvGenerator;
 import org.jasypt.iv.RandomIvGenerator;
 import org.springframework.core.env.Environment;
-
 import java.security.Security;
 import java.util.function.Function;
 import java.util.regex.Pattern;

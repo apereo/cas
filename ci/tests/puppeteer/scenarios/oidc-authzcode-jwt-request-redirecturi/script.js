@@ -1,5 +1,5 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 const assert = require("assert");
 
 (async () => {
@@ -22,7 +22,7 @@ const assert = require("assert");
         await page.waitForNavigation();
     }
 
-    let code = await cas.assertParameter(page, "code");
+    const code = await cas.assertParameter(page, "code");
     await cas.log(`OAuth code ${code}`);
 
     let accessTokenParams = "client_id=client&";
@@ -30,13 +30,13 @@ const assert = require("assert");
     accessTokenParams += "grant_type=authorization_code&";
     accessTokenParams += `redirect_uri=${redirectUrl}`;
 
-    let accessTokenUrl = `https://localhost:8443/cas/oidc/token?${accessTokenParams}&code=${code}`;
+    const accessTokenUrl = `https://localhost:8443/cas/oidc/token?${accessTokenParams}&code=${code}`;
     await cas.log(`Calling ${accessTokenUrl}`);
 
     let accessToken = null;
     await cas.doPost(accessTokenUrl, "", {
-        'Content-Type': "application/json"
-    }, async res => {
+        "Content-Type": "application/json"
+    }, async (res) => {
         await cas.log(res.data);
         assert(res.data.access_token !== null);
 
@@ -44,15 +44,15 @@ const assert = require("assert");
         await cas.log(`Received access token ${accessToken}`);
 
         await cas.log("Decoding ID token...");
-        let decoded = await cas.decodeJwt(res.data.id_token);
-        assert(decoded.sub != null);
-        assert(decoded.aud != null);
-        assert(decoded.jti != null);
-        assert(decoded.sid != null);
-        assert(decoded.iss != null);
-        assert(decoded.state != null);
-        assert(decoded.nonce != null)
-    }, error => {
+        const decoded = await cas.decodeJwt(res.data.id_token);
+        assert(decoded.sub !== null);
+        assert(decoded.aud !== null);
+        assert(decoded.jti !== null);
+        assert(decoded.sid !== null);
+        assert(decoded.iss !== null);
+        assert(decoded.state !== null);
+        assert(decoded.nonce !== null);
+    }, (error) => {
         throw `Operation failed to obtain access token: ${error}`;
     });
 

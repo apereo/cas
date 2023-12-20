@@ -9,7 +9,6 @@ import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.awscore.client.builder.AwsClientBuilder;
 import software.amazon.awssdk.awscore.client.builder.AwsSyncClientBuilder;
-import software.amazon.awssdk.core.client.builder.SdkSyncClientBuilder;
 
 import java.io.Serial;
 
@@ -42,6 +41,6 @@ class AmazonClientConfigurationBuilderTests {
             StaticCredentialsProvider.create(AwsBasicCredentials.create("key", "secret")), properties));
     }
 
-    private interface SampleClientBuilder extends AwsClientBuilder, AwsSyncClientBuilder, SdkSyncClientBuilder {
+    private interface SampleClientBuilder extends AwsClientBuilder, AwsSyncClientBuilder {
     }
 }

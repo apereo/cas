@@ -1,4 +1,4 @@
-import org.apereo.cas.util.model.TriStateBoolean
+import org.apereo.cas.configuration.support.TriStateBoolean
 
 def run(Object[] args) {
     def consentEngine = args[0]

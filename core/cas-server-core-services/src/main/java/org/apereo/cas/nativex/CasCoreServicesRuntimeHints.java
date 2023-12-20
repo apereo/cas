@@ -89,11 +89,11 @@ import java.util.List;
 public class CasCoreServicesRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
-        hints.proxies()
-            .registerJdkProxy(ServiceRegistryInitializer.class)
-            .registerJdkProxy(RegisteredServiceAccessStrategyEnforcer.class)
-            .registerJdkProxy(ServiceRegistry.class)
-            .registerJdkProxy(ServiceRegistryExecutionPlanConfigurer.class);
+        registerProxyHints(hints, List.of(
+            ServiceRegistryInitializer.class,
+            RegisteredServiceAccessStrategyEnforcer.class,
+            ServiceRegistry.class,
+            ServiceRegistryExecutionPlanConfigurer.class));
 
         registerSerializableSpringProxy(hints, ServiceRegistryInitializerEventListener.class);
 

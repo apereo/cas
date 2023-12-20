@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
-const assert = require('assert');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
+const assert = require("assert");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -11,7 +11,7 @@ const assert = require('assert');
     await cas.log(`Navigating to ${url}`);
     await cas.goto(page, url);
 
-    let hint = await cas.inputValue(page, "#username");
+    const hint = await cas.inputValue(page, "#username");
     assert(hint === "casuser@localhost");
     await browser.close();
 })();

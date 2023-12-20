@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.bucket4j;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -23,7 +24,7 @@ import java.util.List;
 @Setter
 @Accessors(chain = true)
 @JsonFilter("BaseBucket4jProperties")
-public abstract class BaseBucket4jProperties implements Serializable {
+public abstract class BaseBucket4jProperties implements CasFeatureModule, Serializable {
     @Serial
     private static final long serialVersionUID = 1813165633105563813L;
 

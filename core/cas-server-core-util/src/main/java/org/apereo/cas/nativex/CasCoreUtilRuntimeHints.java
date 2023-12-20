@@ -1,11 +1,11 @@
 package org.apereo.cas.nativex;
 
+import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.apereo.cas.util.CasVersion;
 import org.apereo.cas.util.LogMessageSummarizer;
 import org.apereo.cas.util.cipher.JsonWebKeySetStringCipherExecutor;
 import org.apereo.cas.util.cipher.RsaKeyPairCipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.model.TriStateBoolean;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 import org.apereo.cas.util.thread.Cleanable;
@@ -96,7 +96,17 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
         hints.resources().registerType(CasVersion.class);
 
-        registerProxiesHints(hints);
+        registerProxyHints(hints, List.of(
+            ComponentSerializationPlanConfigurer.class,
+            InitializingBean.class,
+            Supplier.class,
+            Runnable.class,
+            Function.class,
+            Consumer.class,
+            Cleanable.class,
+            CorsConfigurationSource.class
+        ));
+        
         registerSerializationHints(hints);
 
         registerDeclaredMethod(hints, Map.Entry.class, "getKey");
@@ -296,17 +306,6 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
             .registerType(TypeReference.of("java.lang.String$CaseInsensitiveComparator"));
     }
 
-    private static void registerProxiesHints(final RuntimeHints hints) {
-        hints.proxies()
-            .registerJdkProxy(ComponentSerializationPlanConfigurer.class)
-            .registerJdkProxy(InitializingBean.class)
-            .registerJdkProxy(Supplier.class)
-            .registerJdkProxy(Runnable.class)
-            .registerJdkProxy(Function.class)
-            .registerJdkProxy(Consumer.class)
-            .registerJdkProxy(Cleanable.class)
-            .registerJdkProxy(CorsConfigurationSource.class);
-    }
 
     private static void registerReflectionHintForConstructors(final RuntimeHints hints, final Collection clazzes) {
         clazzes.forEach(clazz ->

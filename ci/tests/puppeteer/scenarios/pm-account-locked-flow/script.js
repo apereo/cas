@@ -1,5 +1,5 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 
 async function loginWith(page, user, password) {
     await cas.gotoLogin(page);
@@ -18,7 +18,7 @@ async function loginWith(page, user, password) {
     await loginWith(page, "locked", "locked");
     await loginWith(page, "disabled", "disabled");
 
-    let captcha = await cas.innerText(page, "#captcha");
+    const captcha = await cas.innerText(page, "#captcha");
     await cas.type(page, "#captchaValue", captcha);
     await cas.submitForm(page, "#fm1");
     await page.waitForTimeout(1000);

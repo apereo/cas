@@ -2,19 +2,16 @@ package org.apereo.cas.interrupt;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.webflow.test.MockRequestContext;
-
 import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

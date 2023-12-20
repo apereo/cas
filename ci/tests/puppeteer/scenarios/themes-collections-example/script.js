@@ -1,7 +1,6 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
-
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const assert = require("assert");
+const cas = require("../../cas.js");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -9,13 +8,12 @@ const cas = require('../../cas.js');
     await cas.gotoLogin(page);
     await page.waitForTimeout(2000);
 
-    await cas.assertVisibility(page, '#twitter-link');
-    await cas.assertVisibility(page, '#youtube-link');
-    await cas.assertInvisibility(page, '#pmlinks');
+    await cas.assertVisibility(page, "#twitter-link");
+    await cas.assertVisibility(page, "#youtube-link");
+    await cas.assertInvisibility(page, "#pmlinks");
 
-    const imgs = await page.$$eval('#cas-logo',
-        imgs => imgs.map(img => img.getAttribute('src')));
-    let logo = imgs.pop();
+    const imgs = await page.$$eval("#cas-logo", (imgs) => imgs.map((img) => img.getAttribute("src")));
+    const logo = imgs.pop();
     await cas.log(logo);
     assert(logo === "/cas/themes/example/images/logo.png");
 

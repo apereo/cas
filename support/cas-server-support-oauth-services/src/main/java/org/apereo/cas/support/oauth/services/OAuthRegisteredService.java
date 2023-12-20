@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.services;
 
+import org.apereo.cas.configuration.model.support.oauth.OAuthCoreProperties;
 import org.apereo.cas.services.BaseRegisteredService;
 import org.apereo.cas.services.BaseWebBasedRegisteredService;
 
@@ -58,7 +59,7 @@ public class OAuthRegisteredService extends BaseWebBasedRegisteredService {
 
     private Set<String> supportedResponseTypes = new HashSet<>(0);
 
-    private String userProfileViewType;
+    private OAuthCoreProperties.UserProfileViewTypes userProfileViewType;
 
     private Set<String> scopes = new HashSet<>(0);
 

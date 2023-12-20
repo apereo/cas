@@ -1,4 +1,4 @@
-const cas = require('../../cas.js');
+const cas = require("../../cas.js");
 
 (async () => {
     await cas.logg("Rotating keys...");

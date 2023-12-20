@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
+import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.metadata.RememberMeAuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.policy.AllCredentialsValidatedAuthenticationPolicy;
@@ -12,7 +13,6 @@ import org.apereo.cas.configuration.model.core.authentication.PrincipalAttribute
 import org.apereo.cas.configuration.model.core.ticket.RememberMeAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
-
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,10 +24,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
-
 import java.util.List;
 import java.util.Set;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -42,6 +40,9 @@ import static org.mockito.Mockito.*;
 class DefaultAuthenticationEventExecutionPlanTests {
     @Mock
     private ServicesManager servicesManager;
+
+    @Mock
+    private AttributeRepositoryResolver attributeRepositoryResolver;
 
     @Mock
     private AttributeDefinitionStore attributeDefinitionStore;
@@ -71,6 +72,7 @@ class DefaultAuthenticationEventExecutionPlanTests {
     void verifyOperation() throws Throwable {
         val context = PrincipalResolutionContext.builder()
             .servicesManager(servicesManager)
+            .attributeRepositoryResolver(attributeRepositoryResolver)
             .attributeDefinitionStore(attributeDefinitionStore)
             .attributeRepository(CoreAuthenticationTestUtils.getAttributeRepository())
             .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())

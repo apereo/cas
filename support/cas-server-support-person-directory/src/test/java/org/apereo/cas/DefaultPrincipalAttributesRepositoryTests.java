@@ -42,24 +42,22 @@ class DefaultPrincipalAttributesRepositoryTests extends BaseCasCoreTests {
             .principal(CoreAuthenticationTestUtils.getPrincipal())
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
             .build();
-        try (val rep = new DefaultPrincipalAttributesRepository()) {
-            assertEquals(CoreAuthenticationTestUtils.getAttributeRepository().getBackingMap().size(), rep.getAttributes(context).size());
-        }
+        val rep = new DefaultPrincipalAttributesRepository();
+        assertEquals(CoreAuthenticationTestUtils.getAttributeRepository().getBackingMap().size(), rep.getAttributes(context).size());
     }
 
     @Test
     void checkInitialAttributes() throws Throwable {
         val principal = PrincipalFactoryUtils.newPrincipalFactory()
             .createPrincipal("uid", Collections.singletonMap("mail", List.of("final@example.com")));
-        try (val rep = new DefaultPrincipalAttributesRepository()) {
-            val context = RegisteredServiceAttributeReleasePolicyContext.builder()
-                .applicationContext(applicationContext)
-                .principal(principal)
-                .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
-                .build();
-            assertEquals(1, rep.getAttributes(context).size());
-            assertTrue(rep.getAttributes(context).containsKey("mail"));
-        }
+        val rep = new DefaultPrincipalAttributesRepository();
+        val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .applicationContext(applicationContext)
+            .principal(principal)
+            .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
+            .build();
+        assertEquals(1, rep.getAttributes(context).size());
+        assertTrue(rep.getAttributes(context).containsKey("mail"));
     }
 
     @Test
@@ -72,12 +70,12 @@ class DefaultPrincipalAttributesRepositoryTests extends BaseCasCoreTests {
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
             .build();
 
-        try (val rep = new DefaultPrincipalAttributesRepository()) {
-            rep.setMergingStrategy(PrincipalAttributesCoreProperties.MergingStrategyTypes.SOURCE);
-            rep.setAttributeRepositoryIds(Set.of("StubPersonAttributeDao"));
-            assertEquals(1, rep.getAttributes(context).size());
-            assertTrue(rep.getAttributes(context).containsKey("mail"));
-        }
+        val rep = new DefaultPrincipalAttributesRepository();
+        rep.setMergingStrategy(PrincipalAttributesCoreProperties.MergingStrategyTypes.SOURCE);
+        rep.setAttributeRepositoryIds(Set.of("StubPersonAttributeDao"));
+        assertEquals(1, rep.getAttributes(context).size());
+        assertTrue(rep.getAttributes(context).containsKey("mail"));
+
     }
 
     @Test
