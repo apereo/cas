@@ -2,8 +2,8 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
-import org.apereo.cas.util.model.TriStateBoolean;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;

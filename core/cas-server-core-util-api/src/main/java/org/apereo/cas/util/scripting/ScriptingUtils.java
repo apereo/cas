@@ -64,6 +64,7 @@ public class ScriptingUtils {
             "java.beans",
             "java.net",
             "java.nio",
+            "java.nio.charset",
             "java.util.stream",
 
             "groovy.net",
@@ -81,7 +82,11 @@ public class ScriptingUtils {
             "org.apache.http.impl.client",
 
             "org.apache.commons.lang3",
-            
+            "org.apache.commons.text",
+            "org.apache.commons.io",
+            "org.apache.commons.io.output",
+            "org.apache.commons.codec.digest",
+
             "jakarta.servlet",
             "jakarta.servlet.http",
 
@@ -100,12 +105,15 @@ public class ScriptingUtils {
             "org.opensaml.saml.common",
             
             "org.apereo.cas",
+            "org.apereo.cas.api",
             "org.apereo.cas.audit",
             "org.apereo.cas.authentication",
             "org.apereo.cas.authentication.services",
             "org.apereo.cas.authentication.credential",
             "org.apereo.cas.authentication.principal",
+            "org.apereo.cas.configuration.support",
             "org.apereo.cas.util",
+            "org.apereo.cas.util.model",
             "org.apereo.cas.web",
             "org.apereo.cas.web.support",
             "org.apereo.cas.authentication.mfa",

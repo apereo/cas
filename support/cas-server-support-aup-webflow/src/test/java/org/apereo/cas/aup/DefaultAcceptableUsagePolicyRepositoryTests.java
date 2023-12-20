@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyPrope
 import org.apereo.cas.configuration.model.support.aup.InMemoryAcceptableUsagePolicyProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.Getter;
 import lombok.val;
@@ -14,12 +15,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.test.MockRequestContext;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -55,7 +51,7 @@ class DefaultAcceptableUsagePolicyRepositoryTests {
         void verifyActionAcceptedGlobal() throws Throwable {
             val properties = new AcceptableUsagePolicyProperties();
             properties.getInMemory().setScope(InMemoryAcceptableUsagePolicyProperties.Scope.GLOBAL);
-            val context = getRequestContext();
+            val context = MockRequestContext.create();
             val repo = getRepositoryInstance(properties);
             val authentication = CoreAuthenticationTestUtils.getAuthentication();
             authentication.getPrincipal().getAttributes().put(
@@ -77,7 +73,7 @@ class DefaultAcceptableUsagePolicyRepositoryTests {
         void verifyActionNoAuthentication() throws Throwable {
             val properties = new AcceptableUsagePolicyProperties();
             properties.getInMemory().setScope(InMemoryAcceptableUsagePolicyProperties.Scope.AUTHENTICATION);
-            val context = getRequestContext();
+            val context = MockRequestContext.create();
             val repo = getRepositoryInstance(properties);
             assertThrows(AuthenticationException.class, () -> repo.verify(context));
         }
@@ -105,7 +101,7 @@ class DefaultAcceptableUsagePolicyRepositoryTests {
         }
 
         private static void verifyAction(final AcceptableUsagePolicyProperties properties) throws Throwable {
-            val context = getRequestContext();
+            val context = MockRequestContext.create();
 
             val repo = getRepositoryInstance(properties);
 
@@ -115,14 +111,6 @@ class DefaultAcceptableUsagePolicyRepositoryTests {
             assertTrue(repo.verify(context).isDenied());
             assertTrue(repo.submit(context));
             assertTrue(repo.verify(context).isAccepted());
-        }
-
-        private static MockRequestContext getRequestContext() {
-            val context = new MockRequestContext();
-            val request = new MockHttpServletRequest();
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request,
-                new MockHttpServletResponse()));
-            return context;
         }
 
         private static AcceptableUsagePolicyRepository getRepositoryInstance(final AcceptableUsagePolicyProperties properties) {

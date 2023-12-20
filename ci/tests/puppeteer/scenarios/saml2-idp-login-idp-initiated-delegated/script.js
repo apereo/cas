@@ -1,5 +1,5 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 const assert = require("assert");
 const path = require("path");
 
@@ -17,9 +17,9 @@ async function startFlow(context, clientName) {
     await cas.waitForElement(page, "body");
     const content = JSON.parse(await cas.innerText(page, "body"));
     await cas.log(content);
-    assert(content.form.SAMLResponse != null);
-    let samlResponse = await cas.base64Decode(content.form.SAMLResponse);
-    let parsedResult = await cas.parseXML(samlResponse);
+    assert(content.form.SAMLResponse !== null);
+    const samlResponse = await cas.base64Decode(content.form.SAMLResponse);
+    const parsedResult = await cas.parseXML(samlResponse);
     console.dir(parsedResult, {depth: null, colors: true});
     assert(parsedResult["saml2p:Response"]["$"]["InResponseTo"] === undefined);
     const subjectConfirmation = parsedResult["saml2p:Response"]["saml2:Assertion"][0]["saml2:Subject"][0]["saml2:SubjectConfirmation"][0];
@@ -40,7 +40,7 @@ async function startFlow(context, clientName) {
         await startFlow(context, provider);
         await context.close();
     }
-    await cas.removeDirectoryOrFile(path.join(__dirname, '/saml-md'));
+    await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
     await browser.close();
 })();
 

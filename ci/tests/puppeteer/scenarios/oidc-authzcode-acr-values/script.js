@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
-const assert = require('assert');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
+const assert = require("assert");
 
 const redirectUrl = "https://apereo.github.io";
 
@@ -15,29 +15,29 @@ async function fetchCode(page, acr, params) {
     await page.waitForTimeout(1000);
     if (await cas.isVisible(page, "#username")) {
         await cas.loginWith(page);
-        await page.waitForTimeout(3000)
+        await page.waitForTimeout(3000);
     }
 
-    let scratch = await cas.fetchGoogleAuthenticatorScratchCode();
+    const scratch = await cas.fetchGoogleAuthenticatorScratchCode();
     await cas.log(`Using scratch code ${scratch} to login...`);
     await cas.screenshot(page);
     await page.waitForTimeout(2000);
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
-        await page.waitForTimeout(3000)
+        await page.waitForTimeout(3000);
     }
     await cas.screenshot(page);
-    await cas.type(page, '#token', scratch);
+    await cas.type(page, "#token", scratch);
     await cas.pressEnter(page);
     await page.waitForNavigation();
 
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
         await page.waitForNavigation();
-        await page.waitForTimeout(2000)
+        await page.waitForTimeout(2000);
     }
 
-    let code = await cas.assertParameter(page, "code");
+    const code = await cas.assertParameter(page, "code");
     await cas.log(`OAuth code ${code}`);
     return code;
 }
@@ -48,13 +48,13 @@ async function exchangeCode(page, code, successHandler) {
     accessTokenParams += "grant_type=authorization_code&";
     accessTokenParams += `redirect_uri=${redirectUrl}`;
 
-    let accessTokenUrl = `https://localhost:8443/cas/oidc/token?${accessTokenParams}&code=${code}`;
+    const accessTokenUrl = `https://localhost:8443/cas/oidc/token?${accessTokenParams}&code=${code}`;
     await cas.log(`Calling ${accessTokenUrl}`);
 
     let accessToken = null;
     await cas.doPost(accessTokenUrl, "", {
-        'Content-Type': "application/json"
-    }, async res => {
+        "Content-Type": "application/json"
+    }, async (res) => {
         await cas.log(res.data);
         assert(res.data.access_token !== null);
 
@@ -62,10 +62,10 @@ async function exchangeCode(page, code, successHandler) {
         await cas.log(`Received access token ${accessToken}`);
 
         await cas.log("Decoding ID token...");
-        let decoded = await cas.decodeJwt(res.data.id_token);
+        const decoded = await cas.decodeJwt(res.data.id_token);
 
         successHandler(decoded);
-    }, error => {
+    }, (error) => {
         throw `Operation failed to obtain access token: ${error}`;
     });
 }
@@ -79,20 +79,20 @@ async function exchangeCode(page, code, successHandler) {
     await cas.log("===================================================================");
     await cas.logg("Fetching code for MFA based on ACR mfa-gauth");
     let code = await fetchCode(page, "mfa-gauth", "login=prompt");
-    await exchangeCode(page, code, idToken => {
+    await exchangeCode(page, code, (idToken) => {
         assert(idToken.sub !== null);
         assert(idToken.acr === "https://refeds.org/profile/mfa");
-        assert(idToken.amr.includes("GoogleAuthenticatorAuthenticationHandler"))
+        assert(idToken.amr.includes("GoogleAuthenticatorAuthenticationHandler"));
     });
     await cas.gotoLogout(page);
 
     await cas.log("===================================================================");
     await cas.logg("Fetching code for MFA based on ACR 1 mapped in configuration to mfa-gauth");
     code = await fetchCode(page, "https://refeds.org/profile/mfa", "login=prompt");
-    await exchangeCode(page, code, idToken => {
+    await exchangeCode(page, code, (idToken) => {
         assert(idToken.sub !== null);
         assert(idToken.acr === "https://refeds.org/profile/mfa");
-        assert(idToken.amr.includes("GoogleAuthenticatorAuthenticationHandler"))
+        assert(idToken.amr.includes("GoogleAuthenticatorAuthenticationHandler"));
     });
     await cas.gotoLogout(page);
 
@@ -102,10 +102,10 @@ async function exchangeCode(page, code, successHandler) {
     await cas.loginWith(page);
 
     code = await fetchCode(page, "mfa-gauth");
-    await exchangeCode(page, code, idToken => {
+    await exchangeCode(page, code, (idToken) => {
         assert(idToken.sub !== null);
         assert(idToken.acr === "https://refeds.org/profile/mfa");
-        assert(idToken.amr.includes("GoogleAuthenticatorAuthenticationHandler"))
+        assert(idToken.amr.includes("GoogleAuthenticatorAuthenticationHandler"));
     });
     await browser.close();
 })();

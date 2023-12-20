@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
-const assert = require('assert');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
+const assert = require("assert");
 const fs = require("fs");
 
 (async () => {
@@ -16,15 +16,15 @@ const fs = require("fs");
     await cas.click(page, "#allow");
     await page.waitForNavigation();
     await page.waitForTimeout(5000);
-    let content = await cas.textContent(page, "body pre");
+    const content = await cas.textContent(page, "body pre");
     const payload = JSON.parse(content);
     // await cas.log(payload);
     assert(payload.form.response !== undefined);
 
-    let response = payload.form.response;
+    const response = payload.form.response;
     await cas.log(`Reading keystore from ${process.env.OIDC_KEYSTORE}`);
-    const keyContent = JSON.parse(fs.readFileSync(process.env.OIDC_KEYSTORE, 'utf8'));
-    cas.decryptJwtWithJwk(response, keyContent.keys[1], "RS256").then(verified => {
+    const keyContent = JSON.parse(fs.readFileSync(process.env.OIDC_KEYSTORE, "utf8"));
+    cas.decryptJwtWithJwk(response, keyContent.keys[1], "RS256").then((verified) => {
         assert(verified.payload.aud === "client");
         assert(verified.payload.iss === "https://localhost:8443/cas/oidc");
         assert(verified.payload.state === "1001");

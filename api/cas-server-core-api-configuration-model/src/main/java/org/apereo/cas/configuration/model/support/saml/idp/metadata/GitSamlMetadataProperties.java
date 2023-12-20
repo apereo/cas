@@ -1,11 +1,11 @@
 package org.apereo.cas.configuration.model.support.saml.idp.metadata;
 
+import org.apereo.cas.configuration.model.core.util.EncryptionJwtCryptoProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
+import org.apereo.cas.configuration.model.core.util.SigningJwtCryptoProperties;
 import org.apereo.cas.configuration.model.support.git.services.BaseGitProperties;
 import org.apereo.cas.configuration.model.support.quartz.SchedulingProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-import org.apereo.cas.util.crypto.CipherExecutor;
-
 import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,7 +13,6 @@ import lombok.experimental.Accessors;
 import org.apache.commons.io.FileUtils;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.FileSystemResource;
-
 import java.io.File;
 import java.io.Serial;
 
@@ -52,8 +51,8 @@ public class GitSamlMetadataProperties extends BaseGitProperties {
 
     public GitSamlMetadataProperties() {
         getCloneDirectory().setLocation(new FileSystemResource(new File(FileUtils.getTempDirectory(), "cas-saml-metadata")));
-        crypto.getEncryption().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
-        crypto.getSigning().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
+        crypto.getEncryption().setKeySize(EncryptionJwtCryptoProperties.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
+        crypto.getSigning().setKeySize(SigningJwtCryptoProperties.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
         schedule.setEnabled(false);
     }
 }

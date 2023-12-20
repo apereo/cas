@@ -1,7 +1,5 @@
 package org.apereo.cas.util.crypto;
 
-import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
-
 import java.io.Serializable;
 import java.security.Key;
 
@@ -15,22 +13,6 @@ import java.security.Key;
  * @since 4.1
  */
 public interface CipherExecutor<I, O> extends EncodableCipher<I, O>, DecodableCipher<I, O> {
-    /**
-     * The default content encryption algorithm.
-     */
-    String DEFAULT_CONTENT_ENCRYPTION_ALGORITHM =
-        ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256;
-
-    /**
-     * Encryption key size for text data and ciphers.
-     */
-    int DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE = 256;
-
-    /**
-     * Signing key size for text data and ciphers.
-     */
-    int DEFAULT_STRINGABLE_SIGNING_KEY_SIZE = 512;
-
     /**
      * Factory method.
      *

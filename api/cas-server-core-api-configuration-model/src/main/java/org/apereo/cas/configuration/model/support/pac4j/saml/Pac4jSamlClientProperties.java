@@ -1,19 +1,15 @@
 package org.apereo.cas.configuration.model.support.pac4j.saml;
 
-import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jBaseClientProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
-import org.apereo.cas.util.model.TriStateBoolean;
-
+import org.apereo.cas.configuration.support.TriStateBoolean;
 import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +26,7 @@ import java.util.stream.Stream;
 @Setter
 @Accessors(chain = true)
 @JsonFilter("Pac4jSamlClientProperties")
-public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties implements CasFeatureModule {
+public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties {
 
     @Serial
     private static final long serialVersionUID = -862819796533384951L;
@@ -69,7 +65,7 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties impleme
      * Location of the keystore to use and generate the SP/CAS keystore.
      */
     @RequiredProperty
-    private String keystorePath = Beans.getTempFilePath("samlSpKeystore", ".jks");
+    private String keystorePath;
 
     /**
      * Once you have an authenticated session on the identity provider, usually it won't prompt you again to enter your

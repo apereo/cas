@@ -79,10 +79,6 @@ public class CasCoreAuthenticationRuntimeHints implements CasRuntimeHintsRegistr
                 DefaultAuthentication.class));
     }
 
-    private static void registerProxyHints(final RuntimeHints hints, final Collection<Class> subclassesInPackage) {
-        subclassesInPackage.forEach(clazz -> hints.proxies().registerJdkProxy(clazz));
-    }
-
     private static void registerSerializationHints(final RuntimeHints hints, final Collection<Class> entries) {
         entries.forEach(el -> hints.serialization().registerType(el));
     }

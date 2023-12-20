@@ -1,7 +1,6 @@
 package org.apereo.cas.configuration.metadata;
 
-import org.apereo.cas.util.model.TriStateBoolean;
-
+import org.apereo.cas.configuration.support.TriStateBoolean;
 import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
@@ -12,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 import org.springframework.core.io.Resource;
-
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,7 +30,8 @@ public class ConfigurationMetadataFieldVisitor extends VoidVisitorAdapter<Config
 
     static {
         EXCLUDED_TYPES = Pattern.compile(
-            String.class.getSimpleName() + '|'
+             File.class.getSimpleName() + '|'
+            + String.class.getSimpleName() + '|'
             + Integer.class.getSimpleName() + '|'
             + Double.class.getSimpleName() + '|'
             + Long.class.getSimpleName() + '|'

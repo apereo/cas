@@ -1,10 +1,10 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const assert = require("assert");
+const cas = require("../../cas.js");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
-    let page = await cas.newPage(browser);
+    const page = await cas.newPage(browser);
     await submitLoginFailure(page);
     await cas.assertInnerTextStartsWith(page, "#content div.banner p", "Authentication attempt has failed");
     await submitLoginFailure(page);

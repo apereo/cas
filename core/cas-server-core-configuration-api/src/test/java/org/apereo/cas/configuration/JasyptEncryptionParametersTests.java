@@ -1,8 +1,8 @@
-package org.apereo.cas.configuration.support;
+package org.apereo.cas.configuration;
 
+import org.apereo.cas.configuration.support.CasConfigurationJasyptCipherExecutor;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

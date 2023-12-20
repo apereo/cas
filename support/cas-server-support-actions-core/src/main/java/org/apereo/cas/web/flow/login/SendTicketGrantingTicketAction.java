@@ -1,8 +1,8 @@
 package org.apereo.cas.web.flow.login;
 
+import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.util.model.TriStateBoolean;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.SingleSignOnParticipationRequest;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;

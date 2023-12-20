@@ -131,12 +131,7 @@
                                                     {%- assign indentation = indentation | append: " " -%}
                                                 {%- endfor -%}
 
-                                                {%- assign listIndicator = "" -%}
-                                                {%- if word contains "[]" -%}
-                                                    {%- assign listIndicator = "- " -%}
-                                                {%- endif -%}
-
-                                                {%- assign path = path | append: indentation | append: listIndicator | append: word | replace: "[]", "" | append: ": " -%}
+                                                {%- assign path = path | append: indentation | append: word | replace: "[]", "[0]" | append: ": " -%}
 
                                                 {%- if forloop.index == totalWords -%}
                                                     {%- assign path = path | append: propertyValueFormatted -%}

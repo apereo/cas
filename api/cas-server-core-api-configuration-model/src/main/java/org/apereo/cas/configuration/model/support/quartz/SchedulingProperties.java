@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.quartz;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -23,7 +24,7 @@ import java.io.Serializable;
 @Setter
 @Accessors(chain = true)
 @JsonFilter("SchedulingProperties")
-public class SchedulingProperties implements Serializable {
+public class SchedulingProperties implements CasFeatureModule, Serializable {
 
     @Serial
     private static final long serialVersionUID = -1522227059439367394L;

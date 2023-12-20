@@ -1,9 +1,9 @@
-const puppeteer = require('puppeteer');
-const path = require('path');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const path = require("path");
+const cas = require("../../cas.js");
 
 async function getActuatorEndpoint(entityId, password = "Mellon") {
-    let baseEndpoint = "https://localhost:8443/cas/actuator/samlPostProfileResponse";
+    const baseEndpoint = "https://localhost:8443/cas/actuator/samlPostProfileResponse";
     let actuator = `${baseEndpoint}?username=casuser&entityId=${entityId}&encrypt=false`;
     if (password !== undefined && password !== "") {
         actuator = `${actuator}&password=${password}`;
@@ -26,7 +26,7 @@ async function getActuatorEndpoint(entityId, password = "Mellon") {
     await cas.loginWith(page);
     await page.waitForTimeout(4000);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
-    await cas.assertInnerText(page, '#content div h2', "Log In Successful");
+    await cas.assertInnerText(page, "#content div h2", "Log In Successful");
     await browser.close();
 
     let endpoint = await getActuatorEndpoint(entityId);
@@ -41,7 +41,7 @@ async function getActuatorEndpoint(entityId, password = "Mellon") {
     await cas.log(`Trying ${endpoint} via POST without password`);
     await cas.log(await cas.doRequest(endpoint, "POST", {}, 200));
 
-    await cas.removeDirectoryOrFile(path.join(__dirname, '/saml-md'));
+    await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
 })();
 
 

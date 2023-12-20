@@ -1,9 +1,12 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.configuration.support.JpaPersistenceUnitProvider;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.StringSerializer;
 
+import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -30,10 +33,16 @@ import java.util.stream.LongStream;
  */
 @ToString
 @Slf4j
-public class JpaServiceRegistry extends AbstractServiceRegistry {
+public class JpaServiceRegistry extends AbstractServiceRegistry implements JpaPersistenceUnitProvider {
+    /**
+     * The persistence unit name.
+     */
+    public static final String PERSISTENCE_UNIT_NAME = "jpaServiceRegistryContext";
+
     private final TransactionOperations transactionTemplate;
 
-    @PersistenceContext(unitName = "jpaServiceRegistryContext")
+    @Getter
+    @PersistenceContext(unitName = PERSISTENCE_UNIT_NAME)
     private EntityManager entityManager;
 
     private final StringSerializer<RegisteredService> serializer;
@@ -44,6 +53,7 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
         super(applicationContext, serviceRegistryListeners);
         this.transactionTemplate = transactionTemplate;
         this.serializer = new RegisteredServiceJsonSerializer(applicationContext);
+        this.entityManager = recreateEntityManagerIfNecessary(PERSISTENCE_UNIT_NAME);
     }
 
     @Override
@@ -79,7 +89,7 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
                 .sorted()
                 .map(this::invokeServiceRegistryListenerPostLoad)
                 .filter(Objects::nonNull)
-                .peek(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s, clientInfo)))
+                .peek(service -> publishEvent(new CasRegisteredServiceLoadedEvent(this, service, clientInfo)))
                 .collect(Collectors.toList());
         });
     }
@@ -106,7 +116,7 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
     @Override
     public RegisteredService findServiceById(final long id) {
         return transactionTemplate.execute(__ ->
-            Optional.ofNullable(this.entityManager.find(JpaRegisteredServiceEntity.class, id))
+            Optional.ofNullable(entityManager.find(JpaRegisteredServiceEntity.class, id))
                 .map(this::toRegisteredService)
                 .stream()
                 .peek(this::invokeServiceRegistryListenerPostLoad)
@@ -210,5 +220,10 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
         service.setId(entity.getId());
         LOGGER.trace("Converted JPA entity [{}] to [{}]", this, service);
         return service;
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        FunctionUtils.doAndHandle(__ -> entityManager.close());
     }
 }

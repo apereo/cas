@@ -5,7 +5,7 @@ import net.shibboleth.shared.resolver.ResolverException;
 import org.opensaml.saml.saml2.metadata.RoleDescriptor;
 import org.opensaml.saml.security.impl.MetadataCredentialResolver;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import javax.xml.namespace.QName;
 import java.util.Objects;
 

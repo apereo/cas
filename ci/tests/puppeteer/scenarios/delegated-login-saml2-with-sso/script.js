@@ -1,7 +1,7 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
-const path = require('path');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const assert = require("assert");
+const path = require("path");
+const cas = require("../../cas.js");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -21,9 +21,9 @@ const cas = require('../../cas.js');
         await cas.gotoLogin(page, "https://github.com");
         await page.waitForTimeout(1000);
 
-        await cas.assertVisibility(page, '#loginProviders');
-        await cas.assertVisibility(page, '#existingSsoMsg');
-        await cas.assertVisibility(page, 'li #SAML2Client');
+        await cas.assertVisibility(page, "#loginProviders");
+        await cas.assertVisibility(page, "#existingSsoMsg");
+        await cas.assertVisibility(page, "li #SAML2Client");
 
         await cas.submitForm(page, "li #formSAML2Client");
         await page.waitForTimeout(2000);
@@ -37,7 +37,7 @@ const cas = require('../../cas.js');
 
         await cas.assertTicketParameter(page);
     } finally {
-        await cas.removeDirectoryOrFile(path.join(__dirname, '/saml-md'));
+        await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
     }
     await browser.close();
 })();

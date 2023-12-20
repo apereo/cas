@@ -1,7 +1,7 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
-const cas = require('../../cas.js');
-const path = require('path');
+const puppeteer = require("puppeteer");
+const assert = require("assert");
+const cas = require("../../cas.js");
+const path = require("path");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -19,7 +19,7 @@ const path = require('path');
         "nonce=vn4qulthnx";
     await cas.goto(page, url);
 
-    await cas.assertVisibility(page, 'li #SAML2Client');
+    await cas.assertVisibility(page, "li #SAML2Client");
     await cas.click(page, "li #SAML2Client");
     await page.waitForTimeout(3000);
 
@@ -33,7 +33,7 @@ const path = require('path');
     await cas.log("Allowing release of scopes and claims...");
     await cas.logPage(page);
     
-    let result = new URL(page.url());
+    const result = new URL(page.url());
     await cas.log(result.searchParams.toString());
 
     assert(result.searchParams.has("ticket") === false);
@@ -47,6 +47,6 @@ const path = require('path');
 
     await cas.logPage(page);
     assert(await page.url().startsWith("https://oidcdebugger.com/debug"));
-    await cas.removeDirectoryOrFile(path.join(__dirname, '/saml-md'));
+    await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
     await browser.close();
 })();

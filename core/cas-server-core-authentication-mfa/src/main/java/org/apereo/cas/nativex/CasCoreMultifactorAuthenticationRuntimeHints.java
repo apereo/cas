@@ -18,7 +18,7 @@ import java.util.List;
 public class CasCoreMultifactorAuthenticationRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
-        hints.proxies().registerJdkProxy(MultifactorAuthenticationTrigger.class);
+        registerProxyHints(hints, MultifactorAuthenticationTrigger.class, ChainingMultifactorAuthenticationProvider.class);
         registerReflectionHints(hints, List.of(ChainingMultifactorAuthenticationProvider.class));
     }
 

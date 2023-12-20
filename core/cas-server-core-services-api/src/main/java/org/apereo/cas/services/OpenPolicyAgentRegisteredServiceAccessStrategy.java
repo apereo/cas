@@ -94,10 +94,12 @@ public class OpenPolicyAgentRegisteredServiceAccessStrategy extends BaseRegister
             LOGGER.debug("Submitting authorization request to [{}] for [{}]", opaUrl, checkEntity);
             response = HttpUtils.execute(exec);
             if (HttpStatus.resolve(response.getCode()).is2xxSuccessful()) {
-                val results = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
-                LOGGER.trace("Received response from endpoint [{}] as [{}]", url, results);
-                val payload = MAPPER.readValue(results, Map.class);
-                return (Boolean) payload.getOrDefault("result", Boolean.FALSE);
+                try (val content = ((HttpEntityContainer) response).getEntity().getContent()) {
+                    val results = IOUtils.toString(content, StandardCharsets.UTF_8);
+                    LOGGER.trace("Received response from endpoint [{}] as [{}]", url, results);
+                    val payload = MAPPER.readValue(results, Map.class);
+                    return (Boolean) payload.getOrDefault("result", Boolean.FALSE);
+                }
             }
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);

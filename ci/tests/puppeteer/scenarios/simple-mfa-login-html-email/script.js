@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
+const puppeteer = require("puppeteer");
 const assert = require("assert");
-const cas = require('../../cas.js');
+const cas = require("../../cas.js");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -8,7 +8,7 @@ const cas = require('../../cas.js');
     await cas.goto(page, "https://localhost:8443/cas/login?authn_method=mfa-simple");
     await cas.loginWith(page);
     await page.waitForTimeout(1000);
-    await cas.assertVisibility(page, '#token');
+    await cas.assertVisibility(page, "#token");
 
     const page2 = await browser.newPage();
     await page2.goto("http://localhost:8282");
@@ -25,9 +25,9 @@ const cas = require('../../cas.js');
     await page2.waitForTimeout(1000);
     await cas.screenshot(page);
 
-    let greeting = await cas.textContent(page2, "#greeting");
+    const greeting = await cas.textContent(page2, "#greeting");
     assert(greeting === "Hello, CAS Apereo");
-    let code = await cas.textContent(page2, "#otpcode");
+    const code = await cas.textContent(page2, "#otpcode");
     await cas.log(`Code to use is extracted as ${code}`);
     await page2.close();
 

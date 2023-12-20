@@ -3,9 +3,9 @@ package org.apereo.cas.adaptors.jdbc;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.configuration.model.support.jdbc.authn.BindJdbcAuthenticationProperties;
 import org.apereo.cas.jpa.JpaPersistenceProviderContext;
 import org.apereo.cas.services.ServicesManager;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -15,10 +15,8 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
-
 import javax.security.auth.login.FailedLoginException;
 import javax.sql.DataSource;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -42,15 +40,15 @@ class BindModeSearchDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthe
 
     @Test
     void verifyAction() throws Throwable {
-        val h = new BindModeSearchDatabaseAuthenticationHandler(null, mock(ServicesManager.class),
-            PrincipalFactoryUtils.newPrincipalFactory(), 0, this.dataSource);
+        val h = new BindModeSearchDatabaseAuthenticationHandler(new BindJdbcAuthenticationProperties(), mock(ServicesManager.class),
+            PrincipalFactoryUtils.newPrincipalFactory(), this.dataSource);
         assertNotNull(h.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon"), mock(Service.class)));
     }
 
     @Test
     void verifyInvalidAction() throws Throwable {
-        val h = new BindModeSearchDatabaseAuthenticationHandler(null, mock(ServicesManager.class),
-            PrincipalFactoryUtils.newPrincipalFactory(), 0, this.dataSource);
+        val h = new BindModeSearchDatabaseAuthenticationHandler(new BindJdbcAuthenticationProperties(), mock(ServicesManager.class),
+            PrincipalFactoryUtils.newPrincipalFactory(), this.dataSource);
         assertThrows(FailedLoginException.class,
             () -> h.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("unknown", "Mellon"), mock(Service.class)));
     }

@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.pm;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -22,7 +23,7 @@ import java.io.Serializable;
 @Setter
 @Accessors(chain = true)
 @JsonFilter("RestfulPasswordManagementProperties")
-public class RestfulPasswordManagementProperties implements Serializable {
+public class RestfulPasswordManagementProperties implements CasFeatureModule, Serializable {
 
     @Serial
     private static final long serialVersionUID = 5262948164099973872L;

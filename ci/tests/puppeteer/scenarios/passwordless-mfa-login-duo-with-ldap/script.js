@@ -1,11 +1,11 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.gotoLogin(page, "https://apereo.github.io");
-    await cas.type(page, '#username', "duobypass");
+    await cas.type(page, "#username", "duobypass");
     await cas.pressEnter(page);
     await cas.screenshot(page);
     await cas.log("Waiting for Duo MFA to complete...");

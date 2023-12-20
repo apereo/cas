@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
-const assert = require("assert");
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
+
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -19,7 +19,7 @@ const assert = require("assert");
 
     await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
-    await cas.assertInnerText(page, '#content div h2', "Log In Successful");
+    await cas.assertInnerText(page, "#content div h2", "Log In Successful");
 
     for (let i = 0; i < 2; i++) {
         await cas.goto(page, "https://localhost:8443/cas/login?renew=true");

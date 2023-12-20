@@ -491,11 +491,11 @@ public abstract class BaseDelegatedIdentityProviderFactory implements DelegatedI
             .getSaml()
             .stream()
             .filter(saml -> saml.isEnabled()
-                && StringUtils.isNotBlank(saml.getKeystorePath())
                 && StringUtils.isNotBlank(saml.getMetadata().getIdentityProviderMetadataPath())
                 && StringUtils.isNotBlank(saml.getServiceProviderEntityId()))
             .map(saml -> {
-                val keystorePath = SpringExpressionLanguageValueResolver.getInstance().resolve(saml.getKeystorePath());
+                val keystorePath = SpringExpressionLanguageValueResolver.getInstance().resolve(
+                     StringUtils.defaultIfBlank(saml.getKeystorePath(), Beans.getTempFilePath("samlSpKeystore", ".jks")));
                 val identityProviderMetadataPath = SpringExpressionLanguageValueResolver.getInstance()
                     .resolve(saml.getMetadata().getIdentityProviderMetadataPath());
 
@@ -521,7 +521,9 @@ public abstract class BaseDelegatedIdentityProviderFactory implements DelegatedI
                 val serviceProviderEntityId = SpringExpressionLanguageValueResolver.getInstance().resolve(saml.getServiceProviderEntityId());
                 cfg.setServiceProviderEntityId(serviceProviderEntityId);
 
-                FunctionUtils.doIfNotNull(saml.getMetadata().getServiceProvider().getFileSystem().getLocation(), location -> {
+                val samlSpMetadata = StringUtils.defaultIfBlank(saml.getMetadata().getServiceProvider().getFileSystem().getLocation(),
+                    Beans.getTempFilePath("samlSpMetadata", ".xml"));
+                FunctionUtils.doIfNotNull(samlSpMetadata, location -> {
                     val resource = ResourceUtils.getRawResourceFrom(location);
                     cfg.setServiceProviderMetadataResource(resource);
                 });

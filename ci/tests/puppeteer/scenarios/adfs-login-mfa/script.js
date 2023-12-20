@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const assert = require("assert");
+const cas = require("../../cas.js");
 
 (async () => {
     const service = "https://apereo.github.io";
@@ -23,30 +23,28 @@ const cas = require('../../cas.js');
     await page2.waitForTimeout(1000);
     await cas.click(page2, "table tbody td a");
     await page2.waitForTimeout(1000);
-    let code = await cas.textContent(page2, "div[name=bodyPlainText] .well");
-    await page2.close();
-
+    const code = await cas.textContent(page2, "div[name=bodyPlainText] .well");
     await page.bringToFront();
     await cas.type(page, "#token", code);
     await cas.submitForm(page, "#fm1");
     await page.waitForTimeout(2000);
     await cas.logPage(page);
     
-    let ticket = await cas.assertTicketParameter(page);
+    const ticket = await cas.assertTicketParameter(page);
     await cas.gotoLogin(page);
     await cas.assertCookie(page);
     await page.waitForTimeout(3000);
-    let body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
+    const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
     await cas.log(body);
-    let json = JSON.parse(body);
-    let authenticationSuccess = json.serviceResponse.authenticationSuccess;
+    const json = JSON.parse(body);
+    const authenticationSuccess = json.serviceResponse.authenticationSuccess;
     assert(authenticationSuccess.user.includes("casuser@apereo.org"));
-    assert(authenticationSuccess.attributes.firstname != null);
-    assert(authenticationSuccess.attributes.lastname != null);
-    assert(authenticationSuccess.attributes.uid != null);
-    assert(authenticationSuccess.attributes.upn != null);
-    assert(authenticationSuccess.attributes.username != null);
-    assert(authenticationSuccess.attributes.surname != null);
-    assert(authenticationSuccess.attributes.email != null);
+    assert(authenticationSuccess.attributes.firstname !== null);
+    assert(authenticationSuccess.attributes.lastname !== null);
+    assert(authenticationSuccess.attributes.uid !== null);
+    assert(authenticationSuccess.attributes.upn !== null);
+    assert(authenticationSuccess.attributes.username !== null);
+    assert(authenticationSuccess.attributes.surname !== null);
+    assert(authenticationSuccess.attributes.email !== null);
     await browser.close();
 })();

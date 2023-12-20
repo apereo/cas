@@ -1,5 +1,5 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -9,24 +9,24 @@ const cas = require('../../cas.js');
 
     // await page.waitForTimeout(5000)
 
-    await cas.assertVisibility(page, '#form-1');
-    await cas.assertVisibility(page, '#name-RecordName');
-    await cas.assertVisibility(page, '#id-1');
+    await cas.assertVisibility(page, "#form-1");
+    await cas.assertVisibility(page, "#name-RecordName");
+    await cas.assertVisibility(page, "#id-1");
 
-    await cas.assertVisibility(page, '#form-2');
-    await cas.assertVisibility(page, '#name-RecordName2');
-    await cas.assertVisibility(page, '#id-2');
+    await cas.assertVisibility(page, "#form-2");
+    await cas.assertVisibility(page, "#name-RecordName2");
+    await cas.assertVisibility(page, "#id-2");
     
-    await cas.assertVisibility(page, '#register');
+    await cas.assertVisibility(page, "#register");
     await page.waitForTimeout(1000);
 
     await cas.log("Deleting a registered device now");
     await cas.click(page, "#delButton-1");
     await page.waitForTimeout(1000);
 
-    await cas.assertInvisibility(page, '#form-1');
-    await cas.assertInvisibility(page, '#name-RecordName');
-    await cas.assertInvisibility(page, '#id-1');
+    await cas.assertInvisibility(page, "#form-1");
+    await cas.assertInvisibility(page, "#name-RecordName");
+    await cas.assertInvisibility(page, "#id-1");
 
     await cas.log("Switching to login view");
     await cas.assertVisibility(page, "#login");

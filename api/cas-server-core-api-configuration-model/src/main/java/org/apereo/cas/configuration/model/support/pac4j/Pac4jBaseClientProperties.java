@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.pac4j;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.support.delegation.DelegationAutoRedirectTypes;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -22,7 +23,7 @@ import java.io.Serializable;
 @Setter
 @Accessors(chain = true)
 @JsonFilter("Pac4jBaseClientProperties")
-public class Pac4jBaseClientProperties implements Serializable {
+public class Pac4jBaseClientProperties implements CasFeatureModule, Serializable {
 
     @Serial
     private static final long serialVersionUID = -7885975876831784206L;

@@ -1,20 +1,20 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 const assert = require("assert");
 const querystring = require("querystring");
 
 async function authenticateWithRestApi(username, status = 200) {
     const formData = {
         username: username,
-        password: 'p@ssw0rd'
+        password: "p@ssw0rd"
     };
     const postData = querystring.stringify(formData);
-    const body = await cas.doRequest('https://localhost:8443/cas/v1/users',
-        'POST',
+    const body = await cas.doRequest("https://localhost:8443/cas/v1/users",
+        "POST",
         {
-            'Accept': 'application/json',
-            'Content-Length': Buffer.byteLength(postData),
-            'Content-Type': 'application/x-www-form-urlencoded'
+            "Accept": "application/json",
+            "Content-Length": Buffer.byteLength(postData),
+            "Content-Type": "application/x-www-form-urlencoded"
         },
         status,
         postData);
@@ -31,7 +31,7 @@ async function authenticateWithRestApi(username, status = 200) {
     await cas.gotoLogout(page);
 
     await cas.gotoLogin(page);
-    let response = await cas.loginWith(page, "casrest", "p@ssw0rd");
+    const response = await cas.loginWith(page, "casrest", "p@ssw0rd");
     await page.waitForTimeout(2000);
     assert(response.status() === 401);
     await cas.screenshot(page);

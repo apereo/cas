@@ -9,9 +9,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.model.support.jdbc.authn.QueryJdbcAuthenticationProperties;
 import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
@@ -19,15 +17,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
-
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import javax.sql.DataSource;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -43,32 +37,23 @@ import java.util.Map;
  */
 @Slf4j
 @Monitorable
-public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
-
-    private final QueryJdbcAuthenticationProperties properties;
-
-    private final Map<String, Object> principalAttributeMap;
+public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler<QueryJdbcAuthenticationProperties> {
 
     public QueryDatabaseAuthenticationHandler(final QueryJdbcAuthenticationProperties properties,
                                               final ServicesManager servicesManager,
                                               final PrincipalFactory principalFactory,
-                                              final DataSource dataSource,
-                                              final Map<String, Object> attributes) {
-        super(properties.getName(), servicesManager, principalFactory, properties.getOrder(), dataSource);
-        this.properties = properties;
-        this.principalAttributeMap = attributes;
-
+                                              final DataSource dataSource) {
+        super(properties, servicesManager, principalFactory, dataSource);
         if (StringUtils.isBlank(properties.getFieldPassword())) {
             LOGGER.warn("When the password field is left undefined, CAS will skip comparing database and user passwords for equality "
-                        + ", (specially if the query results do not contain the password field),"
-                        + "and will instead only rely on a successful query execution with returned results in order to verify credentials");
+                + ", (specially if the query results do not contain the password field),"
+                + "and will instead only rely on a successful query execution with returned results in order to verify credentials");
         }
     }
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
         final UsernamePasswordCredential credential, final String originalPassword) throws Throwable {
-        val attributes = new HashMap<String, List<Object>>(this.principalAttributeMap.size());
         val username = credential.getUsername();
         val password = credential.toPassword();
         try {
@@ -90,7 +75,7 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
                 val count = dbFields.get("total");
                 if (count == null || !NumberUtils.isCreatable(count.toString())) {
                     throw new FailedLoginException("Missing field value 'total' from the query results for "
-                                                   + username + " or value not parseable as a number");
+                        + username + " or value not parseable as a number");
                 }
 
                 val number = NumberUtils.createNumber(count.toString());
@@ -111,7 +96,11 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
                     throw new AccountPasswordMustChangeException("Password has expired");
                 }
             }
-            collectPrincipalAttributes(attributes, dbFields);
+
+            val attributes = collectPrincipalAttributes(dbFields);
+            val principal = this.principalFactory.createPrincipal(username, attributes);
+            return createHandlerResult(credential, principal, new ArrayList<>(0));
+
         } catch (final IncorrectResultSizeDataAccessException e) {
             if (e.getActualSize() == 0) {
                 throw new AccountNotFoundException(username + " not found with SQL query");
@@ -120,11 +109,9 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
         } catch (final DataAccessException e) {
             throw new PreventedException(e);
         }
-        val principal = this.principalFactory.createPrincipal(username, attributes);
-        return createHandlerResult(credential, principal, new ArrayList<>(0));
     }
 
-    private Map<String, Object> query(final UsernamePasswordCredential credential) {
+    protected Map<String, Object> query(final UsernamePasswordCredential credential) {
         val sql = SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getSql());
         if (sql.contains("?")) {
             return getJdbcTemplate().queryForMap(sql, credential.getUsername());
@@ -133,21 +120,5 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
         parameters.put("username", credential.getUsername());
         parameters.put("password", credential.toPassword());
         return getNamedParameterJdbcTemplate().queryForMap(sql, parameters);
-    }
-
-    private void collectPrincipalAttributes(final Map<String, List<Object>> attributes, final Map<String, Object> dbFields) {
-        this.principalAttributeMap.forEach((key, names) -> {
-            val attribute = dbFields.get(key);
-            if (attribute != null) {
-                LOGGER.debug("Found attribute [{}] from the query results", key);
-                val attributeNames = (Collection<String>) names;
-                attributeNames.forEach(s -> {
-                    LOGGER.debug("Principal attribute [{}] is virtually remapped/renamed to [{}]", key, s);
-                    attributes.put(s, CollectionUtils.wrap(attribute.toString()));
-                });
-            } else {
-                LOGGER.warn("Requested attribute [{}] could not be found in the query results", key);
-            }
-        });
     }
 }

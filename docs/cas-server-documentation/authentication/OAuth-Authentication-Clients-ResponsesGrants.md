@@ -5,8 +5,7 @@ category: Authentication
 ---
 {% include variables.html %}
 
-
-# Client Registration - OAuth Authentication
+# Response & Grant Types - OAuth Authentication
 
 Every OAuth relying party must be defined as a CAS service:
 

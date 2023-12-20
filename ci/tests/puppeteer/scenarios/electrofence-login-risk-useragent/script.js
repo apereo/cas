@@ -1,11 +1,11 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
-const assert = require('assert');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
+const assert = require("assert");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
-    let service = "https://localhost:9859/anything/adaptive";
+    const service = "https://localhost:9859/anything/adaptive";
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
     await page.waitForTimeout(2000);
     await cas.loginWith(page);
@@ -18,7 +18,7 @@ const assert = require('assert');
     await page2.waitForTimeout(1000);
     await cas.click(page2, "table tbody td a[title=CAS]");
     await page2.waitForTimeout(1000);
-    let code = await cas.textContent(page2, "div[name=bodyPlainText] .well");
+    const code = await cas.textContent(page2, "div[name=bodyPlainText] .well");
     await cas.screenshot(page);
     await page2.close();
 
@@ -27,7 +27,7 @@ const assert = require('assert');
     await page3.waitForTimeout(1000);
     await cas.click(page3, "table tbody td a[title=CasRiskyAuthN]");
     await page3.waitForTimeout(1000);
-    let body = await cas.textContent(page3, "div[name=bodyPlainText] .well");
+    const body = await cas.textContent(page3, "div[name=bodyPlainText] .well");
     await cas.screenshot(page);
     await cas.log(`Email message body is: ${body}`);
     assert(body.includes("casuser with score 1.00"));
@@ -42,7 +42,7 @@ const assert = require('assert');
     assert(url.includes(service));
     await cas.assertTicketParameter(page);
 
-    await cas.goto(page, `https://localhost:8443/cas/login`);
+    await cas.goto(page, "https://localhost:8443/cas/login");
     await cas.assertCookie(page);
     await cas.click(page, "#auth-tab");
     await page.waitForTimeout(1000);

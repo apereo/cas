@@ -34,6 +34,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.redis.lettucemod.api.sync.RedisModulesCommands;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -155,10 +156,10 @@ public class RedisTicketRegistryConfiguration {
             final CasSSLContext casSslContext) {
             return BeanSupplier.of(RedisConnectionFactory.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> {
+                .supply(Unchecked.supplier(() -> {
                     val redis = casProperties.getTicket().getRegistry().getRedis();
                     return RedisObjectFactory.newRedisConnectionFactory(redis, casSslContext);
-                })
+                }))
                 .otherwiseProxy()
                 .get();
         }

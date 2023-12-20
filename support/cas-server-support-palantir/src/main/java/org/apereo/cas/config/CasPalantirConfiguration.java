@@ -24,7 +24,7 @@ import org.springframework.security.web.authentication.SavedRequestAwareAuthenti
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * This is {@link CasPalantirConfiguration}.

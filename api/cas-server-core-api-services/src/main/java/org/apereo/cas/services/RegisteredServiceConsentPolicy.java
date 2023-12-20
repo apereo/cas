@@ -1,11 +1,9 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.util.model.TriStateBoolean;
-
+import org.apereo.cas.configuration.support.TriStateBoolean;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.springframework.core.Ordered;
-
 import java.io.Serializable;
 import java.util.LinkedHashSet;
 import java.util.List;

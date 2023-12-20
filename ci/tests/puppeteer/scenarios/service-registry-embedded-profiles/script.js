@@ -1,10 +1,9 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const cas = require("../../cas.js");
 const assert = require("assert");
 
 (async () => {
     const baseUrl = "https://localhost:8443/cas/actuator/registeredServices";
-    await cas.doGet(baseUrl, res => {
+    await cas.doGet(baseUrl, (res) => {
         assert(res.status === 200);
         const entries = res.data[1];
         const length = entries.length;
@@ -16,9 +15,9 @@ const assert = require("assert");
 
         assert(entries[1].id === 2);
         assert(entries[1].name === "Fancy");
-    }, err => {
+    }, (err) => {
         throw err;
     }, {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json"
     });
 })();

@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const assert = require("assert");
+const cas = require("../../cas.js");
 
 (async () => {
     const baseUrl = "https://localhost:8443/cas/actuator/ssoSessions";
@@ -11,17 +11,17 @@ const cas = require('../../cas.js');
     await login("https://apereo.github.io");
 
     await cas.logg("Checking for SSO sessions for all users");
-    await cas.doGet(`${baseUrl}?type=ALL`, async res => {
+    await cas.doGet(`${baseUrl}?type=ALL`, async (res) => {
         assert(res.status === 200);
-        let index = Object.keys(res.data.activeSsoSessions).length - 1;
-        let activeSession = res.data.activeSsoSessions[index];
-        cas.log(JSON.stringify(activeSession.authenticated_services));
+        const index = Object.keys(res.data.activeSsoSessions).length - 1;
+        const activeSession = res.data.activeSsoSessions[index];
+        await cas.log(JSON.stringify(activeSession.authenticated_services));
         assert(activeSession.number_of_uses === 4);
-        let services = activeSession.authenticated_services;
-        assert(Object.keys(services).length) === 1;
-    }, async err => {
+        const services = activeSession.authenticated_services;
+        assert(Object.keys(services).length === 1);
+    }, async (err) => {
         throw err;
-    })
+    });
 })();
 
 async function login(service) {
@@ -31,7 +31,7 @@ async function login(service) {
         await cas.log(`Logging into CAS; attempt ${i}`);
         await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
         if (i === 1) {
-            await cas.loginWith(page, `casuser`, "Mellon");
+            await cas.loginWith(page, "casuser", "Mellon");
         }
         await cas.assertTicketParameter(page);
     }

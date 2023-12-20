@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.saml.googleapps;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -22,7 +23,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-support-saml-googleapps")
 @Accessors(chain = true)
 @Deprecated(since = "6.2.0")
-public class GoogleAppsProperties implements Serializable {
+public class GoogleAppsProperties implements CasFeatureModule, Serializable {
 
     @Serial
     private static final long serialVersionUID = -5133482766495375325L;

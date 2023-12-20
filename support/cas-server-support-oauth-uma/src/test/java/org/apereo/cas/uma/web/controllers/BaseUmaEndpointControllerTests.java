@@ -26,6 +26,7 @@ import org.apereo.cas.uma.web.controllers.resource.UmaUpdateResourceSetRegistrat
 import org.apereo.cas.uma.web.controllers.rpt.UmaRequestingPartyTokenJwksEndpointController;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.http.HttpRequestUtils;
+import org.apereo.cas.web.SecurityLogicInterceptor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Triple;
@@ -33,7 +34,6 @@ import org.apache.hc.core5.http.HttpHeaders;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.pac4j.jee.context.JEEContext;
-import org.pac4j.springframework.web.SecurityInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
@@ -117,7 +117,7 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
 
     @Autowired
     @Qualifier("umaRequestingPartyTokenSecurityInterceptor")
-    protected SecurityInterceptor umaRequestingPartyTokenSecurityInterceptor;
+    protected SecurityLogicInterceptor umaRequestingPartyTokenSecurityInterceptor;
 
     @Autowired
     @Qualifier("umaServerDiscoverySettingsFactory")
@@ -125,7 +125,7 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
 
     @Autowired
     @Qualifier("umaAuthorizationApiTokenSecurityInterceptor")
-    protected SecurityInterceptor umaAuthorizationApiTokenSecurityInterceptor;
+    protected SecurityLogicInterceptor umaAuthorizationApiTokenSecurityInterceptor;
 
     @Autowired
     @Qualifier("umaResourceSetClaimPermissionExaminer")
@@ -204,7 +204,7 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
     }
 
     private Triple<HttpServletRequest, HttpServletResponse, String> authenticateUmaRequestWithScope(
-        final String scope, final SecurityInterceptor interceptor) throws Throwable {
+        final String scope, final SecurityLogicInterceptor interceptor) throws Throwable {
         val service = addRegisteredService();
         val pair = assertClientOK(service, false, scope);
         assertNotNull(pair.getKey());

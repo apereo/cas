@@ -1,9 +1,8 @@
 package org.apereo.cas.support.saml.services;
 
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
+import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.apereo.cas.services.BaseWebBasedRegisteredService;
-import org.apereo.cas.util.model.TriStateBoolean;
-
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -13,7 +12,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
-
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -37,6 +37,7 @@ import com.yubico.fido.metadata.TransactionConfirmationDisplayType;
 import com.yubico.fido.metadata.VerificationMethodDescriptor;
 import com.yubico.fido.metadata.Version;
 import com.yubico.webauthn.RegisteredCredential;
+import com.yubico.webauthn.attestation.Attestation;
 import com.yubico.webauthn.attestation.AttestationTrustSource;
 import com.yubico.webauthn.data.ByteArray;
 import com.yubico.webauthn.data.COSEAlgorithmIdentifier;
@@ -94,6 +95,7 @@ public class WebAuthnRuntimeHints implements CasRuntimeHintsRegistrar {
             AttestationTrustSource.TrustRootsResult.TrustRootsResultBuilder.class,
             StatusReport.class,
             ProtocolFamily.class,
+            Attestation.class,
             AuthenticatorStatus.class,
             AuthenticatorAttestationType.class,
             AttachmentHint.class,

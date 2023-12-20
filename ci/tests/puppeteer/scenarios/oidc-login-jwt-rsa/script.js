@@ -1,11 +1,11 @@
-const assert = require('assert');
-const cas = require('../../cas.js');
-const fs = require('fs');
+const assert = require("assert");
+const cas = require("../../cas.js");
+const fs = require("fs");
 const path = require("path");
-const jwkToPem = require('jwk-to-pem');
+const jwkToPem = require("jwk-to-pem");
 
 (async () => {
-    const configFilePath = path.join(__dirname, '/keystore.json');
+    const configFilePath = path.join(__dirname, "/keystore.json");
     const key = JSON.parse(fs.readFileSync(configFilePath)).keys[0];
     await cas.log(`Using JWK:\n${JSON.stringify(key)}\n`);
     
@@ -28,13 +28,13 @@ const jwkToPem = require('jwk-to-pem');
     params += "grant_type=client_credentials&";
     params += "scope=openid";
 
-    let url = `https://localhost:8443/cas/oidc/token?${params}`;
+    const url = `https://localhost:8443/cas/oidc/token?${params}`;
     await cas.doPost(url, "", {
-        'Content-Type': "application/json"
-    }, res => {
+        "Content-Type": "application/json"
+    }, (res) => {
         assert(res.data.access_token !== null);
         assert(res.data.refresh_token !== null);
-    }, error => {
+    }, (error) => {
         throw `Operation failed: ${error}`;
     });
 

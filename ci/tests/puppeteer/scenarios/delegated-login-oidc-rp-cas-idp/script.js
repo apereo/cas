@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const assert = require("assert");
+const cas = require("../../cas.js");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -15,7 +15,7 @@ const cas = require('../../cas.js');
         "nonce=vn4qulthnx";
     await cas.goto(page, url);
 
-    await cas.assertVisibility(page, 'li #CasClient');
+    await cas.assertVisibility(page, "li #CasClient");
     await cas.click(page, "li #CasClient");
     await page.waitForNavigation();
 
@@ -24,7 +24,7 @@ const cas = require('../../cas.js');
     await cas.loginWith(page);
     await page.waitForTimeout(1000);
 
-    let result = new URL(page.url());
+    const result = new URL(page.url());
     await cas.log(result.searchParams.toString());
 
     assert(result.searchParams.has("ticket") === false);

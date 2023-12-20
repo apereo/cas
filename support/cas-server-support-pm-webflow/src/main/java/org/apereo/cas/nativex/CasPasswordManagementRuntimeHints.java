@@ -19,7 +19,7 @@ import java.util.List;
 public class CasPasswordManagementRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
-        hints.proxies().registerJdkProxy(CaptchaActivationStrategy.class);
+        registerProxyHints(hints, CaptchaActivationStrategy.class);
 
         registerReflectionHints(hints, List.of(
             PasswordChangeRequest.class,

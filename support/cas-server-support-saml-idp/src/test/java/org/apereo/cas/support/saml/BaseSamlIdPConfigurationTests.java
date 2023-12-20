@@ -50,6 +50,7 @@ import org.apereo.cas.config.SamlIdPThrottleConfiguration;
 import org.apereo.cas.config.SamlIdPTicketCatalogConfiguration;
 import org.apereo.cas.config.SamlIdPTicketSerializationConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.apereo.cas.services.RegisteredServicesTemplatesManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.ServicesManagerRegisteredServiceLocator;
@@ -67,7 +68,6 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSig
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate.SamlObjectSignatureValidator;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.RandomUtils;
-import org.apereo.cas.util.model.TriStateBoolean;
 import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.ArgumentExtractor;

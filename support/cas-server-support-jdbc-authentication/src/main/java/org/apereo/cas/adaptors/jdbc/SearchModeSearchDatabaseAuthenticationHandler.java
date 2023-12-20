@@ -28,15 +28,12 @@ import java.util.ArrayList;
  */
 @Slf4j
 @Monitorable
-public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
-    private final SearchJdbcAuthenticationProperties properties;
-
+public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler<SearchJdbcAuthenticationProperties> {
     public SearchModeSearchDatabaseAuthenticationHandler(final SearchJdbcAuthenticationProperties properties,
                                                          final ServicesManager servicesManager,
                                                          final PrincipalFactory principalFactory,
                                                          final DataSource datasource) {
-        super(properties.getName(), servicesManager, principalFactory, properties.getOrder(), datasource);
-        this.properties = properties;
+        super(properties, servicesManager, principalFactory, datasource);
     }
 
     @Override
@@ -54,7 +51,8 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
             if (count == null || count == 0) {
                 throw new FailedLoginException(username + " not found with SQL query.");
             }
-            return createHandlerResult(credential, this.principalFactory.createPrincipal(username), new ArrayList<>(0));
+            val principal = principalFactory.createPrincipal(username);
+            return createHandlerResult(credential, principal, new ArrayList<>(0));
         } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
             throw new FailedLoginException(e.getMessage());

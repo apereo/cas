@@ -14,6 +14,6 @@ public class GrouperRuntimeHints implements CasRuntimeHintsRegistrar {
 
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
-        hints.proxies().registerJdkProxy(GrouperFacade.class);
+        registerProxyHints(hints, GrouperFacade.class);
     }
 }

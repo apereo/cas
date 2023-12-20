@@ -1,9 +1,9 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
-const fs = require('fs');
-const os = require('os');
-const assert = require('assert');
-const path = require('path');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
+const fs = require("fs");
+const os = require("os");
+const assert = require("assert");
+const path = require("path");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -16,7 +16,7 @@ const path = require('path');
     await page.waitForTimeout(1000);
     await cas.assertTicketParameter(page);
 
-    let result = path.join(os.tmpdir(), "profile.txt");
+    const result = path.join(os.tmpdir(), "profile.txt");
     await cas.log(`Target file should be at ${result}`);
     assert(fs.existsSync(result) === true);
     

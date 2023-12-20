@@ -11,7 +11,7 @@
     --cas-theme-primary-light: #006d85;
     --cas-theme-secondary: #018077;
     --cas-theme-success: #74C163;
-    --cas-theme-danger: #58151c;
+    --cas-theme-danger: #d01c31;
     --cas-theme-danger-bg: #f8d7da;
     --cas-theme-warning: #e6a210;
     --cas-theme-border-light: 1px solid rgba(0, 0, 0, .2);
@@ -76,8 +76,7 @@ div#content {
     position: absolute;
     top: 8px;
     right: 4px;
-    background-color: #b00020;
-    background-color: var(--cas-theme-danger);
+    background-color: var(--mdc-theme-error, #b00020);
     color: #fff;
     border-radius: 50%;
     padding: 1px 3px;
@@ -101,8 +100,15 @@ header>nav .cas-brand .cas-logo {
     display: none;
 }
 
-.caps-on {
+.caps-on DIV SPAN {
     display: block;
+}
+
+.caps-on span:before {
+    vertical-align: sub;
+    content: "\F0027";
+    font-size: 24px;
+    font: normal normal normal 24px/1 "Material Design Icons";
 }
 
 .login-section {

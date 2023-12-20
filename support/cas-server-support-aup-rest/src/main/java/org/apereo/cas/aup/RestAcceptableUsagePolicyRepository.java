@@ -102,9 +102,11 @@ public class RestAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
             response = HttpUtils.execute(exec);
             val statusCode = Optional.ofNullable(response).map(HttpResponse::getCode).orElseGet(HttpStatus.SERVICE_UNAVAILABLE::value);
             if (HttpStatus.valueOf(statusCode).is2xxSuccessful()) {
-                val result = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
-                val terms = MAPPER.readValue(JsonValue.readHjson(result).toString(), AcceptableUsagePolicyTerms.class);
-                return Optional.ofNullable(terms);
+                try (val content = ((HttpEntityContainer) response).getEntity().getContent()) {
+                    val result = IOUtils.toString(content, StandardCharsets.UTF_8);
+                    val terms = MAPPER.readValue(JsonValue.readHjson(result).toString(), AcceptableUsagePolicyTerms.class);
+                    return Optional.ofNullable(terms);
+                }
             }
             LOGGER.warn("AUP fetch policy request returned with response code [{}]", statusCode);
         } catch (final Exception e) {

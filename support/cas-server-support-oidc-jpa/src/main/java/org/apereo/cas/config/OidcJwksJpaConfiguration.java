@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.jpa.JpaBeanFactory;
+import org.apereo.cas.jpa.JpaPersistenceProviderConfigurer;
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreEntity;
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.oidc.jwks.generator.jpa.OidcJpaJsonWebKeystoreGeneratorService;
@@ -34,6 +35,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.spi.PersistenceProvider;
 import javax.sql.DataSource;
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -72,8 +74,38 @@ public class OidcJwksJpaConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "oidcJwksJpaPersistenceProviderConfigurer")
+    public JpaPersistenceProviderConfigurer oidcJwksJpaPersistenceProviderConfigurer(
+        final ConfigurableApplicationContext applicationContext) {
+        return BeanSupplier.of(JpaPersistenceProviderConfigurer.class)
+            .when(CONDITION.given(applicationContext.getEnvironment()))
+            .supply(() -> context -> {
+                val entities = CollectionUtils.wrapList(OidcJsonWebKeystoreEntity.class.getName());
+                context.getIncludeEntityClasses().addAll(entities);
+            })
+            .otherwiseProxy()
+            .get();
+    }
+
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @Bean
+    public PersistenceProvider oidcJwksJpaPersistenceProvider(
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties,
+        @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME) final JpaBeanFactory jpaBeanFactory) {
+        return BeanSupplier.of(PersistenceProvider.class)
+            .when(CONDITION.given(applicationContext.getEnvironment()))
+            .supply(() -> jpaBeanFactory.newPersistenceProvider(casProperties.getAuthn().getOidc().getJwks().getJpa()))
+            .otherwiseProxy()
+            .get();
+    }
+
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "oidcJwksEntityManagerFactory")
     public FactoryBean<EntityManagerFactory> oidcJwksEntityManagerFactory(
+        @Qualifier("oidcJwksJpaPersistenceProvider")
+        final PersistenceProvider oidcJwksPersistenceProvider,
         final ConfigurableApplicationContext applicationContext,
         @Qualifier("jpaOidcJwksVendorAdapter")
         final JpaVendorAdapter jpaOidcJwksVendorAdapter,
@@ -89,9 +121,10 @@ public class OidcJwksJpaConfiguration {
             .supply(Unchecked.supplier(() -> {
                 val ctx = JpaConfigurationContext.builder()
                     .jpaVendorAdapter(jpaOidcJwksVendorAdapter)
-                    .persistenceUnitName("jpaOidcJwksContext")
+                    .persistenceUnitName(OidcJpaJsonWebKeystoreGeneratorService.PERSISTENCE_UNIT_NAME)
                     .dataSource(dataSourceOidcJwks)
                     .packagesToScan(jpaOidcJwksPackagesToScan.toSet())
+                    .persistenceProvider(oidcJwksPersistenceProvider)
                     .build();
                 return jpaBeanFactory.newEntityManagerFactoryBean(ctx,
                     casProperties.getAuthn().getOidc().getJwks().getJpa());
@@ -144,17 +177,14 @@ public class OidcJwksJpaConfiguration {
         final ConfigurableApplicationContext applicationContext,
         @Qualifier("transactionManagerOidcJwks")
         final PlatformTransactionManager transactionManagerOidcJwks,
-        final CasConfigurationProperties casProperties,
-        @Qualifier("oidcJwksEntityManagerFactory")
-        final ObjectProvider<EntityManagerFactory> emf) {
+        final CasConfigurationProperties casProperties) {
         return BeanSupplier.of(Supplier.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> {
                 val oidc = casProperties.getAuthn().getOidc();
                 LOGGER.info("Managing JWKS via a relational database at [{}]", oidc.getJwks().getJpa().getUrl());
                 val transactionTemplate = new TransactionTemplate(transactionManagerOidcJwks);
-                return () -> new OidcJpaJsonWebKeystoreGeneratorService(oidc,
-                    transactionTemplate, emf.getObject().createEntityManager());
+                return () -> new OidcJpaJsonWebKeystoreGeneratorService(oidc, transactionTemplate, applicationContext);
             })
             .otherwiseProxy()
             .get();

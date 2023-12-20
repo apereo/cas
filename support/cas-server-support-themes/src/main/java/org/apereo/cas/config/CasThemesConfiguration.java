@@ -40,7 +40,7 @@ import org.springframework.web.servlet.theme.CookieThemeResolver;
 import org.springframework.web.servlet.theme.FixedThemeResolver;
 import org.springframework.web.servlet.theme.SessionThemeResolver;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * This is {@link CasThemesConfiguration}.

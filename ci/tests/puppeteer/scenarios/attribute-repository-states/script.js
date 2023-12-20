@@ -1,5 +1,5 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 const assert = require("assert");
 
 async function returnCasResponse(page, appId) {
@@ -8,7 +8,7 @@ async function returnCasResponse(page, appId) {
     const service = `http://localhost:9889/anything/${appId}`;
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
     await cas.loginWith(page);
-    let ticket = await cas.assertTicketParameter(page);
+    const ticket = await cas.assertTicketParameter(page);
     const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
     await cas.log(body);
     const response = JSON.parse(body);

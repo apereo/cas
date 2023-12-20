@@ -1,7 +1,7 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
-const cas = require('../../cas.js');
-const fs = require('fs');
+const puppeteer = require("puppeteer");
+const assert = require("assert");
+const cas = require("../../cas.js");
+const fs = require("fs");
 
 (async () => {
     let browser = await puppeteer.launch(cas.browserOptions());
@@ -10,8 +10,8 @@ const fs = require('fs');
     
     await cas.loginWith(page, "aburr", "P@ssw0rd");
     await cas.assertCookie(page);
-    await cas.assertInnerText(page, '#content div h2', "Log In Successful");
-    const attributesldap = await cas.innerText(page, '#attribute-tab-0 table#attributesTable tbody');
+    await cas.assertInnerText(page, "#content div h2", "Log In Successful");
+    const attributesldap = await cas.innerText(page, "#attribute-tab-0 table#attributesTable tbody");
     assert(attributesldap.includes("aburr"));
     assert(attributesldap.includes("someattribute"));
     assert(attributesldap.includes("uid"));
@@ -22,9 +22,9 @@ const fs = require('fs');
 
     await page.setRequestInterception(true);
 
-    let args = process.argv.slice(2);
-    let config = JSON.parse(fs.readFileSync(args[0]));
-    assert(config != null);
+    const args = process.argv.slice(2);
+    const config = JSON.parse(fs.readFileSync(args[0]));
+    assert(config !== null);
 
     await cas.log(`Certificate file: ${config.trustStoreCertificateFile}`);
 
@@ -33,13 +33,13 @@ const fs = require('fs');
 
     await cas.log(`ssl-client-cert-from-proxy: ${certHeader}`);
 
-    page.on('request', request => {
-        let data = {
-            'method': 'GET',
-            'headers': {
+    page.on("request", (request) => {
+        const data = {
+            "method": "GET",
+            "headers": {
                 ...request.headers(),
-                'ssl-client-cert-from-proxy': certHeader
-            },
+                "ssl-client-cert-from-proxy": certHeader
+            }
         };
         request.continue(data);
     });
@@ -47,7 +47,7 @@ const fs = require('fs');
     await cas.gotoLogin(page);
     await page.waitForTimeout(5000);
 
-    await cas.assertInnerText(page, '#content div h2', "Log In Successful");
+    await cas.assertInnerText(page, "#content div h2", "Log In Successful");
     await cas.assertInnerTextContains(page, "#content div p", "1234567890@college.edu");
 
     await cas.gotoLogin(page, "https://github.com");
@@ -58,7 +58,7 @@ const fs = require('fs');
 
 async function assertFailure(page) {
     await cas.assertInnerText(page, "#loginErrorsPanel p", "Service access denied due to missing privileges.");
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(1000);
 }
 
 

@@ -40,6 +40,7 @@ class PrincipalAttributeRepositoryFetcherJdbcTests extends BaseJdbcAttributeRepo
     void verifyOperationWithUsernamePasswordCredentialType() throws Throwable {
         val context = PrincipalResolutionContext.builder()
             .attributeDefinitionStore(attributeDefinitionStore)
+            .attributeRepositoryResolver(attributeRepositoryResolver)
             .servicesManager(servicesManager)
             .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED))
             .attributeRepository(attributeRepository)
@@ -61,6 +62,7 @@ class PrincipalAttributeRepositoryFetcherJdbcTests extends BaseJdbcAttributeRepo
         val context = PrincipalResolutionContext.builder()
             .servicesManager(servicesManager)
             .attributeDefinitionStore(attributeDefinitionStore)
+            .attributeRepositoryResolver(attributeRepositoryResolver)
             .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED))
             .attributeRepository(attributeRepository)
             .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())

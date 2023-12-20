@@ -1,15 +1,13 @@
 package org.apereo.cas.aup;
 
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.model.TriStateBoolean;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Data;
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Arrays;

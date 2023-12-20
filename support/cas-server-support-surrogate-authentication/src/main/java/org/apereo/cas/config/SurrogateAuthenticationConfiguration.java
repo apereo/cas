@@ -13,6 +13,7 @@ import org.apereo.cas.authentication.SurrogateMultifactorAuthenticationPrincipal
 import org.apereo.cas.authentication.SurrogatePrincipalElectionStrategy;
 import org.apereo.cas.authentication.SurrogatePrincipalResolver;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
+import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
 import org.apereo.cas.authentication.event.DefaultSurrogateAuthenticationEventListener;
 import org.apereo.cas.authentication.event.SurrogateAuthenticationEventListener;
 import org.apereo.cas.authentication.principal.PrincipalElectionStrategyConfigurer;
@@ -223,14 +224,16 @@ public class SurrogateAuthenticationConfiguration {
             @Qualifier(SurrogateAuthenticationPrincipalBuilder.BEAN_NAME)
             final SurrogateAuthenticationPrincipalBuilder surrogatePrincipalBuilder,
             @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
-            final IPersonAttributeDao attributeRepository) {
+            final IPersonAttributeDao attributeRepository,
+            @Qualifier(AttributeRepositoryResolver.BEAN_NAME)
+            final AttributeRepositoryResolver attributeRepositoryResolver) {
             val principal = casProperties.getAuthn().getSurrogate().getPrincipal();
             val personDirectory = casProperties.getPersonDirectory();
             val attributeMerger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
             val resolver = PersonDirectoryPrincipalResolver.newPersonDirectoryPrincipalResolver(
                 applicationContext, surrogatePrincipalFactory,
                 attributeRepository, attributeMerger, SurrogatePrincipalResolver.class,
-                servicesManager, attributeDefinitionStore,
+                servicesManager, attributeDefinitionStore, attributeRepositoryResolver,
                 principal, personDirectory);
             resolver.setSurrogatePrincipalBuilder(surrogatePrincipalBuilder);
             return resolver;

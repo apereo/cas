@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.x509.authentication.principal;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
+import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
@@ -22,15 +23,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
-
 import java.io.FileInputStream;
 import java.security.cert.CertificateFactory;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 import java.util.stream.Stream;
-
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.params.provider.Arguments.arguments;
+import static org.junit.jupiter.params.provider.Arguments.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -51,12 +50,15 @@ class X509SubjectAlternativeNameRFC822EmailPrincipalResolverTests {
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
-    
+
+    @Mock
+    private AttributeRepositoryResolver attributeRepositoryResolver;
+
     @BeforeEach
     public void before() throws Exception {
         MockitoAnnotations.openMocks(this).close();
     }
-    
+
     /**
      * Gets the unit test parameters.
      *
@@ -101,13 +103,14 @@ class X509SubjectAlternativeNameRFC822EmailPrincipalResolverTests {
     @ParameterizedTest
     @MethodSource("getTestParameters")
     void verifyResolvePrincipalInternal(final String certPath,
-                                               final String expectedResult,
-                                               final String alternatePrincipalAttribute,
-                                               final String requiredAttribute) throws Throwable {
+                                        final String expectedResult,
+                                        final String alternatePrincipalAttribute,
+                                        final String requiredAttribute) throws Throwable {
 
         val context = PrincipalResolutionContext.builder()
             .attributeDefinitionStore(attributeDefinitionStore)
             .servicesManager(servicesManager)
+            .attributeRepositoryResolver(attributeRepositoryResolver)
             .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.REPLACE))
             .attributeRepository(CoreAuthenticationTestUtils.getAttributeRepository())
             .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())
@@ -147,6 +150,7 @@ class X509SubjectAlternativeNameRFC822EmailPrincipalResolverTests {
         val context = PrincipalResolutionContext.builder()
             .attributeDefinitionStore(attributeDefinitionStore)
             .servicesManager(servicesManager)
+            .attributeRepositoryResolver(attributeRepositoryResolver)
             .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.REPLACE))
             .attributeRepository(CoreAuthenticationTestUtils.getAttributeRepository())
             .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())

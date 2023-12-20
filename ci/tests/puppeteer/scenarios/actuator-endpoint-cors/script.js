@@ -1,13 +1,13 @@
-const cas = require('../../cas.js');
-const express = require('express');
+const cas = require("../../cas.js");
+const express = require("express");
 const path = require("path");
-const puppeteer = require('puppeteer');
-const assert = require('assert');
+const puppeteer = require("puppeteer");
+const assert = require("assert");
 
 (async () => {
-    let app = express();
-    app.use(express.static(path.join(__dirname, `pages`)));
-    let server = app.listen(8444, async () => {
+    const app = express();
+    app.use(express.static(path.join(__dirname, "pages")));
+    const server = app.listen(8444, async () => {
         let failed = false;
         try {
             const browser = await puppeteer.launch(cas.browserOptions());
@@ -31,7 +31,7 @@ const assert = require('assert');
             assert(data.components !== null);
 
             server.close(() => {
-                cas.log('Exiting server...');
+                cas.log("Exiting server...");
                 browser.close();
             });
         } catch (e) {

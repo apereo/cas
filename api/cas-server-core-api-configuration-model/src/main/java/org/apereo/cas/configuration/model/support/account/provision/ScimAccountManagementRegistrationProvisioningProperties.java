@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.account.provision;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -21,7 +22,7 @@ import java.io.Serializable;
 @Setter
 @Accessors(chain = true)
 @JsonFilter("ScimAccountManagementRegistrationProvisioningProperties")
-public class ScimAccountManagementRegistrationProvisioningProperties implements Serializable {
+public class ScimAccountManagementRegistrationProvisioningProperties implements CasFeatureModule, Serializable {
     @Serial
     private static final long serialVersionUID = 6833936824474022021L;
 

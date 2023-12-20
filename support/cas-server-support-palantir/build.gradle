@@ -2,9 +2,9 @@ description = "Apereo CAS Admin UI"
 ext {
     publishMetadata = true
     projectMetadata = [
-            category: "Administration",
-            title: "Admin UI & Dashboard",
-            aliases: ["palantir", "adminui", "management"]
+        category: "Administration",
+        title: "Admin UI & Dashboard",
+        aliases: ["palantir", "adminui", "management"]
     ]
 }
 
@@ -82,9 +82,17 @@ node {
 
 tasks.named("yarn", YarnTask) {
     args = ['--network-timeout', '600000']
+    outputs.cacheIf { true }
+    inputs.files(
+        'client/package.json',
+        'client/vite.config.js'
+    )
+    inputs.file('client/yarn.lock')
+    outputs.dir(file("client/node_modules"))
 }
 
 tasks.register("build-ui", NpxTask) {
+    outputs.cacheIf { true }
     command = "vite"
     args = [ "build", "--outDir", "../src/main/resources/static/assets"]
     dependsOn(tasks.named("yarn"))
@@ -93,6 +101,6 @@ tasks.register("build-ui", NpxTask) {
         'client/vite.config.js'
     )
     outputs.dir(new File(project.projectDir, "src/main/resources/static/assets"))
-    environment = ["BUILD_PATH": "${buildDir}"]
+    environment = ["BUILD_PATH": "${project.layout.buildDirectory.getAsFile().get().path}"]
 }
 [processResources, resourcesJar].each {it.dependsOn(tasks.named("build-ui")) }

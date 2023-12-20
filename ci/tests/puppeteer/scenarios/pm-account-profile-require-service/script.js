@@ -1,5 +1,5 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 const assert = require("assert");
 
 (async () => {
@@ -15,7 +15,7 @@ const assert = require("assert");
     await cas.loginWith(page);
     await page.waitForTimeout(1000);
     await cas.logPage(page);
-    let url = await page.url();
+    const url = await page.url();
     assert(url === "https://localhost:8443/cas/account");
     await cas.assertTicketParameter(page, false);
 

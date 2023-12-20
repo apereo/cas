@@ -13,7 +13,6 @@ import org.apereo.cas.configuration.model.support.jdbc.authn.QueryJdbcAuthentica
 import org.apereo.cas.configuration.model.support.jdbc.authn.SearchJdbcAuthenticationProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.util.CollectionUtils;
 
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -69,8 +68,8 @@ public class JdbcAuthenticationUtils {
                                                                  final PrincipalFactory jdbcPrincipalFactory,
                                                                  final ServicesManager servicesManager,
                                                                  final PasswordPolicyContext passwordPolicy) {
-        val handler = new BindModeSearchDatabaseAuthenticationHandler(properties.getName(), servicesManager,
-            jdbcPrincipalFactory, properties.getOrder(), JpaBeans.newDataSource(properties));
+        val handler = new BindModeSearchDatabaseAuthenticationHandler(properties, servicesManager,
+            jdbcPrincipalFactory, JpaBeans.newDataSource(properties));
         configureJdbcAuthenticationHandler(handler, passwordPolicy, properties, applicationContext);
         return handler;
     }
@@ -133,10 +132,8 @@ public class JdbcAuthenticationUtils {
                                                                  final PrincipalFactory jdbcPrincipalFactory,
                                                                  final ServicesManager servicesManager,
                                                                  final PasswordPolicyContext queryPasswordPolicyConfiguration) {
-        val attributes = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(properties.getPrincipalAttributeList());
-        LOGGER.trace("Created and mapped principal attributes [{}] for [{}]...", attributes, properties.getName());
-        val handler = new QueryDatabaseAuthenticationHandler(properties, servicesManager, jdbcPrincipalFactory,
-            JpaBeans.newDataSource(properties), CollectionUtils.wrap(attributes));
+        
+        val handler = new QueryDatabaseAuthenticationHandler(properties, servicesManager, jdbcPrincipalFactory, JpaBeans.newDataSource(properties));
         configureJdbcAuthenticationHandler(handler, queryPasswordPolicyConfiguration, properties, applicationContext);
         return handler;
     }

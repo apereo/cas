@@ -1,24 +1,24 @@
-const assert = require('assert');
-const cas = require('../../cas.js');
-const querystring = require('querystring');
+const assert = require("assert");
+const cas = require("../../cas.js");
+const querystring = require("querystring");
 
 (async () => {
     const codes = await cas.fetchDuoSecurityBypassCodes("casuser");
-    const url = `https://localhost:8443/cas/v1/users`;
+    const url = "https://localhost:8443/cas/v1/users";
     const formData = {
-        username: 'casuser',
-        password: 'Mellon',
+        username: "casuser",
+        password: "Mellon",
         passcode: `${codes[0]}`
     };
     const postData = querystring.stringify(formData);
     
     const body = await cas.doRequest(url, "POST",
         {
-            'Accept': 'application/json',
-            'Content-Length': Buffer.byteLength(postData),
-            'Content-Type': 'application/x-www-form-urlencoded'
+            "Accept": "application/json",
+            "Content-Length": Buffer.byteLength(postData),
+            "Content-Type": "application/x-www-form-urlencoded"
         }, 200, postData);
-    let result = JSON.parse(body);
+    const result = JSON.parse(body);
     console.dir(result, {depth: null, colors: true});
     assert(result.authentication.authenticationDate !== undefined);
     assert(result.authentication.principal.id === "casuser");

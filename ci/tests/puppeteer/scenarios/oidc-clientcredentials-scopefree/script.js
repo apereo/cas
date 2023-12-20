@@ -1,24 +1,24 @@
-const assert = require('assert');
-const cas = require('../../cas.js');
+const assert = require("assert");
+const cas = require("../../cas.js");
 
 (async () => {
 
     let params = "grant_type=client_credentials&";
     params += "scope=openid";
 
-    let url = `https://localhost:8443/cas/oidc/token?${params}`;
+    const url = `https://localhost:8443/cas/oidc/token?${params}`;
     await cas.log(`Calling ${url}`);
 
     await cas.doPost(url, "", {
-        'Content-Type': "application/json",
-        'Authorization': 'Basic ' + btoa('client' + ':' + 'secret')
-    }, async res => {
+        "Content-Type": "application/json",
+        "Authorization": `Basic ${btoa("client:secret")}`
+    }, async (res) => {
 
         await cas.log(res.data);
         assert(res.data.access_token !== null);
 
         await cas.log("Decoding JWT access token...");
-        let decoded = await cas.decodeJwt(res.data.id_token);
+        const decoded = await cas.decodeJwt(res.data.id_token);
 
         assert(res.data.id_token !== null);
         assert(res.data.refresh_token !== null);
@@ -28,8 +28,8 @@ const cas = require('../../cas.js');
         assert(decoded.cn !== null);
         assert(decoded.name !== null);
         assert(decoded["preferred_username"] !== null);
-        assert(decoded["given-name"] !== null)
-    }, error => {
+        assert(decoded["given-name"] !== null);
+    }, (error) => {
         throw `Operation failed: ${error}`;
     });
 })();

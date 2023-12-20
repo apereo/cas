@@ -1,5 +1,5 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -7,7 +7,7 @@ const cas = require('../../cas.js');
     await cas.gotoLogin(page, "https://apereo.github.io");
 
     await cas.loginWith(page);
-    const url = await page.url();
+    await page.url();
     await cas.logPage(page);
     await cas.assertTicketParameter(page);
     await browser.close();

@@ -6,9 +6,7 @@
         },
         attachFields: () => {
             new material.textField.MDCTextFieldHelperText(document.querySelectorAll('.mdc-text-field-helper-text'));
-
-            let divs = document.querySelectorAll('.mdc-text-field'),
-                field;
+            let divs = document.querySelectorAll('.mdc-text-field'), field;
             let div;
             for (let i = 0; i < divs.length; ++i) {
                 div = divs[i];
@@ -41,21 +39,18 @@
         },
         checkCaps: ev => {
             let s = String.fromCharCode(ev.which);
-            const parentElement = ev.target.parentElement;
-            if (parentElement != null && parentElement.nextElementSibling != null) {
-                let el = parentElement.nextElementSibling.nextElementSibling;
-                if (el != null) {
-                    if (s.toUpperCase() === s && s.toLowerCase() !== s && !ev.shiftKey) {
-                        // console.log('CAPSLOCK is on');
-                        el.classList.remove("caps-warn");
-                        el.classList.add('caps-on');
-                    } else {
-                        // console.log('CAPSLOCK is off')
-                        el.classList.remove("caps-on");
-                        el.classList.add('caps-warn');
-                    }
+            if (s.toUpperCase() === s && s.toLowerCase() !== s && !ev.shiftKey) {
+                for (let el of document.getElementsByClassName("caps-warn")) {
+                    el.classList.remove("caps-warn");
+                    el.classList.add('caps-on');
+                }
+            } else {
+                for (let el of document.getElementsByClassName("caps-on")) {
+                    el.classList.remove("caps-on");
+                    el.classList.add('caps-warn');
                 }
             }
+
         }
     };
 

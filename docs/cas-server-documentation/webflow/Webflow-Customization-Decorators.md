@@ -25,37 +25,30 @@ later on becomes available to the CAS login view, and more. Once the data is
 available, you still have the responsibility of using that data to properly 
 display it in the appropriate view and style it correctly.
 
-## Groovy Decorators
+<div class="alert alert-info">:information_source: <strong>Usage</strong><p>
+Remember that objects and data put into the webflow context must always be <code>Serializable</code>. Complex
+objects and data structures that do not pass the serialization requirement will most likely break the flow.</p></div>
 
-Groovy login decorators allow one to inject data into the Spring webflow 
-context by using an external Groovy script that may take on the following form:
+## Decorators
 
-```groovy
-def run(Object[] args) {
-    def (requestContext,logger) = args
-    logger.info("Decorating the webflow...")
-    requestContext.flowScope.put("decoration", ...)
- }
-``` 
+The following decorators are available:
 
-The parameters passed are as follows:
+| Option | Reference                                                       |
+|--------|-----------------------------------------------------------------|
+| Groovy | [See this guide](Webflow-Customization-Decorators-Groovy.html). |
+| REST   | [See this guide](Webflow-Customization-Decorators-REST.html).   |
 
-| Parameter            | Description                                                                   |
-|----------------------|-------------------------------------------------------------------------------|
-| `requestContext`     | The `RequestContext` that carries various types of scopes as data containers. |
-| `logger`             | Logger object used to issue log messages where needed.                        |
+## Custom
 
-{% include_cached casproperties.html properties="cas.webflow.login-decorator.groovy" %}
+It is possible to design and inject your webflow decorator into CAS using 
+the following `@Bean` that would be registered in a `@AutoConfiguration` class:
 
-## REST Decorators
+```java
+@Bean
+public WebflowDecorator myWebflowDecorator() {
+    return new MyWebflowDecorator();
+}
+```
 
-RESTful login decorators allow one to inject data into the webflow context by 
-reaching out to an external REST API. If the endpoint responds back with a `200` 
-status code, CAS would parse the response body into a JSON object and will stuff 
-the result into the webflow's `flowScope` container under the key `decoration`. 
-Please remember that data stuffed into the webflow **MUST** be serializable and 
-if you intend to pass along complex objects types and fancy data structures, you 
-need to make sure they can safely and ultimately transform into a simple `byte[]`.
-
-{% include_cached casproperties.html properties="cas.webflow.login-decorator.rest" %}
-
+Your configuration class needs to be registered
+with CAS. [See this guide](../configuration/Configuration-Management-Extensions.html) for better details.

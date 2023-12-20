@@ -16,7 +16,7 @@ import org.opensaml.saml.common.binding.artifact.impl.BasicSAMLArtifactMap;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.jee.context.JEEContext;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.io.IOException;
 import java.util.Objects;
 

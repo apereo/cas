@@ -10,6 +10,16 @@ services:
       - REDIS_MASTER_PORT_NUMBER=6379
     ports:
       - "6379:6379"
+  redis-ssl:
+    image: redis/redis-stack:${REDIS_VERSION}
+    container_name: redis_server_ssl
+    environment:
+      - REDIS_PASSWORD=pAssw0rd123
+      - REDIS_ARGS=--tls-port 6669 --tls-cert-file /etc/ssl/certs/redis.crt --tls-ca-cert-file /etc/ssl/certs/redis.crt --tls-key-file /etc/ssl/certs/redis.key
+    ports:
+      - "16669:6669"
+    volumes:
+      - ./certs:/etc/ssl/certs
   redis-master2:
     image: redis/redis-stack:${REDIS_VERSION}
     container_name: redis_server_master2
@@ -17,7 +27,6 @@ services:
       - REDIS_PASSWORD=pAssw0rd123
     ports:
       - "16389:6379"
-
   sentinel_1:
     image: bitnami/redis-sentinel:${REDIS_SENTINEL_VERSION}
     container_name: redis_sentinel_1

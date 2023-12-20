@@ -1,14 +1,14 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
-const cas = require('../../cas.js');
-const fs = require('fs');
-const request = require('request');
+const puppeteer = require("puppeteer");
+const assert = require("assert");
+const cas = require("../../cas.js");
+const fs = require("fs");
+const request = require("request");
 
 (async () => {
 
-    let args = process.argv.slice(2);
-    let config = JSON.parse(fs.readFileSync(args[0]));
-    assert(config != null);
+    const args = process.argv.slice(2);
+    const config = JSON.parse(fs.readFileSync(args[0]));
+    assert(config !== null);
 
     await cas.log(`Certificate file: ${config.trustStoreCertificateFile}`);
     await cas.log(`Private key file: ${config.trustStorePrivateKeyFile}`);
@@ -19,7 +19,7 @@ const request = require('request');
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     await page.setRequestInterception(true);
-    page.on('request', interceptedRequest => {
+    page.on("request", (interceptedRequest) => {
         if (interceptedRequest.isInterceptResolutionHandled()) {
             return;
         }
@@ -37,25 +37,25 @@ const request = require('request');
         request(options, (err, resp, body) => {
             if (err) {
                 cas.logr(`Unable to call ${options.uri}`, err);
-                return interceptedRequest.abort('connectionrefused');
+                return interceptedRequest.abort("connectionrefused");
             }
 
             cas.logb(`Responding with X.509 client certificate ${url}`);
             interceptedRequest.respond({
                 status: resp.statusCode,
-                contentType: resp.headers['content-type'],
+                contentType: resp.headers["content-type"],
                 headers: resp.headers,
                 body: body
             });
         });
     });
 
-    let params = "grant_type=client_credentials&scope=openid&client_id=client";
-    let url = `https://localhost:8443/cas/oidc/token?${params}`;
-    let response = await cas.goto(page, url);
+    const params = "grant_type=client_credentials&scope=openid&client_id=client";
+    const url = `https://localhost:8443/cas/oidc/token?${params}`;
+    const response = await cas.goto(page, url);
     await cas.log(`${response.status()} ${response.statusText()}`);
     assert(response.ok());
-    let tokenResponse = JSON.parse(await cas.innerText(page, "body pre"));
+    const tokenResponse = JSON.parse(await cas.innerText(page, "body pre"));
     await cas.logb(tokenResponse);
     assert(tokenResponse.access_token !== undefined);
     assert(tokenResponse.id_token !== undefined);
@@ -63,7 +63,7 @@ const request = require('request');
     assert(tokenResponse.token_type === "Bearer");
     assert(tokenResponse.scope === "openid");
     assert(tokenResponse.expires_in === 28800);
-    let decoded = await cas.decodeJwt(tokenResponse.id_token);
+    const decoded = await cas.decodeJwt(tokenResponse.id_token);
     assert(decoded["sub"] === "mmoayyed");
     assert(decoded["sub"] === decoded["preferred_username"]);
     assert(decoded["txn"] !== undefined);

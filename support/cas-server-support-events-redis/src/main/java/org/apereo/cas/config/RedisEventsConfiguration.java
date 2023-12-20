@@ -44,7 +44,7 @@ public class RedisEventsConfiguration {
     public RedisConnectionFactory redisEventConnectionFactory(
         @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext,
-        final CasConfigurationProperties casProperties) {
+        final CasConfigurationProperties casProperties) throws Exception {
         val redis = casProperties.getEvents().getRedis();
         return RedisObjectFactory.newRedisConnectionFactory(redis, casSslContext);
     }

@@ -9,6 +9,7 @@ import org.apereo.cas.web.view.CasThymeleafView;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 import org.thymeleaf.DialectConfiguration;
+import org.thymeleaf.engine.IterationStatusVar;
 import org.thymeleaf.engine.StandardModelFactory;
 import org.thymeleaf.model.ICloseElementTag;
 import org.thymeleaf.model.IOpenElementTag;
@@ -41,6 +42,7 @@ public class CasThymeleafRuntimeHints implements CasRuntimeHintsRegistrar {
                 TemplateMode.class,
                 StandardXmlNsTagProcessor.class,
                 Themes.class,
+                IterationStatusVar.class,
                 FragmentExpression.class,
                 StandardTextTagProcessor.class,
                 IOpenElementTag.class,

@@ -1,5 +1,7 @@
 package org.apereo.cas.util;
 
+import org.apereo.cas.util.http.HttpRequestUtils;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.val;
 import org.springframework.binding.expression.support.LiteralExpression;
 import org.springframework.binding.message.DefaultMessageContext;
@@ -20,6 +22,7 @@ import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockExternalContext;
 import org.springframework.webflow.test.MockFlowExecutionContext;
 import org.springframework.webflow.test.MockRequestControlContext;
+import java.util.Locale;
 import java.util.Objects;
 import static org.mockito.Mockito.*;
 
@@ -116,6 +119,23 @@ public class MockRequestContext extends MockRequestControlContext {
         return this;
     }
 
+    @CanIgnoreReturnValue
+    public MockRequestContext withUserAgent(final String s) {
+        addHeader(HttpRequestUtils.USER_AGENT_HEADER, s);
+        return this;
+    }
+
+    public MockRequestContext setRequestAttribute(final String name, final Object value) {
+        getHttpServletRequest().setAttribute(name, value);
+        return this;
+    }
+
+    public MockRequestContext withLocale(final Locale value) {
+        getHttpServletRequest().setAttribute("locale", value);
+        setParameter("locale", value.toLanguageTag());
+        ((MockExternalContext) getExternalContext()).setLocale(value);
+        return this;
+    }
 
     public static MockRequestContext create() throws Exception {
         val staticContext = new StaticApplicationContext();
@@ -131,6 +151,7 @@ public class MockRequestContext extends MockRequestControlContext {
         externalContext.setNativeContext(new MockServletContext());
         externalContext.setNativeRequest(request);
         externalContext.setNativeResponse(response);
+        externalContext.setLocale(Locale.ENGLISH);
         requestContext.setExternalContext(externalContext);
         RequestContextHolder.setRequestContext(requestContext);
         ExternalContextHolder.setExternalContext(externalContext);

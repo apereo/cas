@@ -24,21 +24,17 @@ import java.util.Collection;
 public class CasCoreTicketsRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
-        hints.proxies()
-            .registerJdkProxy(TicketSerializationExecutionPlanConfigurer.class)
-            .registerJdkProxy(TicketFactoryExecutionPlanConfigurer.class);
-
+        registerProxyHints(hints, TicketSerializationExecutionPlanConfigurer.class, TicketFactoryExecutionPlanConfigurer.class);
 
         registerSpringProxy(hints, Cleanable.class, TicketRegistry.class);
         registerSpringProxy(hints, QueueableTicketRegistry.class, TicketRegistry.class);
 
         registerSerializationHints(hints, findSubclassesInPackage(Ticket.class, CentralAuthenticationService.NAMESPACE));
-        var clazzes = findSubclassesInPackage(ExpirationPolicy.class, CentralAuthenticationService.NAMESPACE);
+        val clazzes = findSubclassesInPackage(ExpirationPolicy.class, CentralAuthenticationService.NAMESPACE);
         registerSerializationHints(hints, clazzes);
         registerReflectionHints(hints, clazzes);
 
-        registerReflectionHints(hints,
-            findSubclassesInPackage(CipherExecutor.class, CentralAuthenticationService.NAMESPACE));
+        registerReflectionHints(hints, findSubclassesInPackage(CipherExecutor.class, CentralAuthenticationService.NAMESPACE));
     }
 
     private static void registerReflectionHints(final RuntimeHints hints, final Collection entries) {

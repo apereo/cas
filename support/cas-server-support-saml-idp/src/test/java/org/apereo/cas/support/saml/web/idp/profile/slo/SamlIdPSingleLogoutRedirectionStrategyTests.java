@@ -1,12 +1,12 @@
 package org.apereo.cas.support.saml.web.idp.profile.slo;
 
+import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.apereo.cas.logout.LogoutRedirectionStrategy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.MockRequestContext;
-import org.apereo.cas.util.model.TriStateBoolean;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Nested;

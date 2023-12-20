@@ -3,6 +3,7 @@ package org.apereo.cas.redis.core;
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.util.function.FunctionUtils;
 import com.redis.lettucemod.RedisModulesClient;
 import com.redis.lettucemod.api.sync.RedisModulesCommands;
 import io.lettuce.core.ClientOptions;
@@ -81,7 +82,7 @@ public class RedisObjectFactory {
      * @return the redis connection factory
      */
     public static RedisConnectionFactory newRedisConnectionFactory(final BaseRedisProperties redis,
-                                                                   final CasSSLContext casSslContext) {
+                                                                   final CasSSLContext casSslContext) throws Exception {
         return newRedisConnectionFactory(redis, false, casSslContext);
     }
 
@@ -95,7 +96,7 @@ public class RedisObjectFactory {
      */
     public static RedisConnectionFactory newRedisConnectionFactory(final BaseRedisProperties redis,
                                                                    final boolean initialize,
-                                                                   final CasSSLContext casSslContext) {
+                                                                   final CasSSLContext casSslContext) throws Exception {
         var factory = (LettuceConnectionFactory) null;
         if (redis.getSentinel() != null && StringUtils.hasText(redis.getSentinel().getMaster())) {
             factory = new LettuceConnectionFactory(getSentinelConfig(redis), getRedisPoolClientConfig(redis, true, casSslContext));
@@ -110,7 +111,7 @@ public class RedisObjectFactory {
         }
         LOGGER.info("Redis native connection sharing is turned [{}]", BooleanUtils.toStringOnOff(connectionSharingEnabled));
         factory.setShareNativeConnection(connectionSharingEnabled);
-        
+
         if (initialize) {
             factory.afterPropertiesSet();
         }
@@ -128,7 +129,7 @@ public class RedisObjectFactory {
             .withHost(redis.getHost())
             .withPort(redis.getPort())
             .withDatabase(redis.getDatabase());
-        
+
         if (StringUtils.hasText(redis.getUsername()) && StringUtils.hasText(redis.getPassword())) {
             uriBuilder.withAuthentication(redis.getUsername(), redis.getPassword());
         } else if (StringUtils.hasText(redis.getPassword())) {
@@ -153,8 +154,8 @@ public class RedisObjectFactory {
         cluster.getNodes()
             .stream()
             .filter(nodeConfig -> StringUtils.hasText(nodeConfig.getHost())
-                                  && nodeConfig.getPort() > 0
-                                  && StringUtils.hasText(nodeConfig.getType()))
+                && nodeConfig.getPort() > 0
+                && StringUtils.hasText(nodeConfig.getType()))
             .forEach(nodeConfig -> {
                 LOGGER.trace("Building redis cluster node for [{}]", nodeConfig);
 
@@ -185,10 +186,12 @@ public class RedisObjectFactory {
 
     private static LettucePoolingClientConfiguration getRedisPoolClientConfig(final BaseRedisProperties redis,
                                                                               final boolean cluster,
-                                                                              final CasSSLContext casSslContext) {
-        val poolingClientConfig = LettucePoolingClientConfiguration.builder();
+                                                                              final CasSSLContext casSslContext) throws Exception {
+        var poolingClientConfig = LettucePoolingClientConfiguration.builder();
         if (redis.isUseSsl()) {
-            poolingClientConfig.useSsl();
+            val sslPoolingConfig = poolingClientConfig.useSsl();
+            FunctionUtils.doWhen(!redis.isVerifyPeer(), __ -> sslPoolingConfig.disablePeerVerification());
+            FunctionUtils.doWhen(redis.isStartTls(), __ -> sslPoolingConfig.startTls());
             LOGGER.trace("Redis configuration: SSL connections are enabled");
         }
         if (redis.getReadFrom() != null) {
@@ -205,7 +208,8 @@ public class RedisObjectFactory {
             }
         }
 
-        poolingClientConfig.clientOptions(createClientOptions(redis, cluster, casSslContext));
+        val clientOptions = createClientOptions(redis, cluster, casSslContext);
+        poolingClientConfig.clientOptions(clientOptions);
 
         val pool = redis.getPool();
         if (pool != null && pool.isEnabled()) {
@@ -236,35 +240,40 @@ public class RedisObjectFactory {
     }
 
     private static ClientOptions createClientOptions(final BaseRedisProperties redis, final boolean cluster,
-                                                     final CasSSLContext casSslContext) {
+                                                     final CasSSLContext casSslContext) throws Exception {
         val clientOptionsBuilder = initializeClientOptionsBuilder(redis, cluster);
         if (StringUtils.hasText(redis.getConnectTimeout())) {
             val connectTimeout = Beans.newDuration(redis.getConnectTimeout());
             clientOptionsBuilder.socketOptions(SocketOptions.builder().connectTimeout(connectTimeout).build());
         }
-        val sslOptions = SslOptions.builder()
+        val sslOptionsBuilder = SslOptions.builder()
             .jdkSslProvider()
             .keyManager(casSslContext.getKeyManagerFactory())
-            .trustManager(casSslContext.getTrustManagerFactory())
-            .build();
+            .trustManager(casSslContext.getTrustManagerFactory());
+
+        if ((redis.isStartTls() || redis.isUseSsl()) && redis.getKeyCertificateChainFile() != null && redis.getKeyFile() != null) {
+            LOGGER.debug("Loading SSL certificate chain [{}] and key file [{}]",
+                redis.getKeyCertificateChainFile().getCanonicalPath(), redis.getKeyFile().getCanonicalPath());
+            sslOptionsBuilder.keyManager(redis.getKeyCertificateChainFile(), redis.getKeyFile(),
+                StringUtils.hasText(redis.getKeyPassword()) ? redis.getKeyPassword().toCharArray() : null);
+        }
         return clientOptionsBuilder
             .timeoutOptions(TimeoutOptions.enabled())
-            .sslOptions(sslOptions)
+            .sslOptions(sslOptionsBuilder.build())
             .protocolVersion(ProtocolVersion.valueOf(redis.getProtocolVersion()))
             .build();
     }
 
     private static ClientOptions.Builder initializeClientOptionsBuilder(final BaseRedisProperties redis, final boolean cluster) {
         if (cluster) {
-            ClusterTopologyRefreshOptions.Builder refreshBuilder = ClusterTopologyRefreshOptions.builder()
-                .dynamicRefreshSources(redis.getCluster().isDynamicRefreshSources());
+            val refreshBuilder = ClusterTopologyRefreshOptions.builder().dynamicRefreshSources(redis.getCluster().isDynamicRefreshSources());
             if (StringUtils.hasText(redis.getCluster().getTopologyRefreshPeriod())) {
                 refreshBuilder.enablePeriodicRefresh(Beans.newDuration(redis.getCluster().getTopologyRefreshPeriod()));
             }
             if (redis.getCluster().isAdaptiveTopologyRefresh()) {
                 refreshBuilder.enableAllAdaptiveRefreshTriggers();
             }
-            ClusterClientOptions.Builder clusterClientOptionsBuilder = ClusterClientOptions.builder();
+            val clusterClientOptionsBuilder = ClusterClientOptions.builder();
             return clusterClientOptionsBuilder.topologyRefreshOptions(refreshBuilder.build());
         }
         return ClientOptions.builder();
