@@ -14,6 +14,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.configuration.support.TriStateBoolean;
+import org.apereo.cas.persondir.AttributeRepositoryResolver;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.services.ServicesManager;
@@ -70,6 +71,9 @@ class PersonDirectoryPrincipalResolverTests {
     private ServicesManager servicesManager;
 
     @Mock
+    private AttributeRepositoryResolver attributeRepositoryResolver;
+
+    @Mock
     private AttributeDefinitionStore attributeDefinitionStore;
 
     @BeforeEach
@@ -91,6 +95,7 @@ class PersonDirectoryPrincipalResolverTests {
         final StubPersonAttributeDao attributeRepository) {
         return PrincipalResolutionContext.builder()
             .attributeDefinitionStore(attributeDefinitionStore)
+            .attributeRepositoryResolver(attributeRepositoryResolver)
             .servicesManager(servicesManager)
             .applicationContext(applicationContext)
             .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(casProperties))
@@ -526,6 +531,6 @@ class PersonDirectoryPrincipalResolverTests {
             new StubPersonAttributeDao(Collections.emptyMap()),
             CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.ADD),
             mock(ServicesManager.class), mock(AttributeDefinitionStore.class),
-            properties);
+            mock(AttributeRepositoryResolver.class), properties);
     }
 }

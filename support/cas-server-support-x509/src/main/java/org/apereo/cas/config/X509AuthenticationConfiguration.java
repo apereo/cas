@@ -35,6 +35,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.support.x509.X509Properties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.persondir.AttributeRepositoryResolver;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.RegexUtils;
@@ -78,7 +79,8 @@ public class X509AuthenticationConfiguration {
         final X509AttributeExtractor x509AttributeExtractor,
         final PrincipalFactory x509PrincipalFactory,
         final ServicesManager servicesManager,
-        final AttributeDefinitionStore attributeDefinitionStore) {
+        final AttributeDefinitionStore attributeDefinitionStore,
+        final AttributeRepositoryResolver attributeRepositoryResolver) {
         val x509 = casProperties.getAuthn().getX509();
         val serialNoProperties = x509.getSerialNo();
         val personDirectory = casProperties.getPersonDirectory();
@@ -90,7 +92,7 @@ public class X509AuthenticationConfiguration {
             CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
             X509SerialNumberPrincipalResolver.class,
             servicesManager, attributeDefinitionStore,
-            principal, personDirectory);
+            attributeRepositoryResolver, principal, personDirectory);
         resolver.setX509AttributeExtractor(x509AttributeExtractor);
         if (Character.MIN_RADIX <= radix && radix <= Character.MAX_RADIX) {
             if (radix == HEX) {
@@ -285,13 +287,15 @@ public class X509AuthenticationConfiguration {
         @Qualifier("x509AttributeExtractor")
         final X509AttributeExtractor x509AttributeExtractor,
         @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
-        final IPersonAttributeDao attributeRepository) {
+        final IPersonAttributeDao attributeRepository,
+        @Qualifier(AttributeRepositoryResolver.BEAN_NAME)
+        final AttributeRepositoryResolver attributeRepositoryResolver) {
         val personDirectory = casProperties.getPersonDirectory();
         val x509 = casProperties.getAuthn().getX509();
         val principal = x509.getPrincipal();
         val resolver = PersonDirectoryPrincipalResolver.newPersonDirectoryPrincipalResolver(applicationContext, x509PrincipalFactory, attributeRepository,
             CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
-            X509SubjectPrincipalResolver.class, servicesManager, attributeDefinitionStore, principal, personDirectory);
+            X509SubjectPrincipalResolver.class, servicesManager, attributeDefinitionStore, attributeRepositoryResolver, principal, personDirectory);
         resolver.setPrincipalDescriptor(x509.getPrincipalDescriptor());
         resolver.setX509AttributeExtractor(x509AttributeExtractor);
         return resolver;
@@ -312,7 +316,9 @@ public class X509AuthenticationConfiguration {
         @Qualifier("x509AttributeExtractor")
         final X509AttributeExtractor x509AttributeExtractor,
         @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
-        final IPersonAttributeDao attributeRepository) {
+        final IPersonAttributeDao attributeRepository,
+        @Qualifier(AttributeRepositoryResolver.BEAN_NAME)
+        final AttributeRepositoryResolver attributeRepositoryResolver) {
         val x509 = casProperties.getAuthn().getX509();
         val subjectDn = x509.getSubjectDn();
         val personDirectory = casProperties.getPersonDirectory();
@@ -320,7 +326,7 @@ public class X509AuthenticationConfiguration {
         val resolver = PersonDirectoryPrincipalResolver.newPersonDirectoryPrincipalResolver(applicationContext, x509PrincipalFactory, attributeRepository,
             CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
             X509SubjectDNPrincipalResolver.class, servicesManager, attributeDefinitionStore,
-            principal, personDirectory);
+            attributeRepositoryResolver, principal, personDirectory);
         resolver.setSubjectDnFormat(X509AuthenticationUtils.getSubjectDnFormat(subjectDn.getFormat()));
         resolver.setX509AttributeExtractor(x509AttributeExtractor);
         return resolver;
@@ -341,7 +347,9 @@ public class X509AuthenticationConfiguration {
         @Qualifier("x509AttributeExtractor")
         final X509AttributeExtractor x509AttributeExtractor,
         @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
-        final IPersonAttributeDao attributeRepository) {
+        final IPersonAttributeDao attributeRepository,
+        @Qualifier(AttributeRepositoryResolver.BEAN_NAME)
+        final AttributeRepositoryResolver attributeRepositoryResolver) {
         val x509 = casProperties.getAuthn().getX509();
         val personDirectory = casProperties.getPersonDirectory();
         val subjectAltNameProperties = x509.getSubjectAltName();
@@ -349,7 +357,7 @@ public class X509AuthenticationConfiguration {
         val resolver = PersonDirectoryPrincipalResolver.newPersonDirectoryPrincipalResolver(applicationContext, x509PrincipalFactory, attributeRepository,
             CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
             X509SubjectAlternativeNameUPNPrincipalResolver.class, servicesManager, attributeDefinitionStore,
-            principal, personDirectory);
+            attributeRepositoryResolver, principal, personDirectory);
         resolver.setAlternatePrincipalAttribute(subjectAltNameProperties.getAlternatePrincipalAttribute());
         resolver.setX509AttributeExtractor(x509AttributeExtractor);
         return resolver;
@@ -370,7 +378,9 @@ public class X509AuthenticationConfiguration {
         @Qualifier("x509AttributeExtractor")
         final X509AttributeExtractor x509AttributeExtractor,
         @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
-        final IPersonAttributeDao attributeRepository) {
+        final IPersonAttributeDao attributeRepository,
+        @Qualifier(AttributeRepositoryResolver.BEAN_NAME)
+        final AttributeRepositoryResolver attributeRepositoryResolver) {
         val x509 = casProperties.getAuthn().getX509();
         val personDirectory = casProperties.getPersonDirectory();
         val rfc822EmailProperties = x509.getRfc822Email();
@@ -378,7 +388,7 @@ public class X509AuthenticationConfiguration {
         val resolver = PersonDirectoryPrincipalResolver.newPersonDirectoryPrincipalResolver(applicationContext, x509PrincipalFactory, attributeRepository,
             CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
             X509SubjectAlternativeNameRFC822EmailPrincipalResolver.class, servicesManager, attributeDefinitionStore,
-            principal, personDirectory);
+            attributeRepositoryResolver, principal, personDirectory);
         resolver.setAlternatePrincipalAttribute(rfc822EmailProperties.getAlternatePrincipalAttribute());
         resolver.setX509AttributeExtractor(x509AttributeExtractor);
         return resolver;
@@ -399,9 +409,11 @@ public class X509AuthenticationConfiguration {
         @Qualifier("x509AttributeExtractor")
         final X509AttributeExtractor x509AttributeExtractor,
         @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
-        final IPersonAttributeDao attributeRepository) {
+        final IPersonAttributeDao attributeRepository,
+        @Qualifier(AttributeRepositoryResolver.BEAN_NAME)
+        final AttributeRepositoryResolver attributeRepositoryResolver) {
         return getX509SerialNumberPrincipalResolver(applicationContext, casProperties, attributeRepository,
-            x509AttributeExtractor, x509PrincipalFactory, servicesManager, attributeDefinitionStore);
+            x509AttributeExtractor, x509PrincipalFactory, servicesManager, attributeDefinitionStore, attributeRepositoryResolver);
     }
 
     @ConditionalOnMissingBean(name = "x509PrincipalFactory")
@@ -425,6 +437,8 @@ public class X509AuthenticationConfiguration {
         final PrincipalFactory x509PrincipalFactory,
         @Qualifier("x509AttributeExtractor")
         final X509AttributeExtractor x509AttributeExtractor,
+        @Qualifier(AttributeRepositoryResolver.BEAN_NAME)
+        final AttributeRepositoryResolver attributeRepositoryResolver,
         @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
         final IPersonAttributeDao attributeRepository) {
         val x509 = casProperties.getAuthn().getX509();
@@ -433,7 +447,7 @@ public class X509AuthenticationConfiguration {
         val personDirectory = casProperties.getPersonDirectory();
         val resolver = PersonDirectoryPrincipalResolver.newPersonDirectoryPrincipalResolver(applicationContext, x509PrincipalFactory, attributeRepository,
             CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
-            X509SerialNumberAndIssuerDNPrincipalResolver.class, servicesManager, attributeDefinitionStore,
+            X509SerialNumberAndIssuerDNPrincipalResolver.class, servicesManager, attributeDefinitionStore, attributeRepositoryResolver,
             principal, personDirectory);
         resolver.setSerialNumberPrefix(serialNoDnProperties.getSerialNumberPrefix());
         resolver.setValueDelimiter(serialNoDnProperties.getValueDelimiter());
@@ -456,15 +470,17 @@ public class X509AuthenticationConfiguration {
         @Qualifier("x509AttributeExtractor")
         final X509AttributeExtractor x509AttributeExtractor,
         @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
-        final IPersonAttributeDao attributeRepository) {
+        final IPersonAttributeDao attributeRepository,
+        @Qualifier(AttributeRepositoryResolver.BEAN_NAME)
+        final AttributeRepositoryResolver attributeRepositoryResolver) {
         val x509 = casProperties.getAuthn().getX509();
         val cnEdipiProperties = x509.getCnEdipi();
         val principal = x509.getPrincipal();
         val personDirectory = casProperties.getPersonDirectory();
         val resolver = PersonDirectoryPrincipalResolver.newPersonDirectoryPrincipalResolver(applicationContext, x509PrincipalFactory, attributeRepository,
             CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
-            X509CommonNameEDIPIPrincipalResolver.class, servicesManager, attributeDefinitionStore, principal,
-            personDirectory);
+            X509CommonNameEDIPIPrincipalResolver.class, servicesManager, attributeDefinitionStore,
+            attributeRepositoryResolver, principal, personDirectory);
         resolver.setAlternatePrincipalAttribute(cnEdipiProperties.getAlternatePrincipalAttribute());
         resolver.setX509AttributeExtractor(x509AttributeExtractor);
         return resolver;

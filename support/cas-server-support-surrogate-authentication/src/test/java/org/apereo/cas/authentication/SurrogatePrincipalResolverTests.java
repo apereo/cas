@@ -12,6 +12,7 @@ import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionCont
 import org.apereo.cas.authentication.surrogate.SimpleSurrogateAuthenticationService;
 import org.apereo.cas.authentication.surrogate.SurrogateCredentialTrait;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.persondir.AttributeRepositoryResolver;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
@@ -57,6 +58,9 @@ class SurrogatePrincipalResolverTests {
 
     @Mock
     private AttributeDefinitionStore attributeDefinitionStore;
+
+    @Mock
+    private AttributeRepositoryResolver attributeRepositoryResolver;
 
     @BeforeEach
     public void before() throws Exception {
@@ -201,6 +205,7 @@ class SurrogatePrincipalResolverTests {
         return PrincipalResolutionContext.builder()
             .attributeDefinitionStore(attributeDefinitionStore)
             .servicesManager(servicesManager)
+            .attributeRepositoryResolver(attributeRepositoryResolver)
             .applicationContext(applicationContext)
             .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()))
             .attributeRepository(attributeRepository)

@@ -7,6 +7,7 @@ import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -25,6 +26,7 @@ import java.util.Map;
 @ToString
 @EqualsAndHashCode(callSuper = true)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+@Accessors(chain = true)
 public class DefaultPrincipalAttributesRepository extends AbstractPrincipalAttributesRepository {
 
     @Serial

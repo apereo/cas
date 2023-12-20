@@ -1,8 +1,9 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
@@ -54,12 +55,19 @@ class ReturnAllowedAttributeReleasePolicyTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @SpringBootTest(classes = {
-        CasPersonDirectoryTestConfiguration.class,
+        CasPersonDirectoryConfiguration.class,
+        CasCoreAuthenticationPrincipalConfiguration.class,
         ReturnAllowedAttributeReleasePolicyTestConfiguration.class,
         CasCoreUtilConfiguration.class,
         RefreshAutoConfiguration.class
     },
-        properties = "cas.authn.attribute-repository.attribute-definition-store.json.location=classpath:/return-allowed-definitions.json")
+        properties = {
+            "cas.authn.attribute-repository.stub.attributes.uid=uid",
+            "cas.authn.attribute-repository.stub.attributes.mail=cas@apereo.org",
+            "cas.authn.attribute-repository.stub.attributes.eduPersonAffiliation=developer",
+            "cas.authn.attribute-repository.stub.attributes.groupMembership=adopters",
+            "cas.authn.attribute-repository.attribute-definition-store.json.location=classpath:/return-allowed-definitions.json"
+        })
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @Nested
     class AttributeDefinitionsTests {
@@ -110,12 +118,17 @@ class ReturnAllowedAttributeReleasePolicyTests {
     }
 
     @SpringBootTest(classes = {
-        CasPersonDirectoryTestConfiguration.class,
+        CasPersonDirectoryConfiguration.class,
+        CasCoreAuthenticationPrincipalConfiguration.class,
         ReturnAllowedAttributeReleasePolicyTestConfiguration.class,
         CasCoreUtilConfiguration.class,
         RefreshAutoConfiguration.class
     },
         properties = {
+            "cas.authn.attribute-repository.stub.attributes.uid=uid",
+            "cas.authn.attribute-repository.stub.attributes.mail=cas@apereo.org",
+            "cas.authn.attribute-repository.stub.attributes.eduPersonAffiliation=developer",
+            "cas.authn.attribute-repository.stub.attributes.groupMembership=adopters",
             "cas.authn.attribute-repository.attribute-definition-store.json.location=classpath:/return-allowed-definitions.json",
             "cas.authn.attribute-repository.core.default-attributes-to-release=cn,mail"
         })

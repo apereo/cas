@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
+import org.apereo.cas.persondir.AttributeRepositoryResolver;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
@@ -49,6 +50,9 @@ class X509SubjectAlternativeNameUPNPrincipalResolverTests {
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
+
+    @Mock
+    private AttributeRepositoryResolver attributeRepositoryResolver;
 
     @BeforeEach
     public void before() throws Exception {
@@ -110,6 +114,7 @@ class X509SubjectAlternativeNameUPNPrincipalResolverTests {
             .useCurrentPrincipalId(false)
             .resolveAttributes(true)
             .applicationContext(applicationContext)
+            .attributeRepositoryResolver(attributeRepositoryResolver)
             .activeAttributeRepositoryIdentifiers(CollectionUtils.wrapSet(IPersonAttributeDao.WILDCARD))
             .build();
         val resolver = new X509SubjectAlternativeNameUPNPrincipalResolver(context);
@@ -136,6 +141,7 @@ class X509SubjectAlternativeNameUPNPrincipalResolverTests {
     void verifyAlternate() throws Throwable {
         val context = PrincipalResolutionContext.builder()
             .attributeDefinitionStore(attributeDefinitionStore)
+            .attributeRepositoryResolver(attributeRepositoryResolver)
             .servicesManager(servicesManager)
             .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.REPLACE))
             .attributeRepository(CoreAuthenticationTestUtils.getAttributeRepository())

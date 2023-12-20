@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
+import org.apereo.cas.persondir.AttributeRepositoryResolver;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
@@ -47,6 +48,9 @@ class X509CommonNameEDIPIPrincipalResolverTests {
 
     @Mock
     private AttributeDefinitionStore attributeDefinitionStore;
+
+    @Mock
+    private AttributeRepositoryResolver attributeRepositoryResolver;
 
     @BeforeEach
     public void before() throws Exception {
@@ -135,6 +139,7 @@ class X509CommonNameEDIPIPrincipalResolverTests {
             .attributeDefinitionStore(attributeDefinitionStore)
             .servicesManager(servicesManager)
             .applicationContext(applicationContext)
+            .attributeRepositoryResolver(attributeRepositoryResolver)
             .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.REPLACE))
             .attributeRepository(CoreAuthenticationTestUtils.getAttributeRepository())
             .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())

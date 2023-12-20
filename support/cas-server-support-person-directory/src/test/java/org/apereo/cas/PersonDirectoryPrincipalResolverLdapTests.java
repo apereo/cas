@@ -12,6 +12,7 @@ import org.apereo.cas.authentication.principal.resolvers.ChainingPrincipalResolv
 import org.apereo.cas.authentication.principal.resolvers.EchoingPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.persondir.AttributeRepositoryResolver;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
@@ -80,12 +81,17 @@ class PersonDirectoryPrincipalResolverLdapTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
+    @Autowired
+    @Qualifier(AttributeRepositoryResolver.BEAN_NAME)
+    private AttributeRepositoryResolver attributeRepositoryResolver;
+
     @Test
     void verifyResolver() throws Throwable {
         val attributeMerger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
         val resolver = PersonDirectoryPrincipalResolver.newPersonDirectoryPrincipalResolver(
             applicationContext, PrincipalFactoryUtils.newPrincipalFactory(),
-            this.attributeRepository, attributeMerger, servicesManager, attributeDefinitionStore, casProperties.getPersonDirectory());
+            this.attributeRepository, attributeMerger, servicesManager,
+            attributeDefinitionStore, attributeRepositoryResolver, casProperties.getPersonDirectory());
         val principal = resolver.resolve(new UsernamePasswordCredential("admin", "password"),
             Optional.of(CoreAuthenticationTestUtils.getPrincipal("admin")),
             Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()),
@@ -102,7 +108,7 @@ class PersonDirectoryPrincipalResolverLdapTests {
             this.attributeRepository,
             CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
             servicesManager, attributeDefinitionStore,
-            casProperties.getPersonDirectory());
+            attributeRepositoryResolver, casProperties.getPersonDirectory());
         val chain = new ChainingPrincipalResolver(new DefaultPrincipalElectionStrategy(), casProperties);
         chain.setChain(Arrays.asList(new EchoingPrincipalResolver(), resolver));
         val attributes = new HashMap<String, List<Object>>(2);

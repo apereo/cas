@@ -87,18 +87,18 @@ class ExpiringPrincipalAttributesRepositoryTests {
                 .principal(PRINCIPAL)
                 .registeredService(CoreAuthenticationTestUtils.getRegisteredService(UUID.randomUUID().toString(), UUID.randomUUID().toString()))
                 .build();
-            try (val repository = getPrincipalAttributesRepository(TimeUnit.MILLISECONDS.name(), 100)) {
-                var repoAttrs = repository.getAttributes(context);
-                assertEquals(1, repoAttrs.size());
-                assertTrue(repoAttrs.containsKey(MAIL));
-                Thread.sleep(1_000);
-                repository.setMergingStrategy(PrincipalAttributesCoreProperties.MergingStrategyTypes.REPLACE);
-                repository.setAttributeRepositoryIds(Set.of("Stub"));
-                repoAttrs = repository.getAttributes(context);
-                assertEquals(1, repoAttrs.size());
-                assertFalse(repoAttrs.containsKey("uid"));
-                assertEquals("final@school.com", repoAttrs.get(MAIL).getFirst());
-            }
+            val repository = getPrincipalAttributesRepository(TimeUnit.MILLISECONDS.name(), 100);
+            var repoAttrs = repository.getAttributes(context);
+            assertEquals(1, repoAttrs.size());
+            assertTrue(repoAttrs.containsKey(MAIL));
+            Thread.sleep(1_000);
+            repository.setMergingStrategy(PrincipalAttributesCoreProperties.MergingStrategyTypes.REPLACE);
+            repository.setAttributeRepositoryIds(Set.of("Stub"));
+            repoAttrs = repository.getAttributes(context);
+            assertEquals(1, repoAttrs.size());
+            assertFalse(repoAttrs.containsKey("uid"));
+            assertEquals("final@school.com", repoAttrs.get(MAIL).getFirst());
+
         }
 
         @Test
@@ -108,12 +108,12 @@ class ExpiringPrincipalAttributesRepositoryTests {
                 .principal(PRINCIPAL)
                 .registeredService(CoreAuthenticationTestUtils.getRegisteredService(UUID.randomUUID().toString(), UUID.randomUUID().toString()))
                 .build();
-            try (val repository = getPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 5)) {
-                assertEquals(1, repository.getAttributes(context).size());
-                assertTrue(repository.getAttributes(context).containsKey(MAIL));
-                REPOSITORY_ATTRIBUTES.clear();
-                assertTrue(repository.getAttributes(context).containsKey(MAIL));
-            }
+            val repository = getPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 5);
+            assertEquals(1, repository.getAttributes(context).size());
+            assertTrue(repository.getAttributes(context).containsKey(MAIL));
+            REPOSITORY_ATTRIBUTES.clear();
+            assertTrue(repository.getAttributes(context).containsKey(MAIL));
+
         }
     }
 

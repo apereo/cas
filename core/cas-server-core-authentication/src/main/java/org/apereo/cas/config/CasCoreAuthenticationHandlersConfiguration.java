@@ -17,6 +17,7 @@ import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.persondir.AttributeRepositoryResolver;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -213,7 +214,9 @@ public class CasCoreAuthenticationHandlersConfiguration {
             final ServicesManager servicesManager,
             final CasConfigurationProperties casProperties,
             @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY) final IPersonAttributeDao attributeRepository,
-            @Qualifier("jaasPrincipalFactory") final PrincipalFactory jaasPrincipalFactory) {
+            @Qualifier("jaasPrincipalFactory") final PrincipalFactory jaasPrincipalFactory,
+            @Qualifier(AttributeRepositoryResolver.BEAN_NAME)
+            final AttributeRepositoryResolver attributeRepositoryResolver) {
             val personDirectory = casProperties.getPersonDirectory();
             return BeanContainer.of(casProperties.getAuthn().getJaas()
                 .stream()
@@ -222,7 +225,8 @@ public class CasCoreAuthenticationHandlersConfiguration {
                     val jaasPrincipal = jaas.getPrincipal();
                     var attributeMerger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
                     return PersonDirectoryPrincipalResolver.newPersonDirectoryPrincipalResolver(applicationContext, jaasPrincipalFactory,
-                        attributeRepository, attributeMerger, servicesManager, attributeDefinitionStore, jaasPrincipal, personDirectory);
+                        attributeRepository, attributeMerger, servicesManager, attributeDefinitionStore,
+                        attributeRepositoryResolver, jaasPrincipal, personDirectory);
                 })
                 .collect(Collectors.toList()));
         }
