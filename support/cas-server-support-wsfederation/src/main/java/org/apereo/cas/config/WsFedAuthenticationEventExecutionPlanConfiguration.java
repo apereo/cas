@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
+import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -171,7 +172,9 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
             @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
             final IPersonAttributeDao attributeRepository,
             @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) {
+            final ServicesManager servicesManager,
+            @Qualifier(AttributeRepositoryResolver.BEAN_NAME)
+            final AttributeRepositoryResolver attributeRepositoryResolver) {
             val personDirectory = casProperties.getPersonDirectory();
             return plan -> casProperties.getAuthn()
                 .getWsfed()
@@ -194,7 +197,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
                             applicationContext, wsfedPrincipalFactory, attributeRepository,
                             CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
                             WsFederationCredentialsToPrincipalResolver.class, servicesManager, attributeDefinitionStore,
-                            principal, personDirectory);
+                            attributeRepositoryResolver, principal, personDirectory);
                         resolver.setConfiguration(cfg);
                         plan.registerAuthenticationHandlerWithPrincipalResolver(handler, resolver);
                     } else {

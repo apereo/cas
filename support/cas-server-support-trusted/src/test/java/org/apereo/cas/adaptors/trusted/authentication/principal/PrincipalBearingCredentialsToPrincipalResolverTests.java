@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.trusted.authentication.principal;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
+import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
@@ -10,7 +11,6 @@ import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionCont
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
-
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,9 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
-
 import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -45,12 +43,16 @@ class PrincipalBearingCredentialsToPrincipalResolverTests {
     @Mock
     private AttributeDefinitionStore attributeDefinitionStore;
 
+    @Mock
+    private AttributeRepositoryResolver attributeRepositoryResolver;
+    
     @BeforeEach
     public void initialize() throws Exception {
         MockitoAnnotations.openMocks(this).close();
         val context = PrincipalResolutionContext.builder()
             .attributeDefinitionStore(attributeDefinitionStore)
             .servicesManager(servicesManager)
+            .attributeRepositoryResolver(attributeRepositoryResolver)
             .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.REPLACE))
             .attributeRepository(CoreAuthenticationTestUtils.getAttributeRepository())
             .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())

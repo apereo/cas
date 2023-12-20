@@ -3,6 +3,7 @@ package org.apereo.cas;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
+import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
@@ -74,6 +75,10 @@ class PersonDirectoryPrincipalResolverActiveDirectoryTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
+    @Autowired
+    @Qualifier(AttributeRepositoryResolver.BEAN_NAME)
+    private AttributeRepositoryResolver attributeRepositoryResolver;
+
     @Test
     void verifyResolver() throws Throwable {
         val attributeMerger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
@@ -81,7 +86,7 @@ class PersonDirectoryPrincipalResolverActiveDirectoryTests {
             applicationContext, PrincipalFactoryUtils.newPrincipalFactory(),
             attributeRepository, attributeMerger,
             servicesManager, attributeDefinitionStore,
-            casProperties.getPersonDirectory());
+            attributeRepositoryResolver, casProperties.getPersonDirectory());
         val principal = resolver.resolve(new UsernamePasswordCredential("admin", "P@ssw0rd"),
             Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
             Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()),

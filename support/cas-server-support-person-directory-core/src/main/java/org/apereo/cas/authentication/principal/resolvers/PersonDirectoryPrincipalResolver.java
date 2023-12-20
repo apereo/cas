@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.principal.resolvers;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
+import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
 import org.apereo.cas.authentication.attribute.PrincipalAttributeRepositoryFetcher;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -11,8 +12,6 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import org.apereo.cas.configuration.support.TriStateBoolean;
-import org.apereo.cas.persondir.AttributeRepositoryResolver;
-import org.apereo.cas.persondir.DefaultAttributeRepositoryResolver;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.transforms.ChainingPrincipalNameTransformer;
@@ -191,11 +190,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         val query = new AttributeRepositoryResolver.AttributeRepositoryQuery(handler.orElse(null), principal,
             service, context.getActiveAttributeRepositoryIdentifiers());
 
-        val repositoryResolver = context.getApplicationContext().containsBean(AttributeRepositoryResolver.BEAN_NAME)
-            ? context.getApplicationContext().getBean(AttributeRepositoryResolver.BEAN_NAME, AttributeRepositoryResolver.class)
-            : new DefaultAttributeRepositoryResolver(context.getServicesManager());
-
-        val repositoryIds = repositoryResolver.resolve(query);
+        val repositoryIds = context.getAttributeRepositoryResolver().resolve(query);
         LOGGER.debug("The following attribute repository IDs are resolved: [{}]", repositoryIds);
 
         val attributeFetcher = PrincipalAttributeRepositoryFetcher.builder()
@@ -270,9 +265,11 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         final IAttributeMerger attributeMerger,
         final ServicesManager servicesManager,
         final AttributeDefinitionStore attributeDefinitionStore,
+        final AttributeRepositoryResolver attributeRepositoryResolver,
         final PersonDirectoryPrincipalResolverProperties... personDirectory) {
         return newPersonDirectoryPrincipalResolver(applicationContext, principalFactory, attributeRepository,
-            attributeMerger, PersonDirectoryPrincipalResolver.class, servicesManager, attributeDefinitionStore, personDirectory);
+            attributeMerger, PersonDirectoryPrincipalResolver.class, servicesManager,
+            attributeDefinitionStore, attributeRepositoryResolver, personDirectory);
     }
 
     /**
@@ -297,10 +294,11 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         final Class<T> resolverClass,
         final ServicesManager servicesManager,
         final AttributeDefinitionStore attributeDefinitionStore,
+        final AttributeRepositoryResolver attributeRepositoryResolver,
         final PersonDirectoryPrincipalResolverProperties... personDirectory) {
 
         val context = buildPrincipalResolutionContext(applicationContext, principalFactory, attributeRepository, attributeMerger,
-            servicesManager, attributeDefinitionStore, personDirectory);
+            servicesManager, attributeDefinitionStore, attributeRepositoryResolver, personDirectory);
         return newPersonDirectoryPrincipalResolver(resolverClass, context);
     }
 
@@ -339,6 +337,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         final IAttributeMerger attributeMerger,
         final ServicesManager servicesManager,
         final AttributeDefinitionStore attributeDefinitionStore,
+        final AttributeRepositoryResolver attributeRepositoryResolver,
         final PersonDirectoryPrincipalResolverProperties... personDirectory) {
 
         val transformers = Arrays.stream(personDirectory)
@@ -373,6 +372,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
             .resolveAttributes(Arrays.stream(personDirectory).filter(p -> p.getAttributeResolutionEnabled() != TriStateBoolean.UNDEFINED)
                 .map(p -> p.getAttributeResolutionEnabled().toBoolean()).findFirst().orElse(Boolean.TRUE))
             .activeAttributeRepositoryIdentifiers(activeAttributeRepositoryIdentifiers)
+            .attributeRepositoryResolver(attributeRepositoryResolver)
             .build();
     }
 }

@@ -4,6 +4,7 @@ import org.apereo.cas.adaptors.x509.authentication.CasX509Certificate;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
+import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
@@ -22,10 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
-
 import java.security.cert.X509Certificate;
 import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -49,12 +48,16 @@ class X509SerialNumberAndIssuerDNPrincipalResolverTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
+    @Mock
+    private AttributeRepositoryResolver attributeRepositoryResolver;
+
     @BeforeEach
     public void setup() throws Exception {
         MockitoAnnotations.openMocks(this).close();
         val context = PrincipalResolutionContext.builder()
             .servicesManager(servicesManager)
             .attributeDefinitionStore(attributeDefinitionStore)
+            .attributeRepositoryResolver(attributeRepositoryResolver)
             .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.REPLACE))
             .attributeRepository(CoreAuthenticationTestUtils.getAttributeRepository())
             .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())

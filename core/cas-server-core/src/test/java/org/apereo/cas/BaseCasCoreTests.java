@@ -2,6 +2,7 @@ package org.apereo.cas;
 
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolutionExecutionPlanConfigurer;
@@ -71,6 +72,7 @@ import java.io.Serial;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * This is {@link BaseCasCoreTests}.
@@ -176,7 +178,6 @@ public abstract class BaseCasCoreTests {
             }
         }
 
-
         @TestConfiguration(value = "AttributeRepositoryTestConfiguration", proxyBeanMethods = false)
         public static class AttributeRepositoryTestConfiguration {
             @ConditionalOnMissingBean(name = PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
@@ -189,6 +190,12 @@ public abstract class BaseCasCoreTests {
                     "eduPersonAffiliation", CollectionUtils.wrap("developer"),
                     "groupMembership", CollectionUtils.wrap("adopters"));
                 return new StubPersonAttributeDao((Map) attrs);
+            }
+
+            @Bean
+            @ConditionalOnMissingBean(name = AttributeRepositoryResolver.BEAN_NAME)
+            public AttributeRepositoryResolver attributeRepositoryResolver() {
+                return query -> Set.of(IPersonAttributeDao.WILDCARD);
             }
         }
     }

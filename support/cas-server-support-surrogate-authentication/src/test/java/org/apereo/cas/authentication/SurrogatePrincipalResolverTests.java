@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
+import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalElectionStrategy;
@@ -57,6 +58,9 @@ class SurrogatePrincipalResolverTests {
 
     @Mock
     private AttributeDefinitionStore attributeDefinitionStore;
+
+    @Mock
+    private AttributeRepositoryResolver attributeRepositoryResolver;
 
     @BeforeEach
     public void before() throws Exception {
@@ -201,6 +205,7 @@ class SurrogatePrincipalResolverTests {
         return PrincipalResolutionContext.builder()
             .attributeDefinitionStore(attributeDefinitionStore)
             .servicesManager(servicesManager)
+            .attributeRepositoryResolver(attributeRepositoryResolver)
             .applicationContext(applicationContext)
             .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()))
             .attributeRepository(attributeRepository)

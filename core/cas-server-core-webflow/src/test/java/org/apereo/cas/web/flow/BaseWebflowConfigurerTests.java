@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.config.CasCookieConfiguration;
 import org.apereo.cas.config.CasCoreAuditConfiguration;
@@ -55,6 +56,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * This is {@link BaseWebflowConfigurerTests}.
@@ -145,6 +147,11 @@ public abstract class BaseWebflowConfigurerTests {
                     "eduPersonAffiliation", CollectionUtils.wrap("developer"),
                     "groupMembership", CollectionUtils.wrap("adopters"));
                 return new StubPersonAttributeDao((Map) attrs);
+            }
+
+            @Bean
+            public AttributeRepositoryResolver attributeRepositoryResolver() {
+                return query -> Set.of(IPersonAttributeDao.WILDCARD);
             }
         }
     }

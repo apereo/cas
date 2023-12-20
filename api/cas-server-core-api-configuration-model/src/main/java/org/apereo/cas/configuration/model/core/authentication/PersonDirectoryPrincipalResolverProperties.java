@@ -9,6 +9,8 @@ import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Configuration properties class for Person Directory.
@@ -84,4 +86,13 @@ public class PersonDirectoryPrincipalResolverProperties implements Serializable 
     @NestedConfigurationProperty
     private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
 
+    /**
+     * Control the behavior of the attribute repository selection by authentication method or handler.
+     * The map here is keyed by the authentication handler name, and the value is the attribute repository
+     * identifiers separated by comma. When the authentication handler is executed, the attribute repositories
+     * assigned to this handler will be selected to fetch attributes.
+     * Note that the resolution engine will always favor attribute repositories assigned to the
+     * service definition, if any and as part of its authentication policy, over this global setting.
+     */
+    private Map<String, String> attributeRepositorySelection = new HashMap<>();
 }
