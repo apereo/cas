@@ -4,7 +4,7 @@ import lombok.Getter;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.thymeleaf.IEngineConfiguration;
 import org.thymeleaf.templateresolver.AbstractConfigurableTemplateResolver;
-import org.thymeleaf.templateresolver.AbstractTemplateResolver;
+import org.thymeleaf.templateresolver.ITemplateResolver;
 import org.thymeleaf.templateresolver.TemplateResolution;
 import org.thymeleaf.templateresource.ITemplateResource;
 
@@ -20,7 +20,7 @@ import java.util.Map;
  */
 @Getter
 public class ChainingTemplateViewResolver extends AbstractConfigurableTemplateResolver {
-    private final List<AbstractTemplateResolver> resolvers = new ArrayList<>(0);
+    private final List<ITemplateResolver> resolvers = new ArrayList<>(0);
 
     public ChainingTemplateViewResolver() {
         setOrder(0);
@@ -34,7 +34,7 @@ public class ChainingTemplateViewResolver extends AbstractConfigurableTemplateRe
      *
      * @param resolver the resolver
      */
-    public void addResolver(final AbstractTemplateResolver resolver) {
+    public void addResolver(final ITemplateResolver resolver) {
         this.resolvers.add(resolver);
     }
 

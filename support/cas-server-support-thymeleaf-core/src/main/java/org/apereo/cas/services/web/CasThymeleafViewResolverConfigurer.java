@@ -3,6 +3,7 @@ package org.apereo.cas.services.web;
 import org.springframework.core.Ordered;
 import org.thymeleaf.spring6.view.AbstractThymeleafView;
 import org.thymeleaf.spring6.view.ThymeleafViewResolver;
+import org.thymeleaf.templateresolver.ITemplateResolver;
 
 /**
  * Spring beans that implement this interface will be used to configure the base
@@ -30,4 +31,13 @@ public interface CasThymeleafViewResolverConfigurer extends Ordered {
      * @param thymeleafView the thymeleaf view
      */
     void configureThymeleafView(AbstractThymeleafView thymeleafView);
+
+    /**
+     * Register template resolver.
+     *
+     * @return the template resolver
+     */
+    default ITemplateResolver registerTemplateResolver() {
+        return null;
+    }
 }

@@ -46,7 +46,8 @@ public abstract class BaseJdbcAttributeRepositoryTests {
     @Mock
     protected AttributeDefinitionStore attributeDefinitionStore;
 
-    @Mock
+    @Autowired
+    @Qualifier(AttributeRepositoryResolver.BEAN_NAME)
     protected AttributeRepositoryResolver attributeRepositoryResolver;
 
     @BeforeEach
