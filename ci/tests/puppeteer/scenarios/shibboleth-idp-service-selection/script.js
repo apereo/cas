@@ -11,7 +11,7 @@ function getShibbolethUrlForEntityId(entityId) {
     await cas.goto(page, getShibbolethUrlForEntityId("google.com"));
     await cas.loginWith(page);
     await page.waitForTimeout(1000);
-    await cas.assertInnerTextStartsWith(page, "#login h4", "Your account is not registered");
+    await cas.assertInnerTextStartsWith(page, "#login h2", "Your account is not registered");
     await cas.assertVisibility(page, "img#imageQRCode");
     await cas.assertVisibility(page, "#scratchcodes");
 

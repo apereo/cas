@@ -23,7 +23,7 @@ async function updateProperty(properties, propertiesFile, value) {
         await cas.gotoLogin(page);
         await page.waitForTimeout(1000);
         await cas.assertInnerText(page, "#sidebar div p", "Stay safe!");
-        await cas.assertInnerText(page, "#login-form-controls h3 span", "Welcome to CAS");
+        await cas.assertInnerText(page, "#login-form-controls h2 span", "Welcome to CAS");
 
         await updateProperty(properties, propertiesFile, "Hello World!");
 

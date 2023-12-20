@@ -17,7 +17,7 @@ const assert = require("assert");
     await cas.gotoLogout(page);
     await page.waitForTimeout(2000);
 
-    await cas.assertInnerText(page, "div h2", "Logout successful");
+    await cas.assertInnerText(page, "#main-content h2", "Logout successful");
     await cas.assertInnerTextStartsWith(page, "#logoutMessage", "You have successfully logged out");
     await cas.assertInnerTextStartsWith(page, "div ul li p kbd", "https://localhost:8444/protected");
 

@@ -15,6 +15,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
@@ -43,7 +44,8 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = {"mergingStrategy", "attributeRepositoryIds"})
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public abstract class AbstractPrincipalAttributesRepository implements RegisteredServicePrincipalAttributesRepository, AutoCloseable {
+@Accessors(chain = true)
+public abstract class AbstractPrincipalAttributesRepository implements RegisteredServicePrincipalAttributesRepository {
     @Serial
     private static final long serialVersionUID = 6350245643948535906L;
 
@@ -65,11 +67,6 @@ public abstract class AbstractPrincipalAttributesRepository implements Registere
     @Setter
     private boolean ignoreResolvedAttributes;
 
-    /***
-     * Convert principal attributes to person attributes.
-     * @param attributes the attributes
-     * @return person attributes
-     */
     protected static Map<String, List<Object>> convertPrincipalAttributesToPersonAttributes(final Map<String, ?> attributes) {
         val convertedAttributes = new TreeMap<String, List<Object>>(String.CASE_INSENSITIVE_ORDER);
         val principalAttributes = new LinkedHashMap<>(attributes);
@@ -87,29 +84,12 @@ public abstract class AbstractPrincipalAttributesRepository implements Registere
         return convertedAttributes;
     }
 
-    /**
-     * Convert person attributes to principal attributes.
-     *
-     * @param attributes person attributes
-     * @return principal attributes
-     */
     protected static Map<String, List<Object>> convertPersonAttributesToPrincipalAttributes(final Map<String, List<Object>> attributes) {
         return attributes.entrySet()
             .stream()
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    @Override
-    public void close() {
-    }
-
-    /**
-     * Convert attributes to principal attributes and cache.
-     *
-     * @param sourceAttributes the source attributes
-     * @param context          the context
-     * @return the map
-     */
     protected Map<String, List<Object>> convertAttributesToPrincipalAttributesAndCache(final Map<String, List<Object>> sourceAttributes,
                                                                                        final RegisteredServiceAttributeReleasePolicyContext context) {
         val finalAttributes = convertPersonAttributesToPrincipalAttributes(sourceAttributes);
@@ -118,32 +98,15 @@ public abstract class AbstractPrincipalAttributesRepository implements Registere
         return finalAttributes;
     }
 
-    /**
-     * Calculate merging strategy attribute merging strategy.
-     *
-     * @return the attribute merging strategy
-     */
     protected PrincipalAttributesCoreProperties.MergingStrategyTypes determineMergingStrategy() {
         return ObjectUtils.defaultIfNull(getMergingStrategy(), PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED);
     }
 
-    /**
-     * Are attribute repository ids defined boolean.
-     *
-     * @return true/false
-     */
     @JsonIgnore
     protected boolean areAttributeRepositoryIdsDefined() {
         return attributeRepositoryIds != null && !attributeRepositoryIds.isEmpty();
     }
 
-    /**
-     * Obtains attributes first from the repository by calling
-     * {@link IPersonAttributeDao#getPerson(String)}.
-     *
-     * @param context the context
-     * @return the map of attributes
-     */
     protected Map<String, List<Object>> retrievePersonAttributesFromAttributeRepository(
         final RegisteredServiceAttributeReleasePolicyContext context) {
         val repository = context.getApplicationContext().getBean(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY, IPersonAttributeDao.class);
@@ -156,12 +119,6 @@ public abstract class AbstractPrincipalAttributesRepository implements Registere
             .retrieve();
     }
 
-    /**
-     * Gets principal attributes.
-     *
-     * @param principal the principal
-     * @return the principal attributes
-     */
     @JsonIgnore
     protected Map<String, List<Object>> getPrincipalAttributes(final Principal principal) {
         if (ignoreResolvedAttributes) {

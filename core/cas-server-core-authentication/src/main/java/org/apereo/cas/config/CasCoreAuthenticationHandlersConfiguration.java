@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
+import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
 import org.apereo.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler;
 import org.apereo.cas.authentication.handler.support.jaas.JaasAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -25,7 +26,6 @@ import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -39,7 +39,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -213,7 +212,9 @@ public class CasCoreAuthenticationHandlersConfiguration {
             final ServicesManager servicesManager,
             final CasConfigurationProperties casProperties,
             @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY) final IPersonAttributeDao attributeRepository,
-            @Qualifier("jaasPrincipalFactory") final PrincipalFactory jaasPrincipalFactory) {
+            @Qualifier("jaasPrincipalFactory") final PrincipalFactory jaasPrincipalFactory,
+            @Qualifier(AttributeRepositoryResolver.BEAN_NAME)
+            final AttributeRepositoryResolver attributeRepositoryResolver) {
             val personDirectory = casProperties.getPersonDirectory();
             return BeanContainer.of(casProperties.getAuthn().getJaas()
                 .stream()
@@ -222,7 +223,8 @@ public class CasCoreAuthenticationHandlersConfiguration {
                     val jaasPrincipal = jaas.getPrincipal();
                     var attributeMerger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
                     return PersonDirectoryPrincipalResolver.newPersonDirectoryPrincipalResolver(applicationContext, jaasPrincipalFactory,
-                        attributeRepository, attributeMerger, servicesManager, attributeDefinitionStore, jaasPrincipal, personDirectory);
+                        attributeRepository, attributeMerger, servicesManager, attributeDefinitionStore,
+                        attributeRepositoryResolver, jaasPrincipal, personDirectory);
                 })
                 .collect(Collectors.toList()));
         }
