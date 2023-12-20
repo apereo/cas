@@ -13,6 +13,7 @@ import org.apereo.cas.authentication.SurrogateMultifactorAuthenticationPrincipal
 import org.apereo.cas.authentication.SurrogatePrincipalElectionStrategy;
 import org.apereo.cas.authentication.SurrogatePrincipalResolver;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
+import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
 import org.apereo.cas.authentication.event.DefaultSurrogateAuthenticationEventListener;
 import org.apereo.cas.authentication.event.SurrogateAuthenticationEventListener;
 import org.apereo.cas.authentication.principal.PrincipalElectionStrategyConfigurer;
@@ -28,7 +29,6 @@ import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.notifications.CommunicationsManager;
-import org.apereo.cas.persondir.AttributeRepositoryResolver;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.expiration.builder.TicketGrantingTicketExpirationPolicyBuilder;
