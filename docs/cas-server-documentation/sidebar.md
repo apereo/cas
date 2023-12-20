@@ -736,7 +736,10 @@ layout: null
     *   [Custom Properties](/cas/{{ version }}/webflow/Webflow-Customization-CustomProperties.html)
     *   [Error Handling](/cas/{{ version }}/webflow/Webflow-Customization-Exceptions.html)
     *   [Extending Webflow](/cas/{{ version }}/webflow/Webflow-Customization-Extensions.html)
-    *   [Dynamic Decorations](/cas/{{ version }}/webflow/Webflow-Customization-Decorators.html)
+    *   [Dynamic Decorations](#swfdecoration)
+        *   [Overview](/cas/{{ version }}/webflow/Webflow-Customization-Decorators.html)
+        *   [Groovy](/cas/{{ version }}/webflow/Webflow-Customization-Decorators-Groovy.html)
+        *   [REST](/cas/{{ version }}/webflow/Webflow-Customization-Decorators-REST.html)
     *   [Session Persistence](/cas/{{ version }}/webflow/Webflow-Customization-Sessions.html)
     *   [SSO & Services](/cas/{{ version }}/webflow/Webflow-Customization-Services.html)
 
