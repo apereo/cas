@@ -1,6 +1,7 @@
 package org.apereo.cas.persondir;
 
 import org.apereo.cas.BasePrincipalAttributeRepositoryTests;
+import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
@@ -8,8 +9,8 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.services.persondir.IPersonAttributeDao;
 import lombok.val;
+import org.apereo.services.persondir.IPersonAttributeDao;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
