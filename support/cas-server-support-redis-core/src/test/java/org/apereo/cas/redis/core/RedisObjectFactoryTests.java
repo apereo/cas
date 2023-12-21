@@ -6,7 +6,6 @@ import org.apereo.cas.configuration.model.support.redis.RedisClusterNodeProperti
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import com.redis.lettucemod.search.Field;
 import io.lettuce.core.ReadFrom;
-import io.lettuce.core.RedisConnectionException;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
@@ -30,7 +29,7 @@ class RedisObjectFactoryTests {
         val props = new BaseRedisProperties();
         props.setHost("localhost");
         props.setPort(6379);
-        val command = RedisObjectFactory.newRedisModulesCommands(props);
+        val command = RedisObjectFactory.newRedisModulesCommands(props, CasSSLContext.disabled());
         assertFalse(command.isEmpty());
         val indexName = UUID.randomUUID().toString();
         val result = command.get().ftCreate(indexName,
@@ -62,7 +61,7 @@ class RedisObjectFactoryTests {
         props.setPort(16389);
         props.setUsername("default");
         props.setPassword("pAssw0rd123");
-        val connection = RedisObjectFactory.newRedisModulesCommands(props);
+        val connection = RedisObjectFactory.newRedisModulesCommands(props, CasSSLContext.disabled());
         assertNotNull(connection);
     }
 
@@ -86,13 +85,31 @@ class RedisObjectFactoryTests {
     }
 
     @Test
+    void verifyConnectionWithUsernamePasswordOverTls() throws Throwable {
+        val props = new BaseRedisProperties();
+        props.setHost("localhost");
+        props.setPort(16669);
+        props.setUsername("default");
+        props.setPassword("pAssw0rd123");
+        props.setKeyCertificateChainFile(new File("../../ci/tests/redis/certs/redis.crt"));
+        props.setKeyFile(new File("../../ci/tests/redis/certs/redis.key"));
+        props.setVerifyPeer(false);
+        props.setUseSsl(true);
+        val connection = RedisObjectFactory.newRedisModulesCommands(props, CasSSLContext.disabled()).orElseThrow();
+        assertNotNull(connection);
+        try (val con = connection.getStatefulConnection()) {
+            assertTrue(con.isOpen());
+        }
+    }
+
+    @Test
     void verifyConnectionWithPassword() throws Throwable {
         val props = new BaseRedisProperties();
         props.setHost("localhost");
         props.setPort(16389);
         props.setUsername(null);
         props.setPassword("pAssw0rd123");
-        assertThrows(RedisConnectionException.class, () -> RedisObjectFactory.newRedisModulesCommands(props));
+        assertDoesNotThrow(() -> RedisObjectFactory.newRedisModulesCommands(props, CasSSLContext.system()));
     }
 
     @Test
@@ -169,8 +186,7 @@ class RedisObjectFactoryTests {
         val connection = RedisObjectFactory.newRedisConnectionFactory(props, true, CasSSLContext.disabled());
         assertNotNull(connection);
     }
-
-
+    
     @Test
     void validateRedisReadFromValues() {
         Stream.of(BaseRedisProperties.RedisReadFromTypes.values()).map(Enum::name).forEach(ReadFrom::valueOf);
