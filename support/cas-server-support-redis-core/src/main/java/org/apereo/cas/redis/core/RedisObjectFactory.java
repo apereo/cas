@@ -253,7 +253,8 @@ public class RedisObjectFactory {
         return poolingClientConfig.build();
     }
 
-    private static ClientOptions createClientOptions(final BaseRedisProperties redis, final CasSSLContext casSslContext) throws Exception {
+    private static ClientOptions createClientOptions(final BaseRedisProperties redis,
+                                                     final CasSSLContext casSslContext) throws Exception {
         val clientOptionsBuilder = initializeClientOptionsBuilder(redis);
         if (StringUtils.hasText(redis.getConnectTimeout())) {
             val connectTimeout = Beans.newDuration(redis.getConnectTimeout());
@@ -275,12 +276,14 @@ public class RedisObjectFactory {
             .sslOptions(sslOptionsBuilder.build())
             .protocolVersion(ProtocolVersion.valueOf(redis.getProtocolVersion()))
             .build();
+
     }
 
     private static ClientOptions.Builder initializeClientOptionsBuilder(final BaseRedisProperties redis) {
         val cluster = isRedisClusteringEnabled(redis);
         if (cluster) {
-            val refreshBuilder = ClusterTopologyRefreshOptions.builder().dynamicRefreshSources(redis.getCluster().isDynamicRefreshSources());
+            val refreshBuilder = ClusterTopologyRefreshOptions.builder()
+                .dynamicRefreshSources(redis.getCluster().isDynamicRefreshSources());
             if (StringUtils.hasText(redis.getCluster().getTopologyRefreshPeriod())) {
                 refreshBuilder.enablePeriodicRefresh(Beans.newDuration(redis.getCluster().getTopologyRefreshPeriod()));
             }
