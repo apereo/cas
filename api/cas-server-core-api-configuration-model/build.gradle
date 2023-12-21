@@ -30,6 +30,7 @@ dependencies {
 
 if (!skipConfigurationMetadata) {
     def outputFile = project.layout.buildDirectory.file("generated/spring-configuration-metadata/META-INF/spring-configuration-metadata.json")
+    def inputFile = project.layout.buildDirectory.file("classes/java/main/META-INF")
 
     tasks.register('generateConfigurationMetadata', JavaExec) {
         inputs.files(tasks.named('processResources'), tasks.named('compileJava'))
@@ -42,14 +43,25 @@ if (!skipConfigurationMetadata) {
         def sortedClasspath = sourceSets.main.compileClasspath + sourceSets.main.runtimeClasspath + sourceSets.configurationMetadata.runtimeClasspath
         classpath = files(sortedClasspath.sort())
         args project.layout.buildDirectory.getAsFile().get().path, projectDir.canonicalPath
-    }
-    sourceSets.main.output.dir project.layout.buildDirectory.file("generated/spring-configuration-metadata"), builtBy: "generateConfigurationMetadata"
-    
-    tasks.named('compileJava') {
-        inputs.files(tasks.named('processResources'))
+        finalizedBy("copyConfigurationMetadata")
     }
 
-    jar {
+//    sourceSets.main.output.dir project.layout.buildDirectory.file("generated/spring-configuration-metadata"), builtBy: "generateConfigurationMetadata"
+    tasks.register('copyConfigurationMetadata', Copy) {
+        from outputFile
+        into inputFile
         duplicatesStrategy = DuplicatesStrategy.INCLUDE
     }
+
+    tasks.named('compileJava') {
+        inputs.files(tasks.named('processResources'))
+        finalizedBy("generateConfigurationMetadata")
+    }
+
+
+    sourceSets.main.output.dir inputFile, builtBy: "copyConfigurationMetadata"
+//
+//    jar {
+//        duplicatesStrategy = DuplicatesStrategy.INCLUDE
+//    }
 }
