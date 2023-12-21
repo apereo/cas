@@ -139,8 +139,8 @@ public class SamlIdPServicesManagerRegisteredServiceLocator extends DefaultServi
          * @param attributeValue the attribute value
          * @return the entity id from
          */
-        public String getEntityIdFrom(final SamlRegisteredServiceCachingMetadataResolver resolver,
-                                      final String attributeValue) {
+        @SuppressWarnings("UnusedVariable")
+        public String getEntityIdFrom(final SamlRegisteredServiceCachingMetadataResolver resolver, final String attributeValue) {
             return attributeValue;
         }
     }
