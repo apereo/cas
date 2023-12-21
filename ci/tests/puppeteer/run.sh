@@ -27,16 +27,16 @@ CYAN="\e[36m"
 ENDCOLOR="\e[0m"
 
 function printcyan() {
-  printf "ℹ️ ${CYAN}$1${ENDCOLOR}\n"
+  printf "💬 ${CYAN}$1${ENDCOLOR}\n"
 }
 function printgreen() {
-  printf "✅ ${GREEN}$1${ENDCOLOR}\n"
+  printf "☘️ ${GREEN}$1${ENDCOLOR}\n"
 }
 function printyellow() {
-  printf "🔥 ${YELLOW}$1${ENDCOLOR}\n"
+  printf "🧨 ${YELLOW}$1${ENDCOLOR}\n"
 }
 function printred() {
-  printf "🔴 ${RED}$1${ENDCOLOR}\n"
+  printf "🔥 ${RED}$1${ENDCOLOR}\n"
 }
 
 function progressbar() {
@@ -674,6 +674,7 @@ if [[ "${RERUN}" != "true" && ("${NATIVE_BUILD}" == "false" || "${NATIVE_RUN}" =
         ${targetArtifact} -Dcom.sun.net.ssl.checkRevocation=false \
           -Dlog.console.stacktraces=true -DaotSpringActiveProfiles=none \
           --spring.main.lazy-initialization=false \
+          --management.endpoints.web.discovery.enabled=true \
           --server.port=${serverPort} --spring.profiles.active=none  \
           --server.ssl.key-store="$keystore" ${properties} &
       elif [[ "${buildDockerImage}" == "true" ]]; then
@@ -694,23 +695,26 @@ if [[ "${RERUN}" != "true" && ("${NATIVE_BUILD}" == "false" || "${NATIVE_RUN}" =
         java ${runArgs} -Dlog.console.stacktraces=true -jar "$PWD"/cas.${projectType} \
            -Dcom.sun.net.ssl.checkRevocation=false --server.port=${serverPort} \
            --spring.main.lazy-initialization=false \
-           --spring.profiles.active=none --server.ssl.key-store="$keystore" \
+           --spring.profiles.active=none \
+           --management.endpoints.web.discovery.enabled=true \
+           --server.ssl.key-store="$keystore" \
            ${properties} &
       fi
       pid=$!
       printcyan "Waiting for CAS instance #${c} under process id ${pid}"
       casLogin="https://localhost:${serverPort}/cas/login"
+      casStatus="https://localhost:${serverPort}/cas/actuator"
 
       if [[ "${CI}" == "true" ]]; then
         timeout=$(jq -j '.timeout // 70' "${config}")
         sleepfor $timeout
 
         printcyan "Checking CAS server's status @ ${casLogin}"
-        curl -k -L --connect-timeout 10 --output /dev/null --silent --fail $casLogin
+        curl -k -L --connect-timeout 10 --output /dev/null --silent --fail $casStatus
         RC=$?
       else
         # We cannot do this in Github Actions/CI; curl seems to hang indefinitely
-        until curl -k -L --connect-timeout 10 --output /dev/null --silent --fail $casLogin; do
+        until curl -I -k -L --connect-timeout 10 --output /dev/null --silent --fail $casStatus; do
            echo -n '.'
            sleep 1
         done

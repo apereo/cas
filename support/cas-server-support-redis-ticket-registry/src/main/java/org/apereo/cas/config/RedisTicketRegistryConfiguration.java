@@ -222,6 +222,8 @@ public class RedisTicketRegistryConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TicketRegistry ticketRegistry(
+            @Qualifier(CasSSLContext.BEAN_NAME)
+            final CasSSLContext casSslContext,
             @Qualifier("redisKeyGeneratorFactory")
             final RedisKeyGeneratorFactory redisKeyGeneratorFactory,
             @Qualifier("casRedisTemplates")
@@ -238,14 +240,16 @@ public class RedisTicketRegistryConfiguration {
             final CasConfigurationProperties casProperties) {
             return BeanSupplier.of(TicketRegistry.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> {
+                .supply(Unchecked.supplier(() -> {
                     val redis = casProperties.getTicket().getRegistry().getRedis();
                     val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(redis.getCrypto(), "redis");
-                    val searchCommands = redis.isEnableRedisSearch() ? RedisObjectFactory.newRedisModulesCommands(redis) : Optional.<RedisModulesCommands>empty();
+                    val searchCommands = redis.isEnableRedisSearch()
+                        ? RedisObjectFactory.newRedisModulesCommands(redis, casSslContext)
+                        : Optional.<RedisModulesCommands>empty();
                     return new RedisTicketRegistry(cipher, ticketSerializationManager, ticketCatalog,
                         casRedisTemplates, redisTicketRegistryCache, redisTicketRegistryMessagePublisher,
                         searchCommands, redisKeyGeneratorFactory, casProperties);
-                })
+                }))
                 .otherwise(() -> new DefaultTicketRegistry(ticketSerializationManager, ticketCatalog))
                 .get();
         }

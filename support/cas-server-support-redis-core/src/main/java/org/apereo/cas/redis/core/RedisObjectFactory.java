@@ -99,11 +99,11 @@ public class RedisObjectFactory {
                                                                    final CasSSLContext casSslContext) throws Exception {
         var factory = (LettuceConnectionFactory) null;
         if (redis.getSentinel() != null && StringUtils.hasText(redis.getSentinel().getMaster())) {
-            factory = new LettuceConnectionFactory(getSentinelConfig(redis), getRedisPoolClientConfig(redis, true, casSslContext));
+            factory = new LettuceConnectionFactory(getSentinelConfig(redis), getRedisPoolClientConfig(redis, casSslContext));
         } else if (redis.getCluster() != null && !redis.getCluster().getNodes().isEmpty()) {
-            factory = new LettuceConnectionFactory(getClusterConfig(redis), getRedisPoolClientConfig(redis, true, casSslContext));
+            factory = new LettuceConnectionFactory(getClusterConfig(redis), getRedisPoolClientConfig(redis, casSslContext));
         } else {
-            factory = new LettuceConnectionFactory(getStandaloneConfig(redis), getRedisPoolClientConfig(redis, false, casSslContext));
+            factory = new LettuceConnectionFactory(getStandaloneConfig(redis), getRedisPoolClientConfig(redis, casSslContext));
         }
         var connectionSharingEnabled = redis.getPool() == null || !redis.getPool().isEnabled();
         if (redis.getShareNativeConnections() != null) {
@@ -118,24 +118,39 @@ public class RedisObjectFactory {
         return factory;
     }
 
+    private boolean isRedisClusteringEnabled(final BaseRedisProperties redis) {
+        return (redis.getSentinel() != null && StringUtils.hasText(redis.getSentinel().getMaster()))
+            || (redis.getCluster() != null && !redis.getCluster().getNodes().isEmpty());
+    }
+
     /**
      * New redis modules commands.
      *
-     * @param redis the redis
+     * @param redis         the redis
+     * @param casSslContext the cas ssl context
      * @return the redis search commands
+     * @throws Exception the exception
      */
-    public static Optional<RedisModulesCommands> newRedisModulesCommands(final BaseRedisProperties redis) {
+    public static Optional<RedisModulesCommands> newRedisModulesCommands(
+        final BaseRedisProperties redis, final CasSSLContext casSslContext) throws Exception {
         val uriBuilder = RedisURI.builder()
+            .withStartTls(redis.isStartTls())
+            .withVerifyPeer(redis.isVerifyPeer())
             .withHost(redis.getHost())
             .withPort(redis.getPort())
-            .withDatabase(redis.getDatabase());
+            .withDatabase(redis.getDatabase())
+            .withSsl(redis.isUseSsl());
 
         if (StringUtils.hasText(redis.getUsername()) && StringUtils.hasText(redis.getPassword())) {
             uriBuilder.withAuthentication(redis.getUsername(), redis.getPassword());
         } else if (StringUtils.hasText(redis.getPassword())) {
             uriBuilder.withPassword(redis.getPassword().toCharArray());
         }
-        val result = RedisModulesClient.create(uriBuilder.build()).connect().sync();
+        val redisModulesClient = RedisModulesClient.create(uriBuilder.build());
+        val clientOptions = createClientOptions(redis, casSslContext);
+        redisModulesClient.setOptions(clientOptions);
+        val result = redisModulesClient.connect().sync();
+
         try {
             result.ftInfo(UUID.randomUUID().toString());
         } catch (final RedisCommandExecutionException e) {
@@ -185,7 +200,6 @@ public class RedisObjectFactory {
     }
 
     private static LettucePoolingClientConfiguration getRedisPoolClientConfig(final BaseRedisProperties redis,
-                                                                              final boolean cluster,
                                                                               final CasSSLContext casSslContext) throws Exception {
         var poolingClientConfig = LettucePoolingClientConfiguration.builder();
         if (redis.isUseSsl()) {
@@ -208,7 +222,7 @@ public class RedisObjectFactory {
             }
         }
 
-        val clientOptions = createClientOptions(redis, cluster, casSslContext);
+        val clientOptions = createClientOptions(redis, casSslContext);
         poolingClientConfig.clientOptions(clientOptions);
 
         val pool = redis.getPool();
@@ -239,9 +253,9 @@ public class RedisObjectFactory {
         return poolingClientConfig.build();
     }
 
-    private static ClientOptions createClientOptions(final BaseRedisProperties redis, final boolean cluster,
+    private static ClientOptions createClientOptions(final BaseRedisProperties redis,
                                                      final CasSSLContext casSslContext) throws Exception {
-        val clientOptionsBuilder = initializeClientOptionsBuilder(redis, cluster);
+        val clientOptionsBuilder = initializeClientOptionsBuilder(redis);
         if (StringUtils.hasText(redis.getConnectTimeout())) {
             val connectTimeout = Beans.newDuration(redis.getConnectTimeout());
             clientOptionsBuilder.socketOptions(SocketOptions.builder().connectTimeout(connectTimeout).build());
@@ -262,11 +276,14 @@ public class RedisObjectFactory {
             .sslOptions(sslOptionsBuilder.build())
             .protocolVersion(ProtocolVersion.valueOf(redis.getProtocolVersion()))
             .build();
+
     }
 
-    private static ClientOptions.Builder initializeClientOptionsBuilder(final BaseRedisProperties redis, final boolean cluster) {
+    private static ClientOptions.Builder initializeClientOptionsBuilder(final BaseRedisProperties redis) {
+        val cluster = isRedisClusteringEnabled(redis);
         if (cluster) {
-            val refreshBuilder = ClusterTopologyRefreshOptions.builder().dynamicRefreshSources(redis.getCluster().isDynamicRefreshSources());
+            val refreshBuilder = ClusterTopologyRefreshOptions.builder()
+                .dynamicRefreshSources(redis.getCluster().isDynamicRefreshSources());
             if (StringUtils.hasText(redis.getCluster().getTopologyRefreshPeriod())) {
                 refreshBuilder.enablePeriodicRefresh(Beans.newDuration(redis.getCluster().getTopologyRefreshPeriod()));
             }
