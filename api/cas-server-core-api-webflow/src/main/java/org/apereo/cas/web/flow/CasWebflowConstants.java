@@ -1406,11 +1406,6 @@ public interface CasWebflowConstants {
     String ACTION_ID_INIT_PASSWORD_CHANGE = "initPasswordChangeAction";
 
     /**
-     * Action id 'renderLoginFormAction'.
-     */
-    String ACTION_ID_RENDER_LOGIN_FORM = "renderLoginFormAction";
-
-    /**
      * Action id 'setServiceUnauthorizedRedirectUrlAction'.
      */
     String ACTION_ID_SET_SERVICE_UNAUTHORIZED_REDIRECT_URL = "setServiceUnauthorizedRedirectUrlAction";
