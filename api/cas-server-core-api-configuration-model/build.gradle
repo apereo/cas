@@ -46,7 +46,6 @@ if (!skipConfigurationMetadata) {
         finalizedBy("copyConfigurationMetadata")
     }
 
-//    sourceSets.main.output.dir project.layout.buildDirectory.file("generated/spring-configuration-metadata"), builtBy: "generateConfigurationMetadata"
     tasks.register('copyConfigurationMetadata', Copy) {
         from outputFile
         into inputFile
@@ -57,11 +56,5 @@ if (!skipConfigurationMetadata) {
         inputs.files(tasks.named('processResources'))
         finalizedBy("generateConfigurationMetadata")
     }
-
-
     sourceSets.main.output.dir inputFile, builtBy: "copyConfigurationMetadata"
-//
-//    jar {
-//        duplicatesStrategy = DuplicatesStrategy.INCLUDE
-//    }
 }
