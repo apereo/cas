@@ -710,11 +710,11 @@ if [[ "${RERUN}" != "true" && ("${NATIVE_BUILD}" == "false" || "${NATIVE_RUN}" =
         sleepfor $timeout
 
         printcyan "Checking CAS server's status @ ${casLogin}"
-        curl -k -L --connect-timeout 10 --output /dev/null --silent --fail $casStatus
+        curl -k -L --connect-timeout 10 --output /dev/null --silent --fail $casLogin
         RC=$?
       else
         # We cannot do this in Github Actions/CI; curl seems to hang indefinitely
-        until curl -I -k -L --connect-timeout 10 --output /dev/null --silent --fail $casStatus; do
+        until curl -k -L --connect-timeout 10 --output /dev/null --silent --fail $casLogin; do
            echo -n '.'
            sleep 1
         done
