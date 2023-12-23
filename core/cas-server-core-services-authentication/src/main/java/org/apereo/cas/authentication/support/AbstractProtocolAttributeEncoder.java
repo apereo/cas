@@ -2,7 +2,7 @@ package org.apereo.cas.authentication.support;
 
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
-import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
@@ -49,7 +49,7 @@ public abstract class AbstractProtocolAttributeEncoder implements ProtocolAttrib
     @Override
     public Map<String, Object> encodeAttributes(final Map<String, Object> attributes,
                                                 final RegisteredService registeredService,
-                                                final WebApplicationService webApplicationService) {
+                                                final Service webApplicationService) {
         LOGGER.trace("Starting to encode attributes for release to service [{}]", registeredService);
         val newEncodedAttributes = new HashMap<>(attributes);
         if (registeredService != null && registeredService.getAccessStrategy().isServiceAccessAllowed(registeredService, webApplicationService)) {
@@ -64,19 +64,9 @@ public abstract class AbstractProtocolAttributeEncoder implements ProtocolAttrib
         return newEncodedAttributes;
     }
 
-    /**
-     * Initialize the cipher with the public key
-     * and then start to encrypt select attributes.
-     *
-     * @param attributes               the attributes
-     * @param cachedAttributesToEncode the cached attributes to encode
-     * @param cipher                   the cipher object initialized per service public key
-     * @param registeredService        the registered service
-     * @param webApplicationService    the web application service
-     */
     protected abstract void encodeAttributesInternal(Map<String, Object> attributes, Map<String, String> cachedAttributesToEncode,
                                                      RegisteredServiceCipherExecutor cipher, RegisteredService registeredService,
-                                                     WebApplicationService webApplicationService);
+                                                     Service webApplicationService);
 
     /**
      * Initialize the encoding process. Removes the

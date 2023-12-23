@@ -79,7 +79,7 @@ public abstract class BaseJwtTokenTicketBuilderTests {
     protected CipherExecutor tokenCipherExecutor;
 
     @Autowired
-    @Qualifier("tokenTicketJwtBuilder")
+    @Qualifier(JwtBuilder.TICKET_JWT_BUILDER_BEAN_NAME)
     protected JwtBuilder tokenTicketJwtBuilder;
 
     @Autowired

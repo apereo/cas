@@ -79,7 +79,7 @@ public class QRAuthenticationConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier("qrAuthenticationDeviceRepository")
             final QRAuthenticationDeviceRepository qrAuthenticationDeviceRepository,
-            @Qualifier("tokenTicketJwtBuilder")
+            @Qualifier(JwtBuilder.TICKET_JWT_BUILDER_BEAN_NAME)
             final JwtBuilder tokenTicketJwtBuilder,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry) {

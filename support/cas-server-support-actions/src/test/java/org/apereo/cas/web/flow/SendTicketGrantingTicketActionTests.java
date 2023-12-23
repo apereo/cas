@@ -44,11 +44,12 @@ class SendTicketGrantingTicketActionTests {
             context.addHeader("User-Agent", "Test");
 
             val tgt1 = new MockTicketGrantingTicket(UUID.randomUUID().toString());
-
+            getTicketRegistry().addTicket(tgt1);
             WebUtils.putPublicWorkstationToFlowIfRequestParameterPresent(context);
             WebUtils.putTicketGrantingTicketIntoMap(context.getRequestScope(), tgt1.getId());
 
             val tgt2 = new MockTicketGrantingTicket(UUID.randomUUID().toString());
+            getTicketRegistry().addTicket(tgt2);
             WebUtils.putTicketGrantingTicketIntoMap(context.getFlowScope(), tgt2.getId());
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
         }
@@ -77,6 +78,7 @@ class SendTicketGrantingTicketActionTests {
 
             context.addHeader("User-Agent", "Test");
             val tgt = new MockTicketGrantingTicket(UUID.randomUUID().toString());
+            getTicketRegistry().addTicket(tgt);
             WebUtils.putTicketGrantingTicketInScopes(context, tgt);
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
             context.setRequestCookiesFromResponse();
@@ -93,6 +95,7 @@ class SendTicketGrantingTicketActionTests {
             context.addHeader("User-Agent", "Test");
 
             val tgt = new MockTicketGrantingTicket(UUID.randomUUID().toString());
+            getTicketRegistry().addTicket(tgt);
             context.getHttpServletRequest().setCookies(new Cookie("TGT", "test5"));
             WebUtils.putTicketGrantingTicketInScopes(context, tgt);
 

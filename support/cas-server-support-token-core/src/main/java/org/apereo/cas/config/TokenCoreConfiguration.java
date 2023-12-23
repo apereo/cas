@@ -8,8 +8,8 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.token.JwtBuilder;
+import org.apereo.cas.token.JwtTicketBuilder;
 import org.apereo.cas.token.JwtTokenCipherSigningPublicKeyEndpoint;
-import org.apereo.cas.token.JwtTokenTicketBuilder;
 import org.apereo.cas.token.TokenTicketBuilder;
 import org.apereo.cas.token.cipher.JwtTicketCipherExecutor;
 import org.apereo.cas.token.cipher.RegisteredServiceJwtTicketCipherExecutor;
@@ -95,7 +95,7 @@ public class TokenCoreConfiguration {
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        @ConditionalOnMissingBean(name = "tokenTicketJwtBuilder")
+        @ConditionalOnMissingBean(name = JwtBuilder.TICKET_JWT_BUILDER_BEAN_NAME)
         public JwtBuilder tokenTicketJwtBuilder(
             final CasConfigurationProperties casProperties,
             @Qualifier("tokenCipherExecutor")
@@ -118,13 +118,13 @@ public class TokenCoreConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier("tokenTicketValidator")
             final TicketValidator tokenTicketValidator,
-            @Qualifier("tokenTicketJwtBuilder")
+            @Qualifier(JwtBuilder.TICKET_JWT_BUILDER_BEAN_NAME)
             final JwtBuilder tokenTicketJwtBuilder,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             @Qualifier(ExpirationPolicyBuilder.BEAN_NAME_TICKET_GRANTING_TICKET_EXPIRATION_POLICY)
             final ExpirationPolicyBuilder grantingTicketExpirationPolicy) {
-            return new JwtTokenTicketBuilder(tokenTicketValidator,
+            return new JwtTicketBuilder(tokenTicketValidator,
                 grantingTicketExpirationPolicy, tokenTicketJwtBuilder, servicesManager, casProperties);
         }
     }

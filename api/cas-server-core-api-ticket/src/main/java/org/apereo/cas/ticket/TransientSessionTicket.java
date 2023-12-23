@@ -1,11 +1,6 @@
 package org.apereo.cas.ticket;
 
-import org.apereo.cas.authentication.principal.Service;
-
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
-import java.io.Serializable;
-import java.util.Map;
 
 /**
  * This is {@link TransientSessionTicket} that allows CAS to use the ticket registry
@@ -25,77 +20,9 @@ import java.util.Map;
  * @since 5.3.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-public interface TransientSessionTicket extends TicketGrantingTicketAwareTicket {
+public interface TransientSessionTicket extends TicketGrantingTicketAwareTicket, ServiceAwareTicket, PropertiesAwareTicket {
     /**
      * Ticket prefix for the delegated authentication request.
      */
     String PREFIX = "TST";
-
-    /**
-     * Gets properties.
-     *
-     * @return the properties
-     */
-    Map<String, Object> getProperties();
-
-    /**
-     * Gets property.
-     *
-     * @param <T>   the type parameter
-     * @param key   the key
-     * @param clazz the clazz
-     * @return the property
-     */
-    <T> T getProperty(String key, Class<T> clazz);
-
-    /**
-     * Gets service.
-     *
-     * @return the service
-     */
-    Service getService();
-
-    /**
-     * Put property.
-     *
-     * @param name  the name
-     * @param value the value
-     */
-    void put(String name, Serializable value);
-
-    /**
-     * Put all properties.
-     *
-     * @param props the props
-     */
-    void putAll(Map<String, Serializable> props);
-
-    /**
-     * Contains property boolean.
-     *
-     * @param name the name
-     * @return true/false
-     */
-    boolean contains(String name);
-
-    /**
-     * Gets property.
-     *
-     * @param <T>   the type parameter
-     * @param name  the name
-     * @param clazz the clazz
-     * @return the property
-     */
-    <T extends Serializable> T get(String name, Class<T> clazz);
-
-    /**
-     * Gets property.
-     *
-     * @param <T>          the type parameter
-     * @param name         the name
-     * @param clazz        the clazz
-     * @param defaultValue the default value
-     * @return the property
-     */
-    <T extends Serializable> T get(String name, Class<T> clazz, T defaultValue);
 }

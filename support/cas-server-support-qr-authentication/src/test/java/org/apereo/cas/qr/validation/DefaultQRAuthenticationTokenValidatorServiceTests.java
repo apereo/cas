@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
     properties = "cas.authn.qr.json.location=file:${java.io.tmpdir}/cas-qr-devices.json")
 class DefaultQRAuthenticationTokenValidatorServiceTests {
     @Autowired
-    @Qualifier("tokenTicketJwtBuilder")
+    @Qualifier(JwtBuilder.TICKET_JWT_BUILDER_BEAN_NAME)
     private JwtBuilder jwtBuilder;
 
     @Autowired

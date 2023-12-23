@@ -3,6 +3,7 @@ package org.apereo.cas;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.ServiceTicket;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
@@ -49,7 +50,7 @@ public interface CentralAuthenticationService {
      * @return Non -null ticket-granting ticket identifier.
      * @throws Throwable the throwable
      */
-    TicketGrantingTicket createTicketGrantingTicket(AuthenticationResult authenticationResult) throws Throwable;
+    Ticket createTicketGrantingTicket(AuthenticationResult authenticationResult) throws Throwable;
 
     /**
      * Grant a {@link ServiceTicket} that may be used to access the given service
@@ -68,7 +69,7 @@ public interface CentralAuthenticationService {
      * @return Non -null service ticket identifier.
      * @throws Throwable the throwable
      */
-    ServiceTicket grantServiceTicket(String ticketGrantingTicketId, Service service, AuthenticationResult authenticationResult) throws Throwable;
+    Ticket grantServiceTicket(String ticketGrantingTicketId, Service service, AuthenticationResult authenticationResult) throws Throwable;
 
     /**
      * Grant a {@link ProxyTicket} that may be used to access the given service

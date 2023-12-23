@@ -5,6 +5,7 @@ import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlIdPProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurationContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
+import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicket;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicketFactory;
@@ -65,7 +66,8 @@ public class SamlIdPSaml1ArtifactResolutionProfileHandlerController extends Abst
                 throw new InvalidTicketException(ticketId);
             }
             val issuerService = getConfigurationContext().getWebApplicationServiceFactory().createService(issuer);
-            val casAssertion = buildCasAssertion(ticket.getTicketGrantingTicket().getAuthentication(),
+            val authentication = ((AuthenticationAwareTicket) ticket.getTicketGrantingTicket()).getAuthentication();
+            val casAssertion = buildCasAssertion(authentication,
                 issuerService, registeredService,
                 CollectionUtils.wrap("artifact", ticket));
 

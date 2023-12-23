@@ -2,7 +2,6 @@ package org.apereo.cas;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.CasModelRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.UnauthorizedProxyingException;
@@ -88,17 +87,10 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         }
     }
 
-    protected WebApplicationService resolveServiceFromAuthenticationRequest(final Service service) throws Throwable {
-        return configurationContext.getAuthenticationServiceSelectionPlan().resolveService(service, WebApplicationService.class);
+    protected Service resolveServiceFromAuthenticationRequest(final Service service) throws Throwable {
+        return configurationContext.getAuthenticationServiceSelectionPlan().resolveService(service, Service.class);
     }
 
-    /**
-     * Verify the ticket id received is actually legitimate
-     * before contacting downstream systems to find and process it.
-     *
-     * @param ticketId the ticket id
-     * @return true/false
-     */
     protected boolean isTicketAuthenticityVerified(final String ticketId) {
         try {
             if (configurationContext.getCipherExecutor() != null) {

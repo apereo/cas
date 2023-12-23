@@ -88,10 +88,8 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     }
 
     @Override
-    public void addTicket(final Ticket ticket) throws Exception {
-        if (ticket != null && !ticket.isExpired()) {
-            addTicketInternal(ticket);
-        }
+    public Ticket addTicket(final Ticket ticket) throws Exception {
+        return ticket != null && !ticket.isExpired() ? addSingleTicket(ticket) : null;
     }
 
     @Override
@@ -244,15 +242,11 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         });
     }
 
-    /**
-     * Delete a single ticket instance from the store.
-     *
-     * @param ticket the ticket
-     * @return true /false
-     */
-    public abstract long deleteSingleTicket(Ticket ticket);
+    protected long deleteSingleTicket(final Ticket ticket) {
+        return 0;
+    }
 
-    protected abstract void addTicketInternal(Ticket ticket) throws Exception;
+    protected abstract Ticket addSingleTicket(Ticket ticket) throws Exception;
 
     protected int deleteTickets(final Set<String> tickets) {
         return deleteTickets(tickets.stream());
@@ -349,9 +343,13 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         return ticketSerializationManager.serializeTicket(ticket);
     }
 
-    private Ticket createEncodedTicket(final Ticket ticket) throws Exception {
+    protected Ticket createEncodedTicket(final Ticket ticket) throws Exception {
         LOGGER.debug("Encoding ticket [{}]", ticket);
-        val encodedTicketObject = SerializationUtils.serializeAndEncodeObject(this.cipherExecutor, ticket);
+        val encodedTicketObject = SerializationUtils.serializeAndEncodeObject(cipherExecutor, ticket);
+        return toEncodedTicket(ticket, encodedTicketObject);
+    }
+
+    protected Ticket toEncodedTicket(final Ticket ticket, final byte[] encodedTicketObject) throws Exception {
         val encodedTicketId = digestIdentifier(ticket.getId());
         return new DefaultEncodedTicket(encodedTicketId,
             ByteSource.wrap(encodedTicketObject).read(), ticket.getPrefix());
@@ -370,11 +368,17 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     }
 
     private void deleteProxyGrantingTicketFromParent(final ProxyGrantingTicket ticket) throws Exception {
-        ticket.getTicketGrantingTicket().getProxyGrantingTickets().remove(ticket.getId());
-        updateTicket(ticket.getTicketGrantingTicket());
+        if (ticket.getTicketGrantingTicket() instanceof final TicketGrantingTicket tgt) {
+            tgt.getProxyGrantingTickets().remove(ticket.getId());
+            updateTicket(tgt);
+        }
     }
 
     private static long getTicketAgeSeconds(@NonNull final Ticket ticket) {
         return ZonedDateTime.now(ticket.getExpirationPolicy().getClock()).toEpochSecond() - ticket.getCreationTime().toEpochSecond();
+    }
+
+    protected Ticket deserializeTicket(final String ticketContent, final String type) {
+        return ticketSerializationManager.deserializeTicket(ticketContent, type);
     }
 }

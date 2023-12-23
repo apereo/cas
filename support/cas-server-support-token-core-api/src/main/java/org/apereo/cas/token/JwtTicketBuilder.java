@@ -23,13 +23,13 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * This is {@link JwtTokenTicketBuilder}.
+ * This is {@link JwtTicketBuilder}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
 @Slf4j
-public record JwtTokenTicketBuilder(TicketValidator ticketValidator, ExpirationPolicyBuilder expirationPolicy,
+public record JwtTicketBuilder(TicketValidator ticketValidator, ExpirationPolicyBuilder expirationPolicy,
     JwtBuilder jwtBuilder, ServicesManager servicesManager,
     CasConfigurationProperties casProperties) implements TokenTicketBuilder {
     

@@ -403,6 +403,17 @@ public interface CasWebflowConstants {
      */
     String TRANSITION_ID_PASSWORD_UPDATE_SUCCESS = "passwordUpdateSuccess";
 
+
+    /**
+     * Transition id 'writeToSessionStorage'.
+     */
+    String TRANSITION_ID_WRITE_SESSION_STORAGE = "writeToSessionStorage";
+
+    /**
+     * Transition id 'readFromSessionStorage'.
+     */
+    String TRANSITION_ID_READ_SESSION_STORAGE = "readFromSessionStorage";
+
     /**
      * Transition id 'resetPassword'.
      */
@@ -1429,6 +1440,16 @@ public interface CasWebflowConstants {
      * Action id 'fetchTicketGrantingTicketAction'.
      */
     String ACTION_ID_FETCH_TICKET_GRANTING_TICKET = "fetchTicketGrantingTicketAction";
+
+    /**
+     * Action id 'writeSessionStorageAction'.
+     */
+    String ACTION_ID_WRITE_SESSION_STORAGE = "writeSessionStorageAction";
+
+    /**
+     * Action id 'readSessionStorageAction'.
+     */
+    String ACTION_ID_READ_SESSION_STORAGE = "readSessionStorageAction";
 
     /**
      * Action id 'ticketGrantingTicketCheckAction'.

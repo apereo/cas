@@ -2,6 +2,7 @@ package org.apereo.cas.authentication.support;
 
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
@@ -63,9 +64,8 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
     }
 
     private static void sanitizeAndTransformAttributeNames(final Map<String, Object> attributes,
-                                                           final WebApplicationService webApplicationService) {
-        if (webApplicationService != null && webApplicationService.getFormat() != null
-            && !webApplicationService.getFormat().isEncodingNecessary()) {
+                                                           final Service webApplicationService) {
+        if (webApplicationService instanceof final WebApplicationService was && !was.getFormat().isEncodingNecessary()) {
             LOGGER.trace("Skipping attribute name sanitization for [{}]", webApplicationService);
             return;
         }
@@ -199,7 +199,7 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
                                             final Map<String, String> cachedAttributesToEncode,
                                             final RegisteredServiceCipherExecutor cipher,
                                             final RegisteredService registeredService,
-                                            final WebApplicationService webApplicationService) {
+                                            final Service webApplicationService) {
         encodeAndEncryptCredentialPassword(attributes, cachedAttributesToEncode, cipher, registeredService);
         encodeAndEncryptProxyGrantingTicket(attributes, cachedAttributesToEncode, cipher, registeredService);
         sanitizeAndTransformAttributeNames(attributes, webApplicationService);

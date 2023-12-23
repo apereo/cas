@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.MessageDescriptor;
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.ticket.InvalidTicketException;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -23,6 +24,8 @@ import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -39,21 +42,24 @@ import java.util.stream.Collectors;
 public class CreateTicketGrantingTicketAction extends BaseCasWebflowAction {
     private final CasWebflowEventResolutionConfigurationContext configurationContext;
 
-    private static Collection<MessageDescriptor> calculateAuthenticationWarningMessages(final Authentication authentication,
-                                                                                        final MessageContext messageContext) {
-        val entries = authentication.getSuccesses().entrySet();
-        val messages = entries
-            .stream()
-            .map(entry -> entry.getValue().getWarnings())
-            .filter(entry -> !entry.isEmpty())
-            .collect(Collectors.toList());
-        messages.add(authentication.getWarnings());
-
-        return messages
-            .stream()
-            .flatMap(Collection::stream)
-            .peek(message -> addMessageDescriptorToMessageContext(messageContext, message))
-            .collect(Collectors.toSet());
+    private static Collection<? extends MessageDescriptor> calculateAuthenticationWarningMessages(final RequestContext context) {
+        return Optional.ofNullable(WebUtils.getTicketGrantingTicket(context))
+            .map(tgt -> {
+                val authentication = tgt.getAuthentication();
+                val messages = authentication.getSuccesses().entrySet();
+                val warnings = messages
+                    .stream()
+                    .map(entry -> entry.getValue().getWarnings())
+                    .filter(entry -> !entry.isEmpty())
+                    .collect(Collectors.toList());
+                warnings.add(authentication.getWarnings());
+                return warnings
+                    .stream()
+                    .flatMap(Collection::stream)
+                    .peek(message -> addMessageDescriptorToMessageContext(context.getMessageContext(), message))
+                    .collect(Collectors.<MessageDescriptor>toSet());
+            })
+            .orElseGet(HashSet::new);
     }
 
     protected static void addMessageDescriptorToMessageContext(final MessageContext context, final MessageDescriptor warning) {
@@ -85,10 +91,10 @@ public class CreateTicketGrantingTicketAction extends BaseCasWebflowAction {
         }
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
         WebUtils.putAuthenticationResult(authenticationResult, context);
-        WebUtils.putAuthentication(tgt.getAuthentication(), context);
+        WebUtils.putAuthentication(tgt, context);
 
         LOGGER.trace("Calculating authentication warning messages...");
-        val warnings = calculateAuthenticationWarningMessages(tgt.getAuthentication(), context.getMessageContext());
+        val warnings = calculateAuthenticationWarningMessages(context);
         if (!warnings.isEmpty()) {
             val attributes = new LocalAttributeMap<Object>(CasWebflowConstants.ATTRIBUTE_ID_AUTHENTICATION_WARNINGS, warnings);
             return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS, attributes);
@@ -99,24 +105,15 @@ public class CreateTicketGrantingTicketAction extends BaseCasWebflowAction {
     protected Authentication buildFinalAuthentication(final AuthenticationResult authenticationResult) {
         return authenticationResult.getAuthentication();
     }
-
-    /**
-     * Create or update ticket granting ticket ticket granting ticket.
-     *
-     * @param authenticationResult the authentication result
-     * @param authentication       the authentication
-     * @param ticketGrantingTicket the ticket granting ticket
-     * @return the ticket granting ticket
-     */
-    protected TicketGrantingTicket createOrUpdateTicketGrantingTicket(final AuthenticationResult authenticationResult,
-                                                                      final Authentication authentication, final String ticketGrantingTicket) {
+    
+    protected Ticket createOrUpdateTicketGrantingTicket(final AuthenticationResult authenticationResult,
+                                                        final Authentication authentication, final String ticketGrantingTicket) {
         try {
             if (shouldIssueTicketGrantingTicket(authentication, ticketGrantingTicket)) {
                 if (StringUtils.isNotBlank(ticketGrantingTicket)) {
                     LOGGER.trace("Removing existing ticket-granting ticket [{}]", ticketGrantingTicket);
                     configurationContext.getTicketRegistry().deleteTicket(ticketGrantingTicket);
                 }
-
                 LOGGER.trace("Attempting to issue a new ticket-granting ticket...");
                 return configurationContext.getCentralAuthenticationService().createTicketGrantingTicket(authenticationResult);
             }

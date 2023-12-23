@@ -20,10 +20,12 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.JWTParser;
 import com.nimbusds.jwt.PlainJWT;
 import com.nimbusds.jwt.SignedJWT;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+import lombok.With;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -49,6 +51,11 @@ import java.util.Set;
 @RequiredArgsConstructor
 @Getter
 public class JwtBuilder {
+    /**
+     * Bean name of the builder that builds tickets as JWTs.
+     */
+    public static final String TICKET_JWT_BUILDER_BEAN_NAME = "tokenTicketJwtBuilder";
+
     private final CipherExecutor<Serializable, String> defaultTokenCipherExecutor;
 
     private final ServicesManager servicesManager;
@@ -154,6 +161,7 @@ public class JwtBuilder {
     public String build(final JwtRequest payload) throws Exception {
         val serviceAudience = payload.getServiceAudience();
         Objects.requireNonNull(payload.getIssuer(), "Issuer cannot be undefined");
+        Objects.requireNonNull(serviceAudience, "Audience cannot be undefined");
         val claims = new JWTClaimsSet.Builder()
             .audience(new ArrayList<>(serviceAudience))
             .issuer(payload.getIssuer())
@@ -232,6 +240,8 @@ public class JwtBuilder {
     @Getter
     @ToString
     @SuppressWarnings("JavaUtilDate")
+    @AllArgsConstructor
+    @With
     public static class JwtRequest {
         private final String jwtId;
 

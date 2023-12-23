@@ -1,5 +1,6 @@
 package org.apereo.cas.aup;
 
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.BaseWebBasedRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceAcceptableUsagePolicy;
@@ -71,7 +72,7 @@ class JdbcAcceptableUsagePolicyRepositoryAdvancedTests extends BaseJdbcAcceptabl
     void verifySubmitWithoutAuthn() throws Throwable {
         val c = getCredential("casuser");
         val context = getRequestContext("casuser", Map.of(), c);
-        WebUtils.putAuthentication(null, context);
+        WebUtils.putAuthentication((Authentication) null, context);
         assertFalse(getAcceptableUsagePolicyRepository().submit(context));
     }
 

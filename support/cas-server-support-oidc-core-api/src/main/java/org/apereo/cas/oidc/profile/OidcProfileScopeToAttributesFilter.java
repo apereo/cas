@@ -12,6 +12,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -85,10 +86,9 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
         val userInfo = OAuth20Utils.parseUserInfoRequestClaims(accessToken);
         if (userInfo.isEmpty()) {
             LOGGER.trace("No userinfo requested claims are available");
-        } else {
-            val principalAttributes = accessToken.getTicketGrantingTicket().getAuthentication().getPrincipal().getAttributes();
-            LOGGER.debug("Requested user-info claims [{}] are compared against principal attributes [{}]",
-                userInfo, principalAttributes);
+        } else if (accessToken.getTicketGrantingTicket() instanceof final AuthenticationAwareTicket aat) {
+            val principalAttributes = aat.getAuthentication().getPrincipal().getAttributes();
+            LOGGER.debug("Requested user-info claims [{}] are compared against principal attributes [{}]", userInfo, principalAttributes);
             userInfo
                 .stream()
                 .filter(principalAttributes::containsKey)

@@ -9,7 +9,6 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
@@ -47,7 +46,7 @@ public class OAuth20DefaultRefreshTokenFactory implements OAuth20RefreshTokenFac
     @Override
     public OAuth20RefreshToken create(final Service service,
                                       final Authentication authentication,
-                                      final TicketGrantingTicket ticketGrantingTicket,
+                                      final Ticket ticketGrantingTicket,
                                       final Collection<String> scopes,
                                       final String clientId,
                                       final String accessToken,

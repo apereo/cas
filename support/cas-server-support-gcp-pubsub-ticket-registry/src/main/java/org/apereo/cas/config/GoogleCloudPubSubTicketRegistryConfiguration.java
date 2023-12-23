@@ -57,7 +57,7 @@ public class GoogleCloudPubSubTicketRegistryConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "pubSubMessageConverter")
     public PubSubMessageConverter pubSubMessageConverter(
-        @Qualifier("defaultTicketRegistryCipherExecutor")
+        @Qualifier(CipherExecutor.BEAN_NAME_TICKET_REGISTRY_CIPHER_EXECUTOR)
         final CipherExecutor defaultTicketRegistryCipherExecutor) {
         return new GoogleCloudPubSubMessageConverter(defaultTicketRegistryCipherExecutor);
     }

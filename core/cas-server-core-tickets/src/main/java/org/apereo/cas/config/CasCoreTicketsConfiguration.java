@@ -31,7 +31,6 @@ import org.apereo.cas.ticket.factory.DefaultTicketGrantingTicketFactory;
 import org.apereo.cas.ticket.factory.DefaultTransientSessionTicketFactory;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicketFactory;
 import org.apereo.cas.ticket.proxy.ProxyTicketFactory;
-import org.apereo.cas.ticket.registry.CachingTicketRegistry;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistrySupport;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -169,7 +168,7 @@ public class CasCoreTicketsConfiguration {
         public TicketRegistry ticketRegistry(
             @Qualifier("messageQueueTicketRegistryPublisher")
             final QueueableTicketRegistryMessagePublisher messageQueueTicketRegistryPublisher,
-            @Qualifier("defaultTicketRegistryCipherExecutor")
+            @Qualifier(CipherExecutor.BEAN_NAME_TICKET_REGISTRY_CIPHER_EXECUTOR)
             final CipherExecutor defaultTicketRegistryCipherExecutor,
             @Qualifier("messageQueueTicketRegistryIdentifier")
             final PublisherIdentifier messageQueueTicketRegistryIdentifier,
@@ -183,10 +182,6 @@ public class CasCoreTicketsConfiguration {
             LOGGER.info("Runtime memory is used as the persistence storage for retrieving and managing tickets. "
                         + "Tickets that are issued during runtime will be LOST when the web server is restarted. This MAY impact SSO functionality.");
             val mem = casProperties.getTicket().getRegistry().getInMemory();
-            if (mem.isCache()) {
-                return new CachingTicketRegistry(defaultTicketRegistryCipherExecutor, ticketSerializationManager, ticketCatalog,
-                    logoutManager, messageQueueTicketRegistryPublisher, messageQueueTicketRegistryIdentifier);
-            }
             val storageMap = new ConcurrentHashMap<String, Ticket>(mem.getInitialCapacity(), mem.getLoadFactor(), mem.getConcurrency());
             return new DefaultTicketRegistry(defaultTicketRegistryCipherExecutor, ticketSerializationManager, ticketCatalog,
                 storageMap, messageQueueTicketRegistryPublisher, messageQueueTicketRegistryIdentifier);
@@ -194,7 +189,7 @@ public class CasCoreTicketsConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "defaultTicketRegistryCipherExecutor")
+        @ConditionalOnMissingBean(name = CipherExecutor.BEAN_NAME_TICKET_REGISTRY_CIPHER_EXECUTOR)
         public CipherExecutor defaultTicketRegistryCipherExecutor(final CasConfigurationProperties casProperties) {
             val mem = casProperties.getTicket().getRegistry().getInMemory();
             return CoreTicketUtils.newTicketRegistryCipherExecutor(mem.getCrypto(), "in-memory");

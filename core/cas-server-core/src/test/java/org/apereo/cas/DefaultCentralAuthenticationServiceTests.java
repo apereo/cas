@@ -16,6 +16,8 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.services.UnauthorizedSsoServiceException;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.InvalidTicketException;
+import org.apereo.cas.ticket.ServiceAwareTicket;
+import org.apereo.cas.ticket.ServiceTicketImpl;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UnrecognizableServiceForServiceTicketValidationException;
 import org.apereo.cas.validation.DefaultCasProtocolValidationSpecification;
@@ -191,9 +193,8 @@ class DefaultCentralAuthenticationServiceTests extends AbstractCentralAuthentica
     @Test
     void verifyProxyGrantingTicketHasRootAuthenticationAsPrincipal() throws Throwable {
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), getService());
-        val ticket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
-        val serviceTicketId = getCentralAuthenticationService().grantServiceTicket(ticket.getId(), getService(), ctx);
-
+        val ticket = (TicketGrantingTicket) getCentralAuthenticationService().createTicketGrantingTicket(ctx);
+        val serviceTicketId = (ServiceAwareTicket) getCentralAuthenticationService().grantServiceTicket(ticket.getId(), getService(), ctx);
         val service = (AbstractWebApplicationService) serviceTicketId.getService();
         assertEquals(service.getPrincipal(), ticket.getAuthentication().getPrincipal().getId());
     }
@@ -201,14 +202,11 @@ class DefaultCentralAuthenticationServiceTests extends AbstractCentralAuthentica
     @Test
     void verifyDelegateTicketGrantingTicketWithBadServiceTicket() throws Throwable {
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), getService());
-
         val ticketId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
         val serviceTicketId = getCentralAuthenticationService().grantServiceTicket(ticketId.getId(), getService(), ctx);
         getTicketRegistry().deleteTicket(ticketId.getId());
-
         val ctx2 = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(),
             RegisteredServiceTestUtils.getHttpBasedServiceCredentials());
-
         assertThrows(AbstractTicketException.class,
             () -> getCentralAuthenticationService().createProxyGrantingTicket(serviceTicketId.getId(), ctx2));
     }
@@ -216,7 +214,6 @@ class DefaultCentralAuthenticationServiceTests extends AbstractCentralAuthentica
     @Test
     void verifyGrantServiceTicketWithValidCredentials() throws Throwable {
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), getService());
-
         val ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
         getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), getService(), ctx);
     }
@@ -226,10 +223,8 @@ class DefaultCentralAuthenticationServiceTests extends AbstractCentralAuthentica
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(),
             CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("testA"));
         val ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
-
         val ctx2 = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(),
             CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("testB"));
-
         assertThrows(MixedPrincipalException.class,
             () -> getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), getService(), ctx2));
     }
@@ -247,8 +242,7 @@ class DefaultCentralAuthenticationServiceTests extends AbstractCentralAuthentica
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport());
         val ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
         val operativeService = getService("accessStrategyMapped");
-        val serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(),
-            operativeService, ctx);
+        val serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), operativeService, ctx);
         assertNotNull(getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(), operativeService));
     }
 
@@ -264,6 +258,16 @@ class DefaultCentralAuthenticationServiceTests extends AbstractCentralAuthentica
         assertThrows(UnrecognizableServiceForServiceTicketValidationException.class,
             () -> getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(),
                 RegisteredServiceTestUtils.getService(id)));
+    }
+
+    @Test
+    void verifyValidateServiceTicketWithoutTicketGrantingTicket() throws Throwable {
+        val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport());
+        val ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
+        val serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), getService(), ctx);
+        ((ServiceTicketImpl) serviceTicket).setTicketGrantingTicket(null);
+        assertThrows(InvalidTicketException.class,
+            () -> getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(), getService()));
     }
 
     @Test

@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
 
@@ -107,7 +108,8 @@ public interface ProtocolAttributeEncoder {
      * @since 4.1
      */
     default Map<String, Object> encodeAttributes(final Map<String, Object> attributes,
-                                                 final RegisteredService registeredService, final WebApplicationService webApplicationService) {
+                                                 final RegisteredService registeredService,
+                                                 final Service webApplicationService) {
         val finalAttributes = new HashMap<String, Object>(attributes.size());
         attributes.forEach((k, v) -> {
             val attributeName = decodeAttribute(k);

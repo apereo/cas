@@ -6,7 +6,6 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.ticket.code.OAuth20Code;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -36,11 +35,7 @@ public abstract class BaseOAuth20Token extends AbstractTicket implements OAuth20
 
     private Map<String, Map<String, Object>> claims = new HashMap<>(0);
 
-    /**
-     * The {@link TicketGrantingTicket} this is associated with.
-     */
-    @JsonProperty("ticketGrantingTicket")
-    private TicketGrantingTicket ticketGrantingTicket;
+    private Ticket ticketGrantingTicket;
 
     /**
      * The service this ticket is valid for.
@@ -66,7 +61,7 @@ public abstract class BaseOAuth20Token extends AbstractTicket implements OAuth20
                             final @NonNull Service service,
                             final Authentication authentication,
                             final @NonNull ExpirationPolicy expirationPolicy,
-                            final TicketGrantingTicket ticketGrantingTicket,
+                            final Ticket ticketGrantingTicket,
                             final @NonNull Collection<String> scopes,
                             final String codeChallenge,
                             final String codeChallengeMethod,

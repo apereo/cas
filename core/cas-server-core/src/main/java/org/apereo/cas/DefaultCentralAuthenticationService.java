@@ -28,6 +28,7 @@ import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.RenewableServiceTicket;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.ServiceTicketFactory;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketFactory;
 import org.apereo.cas.ticket.UnrecognizableServiceForServiceTicketValidationException;
@@ -94,8 +95,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         actionResolverName = AuditActionResolvers.CREATE_TICKET_GRANTING_TICKET_RESOLVER,
         resourceResolverName = AuditResourceResolvers.CREATE_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER)
     @Override
-    public TicketGrantingTicket createTicketGrantingTicket(final AuthenticationResult authenticationResult) throws Throwable {
-
+    public Ticket createTicketGrantingTicket(final AuthenticationResult authenticationResult) throws Throwable {
         val authentication = authenticationResult.getAuthentication();
         var service = authenticationResult.getService();
         val clientInfo = ClientInfoHolder.getClientInfo();
@@ -109,12 +109,9 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
 
         val factory = (TicketGrantingTicketFactory) configurationContext.getTicketFactory().get(TicketGrantingTicket.class);
         val ticketGrantingTicket = factory.create(authentication, service, TicketGrantingTicket.class);
-
-        FunctionUtils.doUnchecked(__ -> {
-            configurationContext.getTicketRegistry().addTicket(ticketGrantingTicket);
-            doPublishEvent(new CasTicketGrantingTicketCreatedEvent(this, ticketGrantingTicket, clientInfo));
-        });
-        return ticketGrantingTicket;
+        val addedTicket = configurationContext.getTicketRegistry().addTicket(ticketGrantingTicket);
+        doPublishEvent(new CasTicketGrantingTicketCreatedEvent(this, ticketGrantingTicket, clientInfo));
+        return addedTicket;
     }
 
     @Audit(
@@ -122,15 +119,15 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         actionResolverName = AuditActionResolvers.GRANT_SERVICE_TICKET_RESOLVER,
         resourceResolverName = AuditResourceResolvers.GRANT_SERVICE_TICKET_RESOURCE_RESOLVER)
     @Override
-    public ServiceTicket grantServiceTicket(final String ticketGrantingTicketId, final Service service,
-                                            final AuthenticationResult authenticationResult) throws Throwable {
+    public Ticket grantServiceTicket(final String ticketGrantingTicketId, final Service service,
+                                     final AuthenticationResult authenticationResult) throws Throwable {
 
         val credentialProvided = authenticationResult != null && authenticationResult.isCredentialProvided();
         val clientInfo = ClientInfoHolder.getClientInfo();
         return configurationContext.getLockRepository().execute(ticketGrantingTicketId,
-            Unchecked.supplier(new CheckedSupplier<ServiceTicket>() {
+            Unchecked.supplier(new CheckedSupplier<Ticket>() {
                 @Override
-                public ServiceTicket get() throws Throwable {
+                public Ticket get() throws Throwable {
                     val ticketGrantingTicket = configurationContext.getTicketRegistry().getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
                     val selectedService = resolveServiceFromAuthenticationRequest(service);
                     val registeredService = configurationContext.getServicesManager().findServiceBy(selectedService);
@@ -160,12 +157,11 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
                     val factory = (ServiceTicketFactory) configurationContext.getTicketFactory().get(ServiceTicket.class);
                     val serviceTicket = factory.create(ticketGrantingTicket, selectedService, credentialProvided, ServiceTicket.class);
                     configurationContext.getTicketRegistry().updateTicket(ticketGrantingTicket);
-                    configurationContext.getTicketRegistry().addTicket(serviceTicket);
-
+                    val addedServiceTicket = configurationContext.getTicketRegistry().addTicket(serviceTicket);
                     LOGGER.info("Granted service ticket [{}] for service [{}] and principal [{}]",
                         serviceTicket.getId(), DigestUtils.abbreviate(selectedService.getId()), principal.getId());
                     doPublishEvent(new CasServiceTicketGrantedEvent(this, ticketGrantingTicket, serviceTicket, clientInfo));
-                    return serviceTicket;
+                    return addedServiceTicket;
                 }
             })).orElseThrow(() -> new InvalidTicketException(ticketGrantingTicketId));
     }
@@ -227,10 +223,13 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             LOGGER.info("Service ticket [{}] is not a valid ticket issued by CAS.", serviceTicketId);
             throw new InvalidTicketException(serviceTicketId);
         }
-
         val serviceTicket = configurationContext.getTicketRegistry().getTicket(serviceTicketId, ServiceTicket.class);
         if (serviceTicket == null) {
             LOGGER.warn("Service ticket [{}] does not exist.", serviceTicketId);
+            throw new InvalidTicketException(serviceTicketId);
+        }
+        if (!(serviceTicket.getTicketGrantingTicket() instanceof TicketGrantingTicket)) {
+            LOGGER.warn("Service ticket [{}] is not assigned a valid ticket granting ticket", serviceTicketId);
             throw new InvalidTicketException(serviceTicketId);
         }
 
@@ -260,10 +259,9 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             LOGGER.trace("Located registered service definition [{}] from [{}] to handle validation request", registeredService, selectedService);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(selectedService, registeredService);
 
-            val root = serviceTicket.getTicketGrantingTicket().getRoot();
+            val root = ((TicketGrantingTicket) serviceTicket.getTicketGrantingTicket()).getRoot();
             val authentication = getAuthenticationSatisfiedByPolicy(root.getAuthentication(), selectedService, registeredService);
             val principal = authentication.getPrincipal();
-
             val attributePolicy = Objects.requireNonNull(registeredService.getAttributeReleasePolicy());
             LOGGER.debug("Attribute policy [{}] is associated with service [{}]", attributePolicy, registeredService);
 
@@ -310,14 +308,15 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
 
             enforceRegisteredServiceAccess(selectedService, registeredService, accessPrincipal);
 
+            val ticketGrantingTicket = (TicketGrantingTicket) serviceTicket.getTicketGrantingTicket();
             val assertion = DefaultAssertionBuilder.builder()
                 .primaryAuthentication(finalAuthentication)
                 .originalAuthentication(authentication)
                 .service(selectedService)
                 .registeredService(registeredService)
-                .authentications(serviceTicket.getTicketGrantingTicket().getChainedAuthentications())
+                .authentications(ticketGrantingTicket.getChainedAuthentications())
                 .newLogin(((RenewableServiceTicket) serviceTicket).isFromNewLogin())
-                .context(CollectionUtils.wrap(TicketGrantingTicket.class.getName(), serviceTicket.getTicketGrantingTicket().getRoot().getId()))
+                .context(CollectionUtils.wrap(TicketGrantingTicket.class.getName(), root.getId()))
                 .build()
                 .assemble();
             val clientInfo = ClientInfoHolder.getClientInfo();

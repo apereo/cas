@@ -1,7 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.ticket.EncodedTicket;
-import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.util.EncodingUtils;
 
@@ -14,9 +13,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ArrayUtils;
 
 import java.io.Serial;
-import java.time.ZonedDateTime;
 
 /**
  * Ticket implementation that encodes a source ticket and stores the encoded
@@ -51,64 +50,17 @@ public class DefaultEncodedTicket implements EncodedTicket {
         this.prefix = prefix;
     }
 
-    @Override
-    @JsonIgnore
-    public ZonedDateTime getCreationTime() {
-        getOpNotSupportedMessage("getCreationTime");
-        return null;
-    }
-
-    @JsonIgnore
-    @Override
-    public int getCountOfUses() {
-        getOpNotSupportedMessage("getCountOfUses");
-        return 0;
-    }
-
-    @Override
-    @JsonIgnore
-    public boolean isExpired() {
-        getOpNotSupportedMessage("getExpirationPolicy");
-        return false;
-    }
-
-    @Override
-    @JsonIgnore
-    public ExpirationPolicy getExpirationPolicy() {
-        getOpNotSupportedMessage("getExpirationPolicy");
-        return null;
-    }
-
-    @Override
-    @JsonIgnore
-    public void markTicketExpired() {
-    }
-
-    @Override
-    @JsonIgnore
-    public ZonedDateTime getLastTimeUsed() {
-        return null;
-    }
-
-    @Override
-    @JsonIgnore
-    public ZonedDateTime getPreviousTimeUsed() {
-        return null;
-    }
-
-    @Override
-    @JsonIgnore
-    public void update() {
+    public DefaultEncodedTicket(@JsonProperty("encoded") final String encodedTicket,
+                                @JsonProperty("prefix") final String prefix) {
+        this.id = encodedTicket;
+        this.prefix = prefix;
+        this.encodedTicket = ArrayUtils.EMPTY_BYTE_ARRAY;
     }
 
     @Override
     @JsonIgnore
     public int compareTo(final Ticket o) {
         return getId().compareTo(o.getId());
-    }
-
-    private void getOpNotSupportedMessage(final String op) {
-        LOGGER.trace("[{}] operation not supported on a [{}].", op, getClass().getSimpleName());
     }
 
 }

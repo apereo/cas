@@ -2,6 +2,7 @@ package org.apereo.cas.ticket.tracking;
 
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.ServiceTicket;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import lombok.val;
@@ -21,10 +22,11 @@ public class MostRecentServiceSessionTrackingPolicy extends AllServicesSessionTr
     }
 
     @Override
-    protected void beforeTrackingServiceTicket(final TicketGrantingTicket ownerTicket,
+    protected void beforeTrackingServiceTicket(final Ticket ownerTicket,
                                                final ServiceTicket serviceTicket) {
+        val ticketGrantingTicket = (TicketGrantingTicket) ownerTicket;
         val path = normalizePath(serviceTicket.getService());
-        val toRemove = ownerTicket.getServices()
+        val toRemove = ticketGrantingTicket.getServices()
             .entrySet()
             .stream()
             .filter(entry -> {
@@ -33,7 +35,7 @@ public class MostRecentServiceSessionTrackingPolicy extends AllServicesSessionTr
             }).toList();
 
         toRemove.forEach(Unchecked.consumer(entry -> {
-            ownerTicket.getServices().remove(entry.getKey());
+            ticketGrantingTicket.getServices().remove(entry.getKey());
             ticketRegistry.deleteTicket(entry.getKey());
         }));
     }

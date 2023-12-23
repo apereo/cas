@@ -49,7 +49,8 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
     private final HazelcastTicketRegistryProperties properties;
 
     public HazelcastTicketRegistry(final CipherExecutor cipherExecutor, final TicketSerializationManager ticketSerializationManager,
-                                   final TicketCatalog ticketCatalog, final HazelcastInstance hazelcastInstance, final HazelcastTicketRegistryProperties properties) {
+                                   final TicketCatalog ticketCatalog, final HazelcastInstance hazelcastInstance,
+                                   final HazelcastTicketRegistryProperties properties) {
         super(cipherExecutor, ticketSerializationManager, ticketCatalog);
         this.hazelcastInstance = hazelcastInstance;
         this.properties = properties;
@@ -62,7 +63,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
     }
 
     @Override
-    public void addTicketInternal(final Ticket ticket) throws Exception {
+    public Ticket addSingleTicket(final Ticket ticket) throws Exception {
         var ttl = ticket.getExpirationPolicy().getTimeToLive();
         /*
          * Valid values are integers between 0 and Integer.MAX VALUE. Its default value is 0,
@@ -95,6 +96,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
         } else {
             LOGGER.warn("Unable to locate ticket map for ticket metadata [{}]", metadata);
         }
+        return ticket;
     }
 
     @Override

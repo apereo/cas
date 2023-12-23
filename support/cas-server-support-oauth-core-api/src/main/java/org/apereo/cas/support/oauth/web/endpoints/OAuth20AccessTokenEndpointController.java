@@ -14,12 +14,12 @@ import org.apereo.cas.support.oauth.validator.token.device.UnapprovedOAuth20Devi
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGeneratedResult;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseResult;
+import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.ticket.OAuth20UnauthorizedScopeRequestException;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-
 import com.google.common.base.Supplier;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -31,7 +31,6 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.LinkedHashMap;
@@ -110,8 +109,8 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
         try {
             val requestHolder = examineAndExtractAccessTokenGrantRequest(request, response);
             var authn = requestHolder.getAuthentication();
-            if (authn == null) {
-                authn = requestHolder.getTicketGrantingTicket().getAuthentication();
+            if (authn == null && requestHolder.getTicketGrantingTicket() instanceof final AuthenticationAwareTicket aat) {
+                authn = aat.getAuthentication();
             }
             LoggingUtils.protocolMessage("OAuth/OpenID Connect Token Request",
                 Map.of("Token", Optional.ofNullable(requestHolder.getToken()).map(OAuth20Token::getId).orElse("none"),

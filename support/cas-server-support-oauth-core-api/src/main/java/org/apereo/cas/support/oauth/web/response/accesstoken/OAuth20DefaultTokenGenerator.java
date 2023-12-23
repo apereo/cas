@@ -10,8 +10,8 @@ import org.apereo.cas.support.oauth.validator.token.device.InvalidOAuth20DeviceT
 import org.apereo.cas.support.oauth.validator.token.device.ThrottledOAuth20DeviceUserCodeApprovalException;
 import org.apereo.cas.support.oauth.validator.token.device.UnapprovedOAuth20DeviceUserCodeException;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
+import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
 import org.apereo.cas.ticket.device.OAuth20DeviceToken;
@@ -153,8 +153,8 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         LOGGER.debug("Creating access token for [{}]", holder.getService());
         val ticketGrantingTicket = holder.getTicketGrantingTicket();
         var existingAuthn = holder.getAuthentication();
-        if (existingAuthn == null) {
-            existingAuthn = ticketGrantingTicket.getAuthentication();
+        if (existingAuthn == null && ticketGrantingTicket instanceof final AuthenticationAwareTicket aat) {
+            existingAuthn = aat.getAuthentication();
         }
         val authnBuilder = DefaultAuthenticationBuilder
             .newInstance(existingAuthn)
@@ -216,14 +216,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         }
     }
 
-    /**
-     * Add ticket to registry.
-     *
-     * @param ticket               the ticket
-     * @param ticketGrantingTicket the ticket granting ticket
-     * @throws Exception the exception
-     */
-    protected void addTicketToRegistry(final Ticket ticket, final TicketGrantingTicket ticketGrantingTicket) throws Exception {
+    protected void addTicketToRegistry(final Ticket ticket, final Ticket ticketGrantingTicket) throws Exception {
         LOGGER.debug("Adding ticket [{}] to registry", ticket);
         ticketRegistry.addTicket(ticket);
         if (ticketGrantingTicket != null) {
@@ -245,7 +238,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
     protected OAuth20RefreshToken generateRefreshToken(final AccessTokenRequestContext responseHolder,
                                                        final OAuth20AccessToken accessToken) throws Throwable {
         LOGGER.debug("Creating refresh token for [{}]", responseHolder.getService());
-        val refreshToken = this.refreshTokenFactory.create(responseHolder.getService(),
+        val refreshToken = refreshTokenFactory.create(responseHolder.getService(),
             responseHolder.getAuthentication(),
             responseHolder.getTicketGrantingTicket(),
             responseHolder.getScopes(),
