@@ -77,6 +77,8 @@ public class StatelessTicketRegistryConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasWebflowConfigurer statelessTicketRegistryWebflowConfigurer(
+        @Qualifier(CasWebflowConstants.BEAN_NAME_ACCOUNT_PROFILE_FLOW_DEFINITION_REGISTRY)
+        final ObjectProvider<FlowDefinitionRegistry> accountProfileFlowRegistry,
         @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
         final FlowBuilderServices flowBuilderServices,
         @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
@@ -84,6 +86,6 @@ public class StatelessTicketRegistryConfiguration {
         final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext) {
         return new StatelessTicketRegistryWebflowConfigurer(flowBuilderServices,
-            loginFlowDefinitionRegistry, applicationContext, casProperties);
+            loginFlowDefinitionRegistry, accountProfileFlowRegistry, applicationContext, casProperties);
     }
 }
