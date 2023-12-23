@@ -6,6 +6,7 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
+import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
@@ -62,7 +63,7 @@ class OidcUserProfileDataCreatorTests {
             val accessToken = getAccessToken();
             val data = oidcUserProfileDataCreator.createFrom(accessToken, context);
             assertFalse(data.isEmpty());
-            assertEquals(accessToken.getTicketGrantingTicket().getAuthentication()
+            assertEquals(((AuthenticationAwareTicket) accessToken.getTicketGrantingTicket()).getAuthentication()
                 .getAuthenticationDate().toEpochSecond(), (long) data.get(OidcConstants.CLAIM_AUTH_TIME));
             assertTrue(data.containsKey(OidcConstants.CLAIM_SUB));
             assertTrue(data.containsKey(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ID));

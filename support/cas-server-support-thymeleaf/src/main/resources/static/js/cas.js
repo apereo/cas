@@ -16,8 +16,8 @@ function randomWord() {
         "mandela", "gandhi", "curie", "newton", "tesla", "faraday", "bell",
         "aristotle", "hubble", "nobel", "pascal", "washington", "galileo"];
 
-    let n1 = things[Math.floor(Math.random() * things.length)];
-    let n2 = names[Math.floor(Math.random() * names.length)];
+    const n1 = things[Math.floor(Math.random() * things.length)];
+    const n2 = names[Math.floor(Math.random() * names.length)];
     return `${n1}_${n2}`;
 }
 
@@ -117,7 +117,7 @@ function readFromLocalStorage(key = "localStorageKey") {
     return payload;
 }
 
-function writeToSessionStorage(value, key= "sessionStorageKey") {
+function writeToSessionStorage(value, key = "sessionStorageKey") {
     if (typeof (Storage) === "undefined") {
         console.log("Browser does not support session storage for write-ops");
     } else {
@@ -126,6 +126,15 @@ function writeToSessionStorage(value, key= "sessionStorageKey") {
         console.log(`Stored ${value} in session storage under key ${key}`);
     }
 }
+
+function clearSessionStorage() {
+    if (typeof (Storage) === "undefined") {
+        console.log("Browser does not support session storage for write-ops");
+    } else {
+        window.sessionStorage.clear();
+    }
+}
+
 
 function readFromSessionStorage(key= "sessionStorageKey") {
     if (typeof (Storage) === "undefined") {

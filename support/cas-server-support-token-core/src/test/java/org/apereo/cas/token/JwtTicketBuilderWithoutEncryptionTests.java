@@ -12,14 +12,14 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link JwtTokenTicketBuilderWithoutEncryptionTests}.
+ * This is {@link JwtTicketBuilderWithoutEncryptionTests}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
 @TestPropertySource(properties = "cas.authn.token.crypto.encryption-enabled=false")
 @Tag("Tickets")
-class JwtTokenTicketBuilderWithoutEncryptionTests extends BaseJwtTokenTicketBuilderTests {
+class JwtTicketBuilderWithoutEncryptionTests extends BaseJwtTokenTicketBuilderTests {
 
     @Test
     void verifyJwtForServiceTicket() throws Throwable {

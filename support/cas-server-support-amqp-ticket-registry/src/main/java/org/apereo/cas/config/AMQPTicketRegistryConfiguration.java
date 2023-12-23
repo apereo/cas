@@ -49,7 +49,7 @@ public class AMQPTicketRegistryConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MessageConverter messageQueueTicketRegistryConverter(
-        @Qualifier("defaultTicketRegistryCipherExecutor")
+        @Qualifier(CipherExecutor.BEAN_NAME_TICKET_REGISTRY_CIPHER_EXECUTOR)
         final CipherExecutor defaultTicketRegistryCipherExecutor) {
         val converter = new SerializerMessageConverter();
         converter.setDefaultCharset(StandardCharsets.UTF_8.name());

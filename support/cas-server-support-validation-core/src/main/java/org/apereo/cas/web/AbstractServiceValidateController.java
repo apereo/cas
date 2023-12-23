@@ -171,25 +171,12 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         return null;
     }
 
-    /**
-     * Initialize the binder with the required fields.
-     *
-     * @param request the request
-     * @param binder  the binder
-     */
     protected void initBinder(final HttpServletRequest request, final ServletRequestDataBinder binder) {
         if (serviceValidateConfigurationContext.getCasProperties().getSso().isRenewAuthnEnabled()) {
             binder.setRequiredFields(CasProtocolConstants.PARAMETER_RENEW);
         }
     }
 
-    /**
-     * Prepare for ticket validation.
-     *
-     * @param request         the request
-     * @param service         the service
-     * @param serviceTicketId the service ticket id
-     */
     protected void prepareForTicketValidation(final HttpServletRequest request, final WebApplicationService service, final String serviceTicketId) {
     }
 

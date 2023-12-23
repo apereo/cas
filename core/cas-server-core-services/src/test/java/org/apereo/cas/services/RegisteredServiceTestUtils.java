@@ -3,6 +3,8 @@ package org.apereo.cas.services;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.credential.HttpBasedServiceCredential;
@@ -233,6 +235,15 @@ public class RegisteredServiceTestUtils {
         return new DefaultAuthenticationBuilder(principal)
             .addCredential(credential)
             .addSuccess("testHandler", new DefaultAuthenticationHandlerExecutionResult(handler, credential))
+            .setAttributes(attributes)
+            .build();
+    }
+
+    public static Authentication getAuthentication(final String principal, final AuthenticationHandler handler,
+                                                   final Credential credential, final Map<String, List<Object>> attributes) {
+        return new DefaultAuthenticationBuilder(getPrincipal(principal))
+            .addCredential(credential)
+            .addSuccess(handler.getName(), new DefaultAuthenticationHandlerExecutionResult(handler, credential))
             .setAttributes(attributes)
             .build();
     }

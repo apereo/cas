@@ -14,6 +14,11 @@ import java.security.Key;
  */
 public interface CipherExecutor<I, O> extends EncodableCipher<I, O>, DecodableCipher<I, O> {
     /**
+     * Default cipher bean name for ticket registry ops.
+     */
+    String BEAN_NAME_TICKET_REGISTRY_CIPHER_EXECUTOR = "defaultTicketRegistryCipherExecutor";
+
+    /**
      * Factory method.
      *
      * @return Strongly -typed Noop {@code CipherExecutor Serializable -> Serializable}

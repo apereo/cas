@@ -16,13 +16,13 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link JwtTokenTicketBuilderTests}.
+ * This is {@link JwtTicketBuilderTests}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
 @Tag("Tickets")
-class JwtTokenTicketBuilderTests extends BaseJwtTokenTicketBuilderTests {
+class JwtTicketBuilderTests extends BaseJwtTokenTicketBuilderTests {
 
     @Test
     void verifyJwtForServiceTicket() throws Throwable {

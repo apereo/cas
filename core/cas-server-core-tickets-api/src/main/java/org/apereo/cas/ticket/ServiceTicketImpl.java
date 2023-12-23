@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
@@ -36,9 +37,6 @@ public class ServiceTicketImpl extends AbstractTicket
     @Serial
     private static final long serialVersionUID = -4223319704861765405L;
 
-    /**
-     * The {@link TicketGrantingTicket} this is associated with.
-     */
     @JsonProperty("ticketGrantingTicket")
     private TicketGrantingTicket ticketGrantingTicket;
 
@@ -54,18 +52,6 @@ public class ServiceTicketImpl extends AbstractTicket
 
     private Boolean grantedTicketAlready = Boolean.FALSE;
 
-    /**
-     * Constructs a new ServiceTicket with a Unique Id, a TicketGrantingTicket,
-     * a Service, Expiration Policy and a flag to determine if the ticket
-     * creation was from a new Login or not.
-     *
-     * @param id                 the unique identifier for the ticket.
-     * @param ticket             the TicketGrantingTicket parent.
-     * @param service            the service this ticket is for.
-     * @param credentialProvided current credential that prompted this service ticket. May be null.
-     * @param policy             the expiration policy for the Ticket.
-     * @throws IllegalArgumentException if the TicketGrantingTicket or the Service are null.
-     */
     @JsonCreator
     public ServiceTicketImpl(
         @JsonProperty("id") final @NonNull String id,
@@ -95,6 +81,7 @@ public class ServiceTicketImpl extends AbstractTicket
     }
 
     @Override
+    @JsonIgnore
     public Authentication getAuthentication() {
         return getTicketGrantingTicket().getAuthentication();
     }
