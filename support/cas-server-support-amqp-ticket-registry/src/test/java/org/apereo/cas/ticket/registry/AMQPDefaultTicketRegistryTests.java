@@ -47,7 +47,7 @@ class AMQPDefaultTicketRegistryTests extends BaseTicketRegistryTests {
     private TicketRegistry newTicketRegistry;
 
     @Autowired
-    @Qualifier("defaultTicketRegistryCipherExecutor")
+    @Qualifier(CipherExecutor.BEAN_NAME_TICKET_REGISTRY_CIPHER_EXECUTOR)
     private CipherExecutor messageQueueCipherExecutor;
 
     @Override

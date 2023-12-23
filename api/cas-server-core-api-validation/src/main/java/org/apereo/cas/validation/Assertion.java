@@ -1,7 +1,7 @@
 package org.apereo.cas.validation;
 
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 
 import java.io.Serializable;
@@ -58,7 +58,7 @@ public interface Assertion extends Serializable {
      *
      * @return the service for which we are asserting this ticket is valid for.
      */
-    WebApplicationService getService();
+    Service getService();
 
     /**
      * Gets registered service.

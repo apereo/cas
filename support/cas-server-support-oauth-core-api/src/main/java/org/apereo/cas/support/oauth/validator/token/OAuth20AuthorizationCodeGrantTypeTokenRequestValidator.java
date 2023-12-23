@@ -7,6 +7,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
+import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -80,7 +81,8 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
             val codeRegisteredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
                 getConfigurationContext().getServicesManager(), id);
 
-            val originalPrincipal = token.getTicketGrantingTicket().getAuthentication().getPrincipal();
+            val authentication = ((AuthenticationAwareTicket) token.getTicketGrantingTicket()).getAuthentication();
+            val originalPrincipal = authentication.getPrincipal();
             val accessStrategyAttributes = CoreAuthenticationUtils.mergeAttributes(originalPrincipal.getAttributes(),
                 token.getAuthentication().getPrincipal().getAttributes());
             val accessStrategyPrincipal = getConfigurationContext().getPrincipalFactory()

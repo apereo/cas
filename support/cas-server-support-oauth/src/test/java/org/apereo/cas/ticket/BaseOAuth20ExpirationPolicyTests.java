@@ -142,7 +142,7 @@ public abstract class BaseOAuth20ExpirationPolicyTests {
         val rt = defaultRefreshTokenFactory.create(testService, at.getAuthentication(),
             at.getTicketGrantingTicket(), new ArrayList<>(), "clientid12345", at.getId(),
             new HashMap<>(), OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
-        at.getTicketGrantingTicket().getDescendantTickets().add(rt.getId());
+        ((TicketGrantingTicket) at.getTicketGrantingTicket()).getDescendantTickets().add(rt.getId());
         return rt;
     }
 }

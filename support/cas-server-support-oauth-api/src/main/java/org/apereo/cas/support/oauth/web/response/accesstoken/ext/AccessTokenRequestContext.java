@@ -7,7 +7,7 @@ import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.OAuth20Token;
-import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 
@@ -58,7 +58,7 @@ public class AccessTokenRequestContext implements Serializable {
 
     private final OAuthRegisteredService registeredService;
 
-    private final TicketGrantingTicket ticketGrantingTicket;
+    private final Ticket ticketGrantingTicket;
 
     @Builder.Default
     private final OAuth20GrantTypes grantType = OAuth20GrantTypes.NONE;

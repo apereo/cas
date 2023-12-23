@@ -1,7 +1,7 @@
 package org.apereo.cas.validation;
 
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 
 import lombok.Builder;
@@ -28,7 +28,7 @@ public class DefaultAssertionBuilder {
     @Builder.Default
     private final List<Authentication> authentications = new ArrayList<>(0);
 
-    private final WebApplicationService service;
+    private final Service service;
 
     private final boolean newLogin;
 

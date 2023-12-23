@@ -17,7 +17,7 @@ import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
-import org.apereo.cas.ticket.ServiceTicket;
+import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -212,7 +212,7 @@ public class WebUtils {
      * @param context the context
      * @param ticket  the ticket value
      */
-    public static void putTicketGrantingTicket(final RequestContext context, final TicketGrantingTicket ticket) {
+    public static void putTicketGrantingTicket(final RequestContext context, final Ticket ticket) {
         context.getFlowScope().put("ticketGrantingTicket", ticket);
     }
 
@@ -232,7 +232,7 @@ public class WebUtils {
      * @param context the context
      * @param ticket  the ticket value
      */
-    public static void putTicketGrantingTicketInScopes(final RequestContext context, final TicketGrantingTicket ticket) {
+    public static void putTicketGrantingTicketInScopes(final RequestContext context, final Ticket ticket) {
         val ticketValue = Optional.ofNullable(ticket).map(Ticket::getId).orElse(null);
         putTicketGrantingTicketInScopes(context, ticketValue);
     }
@@ -296,7 +296,7 @@ public class WebUtils {
      * @param context     the context
      * @param ticketValue the ticket value
      */
-    public static void putServiceTicketInRequestScope(final RequestContext context, final ServiceTicket ticketValue) {
+    public static void putServiceTicketInRequestScope(final RequestContext context, final Ticket ticketValue) {
         context.getRequestScope().put(PARAMETER_SERVICE_TICKET_ID, ticketValue.getId());
     }
 
@@ -567,6 +567,18 @@ public class WebUtils {
      */
     public static void putAuthentication(final Authentication authentication, final RequestContext requestContext) {
         requestContext.getConversationScope().put(CasWebflowConstants.ATTRIBUTE_AUTHENTICATION, authentication);
+    }
+
+    /**
+     * Put authentication.
+     *
+     * @param ticket         the ticket
+     * @param requestContext the request context
+     */
+    public static void putAuthentication(final Ticket ticket, final RequestContext requestContext) {
+        if (ticket instanceof final AuthenticationAwareTicket aat) {
+            putAuthentication(aat.getAuthentication(), requestContext);
+        }
     }
 
     /**

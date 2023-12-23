@@ -45,9 +45,11 @@ import org.apereo.cas.web.flow.actions.AuthenticationExceptionHandlerAction;
 import org.apereo.cas.web.flow.actions.CheckWebAuthenticationRequestAction;
 import org.apereo.cas.web.flow.actions.ClearWebflowCredentialAction;
 import org.apereo.cas.web.flow.actions.InjectResponseHeadersAction;
+import org.apereo.cas.web.flow.actions.ReadSessionStorageAction;
 import org.apereo.cas.web.flow.actions.RedirectToServiceAction;
 import org.apereo.cas.web.flow.actions.RenewAuthenticationRequestCheckAction;
 import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
+import org.apereo.cas.web.flow.actions.WriteSessionStorageAction;
 import org.apereo.cas.web.flow.authentication.CasWebflowExceptionCatalog;
 import org.apereo.cas.web.flow.authentication.CasWebflowExceptionConfigurer;
 import org.apereo.cas.web.flow.authentication.CasWebflowExceptionHandler;
@@ -247,6 +249,7 @@ public class CasCoreWebflowConfiguration {
                 .build()
                 .get();
         }
+        
 
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_REDIRECT_TO_SERVICE)
@@ -521,6 +524,45 @@ public class CasCoreWebflowConfiguration {
                     return new RestfulLoginWebflowDecorator(decorator.getRest());
                 })
                 .otherwiseProxy()
+                .get();
+        }
+    }
+    
+    @Configuration(value = "CasCoreWebflowStorageActionsConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasCoreWebflowStorageActionsConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_WRITE_SESSION_STORAGE)
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public Action writeSessionStorageAction(
+            @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
+            final CasCookieBuilder ticketGrantingTicketCookieGenerator,
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties) {
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new WriteSessionStorageAction(ticketGrantingTicketCookieGenerator))
+                .withId(CasWebflowConstants.ACTION_ID_WRITE_SESSION_STORAGE)
+                .build()
+                .get();
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_READ_SESSION_STORAGE)
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public Action readSessionStorageAction(
+            @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
+            final CasCookieBuilder ticketGrantingTicketCookieGenerator,
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties) {
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new ReadSessionStorageAction(ticketGrantingTicketCookieGenerator,
+                    "casSessionStorageContext", CasWebflowConstants.TRANSITION_ID_READ_SESSION_STORAGE))
+                .withId(CasWebflowConstants.ACTION_ID_READ_SESSION_STORAGE)
+                .build()
                 .get();
         }
     }

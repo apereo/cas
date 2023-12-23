@@ -11,7 +11,7 @@ import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link JwtTokenTicketBuilderWithoutCryptoTests}.
+ * This is {@link JwtTicketBuilderWithoutCryptoTests}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.token.crypto.signingEnabled=false"
 })
 @Tag("Tickets")
-class JwtTokenTicketBuilderWithoutCryptoTests extends BaseJwtTokenTicketBuilderTests {
+class JwtTicketBuilderWithoutCryptoTests extends BaseJwtTokenTicketBuilderTests {
 
     @Test
     void verifyJwtForServiceTicketEncoding() throws Throwable {

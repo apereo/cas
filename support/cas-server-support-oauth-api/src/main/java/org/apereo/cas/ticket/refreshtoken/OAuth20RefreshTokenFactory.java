@@ -4,8 +4,8 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import java.util.Collection;
 import java.util.Map;
@@ -34,7 +34,7 @@ public interface OAuth20RefreshTokenFactory extends TicketFactory {
      * @throws Throwable the throwable
      */
     OAuth20RefreshToken create(Service service, Authentication authentication,
-                               TicketGrantingTicket ticketGrantingTicket,
+                               Ticket ticketGrantingTicket,
                                Collection<String> scopes,
                                String clientId,
                                String accessToken,

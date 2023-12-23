@@ -55,7 +55,10 @@ public class AccountProfileWebflowConfigurer extends AbstractCasWebflowConfigure
         createEndState(accountFlow, "redirectToPasswordReset", "requestScope.url", true);
 
         val validate = createActionState(accountFlow, CasWebflowConstants.STATE_ID_TICKET_GRANTING_TICKET_CHECK,
+            CasWebflowConstants.ACTION_ID_FETCH_TICKET_GRANTING_TICKET,
             CasWebflowConstants.ACTION_ID_TICKET_GRANTING_TICKET_CHECK);
+
+        createTransitionForState(validate, CasWebflowConstants.TRANSITION_ID_READ_SESSION_STORAGE, CasWebflowConstants.STATE_ID_SESSION_STORAGE_READ);
         createTransitionForState(validate, CasWebflowConstants.TRANSITION_ID_TICKET_GRANTING_TICKET_VALID, myAccountView.getId());
         createStateDefaultTransition(validate, CasWebflowConstants.STATE_ID_REDIRECT_TO_LOGIN);
 
@@ -68,16 +71,19 @@ public class AccountProfileWebflowConfigurer extends AbstractCasWebflowConfigure
         accountFlow.setStartState(validate);
         mainFlowDefinitionRegistry.registerFlowDefinition(accountFlow);
 
-
         val removeSession = createActionState(accountFlow, CasWebflowConstants.STATE_ID_REMOVE_SINGLE_SIGNON_SESSION,
             CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_REMOVE_SINGLE_SIGNON_SESSION);
         createTransitionForState(removeSession, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_MY_ACCOUNT_PROFILE_VIEW);
         createTransitionForState(removeSession, CasWebflowConstants.TRANSITION_ID_VALIDATE, accountFlow.getStartState().getId());
 
-
         val successView = getState(loginFlow, CasWebflowConstants.STATE_ID_VIEW_GENERIC_LOGIN_SUCCESS, EndState.class);
         val expression = createExpression(String.format("'%s'", accountFlow.getId()));
         successView.getEntryActionList().add(new ExternalRedirectAction(expression));
+
+
+        val readStorage = createViewState(accountFlow, CasWebflowConstants.STATE_ID_SESSION_STORAGE_READ, CasWebflowConstants.VIEW_ID_SESSION_STORAGE_READ);
+        readStorage.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_READ_SESSION_STORAGE));
+        createStateDefaultTransition(readStorage, accountFlow.getStartState());
     }
 
 }

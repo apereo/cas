@@ -29,7 +29,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-monitor")
 
     testImplementation project(":support:cas-server-support-person-directory")
-    
+
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-notifications", configuration: "tests")

@@ -3,7 +3,7 @@ package org.apereo.cas.token;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -38,7 +38,7 @@ public interface TokenTicketBuilder {
      * @return the string
      * @throws Exception the exception
      */
-    default String build(final TicketGrantingTicket ticketGrantingTicket, final Map<String, List<Object>> claims) throws Exception {
+    default String build(final AuthenticationAwareTicket ticketGrantingTicket, final Map<String, List<Object>> claims) throws Exception {
         return build(ticketGrantingTicket.getAuthentication(), null, ticketGrantingTicket.getId(), claims);
     }
 
