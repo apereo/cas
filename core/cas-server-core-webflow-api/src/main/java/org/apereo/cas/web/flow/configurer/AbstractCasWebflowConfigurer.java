@@ -223,7 +223,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
             return null;
         }
         val ctx = new FluentParserContext();
-        val action = this.flowBuilderServices.getExpressionParser().parseExpression(expression, ctx);
+        val action = flowBuilderServices.getExpressionParser().parseExpression(expression, ctx);
         val newAction = new EvaluateAction(action, null);
         LOGGER.trace("Created evaluate action for expression [{}]", action.getExpressionString());
         return newAction;
