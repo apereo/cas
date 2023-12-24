@@ -98,9 +98,9 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
         createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_SUCCESS, targetSuccess);
         createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_SKIP, getStartState(flow).getId());
         createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_MFA_UNAVAILABLE);
-        createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_RESTORE, CasWebflowConstants.STATE_ID_SESSION_STORAGE_READ);
+        createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_RESTORE, CasWebflowConstants.STATE_ID_BROWSER_STORAGE_READ);
         
-        val viewState = createViewState(flow, CasWebflowConstants.STATE_ID_SESSION_STORAGE_READ, CasWebflowConstants.VIEW_ID_SESSION_STORAGE_READ);
+        val viewState = createViewState(flow, CasWebflowConstants.STATE_ID_BROWSER_STORAGE_READ, CasWebflowConstants.VIEW_ID_BROWSER_STORAGE_READ);
         val setKeyAction = createSetAction("flowScope." + BrowserSessionStorage.KEY_SESSION_STORAGE_CONTEXT, String.format("'%s'", SESSION_STORAGE_CONTEXT));
         viewState.getEntryActionList().add(setKeyAction);
         createStateDefaultTransition(viewState, CasWebflowConstants.STATE_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN);
@@ -143,7 +143,7 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
         val trans = new LinkedList<TransitionModel>();
         val transModel = new TransitionModel();
         transModel.setOn(CasWebflowConstants.TRANSITION_ID_SUCCESS);
-        transModel.setTo(CasWebflowConstants.STATE_ID_SESSION_STORAGE_WRITE);
+        transModel.setTo(CasWebflowConstants.STATE_ID_BROWSER_STORAGE_WRITE);
         trans.add(transModel);
         actionState.setTransitions(trans);
         states.add(actionState);
@@ -154,14 +154,14 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
         val action = new SetModel("flowScope." + BrowserSessionStorage.KEY_SESSION_STORAGE_CONTEXT, String.format("'%s'", SESSION_STORAGE_CONTEXT));
         actions.add(action);
 
-        val writeState = new ViewStateModel(CasWebflowConstants.STATE_ID_SESSION_STORAGE_WRITE);
+        val writeState = new ViewStateModel(CasWebflowConstants.STATE_ID_BROWSER_STORAGE_WRITE);
         writeState.setOnEntryActions(actions);
-        writeState.setView(CasWebflowConstants.STATE_ID_SESSION_STORAGE_WRITE);
+        writeState.setView(CasWebflowConstants.STATE_ID_BROWSER_STORAGE_WRITE);
         states.add(writeState);
 
-        val readState = new ViewStateModel(CasWebflowConstants.STATE_ID_SESSION_STORAGE_READ);
+        val readState = new ViewStateModel(CasWebflowConstants.STATE_ID_BROWSER_STORAGE_READ);
         readState.setOnEntryActions(actions);
-        readState.setView(CasWebflowConstants.STATE_ID_SESSION_STORAGE_READ);
+        readState.setView(CasWebflowConstants.STATE_ID_BROWSER_STORAGE_READ);
         
         states.add(readState);
     }

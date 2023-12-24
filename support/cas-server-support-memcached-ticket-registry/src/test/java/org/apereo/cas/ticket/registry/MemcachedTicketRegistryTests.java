@@ -92,7 +92,7 @@ class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
     private AuthenticationSystemSupport authenticationSystemSupport;
 
     @Override
-    protected boolean isIterableRegistry() {
+    protected boolean canTicketRegistryIterate() {
         return false;
     }
 

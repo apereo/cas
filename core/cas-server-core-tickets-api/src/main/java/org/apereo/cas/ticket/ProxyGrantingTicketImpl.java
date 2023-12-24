@@ -35,26 +35,10 @@ public class ProxyGrantingTicketImpl extends TicketGrantingTicketImpl implements
     @Serial
     private static final long serialVersionUID = -8126909926138945649L;
 
-    /**
-     * Instantiates a new proxy granting ticket impl.
-     *
-     * @param id             the id
-     * @param authentication the authentication
-     * @param policy         the policy
-     */
     public ProxyGrantingTicketImpl(final String id, final Authentication authentication, final ExpirationPolicy policy) {
         super(id, authentication, policy);
     }
 
-    /**
-     * Instantiates a new proxy granting ticket impl.
-     *
-     * @param id                         the id
-     * @param proxiedBy                  the proxied by
-     * @param parentTicketGrantingTicket the ticket granting ticket
-     * @param authentication             the authentication
-     * @param expirationPolicy           the policy
-     */
     @JsonCreator
     public ProxyGrantingTicketImpl(@JsonProperty("id") final String id, @JsonProperty("proxiedBy") final Service proxiedBy,
                                    @JsonProperty("ticketGrantingTicket") final TicketGrantingTicket parentTicketGrantingTicket,

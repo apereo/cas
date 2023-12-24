@@ -98,14 +98,6 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
         this.proxiedBy = proxiedBy;
     }
 
-    /**
-     * Constructs a new TicketGrantingTicket without a parent
-     * TicketGrantingTicket.
-     *
-     * @param id             the id of the Ticket
-     * @param authentication the Authentication request for this ticket
-     * @param policy         the expiration policy for this ticket.
-     */
     public TicketGrantingTicketImpl(final String id, final Authentication authentication, final ExpirationPolicy policy) {
         this(id, null, null, authentication, policy);
     }
@@ -120,7 +112,6 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
         trackingPolicy.trackTicket(this, serviceTicket);
         return serviceTicket;
     }
-
 
     @Override
     public void removeAllServices() {

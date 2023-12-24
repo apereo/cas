@@ -346,7 +346,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
         policyData.put("clock", expirationPolicy.getClock().toString());
         policyData.put("name", expirationPolicy.getName());
 
-        Optional.ofNullable(expirationPolicy.getMaximumExpirationTime(tgt)).ifPresent(dt -> policyData.put("maxExpirationTime", dt));
+        Optional.ofNullable(expirationPolicy.toMaximumExpirationTime(tgt)).ifPresent(dt -> policyData.put("maxExpirationTime", dt));
         Optional.ofNullable(expirationPolicy.getIdleExpirationTime(tgt)).ifPresent(dt -> policyData.put("idleExpirationTime", dt));
 
         sso.put(SsoSessionAttributeKeys.EXPIRATION_POLICY.getAttributeKey(), policyData);

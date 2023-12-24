@@ -15,14 +15,14 @@ import org.springframework.webflow.execution.RequestContext;
 import java.util.Map;
 
 /**
- * This is {@link ReadSessionStorageAction}.
+ * This is {@link ReadBrowserStorageAction}.
  *
  * @author Misagh Moayyed
  * @since 7.0.0
  */
 @RequiredArgsConstructor
 @Getter
-public class ReadSessionStorageAction extends BaseCasWebflowAction {
+public class ReadBrowserStorageAction extends BaseCasWebflowAction {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).minimal(true).build().toObjectMapper();
 
@@ -44,6 +44,7 @@ public class ReadSessionStorageAction extends BaseCasWebflowAction {
             return null;
         }
         requestContext.getFlowScope().put(BrowserSessionStorage.KEY_SESSION_STORAGE_CONTEXT, sessionStorageContextKey);
+        requestContext.getFlowScope().put("removeOnRead", Boolean.FALSE);
         return result(nextTransition);
     }
 

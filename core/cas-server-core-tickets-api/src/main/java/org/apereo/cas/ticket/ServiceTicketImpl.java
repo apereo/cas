@@ -55,7 +55,7 @@ public class ServiceTicketImpl extends AbstractTicket
     @JsonCreator
     public ServiceTicketImpl(
         @JsonProperty("id") final @NonNull String id,
-        @JsonProperty("ticketGrantingTicket") final @NonNull TicketGrantingTicket ticket,
+        @JsonProperty("ticketGrantingTicket") final TicketGrantingTicket ticket,
         @JsonProperty("service") final @NonNull Service service,
         @JsonProperty("credentialProvided") final boolean credentialProvided,
         @JsonProperty("expirationPolicy") final ExpirationPolicy policy) {
@@ -70,20 +70,23 @@ public class ServiceTicketImpl extends AbstractTicket
         final @NonNull String id,
         final @NonNull Authentication authentication,
         final ExpirationPolicy expirationPolicy) throws AbstractTicketException {
-        if (this.grantedTicketAlready) {
-            LOGGER.warn("Service ticket [{}] issued for service [{}] has already allotted a proxy-granting ticket", getId(), this.service.getId());
-            throw new InvalidProxyGrantingTicketForServiceTicketException(this.service);
+        if (ticketGrantingTicket != null) {
+            if (this.grantedTicketAlready) {
+                LOGGER.warn("Service ticket [{}] issued for service [{}] has already allotted a proxy-granting ticket", getId(), this.service.getId());
+                throw new InvalidProxyGrantingTicketForServiceTicketException(this.service);
+            }
+            this.grantedTicketAlready = Boolean.TRUE;
+            val pgt = new ProxyGrantingTicketImpl(id, this.service, ticketGrantingTicket, authentication, expirationPolicy);
+            ticketGrantingTicket.getProxyGrantingTickets().put(pgt.getId(), this.service);
+            return pgt;
         }
-        this.grantedTicketAlready = Boolean.TRUE;
-        val pgt = new ProxyGrantingTicketImpl(id, this.service, this.getTicketGrantingTicket(), authentication, expirationPolicy);
-        getTicketGrantingTicket().getProxyGrantingTickets().put(pgt.getId(), this.service);
-        return pgt;
+        return null;
     }
 
     @Override
     @JsonIgnore
     public Authentication getAuthentication() {
-        return getTicketGrantingTicket().getAuthentication();
+        return ticketGrantingTicket != null ? ticketGrantingTicket.getAuthentication() : null;
     }
 
     @Override

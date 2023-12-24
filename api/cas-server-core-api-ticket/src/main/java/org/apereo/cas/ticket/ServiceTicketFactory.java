@@ -24,4 +24,16 @@ public interface ServiceTicketFactory extends TicketFactory {
      */
     <T extends Ticket> T create(TicketGrantingTicket ticketGrantingTicket, Service service,
                                 boolean credentialProvided, Class<T> clazz) throws Throwable;
+
+    /**
+     * Create service ticket.
+     *
+     * @param <T>                 the type parameter
+     * @param service             the service
+     * @param credentialsProvided the credentials provided
+     * @param serviceTicketClass  the service ticket class
+     * @return the t
+     * @throws Throwable the throwable
+     */
+    <T extends Ticket> T create(Service service, boolean credentialsProvided, Class<T> serviceTicketClass) throws Throwable;
 }

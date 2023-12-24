@@ -561,8 +561,7 @@ public class FunctionUtils {
      * @param throwable the throwable
      * @throws Throwable the throwable
      */
-    public static void throwIf(final boolean condition,
-                               final CheckedSupplier<? extends Throwable> throwable) throws Throwable {
+    public static void throwIf(final boolean condition, final CheckedSupplier<? extends Throwable> throwable) throws Throwable {
         if (condition) {
             throw throwable.get();
         }
@@ -591,8 +590,25 @@ public class FunctionUtils {
      * @return the t
      * @throws Exception the exception
      */
-    public static <T> T doAndThrow(final CheckedSupplier<T> supplier,
-                                   final Function<Throwable, ? extends Exception> handler) throws Exception {
+    public static <T> T doAndThrow(final CheckedSupplier<T> supplier, final Function<Throwable, ? extends Exception> handler) throws Exception {
+        try {
+            return supplier.get();
+        } catch (final Throwable e) {
+            LoggingUtils.error(LOGGER, e);
+            throw handler.apply(e);
+        }
+    }
+
+    /**
+     * Do and throw unchecked.
+     *
+     * @param <T>      the type parameter
+     * @param supplier the supplier
+     * @param handler  the handler
+     * @return the t
+     */
+    public static <T> T doAndThrowUnchecked(final CheckedSupplier<T> supplier,
+                                            final Function<Throwable, ? extends RuntimeException> handler) {
         try {
             return supplier.get();
         } catch (final Throwable e) {

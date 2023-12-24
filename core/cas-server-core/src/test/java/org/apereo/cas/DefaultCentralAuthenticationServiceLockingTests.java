@@ -66,7 +66,7 @@ class DefaultCentralAuthenticationServiceLockingTests {
             }
             val ticket = getTicketRegistry().getTicket(ticketGrantingTicket.getId(), TicketGrantingTicket.class);
             assertInstanceOf(TicketGrantingTicket.class, ticket);
-            val services = ((TicketGrantingTicket) ticket).getServices();
+            val services = ticket.getServices();
             assertEquals(serviceTicketIds.size(), services.size());
         }
     }
@@ -111,7 +111,7 @@ class DefaultCentralAuthenticationServiceLockingTests {
             }
             val ticket = getTicketRegistry().getTicket(ticketGrantingTicket.getId(), TicketGrantingTicket.class);
             assertInstanceOf(TicketGrantingTicket.class, ticket);
-            val services = ((TicketGrantingTicket) ticket).getServices();
+            val services = ticket.getServices();
             assertNotEquals(serviceTicketIds.size(), services.size());
         }
     }

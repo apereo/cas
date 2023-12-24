@@ -50,4 +50,9 @@ public class EncryptionRandomizedSigningJwtCryptographyProperties implements Ser
      * The signing/encryption algorithm to use.
      */
     private String alg = "AES";
+
+    /**
+     * Whether signing encryption operations are enabled.
+     */
+    private boolean signingEnabled = true;
 }

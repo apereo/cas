@@ -45,11 +45,11 @@ import org.apereo.cas.web.flow.actions.AuthenticationExceptionHandlerAction;
 import org.apereo.cas.web.flow.actions.CheckWebAuthenticationRequestAction;
 import org.apereo.cas.web.flow.actions.ClearWebflowCredentialAction;
 import org.apereo.cas.web.flow.actions.InjectResponseHeadersAction;
-import org.apereo.cas.web.flow.actions.ReadSessionStorageAction;
+import org.apereo.cas.web.flow.actions.ReadBrowserStorageAction;
 import org.apereo.cas.web.flow.actions.RedirectToServiceAction;
 import org.apereo.cas.web.flow.actions.RenewAuthenticationRequestCheckAction;
 import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
-import org.apereo.cas.web.flow.actions.WriteSessionStorageAction;
+import org.apereo.cas.web.flow.actions.WriteBrowserStorageAction;
 import org.apereo.cas.web.flow.authentication.CasWebflowExceptionCatalog;
 import org.apereo.cas.web.flow.authentication.CasWebflowExceptionConfigurer;
 import org.apereo.cas.web.flow.authentication.CasWebflowExceptionHandler;
@@ -532,9 +532,9 @@ public class CasCoreWebflowConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreWebflowStorageActionsConfiguration {
         @Bean
-        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_WRITE_SESSION_STORAGE)
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_WRITE_BROWSER_STORAGE)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public Action writeSessionStorageAction(
+        public Action writeBrowserStorageAction(
             @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
             final ConfigurableApplicationContext applicationContext,
@@ -542,16 +542,16 @@ public class CasCoreWebflowConfiguration {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
-                .withAction(() -> new WriteSessionStorageAction(ticketGrantingTicketCookieGenerator))
-                .withId(CasWebflowConstants.ACTION_ID_WRITE_SESSION_STORAGE)
+                .withAction(() -> new WriteBrowserStorageAction(ticketGrantingTicketCookieGenerator))
+                .withId(CasWebflowConstants.ACTION_ID_WRITE_BROWSER_STORAGE)
                 .build()
                 .get();
         }
 
         @Bean
-        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_READ_SESSION_STORAGE)
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_READ_BROWSER_STORAGE)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public Action readSessionStorageAction(
+        public Action readBrowserStorageAction(
             @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
             final ConfigurableApplicationContext applicationContext,
@@ -559,9 +559,9 @@ public class CasCoreWebflowConfiguration {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
-                .withAction(() -> new ReadSessionStorageAction(ticketGrantingTicketCookieGenerator,
-                    "casSessionStorageContext", CasWebflowConstants.TRANSITION_ID_READ_SESSION_STORAGE))
-                .withId(CasWebflowConstants.ACTION_ID_READ_SESSION_STORAGE)
+                .withAction(() -> new ReadBrowserStorageAction(ticketGrantingTicketCookieGenerator,
+                    "casSessionStorageContext", CasWebflowConstants.TRANSITION_ID_READ_BROWSER_STORAGE))
+                .withId(CasWebflowConstants.ACTION_ID_READ_BROWSER_STORAGE)
                 .build()
                 .get();
         }

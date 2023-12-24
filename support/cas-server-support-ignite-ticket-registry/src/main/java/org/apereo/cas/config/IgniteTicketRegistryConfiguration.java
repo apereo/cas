@@ -163,7 +163,8 @@ public class IgniteTicketRegistryConfiguration {
         dataStorageConfiguration.setSystemRegionMaxSize(ignite.getDefaultRegionMaxSize());
         config.setDataStorageConfiguration(dataStorageConfiguration);
 
-        val sqlSchemas = ticketCatalog.findAll()
+        val sqlSchemas = ticketCatalog
+            .findAll()
             .stream()
             .map(TicketDefinition::getProperties)
             .map(TicketDefinitionProperties::getStorageName)
