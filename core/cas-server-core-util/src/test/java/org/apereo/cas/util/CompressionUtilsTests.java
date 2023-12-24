@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,6 +19,15 @@ import static org.junit.jupiter.api.Assertions.*;
 class CompressionUtilsTests {
 
     @Test
+    void verifyDeflation() throws Throwable {
+        val source = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+        val deflated = CompressionUtils.deflateToByteArray(source);
+        val results = CompressionUtils.inflateToByteArray(deflated);
+        assertEquals(source, new String(Objects.requireNonNull(results), StandardCharsets.UTF_8));
+        assertNotNull(CompressionUtils.compress(source.getBytes(StandardCharsets.UTF_8)));
+    }
+
+    @Test
     void verifyInflation() throws Throwable {
         val source = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
                      + "<samlp:AuthnRequest xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" "
@@ -26,7 +36,7 @@ class CompressionUtilsTests {
                      + "ProviderName=\"https://localhost:8443/myRutgers\" AssertionConsumerServiceURL=\"https://localhost:8443/myRutgers\"/>";
         val deflated = CompressionUtils.deflate(source);
         val decoded = EncodingUtils.decodeBase64(deflated);
-        val results = CompressionUtils.decodeByteArrayToString(decoded);
+        val results = CompressionUtils.inflateToString(decoded);
         assertEquals(source, results);
 
         assertNotNull(CompressionUtils.deflate(source.getBytes(StandardCharsets.UTF_8)));

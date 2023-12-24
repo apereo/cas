@@ -1,5 +1,6 @@
 package org.apereo.cas.util.cipher;
 
+import org.apereo.cas.util.crypto.RsaCipherExecutor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,7 @@ import java.security.PublicKey;
 @Getter
 @RequiredArgsConstructor
 @NoArgsConstructor(force = true)
-public class RsaKeyPairCipherExecutor extends BaseStringCipherExecutor {
+public class RsaKeyPairCipherExecutor extends BaseStringCipherExecutor implements RsaCipherExecutor {
     private final PrivateKey privateKeySigning;
 
     private final PublicKey publicKeySigning;

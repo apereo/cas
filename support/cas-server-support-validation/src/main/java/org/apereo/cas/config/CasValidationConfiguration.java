@@ -294,7 +294,7 @@ public class CasValidationConfiguration {
             @Qualifier(CasProtocolViewFactory.BEAN_NAME_THYMELEAF_VIEW_FACTORY)
             final CasProtocolViewFactory casProtocolViewFactory,
             final ConfigurableApplicationContext applicationContext) {
-            return casProtocolViewFactory.create(applicationContext, CasWebflowConstants.VIEW_ID_SESSION_STORAGE_WRITE);
+            return casProtocolViewFactory.create(applicationContext, CasWebflowConstants.VIEW_ID_BROWSER_STORAGE_WRITE);
         }
 
         @Bean
@@ -303,7 +303,7 @@ public class CasValidationConfiguration {
             @Qualifier(CasProtocolViewFactory.BEAN_NAME_THYMELEAF_VIEW_FACTORY)
             final CasProtocolViewFactory casProtocolViewFactory,
             final ConfigurableApplicationContext applicationContext) {
-            return casProtocolViewFactory.create(applicationContext, CasWebflowConstants.VIEW_ID_SESSION_STORAGE_READ);
+            return casProtocolViewFactory.create(applicationContext, CasWebflowConstants.VIEW_ID_BROWSER_STORAGE_READ);
         }
 
 

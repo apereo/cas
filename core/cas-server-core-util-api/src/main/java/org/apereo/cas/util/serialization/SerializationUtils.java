@@ -1,6 +1,7 @@
 package org.apereo.cas.util.serialization;
 
-import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.crypto.DecodableCipher;
+import org.apereo.cas.util.crypto.EncodableCipher;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.experimental.UtilityClass;
@@ -103,11 +104,13 @@ public class SerializationUtils {
      * @return the byte []
      * @since 4.2
      */
-    public static byte[] serializeAndEncodeObject(final CipherExecutor cipher,
+    public static byte[] serializeAndEncodeObject(final EncodableCipher cipher,
                                                   final Serializable object,
                                                   final Object[] parameters) {
-        val outBytes = serialize(object);
-        return (byte[]) cipher.encode(outBytes, parameters);
+        return FunctionUtils.doUnchecked(() -> {
+            val outBytes = serialize(object);
+            return (byte[]) cipher.encode(outBytes, parameters);
+        });
     }
 
     /**
@@ -117,7 +120,7 @@ public class SerializationUtils {
      * @param object the object
      * @return the byte []
      */
-    public static byte[] serializeAndEncodeObject(final CipherExecutor cipher,
+    public static byte[] serializeAndEncodeObject(final EncodableCipher cipher,
                                                   final Serializable object) {
         return serializeAndEncodeObject(cipher, object, ArrayUtils.EMPTY_OBJECT_ARRAY);
     }
@@ -134,7 +137,7 @@ public class SerializationUtils {
      * @since 4.2
      */
     public static <T extends Serializable> T decodeAndDeserializeObject(final byte[] object,
-                                                                        final CipherExecutor cipher,
+                                                                        final DecodableCipher cipher,
                                                                         final Class<T> type,
                                                                         final Object[] parameters) {
         val decoded = (byte[]) cipher.decode(object, parameters);
@@ -151,7 +154,7 @@ public class SerializationUtils {
      * @return the t
      */
     public static <T extends Serializable> T decodeAndDeserializeObject(final byte[] object,
-                                                                        final CipherExecutor cipher,
+                                                                        final DecodableCipher cipher,
                                                                         final Class<T> type) {
         return decodeAndDeserializeObject(object, cipher, type, ArrayUtils.EMPTY_OBJECT_ARRAY);
     }

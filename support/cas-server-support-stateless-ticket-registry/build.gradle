@@ -9,23 +9,18 @@ ext {
 }
 
 dependencies {
-    implementation libraries.jose4j
-    implementation libraries.nimbus
-
     api project(":api:cas-server-core-api-util")
 
     implementation project(":core:cas-server-core-logging")
     implementation project(":core:cas-server-core-tickets-api")
-    implementation project(":core:cas-server-core-services")
+    implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-webflow-api")
     implementation project(":core:cas-server-core-webflow-mfa-api")
-
-    implementation project(":support:cas-server-support-token-core-api")
-    implementation project(":support:cas-server-support-token-core")
+    implementation project(":core:cas-server-core-services-registry")
 
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
@@ -42,6 +37,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-tickets")

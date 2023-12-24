@@ -8,13 +8,11 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -83,11 +81,11 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public void addTicket(final Stream<? extends Ticket> toSave) {
-        FunctionUtils.doAndHandle(__ -> {
-            val toPut = toSave.map(Unchecked.function(this::toTicketPayload));
-            dbTableService.put(toPut);
-        });
+    public List<? extends Ticket> addTicket(final Stream<? extends Ticket> toSave) throws Exception {
+        val initialList = toSave.toList();
+        val toPut = initialList.stream().map(Unchecked.function(this::toTicketPayload));
+        dbTableService.put(toPut);
+        return initialList;
     }
 
     @Override

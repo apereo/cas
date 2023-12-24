@@ -190,7 +190,11 @@ public class JwtBuilder {
                 .map(this::locateRegisteredService)
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow(() -> UnauthorizedServiceException.denied("Unable to locate registered service via any of %s".formatted(serviceAudience))));
+                .orElseThrow(() -> {
+                    val formatted = "There is no application record registered with the CAS service registry that would match %s. "
+                        + "Review the applications registered with the CAS service registry and make sure a matching record exists for %s.";
+                    return UnauthorizedServiceException.denied(formatted.formatted(serviceAudience, serviceAudience));
+                }));
         return build(registeredService, claimsSet);
     }
 

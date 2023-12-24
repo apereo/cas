@@ -16,7 +16,7 @@ import java.time.Clock;
 import java.time.ZonedDateTime;
 
 /**
- * NeverExpiresExpirationPolicy always answers false when asked if a Ticket is
+ * {@link NeverExpiresExpirationPolicy} always answers false when asked if a Ticket is
  * expired. Use this policy when you want a Ticket to live forever, or at least
  * as long as the particular CAS Universe exists.
  *
@@ -58,7 +58,7 @@ public class NeverExpiresExpirationPolicy extends AbstractCasExpirationPolicy {
     }
 
     @Override
-    public ZonedDateTime getMaximumExpirationTime(final Ticket ticketState) {
+    public ZonedDateTime toMaximumExpirationTime(final Ticket ticketState) {
         return ZonedDateTime.now(Clock.systemUTC()).plusYears(MAX_EXPIRATION_IN_YEARS);
     }
 

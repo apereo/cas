@@ -18,6 +18,11 @@ public class ImmutableInMemoryServiceRegistry extends InMemoryServiceRegistry im
         super(applicationContext, registeredServices, serviceRegistryListeners);
     }
 
+    public ImmutableInMemoryServiceRegistry(final RegisteredService registeredServices,
+                                            final ConfigurableApplicationContext applicationContext) {
+        super(applicationContext, List.of(registeredServices), List.of());
+    }
+
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
         return registeredService;

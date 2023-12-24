@@ -33,11 +33,15 @@
             /*<![CDATA[*/
 
             let sessionStorageContext = /*[[${sessionStorageContext}]]*/;
+            let removeOnRead = /*[[${removeOnRead}]]*/;
             if (sessionStorageContext === undefined || sessionStorageContext === null || sessionStorageContext === "") {
                 sessionStorageContext = "sessionStorage";
             }
+            if (removeOnRead === undefined || removeOnRead === null || removeOnRead === "") {
+                removeOnRead = true;
+            }
 
-            const payload = readFromSessionStorage(sessionStorageContext);
+            const payload = readFromSessionStorage(sessionStorageContext, removeOnRead);
             document.getElementById("sessionStorage").value = payload;
             document.getElementById("fm1").submit();
             /*]]>*/

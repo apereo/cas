@@ -38,7 +38,7 @@ is also fine as well and protects the key from being overwritten on deploy of a 
 ```bash
 openssl genrsa -out private.key 1024
 openssl rsa -pubout -in private.key -out public.key -inform PEM -outform DER
-openssl pkcs8 -topk8 -inform PER -outform DER -nocrypt -in private.key -out private.p8
+openssl pkcs8 -topk8 -inform PEM -outform DER -nocrypt -in private.key -out private.p8
 openssl req -new -x509 -key private.key -out x509.pem -days 365
 ```
 

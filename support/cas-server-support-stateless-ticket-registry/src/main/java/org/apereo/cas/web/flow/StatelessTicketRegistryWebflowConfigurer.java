@@ -35,13 +35,13 @@ public class StatelessTicketRegistryWebflowConfigurer extends AbstractCasWebflow
         val loginFlow = getLoginFlow();
         prependActionsToActionStateExecutionList(loginFlow,
             CasWebflowConstants.STATE_ID_INITIAL_AUTHN_REQUEST_VALIDATION_CHECK,
-            CasWebflowConstants.ACTION_ID_READ_SESSION_STORAGE);
+            CasWebflowConstants.ACTION_ID_READ_BROWSER_STORAGE);
 
         accountProfileFlowRegistry.ifAvailable(registry -> {
             val flow = getFlow(registry, CasWebflowConfigurer.FLOW_ID_ACCOUNT);
             prependActionsToActionStateExecutionList(flow,
                 CasWebflowConstants.STATE_ID_TICKET_GRANTING_TICKET_CHECK,
-                CasWebflowConstants.ACTION_ID_READ_SESSION_STORAGE);
+                CasWebflowConstants.ACTION_ID_READ_BROWSER_STORAGE);
         });
     }
 }

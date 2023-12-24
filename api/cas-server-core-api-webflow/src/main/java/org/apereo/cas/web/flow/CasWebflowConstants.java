@@ -405,14 +405,14 @@ public interface CasWebflowConstants {
 
 
     /**
-     * Transition id 'writeToSessionStorage'.
+     * Transition id 'writeToBrowserStorage'.
      */
-    String TRANSITION_ID_WRITE_SESSION_STORAGE = "writeToSessionStorage";
+    String TRANSITION_ID_WRITE_BROWSER_STORAGE = "writeToBrowserStorage";
 
     /**
-     * Transition id 'readFromSessionStorage'.
+     * Transition id 'readFromBrowserStorage'.
      */
-    String TRANSITION_ID_READ_SESSION_STORAGE = "readFromSessionStorage";
+    String TRANSITION_ID_READ_BROWSER_STORAGE = "readFromBrowserStorage";
 
     /**
      * Transition id 'resetPassword'.
@@ -506,14 +506,14 @@ public interface CasWebflowConstants {
     String STATE_ID_SEND_TICKET_GRANTING_TICKET = "sendTicketGrantingTicket";
 
     /**
-     * The state id 'casSessionStorageWriteView'.
+     * The state id 'casBrowserStorageWriteView'.
      */
-    String STATE_ID_SESSION_STORAGE_WRITE = "casSessionStorageWriteView";
+    String STATE_ID_BROWSER_STORAGE_WRITE = "casBrowserStorageWriteView";
 
     /**
-     * The state id 'casSessionStorageReadView'.
+     * The state id 'casBrowserStorageReadView'.
      */
-    String STATE_ID_SESSION_STORAGE_READ = "casSessionStorageReadView";
+    String STATE_ID_BROWSER_STORAGE_READ = "casBrowserStorageReadView";
 
     /**
      * The state id 'ticketGrantingTicketCheck'.
@@ -1230,14 +1230,14 @@ public interface CasWebflowConstants {
     String VIEW_ID_DELEGATED_AUTHENTICATION_STOP_WEBFLOW = "delegated-authn/casDelegatedAuthnStopWebflow";
 
     /**
-     * The view state 'casSessionStorageWriteView'.
+     * The view state for browser storage writes.
      */
-    String VIEW_ID_SESSION_STORAGE_WRITE = "storage/casSessionStorageWriteView";
+    String VIEW_ID_BROWSER_STORAGE_WRITE = "storage/casSessionStorageWriteView";
 
     /**
-     * The view state 'casSessionStorageReadView'.
+     *The view state for browser storage reads..
      */
-    String VIEW_ID_SESSION_STORAGE_READ = "storage/casSessionStorageReadView";
+    String VIEW_ID_BROWSER_STORAGE_READ = "storage/casSessionStorageReadView";
 
     /**
      * The view state 'dynamicHtmlView'.
@@ -1442,14 +1442,14 @@ public interface CasWebflowConstants {
     String ACTION_ID_FETCH_TICKET_GRANTING_TICKET = "fetchTicketGrantingTicketAction";
 
     /**
-     * Action id 'writeSessionStorageAction'.
+     * Action id 'writeBrowserStorageAction'.
      */
-    String ACTION_ID_WRITE_SESSION_STORAGE = "writeSessionStorageAction";
+    String ACTION_ID_WRITE_BROWSER_STORAGE = "writeBrowserStorageAction";
 
     /**
-     * Action id 'readSessionStorageAction'.
+     * Action id 'readBrowserStorageAction'.
      */
-    String ACTION_ID_READ_SESSION_STORAGE = "readSessionStorageAction";
+    String ACTION_ID_READ_BROWSER_STORAGE = "readBrowserStorageAction";
 
     /**
      * Action id 'ticketGrantingTicketCheckAction'.

@@ -171,7 +171,7 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
         createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
         createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_TICKET_GRANTING_TICKET_CHECK);
         createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS, CasWebflowConstants.STATE_ID_SHOW_AUTHN_WARNING_MSGS);
-        createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_READ_SESSION_STORAGE, CasWebflowConstants.STATE_ID_SESSION_STORAGE_READ);
+        createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_READ_BROWSER_STORAGE, CasWebflowConstants.STATE_ID_BROWSER_STORAGE_READ);
     }
 
     protected void createTerminateSessionAction(final Flow flow) {
@@ -186,8 +186,8 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
             CasWebflowConstants.ACTION_ID_SEND_TICKET_GRANTING_TICKET);
         action.getExitActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_SINGLE_SIGON_SESSION_CREATED));
 
-        createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_WRITE_SESSION_STORAGE,
-            CasWebflowConstants.STATE_ID_SESSION_STORAGE_WRITE);
+        createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_WRITE_BROWSER_STORAGE,
+            CasWebflowConstants.STATE_ID_BROWSER_STORAGE_WRITE);
         createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_SUCCESS,
             CasWebflowConstants.STATE_ID_SERVICE_CHECK);
         createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS,
@@ -196,12 +196,12 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
     }
 
     private void createSessionStorageStates(final Flow flow) {
-        val writeStorage = createViewState(flow, CasWebflowConstants.STATE_ID_SESSION_STORAGE_WRITE, CasWebflowConstants.VIEW_ID_SESSION_STORAGE_WRITE);
-        writeStorage.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_WRITE_SESSION_STORAGE));
+        val writeStorage = createViewState(flow, CasWebflowConstants.STATE_ID_BROWSER_STORAGE_WRITE, CasWebflowConstants.VIEW_ID_BROWSER_STORAGE_WRITE);
+        writeStorage.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_WRITE_BROWSER_STORAGE));
         createTransitionForState(writeStorage, CasWebflowConstants.TRANSITION_ID_CONTINUE, CasWebflowConstants.STATE_ID_SERVICE_CHECK);
 
-        val readStorage = createViewState(flow, CasWebflowConstants.STATE_ID_SESSION_STORAGE_READ, CasWebflowConstants.VIEW_ID_SESSION_STORAGE_READ);
-        readStorage.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_READ_SESSION_STORAGE));
+        val readStorage = createViewState(flow, CasWebflowConstants.STATE_ID_BROWSER_STORAGE_READ, CasWebflowConstants.VIEW_ID_BROWSER_STORAGE_READ);
+        readStorage.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_READ_BROWSER_STORAGE));
         createStateDefaultTransition(readStorage, CasWebflowConstants.STATE_ID_INITIAL_AUTHN_REQUEST_VALIDATION_CHECK);
     }
     

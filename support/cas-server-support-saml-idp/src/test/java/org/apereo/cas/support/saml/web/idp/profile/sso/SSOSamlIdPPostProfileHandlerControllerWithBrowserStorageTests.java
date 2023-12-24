@@ -61,7 +61,7 @@ class SSOSamlIdPPostProfileHandlerControllerWithBrowserStorageTests extends Base
         val xml = SamlUtils.transformSamlObject(openSamlConfigBean, getAuthnRequest()).toString();
         request.addParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST, EncodingUtils.encodeBase64(xml));
         val mv = controller.handleSaml2ProfileSsoPostRequest(response, request);
-        assertEquals(CasWebflowConstants.VIEW_ID_SESSION_STORAGE_WRITE, mv.getViewName());
+        assertEquals(CasWebflowConstants.VIEW_ID_BROWSER_STORAGE_WRITE, mv.getViewName());
         assertTrue(mv.getModel().containsKey(BrowserSessionStorage.KEY_SESSION_STORAGE));
     }
 

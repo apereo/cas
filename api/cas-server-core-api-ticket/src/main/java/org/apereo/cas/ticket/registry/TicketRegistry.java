@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -46,8 +47,8 @@ public interface TicketRegistry {
      * @param toSave the to save
      * @throws Exception the exception
      */
-    default void addTicket(final Stream<? extends Ticket> toSave) throws Exception {
-        toSave.forEach(Unchecked.consumer(this::addTicket));
+    default List<? extends Ticket> addTicket(final Stream<? extends Ticket> toSave) throws Exception {
+        return toSave.map(Unchecked.function(this::addTicket)).collect(Collectors.toList());
     }
 
     /**

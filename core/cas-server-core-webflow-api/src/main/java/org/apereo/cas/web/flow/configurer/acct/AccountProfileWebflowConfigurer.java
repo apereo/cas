@@ -58,7 +58,7 @@ public class AccountProfileWebflowConfigurer extends AbstractCasWebflowConfigure
             CasWebflowConstants.ACTION_ID_FETCH_TICKET_GRANTING_TICKET,
             CasWebflowConstants.ACTION_ID_TICKET_GRANTING_TICKET_CHECK);
 
-        createTransitionForState(validate, CasWebflowConstants.TRANSITION_ID_READ_SESSION_STORAGE, CasWebflowConstants.STATE_ID_SESSION_STORAGE_READ);
+        createTransitionForState(validate, CasWebflowConstants.TRANSITION_ID_READ_BROWSER_STORAGE, CasWebflowConstants.STATE_ID_BROWSER_STORAGE_READ);
         createTransitionForState(validate, CasWebflowConstants.TRANSITION_ID_TICKET_GRANTING_TICKET_VALID, myAccountView.getId());
         createStateDefaultTransition(validate, CasWebflowConstants.STATE_ID_REDIRECT_TO_LOGIN);
 
@@ -81,8 +81,8 @@ public class AccountProfileWebflowConfigurer extends AbstractCasWebflowConfigure
         successView.getEntryActionList().add(new ExternalRedirectAction(expression));
 
 
-        val readStorage = createViewState(accountFlow, CasWebflowConstants.STATE_ID_SESSION_STORAGE_READ, CasWebflowConstants.VIEW_ID_SESSION_STORAGE_READ);
-        readStorage.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_READ_SESSION_STORAGE));
+        val readStorage = createViewState(accountFlow, CasWebflowConstants.STATE_ID_BROWSER_STORAGE_READ, CasWebflowConstants.VIEW_ID_BROWSER_STORAGE_READ);
+        readStorage.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_READ_BROWSER_STORAGE));
         createStateDefaultTransition(readStorage, accountFlow.getStartState());
     }
 

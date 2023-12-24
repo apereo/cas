@@ -145,11 +145,9 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
     }
 
     @Override
-    public void addTicket(final Stream<? extends Ticket> toSave) {
-        casRedisTemplates.getTicketsRedisTemplate().executePipelined((RedisCallback<Object>) connection -> {
-            toSave.forEach(this::addSingleTicket);
-            return null;
-        });
+    public List<? extends Ticket> addTicket(final Stream<? extends Ticket> toSave) {
+        return (List) casRedisTemplates.getTicketsRedisTemplate().executePipelined(
+            (RedisCallback<List<Ticket>>) __ -> toSave.map(this::addSingleTicket).collect(Collectors.toList()));
     }
 
     @Override

@@ -75,7 +75,7 @@ class SSOSamlIdPProfileCallbackHandlerControllerWithBrowserStorageTests extends 
         val st = getServiceTicket();
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, st.getId());
         val mv = controller.handleCallbackProfileRequestGet(response, request);
-        assertEquals(CasWebflowConstants.VIEW_ID_SESSION_STORAGE_READ, mv.getViewName());
+        assertEquals(CasWebflowConstants.VIEW_ID_BROWSER_STORAGE_READ, mv.getViewName());
     }
 
     @Test

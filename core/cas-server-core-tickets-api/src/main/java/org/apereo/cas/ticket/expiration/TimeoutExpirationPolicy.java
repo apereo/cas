@@ -47,11 +47,6 @@ public class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
      */
     private long timeToKillInSeconds;
 
-    /**
-     * Instantiates a new timeout expiration policy.
-     *
-     * @param timeToKillInSeconds the time to kill in seconds
-     */
     @JsonCreator
     public TimeoutExpirationPolicy(
         @JsonProperty("timeToIdle") final long timeToKillInSeconds) {

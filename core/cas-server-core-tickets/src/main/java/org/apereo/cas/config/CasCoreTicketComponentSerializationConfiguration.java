@@ -9,6 +9,7 @@ import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.TransientSessionTicketImpl;
 import org.apereo.cas.ticket.expiration.AlwaysExpiresExpirationPolicy;
 import org.apereo.cas.ticket.expiration.BaseDelegatingExpirationPolicy;
+import org.apereo.cas.ticket.expiration.FixedInstantExpirationPolicy;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.expiration.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
@@ -62,6 +63,7 @@ public class CasCoreTicketComponentSerializationConfiguration {
             plan.registerSerializableClass(AlwaysExpiresExpirationPolicy.class);
             plan.registerSerializableClass(ThrottledUseAndTimeoutExpirationPolicy.class);
             plan.registerSerializableClass(TicketGrantingTicketExpirationPolicy.class);
+            plan.registerSerializableClass(FixedInstantExpirationPolicy.class);
             plan.registerSerializableClass(BaseDelegatingExpirationPolicy.class);
 
         };

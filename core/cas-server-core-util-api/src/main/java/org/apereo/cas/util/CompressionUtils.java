@@ -2,7 +2,6 @@ package org.apereo.cas.util;
 
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.io.TemporaryFileSystemResource;
-
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -10,7 +9,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.core.io.WritableResource;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -24,9 +22,11 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Stream;
 import java.util.zip.Deflater;
+import java.util.zip.DeflaterInputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import java.util.zip.Inflater;
@@ -44,6 +44,7 @@ import java.util.zip.InflaterInputStream;
 @UtilityClass
 public class CompressionUtils {
     private static final int INFLATED_ARRAY_LENGTH = 10000;
+    private static final int BUFFER_LENGTH = 1024;
 
     /**
      * Deflate the given bytes using zlib.
@@ -63,37 +64,31 @@ public class CompressionUtils {
      * @return base64 encoded string
      */
     public static String deflate(final String data) {
-        val deflater = new Deflater();
-        deflater.setInput(data.getBytes(StandardCharsets.UTF_8));
-        deflater.finish();
-        val buffer = new byte[data.length()];
-        val resultSize = deflater.deflate(buffer);
-        deflater.end();
-        val output = new byte[resultSize];
-        System.arraycopy(buffer, 0, output, 0, resultSize);
+        val output = deflateToByteArray(data);
         return EncodingUtils.encodeBase64(output);
     }
 
     /**
-     * Inflate the byte[] to a string.
+     * Deflate to byte array.
      *
-     * @param bytes the data to decode
-     * @return the new string
+     * @param data the data
+     * @return the byte [ ]
      */
-    public static String inflate(final byte[] bytes) {
-        val inflater = new Inflater(true);
-        val xmlMessageBytes = new byte[INFLATED_ARRAY_LENGTH];
+    public static byte[] deflateToByteArray(final String data) {
+        val bais = new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8));
+        val baos = new ByteArrayOutputStream();
+        var bytesRead = -1;
+        val buf = new byte[BUFFER_LENGTH];
 
-        val extendedBytes = new byte[bytes.length + 1];
-        System.arraycopy(bytes, 0, extendedBytes, 0, bytes.length);
-        extendedBytes[bytes.length] = 0;
-        inflater.setInput(extendedBytes);
-
-        return FunctionUtils.doAndHandle(() -> {
-            val resultLength = inflater.inflate(xmlMessageBytes);
-            inflater.end();
-            return new String(xmlMessageBytes, 0, resultLength, StandardCharsets.UTF_8);
-        }, throwable -> null).get();
+        try (val iis = new DeflaterInputStream(bais)) {
+            while ((bytesRead = iis.read(buf)) != -1) {
+                baos.write(buf, 0, bytesRead);
+            }
+            return baos.toByteArray();
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+            return null;
+        }
     }
 
     /**
@@ -118,27 +113,73 @@ public class CompressionUtils {
      * @param bytes the data to encode
      * @return the new string
      */
-    public static String decodeByteArrayToString(final byte[] bytes) {
+    public static String inflateToString(final byte[] bytes) {
+        return new String(Objects.requireNonNull(inflateToByteArray(bytes)), StandardCharsets.UTF_8);
+    }
+
+    /**
+     * Inflate the byte[] to a string.
+     *
+     * @param bytes the data to decode
+     * @return the new string
+     */
+    public static String inflate(final byte[] bytes) {
+        val inflater = new Inflater(true);
+        val xmlMessageBytes = new byte[INFLATED_ARRAY_LENGTH];
+
+        val extendedBytes = new byte[bytes.length + 1];
+        System.arraycopy(bytes, 0, extendedBytes, 0, bytes.length);
+        extendedBytes[bytes.length] = 0;
+        inflater.setInput(extendedBytes);
+
+        return FunctionUtils.doAndHandle(() -> {
+            val resultLength = inflater.inflate(xmlMessageBytes);
+            inflater.end();
+            return new String(xmlMessageBytes, 0, resultLength, StandardCharsets.UTF_8);
+        }, throwable -> null).get();
+    }
+    
+    /**
+     * Decode byte array byte [].
+     *
+     * @param bytes the bytes
+     * @return the byte [ ]
+     */
+    public static byte[] inflateToByteArray(final byte[] bytes) {
         val bais = new ByteArrayInputStream(bytes);
         val baos = new ByteArrayOutputStream();
-        val buf = new byte[bytes.length];
+        var bytesRead = -1;
+        val buf = new byte[BUFFER_LENGTH];
 
         try (val iis = new InflaterInputStream(bais)) {
-            var count = iis.read(buf);
-            while (count != -1) {
-                baos.write(buf, 0, count);
-                count = iis.read(buf);
+            while ((bytesRead = iis.read(buf)) != -1) {
+                baos.write(buf, 0, bytesRead);
             }
-            return baos.toString(StandardCharsets.UTF_8);
+            return baos.toByteArray();
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
             return null;
         }
     }
 
+    /**
+     * Use {@link java.util.zip.ZipOutputStream} to zip text to byte array, then convert
+     * byte array to base64 string, so it can be transferred via http request.
+     *
+     * @param srcTxt the src txt
+     * @return the byte array
+     */
+    public static byte[] compress(final byte[] srcTxt) throws Exception {
+        try (val rstBao = new ByteArrayOutputStream(); val zos = new GZIPOutputStream(rstBao)) {
+            zos.write(srcTxt);
+            zos.flush();
+            zos.finish();
+            return rstBao.toByteArray();
+        }
+    }
 
     /**
-     * Use ZipOutputStream to zip text to byte array, then convert
+     * Use {@link java.util.zip.ZipOutputStream} to zip text to byte array, then convert
      * byte array to base64 string, so it can be transferred via http request.
      *
      * @param srcTxt the src txt
@@ -146,14 +187,9 @@ public class CompressionUtils {
      */
     public static String compress(final String srcTxt) {
         return Unchecked.supplier(() -> {
-            try (val rstBao = new ByteArrayOutputStream(); val zos = new GZIPOutputStream(rstBao)) {
-                zos.write(srcTxt.getBytes(StandardCharsets.UTF_8));
-                zos.flush();
-                zos.finish();
-                val bytes = rstBao.toByteArray();
-                val base64 = StringUtils.remove(EncodingUtils.encodeBase64(bytes), '\0');
-                return new String(StandardCharsets.UTF_8.encode(base64).array(), StandardCharsets.UTF_8);
-            }
+            val bytes = compress(srcTxt.getBytes(StandardCharsets.UTF_8));
+            val base64 = StringUtils.remove(EncodingUtils.encodeBase64(bytes), '\0');
+            return new String(StandardCharsets.UTF_8.encode(base64).array(), StandardCharsets.UTF_8);
         }).get();
     }
 

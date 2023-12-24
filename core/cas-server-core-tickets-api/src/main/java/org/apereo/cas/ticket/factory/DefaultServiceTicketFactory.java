@@ -8,6 +8,7 @@ import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.ServiceTicketFactory;
+import org.apereo.cas.ticket.ServiceTicketImpl;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
@@ -47,6 +48,18 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
     private final ServicesManager servicesManager;
 
     @Override
+    public <T extends Ticket> T create(final Service service, final boolean credentialsProvided, final Class<T> clazz) throws Throwable {
+        val expirationPolicyToUse = determineExpirationPolicyForService(service);
+        val ticketId = produceTicketIdentifier(service, null, credentialsProvided);
+        val result = new ServiceTicketImpl(ticketId, null, service, credentialsProvided, expirationPolicyToUse);
+        if (!clazz.isAssignableFrom(result.getClass())) {
+            throw new ClassCastException("Result [%s] is of type %s when we were expecting %s".formatted(result, result.getClass(), clazz));
+        }
+        result.markTicketCompact();
+        return (T) result;
+    }
+
+    @Override
     public <T extends Ticket> T create(final TicketGrantingTicket ticketGrantingTicket,
                                        final Service service,
                                        final boolean credentialProvided,
@@ -66,24 +79,12 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
         return ServiceTicket.class;
     }
 
-    /**
-     * Produce ticket.
-     *
-     * @param <T>                  the type parameter
-     * @param ticketGrantingTicket the ticket granting ticket
-     * @param service              the service
-     * @param credentialProvided   the credential provided
-     * @param ticketId             the ticket id
-     * @param clazz                the clazz
-     * @return the ticket
-     */
     protected <T extends Ticket> T produceTicket(final TicketGrantingTicket ticketGrantingTicket,
                                                  final Service service,
                                                  final boolean credentialProvided,
                                                  final String ticketId,
                                                  final Class<T> clazz) {
         val expirationPolicyToUse = determineExpirationPolicyForService(service);
-
         val result = ticketGrantingTicket.grantServiceTicket(
             ticketId,
             service,
@@ -92,9 +93,7 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
             serviceTicketSessionTrackingPolicy);
 
         if (!clazz.isAssignableFrom(result.getClass())) {
-            throw new ClassCastException("Result [" + result
-                                         + " is of type " + result.getClass()
-                                         + " when we were expecting " + clazz);
+            throw new ClassCastException("Result [%s] is of type %s when we were expecting %s".formatted(result, result.getClass(), clazz));
         }
         return (T) result;
     }
@@ -103,12 +102,12 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
                                              final boolean credentialProvided) throws Throwable {
         val uniqueTicketIdGenKey = service.getClass().getName();
         var serviceTicketUniqueTicketIdGenerator = (UniqueTicketIdGenerator) null;
-        if (this.uniqueTicketIdGeneratorsForService != null && !this.uniqueTicketIdGeneratorsForService.isEmpty()) {
+        if (uniqueTicketIdGeneratorsForService != null && !uniqueTicketIdGeneratorsForService.isEmpty()) {
             LOGGER.debug("Looking up service ticket id generator for [{}]", uniqueTicketIdGenKey);
-            serviceTicketUniqueTicketIdGenerator = this.uniqueTicketIdGeneratorsForService.get(uniqueTicketIdGenKey);
+            serviceTicketUniqueTicketIdGenerator = uniqueTicketIdGeneratorsForService.get(uniqueTicketIdGenKey);
         }
         if (serviceTicketUniqueTicketIdGenerator == null) {
-            serviceTicketUniqueTicketIdGenerator = this.defaultServiceTicketIdGenerator;
+            serviceTicketUniqueTicketIdGenerator = defaultServiceTicketIdGenerator;
             LOGGER.debug("Service ticket id generator not found for [{}]. Using the default generator.", uniqueTicketIdGenKey);
         }
 
@@ -126,6 +125,6 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
                     count, Beans.newDuration(ttl).getSeconds());
             }
         }
-        return this.expirationPolicyBuilder.buildTicketExpirationPolicy();
+        return expirationPolicyBuilder.buildTicketExpirationPolicy();
     }
 }

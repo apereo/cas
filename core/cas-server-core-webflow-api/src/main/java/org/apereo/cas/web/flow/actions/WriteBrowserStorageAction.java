@@ -14,13 +14,13 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- * This is {@link WriteSessionStorageAction}.
+ * This is {@link WriteBrowserStorageAction}.
  *
  * @author Misagh Moayyed
  * @since 7.0.0
  */
 @RequiredArgsConstructor
-public class WriteSessionStorageAction extends BaseCasWebflowAction {
+public class WriteBrowserStorageAction extends BaseCasWebflowAction {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).minimal(true).build().toObjectMapper();
 
