@@ -30,6 +30,8 @@
                         <input type="hidden" name="_eventId" value="proceed"/>
                     </form>
                     <script type="text/javascript">
+                        clearLocalStorage();
+                        clearSessionStorage();
                         setTimeout((() => $("#logoutform").submit()), 2000);
                     </script>
                 </div>
