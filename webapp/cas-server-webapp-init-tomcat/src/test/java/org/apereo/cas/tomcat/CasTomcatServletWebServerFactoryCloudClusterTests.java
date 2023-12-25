@@ -10,6 +10,7 @@ import org.apache.catalina.Context;
 import org.apache.catalina.Engine;
 import org.apache.catalina.Host;
 import org.apache.catalina.LifecycleState;
+import org.apache.catalina.Server;
 import org.apache.catalina.Service;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.startup.Tomcat;
@@ -73,10 +74,14 @@ class CasTomcatServletWebServerFactoryCloudClusterTests {
             .setEnabled(true).setClusteringType("CLOUD");
 
         val factory = new CasTomcatServletWebServerFactory(props, serverProperties);
+
         val tomcat = mock(Tomcat.class);
         when(tomcat.getEngine()).thenReturn(mock(Engine.class));
         val service = mock(Service.class);
         when(service.findConnectors()).thenReturn(new Connector[]{});
+
+        val server = mock(Server.class);
+        when(server.findServices()).thenReturn(new Service[]{service});
 
         val host = mock(Host.class);
         val context = mock(Context.class);
@@ -86,6 +91,8 @@ class CasTomcatServletWebServerFactoryCloudClusterTests {
 
         when(tomcat.getHost()).thenReturn(host);
         when(tomcat.getService()).thenReturn(service);
+        when(tomcat.getServer()).thenReturn(server);
+
         assertDoesNotThrow(() -> {
             factory.getTomcatWebServer(tomcat);
         });
@@ -105,6 +112,9 @@ class CasTomcatServletWebServerFactoryCloudClusterTests {
         val service = mock(Service.class);
         when(service.findConnectors()).thenReturn(new Connector[]{});
 
+        val server = mock(Server.class);
+        when(server.findServices()).thenReturn(new Service[]{service});
+        
         val host = mock(Host.class);
         val context = mock(Context.class);
         when(context.getBaseName()).thenReturn("cas");
@@ -113,9 +123,10 @@ class CasTomcatServletWebServerFactoryCloudClusterTests {
 
         when(tc.getHost()).thenReturn(host);
         when(tc.getService()).thenReturn(service);
+        when(tc.getServer()).thenReturn(server);
+
         assertDoesNotThrow(() -> {
             factory.getTomcatWebServer(tc);
         });
     }
 }
-

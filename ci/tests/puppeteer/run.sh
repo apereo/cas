@@ -703,18 +703,17 @@ if [[ "${RERUN}" != "true" && ("${NATIVE_BUILD}" == "false" || "${NATIVE_RUN}" =
       pid=$!
       printcyan "Waiting for CAS instance #${c} under process id ${pid}"
       casLogin="https://localhost:${serverPort}/cas/login"
-      casStatus="https://localhost:${serverPort}/cas/actuator"
 
       if [[ "${CI}" == "true" ]]; then
         timeout=$(jq -j '.timeout // 70' "${config}")
         sleepfor $timeout
 
         printcyan "Checking CAS server's status @ ${casLogin}"
-        curl -k -L --connect-timeout 10 --output /dev/null --silent --fail $casStatus
+        curl -k -L --connect-timeout 10 --output /dev/null --silent --fail $casLogin
         RC=$?
       else
         # We cannot do this in Github Actions/CI; curl seems to hang indefinitely
-        until curl -I -k -L --connect-timeout 10 --output /dev/null --silent --fail $casStatus; do
+        until curl -I -k -L --connect-timeout 10 --output /dev/null --silent --fail $casLogin; do
            echo -n '.'
            sleep 1
         done
