@@ -3,7 +3,7 @@ package org.apereo.cas.integration.pac4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pac4j.BrowserWebStorageSessionStore;
 import org.apereo.cas.util.crypto.CipherExecutor;
-import org.apereo.cas.web.BrowserSessionStorage;
+import org.apereo.cas.web.BrowserStorage;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -49,7 +49,7 @@ class BrowserWebStorageSessionStoreTests {
         assertTrue(session.isPresent());
 
         store.renewSession(ctx);
-        val trackableSession = (BrowserSessionStorage) session.get();
+        val trackableSession = (BrowserStorage) session.get();
         store.buildFromTrackableSession(ctx, trackableSession.getPayload());
         assertTrue(store.get(ctx, "key1").isPresent());
         assertTrue(store.get(ctx, "key2").isPresent());

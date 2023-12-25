@@ -532,7 +532,7 @@ public class SamlIdPEndpointsConfiguration {
             switch (type) {
                 case TICKET_REGISTRY:
                     return new TicketRegistrySessionStore(ticketRegistry, ticketFactory, samlIdPDistributedSessionCookieGenerator);
-                case BROWSER_SESSION_STORAGE:
+                case BROWSER_STORAGE:
                     return new BrowserWebStorageSessionStore(webflowCipherExecutor);
                 default:
                     val jeeSessionStore = new JEESessionStore();

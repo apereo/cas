@@ -1232,12 +1232,12 @@ public interface CasWebflowConstants {
     /**
      * The view state for browser storage writes.
      */
-    String VIEW_ID_BROWSER_STORAGE_WRITE = "storage/casSessionStorageWriteView";
+    String VIEW_ID_BROWSER_STORAGE_WRITE = "storage/casBrowserStorageWriteView";
 
     /**
      *The view state for browser storage reads..
      */
-    String VIEW_ID_BROWSER_STORAGE_READ = "storage/casSessionStorageReadView";
+    String VIEW_ID_BROWSER_STORAGE_READ = "storage/casBrowserStorageReadView";
 
     /**
      * The view state 'dynamicHtmlView'.

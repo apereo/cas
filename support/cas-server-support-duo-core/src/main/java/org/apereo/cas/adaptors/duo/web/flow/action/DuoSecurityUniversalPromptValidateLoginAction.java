@@ -11,7 +11,7 @@ import org.apereo.cas.pac4j.BrowserWebStorageSessionStore;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.web.BrowserSessionStorage;
+import org.apereo.cas.web.BrowserStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
@@ -75,7 +75,7 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
 
     private Event handleDuoSecurityUniversalPromptResponse(final RequestContext requestContext,
                                                            final ParameterMap requestParameters) {
-        if (!requestParameters.contains(BrowserSessionStorage.KEY_SESSION_STORAGE)) {
+        if (!requestParameters.contains(BrowserStorage.PARAMETER_BROWSER_STORAGE)) {
             return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_RESTORE);
         }
 
@@ -87,7 +87,7 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
 
-            val storage = requestParameters.get(BrowserSessionStorage.KEY_SESSION_STORAGE);
+            val storage = requestParameters.get(BrowserStorage.PARAMETER_BROWSER_STORAGE);
             val context = new JEEContext(request, response);
             browserSessionStore = this.sessionStore
                 .buildFromTrackableSession(context, storage)

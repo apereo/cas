@@ -8,7 +8,7 @@ import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurati
 import org.apereo.cas.support.saml.web.idp.profile.builders.AuthenticatedAssertionContext;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;
-import org.apereo.cas.web.BrowserSessionStorage;
+import org.apereo.cas.web.BrowserStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -60,8 +60,8 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
         autoConfigureCookiePath(request);
         val properties = configurationContext.getCasProperties();
         val type = properties.getAuthn().getSamlIdp().getCore().getSessionStorageType();
-        if (type == SessionStorageTypes.BROWSER_SESSION_STORAGE
-            && !request.getParameterMap().containsKey(BrowserSessionStorage.KEY_SESSION_STORAGE)) {
+        if (type == SessionStorageTypes.BROWSER_STORAGE
+            && !request.getParameterMap().containsKey(BrowserStorage.PARAMETER_BROWSER_STORAGE)) {
             return new ModelAndView(CasWebflowConstants.VIEW_ID_BROWSER_STORAGE_READ);
         }
         return handleProfileRequest(response, request);
@@ -73,8 +73,8 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
         autoConfigureCookiePath(request);
         val properties = configurationContext.getCasProperties();
         val type = properties.getAuthn().getSamlIdp().getCore().getSessionStorageType();
-        if (type == SessionStorageTypes.BROWSER_SESSION_STORAGE) {
-            val storage = request.getParameter(BrowserSessionStorage.KEY_SESSION_STORAGE);
+        if (type == SessionStorageTypes.BROWSER_STORAGE) {
+            val storage = request.getParameter(BrowserStorage.PARAMETER_BROWSER_STORAGE);
             val context = new JEEContext(request, response);
             configurationContext.getSessionStore().buildFromTrackableSession(context, storage);
             return handleProfileRequest(response, request);

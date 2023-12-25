@@ -10,7 +10,7 @@ import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactor
 import org.apereo.cas.pac4j.BrowserWebStorageSessionStore;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockRequestContext;
-import org.apereo.cas.web.BrowserSessionStorage;
+import org.apereo.cas.web.BrowserStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 import com.duosecurity.Client;
@@ -112,7 +112,7 @@ class DuoSecurityUniversalPromptValidateLoginActionTests extends BaseCasWebflowM
 
         val prepResult = duoUniversalPromptPrepareLoginAction.execute(context);
 
-        val storage = (BrowserSessionStorage) prepResult.getAttributes().get("result");
+        val storage = (BrowserStorage) prepResult.getAttributes().get("result");
         val attributes = duoUniversalPromptSessionStore.buildFromTrackableSession(webContext, storage)
             .map(BrowserWebStorageSessionStore.class::cast)
             .orElseThrow()
@@ -122,7 +122,7 @@ class DuoSecurityUniversalPromptValidateLoginActionTests extends BaseCasWebflowM
         context.setParameter(DuoSecurityUniversalPromptValidateLoginAction.REQUEST_PARAMETER_CODE, code);
         context.setParameter(DuoSecurityUniversalPromptValidateLoginAction.REQUEST_PARAMETER_STATE,
             attributes.get(DuoSecurityAuthenticationService.class.getSimpleName()).toString());
-        context.setParameter(BrowserSessionStorage.KEY_SESSION_STORAGE, storage.getPayload());
+        context.setParameter(BrowserStorage.PARAMETER_BROWSER_STORAGE, storage.getPayload());
 
         val result = duoUniversalPromptValidateLoginAction.execute(context);
         assertNotNull(result);
