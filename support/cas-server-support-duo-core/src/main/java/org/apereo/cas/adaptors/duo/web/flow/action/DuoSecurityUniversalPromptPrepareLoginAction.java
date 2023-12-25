@@ -12,7 +12,7 @@ import org.apereo.cas.pac4j.BrowserWebStorageSessionStore;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.web.BrowserSessionStorage;
+import org.apereo.cas.web.BrowserStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.AbstractMultifactorAuthenticationAction;
 import org.apereo.cas.web.support.WebUtils;
@@ -91,10 +91,10 @@ public class DuoSecurityUniversalPromptPrepareLoginAction extends AbstractMultif
         val sessionStorage = new BrowserWebStorageSessionStore(webflowCipherExecutor)
             .setSessionAttributes(properties)
             .getTrackableSession(context)
-            .map(BrowserSessionStorage.class::cast)
+            .map(BrowserStorage.class::cast)
             .orElseThrow(() -> new IllegalStateException("Unable to determine trackable session for storage"));
         sessionStorage.setDestinationUrl(authUrl);
-        requestContext.getFlowScope().put(BrowserSessionStorage.KEY_SESSION_STORAGE, sessionStorage);
+        requestContext.getFlowScope().put(BrowserStorage.PARAMETER_BROWSER_STORAGE, sessionStorage);
 
         LOGGER.debug("Redirecting to Duo Security url at [{}]", authUrl);
         return success(sessionStorage);

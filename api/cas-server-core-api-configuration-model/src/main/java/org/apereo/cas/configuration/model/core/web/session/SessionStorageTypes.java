@@ -17,7 +17,7 @@ public enum SessionStorageTypes {
      * are kept in the client browser's session storage, signed and encrypted. All interactions
      * require client-side read/write operations to restore the session from the browser.
      */
-    BROWSER_SESSION_STORAGE,
+    BROWSER_STORAGE,
     /**
      * Authentication requests, and other session data collected as part of authentication protocol flows and requests
      * are tracked as CAS tickets in the registry and replicated across the entire cluster

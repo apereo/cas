@@ -3,7 +3,7 @@ package org.apereo.cas.web.flow.actions;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.MockRequestContext;
-import org.apereo.cas.web.BrowserSessionStorage;
+import org.apereo.cas.web.BrowserStorage;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
@@ -21,13 +21,13 @@ import org.springframework.webflow.execution.Event;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link SessionStorageActionTests}.
+ * This is {@link BrowserStorageActionTests}.
  *
  * @author Misagh Moayyed
  * @since 7.0.0
  */
 @Tag("WebflowAuthenticationActions")
-public class SessionStorageActionTests extends BaseWebflowConfigurerTests {
+public class BrowserStorageActionTests extends BaseWebflowConfigurerTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_WRITE_BROWSER_STORAGE)
     private Action writeSessionStorageAction;
@@ -49,23 +49,23 @@ public class SessionStorageActionTests extends BaseWebflowConfigurerTests {
             new LocalAttributeMap<>(TicketGrantingTicket.class.getName(), ticketGrantingTicket.getId())));
 
         var readResult = readSessionStorageAction.execute(context);
-        assertTrue(context.getFlowScope().contains(BrowserSessionStorage.KEY_SESSION_STORAGE_CONTEXT));
+        assertTrue(context.getFlowScope().contains(BrowserStorage.PARAMETER_BROWSER_STORAGE));
         assertEquals(CasWebflowConstants.TRANSITION_ID_READ_BROWSER_STORAGE, readResult.getId());
 
         val writeResult = writeSessionStorageAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, writeResult.getId());
-        assertTrue(context.getFlowScope().contains(BrowserSessionStorage.KEY_SESSION_STORAGE));
+        assertTrue(context.getFlowScope().contains(BrowserStorage.PARAMETER_BROWSER_STORAGE));
 
         context.setCurrentEvent(new Event(this, CasWebflowConstants.TRANSITION_ID_CONTINUE));
-        val sessionStorage = writeResult.getAttributes().getRequired("result", BrowserSessionStorage.class);
-        context.setParameter(BrowserSessionStorage.KEY_SESSION_STORAGE, sessionStorage.getPayload());
+        val sessionStorage = writeResult.getAttributes().getRequired("result", BrowserStorage.class);
+        context.setParameter(BrowserStorage.PARAMETER_BROWSER_STORAGE, sessionStorage.getPayload());
         readResult = readSessionStorageAction.execute(context);
         assertNull(readResult);
         assertNotNull(WebUtils.getTicketGrantingTicketId(context));
 
         context.getFlowScope().clear();
         context.getRequestScope().clear();
-        context.setParameter(BrowserSessionStorage.KEY_SESSION_STORAGE, StringUtils.EMPTY);
+        context.setParameter(BrowserStorage.PARAMETER_BROWSER_STORAGE, StringUtils.EMPTY);
         readResult = readSessionStorageAction.execute(context);
         assertNull(readResult);
         assertNull(WebUtils.getTicketGrantingTicketId(context));

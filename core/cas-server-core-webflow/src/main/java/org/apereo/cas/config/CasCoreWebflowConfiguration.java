@@ -559,8 +559,7 @@ public class CasCoreWebflowConfiguration {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
-                .withAction(() -> new ReadBrowserStorageAction(ticketGrantingTicketCookieGenerator,
-                    "casSessionStorageContext", CasWebflowConstants.TRANSITION_ID_READ_BROWSER_STORAGE))
+                .withAction(() -> new ReadBrowserStorageAction(ticketGrantingTicketCookieGenerator))
                 .withId(CasWebflowConstants.ACTION_ID_READ_BROWSER_STORAGE)
                 .build()
                 .get();

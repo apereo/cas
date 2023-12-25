@@ -11,7 +11,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.util.Saml20HexRandomIdGenerator;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
-import org.apereo.cas.web.BrowserSessionStorage;
+import org.apereo.cas.web.BrowserStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
@@ -46,7 +46,7 @@ import static org.mockito.Mockito.*;
 @Tag("SAML2Web")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestPropertySource(properties = {
-    "cas.authn.saml-idp.core.session-storage-type=BROWSER_SESSION_STORAGE",
+    "cas.authn.saml-idp.core.session-storage-type=BROWSER_STORAGE",
     "cas.authn.saml-idp.metadata.file-system.location=file:src/test/resources/metadata"
 })
 class SSOSamlIdPProfileCallbackHandlerControllerWithBrowserStorageTests extends BaseSamlIdPConfigurationTests {
@@ -90,10 +90,10 @@ class SSOSamlIdPProfileCallbackHandlerControllerWithBrowserStorageTests extends 
         val st = getServiceTicket();
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, st.getId());
         val payload = samlIdPDistributedSessionStore.getTrackableSession(new JEEContext(request, response))
-            .map(BrowserSessionStorage.class::cast)
-            .map(BrowserSessionStorage::getPayload)
+            .map(BrowserStorage.class::cast)
+            .map(BrowserStorage::getPayload)
             .orElseThrow();
-        request.addParameter(BrowserSessionStorage.KEY_SESSION_STORAGE, payload);
+        request.addParameter(BrowserStorage.PARAMETER_BROWSER_STORAGE, payload);
         val mv = controller.handleCallbackProfileRequestPost(response, request);
         assertNull(mv);
         assertEquals(HttpStatus.SC_OK, response.getStatus());

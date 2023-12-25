@@ -23,7 +23,7 @@
             <form method="post" id="fm1">
                 <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
                 <input type="hidden" name="_eventId" value="continue" />
-                <input type="hidden" id="sessionStorage" name="sessionStorage"/>
+                <input type="hidden" id="browserStorage" name="browserStorage"/>
                 <input type="submit" style="display: none" />
             </form>
         </div>
@@ -31,18 +31,14 @@
         <script>new mdc.linearProgress.MDCLinearProgress(document.querySelector('.mdc-linear-progress'));</script>
         <script th:inline="javascript">
             /*<![CDATA[*/
-
-            let sessionStorageContext = /*[[${sessionStorageContext}]]*/;
-            let removeOnRead = /*[[${removeOnRead}]]*/;
-            if (sessionStorageContext === undefined || sessionStorageContext === null || sessionStorageContext === "") {
-                sessionStorageContext = "sessionStorage";
+            const browserStorage = /*[[${browserStorage}]]*/ ;
+            let payload;
+            if (browserStorage.storageType === 'SESSION') {
+                payload = readFromSessionStorage(browserStorage);
+            } else {
+                payload = readFromLocalStorage(browserStorage);
             }
-            if (removeOnRead === undefined || removeOnRead === null || removeOnRead === "") {
-                removeOnRead = true;
-            }
-
-            const payload = readFromSessionStorage(sessionStorageContext, removeOnRead);
-            document.getElementById("sessionStorage").value = payload;
+            document.getElementById("browserStorage").value = payload;
             document.getElementById("fm1").submit();
             /*]]>*/
         </script>
