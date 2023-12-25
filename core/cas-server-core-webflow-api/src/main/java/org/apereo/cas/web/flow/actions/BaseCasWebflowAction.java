@@ -7,6 +7,7 @@ import org.apereo.cas.web.flow.decorator.WebflowDecorator;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
+import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.definition.FlowDefinition;
@@ -39,7 +40,7 @@ public abstract class BaseCasWebflowAction extends AbstractAction {
     protected Event doPreExecute(final RequestContext requestContext) throws Exception {
         val applicationContext = requestContext.getActiveFlow().getApplicationContext();
         FunctionUtils.doIfNotNull(applicationContext, __ ->
-            applicationContext.getBeansOfType(WebflowDecorator.class)
+            BeanFactoryUtils.beansOfTypeIncludingAncestors(applicationContext, WebflowDecorator.class)
                 .values()
                 .stream()
                 .filter(BeanSupplier::isNotProxy)

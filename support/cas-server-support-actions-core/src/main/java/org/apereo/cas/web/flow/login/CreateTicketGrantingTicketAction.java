@@ -120,8 +120,7 @@ public class CreateTicketGrantingTicketAction extends BaseCasWebflowAction {
             LOGGER.debug("Updating the existing ticket-granting ticket [{}]...", ticketGrantingTicket);
             val tgt = configurationContext.getTicketRegistry().getTicket(ticketGrantingTicket, TicketGrantingTicket.class);
             tgt.getAuthentication().updateAttributes(authentication);
-            configurationContext.getTicketRegistry().updateTicket(tgt);
-            return tgt;
+            return configurationContext.getTicketRegistry().updateTicket(tgt);
         } catch (final PrincipalException e) {
             LoggingUtils.error(LOGGER, e);
             throw e;

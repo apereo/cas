@@ -76,6 +76,7 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
     private Event handleDuoSecurityUniversalPromptResponse(final RequestContext requestContext,
                                                            final ParameterMap requestParameters) {
         if (!requestParameters.contains(BrowserStorage.PARAMETER_BROWSER_STORAGE)) {
+            requestContext.getFlowScope().put("targetEventId", CasWebflowConstants.TRANSITION_ID_SWITCH);
             return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_RESTORE);
         }
 

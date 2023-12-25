@@ -41,11 +41,11 @@ class CreateTicketGrantingTicketActionTests extends AbstractWebflowActionsTests 
         val context = MockRequestContext.create();
 
         val tgt = new MockTicketGrantingTicket("casuser-new");
-        getTicketRegistry().addTicket(tgt);
-        WebUtils.putTicketGrantingTicketInScopes(context, tgt);
+        val added = (TicketGrantingTicket) getTicketRegistry().addTicket(tgt);
+        WebUtils.putTicketGrantingTicketInScopes(context, added);
         WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService());
         
-        prepareRequestContextForAuthentication(context, tgt.getAuthentication());
+        prepareRequestContextForAuthentication(context, added.getAuthentication());
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
     }
 
@@ -60,16 +60,24 @@ class CreateTicketGrantingTicketActionTests extends AbstractWebflowActionsTests 
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
 
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
+    }
 
-        when(tgt.getId()).thenReturn("TGT-111111");
+    @Test
+    void verifyCreateTgtWithWarnings() throws Throwable {
+        val context = MockRequestContext.create();
+
+        val authentication = CoreAuthenticationTestUtils.getAuthentication();
         val handlerResult = new DefaultAuthenticationHandlerExecutionResult();
         handlerResult.getWarnings().addAll(CollectionUtils.wrapList(new DefaultMessageDescriptor("some.authn.message")));
         authentication.getSuccesses().putAll(CollectionUtils.wrap("handler", handlerResult));
-        when(tgt.getAuthentication()).thenReturn(authentication);
-        WebUtils.putTicketGrantingTicketInScopes(context, tgt);
 
+        prepareRequestContextForAuthentication(context, authentication);
+        val tgt = new MockTicketGrantingTicket(authentication);
+        getTicketRegistry().addTicket(tgt);
+        WebUtils.putTicketGrantingTicketInScopes(context, tgt);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS, action.execute(context).getId());
     }
+
 
     private static void prepareRequestContextForAuthentication(final MockRequestContext context,
                                                                final Authentication authentication) throws Throwable {

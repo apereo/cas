@@ -3,7 +3,6 @@ package org.apereo.cas.tomcat;
 import org.apereo.cas.config.CasEmbeddedContainerTomcatConfiguration;
 import org.apereo.cas.config.CasEmbeddedContainerTomcatFiltersConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-
 import lombok.val;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
@@ -23,7 +22,6 @@ import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactor
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -114,7 +112,7 @@ class CasTomcatServletWebServerFactoryCloudClusterTests {
 
         val server = mock(Server.class);
         when(server.findServices()).thenReturn(new Service[]{service});
-        
+
         val host = mock(Host.class);
         val context = mock(Context.class);
         when(context.getBaseName()).thenReturn("cas");

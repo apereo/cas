@@ -71,7 +71,6 @@ class DuoSecurityUniversalPromptValidateLoginActionTests extends BaseCasWebflowM
     @Test
     void verifySkip() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
-
         val result = duoUniversalPromptValidateLoginAction.execute(context);
         assertNotNull(result);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SKIP, result.getId());
@@ -86,6 +85,7 @@ class DuoSecurityUniversalPromptValidateLoginActionTests extends BaseCasWebflowM
         val result = duoUniversalPromptValidateLoginAction.execute(context);
         assertNotNull(result);
         assertEquals(CasWebflowConstants.TRANSITION_ID_RESTORE, result.getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SWITCH, context.getFlowScope().getRequiredString("targetEventId"));
     }
 
     @Test
