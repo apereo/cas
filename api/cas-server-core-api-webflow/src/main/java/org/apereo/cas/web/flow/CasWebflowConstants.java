@@ -210,6 +210,16 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_RESUME = "resume";
 
     /**
+     * The transition state 'navigate'.
+     */
+    String TRANSITION_ID_NAVIGATE = "navigate";
+
+    /**
+     * The transition state 'switch'.
+     */
+    String TRANSITION_ID_SWITCH = "switch";
+
+    /**
      * Transition id `retry`.
      */
     String TRANSITION_ID_RETRY = "retry";

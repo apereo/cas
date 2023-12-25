@@ -374,7 +374,9 @@ public abstract class BaseTicketRegistryTests {
         val service = RegisteredServiceTestUtils.getService("TGT_UPDATE_TEST");
         tgt.grantServiceTicket("ST-1", service, NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy);
         val updatedTgt = ticketRegistry.updateTicket(tgt);
-        val tgtResult = ticketRegistry.getTicket(updatedTgt.getId(), TicketGrantingTicket.class);
+        val tgtResult = updatedTgt.isCompact()
+            ? ticketRegistry.getTicket(updatedTgt.getId(), TicketGrantingTicket.class)
+            : ticketRegistry.getTicket(tgt.getId(), TicketGrantingTicket.class);
         assertInstanceOf(TicketGrantingTicket.class, tgtResult);
         services = tgtResult.getServices();
         assertEquals(Collections.singleton("ST-1"), services.keySet());

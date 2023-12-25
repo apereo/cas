@@ -90,7 +90,7 @@ public class StatelessTicketRegistry extends AbstractTicketRegistry {
         val encoded64 = EncodingUtils.encodeBase64(encoded);
         val finalTicketId = ticket.getPrefix() + UniqueTicketIdGenerator.SEPARATOR + encoded64;
         LOGGER.debug("Compacted ticket in encoded form is [{}]", finalTicketId);
-        return new DefaultEncodedTicket(finalTicketId, ticket.getPrefix());
+        return new DefaultEncodedTicket(finalTicketId, ticket.getPrefix()).markTicketCompact();
     }
 
     @Override

@@ -233,6 +233,7 @@ public class WebUtils {
      * @param ticket  the ticket value
      */
     public static void putTicketGrantingTicketInScopes(final RequestContext context, final Ticket ticket) {
+        putTicketGrantingTicket(context, ticket);
         val ticketValue = Optional.ofNullable(ticket).map(Ticket::getId).orElse(null);
         putTicketGrantingTicketInScopes(context, ticketValue);
     }

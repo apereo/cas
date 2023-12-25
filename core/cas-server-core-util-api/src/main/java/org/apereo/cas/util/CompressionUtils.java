@@ -22,7 +22,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
-import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Stream;
 import java.util.zip.Deflater;
@@ -114,7 +113,8 @@ public class CompressionUtils {
      * @return the new string
      */
     public static String inflateToString(final byte[] bytes) {
-        return new String(Objects.requireNonNull(inflateToByteArray(bytes)), StandardCharsets.UTF_8);
+        val inflated = inflateToByteArray(bytes);
+        return inflated != null? new String(inflated, StandardCharsets.UTF_8) : null;
     }
 
     /**

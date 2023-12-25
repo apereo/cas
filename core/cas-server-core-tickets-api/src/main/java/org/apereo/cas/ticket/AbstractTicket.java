@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -119,8 +120,10 @@ public abstract class AbstractTicket implements TicketGrantingTicketAwareTicket,
     }
 
     @Override
-    public void markTicketCompact() {
+    @CanIgnoreReturnValue
+    public Ticket markTicketCompact() {
         this.compact = Boolean.TRUE;
+        return this;
     }
 
     @Override

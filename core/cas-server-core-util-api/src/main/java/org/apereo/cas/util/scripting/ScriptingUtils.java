@@ -87,6 +87,8 @@ public class ScriptingUtils {
             "org.apache.commons.io.output",
             "org.apache.commons.codec.digest",
 
+            "org.apereo.inspektr.common.web",
+
             "jakarta.servlet",
             "jakarta.servlet.http",
 

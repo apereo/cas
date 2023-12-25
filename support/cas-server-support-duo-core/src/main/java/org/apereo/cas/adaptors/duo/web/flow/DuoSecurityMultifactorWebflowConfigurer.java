@@ -14,6 +14,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.Flow;
+import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.builder.model.FlowModelFlowBuilder;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.engine.model.AbstractActionModel;
@@ -96,8 +97,8 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
         createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_MFA_UNAVAILABLE);
         createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_RESTORE, CasWebflowConstants.STATE_ID_BROWSER_STORAGE_READ);
         
-        val viewState = createViewState(flow, CasWebflowConstants.STATE_ID_BROWSER_STORAGE_READ, CasWebflowConstants.VIEW_ID_BROWSER_STORAGE_READ);
-        createStateDefaultTransition(viewState, CasWebflowConstants.STATE_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN);
+        val viewState = getState(flow, CasWebflowConstants.STATE_ID_BROWSER_STORAGE_READ, ViewState.class);
+        insertTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SWITCH, CasWebflowConstants.STATE_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN);
 
         setStartState(flow, actionState);
     }
@@ -144,17 +145,12 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
     }
 
     private static void createSessionStorageStates(final List<AbstractStateModel> states) {
-        val actions = new LinkedList<AbstractActionModel>();
-
         val writeState = new ViewStateModel(CasWebflowConstants.STATE_ID_BROWSER_STORAGE_WRITE);
-        writeState.setOnEntryActions(actions);
-        writeState.setView(CasWebflowConstants.STATE_ID_BROWSER_STORAGE_WRITE);
+        writeState.setView(CasWebflowConstants.VIEW_ID_BROWSER_STORAGE_WRITE);
         states.add(writeState);
 
         val readState = new ViewStateModel(CasWebflowConstants.STATE_ID_BROWSER_STORAGE_READ);
-        readState.setOnEntryActions(actions);
-        readState.setView(CasWebflowConstants.STATE_ID_BROWSER_STORAGE_READ);
-        
+        readState.setView(CasWebflowConstants.VIEW_ID_BROWSER_STORAGE_READ);
         states.add(readState);
     }
 

@@ -23,8 +23,10 @@ class DefaultEncodedTicketTests {
         val id = UUID.randomUUID().toString();
         val ticket1 = new DefaultEncodedTicket(UUID.randomUUID().toString(),
             id, TicketGrantingTicket.PREFIX);
+        assertTrue(ticket1.isCompact());
         val ticket2 = new DefaultEncodedTicket(UUID.randomUUID().toString(),
             id, TicketGrantingTicket.PREFIX);
+        assertTrue(ticket2.isCompact());
 
         assertNull(ticket1.getCreationTime());
         assertNull(ticket1.getExpirationPolicy());

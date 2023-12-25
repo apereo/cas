@@ -22,7 +22,7 @@
 
             <form method="post" id="fm1">
                 <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
-                <input type="hidden" name="_eventId" value="continue" />
+                <input type="hidden" name="_eventId" th:value="${targetEventId} ?: 'continue'" />
                 <input type="hidden" id="browserStorage" name="browserStorage"/>
                 <input type="submit" style="display: none" />
             </form>
