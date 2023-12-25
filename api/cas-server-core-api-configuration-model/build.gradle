@@ -1,3 +1,6 @@
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
+
 description = "Apereo CAS Core Configuration Model"
 def skipConfigurationMetadata = providers.systemProperty("skipNestedConfigMetadataGen").present
 
@@ -30,7 +33,7 @@ dependencies {
 
 if (!skipConfigurationMetadata) {
     def outputFile = project.layout.buildDirectory.file("generated/spring-configuration-metadata/META-INF/spring-configuration-metadata.json")
-    def inputFile = project.layout.buildDirectory.file("classes/java/main/META-INF")
+    def inputFile = project.layout.buildDirectory.file("classes/java/main/META-INF/spring-configuration-metadata.json")
 
     tasks.register('generateConfigurationMetadata', JavaExec) {
         inputs.files(tasks.named('processResources'), tasks.named('compileJava'))
@@ -46,15 +49,25 @@ if (!skipConfigurationMetadata) {
         finalizedBy("copyConfigurationMetadata")
     }
 
-    tasks.register('copyConfigurationMetadata', Copy) {
-        from outputFile
-        into inputFile
-        duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    tasks.register('copyConfigurationMetadata') {
+        dependsOn tasks.named("generateConfigurationMetadata")
+        doLast {
+            Files.copy(
+                    outputFile.get().asFile.toPath(),
+                    inputFile.get().asFile.toPath(),
+                    StandardCopyOption.REPLACE_EXISTING
+            )
+        }
+        outputs.doNotCacheIf("Caching disabled for copying, as well as build correctness.") { true }
     }
 
     tasks.named('compileJava') {
         inputs.files(tasks.named('processResources'))
         finalizedBy("generateConfigurationMetadata")
     }
-    sourceSets.main.output.dir inputFile, builtBy: "copyConfigurationMetadata"
+
+    jar {
+        dependsOn tasks.named("copyConfigurationMetadata")
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    }
 }
