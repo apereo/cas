@@ -127,5 +127,7 @@ public interface Ticket extends Serializable, Comparable<Ticket> {
     /**
      * Mark this ticket as compact. A compact ticket usually is self contained, such as a JWT.
      */
-    default void markTicketCompact() {}
+    default Ticket markTicketCompact() {
+        return this;
+    }
 }
