@@ -28,6 +28,8 @@ public class ThemeProperties implements Serializable {
 
     /**
      * The default theme name of this CAS deployment.
+     * The default theme file {@code cas-theme-default.properties} can be modified
+     * and extended by the theme file {@code cas-theme-custom.properties}.
      */
     private String defaultThemeName = "cas-theme-default";
 

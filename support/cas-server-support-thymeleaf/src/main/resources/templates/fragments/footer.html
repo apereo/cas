@@ -1,4 +1,5 @@
-<footer class="py-3 d-flex justify-content-center align-items-center cas-footer">
+<footer th:if="${'true' == #strings.defaultString(#themes.code('cas.footer.show'), 'true')}"
+        class="py-3 d-flex justify-content-center align-items-center cas-footer">
     <span id="copyright" th:utext="#{copyright}" class="me-2 d-inline-block">Copyright Date Apereo, Inc</span>
     <span class="px-3 d-inline-block">Powered by <a href="https://github.com/apereo/cas">Apereo CAS</a></span>
     <code class="version" th:text="${T(org.apereo.cas.util.CasVersion).getVersion() + ' ' + T(org.apereo.cas.util.CasVersion).getDateTime()}"></code>
