@@ -14,9 +14,4 @@ public interface EncodedTicket extends Ticket {
      * @return the byte []
      */
     byte[] getEncodedTicket();
-
-    @Override
-    default boolean isCompact() {
-        return true;
-    }
 }

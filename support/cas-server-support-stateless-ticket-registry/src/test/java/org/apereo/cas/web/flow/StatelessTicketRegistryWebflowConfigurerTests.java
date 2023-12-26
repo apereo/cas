@@ -41,7 +41,7 @@ public class StatelessTicketRegistryWebflowConfigurerTests extends BaseWebflowCo
         assertNotNull(flow);
         val state = (ActionState) flow.getState(CasWebflowConstants.STATE_ID_INITIAL_AUTHN_REQUEST_VALIDATION_CHECK);
         assertNotNull(state);
-        val action = (EvaluateAction) state.getActionList().get(0);
+        val action = (EvaluateAction) state.getActionList().get(1);
         var field = ReflectionUtils.findField(EvaluateAction.class, "expression");
         Objects.requireNonNull(field).trySetAccessible();
         var fieldValue = ((Expression) ReflectionUtils.getField(Objects.requireNonNull(field), action)).getExpressionString();

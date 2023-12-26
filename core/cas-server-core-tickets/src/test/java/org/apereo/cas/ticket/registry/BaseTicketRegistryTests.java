@@ -199,10 +199,12 @@ public abstract class BaseTicketRegistryTests {
     @RepeatedTest(2)
     void verifyAddTicketWithStream() throws Throwable {
         val originalAuthn = CoreAuthenticationTestUtils.getAuthentication();
-        val s1 = Stream.of(new TicketGrantingTicketImpl(ticketGrantingTicketId,
-            originalAuthn, NeverExpiresExpirationPolicy.INSTANCE));
-        val addedTickets = ticketRegistry.addTicket(s1);
-        val tgt = ticketRegistry.getTicket(addedTickets.getFirst().getId(), TicketGrantingTicket.class);
+        val ticketGrantingTicket = new TicketGrantingTicketImpl(ticketGrantingTicketId,
+            originalAuthn, NeverExpiresExpirationPolicy.INSTANCE);
+        val streamToAdd = Stream.of(ticketGrantingTicket);
+        val addedTickets = ticketRegistry.addTicket(streamToAdd);
+        val ticketToFetch = addedTickets.isEmpty() ? ticketGrantingTicket.getId() : addedTickets.getFirst().getId();
+        val tgt = ticketRegistry.getTicket(ticketToFetch, TicketGrantingTicket.class);
         assertNotNull(tgt);
     }
 
