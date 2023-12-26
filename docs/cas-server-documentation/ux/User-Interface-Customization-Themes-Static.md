@@ -35,10 +35,12 @@ Contents of this file may contain the following settings:
 | `cas.notifications-menu.enabled`          | Enable and display the notifications menu.                                              | `true`                               |
 | `cas.favicon.file`                        | Path to theme favicon file.                                                             | `/themes/example/images/favicon.ico` |
 | `cas.hero-banner.file`                    | Path to a "hero" styled image/logo on the login form.                                   | `/themes/example/images/hero.png`    |
-| `cas.js.core.enabled`                     | Whether core/default Javascript libraries should be included.                           | `/themes/example/images/hero.png`    |
-| `cas.successful-login.display-attributes` | Whether attributes/applications should be displayed on login.                           | `/themes/example/images/hero.png`    |
+| `cas.js.core.enabled`                     | Whether core/default Javascript libraries should be included.                           | `true`                               |
+| `cas.css.core.enabled=true`               | Whether core/default CSS libraries should be included.                                  | `true`                               |
+| `cas.successful-login.display-attributes` | Whether attributes/applications should be displayed on login.                           | `true`                               |
 | `cas.public-workstation.enabled`          | Whether user can indicate a public workstation option on login.                         | `false`                              |
 | `cas.warn-on-redirect`                    | Whether user should be warned prior to redirects to applications.                       | `false`                              |
+| `cas.browser-storage.show-progress`       | Whether to display progress when reading/writing browser storage data.                  | `true`                               |
 
 - Create the directory `src/main/resources/static/themes/[theme_name]`. Put the 
   theme-specific `cas.css` and `cas.js` inside the appropriate directories for `css` and `js`.

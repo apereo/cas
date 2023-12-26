@@ -40,6 +40,7 @@ import org.springframework.webflow.action.ViewFactoryActionAdapter;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.StateDefinition;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
+import org.springframework.webflow.engine.ActionList;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.DecisionState;
 import org.springframework.webflow.engine.EndState;
@@ -835,14 +836,19 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * Prepend actions to action state execution list.
      *
      * @param flow          the flow
-     * @param actionStateId the action state id
+     * @param stateId the action state id
      * @param actions       the actions
      */
-    public void prependActionsToActionStateExecutionList(final Flow flow, final String actionStateId, final String... actions) {
+    public void prependActionsToActionStateExecutionList(final Flow flow, final String stateId, final Object... actions) {
         val evalActions = Arrays.stream(actions)
-            .map(this::createEvaluateAction)
-            .toArray(EvaluateAction[]::new);
-        addActionsToActionStateExecutionListAt(flow, actionStateId, 0, evalActions);
+            .map(givenAction -> {
+                if (givenAction instanceof final Action action) {
+                    return action;
+                }
+                return createEvaluateAction(givenAction.toString());
+            })
+            .toArray(Action[]::new);
+        addActionsToActionStateExecutionListAt(flow, stateId, 0, evalActions);
     }
 
     /**
@@ -852,7 +858,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @param actionStateId the action state id
      * @param actions       the actions
      */
-    public void prependActionsToActionStateExecutionList(final Flow flow, final ActionState actionStateId, final EvaluateAction... actions) {
+    public void prependActionsToActionStateExecutionList(final Flow flow, final TransitionableState actionStateId, final Action... actions) {
         addActionsToActionStateExecutionListAt(flow, actionStateId.getId(), 0, actions);
     }
 
@@ -860,20 +866,27 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * Add actions to action state execution list at.
      *
      * @param flow          the flow
-     * @param actionStateId the action state id
+     * @param stateId the action state id
      * @param position      the position
      * @param actions       the actions
      */
-    public void addActionsToActionStateExecutionListAt(final Flow flow, final String actionStateId, final int position,
-                                                       final EvaluateAction... actions) {
-        val actionState = getState(flow, actionStateId, ActionState.class);
-        val actionList = actionState.getActionList();
+    public void addActionsToActionStateExecutionListAt(final Flow flow, final String stateId, final int position,
+                                                       final Action... actions) {
+        val givenState = getState(flow, stateId, TransitionableState.class);
+        var actionList = new ActionList();
+        if (givenState instanceof final ActionState as) {
+            actionList = as.getActionList();
+        }
+        if (givenState instanceof final ViewState vs) {
+            actionList = vs.getEntryActionList();
+        }
         val currentActions = new ArrayList<Action>(actionList.size() + actions.length);
         actionList.forEach(currentActions::add);
         val index = position < 0 || position == Integer.MAX_VALUE ? currentActions.size() : position;
         currentActions.forEach(actionList::remove);
-        Arrays.stream(actions).forEach(a -> currentActions.add(index, a));
+        currentActions.addAll(index, Arrays.stream(actions).toList());
         actionList.addAll(currentActions.toArray(Action[]::new));
+        LOGGER.trace("Final (entry) action list for state [{}] is [{}]", stateId, actionList);
     }
 
     /**

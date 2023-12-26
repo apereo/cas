@@ -1,14 +1,11 @@
-package org.apereo.cas.web.flow.actions;
+package org.apereo.cas.web.flow.actions.storage;
 
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.BrowserStorage;
 import org.apereo.cas.web.DefaultBrowserStorage;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.WebUtils;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.val;
 import org.springframework.webflow.execution.Event;
@@ -20,15 +17,11 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@RequiredArgsConstructor
 @Setter
-public class WriteBrowserStorageAction extends BaseCasWebflowAction {
-    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .defaultTypingEnabled(false).minimal(true).build().toObjectMapper();
-
-    private String browserStorageContextKey = "casBrowserStorageContext";
-
-    private final CasCookieBuilder ticketGrantingCookieBuilder;
+public class WriteBrowserStorageAction extends BaseBrowserStorageAction {
+    public WriteBrowserStorageAction(final CasCookieBuilder ticketGrantingCookieBuilder) {
+        super(ticketGrantingCookieBuilder);
+    }
 
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
@@ -39,6 +32,7 @@ public class WriteBrowserStorageAction extends BaseCasWebflowAction {
         val sessionStorage = DefaultBrowserStorage.builder()
             .payload(MAPPER.writeValueAsString(payload))
             .context(browserStorageContextKey)
+            .storageType(determineStorageType(requestContext))
             .build();
         requestContext.getFlowScope().put(BrowserStorage.PARAMETER_BROWSER_STORAGE, sessionStorage);
         return success(sessionStorage);

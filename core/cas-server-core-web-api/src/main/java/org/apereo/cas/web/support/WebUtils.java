@@ -19,7 +19,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
@@ -222,8 +221,8 @@ public class WebUtils {
      * @param context the context
      * @return the ticket granting ticket
      */
-    public static TicketGrantingTicket getTicketGrantingTicket(final RequestContext context) {
-        return context.getFlowScope().get("ticketGrantingTicket", TicketGrantingTicket.class);
+    public static Ticket getTicketGrantingTicket(final RequestContext context) {
+        return context.getFlowScope().get("ticketGrantingTicket", Ticket.class);
     }
 
     /**
