@@ -5,21 +5,19 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.logout.LogoutManager;
-import org.apereo.cas.services.CasRegisteredService;
-import org.apereo.cas.services.ImmutableInMemoryServiceRegistry;
-import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.registry.NoOpTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.ServiceTicketCompactor;
 import org.apereo.cas.ticket.registry.StatelessTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketCompactor;
 import org.apereo.cas.ticket.registry.TicketGrantingTicketCompactor;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.TransientSessionTicketCompactor;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.CoreTicketUtils;
-import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -34,8 +32,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.core.Ordered;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import java.util.List;
@@ -52,21 +50,11 @@ public class StatelessTicketRegistryConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "statelessTicketRegistryServiceExecutionPlanConfigurer")
-    public ServiceRegistryExecutionPlanConfigurer statelessTicketRegistryServiceExecutionPlanConfigurer(
-        final CasConfigurationProperties casProperties,
-        final ConfigurableApplicationContext applicationContext) {
-        return plan -> {
-            val service = new CasRegisteredService();
-            service.setId(RandomUtils.nextLong());
-            service.setEvaluationOrder(Ordered.HIGHEST_PRECEDENCE);
-            service.setName(service.getClass().getSimpleName());
-            service.setDescription("CAS Server");
-            service.setServiceId("^%s.*".formatted(casProperties.getServer().getPrefix()));
-            plan.registerServiceRegistry(new ImmutableInMemoryServiceRegistry(service, applicationContext));
-        };
+    @Lazy(false)
+    public TicketRegistryCleaner ticketRegistryCleaner() {
+        return NoOpTicketRegistryCleaner.getInstance();
     }
-
+    
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "statelessTicketRegistryCipherExecutor")
