@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jooq.lambda.Unchecked;
 import org.springframework.http.HttpStatus;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Action;
@@ -56,13 +57,23 @@ public class ConsumerExecutionAction extends BaseCasWebflowAction {
     private String eventId;
 
     @Override
-    public Event doExecuteInternal(final RequestContext requestContext) {
+    public Event doExecuteInternal(final RequestContext requestContext) throws Exception {
         this.task.accept(requestContext);
         return StringUtils.isNotBlank(this.eventId) ? new EventFactorySupport().event(this, this.eventId) : null;
     }
 
     @Override
     public String toString() {
-        return "Inline Consumer Action, returning " + this.eventId;
+        return "Inline Action, returning " + this.eventId;
+    }
+
+    /**
+     * Wrap action.
+     *
+     * @param innerAction the inner action
+     * @return the action
+     */
+    public static Action wrap(final Action innerAction) {
+        return new ConsumerExecutionAction(Unchecked.consumer(innerAction::execute));
     }
 }

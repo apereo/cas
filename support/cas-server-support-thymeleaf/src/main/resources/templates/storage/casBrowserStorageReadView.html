@@ -3,32 +3,35 @@
 <body id="cas">
 <main class="container mt-3 mb-3">
     <div layout:fragment="content" id="login">
-
-        <div id="mainPanel" class="mdc-card p-4 m-auto w-lg-50">
-            <h2 th:utext="#{screen.processing.title}"></h2>
-            <p th:utext="#{screen.processing.text}"></p>
-            <div role="progressbar" class="mdc-linear-progress mdc-linear-progress--indeterminate">
-                <div class="mdc-linear-progress__buffer">
-                    <div class="mdc-linear-progress__buffer-bar"></div>
-                    <div class="mdc-linear-progress__buffer-dots"></div>
-                </div>
-                <div class="mdc-linear-progress__bar mdc-linear-progress__primary-bar">
-                    <span class="mdc-linear-progress__bar-inner"></span>
-                </div>
-                <div class="mdc-linear-progress__bar mdc-linear-progress__secondary-bar">
-                    <span class="mdc-linear-progress__bar-inner"></span>
+        <span th:remove="tag" th:if="${'true' == #strings.defaultString(#themes.code('cas.browser-storage.show-progress'), 'true')}">
+            <div id="mainPanel" class="mdc-card p-4 m-auto w-lg-50">
+                <h2 th:utext="#{screen.processing.title}"></h2>
+                <p th:utext="#{screen.processing.text}"></p>
+                <div role="progressbar" class="mdc-linear-progress mdc-linear-progress--indeterminate">
+                    <div class="mdc-linear-progress__buffer">
+                        <div class="mdc-linear-progress__buffer-bar"></div>
+                        <div class="mdc-linear-progress__buffer-dots"></div>
+                    </div>
+                    <div class="mdc-linear-progress__bar mdc-linear-progress__primary-bar">
+                        <span class="mdc-linear-progress__bar-inner"></span>
+                    </div>
+                    <div class="mdc-linear-progress__bar mdc-linear-progress__secondary-bar">
+                        <span class="mdc-linear-progress__bar-inner"></span>
+                    </div>
                 </div>
             </div>
-
-            <form method="post" id="fm1">
-                <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
-                <input type="hidden" name="_eventId" th:value="${targetEventId} ?: 'continue'" />
-                <input type="hidden" id="browserStorage" name="browserStorage"/>
-                <input type="submit" style="display: none" />
-            </form>
-        </div>
-
-        <script>new mdc.linearProgress.MDCLinearProgress(document.querySelector('.mdc-linear-progress'));</script>
+            <script>new mdc.linearProgress.MDCLinearProgress(document.querySelector('.mdc-linear-progress'));</script>
+        </span>
+        <span th:remove="tag" th:if="${'false' == #strings.defaultString(#themes.code('cas.browser-storage.show-progress'), 'true')}">
+           <style type="text/css">body {display:none;}</style>
+        </span>
+        <form method="post" id="fm1" style="display: none">
+            <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
+            <input type="hidden" name="_eventId" th:value="${targetEventId} ?: 'continue'" />
+            <input type="hidden" id="browserStorage" name="browserStorage"/>
+            <input type="submit" style="display: none" />
+        </form>
+        
         <script th:inline="javascript">
             /*<![CDATA[*/
             const browserStorage = /*[[${browserStorage}]]*/ ;

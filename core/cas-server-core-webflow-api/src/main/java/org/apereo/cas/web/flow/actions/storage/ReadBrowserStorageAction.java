@@ -1,14 +1,11 @@
-package org.apereo.cas.web.flow.actions;
+package org.apereo.cas.web.flow.actions.storage;
 
-import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.BrowserStorage;
 import org.apereo.cas.web.DefaultBrowserStorage;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -22,24 +19,20 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@RequiredArgsConstructor
 @Getter
 @Setter
-public class ReadBrowserStorageAction extends BaseCasWebflowAction {
-    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .defaultTypingEnabled(false).minimal(true).build().toObjectMapper();
-
-    private final CasCookieBuilder ticketGrantingCookieBuilder;
-    
-    private String browserStorageContextKey = "casBrowserStorageContext";
-
+public class ReadBrowserStorageAction extends BaseBrowserStorageAction {
     private String nextTransition = CasWebflowConstants.TRANSITION_ID_READ_BROWSER_STORAGE;
+
+    public ReadBrowserStorageAction(final CasCookieBuilder ticketGrantingCookieBuilder) {
+        super(ticketGrantingCookieBuilder);
+    }
 
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         val currentEvent = requestContext.getCurrentEvent();
         if (currentEvent != null
-            && currentEvent.getId().equals(CasWebflowConstants.TRANSITION_ID_CONTINUE)
+            && hasFinishedReadingBrowserStorage(requestContext)
             && requestContext.getRequestParameters().contains(BrowserStorage.PARAMETER_BROWSER_STORAGE)) {
             val storageData = requestContext.getRequestParameters().getRequired(BrowserStorage.PARAMETER_BROWSER_STORAGE);
             if (StringUtils.isNotBlank(storageData)) {
@@ -50,10 +43,16 @@ public class ReadBrowserStorageAction extends BaseCasWebflowAction {
         }
 
         val browserStorage = new DefaultBrowserStorage()
+            .setStorageType(determineStorageType(requestContext))
             .setContext(browserStorageContextKey)
             .setRemoveOnRead(false);
         requestContext.getFlowScope().put(BrowserStorage.PARAMETER_BROWSER_STORAGE, browserStorage);
         return result(nextTransition);
+    }
+
+    private static boolean hasFinishedReadingBrowserStorage(final RequestContext requestContext) {
+        val targetEventId = requestContext.getFlowScope().get("targetEventId", String.class, CasWebflowConstants.TRANSITION_ID_CONTINUE);
+        return requestContext.getCurrentEvent().getId().equals(targetEventId);
     }
 
     protected Event hydrateWebflowFromStorage(final Map<String, String> storageMap, final RequestContext requestContext) {

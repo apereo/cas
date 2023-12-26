@@ -36,7 +36,7 @@ public class DefaultBrowserStorage implements BrowserStorage {
     private String context = "casBrowserStorageContext";
 
     @Builder.Default
-    private BrowserStorageType storageType = BrowserStorageType.SESSION;
+    private BrowserStorageTypes storageType = BrowserStorageTypes.SESSION;
 
     @Builder.Default
     private boolean removeOnRead = true;

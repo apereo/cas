@@ -53,8 +53,15 @@ public interface BrowserStorage extends Serializable {
      * @param type the type
      * @return the storage type
      */
-    BrowserStorage setStorageType(BrowserStorageType type);
+    BrowserStorage setStorageType(BrowserStorageTypes type);
 
+    /**
+     * Gets storage type.
+     *
+     * @return the storage type
+     */
+    BrowserStorageTypes getStorageType();
+    
     /**
      * Sets remove on read.
      *
@@ -63,7 +70,7 @@ public interface BrowserStorage extends Serializable {
      */
     BrowserStorage setRemoveOnRead(boolean removeOnRead);
 
-    enum BrowserStorageType {
+    enum BrowserStorageTypes {
         /**
          * Session storage.
          */

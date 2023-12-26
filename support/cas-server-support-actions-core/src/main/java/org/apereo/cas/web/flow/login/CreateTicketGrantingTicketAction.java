@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.MessageDescriptor;
 import org.apereo.cas.authentication.PrincipalException;
+import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -43,7 +44,10 @@ public class CreateTicketGrantingTicketAction extends BaseCasWebflowAction {
     private final CasWebflowEventResolutionConfigurationContext configurationContext;
 
     private static Collection<? extends MessageDescriptor> calculateAuthenticationWarningMessages(final RequestContext context) {
-        return Optional.ofNullable(WebUtils.getTicketGrantingTicket(context))
+        val ticketGrantingTicket = WebUtils.getTicketGrantingTicket(context);
+        return Optional.ofNullable(ticketGrantingTicket)
+            .filter(AuthenticationAwareTicket.class::isInstance)
+            .map(AuthenticationAwareTicket.class::cast)
             .map(tgt -> {
                 val authentication = tgt.getAuthentication();
                 val messages = authentication.getSuccesses().entrySet();
