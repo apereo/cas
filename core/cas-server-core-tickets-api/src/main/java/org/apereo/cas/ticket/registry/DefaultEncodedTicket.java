@@ -7,10 +7,11 @@ import org.apereo.cas.util.EncodingUtils;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
@@ -27,19 +28,21 @@ import java.io.Serial;
 @Slf4j
 @ToString(of = "id")
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 @EqualsAndHashCode(of = "id")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DefaultEncodedTicket implements EncodedTicket {
 
     @Serial
     private static final long serialVersionUID = -7078771807487764116L;
 
-    private String id;
+    private final String id;
 
-    private byte[] encodedTicket;
+    private final byte[] encodedTicket;
 
-    private String prefix;
+    private final String prefix;
+
+    private boolean compact;
 
     @JsonCreator
     public DefaultEncodedTicket(@JsonProperty("encoded") final String encodedTicket,
@@ -63,4 +66,10 @@ public class DefaultEncodedTicket implements EncodedTicket {
         return getId().compareTo(o.getId());
     }
 
+    @Override
+    @CanIgnoreReturnValue
+    public Ticket markTicketCompact() {
+        compact = true;
+        return this;
+    }
 }
