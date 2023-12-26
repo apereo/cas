@@ -785,7 +785,6 @@ layout: null
 * [Integration](#appintegration)
     *   [Apache Groovy](/cas/{{ version }}/integration/Apache-Groovy-Scripting.html)
     *   [SAML2 Service Providers](/cas/{{ version }}/integration/Configuring-SAML-SP-Integrations.html)
-        *   [~~Google Apps~~](/cas/{{ version }}/integration/Google-Apps-Integration.html)
     *   [Google reCAPTCHA](/cas/{{ version }}/integration/Configuring-Google-reCAPTCHA.html)
     *   [Google Analytics](/cas/{{ version }}/integration/Configuring-Google-Analytics.html)
     *   [GeoTracking](#authngeotracking)

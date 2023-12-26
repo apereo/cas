@@ -40,7 +40,6 @@ import org.apereo.cas.configuration.model.support.geo.GeoLocationProperties;
 import org.apereo.cas.configuration.model.support.interrupt.InterruptProperties;
 import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
 import org.apereo.cas.configuration.model.support.saml.SamlCoreProperties;
-import org.apereo.cas.configuration.model.support.saml.googleapps.GoogleAppsProperties;
 import org.apereo.cas.configuration.model.support.saml.mdui.SamlMetadataUIProperties;
 import org.apereo.cas.configuration.model.support.saml.sps.SamlServiceProviderProperties;
 import org.apereo.cas.configuration.model.support.scim.ScimProperties;
@@ -298,15 +297,7 @@ public class CasConfigurationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private DatabaseProperties jdbc = new DatabaseProperties();
-
-    /**
-     * Google Apps integration settings.
-     * @deprecated Since 6.2.0
-     */
-    @NestedConfigurationProperty
-    @Deprecated(since = "6.2.0")
-    private GoogleAppsProperties googleApps = new GoogleAppsProperties();
-
+    
     /**
      * Integration settings for amazon sts.
      */

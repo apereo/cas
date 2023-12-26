@@ -35,7 +35,7 @@ providers ([Duo Security](mfa/DuoSecurity-Authentication.html), [FIDO2 WebAuthN]
 * Manage and review [audits](audits/Audits.html) and [logs](logging/Logging.html) centrally, and publish data to a variety of downstream systems.  
 * Manage and register [client applications and services](services/Service-Management.html) with specific authentication policies.
 * [Cross-platform client support](integration/CAS-Clients.html) (Java, .NET, PHP, Perl, Apache, etc).
-* Integrations with [InCommon, Box, Office365, ServiceNow, Salesforce, Workday, WebAdvisor](integration/Configuring-SAML-SP-Integrations.html), Drupal, Blackboard, Moodle, [Google Apps](integration/Google-Apps-Integration.html), etc.
+* Built-in integrations with [many SAML2 service providers](integration/Configuring-SAML-SP-Integrations.html).
 * Support for many other types of integrations, such as [SCIM](integration/SCIM-Provisioning.html), [reCAPTCHA](integration/Configuring-Google-reCAPTCHA.html), 
   [Swagger](integration/Swagger-Integration.html), etc.
 
