@@ -40,6 +40,7 @@ Contents of this file may contain the following settings:
 | `cas.successful-login.display-attributes` | Whether attributes/applications should be displayed on login.                           | `true`                               |
 | `cas.public-workstation.enabled`          | Whether user can indicate a public workstation option on login.                         | `false`                              |
 | `cas.warn-on-redirect`                    | Whether user should be warned prior to redirects to applications.                       | `false`                              |
+| `cas.browser-storage.show-progress`       | Whether to display progress when reading/writing browser storage data.                  | `true`                               |
 
 - Create the directory `src/main/resources/static/themes/[theme_name]`. Put the 
   theme-specific `cas.css` and `cas.js` inside the appropriate directories for `css` and `js`.

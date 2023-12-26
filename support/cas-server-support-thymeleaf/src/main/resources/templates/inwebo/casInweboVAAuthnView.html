@@ -13,7 +13,7 @@
 <main class="container mt-3 mb-3">
     <div layout:fragment="content" class="banner banner-message mdc-card card p-4 m-auto w-lg-66">
         <script type="text/JavaScript" src="https://ult-inwebo.com/va/client.js"></script>
-        <form id="otpForm" style="display:none;" method="POST" onsubmit="alert('submit')">
+        <form id="otpForm" style="display:none;" method="POST">
             <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
             <input type="hidden" name="_eventId" value="otp" />
             <input type="hidden" name="otp" id="otp" value="" />

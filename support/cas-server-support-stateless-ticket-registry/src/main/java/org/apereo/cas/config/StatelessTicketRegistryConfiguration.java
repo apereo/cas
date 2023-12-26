@@ -8,10 +8,15 @@ import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.ImmutableInMemoryServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.registry.ServiceTicketCompactor;
 import org.apereo.cas.ticket.registry.StatelessTicketRegistry;
+import org.apereo.cas.ticket.registry.TicketCompactor;
+import org.apereo.cas.ticket.registry.TicketGrantingTicketCompactor;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.registry.TransientSessionTicketCompactor;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.RandomUtils;
@@ -33,6 +38,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
+import java.util.List;
 
 /**
  * This is {@link StatelessTicketRegistryConfiguration}.
@@ -72,10 +78,7 @@ public class StatelessTicketRegistryConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public TicketRegistry ticketRegistry(
-        @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
-        final ServiceFactory serviceFactory,
-        @Qualifier(TicketFactory.BEAN_NAME)
-        final ObjectProvider<TicketFactory> ticketFactory,
+        final List<TicketCompactor<Ticket>> ticketCompactors,
         @Qualifier(TicketCatalog.BEAN_NAME)
         final TicketCatalog ticketCatalog,
         @Qualifier(TicketSerializationManager.BEAN_NAME)
@@ -85,8 +88,7 @@ public class StatelessTicketRegistryConfiguration {
         final CasConfigurationProperties casProperties) {
         val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(
             casProperties.getTicket().getRegistry().getStateless().getCrypto(), "stateless");
-        return new StatelessTicketRegistry(cipher, ticketSerializationManager, ticketCatalog,
-            ticketFactory, serviceFactory, casProperties);
+        return new StatelessTicketRegistry(cipher, ticketSerializationManager, ticketCatalog, ticketCompactors);
     }
 
     @Bean
@@ -112,5 +114,36 @@ public class StatelessTicketRegistryConfiguration {
         final ConfigurableApplicationContext applicationContext) {
         return new StatelessTicketRegistryWebflowConfigurer(flowBuilderServices,
             loginFlowDefinitionRegistry, accountProfileFlowRegistry, applicationContext, casProperties);
+    }
+
+    @ConditionalOnMissingBean(name = "ticketGrantingTicketCompactor")
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public TicketCompactor ticketGrantingTicketCompactor(
+        @Qualifier(TicketSerializationManager.BEAN_NAME)
+        final TicketSerializationManager ticketSerializationManager) {
+        return new TicketGrantingTicketCompactor(ticketSerializationManager);
+    }
+
+    @ConditionalOnMissingBean(name = "serviceTicketCompactor")
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public TicketCompactor serviceTicketCompactor(
+        @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
+        final ServiceFactory serviceFactory,
+        @Qualifier(TicketFactory.BEAN_NAME)
+        final ObjectProvider<TicketFactory> ticketFactory) {
+        return new ServiceTicketCompactor(ticketFactory, serviceFactory);
+    }
+
+    @ConditionalOnMissingBean(name = "transientTicketCompactor")
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public TicketCompactor transientTicketCompactor(
+        @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
+        final ServiceFactory serviceFactory,
+        @Qualifier(TicketFactory.BEAN_NAME)
+        final ObjectProvider<TicketFactory> ticketFactory) {
+        return new TransientSessionTicketCompactor(ticketFactory, serviceFactory);
     }
 }
