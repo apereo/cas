@@ -2,18 +2,16 @@ package org.apereo.cas.services.web;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.ResourceUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
+import org.springframework.context.HierarchicalMessageSource;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.StaticMessageSource;
 import org.springframework.ui.context.support.ResourceBundleThemeSource;
-
 import jakarta.annotation.Nonnull;
-
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
@@ -38,20 +36,30 @@ public class DefaultCasThemeSource extends ResourceBundleThemeSource {
             .map(prefix -> StringUtils.appendIfMissing(prefix, "/").concat(basename).concat(".properties"))
             .filter(ResourceUtils::doesResourceExist)
             .findFirst()
-            .map(Unchecked.function(path -> {
-                try (val is = ResourceUtils.getRawResourceFrom(path).getInputStream()) {
-                    val source = new StaticMessageSource();
-                    val properties = new Properties();
-                    properties.load(is);
-                    properties.forEach((key, value) ->
-                        List.of(Locale.US, Locale.CANADA, Locale.ENGLISH).forEach(locale -> {
-                            LOGGER.trace("Adding theme property [{}] with value [{}] from [{}] for locale [{}]", key, value, path, locale);
-                            source.addMessage(key.toString(), locale, value.toString());
-                        }));
-                    return source;
-                }
-            }))
+            .map(Unchecked.function(this::loadMessageSourceFromPath))
             .map(MessageSource.class::cast)
-            .orElseGet(() -> super.createMessageSource(basename));
+            .orElseGet(Unchecked.supplier(() -> createExtendedMessageSource(basename)));
+    }
+
+    protected MessageSource createExtendedMessageSource(final String basename) throws Exception {
+        val source = (HierarchicalMessageSource) super.createMessageSource(StringUtils.replace(basename, "-default", "-custom"));
+        source.setParentMessageSource(super.createMessageSource(basename));
+        return source;
+    }
+
+    protected StaticMessageSource loadMessageSourceFromPath(final String path) throws Exception {
+        val source = new StaticMessageSource();
+        if (ResourceUtils.doesResourceExist(path)) {
+            try (val is = ResourceUtils.getRawResourceFrom(path).getInputStream()) {
+                val properties = new Properties();
+                properties.load(is);
+                properties.forEach((key, value) ->
+                    List.of(Locale.US, Locale.CANADA, Locale.ENGLISH).forEach(locale -> {
+                        LOGGER.trace("Adding theme property [{}] with value [{}] from [{}] for locale [{}]", key, value, path, locale);
+                        source.addMessage(key.toString(), locale, value.toString());
+                    }));
+            }
+        }
+        return source;
     }
 }
