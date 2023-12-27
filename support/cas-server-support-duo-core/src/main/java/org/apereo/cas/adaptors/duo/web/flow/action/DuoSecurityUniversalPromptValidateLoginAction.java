@@ -72,10 +72,10 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
     }
 
     private Event handleDuoSecurityUniversalPromptResponse(final RequestContext requestContext) throws Exception {
-        val browserStorage = WebUtils.readBrowserStorageFromRequest(requestContext);
+        val browserStorage = WebUtils.getBrowserStorage(requestContext);
         if (browserStorage.isEmpty()) {
-            requestContext.getFlowScope().put("targetEventId", CasWebflowConstants.TRANSITION_ID_SWITCH);
-            requestContext.getFlowScope().put("browserStorageContextKey", sessionStore.getBrowserStorageContextKey());
+            WebUtils.putTargetTransition(requestContext, CasWebflowConstants.TRANSITION_ID_SWITCH);
+            WebUtils.putBrowserStorageContextKey(requestContext, sessionStore.getBrowserStorageContextKey());
             return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_RESTORE);
         }
 
