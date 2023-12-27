@@ -24,10 +24,7 @@ public class CasPasswordManagementRuntimeHints implements CasRuntimeHintsRegistr
         registerReflectionHints(hints, List.of(
             PasswordChangeRequest.class,
             PasswordResetTokenCipherExecutor.class));
-
-        hints.serialization()
-            .registerType(JsonResourcePasswordManagementService.JsonBackedAccount.class)
-            .registerType(PasswordChangeRequest.class);
+        registerSerializationHints(hints, JsonResourcePasswordManagementService.JsonBackedAccount.class, PasswordChangeRequest.class);
     }
 
     private static void registerReflectionHints(final RuntimeHints hints, final Collection entries) {

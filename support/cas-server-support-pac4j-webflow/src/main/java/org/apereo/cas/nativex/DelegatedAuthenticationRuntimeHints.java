@@ -20,7 +20,7 @@ public class DelegatedAuthenticationRuntimeHints implements CasRuntimeHintsRegis
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
         val profiles = findSubclassesInPackage(UserProfile.class, "org.pac4j");
-        profiles.forEach(el -> hints.serialization().registerType(el));
+        registerSerializationHints(hints, profiles);
         registerReflectionHints(hints, profiles);
 
         registerReflectionHints(hints,

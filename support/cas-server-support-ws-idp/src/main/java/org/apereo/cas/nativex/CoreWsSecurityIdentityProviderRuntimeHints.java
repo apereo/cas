@@ -5,7 +5,6 @@ import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.TypeReference;
-
 import java.util.List;
 
 /**
@@ -17,7 +16,7 @@ import java.util.List;
 public class CoreWsSecurityIdentityProviderRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
-        hints.serialization().registerType(WSFederationRegisteredService.class);
+        registerSerializationHints(hints, WSFederationRegisteredService.class);
 
         List.of(WSFederationRegisteredService.class).forEach(el ->
             hints.reflection().registerType(TypeReference.of(el),
