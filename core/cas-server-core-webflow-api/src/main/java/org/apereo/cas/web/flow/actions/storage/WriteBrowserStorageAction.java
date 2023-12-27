@@ -2,7 +2,6 @@ package org.apereo.cas.web.flow.actions.storage;
 
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.web.BrowserStorage;
 import org.apereo.cas.web.DefaultBrowserStorage;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.WebUtils;
@@ -34,7 +33,7 @@ public class WriteBrowserStorageAction extends BaseBrowserStorageAction {
             .context(browserStorageContextKey)
             .storageType(determineStorageType(requestContext))
             .build();
-        requestContext.getFlowScope().put(BrowserStorage.PARAMETER_BROWSER_STORAGE, sessionStorage);
+        WebUtils.putBrowserStorage(requestContext, sessionStorage);
         return success(sessionStorage);
     }
 }

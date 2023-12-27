@@ -84,8 +84,10 @@ class DuoSecurityUniversalPromptValidateLoginActionTests extends BaseCasWebflowM
         val result = duoUniversalPromptValidateLoginAction.execute(context);
         assertNotNull(result);
         assertEquals(CasWebflowConstants.TRANSITION_ID_RESTORE, result.getId());
-        assertEquals(CasWebflowConstants.TRANSITION_ID_SWITCH, context.getFlowScope().get("targetEventId"));
-        assertEquals(duoUniversalPromptSessionStore.getBrowserStorageContextKey(), context.getFlowScope().get("browserStorageContextKey"));
+        
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SWITCH, WebUtils.getTargetTransition(context));
+        assertEquals(duoUniversalPromptSessionStore.getBrowserStorageContextKey(),
+            WebUtils.getBrowserStorageContextKey(context, duoUniversalPromptSessionStore.getBrowserStorageContextKey()));
     }
 
     @Test

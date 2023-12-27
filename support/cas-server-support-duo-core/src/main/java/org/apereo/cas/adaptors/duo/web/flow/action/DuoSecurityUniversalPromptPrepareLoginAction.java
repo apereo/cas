@@ -93,7 +93,7 @@ public class DuoSecurityUniversalPromptPrepareLoginAction extends AbstractMultif
             .map(BrowserStorage.class::cast)
             .orElseThrow(() -> new IllegalStateException("Unable to determine trackable session for storage"));
         sessionStorage.setDestinationUrl(authUrl);
-        requestContext.getFlowScope().put(BrowserStorage.PARAMETER_BROWSER_STORAGE, sessionStorage);
+        WebUtils.putBrowserStorage(requestContext, sessionStorage);
 
         LOGGER.debug("Redirecting to Duo Security url at [{}]", authUrl);
         return success(sessionStorage);
