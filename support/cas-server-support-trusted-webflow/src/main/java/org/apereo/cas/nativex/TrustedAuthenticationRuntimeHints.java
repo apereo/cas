@@ -17,7 +17,7 @@ import java.util.List;
 public class TrustedAuthenticationRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
-        hints.serialization().registerType(PrincipalBearingCredential.class);
+        registerSerializationHints(hints, PrincipalBearingCredential.class);
 
         registerReflectionHints(hints, List.of(
             PrincipalBearingCredential.class,

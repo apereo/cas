@@ -12,6 +12,7 @@ import org.springframework.aop.framework.Advised;
 import org.springframework.aot.hint.ExecutableMode;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.RuntimeHintsRegistrar;
+import org.springframework.aot.hint.TypeReference;
 import org.springframework.core.DecoratingProxy;
 import java.io.Serializable;
 import java.util.Arrays;
@@ -131,6 +132,33 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
      */
     default void registerProxyHints(final RuntimeHints hints, final Collection<Class> subclassesInPackage) {
         subclassesInPackage.forEach(clazz -> hints.proxies().registerJdkProxy(clazz));
+    }
+
+    /**
+     * Register serialization hints.
+     *
+     * @param hints   the hints
+     * @param entries the entries
+     */
+    default void registerSerializationHints(final RuntimeHints hints, final Collection<Class> entries) {
+        entries.forEach(el -> hints.serialization().registerType(el));
+    }
+
+    /**
+     * Register serialization hints.
+     *
+     * @param hints   the hints
+     * @param entries the entries
+     */
+    default void registerSerializationHints(final RuntimeHints hints, final Object... entries) {
+        Arrays.stream(entries).forEach(el -> {
+            if (el instanceof final TypeReference tr) {
+                hints.serialization().registerType(tr);
+            }
+            if (el instanceof final Class clazz) {
+                hints.serialization().registerType(clazz);
+            }
+        });
     }
 
     /**

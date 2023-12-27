@@ -15,7 +15,6 @@ import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.TypeReference;
-
 import java.util.List;
 
 /**
@@ -27,14 +26,13 @@ import java.util.List;
 public class CasOAuth20RuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
-        hints.serialization()
-            .registerType(OAuthRegisteredService.class)
-            .registerType(BaseOAuth20Token.class)
-            .registerType(OAuth20DefaultAccessToken.class)
-            .registerType(OAuth20DefaultCode.class)
-            .registerType(OAuth20DefaultRefreshToken.class)
-            .registerType(OAuth20DefaultDeviceToken.class)
-            .registerType(OAuth20DefaultDeviceUserCode.class);
+        registerSerializationHints(hints, OAuthRegisteredService.class,
+            BaseOAuth20Token.class,
+            OAuth20DefaultAccessToken.class,
+            OAuth20DefaultCode.class,
+            OAuth20DefaultRefreshToken.class,
+            OAuth20DefaultDeviceToken.class,
+            OAuth20DefaultDeviceUserCode.class);
 
         List.of(
             OAuthRegisteredService.class,

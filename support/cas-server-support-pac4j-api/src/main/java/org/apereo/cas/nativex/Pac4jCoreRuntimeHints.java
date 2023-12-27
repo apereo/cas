@@ -28,10 +28,9 @@ import java.util.List;
 public class Pac4jCoreRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
-        hints.serialization()
-            .registerType(Credentials.class)
-            .registerType(DelegatedClientIdentityProviderConfiguration.class)
-            .registerType(DelegatedAuthenticationCandidateProfile.class);
+        registerSerializationHints(hints, Credentials.class,
+            DelegatedClientIdentityProviderConfiguration.class,
+            DelegatedAuthenticationCandidateProfile.class);
         registerReflectionHints(hints,
             findSubclassesInPackage(BaseClientConfiguration.class, "org.pac4j"));
         registerReflectionHints(hints,
