@@ -526,6 +526,11 @@ public interface CasWebflowConstants {
     String STATE_ID_BROWSER_STORAGE_READ = "casBrowserStorageReadView";
 
     /**
+     * The state id 'verifyBrowserStorageRead'.
+     */
+    String STATE_ID_VERIFY_BROWSER_STORAGE_READ = "verifyBrowserStorageRead";
+
+    /**
      * The state id 'ticketGrantingTicketCheck'.
      */
     String STATE_ID_TICKET_GRANTING_TICKET_CHECK = "ticketGrantingTicketCheck";
@@ -1460,6 +1465,10 @@ public interface CasWebflowConstants {
      * Action id 'readBrowserStorageAction'.
      */
     String ACTION_ID_READ_BROWSER_STORAGE = "readBrowserStorageAction";
+    /**
+     * Action id 'putBrowserStorageAction'.
+     */
+    String ACTION_ID_PUT_BROWSER_STORAGE = "putBrowserStorageAction";
 
     /**
      * Action id 'ticketGrantingTicketCheckAction'.

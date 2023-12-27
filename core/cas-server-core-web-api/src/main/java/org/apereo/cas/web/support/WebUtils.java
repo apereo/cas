@@ -1968,7 +1968,7 @@ public class WebUtils {
      * @return the optional
      * @throws Exception the exception
      */
-    public static Optional<String> getBrowserStorage(final RequestContext requestContext) throws Exception {
+    public static Optional<String> getBrowserStoragePayload(final RequestContext requestContext) throws Exception {
         if (requestContext.getRequestParameters().contains(BrowserStorage.PARAMETER_BROWSER_STORAGE)) {
             return Optional.of(requestContext.getRequestParameters().getRequired(BrowserStorage.PARAMETER_BROWSER_STORAGE))
                 .stream()
@@ -1976,7 +1976,7 @@ public class WebUtils {
                 .findFirst();
         }
         val httpServletRequest = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        return getBrowserStorage(httpServletRequest);
+        return getBrowserStoragePayload(httpServletRequest);
     }
 
     /**
@@ -1986,7 +1986,7 @@ public class WebUtils {
      * @return the browser storage
      * @throws Exception the exception
      */
-    public static Optional<String> getBrowserStorage(final HttpServletRequest httpServletRequest) throws Exception {
+    public static Optional<String> getBrowserStoragePayload(final HttpServletRequest httpServletRequest) throws Exception {
         try (val is = httpServletRequest.getInputStream()) {
             if (!is.isFinished()) {
                 val encodedParams = WWWFormCodec.parse(IOUtils.toString(is, StandardCharsets.UTF_8), StandardCharsets.UTF_8);
@@ -2009,5 +2009,35 @@ public class WebUtils {
      */
     public static void putBrowserStorage(final RequestContext requestContext, final BrowserStorage browserStorage) {
         requestContext.getFlowScope().put(BrowserStorage.PARAMETER_BROWSER_STORAGE, browserStorage);
+    }
+
+    /**
+     * Gets browser storage.
+     *
+     * @param requestContext the request context
+     * @return the browser storage
+     */
+    public static BrowserStorage getBrowserStorage(final RequestContext requestContext) {
+        return requestContext.getFlowScope().get(BrowserStorage.PARAMETER_BROWSER_STORAGE, BrowserStorage.class);
+    }
+
+    /**
+     * Put target state.
+     *
+     * @param requestContext the request context
+     * @param id             the id
+     */
+    public static void putTargetState(final RequestContext requestContext, final String id) {
+        requestContext.getFlowScope().put("targetState", id);
+    }
+
+    /**
+     * Gets target state.
+     *
+     * @param requestContext the request context
+     * @return the target state
+     */
+    public static String getTargetState(final RequestContext requestContext) {
+        return requestContext.getFlowScope().get("targetState", String.class);
     }
 }

@@ -137,14 +137,14 @@ class WebUtilsTests {
     void verifyStorageRead() throws Throwable {
         val context1 = MockRequestContext.create();
         context1.setParameter(BrowserStorage.PARAMETER_BROWSER_STORAGE, "test");
-        assertTrue(WebUtils.getBrowserStorage(context1).isPresent());
+        assertTrue(WebUtils.getBrowserStoragePayload(context1).isPresent());
 
         val context2 = MockRequestContext.create();
         context2.getHttpServletRequest().setContent((BrowserStorage.PARAMETER_BROWSER_STORAGE + '=' + UUID.randomUUID()).getBytes(StandardCharsets.UTF_8));
-        assertTrue(WebUtils.getBrowserStorage(context2).isPresent());
+        assertTrue(WebUtils.getBrowserStoragePayload(context2).isPresent());
 
         val context3 = MockRequestContext.create();
-        assertTrue(WebUtils.getBrowserStorage(context3).isEmpty());
+        assertTrue(WebUtils.getBrowserStoragePayload(context3).isEmpty());
     }
     
 }

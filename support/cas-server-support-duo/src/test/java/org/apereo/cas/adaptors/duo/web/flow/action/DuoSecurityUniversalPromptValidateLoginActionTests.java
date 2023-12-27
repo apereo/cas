@@ -32,6 +32,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.webflow.engine.State;
 import org.springframework.webflow.execution.Action;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
@@ -79,12 +80,17 @@ class DuoSecurityUniversalPromptValidateLoginActionTests extends BaseCasWebflowM
     @Test
     void verifyRestoreWithoutStorage() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
+        val mockedState = mock(State.class);
+        when(mockedState.getId()).thenReturn(CasWebflowConstants.STATE_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN);
+
+        context.setCurrentState(mockedState);
         context.setParameter(DuoSecurityUniversalPromptValidateLoginAction.REQUEST_PARAMETER_CODE, UUID.randomUUID().toString());
         context.setParameter(DuoSecurityUniversalPromptValidateLoginAction.REQUEST_PARAMETER_STATE, UUID.randomUUID().toString());
         val result = duoUniversalPromptValidateLoginAction.execute(context);
         assertNotNull(result);
         assertEquals(CasWebflowConstants.TRANSITION_ID_RESTORE, result.getId());
-        
+
+        assertEquals(CasWebflowConstants.STATE_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN, WebUtils.getTargetState(context));
         assertEquals(CasWebflowConstants.TRANSITION_ID_SWITCH, WebUtils.getTargetTransition(context));
         assertEquals(duoUniversalPromptSessionStore.getBrowserStorageContextKey(),
             WebUtils.getBrowserStorageContextKey(context, duoUniversalPromptSessionStore.getBrowserStorageContextKey()));
