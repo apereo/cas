@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow.actions.storage;
 import org.apereo.cas.web.BrowserStorage;
 import org.apereo.cas.web.DefaultBrowserStorage;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -34,18 +35,19 @@ public class ReadBrowserStorageAction extends BaseBrowserStorageAction {
             .setContext(WebUtils.getBrowserStorageContextKey(requestContext, this.browserStorageContextKey))
             .setRemoveOnRead(false);
         
-        val storageResult = WebUtils.getBrowserStorage(requestContext);
+        val storageResult = WebUtils.getBrowserStoragePayload(requestContext);
         if (storageResult.isPresent()) {
             val storageData = storageResult.get();
             browserStorage.setPayload(Objects.requireNonNull(storageData));
-            return hydrateWebflowFromStorage(browserStorage, requestContext);
+            hydrateWebflowFromStorage(browserStorage, requestContext);
+            return result(CasWebflowConstants.TRANSITION_ID_SUCCESS, BrowserStorage.PARAMETER_BROWSER_STORAGE, browserStorage);
         }
         WebUtils.putBrowserStorage(requestContext, browserStorage);
-        return null;
+        return error();
     }
 
 
-    protected Event hydrateWebflowFromStorage(final BrowserStorage browserStorage, final RequestContext requestContext) {
+    protected void hydrateWebflowFromStorage(final BrowserStorage browserStorage, final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val storageMap = (Map<String, String>) browserStorage.getPayloadJson(Map.class);
         if (storageMap.containsKey(ticketGrantingCookieBuilder.getCookieName())) {
@@ -54,9 +56,6 @@ public class ReadBrowserStorageAction extends BaseBrowserStorageAction {
             WebUtils.putTicketGrantingTicketInScopes(requestContext, ticketGrantingTicketId);
         }
         WebUtils.putBrowserStorage(requestContext, browserStorage);
-        val targetTransitionId = WebUtils.getTargetTransition(requestContext);
-        LOGGER.debug("Browser storage read [{}] and completed with transition id [{}]", browserStorage, targetTransitionId);
-        return result(targetTransitionId, BrowserStorage.PARAMETER_BROWSER_STORAGE, browserStorage);
     }
 
 }

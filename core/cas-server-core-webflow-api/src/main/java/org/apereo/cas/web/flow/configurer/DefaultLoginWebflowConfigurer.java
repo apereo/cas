@@ -18,6 +18,7 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.StringToCharArrayConverter;
 import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
+import org.apereo.cas.web.flow.resolver.DynamicTargetStateResolver;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -201,10 +202,13 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
         createTransitionForState(writeStorage, CasWebflowConstants.TRANSITION_ID_CONTINUE, CasWebflowConstants.STATE_ID_SERVICE_CHECK);
 
         val readStorage = createViewState(flow, CasWebflowConstants.STATE_ID_BROWSER_STORAGE_READ, CasWebflowConstants.VIEW_ID_BROWSER_STORAGE_READ);
-        readStorage.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_READ_BROWSER_STORAGE));
-        createTransitionForState(readStorage, CasWebflowConstants.TRANSITION_ID_CONTINUE, CasWebflowConstants.STATE_ID_BROWSER_STORAGE_READ);
+        readStorage.getRenderActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_PUT_BROWSER_STORAGE));
+        createTransitionForState(readStorage, CasWebflowConstants.TRANSITION_ID_CONTINUE, CasWebflowConstants.STATE_ID_VERIFY_BROWSER_STORAGE_READ);
+
+        val verifyStorage = createActionState(flow, CasWebflowConstants.STATE_ID_VERIFY_BROWSER_STORAGE_READ, CasWebflowConstants.ACTION_ID_READ_BROWSER_STORAGE);
+        createTransitionForState(verifyStorage, CasWebflowConstants.TRANSITION_ID_SUCCESS, new DynamicTargetStateResolver(flow));
     }
-    
+
     protected void createCreateTicketGrantingTicketAction(final Flow flow) {
         val action = createActionState(flow, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET,
             CasWebflowConstants.ACTION_ID_CREATE_TICKET_GRANTING_TICKET);
