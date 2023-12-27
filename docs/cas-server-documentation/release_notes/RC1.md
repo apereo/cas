@@ -71,6 +71,7 @@ are now configured to run with parallelism enabled.
 
 - Spring Framework
 - Gradle
+- ErrorProne
 - Spring Security
 - Spring Boot
 

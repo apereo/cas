@@ -41,9 +41,6 @@ import java.util.List;
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractJacksonBackedStringSerializer<T> implements StringSerializer<T> {
-    /**
-     * Minimal pretty printer instance.
-     */
     protected static final PrettyPrinter MINIMAL_PRETTY_PRINTER = new MinimalPrettyPrinter();
 
     @Serial
@@ -193,24 +190,12 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
         return objectMapper;
     }
 
-    /**
-     * Read json from stream.
-     *
-     * @param json the json
-     * @return the string
-     * @throws IOException the io exception
-     */
     protected String readJsonFrom(final InputStream json) throws IOException {
         return isJsonFormat()
             ? JsonValue.readHjson(IOUtils.toString(json, StandardCharsets.UTF_8)).toString()
             : String.join("\n", IOUtils.readLines(json, StandardCharsets.UTF_8));
     }
 
-    /**
-     * Configure mapper.
-     *
-     * @param mapper the mapper
-     */
     protected void configureObjectMapper(final ObjectMapper mapper) {
     }
 
@@ -218,21 +203,10 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
         return true;
     }
 
-    /**
-     * Gets json factory.
-     *
-     * @return the json factory
-     */
     protected JsonFactory getJsonFactory() {
         return null;
     }
 
-    /**
-     * Read object from json.
-     *
-     * @param jsonString the json string
-     * @return the type
-     */
     protected T readObjectFromString(final String jsonString) {
         try {
             LOGGER.trace("Attempting to consume [{}]", jsonString);

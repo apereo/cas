@@ -266,6 +266,10 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
             @Serial
             private static final long serialVersionUID = -2198623586274810263L;
 
+            CasSimpleMultifactorAuthenticationTicketStringSerializer() {
+                super(MINIMAL_PRETTY_PRINTER);
+            }
+
             @Override
             public Class<CasSimpleMultifactorAuthenticationTicketImpl> getTypeToSerialize() {
                 return CasSimpleMultifactorAuthenticationTicketImpl.class;

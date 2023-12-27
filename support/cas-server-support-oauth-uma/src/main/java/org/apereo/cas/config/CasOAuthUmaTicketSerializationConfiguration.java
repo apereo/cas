@@ -40,6 +40,10 @@ public class CasOAuthUmaTicketSerializationConfiguration {
         @Serial
         private static final long serialVersionUID = -2198623586274810263L;
 
+        UmaPermissionTicketStringSerializer() {
+            super(MINIMAL_PRETTY_PRINTER);
+        }
+
         @Override
         public Class<DefaultUmaPermissionTicket> getTypeToSerialize() {
             return DefaultUmaPermissionTicket.class;

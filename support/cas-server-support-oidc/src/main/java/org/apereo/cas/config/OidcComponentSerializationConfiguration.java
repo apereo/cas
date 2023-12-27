@@ -73,6 +73,10 @@ public class OidcComponentSerializationConfiguration {
         @Serial
         private static final long serialVersionUID = -6298623586274810263L;
 
+        OidcPushedAuthorizationRequestSerializer() {
+            super(MINIMAL_PRETTY_PRINTER);
+        }
+
         @Override
         public Class<OidcDefaultPushedAuthorizationRequest> getTypeToSerialize() {
             return OidcDefaultPushedAuthorizationRequest.class;

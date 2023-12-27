@@ -22,10 +22,10 @@ class DefaultEncodedTicketTests {
     void verifyDefaults() throws Throwable {
         val id = UUID.randomUUID().toString();
         val ticket1 = new DefaultEncodedTicket(UUID.randomUUID().toString(),
-            id, TicketGrantingTicket.PREFIX);
+            id, TicketGrantingTicket.PREFIX).markTicketCompact();
         assertTrue(ticket1.isCompact());
         val ticket2 = new DefaultEncodedTicket(UUID.randomUUID().toString(),
-            id, TicketGrantingTicket.PREFIX);
+            id, TicketGrantingTicket.PREFIX).markTicketCompact();
         assertTrue(ticket2.isCompact());
 
         assertNull(ticket1.getCreationTime());

@@ -57,6 +57,10 @@ public class CasOAuth20TicketSerializationConfiguration {
         @Serial
         private static final long serialVersionUID = -2198623586274810263L;
 
+        OAuthCodeTicketStringSerializer() {
+            super(MINIMAL_PRETTY_PRINTER);
+        }
+        
         @Override
         public Class<OAuth20DefaultCode> getTypeToSerialize() {
             return OAuth20DefaultCode.class;
@@ -66,6 +70,10 @@ public class CasOAuth20TicketSerializationConfiguration {
     private static final class AccessTokenTicketStringSerializer extends AbstractJacksonBackedStringSerializer<OAuth20DefaultAccessToken> {
         @Serial
         private static final long serialVersionUID = -2198623586274810263L;
+
+        AccessTokenTicketStringSerializer() {
+            super(MINIMAL_PRETTY_PRINTER);
+        }
 
         @Override
         public Class<OAuth20DefaultAccessToken> getTypeToSerialize() {
@@ -77,6 +85,10 @@ public class CasOAuth20TicketSerializationConfiguration {
         @Serial
         private static final long serialVersionUID = -2198623586274810263L;
 
+        RefreshTokenTicketStringSerializer() {
+            super(MINIMAL_PRETTY_PRINTER);
+        }
+
         @Override
         public Class<OAuth20DefaultRefreshToken> getTypeToSerialize() {
             return OAuth20DefaultRefreshToken.class;
@@ -87,6 +99,11 @@ public class CasOAuth20TicketSerializationConfiguration {
         @Serial
         private static final long serialVersionUID = -2198623586274810263L;
 
+        DeviceTokenTicketStringSerializer() {
+            super(MINIMAL_PRETTY_PRINTER);
+        }
+
+
         @Override
         public Class<OAuth20DefaultDeviceToken> getTypeToSerialize() {
             return OAuth20DefaultDeviceToken.class;
@@ -96,6 +113,10 @@ public class CasOAuth20TicketSerializationConfiguration {
     private static final class DeviceUserCodeTicketStringSerializer extends AbstractJacksonBackedStringSerializer<OAuth20DefaultDeviceUserCode> {
         @Serial
         private static final long serialVersionUID = -2198623586274810263L;
+
+        DeviceUserCodeTicketStringSerializer() {
+            super(MINIMAL_PRETTY_PRINTER);
+        }
 
         @Override
         public Class<OAuth20DefaultDeviceUserCode> getTypeToSerialize() {
