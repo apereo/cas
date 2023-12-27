@@ -87,7 +87,8 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
     }
 
     private void createDuoFlowUniversalPromptActions(final Flow flow) {
-        val actionState = createActionState(flow, CasWebflowConstants.STATE_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN,
+        val actionState = createActionState(flow,
+            CasWebflowConstants.STATE_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN,
             CasWebflowConstants.ACTION_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN);
 
         val realSubmit = getState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT);
@@ -148,10 +149,6 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
         val writeState = new ViewStateModel(CasWebflowConstants.STATE_ID_BROWSER_STORAGE_WRITE);
         writeState.setView(CasWebflowConstants.VIEW_ID_BROWSER_STORAGE_WRITE);
         states.add(writeState);
-
-        val readState = new ViewStateModel(CasWebflowConstants.STATE_ID_BROWSER_STORAGE_READ);
-        readState.setView(CasWebflowConstants.VIEW_ID_BROWSER_STORAGE_READ);
-        states.add(readState);
     }
 
     private static void createDuoSuccessEndState(final List<AbstractStateModel> states) {
