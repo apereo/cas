@@ -2,9 +2,9 @@ package org.apereo.cas.nativex;
 
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.web.BrowserStorage;
-import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.TypeReference;
+import java.util.List;
 
 /**
  * This is {@link CasCoreWebRuntimeHints}.
@@ -17,11 +17,6 @@ public class CasCoreWebRuntimeHints implements CasRuntimeHintsRegistrar {
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
         hints.resources().registerResourceBundle("cas_common_messages");
         registerSerializationHints(hints, BrowserStorage.class);
-
-        hints.reflection()
-            .registerType(
-                TypeReference.of("org.springframework.web.servlet.handler.AbstractHandlerMethodMapping$EmptyHandler"),
-                MemberCategory.INVOKE_DECLARED_METHODS, MemberCategory.INVOKE_PUBLIC_METHODS,
-                MemberCategory.INTROSPECT_DECLARED_METHODS, MemberCategory.INTROSPECT_DECLARED_METHODS);
+        registerReflectionHints(hints, List.of(TypeReference.of("org.springframework.web.servlet.handler.AbstractHandlerMethodMapping$EmptyHandler")));
     }
 }

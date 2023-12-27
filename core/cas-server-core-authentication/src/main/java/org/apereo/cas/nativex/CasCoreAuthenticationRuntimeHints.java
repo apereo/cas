@@ -27,9 +27,7 @@ import org.apereo.cas.authentication.principal.SimplePrincipal;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.validation.ValidationResponseType;
 import lombok.val;
-import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -80,15 +78,4 @@ public class CasCoreAuthenticationRuntimeHints implements CasRuntimeHintsRegistr
                 SimplePrincipal.class,
                 DefaultAuthentication.class));
     }
-
-    private static void registerReflectionHints(final RuntimeHints hints, final Collection entries) {
-        entries.forEach(el -> hints.reflection().registerType((Class) el,
-            MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
-            MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
-            MemberCategory.INVOKE_DECLARED_METHODS,
-            MemberCategory.INVOKE_PUBLIC_METHODS,
-            MemberCategory.DECLARED_FIELDS,
-            MemberCategory.PUBLIC_FIELDS));
-    }
-
 }

@@ -12,9 +12,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.thread.Cleanable;
 import lombok.val;
-import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
-import java.util.Collection;
 
 /**
  * This is {@link CasCoreTicketsRuntimeHints}.
@@ -40,20 +38,5 @@ public class CasCoreTicketsRuntimeHints implements CasRuntimeHintsRegistrar {
         registerProxyHints(hints, ticketCompactors);
 
         registerReflectionHints(hints, findSubclassesInPackage(CipherExecutor.class, CentralAuthenticationService.NAMESPACE));
-    }
-
-    private static void registerReflectionHints(final RuntimeHints hints, final Collection entries) {
-        val memberCategories = new MemberCategory[]{
-            MemberCategory.INTROSPECT_DECLARED_CONSTRUCTORS,
-            MemberCategory.INTROSPECT_PUBLIC_CONSTRUCTORS,
-            MemberCategory.INTROSPECT_DECLARED_METHODS,
-            MemberCategory.INTROSPECT_PUBLIC_METHODS,
-            MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
-            MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
-            MemberCategory.INVOKE_DECLARED_METHODS,
-            MemberCategory.INVOKE_PUBLIC_METHODS,
-            MemberCategory.DECLARED_FIELDS,
-            MemberCategory.PUBLIC_FIELDS};
-        entries.forEach(el -> hints.reflection().registerType((Class) el, memberCategories));
     }
 }
