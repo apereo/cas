@@ -7,11 +7,12 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * This is {@link ReadBrowserStorageAction}.
@@ -21,45 +22,50 @@ import java.util.Map;
  */
 @Getter
 @Setter
+@Slf4j
 public class ReadBrowserStorageAction extends BaseBrowserStorageAction {
-    private String nextTransition = CasWebflowConstants.TRANSITION_ID_READ_BROWSER_STORAGE;
-
     public ReadBrowserStorageAction(final CasCookieBuilder ticketGrantingCookieBuilder) {
         super(ticketGrantingCookieBuilder);
     }
 
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
-        val currentEvent = requestContext.getCurrentEvent();
-        if (currentEvent != null
-            && hasFinishedReadingBrowserStorage(requestContext)
-            && requestContext.getRequestParameters().contains(BrowserStorage.PARAMETER_BROWSER_STORAGE)) {
-            val storageData = requestContext.getRequestParameters().getRequired(BrowserStorage.PARAMETER_BROWSER_STORAGE);
-            if (StringUtils.isNotBlank(storageData)) {
-                val storageMap = MAPPER.readValue(storageData, Map.class);
-                return hydrateWebflowFromStorage(storageMap, requestContext);
-            }
-            return null;
-        }
-
         val browserStorage = new DefaultBrowserStorage()
             .setStorageType(determineStorageType(requestContext))
-            .setContext(browserStorageContextKey)
+            .setContext(findBrowserStorageContextKey(requestContext))
             .setRemoveOnRead(false);
+        
+        val storageResult = WebUtils.readBrowserStorageFromRequest(requestContext);
+        if (storageResult.isPresent()) {
+            val storageData = storageResult.get();
+            browserStorage.setPayload(Objects.requireNonNull(storageData));
+            return hydrateWebflowFromStorage(browserStorage, requestContext);
+        }
+
         requestContext.getFlowScope().put(BrowserStorage.PARAMETER_BROWSER_STORAGE, browserStorage);
-        return result(nextTransition);
-    }
-
-    private static boolean hasFinishedReadingBrowserStorage(final RequestContext requestContext) {
-        val targetEventId = requestContext.getFlowScope().get("targetEventId", String.class, CasWebflowConstants.TRANSITION_ID_CONTINUE);
-        return requestContext.getCurrentEvent().getId().equals(targetEventId);
-    }
-
-    protected Event hydrateWebflowFromStorage(final Map<String, String> storageMap, final RequestContext requestContext) {
-        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        val cookieValue = storageMap.get(ticketGrantingCookieBuilder.getCookieName());
-        val ticketGrantingTicketId = ticketGrantingCookieBuilder.getCasCookieValueManager().obtainCookieValue(cookieValue, request);
-        WebUtils.putTicketGrantingTicketInScopes(requestContext, ticketGrantingTicketId);
         return null;
     }
+
+    private static String findTargetTransitionId(final RequestContext requestContext) {
+        return requestContext.getFlowScope().get("targetEventId", String.class, CasWebflowConstants.TRANSITION_ID_CONTINUE);
+    }
+
+    private String findBrowserStorageContextKey(final RequestContext requestContext) {
+        return requestContext.getFlowScope().get("browserStorageContextKey", String.class, browserStorageContextKey);
+    }
+
+    protected Event hydrateWebflowFromStorage(final BrowserStorage browserStorage, final RequestContext requestContext) {
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        val storageMap = (Map<String, String>) browserStorage.getPayloadJson(Map.class);
+        if (storageMap.containsKey(ticketGrantingCookieBuilder.getCookieName())) {
+            val cookieValue = storageMap.get(ticketGrantingCookieBuilder.getCookieName());
+            val ticketGrantingTicketId = ticketGrantingCookieBuilder.getCasCookieValueManager().obtainCookieValue(cookieValue, request);
+            WebUtils.putTicketGrantingTicketInScopes(requestContext, ticketGrantingTicketId);
+        }
+        requestContext.getFlowScope().put(BrowserStorage.PARAMETER_BROWSER_STORAGE, browserStorage);
+        val targetTransitionId = findTargetTransitionId(requestContext);
+        LOGGER.debug("Browser storage read [{}] and completed with transition id [{}]", browserStorage, targetTransitionId);
+        return result(targetTransitionId, BrowserStorage.PARAMETER_BROWSER_STORAGE, browserStorage);
+    }
+
 }

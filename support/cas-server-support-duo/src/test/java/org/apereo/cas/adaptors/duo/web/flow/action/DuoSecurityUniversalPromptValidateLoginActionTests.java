@@ -77,6 +77,18 @@ class DuoSecurityUniversalPromptValidateLoginActionTests extends BaseCasWebflowM
     }
 
     @Test
+    void verifyRestoreWithoutStorage() throws Throwable {
+        val context = MockRequestContext.create(applicationContext);
+        context.setParameter(DuoSecurityUniversalPromptValidateLoginAction.REQUEST_PARAMETER_CODE, UUID.randomUUID().toString());
+        context.setParameter(DuoSecurityUniversalPromptValidateLoginAction.REQUEST_PARAMETER_STATE, UUID.randomUUID().toString());
+        val result = duoUniversalPromptValidateLoginAction.execute(context);
+        assertNotNull(result);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_RESTORE, result.getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SWITCH, context.getFlowScope().get("targetEventId"));
+        assertEquals(duoUniversalPromptSessionStore.getBrowserStorageContextKey(), context.getFlowScope().get("browserStorageContextKey"));
+    }
+
+    @Test
     void verifyError() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
 
@@ -85,7 +97,6 @@ class DuoSecurityUniversalPromptValidateLoginActionTests extends BaseCasWebflowM
         val result = duoUniversalPromptValidateLoginAction.execute(context);
         assertNotNull(result);
         assertEquals(CasWebflowConstants.TRANSITION_ID_RESTORE, result.getId());
-        assertEquals(CasWebflowConstants.TRANSITION_ID_SWITCH, context.getFlowScope().getRequiredString("targetEventId"));
     }
 
     @Test
