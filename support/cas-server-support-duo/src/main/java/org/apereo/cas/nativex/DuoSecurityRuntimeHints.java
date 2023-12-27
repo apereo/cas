@@ -23,9 +23,8 @@ public class DuoSecurityRuntimeHints implements CasRuntimeHintsRegistrar {
                 MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, MemberCategory.INVOKE_DECLARED_CONSTRUCTORS)
             .registerType(DuoSecurityDirectCredential.class,
                 MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, MemberCategory.INVOKE_DECLARED_CONSTRUCTORS);
-        hints.serialization()
-            .registerType(DuoSecurityUniversalPromptCredential.class)
-            .registerType(DuoSecurityPasscodeCredential.class)
-            .registerType(DuoSecurityDirectCredential.class);
+        registerSerializationHints(hints, DuoSecurityUniversalPromptCredential.class,
+            DuoSecurityPasscodeCredential.class,
+            DuoSecurityDirectCredential.class);
     }
 }

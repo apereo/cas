@@ -77,7 +77,6 @@ import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.TypeReference;
-
 import java.util.List;
 
 /**
@@ -97,84 +96,83 @@ public class CasCoreServicesRuntimeHints implements CasRuntimeHintsRegistrar {
 
         registerSerializableSpringProxy(hints, ServiceRegistryInitializerEventListener.class);
 
-        hints.serialization()
-            .registerType(BaseRegisteredService.class)
-            .registerType(BaseWebBasedRegisteredService.class)
-            .registerType(CasRegisteredService.class)
-            .registerType(RegexRegisteredService.class)
+        registerSerializationHints(hints, BaseRegisteredService.class,
+            BaseWebBasedRegisteredService.class,
+            CasRegisteredService.class,
+            RegexRegisteredService.class,
 
-            .registerType(BaseRegisteredServiceAccessStrategy.class)
-            .registerType(AbstractRegisteredServiceAttributeReleasePolicy.class)
+            BaseRegisteredServiceAccessStrategy.class,
+            AbstractRegisteredServiceAttributeReleasePolicy.class,
 
-            .registerType(RegisteredServiceLogoutType.class)
-            .registerType(RegisteredServicePublicKeyImpl.class)
-            .registerType(DefaultRegisteredServiceContact.class)
-            .registerType(DefaultRegisteredServiceProperty.class)
-            .registerType(DefaultRegisteredServiceDelegatedAuthenticationPolicy.class)
-            .registerType(ChainingRegisteredServiceDelegatedAuthenticationPolicy.class)
-            .registerType(DefaultRegisteredServiceExpirationPolicy.class)
-            .registerType(DefaultRegisteredServiceServiceTicketExpirationPolicy.class)
-            .registerType(DefaultRegisteredServiceProxyTicketExpirationPolicy.class)
-            .registerType(DefaultRegisteredServiceDelegatedAuthenticationPolicy.class)
-            .registerType(DefaultRegisteredServiceAcceptableUsagePolicy.class)
-            .registerType(DefaultRegisteredServiceAuthenticationPolicy.class)
-            .registerType(ShibbolethCompatiblePersistentIdGenerator.class)
-            .registerType(FullRegexRegisteredServiceMatchingStrategy.class)
-            .registerType(PartialRegexRegisteredServiceMatchingStrategy.class)
-            .registerType(LiteralRegisteredServiceMatchingStrategy.class)
+            RegisteredServiceLogoutType.class,
+            RegisteredServicePublicKeyImpl.class,
+            DefaultRegisteredServiceContact.class,
+            DefaultRegisteredServiceProperty.class,
+            DefaultRegisteredServiceDelegatedAuthenticationPolicy.class,
+            ChainingRegisteredServiceDelegatedAuthenticationPolicy.class,
+            DefaultRegisteredServiceExpirationPolicy.class,
+            DefaultRegisteredServiceServiceTicketExpirationPolicy.class,
+            DefaultRegisteredServiceProxyTicketExpirationPolicy.class,
+            DefaultRegisteredServiceDelegatedAuthenticationPolicy.class,
+            DefaultRegisteredServiceAcceptableUsagePolicy.class,
+            DefaultRegisteredServiceAuthenticationPolicy.class,
+            ShibbolethCompatiblePersistentIdGenerator.class,
+            FullRegexRegisteredServiceMatchingStrategy.class,
+            PartialRegexRegisteredServiceMatchingStrategy.class,
+            LiteralRegisteredServiceMatchingStrategy.class,
 
-            .registerType(RegexMatchingRegisteredServiceProxyPolicy.class)
-            .registerType(RefuseRegisteredServiceProxyPolicy.class)
-            .registerType(DefaultRegisteredServiceAccessStrategy.class)
-            .registerType(ChainingRegisteredServiceAccessStrategy.class)
-            .registerType(GroovyRegisteredServiceAccessStrategy.class)
-            .registerType(RemoteEndpointServiceAccessStrategy.class)
-            .registerType(TimeBasedRegisteredServiceAccessStrategy.class)
-            .registerType(DefaultRegisteredServiceProxyGrantingTicketExpirationPolicy.class)
-            .registerType(DefaultRegisteredServiceProxyTicketExpirationPolicy.class)
-            .registerType(DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy.class)
-            .registerType(DefaultRegisteredServiceServiceTicketExpirationPolicy.class)
-            .registerType(PrincipalAttributeRegisteredServiceUsernameProvider.class)
-            .registerType(AnonymousRegisteredServiceUsernameAttributeProvider.class)
-            .registerType(BaseRegisteredServiceUsernameAttributeProvider.class)
-            .registerType(StaticRegisteredServiceUsernameProvider.class)
-            .registerType(GroovyRegisteredServiceUsernameProvider.class)
-            .registerType(DefaultRegisteredServiceUsernameProvider.class)
-            .registerType(DefaultRegisteredServiceWebflowInterruptPolicy.class)
-            .registerType(RegisteredServiceRegexAttributeFilter.class)
-            .registerType(RegisteredServiceChainingAttributeFilter.class)
-            .registerType(RegisteredServiceMappedRegexAttributeFilter.class)
-            .registerType(RegisteredServiceScriptedAttributeFilter.class)
-            .registerType(ChainingRegisteredServiceAccessStrategyActivationCriteria.class)
-            .registerType(AttributeBasedRegisteredServiceAccessStrategyActivationCriteria.class)
-            .registerType(GroovyRegisteredServiceAccessStrategyActivationCriteria.class)
+            RegexMatchingRegisteredServiceProxyPolicy.class,
+            RefuseRegisteredServiceProxyPolicy.class,
+            DefaultRegisteredServiceAccessStrategy.class,
+            ChainingRegisteredServiceAccessStrategy.class,
+            GroovyRegisteredServiceAccessStrategy.class,
+            RemoteEndpointServiceAccessStrategy.class,
+            TimeBasedRegisteredServiceAccessStrategy.class,
+            DefaultRegisteredServiceProxyGrantingTicketExpirationPolicy.class,
+            DefaultRegisteredServiceProxyTicketExpirationPolicy.class,
+            DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy.class,
+            DefaultRegisteredServiceServiceTicketExpirationPolicy.class,
+            PrincipalAttributeRegisteredServiceUsernameProvider.class,
+            AnonymousRegisteredServiceUsernameAttributeProvider.class,
+            BaseRegisteredServiceUsernameAttributeProvider.class,
+            StaticRegisteredServiceUsernameProvider.class,
+            GroovyRegisteredServiceUsernameProvider.class,
+            DefaultRegisteredServiceUsernameProvider.class,
+            DefaultRegisteredServiceWebflowInterruptPolicy.class,
+            RegisteredServiceRegexAttributeFilter.class,
+            RegisteredServiceChainingAttributeFilter.class,
+            RegisteredServiceMappedRegexAttributeFilter.class,
+            RegisteredServiceScriptedAttributeFilter.class,
+            ChainingRegisteredServiceAccessStrategyActivationCriteria.class,
+            AttributeBasedRegisteredServiceAccessStrategyActivationCriteria.class,
+            GroovyRegisteredServiceAccessStrategyActivationCriteria.class,
 
-            .registerType(ChainingAttributeReleasePolicy.class)
-            .registerType(DenyAllAttributeReleasePolicy.class)
-            .registerType(ReturnAllowedAttributeReleasePolicy.class)
-            .registerType(ReturnAllAttributeReleasePolicy.class)
-            .registerType(ReturnStaticAttributeReleasePolicy.class)
-            .registerType(ReturnMappedAttributeReleasePolicy.class)
-            .registerType(GroovyScriptAttributeReleasePolicy.class)
-            .registerType(ReturnRestfulAttributeReleasePolicy.class)
-            .registerType(PatternMatchingAttributeReleasePolicy.class)
-            .registerType(PatternMatchingAttributeReleasePolicy.Rule.class)
+            ChainingAttributeReleasePolicy.class,
+            DenyAllAttributeReleasePolicy.class,
+            ReturnAllowedAttributeReleasePolicy.class,
+            ReturnAllAttributeReleasePolicy.class,
+            ReturnStaticAttributeReleasePolicy.class,
+            ReturnMappedAttributeReleasePolicy.class,
+            GroovyScriptAttributeReleasePolicy.class,
+            ReturnRestfulAttributeReleasePolicy.class,
+            PatternMatchingAttributeReleasePolicy.class,
+            PatternMatchingAttributeReleasePolicy.Rule.class,
 
-            .registerType(DefaultRegisteredServiceMultifactorPolicy.class)
-            .registerType(BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.class)
+            DefaultRegisteredServiceMultifactorPolicy.class,
+            BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.class,
 
-            .registerType(AbstractPrincipalAttributesRepository.class)
-            .registerType(CachingPrincipalAttributesRepository.class)
-            .registerType(DefaultPrincipalAttributesRepository.class)
-            .registerType(PrincipalAttributesCoreProperties.MergingStrategyTypes.class)
+            AbstractPrincipalAttributesRepository.class,
+            CachingPrincipalAttributesRepository.class,
+            DefaultPrincipalAttributesRepository.class,
+            PrincipalAttributesCoreProperties.MergingStrategyTypes.class,
 
-            .registerType(DefaultRegisteredServiceConsentPolicy.class)
+            DefaultRegisteredServiceConsentPolicy.class,
 
-            .registerType(AllAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria.class)
-            .registerType(AnyAuthenticationHandlerRegisteredServiceAuthenticationPolicyCriteria.class)
-            .registerType(GroovyRegisteredServiceAuthenticationPolicyCriteria.class)
-            .registerType(NotPreventedRegisteredServiceAuthenticationPolicyCriteria.class)
-            .registerType(RestfulRegisteredServiceAuthenticationPolicyCriteria.class);
+            AllAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria.class,
+            AnyAuthenticationHandlerRegisteredServiceAuthenticationPolicyCriteria.class,
+            GroovyRegisteredServiceAuthenticationPolicyCriteria.class,
+            NotPreventedRegisteredServiceAuthenticationPolicyCriteria.class,
+            RestfulRegisteredServiceAuthenticationPolicyCriteria.class);
 
         List.of(
             UnauthorizedServiceException.class,

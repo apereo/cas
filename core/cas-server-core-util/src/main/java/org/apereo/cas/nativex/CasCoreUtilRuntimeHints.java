@@ -38,8 +38,11 @@ import java.math.BigInteger;
 import java.net.URI;
 import java.net.URL;
 import java.sql.ResultSet;
+import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -106,7 +109,7 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
             Cleanable.class,
             CorsConfigurationSource.class
         ));
-        
+
         registerSerializationHints(hints);
 
         registerDeclaredMethod(hints, Map.Entry.class, "getKey");
@@ -209,7 +212,7 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
             RsaKeyPairCipherExecutor.class,
             JsonWebKeySetStringCipherExecutor.class,
             System.class));
-        
+
         registerReflectionHintForConstructors(hints,
             List.of(
                 TriStateBoolean.Deserializer.class,
@@ -270,40 +273,41 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
         });
     }
 
-    private static void registerSerializationHints(final RuntimeHints hints) {
-        hints.serialization()
-            .registerType(Boolean.class)
-            .registerType(Double.class)
-            .registerType(Integer.class)
-            .registerType(Long.class)
-            .registerType(String.class)
+    private void registerSerializationHints(final RuntimeHints hints) {
+        registerSerializationHints(hints,
+            Boolean.class,
+            Double.class,
+            Integer.class,
+            Long.class,
+            String.class,
 
-            .registerType(ZonedDateTime.class)
-            .registerType(LocalDateTime.class)
-            .registerType(LocalDate.class)
-            .registerType(ZoneId.class)
-            .registerType(ZoneOffset.class)
+            ZonedDateTime.class,
+            LocalDateTime.class,
+            LocalDate.class,
+            LocalTime.class,
+            ZoneId.class,
+            ZoneOffset.class,
+            Instant.class,
 
-            .registerType(ArrayList.class)
-            .registerType(Vector.class)
-            .registerType(CopyOnWriteArrayList.class)
-            .registerType(LinkedList.class)
+            ArrayList.class,
+            Vector.class,
+            CopyOnWriteArrayList.class,
+            LinkedList.class,
 
-            .registerType(HashMap.class)
-            .registerType(LinkedHashMap.class)
-            .registerType(ConcurrentHashMap.class)
-            .registerType(TreeMap.class)
+            HashMap.class,
+            LinkedHashMap.class,
+            ConcurrentHashMap.class,
+            TreeMap.class,
 
-            .registerType(ConcurrentSkipListSet.class)
-            .registerType(HashSet.class)
-            .registerType(LinkedHashSet.class)
-            .registerType(CopyOnWriteArraySet.class)
-            .registerType(TreeSet.class)
+            ConcurrentSkipListSet.class,
+            HashSet.class,
+            LinkedHashSet.class,
+            CopyOnWriteArraySet.class,
+            TreeSet.class,
+            
+            TypeReference.of("java.lang.String$CaseInsensitiveComparator"));
 
-            .registerType(TypeReference.of("java.time.Clock$SystemClock"))
-            .registerType(TypeReference.of("java.time.Clock$OffsetClock"))
-            .registerType(TypeReference.of("java.time.Clock$FixedClock"))
-            .registerType(TypeReference.of("java.lang.String$CaseInsensitiveComparator"));
+        registerSerializationHints(hints, findSubclassesInPackage(Clock.class, Clock.class.getPackageName()));
     }
 
 

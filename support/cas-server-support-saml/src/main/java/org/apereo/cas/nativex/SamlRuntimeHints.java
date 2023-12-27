@@ -17,7 +17,7 @@ import java.util.List;
 public class SamlRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
-        hints.serialization().registerType(SamlService.class);
+        registerSerializationHints(hints, SamlService.class);
         List.of(SamlService.class).forEach(el ->
             hints.reflection().registerType(TypeReference.of(el),
                 MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,

@@ -49,10 +49,6 @@ public class OidcRuntimeHints implements CasRuntimeHintsRegistrar {
         registerSpringProxy(hints, OidcJsonWebKeystoreGeneratorService.class, DisposableBean.class);
     }
 
-    private static void registerSerializationHints(final RuntimeHints hints, final Collection<Class> entries) {
-        entries.forEach(el -> hints.serialization().registerType(el));
-    }
-
     private static void registerReflectionHints(final RuntimeHints hints, final Collection entries) {
         entries.forEach(el -> hints.reflection().registerType((Class) el,
             MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,

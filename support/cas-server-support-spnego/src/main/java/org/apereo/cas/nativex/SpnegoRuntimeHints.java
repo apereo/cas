@@ -17,7 +17,7 @@ import java.util.List;
 public class SpnegoRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
-        hints.serialization().registerType(SpnegoCredential.class);
+        registerSerializationHints(hints, SpnegoCredential.class);
 
         registerReflectionHints(hints, List.of(
             SpnegoCredential.class,

@@ -48,10 +48,9 @@ public class CasCoreWebflowRuntimeHints implements CasRuntimeHintsRegistrar {
             CasWebflowExceptionHandler.class
         ));
 
-        hints.serialization()
-            .registerType(ClientFlowExecutionRepository.SerializedFlowExecutionState.class)
-            .registerType(ConversationContainer.class)
-            .registerType(LocalAttributeMap.class);
+        registerSerializationHints(hints, ClientFlowExecutionRepository.SerializedFlowExecutionState.class,
+            ConversationContainer.class,
+            LocalAttributeMap.class);
 
         registerReflectionHints(hints, findSubclassesInPackage(MessageContext.class, "org.springframework.binding"));
         registerReflectionHints(hints, findSubclassesInPackage(ValidationContext.class, "org.springframework.binding"));

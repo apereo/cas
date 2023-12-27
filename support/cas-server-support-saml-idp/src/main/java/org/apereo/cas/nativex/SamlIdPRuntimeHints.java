@@ -13,7 +13,6 @@ import lombok.val;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
-
 import java.util.Collection;
 import java.util.List;
 
@@ -29,11 +28,10 @@ public class SamlIdPRuntimeHints implements CasRuntimeHintsRegistrar {
         hints.resources()
             .registerPattern("metadata/*.xml");
 
-        hints.serialization()
-            .registerType(JsonResourceMetadataResolver.SamlServiceProviderMetadata.class)
-            .registerType(SamlRegisteredService.class)
-            .registerType(SamlArtifactTicketImpl.class)
-            .registerType(SamlAttributeQueryTicketImpl.class);
+        registerSerializationHints(hints, JsonResourceMetadataResolver.SamlServiceProviderMetadata.class,
+            SamlRegisteredService.class,
+            SamlArtifactTicketImpl.class,
+            SamlAttributeQueryTicketImpl.class);
 
         registerReflectionHints(hints,
             List.of(

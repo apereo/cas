@@ -209,10 +209,6 @@ public class HazelcastTicketRegistryRuntimeHints implements CasRuntimeHintsRegis
             .registerPattern("META-INF/services/com.hazelcast.sql.Connectors");
     }
 
-    private static void registerSerializationHints(final RuntimeHints hints, final Collection<Class> entries) {
-        entries.forEach(el -> hints.serialization().registerType(el));
-    }
-
     private static void registerReflectionHints(final RuntimeHints hints, final Collection entries) {
         val memberCategories = new MemberCategory[]{
             MemberCategory.INTROSPECT_DECLARED_CONSTRUCTORS,

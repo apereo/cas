@@ -25,19 +25,18 @@ public class RedisTicketRegistryRuntimeHints implements CasRuntimeHintsRegistrar
 
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
-        hints.serialization()
-            .registerType(RedisMessagePayload.RedisMessageTypes.class)
-            .registerType(PublisherIdentifier.class)
-            .registerType(RedisTicketDocument.class)
-            .registerType(RedisMessagePayload.class);
+        registerSerializationHints(hints, RedisMessagePayload.RedisMessageTypes.class,
+            PublisherIdentifier.class,
+            RedisTicketDocument.class,
+            RedisMessagePayload.class);
 
         registerReflectionHints(hints, List.of(
-            RedisMessagePayload.class,
-            RedisMessagePayload.RedisMessagePayloadBuilder.class,
-            CachedTicketExpirationPolicy.class,
-            RedisCompositeKey.class,
-            RedisTicketDocument.class,
-            RedisTicketDocument.RedisTicketDocumentBuilder.class
+                RedisMessagePayload.class,
+                RedisMessagePayload.RedisMessagePayloadBuilder.class,
+                CachedTicketExpirationPolicy.class,
+                RedisCompositeKey.class,
+                RedisTicketDocument.class,
+                RedisTicketDocument.RedisTicketDocumentBuilder.class
             )
         );
 

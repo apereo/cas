@@ -34,6 +34,7 @@ public class ReflectionUtils {
             .enableClassInfo()
             .enableInterClassDependencies()
             .ignoreClassVisibility()
+            .enableSystemJarsAndModules()
             .removeTemporaryFilesAfterScan()
             .enableAnnotationInfo()
             .scan()) {

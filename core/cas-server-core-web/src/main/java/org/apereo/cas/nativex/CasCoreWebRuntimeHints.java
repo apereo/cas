@@ -16,8 +16,7 @@ public class CasCoreWebRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
         hints.resources().registerResourceBundle("cas_common_messages");
-        hints.serialization()
-            .registerType(BrowserStorage.class);
+        registerSerializationHints(hints, BrowserStorage.class);
 
         hints.reflection()
             .registerType(

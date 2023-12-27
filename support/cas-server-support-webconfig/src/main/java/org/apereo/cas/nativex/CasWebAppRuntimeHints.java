@@ -21,7 +21,7 @@ import java.util.List;
 public class CasWebAppRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
-        hints.serialization().registerType(DefaultCsrfToken.class);
+        registerSerializationHints(hints, DefaultCsrfToken.class);
         registerReflectionHints(hints, List.of(
             DefaultCsrfToken.class,
             BasicAuthenticationFilter.class,

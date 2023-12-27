@@ -56,8 +56,4 @@ public class CasCoreTicketsRuntimeHints implements CasRuntimeHintsRegistrar {
             MemberCategory.PUBLIC_FIELDS};
         entries.forEach(el -> hints.reflection().registerType((Class) el, memberCategories));
     }
-
-    private static void registerSerializationHints(final RuntimeHints hints, final Collection<Class> entries) {
-        entries.forEach(el -> hints.serialization().registerType(el));
-    }
 }

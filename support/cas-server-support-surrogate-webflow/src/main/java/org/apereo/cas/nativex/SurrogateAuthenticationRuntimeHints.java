@@ -17,8 +17,7 @@ import java.util.List;
 public class SurrogateAuthenticationRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
-        hints.serialization()
-            .registerType(SurrogateCredentialTrait.class);
+        registerSerializationHints(hints, SurrogateCredentialTrait.class);
 
         registerReflectionHints(hints, List.of(
             SurrogateCredentialTrait.class,

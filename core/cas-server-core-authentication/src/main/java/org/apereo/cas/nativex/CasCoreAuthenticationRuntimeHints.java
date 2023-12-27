@@ -41,12 +41,14 @@ import java.util.List;
 public class CasCoreAuthenticationRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
-        hints.serialization()
-            .registerType(IPAddressIntelligenceResponse.class)
-            .registerType(GeoLocationRequest.class)
-            .registerType(GeoLocationResponse.class)
-            .registerType(DefaultAuthenticationHandlerExecutionResult.class)
-            .registerType(ValidationResponseType.class);
+        registerSerializationHints(hints, List.of(
+            IPAddressIntelligenceResponse.class,
+            GeoLocationRequest.class,
+            GeoLocationResponse.class,
+            DefaultAuthenticationHandlerExecutionResult.class,
+            ValidationResponseType.class
+        ));
+
 
         val subclassesInPackage = findSubclassesInPackage(Principal.class, CentralAuthenticationService.NAMESPACE);
         subclassesInPackage.addAll(findSubclassesInPackage(MessageDescriptor.class, CentralAuthenticationService.NAMESPACE));
@@ -71,16 +73,12 @@ public class CasCoreAuthenticationRuntimeHints implements CasRuntimeHintsRegistr
             AuthenticationPreProcessor.class,
             AuthenticationTransactionManager.class,
             AuthenticationHandlerResolver.class));
-        
+
         registerReflectionHints(hints,
             List.of(
                 CacheCredentialsCipherExecutor.class,
                 SimplePrincipal.class,
                 DefaultAuthentication.class));
-    }
-
-    private static void registerSerializationHints(final RuntimeHints hints, final Collection<Class> entries) {
-        entries.forEach(el -> hints.serialization().registerType(el));
     }
 
     private static void registerReflectionHints(final RuntimeHints hints, final Collection entries) {
