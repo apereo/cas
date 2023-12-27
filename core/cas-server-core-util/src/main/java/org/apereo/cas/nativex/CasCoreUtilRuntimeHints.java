@@ -112,148 +112,97 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
 
         registerSerializationHints(hints);
 
-        registerDeclaredMethod(hints, Map.Entry.class, "getKey");
-        registerDeclaredMethod(hints, Map.Entry.class, "getValue");
-        registerDeclaredMethod(hints, Map.class, "isEmpty");
+        registerReflectionHintForDeclaredMethod(hints, Map.Entry.class, "getKey");
+        registerReflectionHintForDeclaredMethod(hints, Map.Entry.class, "getValue");
+        registerReflectionHintForDeclaredMethod(hints, Map.class, "isEmpty");
 
-        hints.reflection()
-            .registerType(Map.Entry.class,
-                MemberCategory.INTROSPECT_PUBLIC_METHODS,
-                MemberCategory.INTROSPECT_DECLARED_METHODS,
-                MemberCategory.INTROSPECT_PUBLIC_METHODS)
-
-            .registerType(TypeReference.of("java.util.LinkedHashMap$Entry"), MemberCategory.INTROSPECT_PUBLIC_METHODS)
-            .registerType(TypeReference.of("java.util.TreeMap$Entry"), MemberCategory.INTROSPECT_PUBLIC_METHODS)
-            .registerType(LinkedHashMap.class, MemberCategory.INTROSPECT_DECLARED_METHODS, MemberCategory.DECLARED_FIELDS)
-            .registerType(TypeReference.of("java.util.HashMap$Node"))
-            .registerType(TypeReference.of("java.util.HashMap$TreeNode"))
-
-            .registerType(HashMap.class,
-                MemberCategory.INTROSPECT_DECLARED_METHODS,
-                MemberCategory.INTROSPECT_DECLARED_CONSTRUCTORS,
-                MemberCategory.DECLARED_FIELDS)
-            .registerType(AbstractCollection.class,
-                MemberCategory.INTROSPECT_DECLARED_METHODS,
-                MemberCategory.INTROSPECT_PUBLIC_METHODS,
-                MemberCategory.INTROSPECT_DECLARED_CONSTRUCTORS,
-                MemberCategory.DECLARED_FIELDS,
-                MemberCategory.INVOKE_DECLARED_METHODS)
-            .registerType(AbstractMap.class,
-                MemberCategory.INTROSPECT_DECLARED_METHODS,
-                MemberCategory.INTROSPECT_PUBLIC_METHODS,
-                MemberCategory.INTROSPECT_DECLARED_CONSTRUCTORS,
-                MemberCategory.DECLARED_FIELDS,
-                MemberCategory.INVOKE_DECLARED_METHODS)
-            .registerType(Callable.class,
-                MemberCategory.INVOKE_DECLARED_METHODS,
-                MemberCategory.INVOKE_PUBLIC_METHODS,
-                MemberCategory.INTROSPECT_DECLARED_METHODS,
-                MemberCategory.INTROSPECT_PUBLIC_METHODS,
-                MemberCategory.INTROSPECT_DECLARED_CONSTRUCTORS,
-                MemberCategory.DECLARED_FIELDS)
-            .registerType(Map.class,
-                MemberCategory.INTROSPECT_DECLARED_METHODS,
-                MemberCategory.INTROSPECT_PUBLIC_METHODS,
-                MemberCategory.INTROSPECT_DECLARED_CONSTRUCTORS,
-                MemberCategory.DECLARED_FIELDS)
-
-            .registerType(TypeReference.of("java.time.Ser"),
-                MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
-                MemberCategory.INVOKE_DECLARED_METHODS)
-
-            .registerType(TypeReference.of("java.time.Clock$SystemClock"),
-                MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
-                MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
-                MemberCategory.INVOKE_DECLARED_METHODS,
-                MemberCategory.INTROSPECT_PUBLIC_CONSTRUCTORS,
-                MemberCategory.INTROSPECT_DECLARED_CONSTRUCTORS);
-
-        registerReflectionHintForMethods(hints,
-            List.of(
-                BigDecimal.class,
-                BigInteger.class,
-                Math.class,
-                URL.class,
-                URI.class,
-                SetFactoryBean.class,
-                ListFactoryBean.class,
-                CasVersion.class,
-                Module.class,
-                Class.class,
-                Arrays.class,
-                Collections.class,
-                Collection.class,
-                List.class,
-                Iterator.class,
-                Iterable.class,
-                Queue.class,
-                Set.class,
-                Comparator.class,
-                Comparable.class,
-                ResultSet.class,
-                Calendar.class,
-                Date.class,
-                SortedMap.class,
-                SortedSet.class,
-                TimeZone.class,
-                BiPredicate.class,
-                BiFunction.class,
-                Predicate.class,
-                Function.class,
-                Consumer.class,
-                Supplier.class,
-                ModuleLayer.class,
-                Configuration.class,
-                ResolvedModule.class,
-                ServiceLoader.class
-            ));
-
-        registerReflectionHintForPublicOps(hints, List.of(
+        registerReflectionHints(hints, List.of(
+            BigDecimal.class,
+            BigInteger.class,
+            Math.class,
+            URL.class,
+            URI.class,
+            SetFactoryBean.class,
+            ListFactoryBean.class,
+            CasVersion.class,
+            Module.class,
+            Class.class,
+            Arrays.class,
+            Collections.class,
+            Collection.class,
+            List.class,
+            Iterator.class,
+            Iterable.class,
+            Queue.class,
+            Set.class,
+            Comparator.class,
+            Comparable.class,
+            ResultSet.class,
+            Calendar.class,
+            Date.class,
+            SortedMap.class,
+            SortedSet.class,
+            TimeZone.class,
+            BiPredicate.class,
+            BiFunction.class,
+            Predicate.class,
+            Function.class,
+            Consumer.class,
+            Supplier.class,
+            ModuleLayer.class,
+            Configuration.class,
+            ResolvedModule.class,
+            ServiceLoader.class,
+            HashMap.class,
+            LinkedHashMap.class,
+            Map.Entry.class,
+            AbstractCollection.class,
+            AbstractMap.class,
+            Callable.class,
+            Map.class,
+            TypeReference.of("java.util.LinkedHashMap$Entry"),
+            TypeReference.of("java.util.TreeMap$Entry"),
+            TypeReference.of("java.time.Ser"),
             RsaKeyPairCipherExecutor.class,
             JsonWebKeySetStringCipherExecutor.class,
-            System.class));
+            System.class,
+            TriStateBoolean.Deserializer.class,
+            PersistenceAnnotationBeanPostProcessor.class,
+            ConfigurationClassPostProcessor.class,
+            EventListenerMethodProcessor.class,
+            DefaultEventListenerFactory.class,
+            AutowiredAnnotationBeanPostProcessor.class,
+            CommonAnnotationBeanPostProcessor.class,
+            StaticCompileTransformation.class,
+            StaticTypesTransformation.class,
+            GroovyClassLoader.class,
+            BytecodeInterface8.class,
+            Script.class,
+            LoggerFactory.class,
+            Stack.class
+        ));
 
-        registerReflectionHintForConstructors(hints,
-            List.of(
-                TriStateBoolean.Deserializer.class,
-                PersistenceAnnotationBeanPostProcessor.class,
-                ConfigurationClassPostProcessor.class,
-                EventListenerMethodProcessor.class,
-                DefaultEventListenerFactory.class,
-                AutowiredAnnotationBeanPostProcessor.class,
-                CommonAnnotationBeanPostProcessor.class
-            ));
-
-        registerReflectionHintForPublicOps(hints,
-            findSubclassesInPackage(ObjectIdGenerator.class, "com.fasterxml.jackson"));
-
-        registerReflectionHintForPublicOps(hints,
-            findSubclassesInPackage(LogMessageSummarizer.class, "org.apereo.cas"));
+        registerReflectionHintsForTypes(hints,
+            TypeReference.of("java.util.HashMap$Node"),
+            TypeReference.of("java.util.HashMap$TreeNode"));
+        
+        registerReflectionHints(hints, findSubclassesInPackage(Clock.class, Clock.class.getPackageName()));
+        registerReflectionHints(hints, findSubclassesInPackage(ObjectIdGenerator.class, "com.fasterxml.jackson"));
+        registerReflectionHints(hints, findSubclassesInPackage(LogMessageSummarizer.class, "org.apereo.cas"));
 
         registerCaffeineHints(hints);
         registerGroovyDGMClasses(hints, classLoader);
 
         FunctionUtils.doAndHandle(__ -> {
             val clazz = ClassUtils.getClass("nonapi.io.github.classgraph.classloaderhandler.ClassLoaderHandler", false);
-            registerReflectionHintForAll(hints,
-                findSubclassesInPackage(clazz, "nonapi.io.github.classgraph.classloaderhandler"));
+            registerReflectionHints(hints, findSubclassesInPackage(clazz, "nonapi.io.github.classgraph.classloaderhandler"));
         });
-
-
-        registerReflectionHintForAll(hints,
-            List.of(
-                StaticCompileTransformation.class,
-                StaticTypesTransformation.class,
-                GroovyClassLoader.class,
-                BytecodeInterface8.class,
-                Script.class,
-                LoggerFactory.class,
-                Stack.class));
     }
 
     private static void registerGroovyDGMClasses(final RuntimeHints hints, final ClassLoader classLoader) {
         IntStream.range(1, GROOVY_DGM_CLASS_COUNTER).forEach(idx ->
-            hints.reflection().registerTypeIfPresent(classLoader, "org.codehaus.groovy.runtime.dgm$" + idx,
+            hints.reflection().registerTypeIfPresent(classLoader,
+                "org.codehaus.groovy.runtime.dgm$" + idx,
                 MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
                 MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
                 MemberCategory.INVOKE_DECLARED_METHODS,
@@ -265,11 +214,9 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
     private void registerCaffeineHints(final RuntimeHints hints) {
         FunctionUtils.doAndHandle(__ -> {
             var clazz = ClassUtils.getClass("com.github.benmanes.caffeine.cache.Node", false);
-            registerReflectionHintForConstructors(hints,
-                findSubclassesInPackage(clazz, "com.github.benmanes.caffeine.cache"));
+            registerReflectionHints(hints, findSubclassesInPackage(clazz, "com.github.benmanes.caffeine.cache"));
             clazz = ClassUtils.getClass("com.github.benmanes.caffeine.cache.LocalCache", false);
-            registerReflectionHintForConstructors(hints,
-                findSubclassesInPackage(clazz, "com.github.benmanes.caffeine.cache"));
+            registerReflectionHints(hints, findSubclassesInPackage(clazz, "com.github.benmanes.caffeine.cache"));
         });
     }
 
@@ -304,57 +251,9 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
             LinkedHashSet.class,
             CopyOnWriteArraySet.class,
             TreeSet.class,
-            
+
             TypeReference.of("java.lang.String$CaseInsensitiveComparator"));
 
         registerSerializationHints(hints, findSubclassesInPackage(Clock.class, Clock.class.getPackageName()));
-    }
-
-
-    private static void registerReflectionHintForConstructors(final RuntimeHints hints, final Collection clazzes) {
-        clazzes.forEach(clazz ->
-            hints.reflection().registerType((Class) clazz,
-                MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
-                MemberCategory.INVOKE_DECLARED_CONSTRUCTORS));
-    }
-
-    private static void registerReflectionHintForMethods(final RuntimeHints hints, final Collection clazzes) {
-        clazzes.forEach(clazz ->
-            hints.reflection().registerType((Class) clazz,
-                MemberCategory.PUBLIC_FIELDS,
-                MemberCategory.DECLARED_FIELDS,
-                MemberCategory.INVOKE_DECLARED_METHODS,
-                MemberCategory.INVOKE_PUBLIC_METHODS));
-    }
-
-    private static void registerReflectionHintForPublicOps(final RuntimeHints hints, final Collection clazzes) {
-        clazzes.forEach(clazz ->
-            hints.reflection().registerType((Class) clazz,
-                MemberCategory.PUBLIC_FIELDS,
-                MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
-                MemberCategory.INVOKE_PUBLIC_METHODS));
-    }
-
-    private void registerReflectionHintForAll(final RuntimeHints hints, final Collection clazzes) {
-        val memberCategories = new MemberCategory[]{
-            MemberCategory.INTROSPECT_DECLARED_METHODS,
-            MemberCategory.INTROSPECT_PUBLIC_METHODS,
-            MemberCategory.INTROSPECT_DECLARED_CONSTRUCTORS,
-            MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
-            MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
-            MemberCategory.INVOKE_DECLARED_METHODS,
-            MemberCategory.INVOKE_PUBLIC_METHODS,
-            MemberCategory.DECLARED_FIELDS,
-            MemberCategory.PUBLIC_FIELDS
-        };
-        clazzes.forEach(entry -> {
-            if (entry instanceof final String clazzName) {
-                hints.reflection().registerTypeIfPresent(getClass().getClassLoader(), clazzName, memberCategories);
-            }
-            if (entry instanceof final Class clazz) {
-                hints.reflection().registerType(clazz, memberCategories);
-            }
-        });
-
     }
 }

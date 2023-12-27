@@ -14,9 +14,7 @@ import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.client.config.BaseClientConfiguration;
 import org.pac4j.core.credentials.Credentials;
-import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -50,13 +48,4 @@ public class Pac4jCoreRuntimeHints implements CasRuntimeHintsRegistrar {
 
     }
 
-    private static void registerReflectionHints(final RuntimeHints hints, final Collection entries) {
-        entries.forEach(el -> hints.reflection().registerType((Class) el,
-            MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
-            MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
-            MemberCategory.INVOKE_DECLARED_METHODS,
-            MemberCategory.INVOKE_PUBLIC_METHODS,
-            MemberCategory.DECLARED_FIELDS,
-            MemberCategory.PUBLIC_FIELDS));
-    }
 }
