@@ -103,13 +103,11 @@ public abstract class AbstractTicket implements TicketGrantingTicketAwareTicket,
     }
 
     @Override
-    @JsonIgnore
     public boolean isExpired() {
         return this.expirationPolicy.isExpired(this) || isExpiredInternal();
     }
 
     @Override
-    @JsonIgnore
     public boolean isCompact() {
         return this.compact;
     }

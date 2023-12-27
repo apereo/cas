@@ -45,6 +45,10 @@ public class SamlIdPTicketSerializationConfiguration {
         @Serial
         private static final long serialVersionUID = -2198623586274810263L;
 
+        SamlArtifactTicketStringSerializer() {
+            super(MINIMAL_PRETTY_PRINTER);
+        }
+
         @Override
         public Class<SamlArtifactTicketImpl> getTypeToSerialize() {
             return SamlArtifactTicketImpl.class;
@@ -54,6 +58,10 @@ public class SamlIdPTicketSerializationConfiguration {
     private static final class SamlAttributeQueryTicketStringSerializer extends AbstractJacksonBackedStringSerializer<SamlAttributeQueryTicketImpl> {
         @Serial
         private static final long serialVersionUID = -2198623586274810263L;
+
+        SamlAttributeQueryTicketStringSerializer() {
+            super(MINIMAL_PRETTY_PRINTER);
+        }
 
         @Override
         public Class<SamlAttributeQueryTicketImpl> getTypeToSerialize() {
