@@ -5,12 +5,7 @@ import lombok.val;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.TypeReference;
-import org.springframework.security.web.access.HandlerMappingIntrospectorRequestTransformer;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import org.springframework.security.web.csrf.CsrfToken;
-import org.springframework.security.web.csrf.DefaultCsrfToken;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * This is {@link CasWebAppRuntimeHints}.
@@ -21,13 +16,6 @@ import java.util.List;
 public class CasWebAppRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
-        registerSerializationHints(hints, DefaultCsrfToken.class);
-        registerReflectionHints(hints, List.of(
-            DefaultCsrfToken.class,
-            BasicAuthenticationFilter.class,
-            HandlerMappingIntrospectorRequestTransformer.class
-        ));
-        registerReflectionHints(hints, findSubclassesInPackage(CsrfToken.class, CsrfToken.class.getPackageName()));
     }
 
     private static void registerReflectionHints(final RuntimeHints hints, final Collection entries) {
