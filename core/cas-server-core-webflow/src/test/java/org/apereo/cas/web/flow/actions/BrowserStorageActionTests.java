@@ -54,8 +54,23 @@ public class BrowserStorageActionTests extends BaseWebflowConfigurerTests {
     private Action readSessionStorageAction;
 
     @Autowired
+    @Qualifier(CasWebflowConstants.ACTION_ID_PUT_BROWSER_STORAGE)
+    private Action putSessionStorageAction;
+
+    @Autowired
     @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry ticketRegistry;
+
+    @Test
+    void verifyPutStorage() throws Exception {
+        val context = MockRequestContext.create(applicationContext).withUserAgent("Firefox");
+        val request = context.getHttpServletRequest();
+        request.setRemoteAddr("185.86.151.11");
+        request.setLocalAddr("185.88.151.11");
+        val result = putSessionStorageAction.execute(context);
+        assertNull(result);
+        assertNotNull(WebUtils.getBrowserStoragePayload(request));
+    }
 
     @Test
     void verifyReadFromLocalStorage() throws Exception {
@@ -75,10 +90,10 @@ public class BrowserStorageActionTests extends BaseWebflowConfigurerTests {
 
         context.getRequestScope().put(BrowserStorage.BrowserStorageTypes.class.getSimpleName(), BrowserStorage.BrowserStorageTypes.LOCAL.name());
         val readResult = readSessionStorageAction.execute(context);
-        var storage = context.getFlowScope().get(BrowserStorage.PARAMETER_BROWSER_STORAGE, BrowserStorage.class);
+        var storage = WebUtils.getBrowserStorage(context);
         assertNotNull(storage);
         assertEquals(BrowserStorage.BrowserStorageTypes.LOCAL, storage.getStorageType());
-        assertEquals(CasWebflowConstants.TRANSITION_ID_CONTINUE, readResult.getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, readResult.getId());
         assertNotNull(WebUtils.getTicketGrantingTicketId(context));
         storage = readResult.getAttributes().get(BrowserStorage.PARAMETER_BROWSER_STORAGE, BrowserStorage.class);
         assertNotNull(storage);
@@ -97,10 +112,10 @@ public class BrowserStorageActionTests extends BaseWebflowConfigurerTests {
             new LocalAttributeMap<>(TicketGrantingTicket.class.getName(), ticketGrantingTicket.getId())));
 
         var readResult = readSessionStorageAction.execute(context);
-        val storage = context.getFlowScope().get(BrowserStorage.PARAMETER_BROWSER_STORAGE, BrowserStorage.class);
+        val storage = WebUtils.getBrowserStorage(context);
         assertNotNull(storage);
         assertEquals(BrowserStorage.BrowserStorageTypes.SESSION, storage.getStorageType());
-        assertNull(readResult);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, readResult.getId());
 
         val writeResult = writeSessionStorageAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, writeResult.getId());
@@ -110,14 +125,14 @@ public class BrowserStorageActionTests extends BaseWebflowConfigurerTests {
         val sessionStorage = writeResult.getAttributes().getRequired("result", BrowserStorage.class);
         context.setParameter(BrowserStorage.PARAMETER_BROWSER_STORAGE, sessionStorage.getPayload());
         readResult = readSessionStorageAction.execute(context);
-        assertEquals(CasWebflowConstants.TRANSITION_ID_CONTINUE, readResult.getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, readResult.getId());
         assertNotNull(WebUtils.getTicketGrantingTicketId(context));
 
         context.getFlowScope().clear();
         context.getRequestScope().clear();
         context.setParameter(BrowserStorage.PARAMETER_BROWSER_STORAGE, StringUtils.EMPTY);
         readResult = readSessionStorageAction.execute(context);
-        assertNull(readResult);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, readResult.getId());
         assertNull(WebUtils.getTicketGrantingTicketId(context));
     }
 

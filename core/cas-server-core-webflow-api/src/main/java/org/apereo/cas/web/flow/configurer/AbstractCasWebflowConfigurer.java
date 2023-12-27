@@ -49,6 +49,7 @@ import org.springframework.webflow.engine.FlowExecutionExceptionHandler;
 import org.springframework.webflow.engine.FlowVariable;
 import org.springframework.webflow.engine.SubflowAttributeMapper;
 import org.springframework.webflow.engine.SubflowState;
+import org.springframework.webflow.engine.TargetStateResolver;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.TransitionCriteria;
 import org.springframework.webflow.engine.TransitionableState;
@@ -180,10 +181,30 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
 
     @Override
     public Transition createTransition(final Expression criteriaOutcomeExpression,
-                                       final String targetState,
+                                       final String targetState, final Action... actions) {
+        return createTransition(criteriaOutcomeExpression,
+            StringUtils.isNotBlank(targetState) ? new DefaultTargetStateResolver(targetState) : null,
+            actions);
+    }
+
+    @Override
+    public Transition createTransition(final String criteriaOutcomeExpression,
+                                       final TargetStateResolver targetStateResolver) {
+        return createTransition(new LiteralExpression(criteriaOutcomeExpression), targetStateResolver, EMPTY_ACTIONS_ARRAY);
+    }
+
+    @Override
+    public Transition createTransition(final Expression criteriaOutcomeExpression,
+                                       final TargetStateResolver targetStateResolver) {
+        return createTransition(criteriaOutcomeExpression, targetStateResolver, EMPTY_ACTIONS_ARRAY);
+    }
+
+    @Override
+    public Transition createTransition(final Expression criteriaOutcomeExpression,
+                                       final TargetStateResolver targetStateResolver,
                                        final Action... actions) {
         val criteria = getTransitionCriteriaForExpression(criteriaOutcomeExpression);
-        val transition = new Transition(criteria, StringUtils.isNotBlank(targetState) ? new DefaultTargetStateResolver(targetState) : null);
+        val transition = new Transition(criteria, targetStateResolver);
         if (actions != null && actions.length > 0) {
             val transitionActionCriteria = Arrays.stream(actions)
                 .map(ActionTransitionCriteria::new)
@@ -238,7 +259,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     @Override
     public ActionState createActionState(final Flow flow, final String name, final String... action) {
         val actionList = Arrays.stream(action).map(this::createEvaluateAction).toList();
-        return createActionState(flow, name, actionList.toArray(EMPTY_ACTIONS_ARRAY));
+        return createActionState(flow, name, actionList.toArray(Action[]::new));
     }
 
     @Override
@@ -492,20 +513,29 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
                                                final String targetState, final boolean removeExisting,
                                                final Map<String, Object> attributes) {
         return createTransitionForState(state, criteriaOutcome, targetState,
-            removeExisting, attributes, new Action[0]);
+            removeExisting, attributes, EMPTY_ACTIONS_ARRAY);
     }
 
     @Override
     public Transition createTransitionForState(final TransitionableState state, final String criteriaOutcome,
                                                final String targetState, final boolean removeExisting) {
         return createTransitionForState(state, criteriaOutcome, targetState,
-            removeExisting, Map.of(), new Action[0]);
+            removeExisting, Map.of(), EMPTY_ACTIONS_ARRAY);
+    }
+
+    @Override
+    public Transition createTransitionForState(final TransitionableState state,
+                                               final String criteriaOutcome,
+                                               final TargetStateResolver targetStateResolver) {
+        val transition = createTransition(criteriaOutcome, targetStateResolver);
+        state.getTransitionSet().add(transition);
+        return transition;
     }
 
     @Override
     public Transition insertTransitionForState(final TransitionableState state, final String criteriaOutcome,
                                                final String targetState) {
-        val transition = createTransition(criteriaOutcome, targetState, new Action[0]);
+        val transition = createTransition(criteriaOutcome, targetState, EMPTY_ACTIONS_ARRAY);
         val field = ReflectionUtils.findField(state.getTransitionSet().getClass(), "transitions");
         ReflectionUtils.makeAccessible(field);
         val transitions = (List<Transition>) ReflectionUtils.getField(field, state.getTransitionSet());

@@ -48,6 +48,7 @@ import org.apereo.cas.web.flow.actions.InjectResponseHeadersAction;
 import org.apereo.cas.web.flow.actions.RedirectToServiceAction;
 import org.apereo.cas.web.flow.actions.RenewAuthenticationRequestCheckAction;
 import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
+import org.apereo.cas.web.flow.actions.storage.PutBrowserStorageAction;
 import org.apereo.cas.web.flow.actions.storage.ReadBrowserStorageAction;
 import org.apereo.cas.web.flow.actions.storage.WriteBrowserStorageAction;
 import org.apereo.cas.web.flow.authentication.CasWebflowExceptionCatalog;
@@ -564,5 +565,24 @@ public class CasCoreWebflowConfiguration {
                 .build()
                 .get();
         }
+
+
+        @Bean
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_PUT_BROWSER_STORAGE)
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public Action putBrowserStorageAction(
+            @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
+            final CasCookieBuilder ticketGrantingTicketCookieGenerator,
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties) {
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new PutBrowserStorageAction(ticketGrantingTicketCookieGenerator))
+                .withId(CasWebflowConstants.ACTION_ID_PUT_BROWSER_STORAGE)
+                .build()
+                .get();
+        }
+
     }
 }
