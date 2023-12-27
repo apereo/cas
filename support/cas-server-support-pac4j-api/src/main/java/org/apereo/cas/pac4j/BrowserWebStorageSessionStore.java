@@ -4,7 +4,6 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.serialization.SerializationUtils;
 import org.apereo.cas.web.BrowserStorage;
 import org.apereo.cas.web.DefaultBrowserStorage;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -13,9 +12,7 @@ import lombok.val;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.jee.context.session.JEESessionStore;
-
 import jakarta.servlet.http.HttpSession;
-
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -33,6 +30,7 @@ import java.util.Optional;
 @Setter
 public class BrowserWebStorageSessionStore extends JEESessionStore {
     private final CipherExecutor webflowCipherExecutor;
+    private final String browserStorageContextKey;
 
     private Map<String, Object> sessionAttributes = new LinkedHashMap<>();
 
@@ -56,15 +54,25 @@ public class BrowserWebStorageSessionStore extends JEESessionStore {
 
         val encoded = SerializationUtils.serializeAndEncodeObject(this.webflowCipherExecutor, attributes);
         val trackableSession = new String(encoded, StandardCharsets.UTF_8);
-        return Optional.of(DefaultBrowserStorage.builder().payload(trackableSession).build());
+        return Optional.of(DefaultBrowserStorage
+            .builder()
+            .context(browserStorageContextKey)
+            .build()
+            .setPayloadJson(Map.of("context", trackableSession)));
     }
 
     @Override
     public Optional<SessionStore> buildFromTrackableSession(final WebContext context,
                                                             final Object trackableSession) {
-        val encoded = trackableSession instanceof final BrowserStorage storage
-            ? storage.getPayload().getBytes(StandardCharsets.UTF_8)
-            : trackableSession.toString().getBytes(StandardCharsets.UTF_8);
+        val encoded = DefaultBrowserStorage
+            .builder()
+            .context(browserStorageContextKey)
+            .payload(trackableSession instanceof final BrowserStorage bs ? bs.getPayload() : trackableSession.toString())
+            .build()
+            .getPayloadJson(Map.class)
+            .get("context")
+            .toString()
+            .getBytes(StandardCharsets.UTF_8);
         val attributes = (Map<String, Object>) SerializationUtils.decodeAndDeserializeObject(encoded, webflowCipherExecutor, LinkedHashMap.class);
         attributes.forEach((key, value) -> set(context, key, value));
         this.sessionAttributes.putAll(attributes);

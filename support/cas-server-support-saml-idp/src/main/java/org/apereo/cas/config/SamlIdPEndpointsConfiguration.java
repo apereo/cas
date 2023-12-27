@@ -533,7 +533,7 @@ public class SamlIdPEndpointsConfiguration {
                 case TICKET_REGISTRY:
                     return new TicketRegistrySessionStore(ticketRegistry, ticketFactory, samlIdPDistributedSessionCookieGenerator);
                 case BROWSER_STORAGE:
-                    return new BrowserWebStorageSessionStore(webflowCipherExecutor);
+                    return new BrowserWebStorageSessionStore(webflowCipherExecutor, "SamlIdPSessionStore");
                 default:
                     val jeeSessionStore = new JEESessionStore();
                     jeeSessionStore.setPrefix(SAML_SERVER_SUPPORT_PREFIX);

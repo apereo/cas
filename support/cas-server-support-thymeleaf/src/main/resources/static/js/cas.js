@@ -143,6 +143,7 @@ function clearSessionStorage() {
         console.log("Browser does not support session storage for write-ops");
     } else {
         window.sessionStorage.clear();
+        console.log("Cleared session storage")
     }
 }
 

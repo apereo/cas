@@ -70,6 +70,23 @@ public interface BrowserStorage extends Serializable {
      */
     BrowserStorage setRemoveOnRead(boolean removeOnRead);
 
+    /**
+     * Json browser storage.
+     *
+     * @param data the data
+     * @return the browser storage
+     */
+    BrowserStorage setPayloadJson(Object data);
+
+    /**
+     * Gets payload json.
+     *
+     * @param <T>   the type parameter
+     * @param clazz the clazz
+     * @return the payload json
+     */
+    <T> T getPayloadJson(Class<T> clazz);
+
     enum BrowserStorageTypes {
         /**
          * Session storage.

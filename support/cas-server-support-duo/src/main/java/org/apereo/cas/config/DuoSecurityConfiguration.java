@@ -56,7 +56,7 @@ public class DuoSecurityConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public BrowserWebStorageSessionStore duoUniversalPromptSessionStore(@Qualifier("webflowCipherExecutor")
                                                                             final CipherExecutor webflowCipherExecutor) {
-            return new BrowserWebStorageSessionStore(webflowCipherExecutor);
+            return new BrowserWebStorageSessionStore(webflowCipherExecutor, "DuoSecuritySessionContext");
         }
 
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_DUO_NON_WEB_AUTHENTICATION)
@@ -99,15 +99,16 @@ public class DuoSecurityConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action duoUniversalPromptPrepareLoginAction(
+            @Qualifier("duoUniversalPromptSessionStore")
+            final BrowserWebStorageSessionStore duoUniversalPromptSessionStore,
             final CasConfigurationProperties casProperties,
-            @Qualifier("webflowCipherExecutor") final CipherExecutor webflowCipherExecutor,
             final ConfigurableApplicationContext applicationContext) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
                 .withAction(() -> BeanSupplier.of(Action.class)
                     .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
-                    .supply(() -> new DuoSecurityUniversalPromptPrepareLoginAction(webflowCipherExecutor, applicationContext))
+                    .supply(() -> new DuoSecurityUniversalPromptPrepareLoginAction(applicationContext, duoUniversalPromptSessionStore))
                     .otherwiseProxy()
                     .get())
                 .withId(CasWebflowConstants.ACTION_ID_DUO_UNIVERSAL_PROMPT_PREPARE_LOGIN)

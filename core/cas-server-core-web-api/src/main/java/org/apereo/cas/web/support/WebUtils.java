@@ -24,16 +24,20 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpRequestUtils;
+import org.apereo.cas.web.BrowserStorage;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.hc.core5.http.NameValuePair;
+import org.apache.hc.core5.net.WWWFormCodec;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.http.HttpStatus;
@@ -50,6 +54,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -1934,5 +1939,33 @@ public class WebUtils {
         return (String) requestContext.getFlashScope().get("activeFlowId",
             requestContext.getFlowScope().get("activeFlowId",
                 requestContext.getConversationScope().get("activeFlowId")));
+    }
+
+    /**
+     * Read browser storage from request.
+     *
+     * @param requestContext the request context
+     * @return the optional
+     * @throws Exception the exception
+     */
+    public static Optional<String> readBrowserStorageFromRequest(final RequestContext requestContext) throws Exception {
+        if (requestContext.getRequestParameters().contains(BrowserStorage.PARAMETER_BROWSER_STORAGE)) {
+            return Optional.of(requestContext.getRequestParameters().getRequired(BrowserStorage.PARAMETER_BROWSER_STORAGE))
+                .stream()
+                .filter(StringUtils::isNotBlank)
+                .findFirst();
+        }
+        try (val is = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext).getInputStream()) {
+            if (!is.isFinished()) {
+                val encodedParams = WWWFormCodec.parse(IOUtils.toString(is, StandardCharsets.UTF_8), StandardCharsets.UTF_8);
+                return encodedParams
+                    .stream()
+                    .filter(param -> param.getName().equalsIgnoreCase(BrowserStorage.PARAMETER_BROWSER_STORAGE))
+                    .map(NameValuePair::getValue)
+                    .filter(StringUtils::isNotBlank)
+                    .findFirst();
+            }
+        }
+        return Optional.empty();
     }
 }

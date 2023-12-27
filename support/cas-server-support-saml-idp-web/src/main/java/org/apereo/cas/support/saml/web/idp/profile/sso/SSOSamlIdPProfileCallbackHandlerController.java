@@ -11,7 +11,6 @@ import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.web.BrowserStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -24,10 +23,8 @@ import org.pac4j.jee.context.JEEContext;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.util.Objects;
 import java.util.Optional;
 
@@ -62,7 +59,12 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
         val type = properties.getAuthn().getSamlIdp().getCore().getSessionStorageType();
         if (type == SessionStorageTypes.BROWSER_STORAGE
             && !request.getParameterMap().containsKey(BrowserStorage.PARAMETER_BROWSER_STORAGE)) {
-            return new ModelAndView(CasWebflowConstants.VIEW_ID_BROWSER_STORAGE_READ);
+            val context = new JEEContext(request, response);
+            val sessionStorage = configurationContext.getSessionStore()
+                .getTrackableSession(context).map(BrowserStorage.class::cast)
+                .orElseThrow(() -> new IllegalStateException("Unable to determine trackable session for storage"));
+            return new ModelAndView(CasWebflowConstants.VIEW_ID_BROWSER_STORAGE_READ,
+                BrowserStorage.PARAMETER_BROWSER_STORAGE, sessionStorage);
         }
         return handleProfileRequest(response, request);
     }

@@ -38,16 +38,15 @@ class BrowserWebStorageSessionStoreTests {
 
     @Test
     void verifyOperation() throws Throwable {
-        val store = new BrowserWebStorageSessionStore(webflowCipherExecutor);
+        val store = new BrowserWebStorageSessionStore(webflowCipherExecutor, "ContextKey");
         val request = new MockHttpServletRequest();
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         store.set(ctx, "key1", "value1");
         store.set(ctx, "key2", List.of("HelloWorld"));
         store.set(ctx, "key3", 1234567);
         store.set(ctx, "dummy", new Dummy());
-        var session = store.getTrackableSession(ctx);
+        val session = store.getTrackableSession(ctx);
         assertTrue(session.isPresent());
-
         store.renewSession(ctx);
         val trackableSession = (BrowserStorage) session.get();
         store.buildFromTrackableSession(ctx, trackableSession.getPayload());

@@ -10,7 +10,6 @@ import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.pac4j.BrowserWebStorageSessionStore;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.BrowserStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -40,9 +39,9 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 public class DuoSecurityUniversalPromptPrepareLoginAction extends AbstractMultifactorAuthenticationAction<DuoSecurityMultifactorAuthenticationProvider> {
-    private final CipherExecutor webflowCipherExecutor;
-
     private final ConfigurableApplicationContext applicationContext;
+
+    private final BrowserWebStorageSessionStore duoUniversalPromptSessionStore;
 
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
@@ -88,7 +87,7 @@ public class DuoSecurityUniversalPromptPrepareLoginAction extends AbstractMultif
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         val context = new JEEContext(request, response);
-        val sessionStorage = new BrowserWebStorageSessionStore(webflowCipherExecutor)
+        val sessionStorage = duoUniversalPromptSessionStore
             .setSessionAttributes(properties)
             .getTrackableSession(context)
             .map(BrowserStorage.class::cast)

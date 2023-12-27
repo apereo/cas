@@ -11,6 +11,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.http.HttpRequestUtils;
+import org.apereo.cas.web.BrowserStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -21,9 +22,11 @@ import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.test.MockFlowExecutionContext;
 import org.springframework.webflow.test.MockFlowSession;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -128,6 +131,20 @@ class WebUtilsTests {
         val service = HttpRequestUtils.getService(List.of(casArgumentExtractor), request);
         assertNotNull(service);
         assertEquals("test", service.getId());
+    }
+
+    @Test
+    void verifyStorageRead() throws Throwable {
+        val context1 = MockRequestContext.create();
+        context1.setParameter(BrowserStorage.PARAMETER_BROWSER_STORAGE, "test");
+        assertTrue(WebUtils.readBrowserStorageFromRequest(context1).isPresent());
+
+        val context2 = MockRequestContext.create();
+        context2.getHttpServletRequest().setContent((BrowserStorage.PARAMETER_BROWSER_STORAGE + '=' + UUID.randomUUID()).getBytes(StandardCharsets.UTF_8));
+        assertTrue(WebUtils.readBrowserStorageFromRequest(context2).isPresent());
+
+        val context3 = MockRequestContext.create();
+        assertTrue(WebUtils.readBrowserStorageFromRequest(context3).isEmpty());
     }
     
 }
