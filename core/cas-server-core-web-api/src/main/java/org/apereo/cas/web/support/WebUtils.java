@@ -1942,20 +1942,52 @@ public class WebUtils {
     }
 
     /**
+     * Gets browser storage context key.
+     *
+     * @param requestContext the request context
+     * @return the browser storage context key
+     */
+    public String getBrowserStorageContextKey(final RequestContext requestContext, final String defaultKey) {
+        return requestContext.getFlowScope().get("browserStorageContextKey", String.class, defaultKey);
+    }
+
+    /**
+     * Put browser storage context key.
+     *
+     * @param requestContext           the request context
+     * @param browserStorageContextKey the browser storage context key
+     */
+    public static void putBrowserStorageContextKey(final RequestContext requestContext, final String browserStorageContextKey) {
+        requestContext.getFlowScope().put("browserStorageContextKey", browserStorageContextKey);
+    }
+
+    /**
      * Read browser storage from request.
      *
      * @param requestContext the request context
      * @return the optional
      * @throws Exception the exception
      */
-    public static Optional<String> readBrowserStorageFromRequest(final RequestContext requestContext) throws Exception {
+    public static Optional<String> getBrowserStorage(final RequestContext requestContext) throws Exception {
         if (requestContext.getRequestParameters().contains(BrowserStorage.PARAMETER_BROWSER_STORAGE)) {
             return Optional.of(requestContext.getRequestParameters().getRequired(BrowserStorage.PARAMETER_BROWSER_STORAGE))
                 .stream()
                 .filter(StringUtils::isNotBlank)
                 .findFirst();
         }
-        try (val is = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext).getInputStream()) {
+        val httpServletRequest = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        return getBrowserStorage(httpServletRequest);
+    }
+
+    /**
+     * Gets browser storage.
+     *
+     * @param httpServletRequest the http servlet request
+     * @return the browser storage
+     * @throws Exception the exception
+     */
+    public static Optional<String> getBrowserStorage(final HttpServletRequest httpServletRequest) throws Exception {
+        try (val is = httpServletRequest.getInputStream()) {
             if (!is.isFinished()) {
                 val encodedParams = WWWFormCodec.parse(IOUtils.toString(is, StandardCharsets.UTF_8), StandardCharsets.UTF_8);
                 return encodedParams
@@ -1967,5 +1999,15 @@ public class WebUtils {
             }
         }
         return Optional.empty();
+    }
+
+    /**
+     * Put browser storage request.
+     *
+     * @param requestContext the request context
+     * @param browserStorage the browser storage
+     */
+    public static void putBrowserStorage(final RequestContext requestContext, final BrowserStorage browserStorage) {
+        requestContext.getFlowScope().put(BrowserStorage.PARAMETER_BROWSER_STORAGE, browserStorage);
     }
 }
