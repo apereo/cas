@@ -9,8 +9,6 @@ import org.apereo.cas.web.flow.configurer.CasWebflowCustomizer;
 import org.apereo.cas.web.flow.decorator.WebflowDecorator;
 import org.apereo.cas.web.flow.executor.ClientFlowExecutionRepository;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
-import lombok.val;
-import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.TypeReference;
 import org.springframework.binding.message.MessageContext;
@@ -24,7 +22,6 @@ import org.springframework.webflow.engine.FlowExecutionExceptionHandlerSet;
 import org.springframework.webflow.engine.TransitionSet;
 import org.springframework.webflow.engine.impl.FlowExecutionImpl;
 import org.springframework.webflow.execution.Action;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -67,26 +64,5 @@ public class CasCoreWebflowRuntimeHints implements CasRuntimeHintsRegistrar {
 
         registerReflectionHints(hints,
             findSubclassesInPackage(AnnotatedObject.class, "org.springframework.webflow"));
-    }
-
-    private static void registerReflectionHints(final RuntimeHints hints, final Collection entries) {
-        val memberCategories = new MemberCategory[]{
-            MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
-            MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
-            MemberCategory.INVOKE_DECLARED_METHODS,
-            MemberCategory.INVOKE_PUBLIC_METHODS,
-            MemberCategory.DECLARED_FIELDS,
-            MemberCategory.PUBLIC_FIELDS};
-        entries.forEach(el -> {
-            if (el instanceof final String clazz) {
-                hints.reflection().registerType(TypeReference.of(clazz), memberCategories);
-            }
-            if (el instanceof final Class clazz) {
-                hints.reflection().registerType(clazz, memberCategories);
-            }
-            if (el instanceof final TypeReference reference) {
-                hints.reflection().registerType(reference, memberCategories);
-            }
-        });
     }
 }

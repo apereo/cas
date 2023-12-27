@@ -74,9 +74,7 @@ import org.apereo.cas.services.support.RegisteredServiceMappedRegexAttributeFilt
 import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.apereo.cas.services.support.RegisteredServiceScriptedAttributeFilter;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
-import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
-import org.springframework.aot.hint.TypeReference;
 import java.util.List;
 
 /**
@@ -174,18 +172,11 @@ public class CasCoreServicesRuntimeHints implements CasRuntimeHintsRegistrar {
             NotPreventedRegisteredServiceAuthenticationPolicyCriteria.class,
             RestfulRegisteredServiceAuthenticationPolicyCriteria.class);
 
-        List.of(
+        registerReflectionHints(hints, List.of(
             UnauthorizedServiceException.class,
             RegisteredServiceQuery.class,
             RegisteredServiceQueryIndex.class,
             CasRegisteredService.class
-        ).forEach(el ->
-            hints.reflection().registerType(TypeReference.of(el),
-                MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
-                MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
-                MemberCategory.INVOKE_DECLARED_METHODS,
-                MemberCategory.INVOKE_PUBLIC_METHODS,
-                MemberCategory.DECLARED_FIELDS,
-                MemberCategory.PUBLIC_FIELDS));
+        ));
     }
 }

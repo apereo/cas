@@ -10,6 +10,7 @@ import org.jooq.lambda.Unchecked;
 import org.springframework.aop.SpringProxy;
 import org.springframework.aop.framework.Advised;
 import org.springframework.aot.hint.ExecutableMode;
+import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.RuntimeHintsRegistrar;
 import org.springframework.aot.hint.TypeReference;
@@ -89,22 +90,6 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
     }
 
     /**
-     * Register declared method as invokable.
-     *
-     * @param hints the hints
-     * @param clazz the clazz
-     * @param name  the name
-     * @return the cas runtime hints registrar
-     */
-    @CanIgnoreReturnValue
-    default CasRuntimeHintsRegistrar registerDeclaredMethod(final RuntimeHints hints, final Class clazz,
-                                                            final String name) {
-        val method = Unchecked.supplier(() -> clazz.getDeclaredMethod(name)).get();
-        hints.reflection().registerMethod(method, ExecutableMode.INVOKE);
-        return this;
-    }
-
-    /**
      * Register proxy hints together.
      *
      * @param hints               the hints
@@ -159,6 +144,86 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
                 hints.serialization().registerType(clazz);
             }
         });
+    }
+
+    /**
+     * Register declared method as invokable.
+     *
+     * @param hints the hints
+     * @param clazz the clazz
+     * @param name  the name
+     * @return the cas runtime hints registrar
+     */
+    @CanIgnoreReturnValue
+    default CasRuntimeHintsRegistrar registerReflectionHintForDeclaredMethod(final RuntimeHints hints, final Class clazz,
+                                                                             final String name) {
+        val method = Unchecked.supplier(() -> clazz.getDeclaredMethod(name)).get();
+        hints.reflection().registerMethod(method, ExecutableMode.INVOKE);
+        return this;
+    }
+
+    /**
+     * Register reflection hints for types.
+     *
+     * @param hints   the hints
+     * @param entries the entries
+     * @return the cas runtime hints registrar
+     */
+    @CanIgnoreReturnValue
+    default CasRuntimeHintsRegistrar registerReflectionHintsForTypes(final RuntimeHints hints, final TypeReference... entries) {
+        List.of(entries).forEach(ref -> hints.reflection().registerType(ref));
+        return this;
+    }
+
+    /**
+     * Register reflection hints.
+     *
+     * @param hints   the hints
+     * @param entries the entries
+     * @return the cas runtime hints registrar
+     */
+    @CanIgnoreReturnValue
+    default CasRuntimeHintsRegistrar registerReflectionHints(final RuntimeHints hints, final Class... entries) {
+        registerReflectionHints(hints, List.of(entries));
+        return this;
+    }
+
+    /**
+     * Register reflection hints.
+     *
+     * @param hints   the hints
+     * @param entries the entries
+     */
+    @CanIgnoreReturnValue
+    default CasRuntimeHintsRegistrar registerReflectionHints(final RuntimeHints hints, final Collection entries) {
+        val memberCategories = new MemberCategory[]{
+            MemberCategory.INTROSPECT_DECLARED_CONSTRUCTORS,
+            MemberCategory.INTROSPECT_PUBLIC_CONSTRUCTORS,
+
+            MemberCategory.INTROSPECT_DECLARED_METHODS,
+            MemberCategory.INTROSPECT_PUBLIC_METHODS,
+
+            MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
+            MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
+
+            MemberCategory.INVOKE_DECLARED_METHODS,
+            MemberCategory.INVOKE_PUBLIC_METHODS,
+
+            MemberCategory.DECLARED_FIELDS,
+            MemberCategory.PUBLIC_FIELDS
+        };
+        entries.forEach(el -> {
+            if (el instanceof final String clazz) {
+                hints.reflection().registerType(TypeReference.of(clazz), memberCategories);
+            }
+            if (el instanceof final Class clazz) {
+                hints.reflection().registerType(clazz, memberCategories);
+            }
+            if (el instanceof final TypeReference reference) {
+                hints.reflection().registerType(reference, memberCategories);
+            }
+        });
+        return this;
     }
 
     /**

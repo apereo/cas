@@ -26,9 +26,7 @@ import org.apache.xerces.util.SecurityManager;
 import org.opensaml.core.xml.XMLObjectBuilder;
 import org.opensaml.core.xml.io.Marshaller;
 import org.opensaml.core.xml.io.Unmarshaller;
-import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -59,21 +57,21 @@ public class CoreSamlRuntimeHints implements CasRuntimeHintsRegistrar {
             .registerPattern("encryption-config.xml")
             .registerPattern("soap11-config.xml");
 
-        registerReflectionHint(hints, findSubclassesInPackage(XMLObjectBuilder.class, "org.opensaml"));
-        registerReflectionHint(hints, findSubclassesInPackage(Marshaller.class, "org.opensaml"));
-        registerReflectionHint(hints, findSubclassesInPackage(Unmarshaller.class, "org.opensaml"));
-        registerReflectionHint(hints, findSubclassesInPackage(Criterion.class, "org.opensaml"));
-        registerReflectionHint(hints, findSubclassesInPackage(ResourceManager.class, ResourceManager.class.getPackageName()));
-        registerReflectionHint(hints, findSubclassesInPackage(ResourceLoader.class, ResourceLoader.class.getPackageName()));
-        registerReflectionHint(hints, findSubclassesInPackage(ResourceCache.class, ResourceCache.class.getPackageName()));
-        registerReflectionHint(hints, findSubclassesInPackage(StringResourceRepository.class, StringResourceRepository.class.getPackageName()));
-        registerReflectionHint(hints, findSubclassesInPackage(Directive.class, Directive.class.getPackageName()));
-        registerReflectionHint(hints, findSubclassesInPackage(Parser.class, Parser.class.getPackageName()));
-        registerReflectionHint(hints, findSubclassesInPackage(ParserPool.class, ParserPool.class.getPackageName()));
-        registerReflectionHint(hints, findSubclassesInPackage(Renderable.class, Renderable.class.getPackageName()));
-        registerReflectionHint(hints, findSubclassesInPackage(RuntimeServices.class, RuntimeServices.class.getPackageName()));
-        registerReflectionHint(hints, findSubclassesInPackage(Uberspect.class, Uberspect.class.getPackageName()));
-        registerReflectionHint(hints, findSubclassesInPackage(TypeConversionHandler.class, TypeConversionHandler.class.getPackageName()));
+        registerReflectionHints(hints, findSubclassesInPackage(XMLObjectBuilder.class, "org.opensaml"));
+        registerReflectionHints(hints, findSubclassesInPackage(Marshaller.class, "org.opensaml"));
+        registerReflectionHints(hints, findSubclassesInPackage(Unmarshaller.class, "org.opensaml"));
+        registerReflectionHints(hints, findSubclassesInPackage(Criterion.class, "org.opensaml"));
+        registerReflectionHints(hints, findSubclassesInPackage(ResourceManager.class, ResourceManager.class.getPackageName()));
+        registerReflectionHints(hints, findSubclassesInPackage(ResourceLoader.class, ResourceLoader.class.getPackageName()));
+        registerReflectionHints(hints, findSubclassesInPackage(ResourceCache.class, ResourceCache.class.getPackageName()));
+        registerReflectionHints(hints, findSubclassesInPackage(StringResourceRepository.class, StringResourceRepository.class.getPackageName()));
+        registerReflectionHints(hints, findSubclassesInPackage(Directive.class, Directive.class.getPackageName()));
+        registerReflectionHints(hints, findSubclassesInPackage(Parser.class, Parser.class.getPackageName()));
+        registerReflectionHints(hints, findSubclassesInPackage(ParserPool.class, ParserPool.class.getPackageName()));
+        registerReflectionHints(hints, findSubclassesInPackage(Renderable.class, Renderable.class.getPackageName()));
+        registerReflectionHints(hints, findSubclassesInPackage(RuntimeServices.class, RuntimeServices.class.getPackageName()));
+        registerReflectionHints(hints, findSubclassesInPackage(Uberspect.class, Uberspect.class.getPackageName()));
+        registerReflectionHints(hints, findSubclassesInPackage(TypeConversionHandler.class, TypeConversionHandler.class.getPackageName()));
 
         val list = List.of(
             DestructableComponent.class,
@@ -85,20 +83,7 @@ public class CoreSamlRuntimeHints implements CasRuntimeHintsRegistrar {
             ExtendedSchemaDVFactoryImpl.class,
             SchemaDVFactoryImpl.class,
             DTDDVFactoryImpl.class);
-        registerReflectionHint(hints, list);
+        registerReflectionHints(hints, list);
 
-    }
-
-    private static void registerReflectionHint(final RuntimeHints hints, final Collection clazzes) {
-        clazzes.forEach(clazz ->
-            hints.reflection().registerType((Class) clazz,
-                MemberCategory.INTROSPECT_DECLARED_METHODS,
-                MemberCategory.INTROSPECT_PUBLIC_METHODS,
-                MemberCategory.DECLARED_FIELDS,
-                MemberCategory.PUBLIC_FIELDS,
-                MemberCategory.INVOKE_PUBLIC_METHODS,
-                MemberCategory.INVOKE_DECLARED_METHODS,
-                MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
-                MemberCategory.INVOKE_DECLARED_CONSTRUCTORS));
     }
 }
