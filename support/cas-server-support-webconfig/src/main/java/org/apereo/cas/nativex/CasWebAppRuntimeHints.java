@@ -25,9 +25,7 @@ public class CasWebAppRuntimeHints implements CasRuntimeHintsRegistrar {
         registerReflectionHints(hints, List.of(
             DefaultCsrfToken.class,
             BasicAuthenticationFilter.class,
-            HandlerMappingIntrospectorRequestTransformer.class,
-            TypeReference.of("org.springframework.security.config.annotation.web.configuration.WebMvcSecurityConfiguration$HandlerMappingIntrospectorCachFilterFactoryBean"),
-            TypeReference.of("org.springframework.security.config.annotation.web.configuration.WebMvcSecurityConfiguration$CompositeFilterChainProxy")
+            HandlerMappingIntrospectorRequestTransformer.class
         ));
         registerReflectionHints(hints, findSubclassesInPackage(CsrfToken.class, CsrfToken.class.getPackageName()));
     }

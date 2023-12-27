@@ -4,6 +4,7 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactoryExecutionPlanConfigurer;
+import org.apereo.cas.ticket.registry.TicketCompactor;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.pubsub.QueueableTicketRegistry;
 import org.apereo.cas.ticket.serialization.TicketSerializationExecutionPlanConfigurer;
@@ -30,9 +31,13 @@ public class CasCoreTicketsRuntimeHints implements CasRuntimeHintsRegistrar {
         registerSpringProxy(hints, QueueableTicketRegistry.class, TicketRegistry.class);
 
         registerSerializationHints(hints, findSubclassesInPackage(Ticket.class, CentralAuthenticationService.NAMESPACE));
-        val clazzes = findSubclassesInPackage(ExpirationPolicy.class, CentralAuthenticationService.NAMESPACE);
-        registerSerializationHints(hints, clazzes);
-        registerReflectionHints(hints, clazzes);
+        val expirationPolicyClasses = findSubclassesInPackage(ExpirationPolicy.class, CentralAuthenticationService.NAMESPACE);
+        registerSerializationHints(hints, expirationPolicyClasses);
+        registerReflectionHints(hints, expirationPolicyClasses);
+
+        val ticketCompactors = findSubclassesInPackage(TicketCompactor.class, CentralAuthenticationService.NAMESPACE);
+        registerReflectionHints(hints, ticketCompactors);
+        registerProxyHints(hints, ticketCompactors);
 
         registerReflectionHints(hints, findSubclassesInPackage(CipherExecutor.class, CentralAuthenticationService.NAMESPACE));
     }

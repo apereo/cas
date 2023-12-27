@@ -12,8 +12,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
-import java.time.Instant;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -31,9 +29,9 @@ public class TransientSessionTicketCompactor implements TicketCompactor<Transien
     @Override
     public String compact(final StringBuilder builder, final Ticket ticket) {
         if (ticket instanceof final ServiceAwareTicket sat && Objects.nonNull(sat.getService())) {
-            builder.append(String.format(",%s", StringUtils.defaultString(sat.getService().getId())));
+            builder.append(String.format("%s%s", DELIMITER, StringUtils.defaultString(sat.getService().getId())));
         } else {
-            builder.append(",*");
+            builder.append("%s*".formatted(DELIMITER));
         }
         return builder.toString();
     }
@@ -45,16 +43,12 @@ public class TransientSessionTicketCompactor implements TicketCompactor<Transien
 
     @Override
     public Ticket expand(final String ticketId) throws Throwable {
+        val structure = parse(ticketId);
         val transientSessionTicketFactory = (TransientSessionTicketFactory) ticketFactory.getObject().get(getTicketType());
-        val ticketElements = List.of(org.springframework.util.StringUtils.commaDelimitedListToStringArray(ticketId));
-
-        val creationTimeInSeconds = Instant.ofEpochSecond(Long.parseLong(ticketElements.get(0)));
-        val expirationTimeInSeconds = Instant.ofEpochSecond(Long.parseLong(ticketElements.get(1)));
-        val service = serviceFactory.createService(ticketElements.get(2));
-
+        val service = serviceFactory.createService(structure.ticketElements().get(2));
         val transientTicket = transientSessionTicketFactory.create(service, Map.of());
-        transientTicket.setExpirationPolicy(new FixedInstantExpirationPolicy(expirationTimeInSeconds));
-        transientTicket.setCreationTime(DateTimeUtils.zonedDateTimeOf(creationTimeInSeconds));
+        transientTicket.setExpirationPolicy(new FixedInstantExpirationPolicy(structure.expirationTime()));
+        transientTicket.setCreationTime(DateTimeUtils.zonedDateTimeOf(structure.creationTime()));
         return transientTicket;
     }
 }

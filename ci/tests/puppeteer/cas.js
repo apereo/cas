@@ -25,6 +25,9 @@ const docker = new Docker({ socketPath: "/var/run/docker.sock" });
 
 const LOGGER = pino({
     level: "debug",
+    options: {
+        colorize: true
+    },
     transport: {
         target: "pino-pretty"
     }
@@ -56,32 +59,32 @@ function inspect(text) {
     } catch {
         result = text;
     }
-    return util.inspect(result, {colors: true, depth: null});
+    return util.inspect(result, {colors: false, depth: null});
 }
 
 exports.log = async(text, ...args) => {
     const toLog = inspect(text);
-    await LOGGER.debug(`💬 ${toLog}`, args);
+    await LOGGER.debug(`💬 ${colors.blue(toLog)}`, args);
 };
 
 exports.logy = async (text) => {
     const toLog = inspect(text);
-    await LOGGER.warn(`🔥 ${toLog}`);
+    await LOGGER.warn(`🔥 ${colors.yellow(toLog)}`);
 };
 
 exports.logb = async (text) => {
     const toLog = inspect(text);
-    await LOGGER.debug(`💬 ${toLog}`);
+    await LOGGER.debug(`💬 ${colors.blue(toLog)}`);
 };
 
 exports.logg = async (text) => {
     const toLog = inspect(text);
-    await LOGGER.info(`✅ ${toLog}`);
+    await LOGGER.info(`✅ ${colors.green(toLog)}`);
 };
 
 exports.logr = async (text) => {
     const toLog = inspect(text);
-    await LOGGER.error(`📛 ${toLog}`);
+    await LOGGER.error(`📛 ${colors.red(toLog)}`);
 };
 
 exports.logPage = async(page) => {
