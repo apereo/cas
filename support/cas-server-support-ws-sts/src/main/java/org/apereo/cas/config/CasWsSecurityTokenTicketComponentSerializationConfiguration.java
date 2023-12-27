@@ -47,6 +47,10 @@ public class CasWsSecurityTokenTicketComponentSerializationConfiguration {
         @Serial
         private static final long serialVersionUID = -3198623586274810263L;
 
+        SecurityTokenTicketStringSerializer() {
+            super(MINIMAL_PRETTY_PRINTER);
+        }
+
         @Override
         public Class<DefaultSecurityTokenTicket> getTypeToSerialize() {
             return DefaultSecurityTokenTicket.class;
