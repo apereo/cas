@@ -7,8 +7,8 @@ import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import lombok.extern.slf4j.Slf4j;
@@ -57,9 +57,7 @@ public class SamlProfileAuthnContextClassRefBuilder extends AbstractSaml20Object
     @Override
     public AuthnContext build(final SamlProfileBuilderContext context) throws Exception {
         val classRefValue = buildAuthnContextClassRefValue(context);
-
         val authnContext = newSamlObject(AuthnContext.class);
-
         val classRef = newSamlObject(AuthnContextClassRef.class);
         classRef.setURI(classRefValue);
         authnContext.setAuthnContextClassRef(classRef);
@@ -89,29 +87,15 @@ public class SamlProfileAuthnContextClassRefBuilder extends AbstractSaml20Object
         if (StringUtils.isNotBlank(requiredClass)) {
             LOGGER.debug("Using [{}] as indicated by SAML registered service [{}]",
                 requiredClass, context.getRegisteredService().getName());
-            if (!ResourceUtils.isUrl(requiredClass) && ResourceUtils.doesResourceExist(requiredClass)) {
-                LOGGER.debug("Executing groovy script [{}] to determine authentication context class for [{}]",
-                    requiredClass, context.getAdaptor().getEntityId());
-                return ApplicationContextProvider.getScriptResourceCacheManager()
-                    .map(cacheMgr -> {
-                        val script = cacheMgr.resolveScriptableResource(requiredClass,
-                            requiredClass, context.getAdaptor().getEntityId());
-                        return FunctionUtils.doIfNotNull(script,
-                            () -> {
-                                val args = CollectionUtils.wrap("context", context, "logger", LOGGER);
-                                script.setBinding(args);
-                                return script.execute(args.values().toArray(), String.class, true);
-                            },
-                            () -> null).get();
-                    })
-                    .orElseThrow(() -> new RuntimeException("Unable to locate script cache manager"));
+            if (ScriptingUtils.isGroovyScript(requiredClass) || ScriptingUtils.isInlineGroovyScript(requiredClass)) {
+                return buildScriptedAuthnContextClassRef(context, requiredClass);
             }
             return requiredClass;
         }
 
         val defClass = getDefaultAuthenticationContextClass();
-        val requestedAuthnContext = context.getSamlRequest() instanceof AuthnRequest
-            ? ((AuthnRequest) context.getSamlRequest()).getRequestedAuthnContext() : null;
+        val requestedAuthnContext = context.getSamlRequest() instanceof final AuthnRequest authnRequest
+            ? authnRequest.getRequestedAuthnContext() : null;
         if (requestedAuthnContext == null) {
             LOGGER.debug("No specific authN context is requested. Returning [{}]", defClass);
             return buildDefaultAuthenticationContextClass(defClass, context);
@@ -129,12 +113,30 @@ public class SamlProfileAuthnContextClassRefBuilder extends AbstractSaml20Object
         return finalCtx;
     }
 
+    protected String buildScriptedAuthnContextClassRef(final SamlProfileBuilderContext context, final String requiredClass) {
+        LOGGER.debug("Executing groovy script [{}] to determine authentication context class for [{}]",
+            requiredClass, context.getAdaptor().getEntityId());
+        return ApplicationContextProvider.getScriptResourceCacheManager()
+            .map(cacheMgr -> {
+                val script = cacheMgr.resolveScriptableResource(requiredClass,
+                    requiredClass, context.getAdaptor().getEntityId());
+                return FunctionUtils.doIfNotNull(script,
+                    () -> {
+                        val args = CollectionUtils.wrap("context", context, "logger", LOGGER);
+                        script.setBinding(args);
+                        return script.execute(args.values().toArray(), String.class, true);
+                    },
+                    () -> requiredClass).get();
+            })
+            .orElseThrow(() -> new RuntimeException("Unable to locate script cache manager or execute groovy script"));
+    }
+
     protected String buildDefaultAuthenticationContextClass(final String defClass,
                                                             final SamlProfileBuilderContext context) {
         val contextValues = CollectionUtils.toCollection(context.getAuthenticatedAssertion()
             .get().getAttributes().get(casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute()));
         val definedContexts = CollectionUtils.convertDirectedListToMap(
-            casProperties.getAuthn().getSamlIdp().getCore().getAuthenticationContextClassMappings());
+            casProperties.getAuthn().getSamlIdp().getCore().getContext().getAuthenticationContextClassMappings());
         return definedContexts.entrySet()
             .stream()
             .filter(entry -> contextValues.contains(entry.getValue()))
@@ -145,7 +147,7 @@ public class SamlProfileAuthnContextClassRefBuilder extends AbstractSaml20Object
 
     protected String getDefaultAuthenticationContextClass() {
         return StringUtils.defaultIfBlank(
-            casProperties.getAuthn().getSamlIdp().getResponse().getDefaultAuthenticationContextClass(),
+            casProperties.getAuthn().getSamlIdp().getCore().getContext().getDefaultAuthenticationContextClass(),
             AuthnContext.PPT_AUTHN_CTX);
     }
 
@@ -156,7 +158,7 @@ public class SamlProfileAuthnContextClassRefBuilder extends AbstractSaml20Object
         authnContextClassRefs.forEach(ref -> LOGGER.debug("Requested AuthN Context [{}]", ref.getURI()));
 
         val definedContexts = CollectionUtils.convertDirectedListToMap(
-            casProperties.getAuthn().getSamlIdp().getCore().getAuthenticationContextClassMappings());
+            casProperties.getAuthn().getSamlIdp().getCore().getContext().getAuthenticationContextClassMappings());
         LOGGER.debug("Defined authentication context mappings are [{}]", definedContexts);
 
         return authnContextClassRefs.stream()

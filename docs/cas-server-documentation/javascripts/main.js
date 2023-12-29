@@ -1,22 +1,20 @@
-var CONST_CURRENT_VER = "development";
+const CONST_CURRENT_VER = "development";
 
 function isDocumentationSiteViewedLocally() {
   return location.href.startsWith("http://localhost:4000");
 }
 
 function generateNavigationBarAndCrumbs() {
-  var crumbs = "<ol class='breadcrumb'>";
+  let crumbs = "<ol class='breadcrumb'>";
 
-  var activeVersion = getActiveDocumentationVersionInView(true);
+  const uri = new URI(document.location);
+  const segments = uri.segment();
 
-  var uri = new URI(document.location);
-  var segments = uri.segment();
-
-  for (var i = 1; i < segments.length; i++) {
-    var clz = ((i + 1) >= segments.length) ? 'breadcrumb-item active' : 'breadcrumb-item ';
+  for (let i = 1; i < segments.length; i++) {
+    let clz = ((i + 1) >= segments.length) ? "breadcrumb-item active" : "breadcrumb-item ";
     clz += "capitalize";
 
-    var page = null;
+    let page = null;
 
     if ((i + 1) >= segments.length) {
       page = document.title.replace("CAS -", "").trim();
@@ -31,14 +29,14 @@ function generateNavigationBarAndCrumbs() {
 }
 
 function getActiveDocumentationVersionInView(returnBlankIfNoVersion) {
-  var currentVersion = CONST_CURRENT_VER;
-  var href = location.href;
-  var index = isDocumentationSiteViewedLocally() ? href.indexOf("4000/") : -1;
+  let currentVersion = CONST_CURRENT_VER;
+  let href = location.href;
+  let index = isDocumentationSiteViewedLocally() ? href.indexOf("4000/") : -1;
 
-  if (index == -1) {
-    var uri = new URI(document.location);
+  if (index === -1) {
+    const uri = new URI(document.location);
 
-    if (uri.filename() != uri.segment(1) && uri.segment(1) != "developer") {
+    if (uri.filename() !== uri.segment(1) && uri.segment(1) !== "developer") {
       currentVersion = uri.segment(1);
     } else if (returnBlankIfNoVersion) {
       return "";
@@ -54,29 +52,29 @@ function getActiveDocumentationVersionInView(returnBlankIfNoVersion) {
 
 function loadSidebarForActiveVersion() {
   let prefix = isDocumentationSiteViewedLocally() ? "/" : "/cas/";
-  $.get(prefix + getActiveDocumentationVersionInView() + "/sidebar.html", function (data) {
-    var menu = $(data);
+  $.get(`${prefix + getActiveDocumentationVersionInView()}/sidebar.html`, data => {
+    const menu = $(data);
 
     if (menu.first().is('ul')) {
 
       menu.addClass('nav flex-column').attr('id', 'sidebarTopics');
 
-      var topLevel = menu.find('> li>a');
+      const topLevel = menu.find("> li>a");
 
-      var topLevelUl = menu.find('> li>ul');
+      const topLevelUl = menu.find("> li>ul");
 
-      var subLevel = menu.find('> li ul');
+      const subLevel = menu.find("> li ul");
 
-      var nestedMenu = menu.find("ul li").has("ul").children('a');
+      const nestedMenu = menu.find("ul li").has("ul").children("a");
 
       topLevel.each(function () {
-        var el = $(this);
+        const el = $(this);
         //console.log("Top level: " + el);
         sidebarTopNav(el);
       });
 
       topLevelUl.each(function () {
-        var el = $(this);
+        const el = $(this);
         //console.log("Top level UL: " + el);
         el.attr({
           'data-bs-parent': '#sidebarTopics'
@@ -84,7 +82,7 @@ function loadSidebarForActiveVersion() {
 
         if (!el.prev().hasClass('collapsed')) {
           el.addClass('show');
-        };
+        }
       });
 
       subLevel.each(function () {
@@ -101,7 +99,7 @@ function loadSidebarForActiveVersion() {
 
       generateSidebarLinksForActiveVersion();
 
-      var uri = new URI(document.location);
+      const uri = new URI(document.location);
       if (uri.filename() === "index.html" || uri.filename() === '') {
         return;
       }
@@ -109,20 +107,19 @@ function loadSidebarForActiveVersion() {
       let count = 0;
       let element = $(`#sidebarTopics a[href*='/${uri.filename()}']`);
       let parent = element.parent();
-      while (parent != null && parent != undefined) {
+      while (parent !== null && parent !== undefined) {
         // parent.collapse('toggle');
         let id = parent.attr("id");
         if (id === "sidebarTopics" || count >= 10) {
           break;
         }
-        if (id != undefined) {
+        if (id !== undefined) {
           parent.collapse('show');
         }
         count++;
         parent = parent.parent();
       }
       element.css("font-weight", "bold").addClass("text-info");
-      let txt = element.text();
       element.prepend("<i class='fa fa-angle-double-right'></i>&nbsp;");
 
       if (uri.fragment() == null || uri.fragment() === "") {
@@ -149,15 +146,15 @@ function sidebarTopNav(el) {
     .append('<i class="expand"></i></a>');
   }
 
-  if (pageSection && el.text() == pageSection) {
+  if (pageSection && el.text() === pageSection) {
     el.removeClass('collapsed')
   }
 
-};
+}
 
 
 function sidebarSubNav(el) {
-  var prevId = $(el).prev('a').attr('href');
+  let prevId = $(el).prev("a").attr("href");
 
   if (prevId.search(/^#.*$/) >= 0) {
     prevId = prevId.substr(1);
@@ -165,20 +162,18 @@ function sidebarSubNav(el) {
     prevId = '';
   }
 
-  if (!prevId == '') {
-    $(el).addClass('nav flex-column collapse subnav ms-3').attr('id', prevId);
-  } else {
+  if (prevId === '') {
     $(el).addClass('nav flex-column subnav ms-3');
+  } else {
+    $(el).addClass('nav flex-column collapse subnav ms-3').attr('id', prevId);
   }
 }
 
 function generateSidebarLinksForActiveVersion() {
-  let prefix = isDocumentationSiteViewedLocally() ? "" : "cas/";
-
   $('#sidebar a').each(function () {
-    var href = this.href;
-    if (href.indexOf("$version") != -1) {
-      href = href.replace("$version", "cas/" + getActiveDocumentationVersionInView());
+    let href = this.href;
+    if (href.indexOf("$version") !== -1) {
+      href = href.replace("$version", `cas/${getActiveDocumentationVersionInView()}`);
     }
     
     if (href.includes("#")) {
@@ -190,9 +185,19 @@ function generateSidebarLinksForActiveVersion() {
   });
 }
 
+function navigateSidebar() {
+  $("#sidebar").toggle("fade slow", () => {
+    if ($("#sidebar").is(":visible")) {
+      $(".cas-docs-content").removeClass("col-xl-10").addClass("col-xl-8")
+    } else {
+      $(".cas-docs-content").removeClass("col-xl-8").addClass("col-xl-10")
+    }
+  });
+}
+
 function toggleDarkMode() {
     let theme = $("html").attr("data-bs-theme");
-    console.log("Current theme: " + theme);
+    console.log(`Current theme: ${theme}`);
     if (theme === "dark") {
       $("html").attr('data-bs-theme', 'light');
     } else {
@@ -201,7 +206,7 @@ function toggleDarkMode() {
 }
 
 function generateToolbarIcons() {
-  let CAS_REPO_URL_GITHUB = $('#forkme_banner').attr('href');
+  let casRepositoryUrl = $('#forkme_banner').attr('href');
   let activeVersion = getActiveDocumentationVersionInView(true);
 
   let uri = new URI(document.location);
@@ -209,11 +214,11 @@ function generateToolbarIcons() {
   let page = "";
 
   for (let i = isDocumentationSiteViewedLocally() ? 0 : 1; i < segments.length; i++) {
-    page += segments[i] + "/";
+    page += `${segments[i]}/`;
   }
   let editablePage = page.replace(".html", ".md");
-  editablePage = editablePage.replace(CONST_CURRENT_VER, "")
-  editablePage = editablePage.replace(activeVersion, "")
+  editablePage = editablePage.replace(CONST_CURRENT_VER, "");
+  editablePage = editablePage.replace(activeVersion, "");
   if (editablePage === "") {
     editablePage = "index.md";
   }
@@ -223,35 +228,35 @@ function generateToolbarIcons() {
   let href = location.href.replace("https://apereo.github.io/cas", "http://localhost:4000");
   $('#toolbarIcons').append(`<a href='${href}'><i class='fab fa-codepen' title='See this page running on localhost'></i></a>`);
 
-  if (activeVersion != CONST_CURRENT_VER && activeVersion !== "") {
+  if (activeVersion !== CONST_CURRENT_VER && activeVersion !== "") {
     let prefix = isDocumentationSiteViewedLocally() ? "/" : "/cas/";
-    var linkToDev = prefix + page.replace(activeVersion, CONST_CURRENT_VER).replace("//", "/");
+    let linkToDev = prefix + page.replace(activeVersion, CONST_CURRENT_VER).replace("//", "/");
     linkToDev = linkToDev.replace("html/", "html");
 
     $('#toolbarIcons').append(`<a href='${linkToDev}'><i class='fa fa-code' title='See the latest version of this page'></i></a>`);
   }
 
-  let baseLink = CAS_REPO_URL_GITHUB;
+  let baseLink = casRepositoryUrl;
   let editLink = "";
   let historyLink = "";
   let deleteLink = "";
 
   if (activeVersion === "") {
-    editLink = baseLink + "/edit/gh-pages/";
-    historyLink = baseLink + "/commits/gh-pages/";
-    deleteLink = baseLink + "/delete/gh-pages/";
-  } else if (activeVersion == CONST_CURRENT_VER) {
-    editLink = baseLink + "/edit/master/docs/cas-server-documentation/";
-    historyLink = baseLink + "/commits/master/docs/cas-server-documentation/";
-    deleteLink = baseLink + "/delete/master/docs/cas-server-documentation/";
-  } else if (activeVersion.indexOf("5.") != -1 || activeVersion.indexOf("6.") != -1) {
-    editLink = baseLink + "/edit/" + activeVersion + "/docs/cas-server-documentation/";
-    historyLink = baseLink + "/commits/" + activeVersion + "/docs/cas-server-documentation/";
-    deleteLink = baseLink + "/delete/" + activeVersion + "/docs/cas-server-documentation/";
-  } else if (activeVersion != CONST_CURRENT_VER) {
-    editLink = baseLink + "/edit/" + activeVersion + "/cas-server-documentation/";
-    historyLink = baseLink + "/commits/" + activeVersion + "/cas-server-documentation/";
-    deleteLink = baseLink + "/delete/" + activeVersion + "/cas-server-documentation/";
+    editLink = `${baseLink}/edit/gh-pages/`;
+    historyLink = `${baseLink}/commits/gh-pages/`;
+    deleteLink = `${baseLink}/delete/gh-pages/`;
+  } else if (activeVersion === CONST_CURRENT_VER) {
+    editLink = `${baseLink}/edit/master/docs/cas-server-documentation/`;
+    historyLink = `${baseLink}/commits/master/docs/cas-server-documentation/`;
+    deleteLink = `${baseLink}/delete/master/docs/cas-server-documentation/`;
+  } else if (activeVersion.indexOf("5.") !== -1 || activeVersion.indexOf("6.") !== -1) {
+    editLink = `${baseLink}/edit/${activeVersion}/docs/cas-server-documentation/`;
+    historyLink = `${baseLink}/commits/${activeVersion}/docs/cas-server-documentation/`;
+    deleteLink = `${baseLink}/delete/${activeVersion}/docs/cas-server-documentation/`;
+  } else if (activeVersion !== CONST_CURRENT_VER) {
+    editLink = `${baseLink}/edit/${activeVersion}/cas-server-documentation/`;
+    historyLink = `${baseLink}/commits/${activeVersion}/cas-server-documentation/`;
+    deleteLink = `${baseLink}/delete/${activeVersion}/cas-server-documentation/`;
   }
 
   editLink += editablePage;
@@ -269,13 +274,11 @@ function generateToolbarIcons() {
 }
 
 function generatePageTOC() {
-  var toc = $('#tableOfContents ul');
-  var page_contents = $('#pageContents ul');
-  var arr = [];
+  const page_contents = $("#pageContents ul");
+  const arr = [];
 
-  var headings = $('#cas-docs-container').find('h1, h2,h3');
-  var subMenu = false;
-  var subMenuId = null;
+  const headings = $("#cas-docs-container").find("h1, h2,h3");
+  let subMenu = false;
 
   headings.each(function (idx) {
     if ($(this).is('h1,h2')) {
@@ -291,19 +294,17 @@ function generatePageTOC() {
         arr.push(tocItem(this.id, this.textContent));
       }
     }
-    ; // End H2
 
     if ($(this).is('h3')) {
       // If it is a H3 and the submenu flag is NOT set, then set the submenu flag then arr.push('<ul><li>h3 text</li>')
-      if (!subMenu) {
+      if (subMenu) {
+        arr.push(tocItem(this.id, this.textContent));
+      } else {
         subMenu = true;
         arr.push('<ul class="nav flex-column">');
         arr.push(tocItem(this.id, this.textContent));
-      } else if (subMenu) {
-        arr.push(tocItem(this.id, this.textContent));
       }
     }
-    ; // End H2
   });
 
   // After the loop, close the last <li> tag
@@ -318,16 +319,8 @@ function generatePageTOC() {
 }
 
 function tocItem(id, text) {
-  return '<li class="toc-entry toc-h2"><a href="#' + id + '">' + text + '</a>';
+  return `<li class="toc-entry toc-h2"><a href="#${id}">${text}</a>`;
 }
-
-
-function guidGenerator() {
-  let S4 = () => (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
-  return (`${S4() + S4()}-${S4()}-${S4()}-${S4()}-${S4()}${S4()}${S4()}`);
-}
-
-
 function responsiveImages() {
   $('img').each(function () {
     $(this).addClass('img-fluid');
@@ -346,16 +339,58 @@ function enableBootstrapTooltips() {
 }
 
 function generateOverlay(artifactId, type) {
-  var id = artifactId.replace("cas-server-", "")
-
+  let id = artifactId.replace("cas-server-", "");
   $("#overlayform").remove();
   $('body').append(" \
-  <form id='overlayform' action='https://casinit.herokuapp.com/starter.zip' method='post'> \
+  <form id='overlayform' action='https://getcas.apereo.org/starter.zip' method='post'> \
     <input type='submit' value='submit' /> \
     <input type='hidden' name='dependencies' value='" + id + "' /> \
     <input type='hidden' name='type' value='" + type + "' /> \
   </form>");
   $("#overlayform").submit();
+}
+
+
+function showOverlay(artifactId, type) {
+  let id = artifactId.replace("cas-server-", "");
+  $("#overlaydialog").remove();
+  
+  let iframe = $('<iframe>', {
+    src: `https://getcas.apereo.org/ui?dependencies=webapp-tomcat,${id}`,
+    id:  'overlayframe',
+    frameborder: 0,
+    scrolling: 'no'
+  }).css({
+    width: '100%',
+    height: '100%',
+    border: 'none'
+  });
+
+  let dialogConfig = {
+    title: `CAS Initializr with ${artifactId}`,
+    width: 800,
+    height: 600,
+    modal: true,
+    resizable: true,
+    draggable: true,
+    autoOpen: false,
+    closeText: 'Close',
+    closeOnEscape: true,
+    show: {
+      effect: 'fade',
+      duration: 500
+    },
+    hide: {
+      effect: 'fade',
+      duration: 500
+    }
+  };
+  $('body').append("<div id='overlaydialog'></div>");
+  $(document).on("click", e => {
+      $("#overlaydialog").dialog('destroy');
+  });
+
+  $("#overlaydialog").append(iframe).dialog(dialogConfig).dialog('open');
 }
 
 function initializePage() {
@@ -378,38 +413,27 @@ function initializePage() {
     });
 }
 
-$(function () {
+$(() => {
   loadSidebarForActiveVersion();
   generatePageTOC();
   generateToolbarIcons();
   generateNavigationBarAndCrumbs();
-
   responsiveImages();
   responsiveTables();
-
-  var formattedVersion = getActiveDocumentationVersionInView();
-  if (formattedVersion != "" && formattedVersion.indexOf(CONST_CURRENT_VER) == -1) {
-    formattedVersion = " (" + formattedVersion + ")"
-  } else {
-    formattedVersion = "";
-  }
-
   enableBootstrapTooltips();
   initializePage();
 });
 
 
-$(function () {
-  return $("h2, h3, h4, h5, h6").each((i, el) => {
-    var $el, icon, id;
-    $el = $(el);
-    id = $el.attr('id');
-    icon = '<i class="fa fa-link"></i>';
-    if (id) {
-      return $el.prepend($("<a />").addClass("header-link").attr("href", "#" + id).html(icon));
-    }
-  });
-});
+$(() => $("h2, h3, h4, h5, h6").each((i, el) => {
+  let $el, icon, id;
+  $el = $(el);
+  id = $el.attr('id');
+  icon = '<i class="fa fa-link"></i>';
+  if (id) {
+    return $el.prepend($("<a />").addClass("header-link").attr("href", "#" + id).html(icon));
+  }
+}));
 
 
 let codes = document.querySelectorAll('.highlight > pre > code .rouge-code pre');
@@ -435,8 +459,8 @@ codes.forEach((code) => {
 new ClipboardJS('.btn-copy-code');
 
 $(document).ready(() => {
-    var pageLength = $('.cas-datatable').data('page-length');
-    if (pageLength === null || pageLength === undefined || pageLength === "") {
+  let pageLength = $(".cas-datatable").data("page-length");
+  if (pageLength === null || pageLength === undefined || pageLength === "") {
       pageLength = 5;
     }
     $('.cas-datatable').DataTable({
@@ -445,7 +469,7 @@ $(document).ready(() => {
       "pageLength": pageLength
     });
 
-    let popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+    let popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
     let popoverList = popoverTriggerList.map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
 });
 
@@ -458,7 +482,7 @@ function next(id) {
 
   let s = 0;
   s = rows.attr("start");
-  if (s == undefined) {
+  if (s === undefined) {
     s = 0;
   } else {
     if (parseInt(s) + ROWS < rowCount) {
@@ -468,12 +492,14 @@ function next(id) {
 
   let e = 0;
   e = rows.attr("end");
-  if (e == undefined) {
+  if (e === undefined) {
     e = ROWS;
   } else {
     e = parseInt(e) + ROWS;
   }
-  if (e > rowCount) e = rowCount;
+  if (e > rowCount) {
+    e = rowCount;
+  }
 
 
   rows.hide().slice(s, e).show();
@@ -494,11 +520,17 @@ function previous(id) {
 
   // console.log("current start " + start + " current end " + end);
 
-  start = start - ROWS;
-  if (start < 0) start = 0;
-  end = end - ROWS;
-  if (end < ROWS) end = ROWS;
-  if (end - start < ROWS) end = start + ROWS;
+  start -= ROWS;
+  if (start < 0) {
+    start = 0;
+  }
+  end -= ROWS;
+  if (end < ROWS) {
+    end = ROWS;
+  }
+  if (end - start < ROWS) {
+    end = start + ROWS;
+  }
 
   rows.hide().slice(start, end).show();
   // console.log("start " + start + " end " + end);
@@ -524,9 +556,9 @@ const removeActiveClasses = ulElement => {
 };
 
 const getChildPosition = element => {
-    var parent = element.parentNode;
-    var i = 0;
-    for (let i = 0; i < parent.children.length; i++) {
+  const parent = element.parentNode;
+  let i = 0;
+  for (let i = 0; i < parent.children.length; i++) {
         let child = parent.children[i];
         console.log(child.classList);
         if (child === element) {
@@ -542,7 +574,7 @@ window.addEventListener('load', () => {
 
   Array.prototype.forEach.call(tabLinks, link => {
       let property = link.parentElement.classList.contains("property-name");
-      if (property == false) {
+      if (property === false) {
         link.addEventListener('click', event => {
             event.preventDefault();
 

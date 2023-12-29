@@ -24,4 +24,10 @@ import java.io.Serial;
 public abstract class BaseRegisteredServiceAccessStrategy implements RegisteredServiceAccessStrategy {
     @Serial
     private static final long serialVersionUID = 2068108924325533291L;
+
+    /**
+     * The delegated authn policy.
+     */
+    protected RegisteredServiceDelegatedAuthenticationPolicy delegatedAuthenticationPolicy =
+        new DefaultRegisteredServiceDelegatedAuthenticationPolicy();
 }

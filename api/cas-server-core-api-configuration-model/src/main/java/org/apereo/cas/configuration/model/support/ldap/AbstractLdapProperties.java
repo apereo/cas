@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
@@ -27,7 +28,7 @@ import java.util.stream.Stream;
 @Setter
 @Accessors(chain = true)
 @JsonFilter("AbstractLdapProperties")
-public abstract class AbstractLdapProperties implements Serializable {
+public abstract class AbstractLdapProperties implements Serializable, CasFeatureModule {
 
     @Serial
     private static final long serialVersionUID = 2682743362616979324L;

@@ -57,15 +57,17 @@ public class RestfulAccountRegistrationProvisioner implements AccountRegistratio
     protected AccountRegistrationResponse buildAccountRegistrationResponse(final HttpResponse response) {
         return FunctionUtils.doUnchecked(() -> {
             if (HttpStatus.valueOf(response.getCode()).is2xxSuccessful()) {
-                val entity = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
-                val success = AccountRegistrationResponse.success();
-                Arrays.stream(response.getHeaders())
-                    .forEach(header -> success.putProperty(header.getName(), header.getValue()));
-                FunctionUtils.doIf(StringUtils.isNotBlank(entity),
-                    value -> success.putProperty("entity", value)).accept(StringUtils.defaultString(entity));
-                success.putProperty("status", response.getCode());
-                success.putProperty("entity", StringUtils.defaultString(entity));
-                return success;
+                try (val content = ((HttpEntityContainer) response).getEntity().getContent()) {
+                    val entity = IOUtils.toString(content, StandardCharsets.UTF_8);
+                    val success = AccountRegistrationResponse.success();
+                    Arrays.stream(response.getHeaders())
+                            .forEach(header -> success.putProperty(header.getName(), header.getValue()));
+                    FunctionUtils.doIf(StringUtils.isNotBlank(entity),
+                            value -> success.putProperty("entity", value)).accept(StringUtils.defaultString(entity));
+                    success.putProperty("status", response.getCode());
+                    success.putProperty("entity", StringUtils.defaultString(entity));
+                    return success;
+                }
             }
             val details = CollectionUtils.wrap("status", response.getCode(),
                 "reason", response.getReasonPhrase());

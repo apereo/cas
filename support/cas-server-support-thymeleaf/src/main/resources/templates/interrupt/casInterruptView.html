@@ -29,7 +29,7 @@
 </head>
 
 <body>
-<main role="main" class="container mt-3 mb-3">
+<main class="container mt-3 mb-3">
     <div id="content" layout:fragment="content" class="mdc-card card p-4 m-auto w-lg-66">
         <h1 th:text="#{screen.interrupt.title}">Authentication Interrupt</h1>
         <p th:utext="#{screen.interrupt.message(${principal.id})}">The authentication flow has been interrupted.</p>

@@ -2,7 +2,7 @@
   "@class": "org.apereo.cas.services.OidcRegisteredService",
   "clientId": "client",
   "clientSecret": "secret",
-  "serviceId": "^https://httpbin.org/anything/sample",
+  "serviceId": "^https://localhost:9859/anything/sample",
   "name": "Sample",
   "id": 1,
   "supportedGrantTypes": [ "java.util.HashSet", [ "authorization_code" ]],

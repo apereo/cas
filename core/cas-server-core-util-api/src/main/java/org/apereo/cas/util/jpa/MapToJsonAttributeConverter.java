@@ -5,7 +5,6 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.AttributeConverter;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -14,17 +13,17 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-public class MapToJsonAttributeConverter implements AttributeConverter<Map<String, List<Object>>, String> {
+public class MapToJsonAttributeConverter implements AttributeConverter<Map<String, ? extends Object>, String> {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .defaultTypingEnabled(true).build().toObjectMapper();
+        .minimal(true).defaultTypingEnabled(true).build().toObjectMapper();
 
     @Override
-    public String convertToDatabaseColumn(final Map<String, List<Object>> map) {
+    public String convertToDatabaseColumn(final Map<String, ? extends Object> map) {
         return FunctionUtils.doUnchecked(() -> MAPPER.writeValueAsString(map));
     }
 
     @Override
-    public Map<String, List<Object>> convertToEntityAttribute(final String value) {
+    public Map<String, Object> convertToEntityAttribute(final String value) {
         return FunctionUtils.doUnchecked(() -> MAPPER.readValue(value, new TypeReference<>() {
         }));
     }

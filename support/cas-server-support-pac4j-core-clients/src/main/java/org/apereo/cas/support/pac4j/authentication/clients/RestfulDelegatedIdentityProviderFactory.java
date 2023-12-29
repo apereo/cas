@@ -2,7 +2,6 @@ package org.apereo.cas.support.pac4j.authentication.clients;
 
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -52,7 +51,7 @@ public class RestfulDelegatedIdentityProviderFactory extends BaseDelegatedIdenti
     }
 
     @Override
-    protected Collection<IndirectClient> loadIdentityProviders() {
+    protected Collection<IndirectClient> loadIdentityProviders() throws Exception {
         val restProperties = casProperties.getAuthn().getPac4j().getRest();
         val exec = HttpExecutionRequest.builder()
             .basicAuthPassword(restProperties.getBasicAuthPassword())
@@ -63,21 +62,21 @@ public class RestfulDelegatedIdentityProviderFactory extends BaseDelegatedIdenti
             .headers(restProperties.getHeaders())
             .build();
 
-        return FunctionUtils.doAndRetry(callback -> {
-            val response = HttpUtils.execute(exec);
-            try {
-                if (response != null && HttpStatus.valueOf(response.getCode()).is2xxSuccessful()) {
-                    val result = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
+        val response = HttpUtils.execute(exec);
+        try {
+            if (response != null && HttpStatus.valueOf(response.getCode()).is2xxSuccessful()) {
+                try (val content = ((HttpEntityContainer) response).getEntity().getContent()) {
+                    val result = IOUtils.toString(content, StandardCharsets.UTF_8);
                     if ("cas".equalsIgnoreCase(restProperties.getType())) {
                         return buildClientsBasedCasProperties(result);
                     }
                     return buildClientsBasedPac4jProperties(result);
                 }
-                return new ArrayList<>();
-            } finally {
-                HttpUtils.close(response);
             }
-        });
+            return new ArrayList<>();
+        } finally {
+            HttpUtils.close(response);
+        }
     }
 
     protected Collection<IndirectClient> buildClientsBasedCasProperties(final String result) throws Exception {

@@ -6,13 +6,13 @@ YELLOW="\e[33m"
 ENDCOLOR="\e[0m"
 
 function printred() {
-  printf "${RED}$1${ENDCOLOR}\n"
+  printf "🔥 ${RED}$1${ENDCOLOR}\n"
 }
 function printgreen() {
-  printf "${GREEN}$1${ENDCOLOR}\n"
+  printf "✅ ${GREEN}$1${ENDCOLOR}\n"
 }
 function printyellow() {
-  printf "${YELLOW}$1${ENDCOLOR}\n"
+  printf "🔥 ${YELLOW}$1${ENDCOLOR}\n"
 }
 
 function validateProjectDocumentation() {
@@ -336,7 +336,8 @@ if [[ ${buildDocs} == "true" ]]; then
   fi
 
   cd "$PWD/gh-pages" || exit
-  
+  ruby --version
+
   printgreen "Installing documentation dependencies...\n"
   bundle config set force_ruby_platform true
   bundle install

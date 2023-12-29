@@ -2,6 +2,7 @@ package org.apereo.cas.nativex;
 
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.audit.AuditTrailExecutionPlanConfigurer;
+import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.inspektr.audit.AuditTrailManagementAspect;
 import org.apereo.inspektr.audit.AuditTrailManager;
@@ -23,11 +24,12 @@ import java.util.List;
 public class CasCoreAuditRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
-        hints.proxies().registerJdkProxy(AuditTrailExecutionPlanConfigurer.class);
+        registerProxyHints(hints, List.of(AuditTrailExecutionPlanConfigurer.class));
 
         registerReflectionHints(hints, List.of(
             AuditTrailExecutionPlan.class,
             AuditTrailExecutionPlanConfigurer.class,
+            AuditTrailRecordResolutionPlanConfigurer.class,
             AuditTrailManagementAspect.class
         ));
 
@@ -37,11 +39,8 @@ public class CasCoreAuditRuntimeHints implements CasRuntimeHintsRegistrar {
             AuditActionResolver.class,
             AuditResourceResolver.class,
             AuditTrailExecutionPlanConfigurer.class,
+            AuditTrailRecordResolutionPlanConfigurer.class,
             AuditEventRepository.class));
-    }
-
-    private static void registerProxyHints(final RuntimeHints hints, final Collection<Class> subclassesInPackage) {
-        subclassesInPackage.forEach(clazz -> hints.proxies().registerJdkProxy(clazz));
     }
 
     private static void registerReflectionHints(final RuntimeHints hints, final Collection entries) {

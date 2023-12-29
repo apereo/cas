@@ -1,9 +1,9 @@
 package org.apereo.cas.api;
 
-import org.apereo.cas.util.model.TriStateBoolean;
-
+import org.apereo.cas.configuration.support.TriStateBoolean;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,7 +12,6 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.With;
 import lombok.experimental.SuperBuilder;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -56,10 +55,12 @@ public class PasswordlessUserAccount implements Serializable {
 
     @JsonProperty("multifactorAuthenticationEligible")
     @Builder.Default
+    @JsonDeserialize(using = TriStateBoolean.Deserializer.class)
     private TriStateBoolean multifactorAuthenticationEligible = TriStateBoolean.UNDEFINED;
 
     @JsonProperty("delegatedAuthenticationEligible")
     @Builder.Default
+    @JsonDeserialize(using = TriStateBoolean.Deserializer.class)
     private TriStateBoolean delegatedAuthenticationEligible = TriStateBoolean.UNDEFINED;
 
     @JsonProperty("allowedDelegatedClients")

@@ -10,18 +10,18 @@ members MUST take place on the [mailing list](/cas/Mailing-Lists.html).
 
 ## Members
 
-The current members of the PMC are:
+The current *core* members of the PMC are:
 
 - [Misagh Moayyed](https://github.com/mmoayyed) [Chairman]
-- [Jérôme Leleu](https://github.com/leleuj) [Vice Chairman]
+- [Jérôme Leleu](https://github.com/leleuj)
 - [Hal Deadman](https://github.com/hdeadman)
-- [Dmitriy Kopylenko](https://github.com/dima767)
 
 Emeritus members are:
 
 - [Bill Thompson](https://github.com/wgthom)
 - [Daniel Frett](https://github.com/frett)
 - [Travis Schmidt](https://github.com/tsschmidt)
+- [Dmitriy Kopylenko](https://github.com/dima767)
 - [Timur Duehr](https://github.com/tduehr)
 - [Scott Battaglia](https://github.com/battags)
 - [Jeff Sittler](https://github.com/mindblender)

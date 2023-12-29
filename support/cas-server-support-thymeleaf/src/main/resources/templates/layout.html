@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" th:lang="${#locale}">
 
 <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-
+    <meta name="_csrf" th:if="${_csrf}" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:if="${_csrf}" th:content="${_csrf.headerName}"/>
+    
     <title layout:title-pattern="$LAYOUT_TITLE $CONTENT_TITLE"
         th:text="${#strings.defaultString(#themes.code('cas.theme.name'), 'CAS - Central Authentication Service')}">
     </title>
@@ -21,6 +23,11 @@
         <link rel="stylesheet" type="text/css" href="../static/css/cas.css" th:href="@{${file}}" />
     </span>
     <link rel="shortcut icon" th:href="@{${#strings.defaultString(#themes.code('cas.favicon.file'), '/favicon.ico')}}" />
+
+    <span th:remove="tag" th:each="name : ${#strings.arraySplit(#themes.code('cas.standard.fragments.head'), ',')}">
+        <span th:replace="~{fragments/custom :: ${name}}" th:remove="tag" />
+    </span>
+
 </head>
 
 <body>
@@ -33,7 +40,7 @@
     <div class="mdc-drawer-scrim"></div>
 
     <div class="mdc-drawer-app-content mdc-top-app-bar--fixed-adjust d-flex justify-content-center">
-        <main role="main" id="main-content" th:attr="class=*{mainContentClass ?: 'container-lg' + ' py-4'} ">
+        <main id="main-content" th:attr="class=*{mainContentClass ?: 'container-lg' + ' py-4'} ">
             <div layout:fragment="content" id="content">
                 CAS content will go here
             </div>
@@ -43,7 +50,7 @@
     <div th:replace="~{fragments/footer :: footer}">
         <a href="fragments/footer.html">Footer</a> fragment will go here
     </div>
-    
+
 </body>
 
 </html>

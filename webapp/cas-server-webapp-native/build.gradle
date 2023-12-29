@@ -14,6 +14,12 @@ ext {
     ]
 }
 
+["bootJar", "processAot", "nativeCompile"].each { name ->
+    tasks.named(name) { task ->
+        task.notCompatibleWithConfigurationCache("${name} is not supported by the Gradle configuration cache")
+    }
+}
+
 configurations {
     configureEach {
         exclude(group: "org.apache.groovy", module: "groovy-templates")
@@ -38,8 +44,10 @@ configurations {
 
 dependencies {
     processAotClasspath libraries.graalvmsdk
+    processAotClasspath libraries.graalvmpolyglot
     processTestAotClasspath libraries.graalvmsdk
-    
+    processTestAotClasspath libraries.graalvmpolyglot
+
     implementation project(":webapp:cas-server-webapp-init")
     implementation project(":webapp:cas-server-webapp-resources")
     implementation project(":webapp:cas-server-webapp-init-tomcat")
@@ -92,6 +100,7 @@ dependencies {
     }
     
     testImplementation libraries.graalvmsdk
+    testImplementation libraries.graalvmpolyglot
 }
 
 graalvmNative {
@@ -124,7 +133,7 @@ graalvmNative {
             buildArgs.add('-H:+BuildReport')
             buildArgs.add('-H:+AddAllCharsets')
             buildArgs.add('-H:+UnlockExperimentalVMOptions')
-
+            
             buildArgs.add('-J-Xmx12G')
             buildArgs.add('-J-Xms4G')
             buildArgs.add('--native-image-info')
@@ -155,10 +164,31 @@ graalvmNative {
             buildArgs.add('--enable-url-protocols=jar,file,resource,http,https')
         }
     }
+
+    /*
+    agent {
+        defaultMode = "direct"
+        enabled = true
+        builtinCallerFilter = false
+        builtinHeuristicFilter = false
+        enableExperimentalPredefinedClasses = true
+        enableExperimentalUnsafeAllocationTracing = false
+        trackReflectionMetadata = false
+        modes {
+            standard {
+            }
+            direct {
+                options.add("config-output-dir={output_dir}")
+                options.add("experimental-configuration-with-origins")
+            }
+        }
+    }
+     */
 }
 
 processAot {
     enabled = providers.systemProperty("skipAot").getOrElse("false") == "false"
+    notCompatibleWithConfigurationCache("processAot is not supported by the Gradle configuration cache")
 
     def list = []
     list.add("--add-opens")
@@ -183,7 +213,7 @@ processAot {
     list.add("-Xrunjdwp:transport=dt_socket,address=*:5005,server=y,suspend=n")
 
     jvmArgs = list
-    systemProperties System.properties
+//    systemProperties System.properties
 
     def aotSpringActiveProfiles = providers.systemProperty("aotSpringActiveProfiles").getOrElse("native")
     logger.info "AOT processing spring active profile: ${aotSpringActiveProfiles}"

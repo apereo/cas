@@ -120,7 +120,7 @@ class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationTests {
         val request = new MockHttpServletRequest();
         val builder = new SAML2AuthnRequestBuilder();
         val authnRequest = builder.build(saml2MessageContext);
-        samlObjectSignatureValidator.verifySamlProfileRequestIfNeeded(authnRequest, adaptor, request, samlContext);
+        samlObjectSignatureValidator.verifySamlProfileRequest(authnRequest, adaptor, request, samlContext);
     }
 
     @Test
@@ -143,7 +143,7 @@ class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationTests {
         handler.initialize();
         handler.invoke(messageContext);
 
-        assertDoesNotThrow(() -> samlObjectSignatureValidator.verifySamlProfileRequestIfNeeded(authnRequest, adaptor, request, samlContext));
+        assertDoesNotThrow(() -> samlObjectSignatureValidator.verifySamlProfileRequest(authnRequest, adaptor, request, samlContext));
     }
 
     @Test
@@ -155,7 +155,7 @@ class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationTests {
         saml2ClientConfiguration.setAuthnRequestSigned(true);
         val authnRequest = builder.build(saml2MessageContext);
 
-        assertDoesNotThrow(() -> samlObjectSignatureValidator.verifySamlProfileRequestIfNeeded(authnRequest, adaptor, request, samlContext));
+        assertDoesNotThrow(() -> samlObjectSignatureValidator.verifySamlProfileRequest(authnRequest, adaptor, request, samlContext));
     }
 
     @Test
@@ -173,7 +173,7 @@ class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationTests {
         val provider = new DefaultSignatureSigningParametersProvider(saml2ClientConfiguration);
         Objects.requireNonNull(secContext).setSignatureSigningParameters(provider.build(adaptor.ssoDescriptor()));
 
-        assertDoesNotThrow(() -> samlObjectSignatureValidator.verifySamlProfileRequestIfNeeded(authnRequest, adaptor, request, samlContext));
+        assertDoesNotThrow(() -> samlObjectSignatureValidator.verifySamlProfileRequest(authnRequest, adaptor, request, samlContext));
 
     }
 }

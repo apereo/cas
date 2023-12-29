@@ -92,19 +92,34 @@ provide support for native images. Additionally, the following scenarios are uns
 and maneuvering to function:
    
 - Apache Log4j does not support native images; [Logback](../logging/Logging-Logback.html) is used instead by default.      
-- All capabilities and features that load, parse and execute Groovy scripts, or load dynamic code constructs.
+- All capabilities and features that load, parse and execute [Groovy scripts](../integration/Apache-Groovy-Scripting.html), or load dynamic code constructs.
 - Libraries and dependencies written in Groovy or other dynamic languages will be extremely challenging to support.
 - All capabilities and features that load CAS configuration properties from external sources that are backed by Spring Cloud.
 - Refresh scope and dynamically refreshing the application context is not supported with CAS native images.
 
-If you find a library which doesn’t work with Graal VM, please discuss that issue
+If you find a library which does not work with Graal VM, please discuss that issue
 on the [reachability metadata project](https://github.com/oracle/graalvm-reachability-metadata).
 
 Note while the startup time is orders of magnitude faster than on the traditional JVM, 
 the actual latency and throughput may be worse on the native image - there is no JIT compiler that optimizes 
 code execution paths in runtime. Ideally, you should run performance tests to find out how CAS behaves 
 as a native image vs a traditional JVM application.
-  
+ 
+### Apache Groovy
+
+Given the dynamic nature of the Apache Groovy programming language and it meta programming model, you will find
+that almost all capabilities and features in CAS that load, parse and execute Groovy scripts of any form or load dynamic code constructs
+in Groovy snippets will either not work at all, or will have to be rewritten so they may be *statically* compiled by the Groovy parser.
+While in native image mode, CAS will forcefully and automatically switch the Groovy compiler configuration to use Groovy's 
+static compilation feature which in some case seems to assist with native image compilation.
+
+<div class="alert alert-info">:information_source: <strong>Remember</strong><p>Again, this only 
+works in some cases and will most certainly not be a bulletproof solution. Fixes and enhancements in this area will
+certainly changes to Apache Groovy and/or Graal VM's native image compiler and AOT processing itself none of which
+carry any weight or scope here.</p></div>
+
+To learn more about Apache Groovy in CAS, please [see this guide](../integration/Apache-Groovy-Scripting.html).
+
 ## Native Image Hints
 
 If you need to provide your own hints for reflection, resources, serialization, proxy usage etc. 

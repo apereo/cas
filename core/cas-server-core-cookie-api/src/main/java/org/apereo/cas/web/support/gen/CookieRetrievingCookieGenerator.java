@@ -42,9 +42,6 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
     @Serial
     private static final long serialVersionUID = -4926982428809856313L;
 
-    /**
-     * Responsible for manging and verifying the cookie value.
-     **/
     private final CookieValueManager casCookieValueManager;
 
     private final CookieGenerationContext cookieGenerationContext;

@@ -2,6 +2,8 @@ package org.apereo.cas.nativex;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.oidc.claims.OidcRegisteredServiceAttributeReleasePolicy;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
+import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreEntity;
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.oidc.ticket.OidcDefaultPushedAuthorizationRequest;
 import org.apereo.cas.oidc.token.OidcJwtAccessTokenCipherExecutor;
@@ -11,6 +13,7 @@ import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import lombok.val;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
+import org.springframework.beans.factory.DisposableBean;
 import java.util.Collection;
 import java.util.List;
 
@@ -23,8 +26,14 @@ import java.util.List;
 public class OidcRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
-        registerSerializationHints(hints, List.of(OidcRegisteredService.class, OidcDefaultPushedAuthorizationRequest.class));
+        registerSerializationHints(hints, List.of(
+            OidcRegisteredService.class,
+            OidcJsonWebKeyCacheKey.class,
+            OidcDefaultPushedAuthorizationRequest.class,
+            OidcJsonWebKeystoreEntity.class
+        ));
         registerReflectionHints(hints, List.of(
+            OidcJsonWebKeystoreEntity.class,
             OidcJsonWebKeystoreGeneratorService.class,
             OidcRegisteredService.class,
             OidcJwtAccessTokenCipherExecutor.class,
@@ -34,6 +43,10 @@ public class OidcRuntimeHints implements CasRuntimeHintsRegistrar {
         val releasePolicies = findSubclassesInPackage(OidcRegisteredServiceAttributeReleasePolicy.class, CentralAuthenticationService.NAMESPACE);
         registerReflectionHints(hints, releasePolicies);
         registerSerializationHints(hints, releasePolicies);
+
+        val entries = findSubclassesInPackage(OidcJsonWebKeystoreGeneratorService.class, CentralAuthenticationService.NAMESPACE);
+        registerReflectionHints(hints, entries);
+        registerSpringProxy(hints, OidcJsonWebKeystoreGeneratorService.class, DisposableBean.class);
     }
 
     private static void registerSerializationHints(final RuntimeHints hints, final Collection<Class> entries) {

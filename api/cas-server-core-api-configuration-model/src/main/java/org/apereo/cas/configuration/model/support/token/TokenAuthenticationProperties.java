@@ -1,11 +1,13 @@
 package org.apereo.cas.configuration.model.support.token;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationHandlerStates;
+import org.apereo.cas.configuration.model.core.util.EncryptionJwtCryptoProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionOptionalSigningOptionalJwtCryptographyProperties;
+import org.apereo.cas.configuration.model.core.util.SigningJwtCryptoProperties;
 import org.apereo.cas.configuration.model.core.web.flow.WebflowAutoConfigurationProperties;
 import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
-import org.apereo.cas.util.crypto.CipherExecutor;
 import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,7 +27,7 @@ import java.io.Serializable;
 @Setter
 @Accessors(chain = true)
 @JsonFilter("TokenAuthenticationProperties")
-public class TokenAuthenticationProperties implements Serializable {
+public class TokenAuthenticationProperties implements Serializable, CasFeatureModule {
 
     @Serial
     private static final long serialVersionUID = 6016124091895278265L;
@@ -78,7 +80,7 @@ public class TokenAuthenticationProperties implements Serializable {
     private boolean ssoTokenEnabled;
 
     public TokenAuthenticationProperties() {
-        crypto.getEncryption().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
-        crypto.getSigning().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
+        crypto.getEncryption().setKeySize(EncryptionJwtCryptoProperties.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
+        crypto.getSigning().setKeySize(SigningJwtCryptoProperties.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
     }
 }

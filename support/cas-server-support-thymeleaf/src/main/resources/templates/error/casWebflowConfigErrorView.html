@@ -9,8 +9,8 @@
     <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
 </head>
 <body>
-<main role="main" class="container mt-3 mb-3">
-    <div layout:fragment="content" class="banner banner-danger mdc-card p-4 m-auto w-lg-66 text-justify">
+<main class="container mt-3 mb-3">
+    <div layout:fragment="content" class="banner banner-danger mdc-card p-4 m-auto w-lg-66">
         <h2>Invalid/Unknown Webflow Configuration</h2>
         <p>You are seeing this error because the authentication flow cannot locate or validate the sequence
             of requested events and transitions and does not know how to route the flow to the next step.
@@ -19,7 +19,7 @@
         </p>
         <p>The error message is:</p>
         <code id="exceptionMessage" th:text="${rootCauseException.message}">unknown</code>
-        
+
         <p>Please examine the CAS server logs to find the root cause and additional details.</p>
     </div>
 </main>

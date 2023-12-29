@@ -1,5 +1,5 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 const https = require("https");
 const assert = require("assert");
 
@@ -7,10 +7,11 @@ const assert = require("assert");
     const browser = await puppeteer.launch(cas.browserOptions());
     const service = "https://localhost:9859/anything/app";
     let ticket = null;
+    let userid = null;
     try {
         const page = await cas.newPage(browser);
         const availableUsers = ["casuser", "casadmin"];
-        const userid = availableUsers[Math.floor(Math.random() * availableUsers.length)];
+        userid = availableUsers[Math.floor(Math.random() * availableUsers.length)];
         console.log(`Selected user: ${userid}`);
         await cas.goto(page, `https://localhost:8443/cas/login?TARGET=${service}`);
         await cas.loginWith(page, userid, "Mellon");
@@ -19,7 +20,7 @@ const assert = require("assert");
         await browser.close();
     }
 
-    let request = `<?xml version="1.0" encoding="UTF-8"?>
+    const request = `<?xml version="1.0" encoding="UTF-8"?>
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
 <SOAP-ENV:Header/>
 <SOAP-ENV:Body>
@@ -31,36 +32,36 @@ IssueInstant="2023-03-19T17:03:44.022Z">
 </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>`;
 
-    let options = {
-        protocol: 'https:',
-        hostname: 'localhost',
+    const options = {
+        protocol: "https:",
+        hostname: "localhost",
         port: 8443,
         path: `/cas/samlValidate?TARGET=${service}&SAMLart=${ticket}`,
-        method: 'POST',
+        method: "POST",
         rejectUnauthorized: false,
         headers: {
-            'Content-Length': request.length
+            "Content-Length": request.length
         }
     };
 
-    const post = options =>
+    const post = (options) =>
         new Promise((resolve, reject) => {
-            let req = https
-                .request(options, res => {
-                    res.setEncoding('utf8');
+            const req = https
+                .request(options, (res) => {
+                    res.setEncoding("utf8");
                     const body = [];
-                    res.on('data', chunk => body.push(chunk));
-                    res.on('end', () => resolve(body.join('')));
+                    res.on("data", (chunk) => body.push(chunk));
+                    res.on("end", () => resolve(body.join("")));
                 })
-                .on('error', reject);
+                .on("error", reject);
             req.write(request);
         });
     const body = await post(options);
     console.log(body);
 
     if (userid === "casuser") {
-        assert(`body.contains("<saml1:AttributeValue>USER-ACCOUNT</saml1:AttributeValue>")`);
+        assert("body.contains(\"<saml1:AttributeValue>USER-ACCOUNT</saml1:AttributeValue>\")");
     } else {
-        assert(`body.contains("<saml1:AttributeValue>ADMINISTRATOR</saml1:AttributeValue>")`);
+        assert("body.contains(\"<saml1:AttributeValue>ADMINISTRATOR</saml1:AttributeValue>\")");
     }
 })();

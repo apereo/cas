@@ -1,6 +1,6 @@
-const assert = require('assert');
-const cas = require('../../cas.js');
-const fs = require("fs");
+const assert = require("assert");
+const cas = require("../../cas.js");
+
 
 (async () => {
     const privateKey = "enTHR15K28p0N6f404HaC9Vp1cfIBgQiHhmbgBiO7UHEnSiNJudxtDhPQNFjFQtOVSjEYu0pr5yxEeBAiO6IlA";
@@ -20,14 +20,14 @@ const fs = require("fs");
     params += "grant_type=client_credentials&";
     params += "scope=openid";
 
-    let url = `https://localhost:8443/cas/oidc/token?${params}`;
+    const url = `https://localhost:8443/cas/oidc/token?${params}`;
     await cas.doPost(url, "", {
-        'Content-Type': "application/json"
-    }, res => {
+        "Content-Type": "application/json"
+    }, (res) => {
         assert(res.data.access_token !== null);
         assert(res.data.refresh_token !== null);
         assert(res.data.id_token !== null);
-    }, error => {
+    }, (error) => {
         throw `Operation failed: ${error}`;
     });
 

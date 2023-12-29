@@ -16,7 +16,7 @@
 
     "--cas.authn.throttle.schedule.start-delay=PT60S",
 
-    "--logging.level.org.apereo.cas=debug",
+    "--logging.level.org.apereo.cas=info",
     "--logging.level.org.apereo.cas.web.support.AbstractThrottledSubmissionHandlerInterceptorAdapter=trace"
   ]
 }

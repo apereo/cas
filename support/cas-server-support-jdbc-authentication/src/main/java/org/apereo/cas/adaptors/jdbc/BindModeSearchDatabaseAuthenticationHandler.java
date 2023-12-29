@@ -3,12 +3,11 @@ package org.apereo.cas.adaptors.jdbc;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.configuration.model.support.jdbc.authn.BindJdbcAuthenticationProperties;
 import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.services.ServicesManager;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
 import javax.security.auth.login.FailedLoginException;
 import javax.sql.DataSource;
 import java.util.ArrayList;
@@ -26,12 +25,12 @@ import java.util.ArrayList;
  */
 @Slf4j
 @Monitorable
-public class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
+public class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler<BindJdbcAuthenticationProperties> {
 
-    public BindModeSearchDatabaseAuthenticationHandler(final String name, final ServicesManager servicesManager,
-        final PrincipalFactory principalFactory,
-        final Integer order, final DataSource dataSource) {
-        super(name, servicesManager, principalFactory, order, dataSource);
+    public BindModeSearchDatabaseAuthenticationHandler(
+        final BindJdbcAuthenticationProperties properties, final ServicesManager servicesManager,
+        final PrincipalFactory principalFactory, final DataSource dataSource) {
+        super(properties, servicesManager, principalFactory, dataSource);
     }
 
     @Override
@@ -41,7 +40,7 @@ public class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUse
         val password = credential.toPassword();
         try (val connection = getDataSource().getConnection(username, password)) {
             LOGGER.trace("Established connection to schema [{}]", connection.getSchema());
-            val principal = this.principalFactory.createPrincipal(username);
+            val principal = principalFactory.createPrincipal(username);
             return createHandlerResult(credential, principal, new ArrayList<>(0));
         } catch (final Throwable e) {
             throw new FailedLoginException(e.getMessage());

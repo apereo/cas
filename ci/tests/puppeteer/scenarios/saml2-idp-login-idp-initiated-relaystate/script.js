@@ -1,7 +1,7 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
-const path = require('path');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const assert = require("assert");
+const path = require("path");
+const cas = require("../../cas.js");
 
 async function unsolicited(page, target) {
     const entityId = "http://localhost:9443/simplesaml/module.php/saml/sp/metadata.php/default-sp";
@@ -36,6 +36,6 @@ async function unsolicited(page, target) {
     await unsolicited(page, "https://github.com/apereo/cas");
     await page.waitForTimeout(4000);
 
-    await cas.removeDirectoryOrFile(path.join(__dirname, '/saml-md'));
+    await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
     await browser.close();
 })();

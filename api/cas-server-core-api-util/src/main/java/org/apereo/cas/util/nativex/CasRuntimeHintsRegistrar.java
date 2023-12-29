@@ -104,6 +104,36 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
     }
 
     /**
+     * Register proxy hints together.
+     *
+     * @param hints               the hints
+     * @param subclassesInPackage the subclasses in package
+     */
+    default void registerChainedProxyHints(final RuntimeHints hints, final Class... subclassesInPackage) {
+        hints.proxies().registerJdkProxy(subclassesInPackage);
+    }
+
+    /**
+     * Register proxy hints.
+     *
+     * @param hints               the hints
+     * @param subclassesInPackage the subclasses in package
+     */
+    default void registerProxyHints(final RuntimeHints hints, final Class... subclassesInPackage) {
+        Arrays.stream(subclassesInPackage).forEach(clazz -> hints.proxies().registerJdkProxy(clazz));
+    }
+
+    /**
+     * Register proxy hints.
+     *
+     * @param hints               the hints
+     * @param subclassesInPackage the subclasses in package
+     */
+    default void registerProxyHints(final RuntimeHints hints, final Collection<Class> subclassesInPackage) {
+        subclassesInPackage.forEach(clazz -> hints.proxies().registerJdkProxy(clazz));
+    }
+
+    /**
      * Find subclasses in packages and exclude tests.
      *
      * @param superClass the parent class
@@ -136,7 +166,7 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
      * @return true/false
      */
     static boolean inNativeImage() {
-        return inImageBuildtimeCode()
+        return inImageBuildTimeCode()
             || inImageRuntimeCode()
             || BooleanUtils.toBoolean(System.getProperty(SYSTEM_PROPERTY_SPRING_AOT_PROCESSING));
     }
@@ -165,7 +195,7 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
      * Returns true if (at the time of the call) code is executing in the context of image building
      * (e.g. in a static initializer of class that will be contained in the image).
      */
-    private static boolean inImageBuildtimeCode() {
+    private static boolean inImageBuildTimeCode() {
         return PROPERTY_IMAGE_CODE_VALUE_BUILDTIME.equals(System.getProperty(PROPERTY_IMAGE_CODE_KEY));
     }
 

@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache;
 
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
+import org.apereo.cas.support.saml.InMemoryResourceMetadataResolver;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.BaseSamlIdPServicesTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
@@ -18,8 +19,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.UUID;
 import static org.apereo.cas.util.junit.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link SamlRegisteredServiceMetadataResolverCacheLoaderTests}.
@@ -29,6 +33,25 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("SAMLMetadata")
 class SamlRegisteredServiceMetadataResolverCacheLoaderTests extends BaseSamlIdPServicesTests {
+    @Test
+    void verifyInMemoryXmlMetadata() throws Throwable {
+        val content = IOUtils.toString(new ClassPathResource("sample-sp.xml").getInputStream(), StandardCharsets.UTF_8);
+        val metadataResolver = mock(SamlRegisteredServiceMetadataResolver.class);
+        when(metadataResolver.supports(any())).thenReturn(Boolean.TRUE);
+        when(metadataResolver.isAvailable(any())).thenReturn(Boolean.TRUE);
+        when(metadataResolver.resolve(any())).thenCallRealMethod();
+        when(metadataResolver.resolve(any(SamlRegisteredService.class), any(CriteriaSet.class)))
+            .thenAnswer(e -> List.of(new InMemoryResourceMetadataResolver(content, openSamlConfigBean)));
+        val loader = buildCacheLoader(metadataResolver);
+        val service = new SamlRegisteredService();
+        service.setName(RandomUtils.randomAlphabetic(4));
+        service.setId(RandomUtils.nextLong());
+        service.setServiceId("https://example.org/saml");
+        service.setMetadataLocation(UUID.randomUUID().toString());
+        val key = new SamlRegisteredServiceCacheKey(service, new CriteriaSet());
+        assertNotNull(loader.load(key));
+    }
+
     @Test
     void verifyClasspathByExpression() throws Throwable {
         System.setProperty("CLASSPATH_SP", "classpath:sample-sp.xml");

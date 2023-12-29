@@ -1,9 +1,8 @@
 package org.apereo.cas.services.consent;
 
+import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.apereo.cas.services.RegisteredServiceConsentPolicy;
-import org.apereo.cas.util.model.TriStateBoolean;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.EqualsAndHashCode;
@@ -12,7 +11,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collection;

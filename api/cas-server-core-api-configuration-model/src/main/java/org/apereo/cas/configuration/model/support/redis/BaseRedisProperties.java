@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.redis;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -9,6 +10,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.File;
 import java.io.Serial;
 import java.io.Serializable;
 
@@ -22,7 +24,7 @@ import java.io.Serializable;
 @Setter
 @RequiresModule(name = "cas-server-support-redis-core")
 @Accessors(chain = true)
-public class BaseRedisProperties implements Serializable {
+public class BaseRedisProperties implements Serializable, CasFeatureModule {
 
     @Serial
     private static final long serialVersionUID = -2600996981339638782L;
@@ -136,6 +138,41 @@ public class BaseRedisProperties implements Serializable {
      * so migrate config to UPSTREAM/REPLICA.
      */
     private RedisReadFromTypes readFrom;
+
+    /**
+     * Control how peer verification is handled with redis connections.
+     * Peer verification is a security feature that checks if the host you're
+     * connecting to is who it says it is. This is often done by checking a digital certificate.
+     */
+    private boolean verifyPeer = true;
+
+    /**
+     * Start mutual TLS.
+     * In order to support TLS, Redis should be configured with a X.509 certificate and a private key.
+     * In addition, it is necessary to specify a CA certificate bundle file or path to be used
+     * as a trusted root when validating certificates.
+     */
+    private boolean startTls;
+
+    /**
+     * May be used when making SSL connections.
+     * Sets the certificate file to use for client authentication.
+     * This is typically an {@code X.509} certificate file (or chain file) in PEM format.
+     */
+    private File keyCertificateChainFile;
+
+    /**
+     * May be used when making SSL connections.
+     * Sets the key file for client authentication.
+     * The key is reloaded on each connection attempt that allows to replace certificates during runtime.
+     * This is typically a {@code PKCS#8} private key file in PEM format.
+     */
+    private File keyFile;
+
+    /**
+     * The password of the {@link #keyFile}, or {@code null} if it's not password-protected.
+     */
+    private String keyPassword;
 
     /**
      * The Lettuce library {@code ReadFrom} types that determine how Lettuce routes read operations to replica nodes.

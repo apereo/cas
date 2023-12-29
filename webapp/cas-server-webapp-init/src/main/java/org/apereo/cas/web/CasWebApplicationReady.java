@@ -3,14 +3,12 @@ package org.apereo.cas.web;
 import org.apereo.cas.configuration.CasConfigurationPropertiesValidator;
 import org.apereo.cas.util.AsciiArtUtils;
 import org.apereo.cas.util.DateTimeUtils;
-
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ConfigurableApplicationContext;
-
 import java.time.Instant;
 
 /**
@@ -31,7 +29,8 @@ public class CasWebApplicationReady implements CasWebApplicationReadyListener {
 
     @Override
     public void handleApplicationReadyEvent(final ApplicationReadyEvent event) {
-        AsciiArtUtils.printAsciiArtReady(LOGGER, StringUtils.EMPTY);
+        val properties = ApplicationContextProvider.getCasConfigurationProperties().orElseThrow();
+        AsciiArtUtils.printAsciiArtReady(LOGGER, "CAS is now running at " + properties.getServer().getPrefix());
         
         LOGGER.info("Ready to process requests @ [{}]", DateTimeUtils.zonedDateTimeOf(Instant.ofEpochMilli(event.getTimestamp())));
         val validator = new CasConfigurationPropertiesValidator(applicationContext);

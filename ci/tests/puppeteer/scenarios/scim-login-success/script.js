@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
-const assert = require('assert');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
+const assert = require("assert");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -11,19 +11,19 @@ const assert = require('assert');
 
     await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
-    await cas.assertInnerText(page, '#content div h2', "Log In Successful");
+    await cas.assertInnerText(page, "#content div h2", "Log In Successful");
 
     await cas.doGet("http://localhost:9666/scim/v2/Users?attributes=userName",
-        res => {
+        (res) => {
             assert(res.status === 200);
-            let length = res.data.Resources.length;
+            const length = res.data.Resources.length;
             cas.log(`Found ${length} record`);
             assert(length === 1);
-            assert(res.data.Resources[0].userName === "casscimuser")
+            assert(res.data.Resources[0].userName === "casscimuser");
         },
-        error => {
+        (error) => {
             throw error;
-        }, { 'Authorization': "Basic c2NpbS11c2VyOmNoYW5nZWl0" });
+        }, { "Authorization": "Basic c2NpbS11c2VyOmNoYW5nZWl0" });
 
     
     await browser.close();

@@ -11,6 +11,8 @@ import org.jooq.lambda.fi.util.function.CheckedConsumer;
 import org.jooq.lambda.fi.util.function.CheckedFunction;
 import org.jooq.lambda.fi.util.function.CheckedSupplier;
 import org.springframework.retry.RetryCallback;
+import org.springframework.retry.RetryContext;
+import org.springframework.retry.RetryListener;
 import org.springframework.retry.backoff.FixedBackOffPolicy;
 import org.springframework.retry.policy.SimpleRetryPolicy;
 import org.springframework.retry.support.RetryTemplate;
@@ -144,6 +146,19 @@ public class FunctionUtils {
     }
 
     /**
+     * Do if blank.
+     *
+     * @param <T>          the type parameter
+     * @param input        the input
+     * @param trueFunction the true function
+     */
+    public static <T> void doIfBlank(final CharSequence input, final CheckedConsumer<T> trueFunction) {
+        if (StringUtils.isBlank(input)) {
+            doAndHandle(trueFunction);
+        }
+    }
+
+    /**
      * Do if not blank.
      *
      * @param <T>           the type parameter
@@ -164,8 +179,7 @@ public class FunctionUtils {
      * @param input        the input
      * @param trueFunction the true function
      */
-    public static <T extends CharSequence> void doIfNotBlank(final T input,
-                                                             final CheckedConsumer<T> trueFunction) {
+    public static <T extends CharSequence> void doIfNotBlank(final T input, final CheckedConsumer<T> trueFunction) {
         try {
             if (StringUtils.isNotBlank(input)) {
                 trueFunction.accept(input);
@@ -422,6 +436,17 @@ public class FunctionUtils {
     }
 
     /**
+     * Do if condition holds.
+     *
+     * @param <T>          the type parameter
+     * @param condition    the condition
+     * @param trueFunction the true function
+     */
+    public static <T> void doWhen(final boolean condition, final Consumer<T> trueFunction) {
+        doIf(condition, trueFunction, __ -> {}).accept(null);
+    }
+    
+    /**
      * Do without throws and return status.
      *
      * @param func   the func
@@ -465,8 +490,9 @@ public class FunctionUtils {
      * @param <T>      the type parameter
      * @param callback the callback
      * @return the t
+     * @throws Exception the exception
      */
-    public static <T> T doAndRetry(final RetryCallback<T, Exception> callback) {
+    public static <T> T doAndRetry(final RetryCallback<T, Exception> callback) throws Exception {
         return doAndRetry(List.of(), callback);
     }
 
@@ -477,9 +503,10 @@ public class FunctionUtils {
      * @param clazzes  the classified clazzes
      * @param callback the callback
      * @return the t
+     * @throws Exception the exception
      */
     public static <T> T doAndRetry(final List<Class<? extends Throwable>> clazzes,
-                                   final RetryCallback<T, Exception> callback) {
+                                   final RetryCallback<T, Exception> callback) throws Exception {
         val retryTemplate = new RetryTemplate();
         retryTemplate.setBackOffPolicy(new FixedBackOffPolicy());
 
@@ -488,9 +515,17 @@ public class FunctionUtils {
         classified.put(Throwable.class, Boolean.TRUE);
         clazzes.forEach(clz -> classified.put(clz, Boolean.TRUE));
 
-        retryTemplate.setRetryPolicy(new SimpleRetryPolicy(SimpleRetryPolicy.DEFAULT_MAX_ATTEMPTS, classified, true));
+        val retryPolicy = new SimpleRetryPolicy(SimpleRetryPolicy.DEFAULT_MAX_ATTEMPTS, classified, true);
+        retryTemplate.setRetryPolicy(retryPolicy);
         retryTemplate.setThrowLastExceptionOnExhausted(true);
-        return Unchecked.supplier(() -> retryTemplate.execute(callback)).get();
+        retryTemplate.registerListener(new RetryListener() {
+            @Override
+            public boolean open(final RetryContext context, final RetryCallback __) {
+                context.setAttribute("retry.maxAttempts", retryPolicy.getMaxAttempts());
+                return RetryListener.super.open(context, __);
+            }
+        });
+        return retryTemplate.execute(callback);
     }
 
     /**

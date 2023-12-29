@@ -12,7 +12,7 @@ docker stop mongodb-server || true && docker rm mongodb-server || true
 docker run --rm -d -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=root \
   -e MONGO_INITDB_ROOT_PASSWORD=secret --name="mongodb-server" \
   -v "$PWD"/ci/tests/mongodb/mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh:ro \
-  mongo:7.0.2
+  mongo:7.0.4
 docker logs mongodb-server &
 sleep 5
 docker ps | grep "mongodb-server"

@@ -1,9 +1,8 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const assert = require("assert");
+const cas = require("../../cas.js");
 
 (async () => {
-
     for (const endpoint of ["validate", "serviceValidate", "p3/serviceValidate"]) {
         await cas.log(`Checking validation endpoint: ${endpoint}`);
 
@@ -19,9 +18,9 @@ const cas = require('../../cas.js');
         let body = await validate(endpoint, service1, ticket, false);
 
         if (endpoint === "validate") {
-            assert(body === "yes\ncasuser\n")
+            assert(body === "yes\ncasuser\n");
         } else {
-            assert(body.includes("<cas:authenticationSuccess>"))
+            assert(body.includes("<cas:authenticationSuccess>"));
         }
 
         const service2 = "https://localhost:9859/get";
@@ -31,9 +30,9 @@ const cas = require('../../cas.js');
         body = await validate(endpoint, service2, ticket, true);
 
         if (endpoint === "validate") {
-            assert(body === "no\n\n")
+            assert(body === "no\n\n");
         } else {
-            assert(body.includes('<cas:authenticationFailure code="INVALID_TICKET">'))
+            assert(body.includes("<cas:authenticationFailure code=\"INVALID_TICKET\">"));
         }
         await browser.close();
     }
@@ -45,7 +44,7 @@ async function validate(endpoint, service, ticket, renew = false) {
         path = `${path}&renew=true`;
     }
     await cas.log(`Validating ${path}`);
-    let result = await cas.doRequest(`https://localhost:8443${path}`);
+    const result = await cas.doRequest(`https://localhost:8443${path}`);
     await cas.log(result);
     return result;
 }

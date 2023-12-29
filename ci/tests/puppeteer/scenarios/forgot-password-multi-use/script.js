@@ -1,6 +1,5 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -13,13 +12,12 @@ const cas = require('../../cas.js');
     await cas.click(page, "#forgotPasswordLink");
     await page.waitForTimeout(1000);
     await cas.assertInnerText(page, "#reset #fm1 h3", "Reset your password");
-    await cas.assertVisibility(page, '#username');
-    let uid = await page.$('#username');
-    assert("none" === await uid.evaluate(el => el.getAttribute("autocapitalize")));
-    assert("false" === await uid.evaluate(el => el.getAttribute("spellcheck")));
-    assert("username" === await uid.evaluate(el => el.getAttribute("autocomplete")));
+    await cas.assertVisibility(page, "#username");
+    await cas.attributeValue(page, "#username", "autocapitalize", "none");
+    await cas.attributeValue(page, "#username", "spellcheck", "false");
+    await cas.attributeValue(page, "#username", "autocomplete", "username");
 
-    await cas.type(page,'#username', "casuser");
+    await cas.type(page,"#username", "casuser");
     await cas.pressEnter(page);
     await page.waitForNavigation();
 
@@ -33,7 +31,7 @@ const cas = require('../../cas.js');
     await cas.click(page, "table tbody td a");
     await page.waitForTimeout(1000);
 
-    let link = await cas.textContent(page, "div[name=bodyPlainText] .well");
+    const link = await cas.textContent(page, "div[name=bodyPlainText] .well");
     await cas.goto(page, link);
     await page.waitForTimeout(1000);
     await cas.assertInnerText(page, "#content #pwdmain h3", "Hello, casuser. You must change your password.");

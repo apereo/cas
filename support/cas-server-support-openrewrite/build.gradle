@@ -1,0 +1,52 @@
+description = "Apereo CAS Open Rewrite Support"
+
+tasks.register("createOpenRewriteRecipe") {
+    def casVersion = rootProject.version.replaceAll(/-SNAPSHOT/, '')
+    def tomcatVersion = project.tomcatVersion
+    def sourceCompatibility = project.sourceCompatibility
+    def springBootVersion = project.springBootVersion
+    def jibVersion = project.jibVersion
+    def gradleVersion = gradle.gradleVersion
+    def recipeName = "cas${casVersion.replaceAll(/\.|-SNAPSHOT/, '')}"
+
+    def inputFile = file("recipes/current.gtemplate")
+    def templateContents = inputFile.text
+    def recipeFileName = "recipes/META-INF/rewrite/${recipeName}.yml"
+    def outputFile = file(recipeFileName)
+
+    outputs.file(outputFile)
+    outputs.cacheIf { true }
+
+    /**
+     * All properties that could have an effect on the generation of
+     * the recipe must be defined as inputs to the task.
+     */
+    inputs.property("casVersion", casVersion)
+    inputs.property("tomcatVersion", tomcatVersion)
+    inputs.property("sourceCompatibility", sourceCompatibility)
+    inputs.property("springBootVersion", springBootVersion)
+    inputs.property("jibVersion", jibVersion)
+    inputs.property("gradleVersion", gradleVersion)
+    inputs.property("recipeName", recipeName)
+    inputs.property("recipeFileName", recipeFileName)
+    inputs.file(inputFile).withPropertyName("openrewrite-template").withPathSensitivity(PathSensitivity.RELATIVE)
+
+    doFirst {
+        def model = [:]
+        model.put("recipeName", recipeName)
+        model.put("tomcatVersion", tomcatVersion)
+        model.put("casVersion", casVersion)
+        model.put("javaVersion", sourceCompatibility)
+        model.put("jibVersion", jibVersion)
+        model.put("gradleVersion", gradleVersion)
+        model.put("springBootVersion", springBootVersion)
+
+        def engine = new groovy.text.GStringTemplateEngine()
+        def recipe = engine.createTemplate(templateContents).make(model).toString()
+
+        outputFile.write(recipe)
+        println "OpenRewrite recipe created at ${outputFile}"
+        println "The following recipes are available:\n${outputFile.parentFile.listFiles().collect { it.name} }"
+    }
+}
+sourceSets.main.output.dir file("recipes"), builtBy: "createOpenRewriteRecipe"

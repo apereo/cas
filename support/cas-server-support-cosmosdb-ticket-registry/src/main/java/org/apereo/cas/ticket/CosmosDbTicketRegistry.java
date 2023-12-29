@@ -141,21 +141,18 @@ public class CosmosDbTicketRegistry extends AbstractTicketRegistry {
     public void addTicket(final Stream<? extends Ticket> toSave) {
         val operations = new HashMap<String, List<CosmosItemOperation>>();
         toSave.forEach(ticket -> {
-            val defn = ticketCatalog.find(ticket);
-            val holder = getCosmosDbTicketDocument(ticket, defn);
-            val commands = (List<CosmosItemOperation>) operations.getOrDefault(defn.getProperties().getStorageName(), new ArrayList<>());
-            commands.add(CosmosBulkOperations.getCreateItemOperation(holder, new PartitionKey(defn.getPrefix())));
-            operations.put(defn.getProperties().getStorageName(), commands);
+            val ticketDefinition = ticketCatalog.find(ticket);
+            val holder = getCosmosDbTicketDocument(ticket, ticketDefinition);
+            val commands = (List<CosmosItemOperation>) operations.getOrDefault(ticketDefinition.getProperties().getStorageName(), new ArrayList<>());
+            commands.add(CosmosBulkOperations.getCreateItemOperation(holder, new PartitionKey(ticketDefinition.getPrefix())));
+            operations.put(ticketDefinition.getProperties().getStorageName(), commands);
         });
         operations.forEach((key, value) -> {
             val container = getTicketContainer(key);
             val result = container.executeBulkOperations(value);
             result.forEach(r -> {
                 if (r.getResponse().getStatusCode() == HttpStatus.TOO_MANY_REQUESTS.value()) {
-                    FunctionUtils.doAndRetry(callback -> {
-                        container.executeBulkOperations(List.of(r.getOperation()));
-                        return null;
-                    });
+                    container.executeBulkOperations(List.of(r.getOperation()));
                 }
             });
         });

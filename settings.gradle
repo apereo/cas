@@ -29,8 +29,8 @@ buildCache {
 gradleEnterprise {
     server = 'https://develocity.apereo.org/'
     allowUntrustedServer = false
-    // accessKey = gradleEnterpriseAccessKey
     buildScan {
+        publishAlways()
         publishIfAuthenticated()
         capture {
             taskInputFiles = true
@@ -381,6 +381,7 @@ include "support:cas-server-support-oidc-jpa"
 include "support:cas-server-support-oidc-mongo"
 include "support:cas-server-support-oidc-services"
 include "support:cas-server-support-okta-authentication"
+include "support:cas-server-support-openrewrite"
 include "support:cas-server-support-otp-mfa"
 include "support:cas-server-support-otp-mfa-core"
 include "support:cas-server-support-pac4j-api"

@@ -4,8 +4,9 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
@@ -59,7 +60,12 @@ public class ClientInfoTests {
     void verifyClientInfoWithServerHost() throws Throwable {
         try {
             val request = getHttpServletRequest();
-            ClientInfoHolder.setClientInfo(ClientInfo.from(request, "server-header", "client-header", true));
+            val options = ClientInfoExtractionOptions.builder()
+                .useServerHostAddress(true)
+                .alternateServerAddrHeaderName("server-header")
+                .alternateLocalAddrHeaderName("client-header")
+                .build();
+            ClientInfoHolder.setClientInfo(ClientInfo.from(request, options));
             val clientInfo = ClientInfo.from(request);
             ClientInfoHolder.setClientInfo(clientInfo);
             val foundInfo = ClientInfoHolder.getClientInfo();
@@ -70,10 +76,53 @@ public class ClientInfoTests {
     }
 
     @Test
+    void verifyHeaderExtractionForAllHeaders() throws Throwable {
+        try {
+            val request = getHttpServletRequest();
+            val options = ClientInfoExtractionOptions.builder()
+                .useServerHostAddress(true)
+                .alternateServerAddrHeaderName("server-header")
+                .alternateLocalAddrHeaderName("client-header")
+                .httpRequestHeaders(List.of("*"))
+                .build();
+            val clientInfo = ClientInfo.from(request, options);
+            assertTrue(clientInfo.getHeaders().containsKey("server-header"));
+            assertTrue(clientInfo.getHeaders().containsKey("client-header"));
+            assertTrue(clientInfo.getHeaders().containsKey("user-agent"));
+        } finally {
+            ClientInfoHolder.clear();
+        }
+    }
+
+    @Test
+    void verifyHeaderExtractionForDefinedHeaders() throws Throwable {
+        try {
+            val request = getHttpServletRequest();
+            val options = ClientInfoExtractionOptions.builder()
+                .useServerHostAddress(true)
+                .alternateServerAddrHeaderName("server-header")
+                .alternateLocalAddrHeaderName("client-header")
+                .httpRequestHeaders(List.of("user-agent"))
+                .build();
+            val clientInfo = ClientInfo.from(request, options);
+            assertFalse(clientInfo.getHeaders().containsKey("server-header"));
+            assertFalse(clientInfo.getHeaders().containsKey("client-header"));
+            assertTrue(clientInfo.getHeaders().containsKey("user-agent"));
+        } finally {
+            ClientInfoHolder.clear();
+        }
+    }
+
+    @Test
     void verifyClientInfoWithoutServerHost() throws Throwable {
         try {
             val request = getHttpServletRequest();
-            ClientInfoHolder.setClientInfo(ClientInfo.from(request, "server-header", "client-header", false));
+            val options = ClientInfoExtractionOptions.builder()
+                .useServerHostAddress(false)
+                .alternateServerAddrHeaderName("server-header")
+                .alternateLocalAddrHeaderName("client-header")
+                .build();
+            ClientInfoHolder.setClientInfo(ClientInfo.from(request, options));
             val clientInfo = ClientInfo.from(request);
             ClientInfoHolder.setClientInfo(clientInfo);
             val foundInfo = ClientInfoHolder.getClientInfo();

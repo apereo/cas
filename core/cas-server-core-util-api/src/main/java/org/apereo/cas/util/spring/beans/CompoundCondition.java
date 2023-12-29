@@ -5,13 +5,15 @@ import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.env.PropertyResolver;
 import java.io.Serializable;
 import java.util.ArrayDeque;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Deque;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
@@ -22,14 +24,18 @@ import java.util.regex.Pattern;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@RequiredArgsConstructor
+@NoArgsConstructor
 class CompoundCondition implements BeanCondition {
     private static final Pattern EXPRESSION_PATTERN = RegexUtils.createPattern("\\$\\{.+\\}");
 
     private final Deque<Condition> conditionList = new ArrayDeque<>();
 
     CompoundCondition(final String name) {
-        conditionList.push(new PropertyCondition(name));
+        and(name);
+    }
+
+    CompoundCondition(final Collection<Condition> conditions) {
+        conditionList.addAll(conditions);
     }
 
     private static String resolvePropertyValue(final PropertyResolver propertyResolver, final PropertyCondition condition) {
@@ -46,6 +52,16 @@ class CompoundCondition implements BeanCondition {
             }
             return null;
         }
+    }
+
+    @Override
+    public BeanCondition toStartWith() {
+        return new CompoundCondition(conditionList);
+    }
+
+    @Override
+    public int count() {
+        return conditionList.size();
     }
 
     @Override
@@ -109,8 +125,8 @@ class CompoundCondition implements BeanCondition {
 
     @Override
     @CanIgnoreReturnValue
-    public BeanCondition and(final Condition condition) {
-        conditionList.push(condition);
+    public BeanCondition and(final Condition... condition) {
+        Arrays.stream(condition).forEach(conditionList::push);
         return this;
     }
 
@@ -143,8 +159,9 @@ class CompoundCondition implements BeanCondition {
     }
 
     @SuppressWarnings("UnusedVariable")
-    private record BooleanCondition(Boolean value) implements Condition {}
-    
+    private record BooleanCondition(Boolean value) implements Condition {
+    }
+
     @Data
     private static final class PropertyCondition implements Condition {
         private final String propertyName;

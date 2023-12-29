@@ -11,7 +11,7 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.security.CasWebSecurityConfigurerAdapter;
 
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apereo.inspektr.common.web.ClientInfoExtractionOptions;
 import org.apereo.inspektr.common.web.ClientInfoThreadLocalFilter;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
@@ -46,9 +46,8 @@ import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -106,26 +105,19 @@ public class CasWebSecurityConfiguration {
         @ConditionalOnMissingBean(name = "casClientInfoLoggingFilter")
         public FilterRegistrationBean<ClientInfoThreadLocalFilter> casClientInfoLoggingFilter(
             final CasConfigurationProperties casProperties) {
-            val audit = casProperties.getAudit().getEngine();
-
             val bean = new FilterRegistrationBean<ClientInfoThreadLocalFilter>();
-            bean.setFilter(new ClientInfoThreadLocalFilter());
+            val audit = casProperties.getAudit().getEngine();
+            val options = ClientInfoExtractionOptions.builder()
+                .alternateLocalAddrHeaderName(audit.getAlternateClientAddrHeaderName())
+                .alternateServerAddrHeaderName(audit.getAlternateServerAddrHeaderName())
+                .useServerHostAddress(audit.isUseServerHostAddress())
+                .httpRequestHeaders(audit.getHttpRequestHeaders())
+                .build();
+            bean.setFilter(new ClientInfoThreadLocalFilter(options));
             bean.setUrlPatterns(CollectionUtils.wrap("/*"));
             bean.setName("CAS Client Info Logging Filter");
             bean.setAsyncSupported(true);
             bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
-
-            val initParams = new HashMap<String, String>();
-            if (StringUtils.isNotBlank(audit.getAlternateClientAddrHeaderName())) {
-                initParams.put(ClientInfoThreadLocalFilter.CONST_IP_ADDRESS_HEADER, audit.getAlternateClientAddrHeaderName());
-            }
-
-            if (StringUtils.isNotBlank(audit.getAlternateServerAddrHeaderName())) {
-                initParams.put(ClientInfoThreadLocalFilter.CONST_SERVER_IP_ADDRESS_HEADER, audit.getAlternateServerAddrHeaderName());
-            }
-
-            initParams.put(ClientInfoThreadLocalFilter.CONST_USE_SERVER_HOST_ADDRESS, String.valueOf(audit.isUseServerHostAddress()));
-            bean.setInitParameters(initParams);
             return bean;
         }
 

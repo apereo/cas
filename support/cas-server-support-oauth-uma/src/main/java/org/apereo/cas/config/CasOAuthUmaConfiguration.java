@@ -7,6 +7,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
+import org.apereo.cas.support.oauth.web.response.introspection.OAuth20IntrospectionResponseGenerator;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.IdTokenGeneratorService;
 import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
@@ -46,16 +47,14 @@ import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.spring.RefreshableHandlerInterceptor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
+import org.apereo.cas.web.SecurityLogicInterceptor;
 
 import lombok.val;
-import org.pac4j.core.authorization.authorizer.DefaultAuthorizers;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.authenticator.Authenticator;
-import org.pac4j.core.matching.matcher.DefaultMatchers;
 import org.pac4j.http.client.direct.HeaderClient;
 import org.pac4j.jee.context.JEEContextFactory;
-import org.pac4j.springframework.web.SecurityInterceptor;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -71,7 +70,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -159,7 +159,8 @@ public class CasOAuthUmaConfiguration {
             final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
             @Qualifier("umaResourceSetRepository")
             final ResourceSetRepository umaResourceSetRepository,
-            final CasConfigurationProperties casProperties) {
+            final CasConfigurationProperties casProperties,
+            final List<OAuth20IntrospectionResponseGenerator> oauthIntrospectionResponseGenerator) {
 
             return UmaConfigurationContext.builder()
                 .authenticationAttributeReleasePolicy(authenticationAttributeReleasePolicy)
@@ -176,6 +177,7 @@ public class CasOAuthUmaConfiguration {
                 .umaResourceSetRepository(umaResourceSetRepository)
                 .idTokenSigningAndEncryptionService(umaTokenSigningAndEncryptionService)
                 .ticketFactory(ticketFactory)
+                .introspectionResponseGenerator(oauthIntrospectionResponseGenerator)
                 .build();
         }
 
@@ -184,7 +186,7 @@ public class CasOAuthUmaConfiguration {
     @Configuration(value = "CasOAuthUmaInterceptorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasOAuthUmaInterceptorConfiguration {
-        private static SecurityInterceptor getSecurityInterceptor(
+        private static SecurityLogicInterceptor getSecurityInterceptor(
             final Authenticator authenticator,
             final String clientName,
             final SessionStore oauthDistributedSessionStore,
@@ -197,12 +199,11 @@ public class CasOAuthUmaConfiguration {
             val config = new Config(OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()), headerClient);
             config.setSessionStoreFactory(objects -> oauthDistributedSessionStore);
             config.setWebContextFactory(JEEContextFactory.INSTANCE);
-            return new SecurityInterceptor(config, clients, DefaultAuthorizers.IS_FULLY_AUTHENTICATED,
-                    DefaultMatchers.SECURITYHEADERS);
+            return new SecurityLogicInterceptor(config, clients);
         }
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public SecurityInterceptor umaRequestingPartyTokenSecurityInterceptor(
+        public SecurityLogicInterceptor umaRequestingPartyTokenSecurityInterceptor(
             final CasConfigurationProperties casProperties,
             @Qualifier("oauthDistributedSessionStore")
             final SessionStore oauthDistributedSessionStore,
@@ -216,7 +217,7 @@ public class CasOAuthUmaConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public SecurityInterceptor umaAuthorizationApiTokenSecurityInterceptor(
+        public SecurityLogicInterceptor umaAuthorizationApiTokenSecurityInterceptor(
             final CasConfigurationProperties casProperties,
             @Qualifier("oauthDistributedSessionStore")
             final SessionStore oauthDistributedSessionStore,
@@ -252,9 +253,9 @@ public class CasOAuthUmaConfiguration {
         @ConditionalOnMissingBean(name = "umaWebMvcConfigurer")
         public WebMvcConfigurer umaWebMvcConfigurer(
             @Qualifier("umaAuthorizationApiTokenSecurityInterceptor")
-            final ObjectProvider<SecurityInterceptor> umaAuthorizationApiTokenSecurityInterceptor,
+            final ObjectProvider<SecurityLogicInterceptor> umaAuthorizationApiTokenSecurityInterceptor,
             @Qualifier("umaRequestingPartyTokenSecurityInterceptor")
-            final ObjectProvider<SecurityInterceptor> umaRequestingPartyTokenSecurityInterceptor) {
+            final ObjectProvider<SecurityLogicInterceptor> umaRequestingPartyTokenSecurityInterceptor) {
             return new WebMvcConfigurer() {
                 @Override
                 public void addInterceptors(

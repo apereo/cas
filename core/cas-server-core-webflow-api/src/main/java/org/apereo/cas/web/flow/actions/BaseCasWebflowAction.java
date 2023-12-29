@@ -1,8 +1,14 @@
 package org.apereo.cas.web.flow.actions;
 
+import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.decorator.WebflowDecorator;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
+import org.springframework.beans.factory.BeanFactoryUtils;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.StateDefinition;
@@ -28,6 +34,19 @@ public abstract class BaseCasWebflowAction extends AbstractAction {
         val currentFlowId = Optional.ofNullable(requestContext.getActiveFlow())
             .map(FlowDefinition::getId).orElse("unknown");
         return currentFlowId.equalsIgnoreCase(CasWebflowConfigurer.FLOW_ID_LOGIN);
+    }
+
+    @Override
+    protected Event doPreExecute(final RequestContext requestContext) throws Exception {
+        val applicationContext = requestContext.getActiveFlow().getApplicationContext();
+        FunctionUtils.doIfNotNull(applicationContext, __ ->
+            BeanFactoryUtils.beansOfTypeIncludingAncestors(applicationContext, WebflowDecorator.class)
+                .values()
+                .stream()
+                .filter(BeanSupplier::isNotProxy)
+                .sorted(AnnotationAwareOrderComparator.INSTANCE)
+                .forEach(Unchecked.consumer(decorator -> decorator.decorate(requestContext))));
+        return super.doPreExecute(requestContext);
     }
 
     @Override

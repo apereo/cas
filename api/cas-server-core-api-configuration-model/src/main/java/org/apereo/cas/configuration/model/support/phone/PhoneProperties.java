@@ -1,13 +1,12 @@
 package org.apereo.cas.configuration.model.support.phone;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 import com.fasterxml.jackson.annotation.JsonFilter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.apache.commons.lang3.StringUtils;
 import java.io.Serial;
 import java.io.Serializable;
 
@@ -22,7 +21,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-core-util", automated = true)
 @Accessors(chain = true)
 @JsonFilter("PhoneProperties")
-public class PhoneProperties implements Serializable {
+public class PhoneProperties implements CasFeatureModule, Serializable {
 
     @Serial
     private static final long serialVersionUID = -3713886839517507306L;
@@ -46,14 +45,4 @@ public class PhoneProperties implements Serializable {
      */
     @RequiredProperty
     private String attributeName = "phone";
-
-    /**
-     * Is text/from defined.
-     *
-     * @return true/false
-     */
-    @JsonIgnore
-    public boolean isDefined() {
-        return StringUtils.isNotBlank(getText()) && StringUtils.isNotBlank(getFrom());
-    }
 }

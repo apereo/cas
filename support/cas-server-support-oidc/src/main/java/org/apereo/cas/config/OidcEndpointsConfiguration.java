@@ -44,6 +44,7 @@ import org.apereo.cas.util.spring.RefreshableHandlerInterceptor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.validation.CasProtocolViewFactory;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
+import org.apereo.cas.web.SecurityLogicInterceptor;
 import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -58,11 +59,8 @@ import org.apereo.cas.web.support.ArgumentExtractor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.authorization.authorizer.DefaultAuthorizers;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.session.SessionStore;
-import org.pac4j.core.matching.matcher.DefaultMatchers;
-import org.pac4j.springframework.web.SecurityInterceptor;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -86,7 +84,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.List;
 import java.util.Optional;
 
@@ -144,9 +142,8 @@ public class OidcEndpointsConfiguration {
         public HandlerInterceptor requiresAuthenticationDynamicRegistrationInterceptor(
             @Qualifier("oauthSecConfig")
             final Config oauthSecConfig) {
-            return new SecurityInterceptor(oauthSecConfig,
-                Authenticators.CAS_OAUTH_CLIENT_DYNAMIC_REGISTRATION_AUTHN,
-                DefaultAuthorizers.IS_FULLY_AUTHENTICATED, DefaultMatchers.SECURITYHEADERS);
+            return new SecurityLogicInterceptor(oauthSecConfig,
+                Authenticators.CAS_OAUTH_CLIENT_DYNAMIC_REGISTRATION_AUTHN);
         }
 
         @Bean
@@ -155,8 +152,7 @@ public class OidcEndpointsConfiguration {
             @Qualifier("oauthSecConfig")
             final Config oauthSecConfig) {
             val clients = String.join(",", OidcConstants.CAS_OAUTH_CLIENT_CONFIG_ACCESS_TOKEN_AUTHN);
-            return new SecurityInterceptor(oauthSecConfig, clients, DefaultAuthorizers.IS_FULLY_AUTHENTICATED,
-                    DefaultMatchers.SECURITYHEADERS);
+            return new SecurityLogicInterceptor(oauthSecConfig, clients);
         }
 
         @Bean

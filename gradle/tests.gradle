@@ -212,14 +212,13 @@ tasks.withType(Test).configureEach {
     if (maxParallelForks != 2) {
         logger.info "Maximum number of parallel forks is set to ${maxParallelForks}"
     }
-    def ci = System.getenv().containsKey("CI")
-    if (ci) {
-        outputs.upToDateWhen { false }
-    }
+//    def ci = System.getenv().containsKey("CI")
+//    if (ci) {
+//        outputs.upToDateWhen { false }
+//    }
     systemProperty("spring.main.banner-mode", "off")
     systemProperty("CI", ci)
-
-
+    
     failFast = true
 
     def list = []
@@ -267,8 +266,6 @@ tasks.withType(Test).configureEach {
 
     list.add("-XX:+EnableDynamicAgentLoading")
     jvmArgs = list
-
-    classpath = it.classpath + files("${projectDir}/src/main/resources") + files("${projectDir}/src/test/resources")
 
     testLogging {
         events "PASSED", "SKIPPED", "FAILED", "STANDARD_OUT", "STANDARD_ERROR"

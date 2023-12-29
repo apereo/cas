@@ -111,7 +111,7 @@ public class SamlIdPDelegatedClientAuthenticationRequestCustomizer implements De
                 .toList();
 
             val definedContexts = CollectionUtils.convertDirectedListToMap(
-                casProperties.getAuthn().getSamlIdp().getCore().getAuthenticationContextClassMappings());
+                casProperties.getAuthn().getSamlIdp().getCore().getContext().getAuthenticationContextClassMappings());
             LOGGER.debug("Defined authentication context mappings are [{}]", definedContexts);
             val mappedMethods = authnContextClassRefs.stream()
                 .map(ref -> definedContexts.getOrDefault(ref, ref))

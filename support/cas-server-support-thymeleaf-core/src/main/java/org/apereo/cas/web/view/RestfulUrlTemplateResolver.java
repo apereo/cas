@@ -14,6 +14,7 @@ import org.apache.hc.core5.http.HttpResponse;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ThemeResolver;
+import org.springframework.web.util.UriComponentsBuilder;
 import org.thymeleaf.IEngineConfiguration;
 import org.thymeleaf.templateresource.ITemplateResource;
 import org.thymeleaf.templateresource.StringTemplateResource;
@@ -45,7 +46,7 @@ public class RestfulUrlTemplateResolver extends ThemeFileTemplateResolver {
                                                         final Map<String, Object> templateResolutionAttributes) {
         val rest = casProperties.getView().getRest();
         val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
-        val themeName = this.themeResolver.resolveThemeName(request);
+        val themeName = themeResolver.resolveThemeName(request);
         val headers = new LinkedHashMap<String, String>();
         headers.put("owner", ownerTemplate);
         headers.put("template", template);
@@ -54,7 +55,11 @@ public class RestfulUrlTemplateResolver extends ThemeFileTemplateResolver {
         if (StringUtils.isNotBlank(themeName)) {
             headers.put("theme", themeName);
         }
-
+        val queryParams = UriComponentsBuilder
+            .fromHttpUrl(HttpRequestUtils.getFullRequestUrl(request))
+            .build()
+            .getQueryParams();
+        
         headers.put("locale", request.getLocale().getCountry());
         headers.putAll(HttpRequestUtils.getRequestHeaders(request));
         headers.putAll(rest.getHeaders());
@@ -67,12 +72,16 @@ public class RestfulUrlTemplateResolver extends ThemeFileTemplateResolver {
                 .method(HttpMethod.valueOf(rest.getMethod().toUpperCase(Locale.ENGLISH).trim()))
                 .url(rest.getUrl())
                 .headers(headers)
+                .parameters(queryParams.toSingleValueMap())
                 .build();
             response = HttpUtils.execute(exec);
             val statusCode = response.getCode();
             if (HttpStatus.valueOf(statusCode).is2xxSuccessful()) {
-                val result = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
-                return new StringTemplateResource(result);
+                val entity = ((HttpEntityContainer) response).getEntity();
+                try (val content = entity.getContent()) {
+                    val result = IOUtils.toString(content, StandardCharsets.UTF_8);
+                    return new StringTemplateResource(result);
+                }
             }
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);

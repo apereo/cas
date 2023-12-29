@@ -6,7 +6,17 @@ import net.shibboleth.shared.component.DestructableComponent;
 import net.shibboleth.shared.component.InitializableComponent;
 import net.shibboleth.shared.resolver.Criterion;
 import net.shibboleth.shared.xml.impl.BasicParserPool;
+import org.apache.velocity.runtime.ParserPool;
+import org.apache.velocity.runtime.Renderable;
+import org.apache.velocity.runtime.RuntimeServices;
+import org.apache.velocity.runtime.directive.Directive;
+import org.apache.velocity.runtime.parser.Parser;
+import org.apache.velocity.runtime.resource.ResourceCache;
 import org.apache.velocity.runtime.resource.ResourceManager;
+import org.apache.velocity.runtime.resource.loader.ResourceLoader;
+import org.apache.velocity.runtime.resource.util.StringResourceRepository;
+import org.apache.velocity.util.introspection.TypeConversionHandler;
+import org.apache.velocity.util.introspection.Uberspect;
 import org.apache.xerces.impl.dv.dtd.DTDDVFactoryImpl;
 import org.apache.xerces.impl.dv.xs.ExtendedSchemaDVFactoryImpl;
 import org.apache.xerces.impl.dv.xs.SchemaDVFactoryImpl;
@@ -18,7 +28,6 @@ import org.opensaml.core.xml.io.Marshaller;
 import org.opensaml.core.xml.io.Unmarshaller;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
-
 import java.util.Collection;
 import java.util.List;
 
@@ -50,16 +59,21 @@ public class CoreSamlRuntimeHints implements CasRuntimeHintsRegistrar {
             .registerPattern("encryption-config.xml")
             .registerPattern("soap11-config.xml");
 
-        registerReflectionHint(hints,
-            findSubclassesInPackage(XMLObjectBuilder.class, "org.opensaml"));
-        registerReflectionHint(hints,
-            findSubclassesInPackage(Marshaller.class, "org.opensaml"));
-        registerReflectionHint(hints,
-            findSubclassesInPackage(Unmarshaller.class, "org.opensaml"));
-        registerReflectionHint(hints,
-            findSubclassesInPackage(Criterion.class, "org.opensaml"));
-        registerReflectionHint(hints,
-            findSubclassesInPackage(ResourceManager.class, "org.apache.velocity.runtime"));
+        registerReflectionHint(hints, findSubclassesInPackage(XMLObjectBuilder.class, "org.opensaml"));
+        registerReflectionHint(hints, findSubclassesInPackage(Marshaller.class, "org.opensaml"));
+        registerReflectionHint(hints, findSubclassesInPackage(Unmarshaller.class, "org.opensaml"));
+        registerReflectionHint(hints, findSubclassesInPackage(Criterion.class, "org.opensaml"));
+        registerReflectionHint(hints, findSubclassesInPackage(ResourceManager.class, ResourceManager.class.getPackageName()));
+        registerReflectionHint(hints, findSubclassesInPackage(ResourceLoader.class, ResourceLoader.class.getPackageName()));
+        registerReflectionHint(hints, findSubclassesInPackage(ResourceCache.class, ResourceCache.class.getPackageName()));
+        registerReflectionHint(hints, findSubclassesInPackage(StringResourceRepository.class, StringResourceRepository.class.getPackageName()));
+        registerReflectionHint(hints, findSubclassesInPackage(Directive.class, Directive.class.getPackageName()));
+        registerReflectionHint(hints, findSubclassesInPackage(Parser.class, Parser.class.getPackageName()));
+        registerReflectionHint(hints, findSubclassesInPackage(ParserPool.class, ParserPool.class.getPackageName()));
+        registerReflectionHint(hints, findSubclassesInPackage(Renderable.class, Renderable.class.getPackageName()));
+        registerReflectionHint(hints, findSubclassesInPackage(RuntimeServices.class, RuntimeServices.class.getPackageName()));
+        registerReflectionHint(hints, findSubclassesInPackage(Uberspect.class, Uberspect.class.getPackageName()));
+        registerReflectionHint(hints, findSubclassesInPackage(TypeConversionHandler.class, TypeConversionHandler.class.getPackageName()));
 
         val list = List.of(
             DestructableComponent.class,
@@ -72,6 +86,7 @@ public class CoreSamlRuntimeHints implements CasRuntimeHintsRegistrar {
             SchemaDVFactoryImpl.class,
             DTDDVFactoryImpl.class);
         registerReflectionHint(hints, list);
+
     }
 
     private static void registerReflectionHint(final RuntimeHints hints, final Collection clazzes) {

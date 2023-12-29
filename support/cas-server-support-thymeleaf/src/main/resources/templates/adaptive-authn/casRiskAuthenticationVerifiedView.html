@@ -10,8 +10,8 @@
 </head>
 
 <body>
-<main role="main" class="container mt-3 mb-3">
-    <div layout:fragment="content" class="mdc-card card p-4 m-auto w-lg-66 text-justify">
+<main class="container mt-3 mb-3">
+    <div layout:fragment="content" class="mdc-card card p-4 m-auto w-lg-66">
         <div class="banner banner-danger my-2" th:if="${flowRequestContext.messageContext.hasErrorMessages()}">
             <h2>Error</h2>
             <p th:each="message : ${flowRequestContext.messageContext.allMessages}"

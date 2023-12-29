@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
+import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -20,7 +21,6 @@ import org.apereo.cas.support.wsfederation.attributes.WsFederationAttributeMutat
 import org.apereo.cas.support.wsfederation.authentication.handler.support.WsFederationAuthenticationHandler;
 import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredentialsToPrincipalResolver;
 import org.apereo.cas.support.wsfederation.web.WsFederationCookieCipherExecutor;
-import org.apereo.cas.support.wsfederation.web.WsFederationCookieGenerator;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -29,6 +29,8 @@ import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.web.support.CookieUtils;
+import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.mgmr.DefaultCasCookieValueManager;
 import org.apereo.cas.web.support.mgmr.DefaultCookieSameSitePolicy;
 import lombok.extern.slf4j.Slf4j;
@@ -109,8 +111,9 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
             val cookie = wsfed.getCookie();
             val cipher = getCipherExecutorForWsFederationConfig(cookie);
             val geoLocationService = applicationContext.getBeanProvider(GeoLocationService.class);
-            return new WsFederationCookieGenerator(new DefaultCasCookieValueManager(cipher, geoLocationService,
-                DefaultCookieSameSitePolicy.INSTANCE, cookie), cookie);
+            val valueManager = new DefaultCasCookieValueManager(cipher, geoLocationService,
+                DefaultCookieSameSitePolicy.INSTANCE, cookie);
+            return new CookieRetrievingCookieGenerator(CookieUtils.buildCookieGenerationContext(cookie), valueManager);
         }
 
         private static CipherExecutor getCipherExecutorForWsFederationConfig(final WsFederationDelegatedCookieProperties cookie) {
@@ -169,7 +172,9 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
             @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
             final IPersonAttributeDao attributeRepository,
             @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) {
+            final ServicesManager servicesManager,
+            @Qualifier(AttributeRepositoryResolver.BEAN_NAME)
+            final AttributeRepositoryResolver attributeRepositoryResolver) {
             val personDirectory = casProperties.getPersonDirectory();
             return plan -> casProperties.getAuthn()
                 .getWsfed()
@@ -192,7 +197,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
                             applicationContext, wsfedPrincipalFactory, attributeRepository,
                             CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
                             WsFederationCredentialsToPrincipalResolver.class, servicesManager, attributeDefinitionStore,
-                            principal, personDirectory);
+                            attributeRepositoryResolver, principal, personDirectory);
                         resolver.setConfiguration(cfg);
                         plan.registerAuthenticationHandlerWithPrincipalResolver(handler, resolver);
                     } else {

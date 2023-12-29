@@ -1,0 +1,29 @@
+[
+  {
+    "trust_framework": "spid",
+    "time": "2019-04-20T20:16Z",
+    "verification_process": "b54c6f-6d3f-4ec5-973e-b0d8506f3bc7",
+    "evidence": [
+      {
+        "type": "document",
+        "validation_method": {
+          "type": "vcrypt"
+        },
+        "verification_method": {
+          "type": "bvr"
+        },
+        "time": "2019-04-20T20:11Z",
+        "document_details": {
+          "type": "passport",
+          "issuer": {
+            "name": "Ministro Affari Esteri",
+            "country": "ITA"
+          },
+          "document_number": "83774554",
+          "date_of_issuance": "2021-04-20",
+          "date_of_expiry": "2041-04-19"
+        }
+      }
+    ]
+  }
+]

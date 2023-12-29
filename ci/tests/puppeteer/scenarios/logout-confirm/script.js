@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const assert = require("assert");
+const cas = require("../../cas.js");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -17,9 +17,9 @@ const cas = require('../../cas.js');
     await cas.gotoLogout(page);
 
     await cas.assertInnerText(page, "#content h2", "Do you, casuser, want to log out completely?");
-    await cas.assertVisibility(page, '#logoutButton');
-    await cas.assertVisibility(page, '#divServices');
-    await cas.assertVisibility(page, '#servicesTable');
+    await cas.assertVisibility(page, "#logoutButton");
+    await cas.assertVisibility(page, "#divServices");
+    await cas.assertVisibility(page, "#servicesTable");
     await cas.submitForm(page, "#fm1");
 
     await cas.logPage(page);
@@ -37,7 +37,7 @@ const cas = require('../../cas.js');
     assert(url === "https://github.com/apereo/cas");
 
     await cas.log("Logout with unauthorized redirect...");
-    let response = await cas.goto(page, "https://localhost:8443/cas/logout?url=https://google.com");
+    const response = await cas.goto(page, "https://localhost:8443/cas/logout?url=https://google.com");
     await cas.log(`${response.status()} ${response.statusText()}`);
     assert(response.status() === 403);
     

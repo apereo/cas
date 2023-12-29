@@ -2,9 +2,9 @@ package org.apereo.cas.sentry;
 
 import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import io.sentry.Sentry;
 import io.sentry.SpanStatus;
+import io.sentry.TransactionOptions;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -12,7 +12,6 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.core.annotation.AnnotationUtils;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
@@ -40,7 +39,9 @@ public class SentryMonitoringAspect implements Serializable {
     @Around("allSentryComponents()")
     public Object aroundSentryMonitoredComponents(final ProceedingJoinPoint joinPoint) {
         val spanType = getSpanTypeFromJoinPoint(joinPoint);
-        val transaction = Sentry.startTransaction(spanType, joinPoint.getSignature().getName(), true);
+        val transactionOptions = new TransactionOptions();
+        transactionOptions.setBindToScope(true);
+        val transaction = Sentry.startTransaction(spanType, joinPoint.getSignature().getName(), transactionOptions);
         var span = Sentry.getSpan();
         if (span == null) {
             span = Sentry.startTransaction(spanType, joinPoint.getSignature().getName());
@@ -61,7 +62,7 @@ public class SentryMonitoringAspect implements Serializable {
             transaction.setStatus(SpanStatus.INTERNAL_ERROR);
 
             Sentry.captureException(e);
-            
+
             throw e;
         } finally {
             LOGGER.debug("Span [{}] ended", span.getOperation());
@@ -87,9 +88,9 @@ public class SentryMonitoringAspect implements Serializable {
     }
 
     @Pointcut("within(org.apereo.cas..*) "
-              + "&& !within(org.apereo.cas..*config..*) "
-              + "&& !within(org.apereo.cas..*Configuration) "
-              + "&& !within(org.apereo.cas.authentication.credential..*)")
+        + "&& !within(org.apereo.cas..*config..*) "
+        + "&& !within(org.apereo.cas..*Configuration) "
+        + "&& !within(org.apereo.cas.authentication.credential..*)")
     private void allSentryComponents() {
     }
 }

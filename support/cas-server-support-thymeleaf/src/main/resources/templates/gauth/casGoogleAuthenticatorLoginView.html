@@ -10,7 +10,7 @@
 </head>
 
 <body>
-<main role="main" class="container mt-3 mb-3">
+<main class="container mt-3 mb-3">
     <div layout:fragment="content" id="login" class="mdc-card card mdc-card-content w-lg-50 p-4 m-auto">
 
         <p th:utext="#{screen.authentication.gauth.selecteddevice(${registeredDevice.name})}"></p>
@@ -27,7 +27,7 @@
                     <div class="w-100 mdc-input-group-field mdc-input-group-field-append">
                         <div class="d-flex">
                             <input type="hidden" id="accountId" name="accountId" size="25" autocomplete="off" th:field="*{accountId}" />
-                    
+
                             <label for="token"
                                 class="mdc-text-field caps-check mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon">
                                 <span class="mdc-notched-outline">
@@ -40,8 +40,8 @@
                                 <input class="mdc-text-field__input form-control pwd" type="password" name="token" id="token"
                                     th:field="*{token}" size="25" autocomplete="off" required />
                             </label>
-                    
-                    
+
+
                             <script type="text/javascript" th:inline="javascript">
                                 /*<![CDATA[*/
                                 let accountId = /*[[${registeredDevice.id}]]*/;
@@ -85,7 +85,7 @@
                 </button>
             </form>
         </span>
-        
+
         <div th:if="${gauthMultipleDeviceRegistrationEnabled}">
             <p>
             <hr width="75%">
@@ -107,7 +107,7 @@
                             <div class="mdc-dialog__content" id="notif-dialog-content">
                                 <div class="mdc-typography--body1">
                                     <div class="banner banner-danger alert alert-danger banner-dismissible"
-                                         style="display: none" id="errorPanel">
+                                         role="alert" style="display: none" id="errorPanel">
                                         <h3>Failure</h3>
                                         <p th:utext="#{screen.authentication.gauth.invalidtoken}">
                                     </div>
@@ -139,11 +139,11 @@
                                                            aria-required="true"
                                                            autocomplete="off"
                                                            required />
-                                                    <div class="mdc-text-field-helper-line invalid-feedback">
-                                                        <div class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg" aria-hidden="true">
+                                                    <span class="mdc-text-field-helper-line invalid-feedback">
+                                                        <span class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg" aria-hidden="true">
                                                             <span th:utext="#{username.required}"></span>
-                                                        </div>
-                                                    </div>
+                                                        </span>
+                                                    </span>
                                                 </label>
                                                 <button class="reveal-password align-self-end mdc-button mdc-button--raised btn btn-primary mdc-input-group-append mdc-icon-button"
                                                         tabindex="-1"
@@ -246,7 +246,7 @@
             </div>
             <!-- Confirmation Dialog -->
 
-            
+
             <script type="text/javascript">
                 (material => {
                     document.addEventListener('DOMContentLoaded', () => {
@@ -260,7 +260,7 @@
                     });
                 })(mdc);
             </script>
-            
+
         </div>
         </p>
     </div>

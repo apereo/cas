@@ -5,7 +5,7 @@
   },
 
   "properties": [
-    "--spring.security.user.roles=ROLE_ADMIN",
+    "--spring.security.user.roles=ADMIN",
     
     "--cas.jdbc.show-sql=false",
     

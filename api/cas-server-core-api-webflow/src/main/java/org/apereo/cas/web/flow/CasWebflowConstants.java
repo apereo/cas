@@ -1406,11 +1406,6 @@ public interface CasWebflowConstants {
     String ACTION_ID_INIT_PASSWORD_CHANGE = "initPasswordChangeAction";
 
     /**
-     * Action id 'renderLoginFormAction'.
-     */
-    String ACTION_ID_RENDER_LOGIN_FORM = "renderLoginFormAction";
-
-    /**
      * Action id 'setServiceUnauthorizedRedirectUrlAction'.
      */
     String ACTION_ID_SET_SERVICE_UNAUTHORIZED_REDIRECT_URL = "setServiceUnauthorizedRedirectUrlAction";
@@ -1947,9 +1942,9 @@ public interface CasWebflowConstants {
     String ACTION_ID_PASSWORD_RESET_VALIDATE_TOKEN = "validatePasswordResetTokenAction";
 
     /**
-     * Action id 'remoteAddressCheck'.
+     * Action id 'remoteAuthenticationCheck'.
      */
-    String ACTION_ID_REMOTE_AUTHENTICATION_ADDRESS_CHECK = "remoteAddressCheck";
+    String ACTION_ID_REMOTE_AUTHENTICATION_ADDRESS_CHECK = "remoteAuthenticationCheck";
 
     /**
      * Action id 'basicAuthenticationAction'.

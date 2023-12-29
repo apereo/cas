@@ -16,6 +16,7 @@ import org.apereo.cas.oidc.web.OidcImplicitIdTokenAndTokenAuthorizationResponseB
 import org.apereo.cas.oidc.web.OidcImplicitIdTokenAuthorizationResponseBuilder;
 import org.apereo.cas.oidc.web.OidcPushedAuthorizationModelAndViewBuilder;
 import org.apereo.cas.oidc.web.OidcPushedAuthorizationRequestUriResponseBuilder;
+import org.apereo.cas.oidc.web.response.OidcIntrospectionResponseGenerator;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
@@ -26,6 +27,7 @@ import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationRe
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ClientCredentialsResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResourceOwnerCredentialsResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20TokenAuthorizationResponseBuilder;
+import org.apereo.cas.support.oauth.web.response.introspection.OAuth20IntrospectionResponseGenerator;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.IdTokenGeneratorService;
 import org.apereo.cas.ticket.TicketFactory;
@@ -198,6 +200,7 @@ public class OidcResponseConfiguration {
                 oauthAuthorizationModelAndViewBuilder);
         }
     }
+
     @Configuration(value = "OidcResponseResourceOwnerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class OidcResponseResourceOwnerConfiguration {
@@ -214,9 +217,20 @@ public class OidcResponseConfiguration {
                 oauthAuthorizationModelAndViewBuilder);
         }
     }
+
     @Configuration(value = "OidcResponseTokenGenerationConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class OidcResponseTokenGenerationConfiguration {
+
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "oidcIntrospectionResponseGenerator")
+        @Bean
+        public OAuth20IntrospectionResponseGenerator oidcIntrospectionResponseGenerator(
+            @Qualifier(OidcConfigurationContext.BEAN_NAME)
+            final ObjectProvider<OidcConfigurationContext> oidcConfigurationContext) {
+            return new OidcIntrospectionResponseGenerator(oidcConfigurationContext);
+        }
+
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcIdTokenGenerator")
         @Bean

@@ -16,6 +16,8 @@ import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.assurance.AssuranceVerificationJsonSource;
 import org.apereo.cas.oidc.assurance.AssuranceVerificationSource;
+import org.apereo.cas.oidc.assurance.AssuranceVerifiedClaimsProducer;
+import org.apereo.cas.oidc.assurance.DefaultAssuranceVerifiedClaimsProducer;
 import org.apereo.cas.oidc.authn.OidcAccessTokenAuthenticator;
 import org.apereo.cas.oidc.authn.OidcCasCallbackUrlResolver;
 import org.apereo.cas.oidc.authn.OidcClientConfigurationAccessTokenAuthenticator;
@@ -93,6 +95,7 @@ import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationRe
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20InvalidAuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResponseModeBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResponseModeFactory;
+import org.apereo.cas.support.oauth.web.response.introspection.OAuth20IntrospectionResponseGenerator;
 import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
@@ -118,6 +121,7 @@ import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
+import org.apereo.cas.web.SecurityLogicInterceptor;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import com.github.benmanes.caffeine.cache.CacheLoader;
@@ -128,17 +132,14 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.jose4j.jwk.JsonWebKeySet;
-import org.pac4j.core.authorization.authorizer.DefaultAuthorizers;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.credentials.extractor.BearerAuthExtractor;
 import org.pac4j.core.engine.SecurityLogic;
 import org.pac4j.core.http.url.UrlResolver;
-import org.pac4j.core.matching.matcher.DefaultMatchers;
 import org.pac4j.http.client.direct.DirectFormClient;
 import org.pac4j.http.client.direct.HeaderClient;
-import org.pac4j.springframework.web.SecurityInterceptor;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -228,9 +229,7 @@ public class OidcConfiguration {
             @Qualifier("oauthSecConfig")
             final Config oauthSecConfig) {
             val authzConfig = oauthSecConfig.withSecurityLogic(oidcAuthorizationSecurityLogic);
-            return new SecurityInterceptor(authzConfig,
-                Authenticators.CAS_OAUTH_CLIENT,
-                DefaultAuthorizers.IS_FULLY_AUTHENTICATED, DefaultMatchers.SECURITYHEADERS);
+            return new SecurityLogicInterceptor(authzConfig, Authenticators.CAS_OAUTH_CLIENT);
         }
     }
 
@@ -774,9 +773,11 @@ public class OidcConfiguration {
             @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME)
             final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
             @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
-            final AuditableExecution registeredServiceAccessStrategyEnforcer) {
+            final AuditableExecution registeredServiceAccessStrategyEnforcer,
+            final List<OAuth20IntrospectionResponseGenerator> oauthIntrospectionResponseGenerator) {
             return (OidcConfigurationContext) OidcConfigurationContext.builder()
-                .tokenIntrospectionSigningAndEncryptionService(oidcTokenIntrospectionSigningAndEncryptionService)
+                .introspectionSigningAndEncryptionService(oidcTokenIntrospectionSigningAndEncryptionService)
+                .introspectionResponseGenerator(oauthIntrospectionResponseGenerator)
                 .argumentExtractor(argumentExtractor)
                 .responseModeJwtBuilder(oidcResponseModeJwtBuilder)
                 .authenticationAttributeReleasePolicy(authenticationAttributeReleasePolicy)
@@ -844,13 +845,24 @@ public class OidcConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = AssuranceVerifiedClaimsProducer.BEAN_NAME)
+        public AssuranceVerifiedClaimsProducer assuranceVerifiedClaimsProducer(
+            @Qualifier(OidcServerDiscoverySettings.BEAN_NAME_FACTORY)
+            final OidcServerDiscoverySettings oidcServerDiscoverySettings,
+            @Qualifier(AssuranceVerificationSource.BEAN_NAME)
+            final AssuranceVerificationSource assuranceVerificationSource) {
+            return new DefaultAssuranceVerifiedClaimsProducer(assuranceVerificationSource, oidcServerDiscoverySettings);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = OidcIdTokenClaimCollector.BEAN_NAME)
         public OidcIdTokenClaimCollector oidcIdTokenClaimCollector(
-            @Qualifier(AssuranceVerificationSource.BEAN_NAME)
-            final AssuranceVerificationSource assuranceVerificationSource,
+            @Qualifier(AssuranceVerifiedClaimsProducer.BEAN_NAME)
+            final AssuranceVerifiedClaimsProducer assuranceVerifiedClaimsProducer,
             @Qualifier(AttributeDefinitionStore.BEAN_NAME)
             final AttributeDefinitionStore attributeDefinitionStore) {
-            return new OidcSimpleIdTokenClaimCollector(attributeDefinitionStore, assuranceVerificationSource);
+            return new OidcSimpleIdTokenClaimCollector(attributeDefinitionStore, assuranceVerifiedClaimsProducer);
         }
 
         @Bean

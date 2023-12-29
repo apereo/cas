@@ -1,13 +1,12 @@
 package org.apereo.cas.support.oauth.web.endpoints;
 
 import org.apereo.cas.audit.AuditableContext;
-import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.response.introspection.BaseOAuth20IntrospectionAccessTokenResponse;
 import org.apereo.cas.support.oauth.web.response.introspection.OAuth20IntrospectionAccessTokenFailureResponse;
-import org.apereo.cas.support.oauth.web.response.introspection.success.OAuth20IntrospectionAccessTokenSuccessResponse;
+import org.apereo.cas.support.oauth.web.response.introspection.OAuth20IntrospectionAccessTokenResponse;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.util.CollectionUtils;
@@ -31,9 +30,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.LinkedHashMap;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link OAuth20IntrospectionEndpointController}.
@@ -44,8 +41,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class OAuth20IntrospectionEndpointController<T extends OAuth20ConfigurationContext> extends BaseOAuth20Controller<T> {
 
-    public OAuth20IntrospectionEndpointController(final T oAuthConfigurationContext) {
-        super(oAuthConfigurationContext);
+    public OAuth20IntrospectionEndpointController(final T context) {
+        super(context);
     }
 
     private static ResponseEntity<OAuth20IntrospectionAccessTokenFailureResponse> buildUnauthorizedResponseEntity(
@@ -111,32 +108,41 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
                 return validationError.get();
             }
 
-            val accessToken = StringUtils.defaultIfBlank(request.getParameter(OAuth20Constants.TOKEN),
+            val accessTokenId = StringUtils.defaultIfBlank(request.getParameter(OAuth20Constants.TOKEN),
                 request.getParameter(OAuth20Constants.ACCESS_TOKEN));
 
-            LOGGER.debug("Located access token [{}] in the request", accessToken);
+            LOGGER.debug("Located access token [{}] in the request", accessTokenId);
 
             val protocolMap = CollectionUtils.<String, Object>wrap(
-                "Token", accessToken,
+                "Token", accessTokenId,
                 "Client ID", registeredService.getClientId(),
                 "Service", registeredService.getName());
             LoggingUtils.protocolMessage("OpenID Connect Introspection Request", protocolMap);
 
-            OAuth20Token ticket = null;
-            try {
-                val token = extractAccessTokenFrom(accessToken);
-                ticket = getConfigurationContext().getTicketRegistry().getTicket(token, OAuth20Token.class);
-            } catch (final InvalidTicketException e) {
-                LOGGER.trace(e.getMessage(), e);
-                LOGGER.info("Unable to fetch access token [{}]: [{}]", accessToken, e.getMessage());
-            }
-            val introspect = createIntrospectionValidResponse(accessToken, ticket);
-
+            val accessToken = fetchAccessTokenFromRegistry(accessTokenId);
+            val introspect = getConfigurationContext()
+                .getIntrospectionResponseGenerator()
+                .stream()
+                .filter(generator -> generator.supports(accessToken))
+                .findFirst()
+                .orElseThrow()
+                .generate(accessTokenId, accessToken);
             return buildIntrospectionEntityResponse(context, introspect);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
         return buildBadRequestResponseEntity(OAuth20Constants.INVALID_REQUEST);
+    }
+
+    private OAuth20Token fetchAccessTokenFromRegistry(final String accessTokenId) {
+        try {
+            val token = extractAccessTokenFrom(accessTokenId);
+            return getConfigurationContext().getTicketRegistry().getTicket(token, OAuth20Token.class);
+        } catch (final InvalidTicketException e) {
+            LOGGER.trace(e.getMessage(), e);
+            LOGGER.info("Unable to fetch access token [{}]: [{}]", accessTokenId, e.getMessage());
+        }
+        return null;
     }
 
     protected Optional<Credentials> extractCredentials(final JEEContext context) {
@@ -145,47 +151,7 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
             getConfigurationContext().getOauthConfig().getProfileManagerFactory());
         return authExtractor.extract(callContext);
     }
-    
-    protected OAuth20IntrospectionAccessTokenSuccessResponse createIntrospectionValidResponse(
-        final String accessTokenId, final OAuth20Token ticket) {
-        val introspect = new OAuth20IntrospectionAccessTokenSuccessResponse();
-        introspect.setScope("CAS");
-        introspect.setActive(ticket != null && !ticket.isExpired());
-        
-        if (ticket != null) {
-            introspect.setClientId(ticket.getClientId());
-            introspect.setAud(ticket.getService().getId());
-            introspect.setToken(accessTokenId);
 
-            val authentication = ticket.getAuthentication();
-            val attributes = new LinkedHashMap<String, Object>(authentication.getAttributes());
-            attributes.putAll(authentication.getPrincipal().getAttributes());
-
-            val subject = authentication.getPrincipal().getId();
-            introspect.setSub(subject);
-            introspect.setUniqueSecurityName(subject);
-            introspect.setIat(ticket.getCreationTime().toInstant().getEpochSecond());
-            introspect.setExp(introspect.getIat() + ticket.getExpirationPolicy().getTimeToLive());
-
-            val methods = attributes.get(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE);
-            val realmNames = CollectionUtils.toCollection(methods)
-                .stream()
-                .map(Object::toString)
-                .collect(Collectors.joining(","));
-
-            introspect.setRealmName(realmNames);
-            val tokenType = attributes.containsKey(OAuth20Constants.DPOP_CONFIRMATION)
-                ? OAuth20Constants.TOKEN_TYPE_DPOP
-                : OAuth20Constants.TOKEN_TYPE_BEARER;
-            introspect.setTokenType(tokenType);
-
-            CollectionUtils.firstElement(attributes.get(OAuth20Constants.GRANT_TYPE))
-                .ifPresent(type -> introspect.setGrantType(type.toString()));
-            CollectionUtils.firstElement(attributes.get(OAuth20Constants.X509_CERTIFICATE_DIGEST))
-                .ifPresent(digest -> introspect.getConfirmation().setX5t(digest.toString()));
-        }
-        return introspect;
-    }
 
     private Optional<ResponseEntity<? extends BaseOAuth20IntrospectionAccessTokenResponse>> validateIntrospectionRequest(
         final OAuthRegisteredService registeredService, final UsernamePasswordCredentials credentials,
@@ -215,7 +181,7 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
     }
 
     protected ResponseEntity buildIntrospectionEntityResponse(
-        final WebContext context, final OAuth20IntrospectionAccessTokenSuccessResponse introspect) {
+        final WebContext context, final OAuth20IntrospectionAccessTokenResponse introspect) {
         return new ResponseEntity<>(introspect, HttpStatus.OK);
     }
 }

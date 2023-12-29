@@ -1,11 +1,9 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.util.model.TriStateBoolean;
-
+import org.apereo.cas.configuration.support.TriStateBoolean;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
