@@ -28,7 +28,7 @@ public class CasThymeleafRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
         hints.resources()
-            .registerResourceBundle("cas-theme-default")
+            .registerPattern("cas-theme-*")
             .registerResourceBundle("messages");
 
         registerReflectionHints(hints, List.of(

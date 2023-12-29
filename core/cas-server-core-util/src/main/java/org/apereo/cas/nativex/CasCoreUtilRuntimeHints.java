@@ -3,14 +3,12 @@ package org.apereo.cas.nativex;
 import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.apereo.cas.util.CasVersion;
 import org.apereo.cas.util.LogMessageSummarizer;
-import org.apereo.cas.util.cipher.JsonWebKeySetStringCipherExecutor;
-import org.apereo.cas.util.cipher.RsaKeyPairCipherExecutor;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 import org.apereo.cas.util.thread.Cleanable;
 import com.fasterxml.jackson.annotation.ObjectIdGenerator;
-import groovy.lang.GroovyClassLoader;
 import groovy.lang.Script;
 import lombok.val;
 import org.apache.commons.lang3.ClassUtils;
@@ -46,8 +44,6 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.util.AbstractCollection;
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -68,7 +64,6 @@ import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
-import java.util.Stack;
 import java.util.TimeZone;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -116,7 +111,7 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
         registerReflectionHintForDeclaredMethod(hints, Map.Entry.class, "getValue");
         registerReflectionHintForDeclaredMethod(hints, Map.class, "isEmpty");
 
-        registerReflectionHints(hints, List.of(
+        registerReflectionHintsForMethodsAndFields(hints, List.of(
             BigDecimal.class,
             BigInteger.class,
             Math.class,
@@ -153,42 +148,53 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
             Configuration.class,
             ResolvedModule.class,
             ServiceLoader.class,
-            HashMap.class,
-            LinkedHashMap.class,
-            Map.Entry.class,
-            AbstractCollection.class,
-            AbstractMap.class,
             Callable.class,
-            Map.class,
-            TypeReference.of("java.util.LinkedHashMap$Entry"),
-            TypeReference.of("java.util.TreeMap$Entry"),
-            TypeReference.of("java.time.Ser"),
-            RsaKeyPairCipherExecutor.class,
-            JsonWebKeySetStringCipherExecutor.class,
-            System.class,
-            TriStateBoolean.Deserializer.class,
-            PersistenceAnnotationBeanPostProcessor.class,
-            ConfigurationClassPostProcessor.class,
-            EventListenerMethodProcessor.class,
-            DefaultEventListenerFactory.class,
-            AutowiredAnnotationBeanPostProcessor.class,
-            CommonAnnotationBeanPostProcessor.class,
-            StaticCompileTransformation.class,
-            StaticTypesTransformation.class,
-            GroovyClassLoader.class,
-            BytecodeInterface8.class,
-            Script.class,
-            LoggerFactory.class,
-            Stack.class
+            Map.class
         ));
 
-        registerReflectionHintsForTypes(hints,
-            TypeReference.of("java.util.HashMap$Node"),
-            TypeReference.of("java.util.HashMap$TreeNode"));
+        registerReflectionHintsForPublicElements(hints, List.of(System.class));
         
-        registerReflectionHints(hints, findSubclassesInPackage(Clock.class, Clock.class.getPackageName()));
-        registerReflectionHints(hints, findSubclassesInPackage(ObjectIdGenerator.class, "com.fasterxml.jackson"));
-        registerReflectionHints(hints, findSubclassesInPackage(LogMessageSummarizer.class, "org.apereo.cas"));
+        registerReflectionHintsForDeclaredElements(hints, List.of(
+            HashMap.class,
+            LinkedHashMap.class,
+            TypeReference.of("java.time.Ser")
+        ));
+
+        registerReflectionHintsForIntrospectedPublicElements(hints, List.of(
+            TypeReference.of("java.util.LinkedHashMap$Entry"),
+            TypeReference.of("java.util.TreeMap$Entry")
+        ));
+
+        registerReflectionHints(hints, List.of(
+            ClassUtils.class,
+            LoggerFactory.class,
+            StaticCompileTransformation.class,
+            StaticTypesTransformation.class,
+            Script.class,
+            BytecodeInterface8.class
+        ));
+
+        registerReflectionHintsForConstructors(hints,
+            List.of(
+                TriStateBoolean.Deserializer.class,
+                PersistenceAnnotationBeanPostProcessor.class,
+                ConfigurationClassPostProcessor.class,
+                EventListenerMethodProcessor.class,
+                DefaultEventListenerFactory.class,
+                AutowiredAnnotationBeanPostProcessor.class,
+                CommonAnnotationBeanPostProcessor.class
+            ));
+
+        registerReflectionHintsForTypes(hints,
+            List.of(
+                TypeReference.of("java.util.HashMap$Node"),
+                TypeReference.of("java.util.HashMap$TreeNode"))
+        );
+
+        registerReflectionHintsForTypes(hints, findSubclassesInPackage(Clock.class, Clock.class.getPackageName()));
+        registerReflectionHintsForPublicElements(hints, findSubclassesInPackage(ObjectIdGenerator.class, "com.fasterxml.jackson"));
+        registerReflectionHintsForPublicElements(hints, findSubclassesInPackage(LogMessageSummarizer.class, "org.apereo.cas"));
+        registerReflectionHintsForPublicElements(hints, findSubclassesInPackage(CipherExecutor.class, "org.apereo.cas"));
 
         registerCaffeineHints(hints);
         registerGroovyDGMClasses(hints, classLoader);
@@ -214,9 +220,9 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
     private void registerCaffeineHints(final RuntimeHints hints) {
         FunctionUtils.doAndHandle(__ -> {
             var clazz = ClassUtils.getClass("com.github.benmanes.caffeine.cache.Node", false);
-            registerReflectionHints(hints, findSubclassesInPackage(clazz, "com.github.benmanes.caffeine.cache"));
+            registerReflectionHintsForConstructors(hints, findSubclassesInPackage(clazz, "com.github.benmanes.caffeine.cache"));
             clazz = ClassUtils.getClass("com.github.benmanes.caffeine.cache.LocalCache", false);
-            registerReflectionHints(hints, findSubclassesInPackage(clazz, "com.github.benmanes.caffeine.cache"));
+            registerReflectionHintsForConstructors(hints, findSubclassesInPackage(clazz, "com.github.benmanes.caffeine.cache"));
         });
     }
 

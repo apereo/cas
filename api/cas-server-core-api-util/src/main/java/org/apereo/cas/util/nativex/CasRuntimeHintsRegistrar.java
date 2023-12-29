@@ -54,6 +54,7 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
      */
     String SYSTEM_PROPERTY_SPRING_AOT_PROCESSING = "spring.aot.processing";
 
+
     /**
      * Register spring proxies.
      *
@@ -170,8 +171,8 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
      * @return the cas runtime hints registrar
      */
     @CanIgnoreReturnValue
-    default CasRuntimeHintsRegistrar registerReflectionHintsForTypes(final RuntimeHints hints, final TypeReference... entries) {
-        List.of(entries).forEach(ref -> hints.reflection().registerType(ref));
+    default CasRuntimeHintsRegistrar registerReflectionHintsForTypes(final RuntimeHints hints, final Collection entries) {
+        registerReflectionHints(hints, List.of(entries), new MemberCategory[0]);
         return this;
     }
 
@@ -188,6 +189,21 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
         return this;
     }
 
+    private static void registerReflectionHints(final RuntimeHints hints, final Collection entries,
+                                                final MemberCategory... memberCategories) {
+        entries.forEach(el -> {
+            if (el instanceof final String clazz) {
+                hints.reflection().registerType(TypeReference.of(clazz), memberCategories);
+            }
+            if (el instanceof final Class clazz) {
+                hints.reflection().registerType(clazz, memberCategories);
+            }
+            if (el instanceof final TypeReference reference) {
+                hints.reflection().registerType(reference, memberCategories);
+            }
+        });
+    }
+    
     /**
      * Register reflection hints.
      *
@@ -212,25 +228,127 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
             MemberCategory.DECLARED_FIELDS,
             MemberCategory.PUBLIC_FIELDS
         };
-        entries.forEach(el -> {
-            if (el instanceof final String clazz) {
-                hints.reflection().registerType(TypeReference.of(clazz), memberCategories);
-            }
-            if (el instanceof final Class clazz) {
-                hints.reflection().registerType(clazz, memberCategories);
-            }
-            if (el instanceof final TypeReference reference) {
-                hints.reflection().registerType(reference, memberCategories);
-            }
-        });
+        registerReflectionHints(hints, entries, memberCategories);
         return this;
     }
 
     /**
+     * Register reflection hints for methods and fields.
+     *
+     * @param hints   the hints
+     * @param entries the entries
+     * @return the cas runtime hints registrar
+     */
+    @CanIgnoreReturnValue
+    default CasRuntimeHintsRegistrar registerReflectionHintsForMethodsAndFields(final RuntimeHints hints, final Collection entries) {
+        val memberCategories = new MemberCategory[]{
+            MemberCategory.PUBLIC_FIELDS,
+            MemberCategory.DECLARED_FIELDS,
+            MemberCategory.INVOKE_DECLARED_METHODS,
+            MemberCategory.INVOKE_PUBLIC_METHODS
+        };
+        registerReflectionHints(hints, entries, memberCategories);
+        return this;
+    }
+
+    /**
+     * Register reflection hints for introspected public elements.
+     *
+     * @param hints   the hints
+     * @param entries the entries
+     * @return the cas runtime hints registrar
+     */
+    @CanIgnoreReturnValue
+    default CasRuntimeHintsRegistrar registerReflectionHintsForIntrospectedPublicElements(final RuntimeHints hints, final Collection entries) {
+        val memberCategories = new MemberCategory[]{
+            MemberCategory.INTROSPECT_PUBLIC_CONSTRUCTORS,
+            MemberCategory.INTROSPECT_PUBLIC_METHODS
+        };
+        registerReflectionHints(hints, entries, memberCategories);
+        return this;
+    }
+
+    /**
+     * Register reflection hints for declared elements.
+     *
+     * @param hints   the hints
+     * @param entries the entries
+     * @return the cas runtime hints registrar
+     */
+    @CanIgnoreReturnValue
+    default CasRuntimeHintsRegistrar registerReflectionHintsForDeclaredElements(final RuntimeHints hints, final Collection entries) {
+        val memberCategories = new MemberCategory[]{
+            MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
+            MemberCategory.INVOKE_DECLARED_METHODS,
+        };
+        registerReflectionHints(hints, entries, memberCategories);
+        return this;
+    }
+
+    /**
+     * Register reflection hints for constructors.
+     *
+     * @param hints   the hints
+     * @param entries the entries
+     * @return the cas runtime hints registrar
+     */
+    @CanIgnoreReturnValue
+    default CasRuntimeHintsRegistrar registerReflectionHintsForConstructors(final RuntimeHints hints, final Collection entries) {
+        val memberCategories = new MemberCategory[]{
+            MemberCategory.INTROSPECT_DECLARED_CONSTRUCTORS,
+            MemberCategory.INTROSPECT_PUBLIC_CONSTRUCTORS,
+
+            MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
+            MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS
+        };
+        registerReflectionHints(hints, entries, memberCategories);
+        return this;
+    }
+
+    /**
+     * Register reflection hints for declared and public elements.
+     *
+     * @param hints   the hints
+     * @param entries the entries
+     * @return the cas runtime hints registrar
+     */
+    @CanIgnoreReturnValue
+    default CasRuntimeHintsRegistrar registerReflectionHintsForDeclaredAndPublicElements(final RuntimeHints hints, final Collection entries) {
+        val memberCategories = new MemberCategory[]{
+            MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
+            MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
+            MemberCategory.INVOKE_DECLARED_METHODS,
+            MemberCategory.INVOKE_PUBLIC_METHODS,
+            MemberCategory.DECLARED_FIELDS,
+            MemberCategory.PUBLIC_FIELDS
+        };
+        registerReflectionHints(hints, entries, memberCategories);
+        return this;
+    }
+
+    /**
+     * Register reflection hints for public elements.
+     *
+     * @param hints   the hints
+     * @param entries the entries
+     * @return the cas runtime hints registrar
+     */
+    @CanIgnoreReturnValue
+    default CasRuntimeHintsRegistrar registerReflectionHintsForPublicElements(final RuntimeHints hints, final Collection entries) {
+        val memberCategories = new MemberCategory[]{
+            MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
+            MemberCategory.INVOKE_PUBLIC_METHODS,
+            MemberCategory.PUBLIC_FIELDS
+        };
+        registerReflectionHints(hints, entries, memberCategories);
+        return this;
+    }
+    
+    /**
      * Find subclasses in packages and exclude tests.
      *
      * @param superClass the parent class
-     * @param packages    the packages
+     * @param packages   the packages
      * @return the collection
      */
     default Collection<Class> findSubclassesInPackage(final Class superClass, final String... packages) {
@@ -254,7 +372,7 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
     }
 
     /**
-     * Determine if code is executing or being aot-rocessed in a GraalVM native image.
+     * Determine if code is executing or being aot-processed in a GraalVM native image.
      *
      * @return true/false
      */
@@ -265,7 +383,7 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
     }
 
     /**
-     * Determine if code is NOT executing or being aot-rocessed in a GraalVM native image.
+     * Determine if code is NOT executing or being aot-processed in a GraalVM native image.
      *
      * @return true/false
      */
@@ -297,4 +415,5 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
         proxies.add(Advised.class);
         proxies.add(DecoratingProxy.class);
     }
+
 }
