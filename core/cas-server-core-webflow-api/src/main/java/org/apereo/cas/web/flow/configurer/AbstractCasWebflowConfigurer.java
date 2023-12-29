@@ -360,10 +360,10 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
             LOGGER.trace("Flow [{}] already contains a definition for state id [{}]", flow.getId(), id);
             return getTransitionableState(flow, id, ViewState.class);
         }
-        val viewFactory = this.flowBuilderServices.getViewFactoryCreator()
-            .createViewFactory(expression, this.flowBuilderServices.getExpressionParser(),
-                this.flowBuilderServices.getConversionService(), binder, this.flowBuilderServices.getValidator(),
-                this.flowBuilderServices.getValidationHintResolver());
+        val viewFactory = flowBuilderServices.getViewFactoryCreator()
+            .createViewFactory(expression, flowBuilderServices.getExpressionParser(),
+                flowBuilderServices.getConversionService(), binder, this.flowBuilderServices.getValidator(),
+                flowBuilderServices.getValidationHintResolver());
         return createViewState(flow, id, viewFactory);
     }
 

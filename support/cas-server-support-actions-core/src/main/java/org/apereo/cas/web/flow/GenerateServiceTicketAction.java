@@ -20,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
@@ -141,8 +140,7 @@ public class GenerateServiceTicketAction extends BaseCasWebflowAction {
     }
 
     protected boolean isGatewayPresent(final RequestContext context) {
-        val requestParameterMap = context.getExternalContext().getRequestParameterMap();
-        return StringUtils.hasText(requestParameterMap.get(CasProtocolConstants.PARAMETER_GATEWAY));
+        return WebUtils.getRequestParameterOrAttribute(context, CasProtocolConstants.PARAMETER_GATEWAY).isPresent();
     }
 
     private Event newEvent(final String id, final Throwable error) {

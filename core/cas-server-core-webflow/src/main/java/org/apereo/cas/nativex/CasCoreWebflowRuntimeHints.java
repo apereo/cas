@@ -22,6 +22,7 @@ import org.springframework.webflow.engine.FlowExecutionExceptionHandlerSet;
 import org.springframework.webflow.engine.TransitionSet;
 import org.springframework.webflow.engine.impl.FlowExecutionImpl;
 import org.springframework.webflow.execution.Action;
+import org.springframework.webflow.mvc.builder.MvcViewFactoryCreator;
 import java.util.List;
 
 /**
@@ -45,7 +46,8 @@ public class CasCoreWebflowRuntimeHints implements CasRuntimeHintsRegistrar {
             CasWebflowExceptionHandler.class
         ));
 
-        registerSerializationHints(hints, ClientFlowExecutionRepository.SerializedFlowExecutionState.class,
+        registerSerializationHints(hints,
+            ClientFlowExecutionRepository.SerializedFlowExecutionState.class,
             ConversationContainer.class,
             LocalAttributeMap.class);
 
@@ -53,6 +55,7 @@ public class CasCoreWebflowRuntimeHints implements CasRuntimeHintsRegistrar {
         registerReflectionHints(hints, findSubclassesInPackage(ValidationContext.class, "org.springframework.binding"));
 
         registerReflectionHints(hints, List.of(
+            MvcViewFactoryCreator.class,
             CasWebflowEventResolver.class,
             TypeReference.of("org.springframework.webflow.engine.impl.RequestControlContextImpl"),
             TypeReference.of("org.springframework.webflow.engine.impl.FlowSessionImpl"),
