@@ -119,7 +119,8 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
             return List.of();
         }
         
-        return parameters.keySet()
+        return parameters
+            .keySet()
             .stream()
             .filter(emailRecipients::containsKey)
             .map(entry -> emailRecipients.get(entry).email())

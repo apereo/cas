@@ -45,13 +45,14 @@ public class SurrogateSelectionAction extends BaseCasWebflowAction {
         try {
             val credential = WebUtils.getCredential(requestContext);
             if (credential instanceof final MutableCredential mutableCredential) {
-                val target = requestContext.getExternalContext().getRequestParameterMap().get(PARAMETER_NAME_SURROGATE_TARGET);
-                LOGGER.debug("Located surrogate target as [{}]", target);
-                if (StringUtils.isNotBlank(target)) {
-                    resultMap.put(PARAMETER_NAME_SURROGATE_TARGET, target);
+                val surrogateTarget = WebUtils.getRequestParameterOrAttribute(requestContext, PARAMETER_NAME_SURROGATE_TARGET).orElse(StringUtils.EMPTY);
+                LOGGER.debug("Located surrogate target as [{}]", surrogateTarget);
+
+                if (StringUtils.isNotBlank(surrogateTarget)) {
+                    resultMap.put(PARAMETER_NAME_SURROGATE_TARGET, surrogateTarget);
                     val registeredService = WebUtils.getRegisteredService(requestContext);
                     val builder = WebUtils.getAuthenticationResultBuilder(requestContext);
-                    mutableCredential.getCredentialMetadata().addTrait(new SurrogateCredentialTrait(target));
+                    mutableCredential.getCredentialMetadata().addTrait(new SurrogateCredentialTrait(surrogateTarget));
                     val result = surrogatePrincipalBuilder.buildSurrogateAuthenticationResult(builder, mutableCredential, registeredService);
                     result.ifPresent(bldr -> WebUtils.putAuthenticationResultBuilder(bldr, requestContext));
                 } else {
