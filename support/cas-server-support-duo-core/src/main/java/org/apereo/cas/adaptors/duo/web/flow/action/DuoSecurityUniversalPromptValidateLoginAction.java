@@ -80,7 +80,7 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
             return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_RESTORE);
         }
 
-        val duoState = requestContext.getRequestParameters().get(REQUEST_PARAMETER_STATE, String.class);
+        val duoState = WebUtils.getRequestParameterOrAttribute(requestContext, REQUEST_PARAMETER_STATE).orElseThrow();
         LOGGER.trace("Received Duo Security state [{}]", duoState);
         BrowserWebStorageSessionStore browserSessionStore = null;
 
@@ -141,10 +141,8 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
     protected void populateContextWithCredential(final RequestContext requestContext,
                                                  final BrowserWebStorageSessionStore sessionStorage,
                                                  final Authentication authentication) {
-        val requestParameters = requestContext.getRequestParameters();
-        val duoCode = requestParameters.get(REQUEST_PARAMETER_CODE, String.class);
+        val duoCode = WebUtils.getRequestParameterOrAttribute(requestContext, REQUEST_PARAMETER_CODE).orElseThrow();
         LOGGER.trace("Received Duo Security code [{}]", duoCode);
-
         val duoSecurityIdentifier = (String) sessionStorage.getSessionAttributes().get("duoProviderId");
         val credential = new DuoSecurityUniversalPromptCredential(duoCode, authentication);
         val provider = MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(duoSecurityIdentifier, applicationContext)

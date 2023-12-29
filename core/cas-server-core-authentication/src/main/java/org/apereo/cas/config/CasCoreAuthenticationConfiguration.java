@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
+import org.apereo.cas.authentication.AuthenticationHandlerResolver;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationResultBuilderFactory;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -13,6 +14,7 @@ import org.apereo.cas.authentication.DefaultAuthenticationManager;
 import org.apereo.cas.authentication.DefaultAuthenticationResultBuilderFactory;
 import org.apereo.cas.authentication.DefaultAuthenticationTransactionFactory;
 import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
+import org.apereo.cas.authentication.handler.DefaultAuthenticationHandlerResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.TriStateBoolean;
@@ -121,9 +123,13 @@ public class CasCoreAuthenticationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlan authenticationEventExecutionPlan(
+            @Qualifier("defaultAuthenticationHandlerResolver")
+            final AuthenticationHandlerResolver defaultAuthenticationHandlerResolver,
             final List<AuthenticationEventExecutionPlanConfigurer> configurers) {
 
             val plan = new DefaultAuthenticationEventExecutionPlan();
+            plan.setDefaultAuthenticationHandlerResolver(defaultAuthenticationHandlerResolver);
+            
             val sortedConfigurers = new ArrayList<>(configurers);
             sortedConfigurers.removeIf(BeanSupplier::isProxy);
             AnnotationAwareOrderComparator.sortIfNecessary(sortedConfigurers);
@@ -135,6 +141,13 @@ public class CasCoreAuthenticationConfiguration {
                     configurer.configureAuthenticationExecutionPlan(plan);
                 }));
             return plan;
+        }
+
+        @ConditionalOnMissingBean(name = "defaultAuthenticationHandlerResolver")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public AuthenticationHandlerResolver defaultAuthenticationHandlerResolver() {
+            return new DefaultAuthenticationHandlerResolver();
         }
     }
 }

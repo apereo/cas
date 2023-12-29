@@ -40,6 +40,7 @@ import org.apache.hc.core5.http.NameValuePair;
 import org.apache.hc.core5.net.WWWFormCodec;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.webflow.context.ExternalContext;
@@ -1987,18 +1988,15 @@ public class WebUtils {
      * @throws Exception the exception
      */
     public static Optional<String> getBrowserStoragePayload(final HttpServletRequest httpServletRequest) throws Exception {
-        try (val is = httpServletRequest.getInputStream()) {
-            if (!is.isFinished()) {
-                val encodedParams = WWWFormCodec.parse(IOUtils.toString(is, StandardCharsets.UTF_8), StandardCharsets.UTF_8);
-                return encodedParams
-                    .stream()
-                    .filter(param -> param.getName().equalsIgnoreCase(BrowserStorage.PARAMETER_BROWSER_STORAGE))
-                    .map(NameValuePair::getValue)
-                    .filter(StringUtils::isNotBlank)
-                    .findFirst();
-            }
-        }
-        return Optional.empty();
+        val parameters = getHttpRequestParametersFromRequestBody(httpServletRequest);
+        return parameters
+            .entrySet()
+            .stream()
+            .filter(param -> param.getKey().equalsIgnoreCase(BrowserStorage.PARAMETER_BROWSER_STORAGE))
+            .map(Map.Entry::getValue)
+            .filter(StringUtils::isNotBlank)
+            .findFirst()
+            .or(() -> Optional.ofNullable((String) httpServletRequest.getAttribute(BrowserStorage.PARAMETER_BROWSER_STORAGE)));
     }
 
     /**
@@ -2039,5 +2037,55 @@ public class WebUtils {
      */
     public static String getTargetState(final RequestContext requestContext) {
         return requestContext.getFlowScope().get("targetState", String.class);
+    }
+
+    /**
+     * Gets http request parameters.
+     *
+     * @param httpServletRequest the http servlet request
+     * @return the http request parameters from request body
+     */
+    public static Map<String, String> getHttpRequestParametersFromRequestBody(final HttpServletRequest httpServletRequest) {
+        if (HttpMethod.POST.matches(httpServletRequest.getMethod())) {
+            try (val is = httpServletRequest.getInputStream()) {
+                if (!is.isFinished()) {
+                    val requestBody = IOUtils.toString(is, StandardCharsets.UTF_8);
+                    val encodedParams = WWWFormCodec.parse(requestBody, StandardCharsets.UTF_8);
+                    return encodedParams
+                        .stream()
+                        .filter(param -> StringUtils.isNotBlank(param.getValue()))
+                        .peek(param -> httpServletRequest.setAttribute(param.getName(), param.getValue()))
+                        .collect(Collectors.toMap(NameValuePair::getName, NameValuePair::getValue));
+                }
+            } catch (final Exception e) {
+                LoggingUtils.error(LOGGER, e);
+            }
+        }
+        return Map.of();
+    }
+
+    /**
+     * Gets request parameter or attribute.
+     *
+     * @param requestContext the request context
+     * @param name           the name
+     * @return the request parameter or attribute
+     */
+    public Optional<String> getRequestParameterOrAttribute(final RequestContext requestContext, final String name) {
+        val httpServletRequest = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        return getRequestParameterOrAttribute(httpServletRequest, name);
+    }
+
+    /**
+     * Gets request parameter or attribute.
+     *
+     * @param request the request
+     * @param name    the name
+     * @return the request parameter or attribute
+     */
+    public Optional<String> getRequestParameterOrAttribute(final HttpServletRequest request, final String name) {
+        return Optional.ofNullable(request.getParameter(name))
+            .or(() -> Optional.ofNullable((String) request.getAttribute(name)))
+            .filter(StringUtils::isNotBlank);
     }
 }

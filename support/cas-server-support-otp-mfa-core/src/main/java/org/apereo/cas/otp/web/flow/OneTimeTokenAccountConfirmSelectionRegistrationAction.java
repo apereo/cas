@@ -26,7 +26,7 @@ public class OneTimeTokenAccountConfirmSelectionRegistrationAction extends BaseC
 
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) {
-        val id = requestContext.getRequestParameters().getRequired(REQUEST_PARAMETER_ACCOUNT_ID, Long.class);
+        val id = Long.parseLong(WebUtils.getRequestParameterOrAttribute(requestContext, REQUEST_PARAMETER_ACCOUNT_ID).orElseThrow());
         WebUtils.putOneTimeTokenAccount(requestContext, repository.get(id));
         return success();
     }

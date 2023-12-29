@@ -99,7 +99,8 @@ class DefaultLoginWebflowConfigurerTests extends BaseWebflowConfigurerTests {
         assertEquals(CasWebflowConstants.STATE_ID_SERVICE_CHECK, writeState.getTransition(CasWebflowConstants.TRANSITION_ID_CONTINUE).getTargetStateId());
         val readState = (ViewState) flow.getState(CasWebflowConstants.STATE_ID_BROWSER_STORAGE_READ);
         assertNotNull(readState);
-        assertEquals(1, readState.getEntryActionList().size());
-        assertEquals(CasWebflowConstants.STATE_ID_BROWSER_STORAGE_READ, readState.getTransition(CasWebflowConstants.TRANSITION_ID_CONTINUE).getTargetStateId());
+        assertEquals(1, readState.getRenderActionList().size());
+        assertEquals(0, readState.getEntryActionList().size());
+        assertEquals(CasWebflowConstants.STATE_ID_VERIFY_BROWSER_STORAGE_READ, readState.getTransition(CasWebflowConstants.TRANSITION_ID_CONTINUE).getTargetStateId());
     }
 }

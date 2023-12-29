@@ -49,11 +49,8 @@ public class MultifactorProviderSelectedAction extends BaseCasWebflowAction {
 
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) {
-        var selectedProvider = requestContext.getRequestParameters().get(PARAMETER_SELECTED_MFA_PROVIDER, String.class);
-        if (StringUtils.isBlank(selectedProvider)) {
-            val provider = requestContext.getFlashScope().get(PARAMETER_SELECTED_MFA_PROVIDER, MultifactorAuthenticationProvider.class);
-            selectedProvider = provider.getId();
-        }
+        val selectedProvider = WebUtils.getRequestParameterOrAttribute(requestContext, PARAMETER_SELECTED_MFA_PROVIDER)
+            .orElseGet(() -> requestContext.getFlashScope().get(PARAMETER_SELECTED_MFA_PROVIDER, MultifactorAuthenticationProvider.class).getId());
         LOGGER.debug("Selected multifactor authentication provider is [{}]", selectedProvider);
         rememberSelectedMultifactorAuthenticationProvider(requestContext, selectedProvider);
         return new EventFactorySupport().event(this, selectedProvider);
