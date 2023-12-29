@@ -64,10 +64,12 @@ public class RestfulSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocato
             if (response != null) {
                 val status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
                 if (status.is2xxSuccessful()) {
-                    val entity = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
-                    val document = MAPPER.readValue(JsonValue.readHjson(entity).toString(), SamlIdPMetadataDocument.class);
-                    if (document != null && document.isValid()) {
-                        return document;
+                    try (val content = response.getEntity().getContent()) {
+                        val entity = IOUtils.toString(content, StandardCharsets.UTF_8);
+                        val document = MAPPER.readValue(JsonValue.readHjson(entity).toString(), SamlIdPMetadataDocument.class);
+                        if (document != null && document.isValid()) {
+                            return document;
+                        }
                     }
                 }
             }

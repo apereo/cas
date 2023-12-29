@@ -128,9 +128,13 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.dataformat", module: "jackson-dataformat-yaml")
+                    exclude(group: "com.fasterxml.jackson.dataformat", module: "jackson-dataformat-cbor")
                     exclude(group: "javax.ws.rs", module: "javax.ws.rs-api")
                     exclude(group: "org.eclipse.jetty", module: "jetty-eclipse")
                     exclude(group: "org.glassfish.jersey.containers", module: "jersey-container-servlet-core")
+                },
+                dependencies.create("com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:$jacksonVersion") {
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                 }
         ],
         semver                  : [
@@ -579,6 +583,7 @@ ext.libraries = [
         guava                   : [
                 dependencies.create("com.google.guava:guava:$guavaVersion") {
                     exclude(group: "com.google.errorprone", module: "error_prone_annotations")
+                    exclude(group: "org.checkerframework", module: "checker-qual")
                 },
                 dependencies.create("de.cronn:reflection-util:$reflectionUtilVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")

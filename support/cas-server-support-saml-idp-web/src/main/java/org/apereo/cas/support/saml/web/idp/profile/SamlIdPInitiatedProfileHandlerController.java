@@ -151,6 +151,7 @@ public class SamlIdPInitiatedProfileHandlerController extends AbstractSamlIdPPro
                 val parameterName = paramNames.nextElement();
                 if (!parameterName.equalsIgnoreCase(SamlIdPConstants.TARGET)
                     && !parameterName.equalsIgnoreCase(SamlIdPConstants.TIME)
+                    && !parameterName.equalsIgnoreCase(SamlProtocolConstants.PARAMETER_SAML_REQUEST)
                     && !parameterName.equalsIgnoreCase(SamlIdPConstants.SHIRE)
                     && !parameterName.equalsIgnoreCase(SamlIdPConstants.PROVIDER_ID)) {
                     urlBuilder.addParameter(parameterName, request.getParameter(parameterName));

@@ -52,9 +52,11 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
 
             response = HttpUtils.execute(exec);
             if (response != null && response.getEntity() != null) {
-                val token = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
-                val result = cipherExecutor.decode(token).toString();
-                return Optional.of(result);
+                try (val content = response.getEntity().getContent()) {
+                    val token = IOUtils.toString(content, StandardCharsets.UTF_8);
+                    val result = cipherExecutor.decode(token).toString();
+                    return Optional.of(result);
+                }
             }
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);

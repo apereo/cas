@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
+import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -45,7 +46,8 @@ public class DelegatedAuthenticationSingleSignOnParticipationStrategy extends Ba
         try {
             val authentication = getTicketState(ssoRequest)
                 .map(AuthenticationAwareTicket.class::cast)
-                .map(AuthenticationAwareTicket::getAuthentication).orElseThrow();
+                .map(AuthenticationAwareTicket::getAuthentication)
+                .orElseThrow(() -> new InvalidTicketException(ticketGrantingTicketId.get()));
             AuthenticationCredentialsThreadLocalBinder.bindCurrent(authentication);
             val policy = accessStrategy.getDelegatedAuthenticationPolicy();
             val attributes = authentication.getAttributes();

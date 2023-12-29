@@ -16,6 +16,7 @@ import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManagerConfigurationContext;
+import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistrySupport;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -180,5 +181,43 @@ public class DelegatedAuthenticationSingleSignOnParticipationStrategyTests {
             .build();
         assertTrue(strategy.supports(ssoRequest));
         assertFalse(strategy.isParticipating(ssoRequest));
+    }
+
+    @Test
+    public void verifyTgtIsExpired() throws Exception {
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+
+        val svc = RegisteredServiceTestUtils.getRegisteredService("serviceid1", Map.of());
+        val policy = new DefaultRegisteredServiceAccessStrategy();
+        policy.setDelegatedAuthenticationPolicy(
+            new DefaultRegisteredServiceDelegatedAuthenticationPolicy()
+                .setExclusive(true)
+                .setAllowedProviders(List.of("CAS")));
+        svc.setAccessStrategy(policy);
+
+        val ticketRegistry = new DefaultTicketRegistry();
+        val strategy = getSingleSignOnStrategy(svc, ticketRegistry);
+
+        WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService("serviceid1"));
+        val authentication = CoreAuthenticationTestUtils.getAuthentication(Map.of());
+
+        val tgt = new MockTicketGrantingTicket(authentication);
+        tgt.markTicketExpired();
+        ticketRegistry.addTicketInternal(tgt);
+        WebUtils.putTicketGrantingTicketInScopes(context, tgt);
+
+        val ssoRequest = SingleSignOnParticipationRequest.builder()
+            .httpServletRequest(request)
+            .httpServletResponse(response)
+            .requestContext(context)
+            .build();
+        assertTrue(strategy.supports(ssoRequest));
+        assertThrows(InvalidTicketException.class, () -> strategy.isParticipating(ssoRequest));
     }
 }

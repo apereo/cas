@@ -54,11 +54,13 @@ public class RestfulIPAddressIntelligenceService extends BaseIPAddressIntelligen
                 if (status.equals(HttpStatus.OK) || status.equals(HttpStatus.ACCEPTED)) {
                     return IPAddressIntelligenceResponse.allowed();
                 }
-                val score = Double.parseDouble(IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8));
-                return IPAddressIntelligenceResponse.builder()
-                    .score(score)
-                    .status(IPAddressIntelligenceResponse.IPAddressIntelligenceStatus.RANKED)
-                    .build();
+                try (val content = response.getEntity().getContent()) {
+                    val score = Double.parseDouble(IOUtils.toString(content, StandardCharsets.UTF_8));
+                    return IPAddressIntelligenceResponse.builder()
+                            .score(score)
+                            .status(IPAddressIntelligenceResponse.IPAddressIntelligenceStatus.RANKED)
+                            .build();
+                }
             }
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);

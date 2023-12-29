@@ -66,13 +66,15 @@ public class RestfulDelegatedClientFactory extends BaseDelegatedClientFactory {
             val response = HttpUtils.execute(exec);
             try {
                 if (response != null && HttpStatus.valueOf(response.getStatusLine().getStatusCode()).is2xxSuccessful()) {
-                    val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
-                    switch (restProperties.getType().toLowerCase()) {
-                        case "cas":
-                            return buildClientsBasedCasProperties(result);
-                        case "pac4j":
-                        default:
-                            return buildClientsBasedPac4jProperties(result);
+                    try (val content = response.getEntity().getContent()) {
+                        val result = IOUtils.toString(content, StandardCharsets.UTF_8);
+                        switch (restProperties.getType().toLowerCase()) {
+                            case "cas":
+                                return buildClientsBasedCasProperties(result);
+                            case "pac4j":
+                            default:
+                                return buildClientsBasedPac4jProperties(result);
+                        }
                     }
                 }
                 return new ArrayList<>();

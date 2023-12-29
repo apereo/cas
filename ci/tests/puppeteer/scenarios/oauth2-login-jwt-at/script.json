@@ -1,0 +1,27 @@
+{
+  "dependencies": "oauth-webflow",
+
+  "environmentVariables": [
+    "OAUTH_ACCESS_TOKEN_SIGNING_KEY=zPdNCd0R1oMR0ClzEqZzapkte8rO0tNvygYjmHoUhitAu6CBscwMC3ZTKy8tleTKiQ6GVcuiQQgxfd1nSKxf7w",
+    "OAUTH_ACCESS_TOKEN_ENCRYPTION_KEY=u696jJnPvm1DHLR7yVCSKMMzzoPoFxJZW4-MP1CkM5w"
+  ],
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    "--cas.audit.slf4j.use-single-line=true",
+
+    "--cas.authn.attribute-repository.stub.attributes.email=casuser@apereo.org",
+
+    "--cas.authn.oauth.access-token.crypto.encryption.key=bTR6EwiuWw4IxCvl_Q4Ld3OoQSi-MmaJccXWxjoglzc",
+    "--cas.authn.oauth.access-token.crypto.signing.key=wTdzuSKFX2pnaDE7CsvTU1WpUE19R-y_py-a07C9auWC4x8KVzJluE1v8XEaA7BHIuBup88CzK5C-qNAg5JWOg",
+    
+    "--cas.authn.oauth.crypto.encryption.key=wXXRBPCvrRjXmGzhbkAzE3U_I4lBzFTy0sNtq21U5Cw",
+    "--cas.authn.oauth.crypto.signing.key=LA7Ud84i_k-gOvyBgWB2FUBuYQipuBzY0jhqYMD3mAUFQb405tEyj8ACqq9i50R-TsyAFlNFCWRIuoQpsdKFlg",
+    
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
+  ]
+}
+
+
+
