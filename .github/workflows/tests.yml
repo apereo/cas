@@ -30,10 +30,8 @@ env:
 
 on:
   push:
-    branches: [ master, pr-* ]
-  pull_request:
-    types: [ labeled ]
-    branches: [ master ]
+    branches-ignore:
+      - '**'
 
 ##########################################################################
 

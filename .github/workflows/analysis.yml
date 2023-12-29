@@ -17,10 +17,10 @@ env:
 
 on:
   push:
-    branches: [ master ]
+    branches: [ 7.0.x ]
   pull_request:
     types: [ labeled ]
-    branches: [ master ]
+    branches: [ 7.0.x ]
 
 ##########################################################################
 

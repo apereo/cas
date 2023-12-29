@@ -36,10 +36,9 @@ env:
   SCENARIO_REGEX: ".*"
 
 on:
-#  push:
-#    branches: [ master ]
-  schedule:
-    - cron: '0 10 */2 * *'
+  push:
+    branches-ignore:
+      - '**'
 
 ##########################################################################
 
