@@ -4,6 +4,8 @@ Thank you very much for submitting this pull request!
 
 This pull request is targeted at a maintenance branch. However, there is no parallel pull request that would port the same functionality forward to the `master` branch. Remember that changes applied to previous branches that target CAS versions in maintenance mode **MUST** be ported forward to the `master` branch as well, via a separate pull request.
 
+![image](https://github.com/apereo/cas/assets/1205228/bef10365-2879-40eb-aa0d-25491f3d264b)
+
 If you already have worked out the targeted-at-`master` pull request, preferably one that is merged, please update the body of your pull request description here to include the following reference:
 
 ```

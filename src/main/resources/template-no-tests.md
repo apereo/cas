@@ -4,6 +4,8 @@ Thank you very much for submitting this pull request!
 
 The patch presented here seems to contain no adequate unit and/or integration tests. Patches that alter CAS core functionality without proper tests, regardless of how small they may seem, are automatically closed. By *tests*, we specifically mean, unit/integration/browser/functional tests; a description and series of instructions on how one may go about reproducing or testing the patch manually is excellent but not sufficient for acceptance. If the change-set here modifies CAS functionality that is extremely and obviously trivial (i.e. fixes a typo) or updates the CAS documentation or presents any other type of change that generally can be accepted without proper tests, please comment and explain on the pull request.
 
+![image](https://github.com/apereo/cas/assets/1205228/9b641bc1-4baa-4d7a-9336-3fad57826f2c)
+
 # What's next? 
 
 Please re-open the pull request (or ask project maintainers to do this for you) when you're ready and have included tests to verify functionality. If you feel like you are not immediately available or have no time to work out test cases and steps to reproduce and verify the changes, that's not an issue. Please revisit the pull request as soon as it's convenient for you to resume work as your schedule allows. The pull request will wait for you right here.

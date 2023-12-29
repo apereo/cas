@@ -270,8 +270,8 @@ public class GitHubTemplate implements GitHubOperations {
     public PullRequest mergeWithBase(final String organization, final String repository, final PullRequest pr) {
         if (pr.getHead().getRepository().isFork()) {
             val url = "https://api.github.com/repos/" + organization + '/' + repository + "/pulls/" + pr.getNumber() + "/update-branch";
-            val params = new HashMap<String, String>();
-            params.put("expected_head_sha", pr.getHead().getSha());
+//            val params = new HashMap<String, String>();
+//            params.put("expected_head_sha", pr.getHead().getSha());
             val responseEntity = this.rest.exchange(url, HttpMethod.PUT,
                 new HttpEntity<>(new LinkedMultiValueMap(Map.of("Accept", List.of("application/vnd.github.lydian-preview+json")))), Map.class);
             if (responseEntity.getStatusCode().is2xxSuccessful()) {
