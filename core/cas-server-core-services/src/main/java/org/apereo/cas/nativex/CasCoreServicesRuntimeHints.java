@@ -172,7 +172,7 @@ public class CasCoreServicesRuntimeHints implements CasRuntimeHintsRegistrar {
             NotPreventedRegisteredServiceAuthenticationPolicyCriteria.class,
             RestfulRegisteredServiceAuthenticationPolicyCriteria.class);
 
-        registerReflectionHints(hints, List.of(
+        registerReflectionHintsForDeclaredAndPublicElements(hints, List.of(
             UnauthorizedServiceException.class,
             RegisteredServiceQuery.class,
             RegisteredServiceQueryIndex.class,

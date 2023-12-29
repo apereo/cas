@@ -157,7 +157,7 @@ public interface CasFeatureModule {
          */
         Thymeleaf,
         /**
-         * Token & JWT management.
+         * Token and JWT management.
          */
         Tokens,
         /**

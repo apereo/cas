@@ -92,7 +92,7 @@ function createTag {
   if [[ $(git tag -l "${releaseTag}") ]]; then
     git tag -d "${releaseTag}" && git push --delete origin "${releaseTag}"
   fi
-  git tag "${releaseTag}" && git push origin "${releaseTag}"
+  git tag "${releaseTag}" -m "Tagging CAS {releaseTag} release" && git push origin "${releaseTag}"
 }
 
 function finished {
