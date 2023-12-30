@@ -48,7 +48,6 @@ import org.apereo.cas.services.PatternMatchingAttributeReleasePolicy;
 import org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.RefuseRegisteredServiceProxyPolicy;
 import org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
-import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyEnforcer;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
 import org.apereo.cas.services.RegisteredServicePublicKeyImpl;
@@ -97,7 +96,6 @@ public class CasCoreServicesRuntimeHints implements CasRuntimeHintsRegistrar {
         registerSerializationHints(hints, BaseRegisteredService.class,
             BaseWebBasedRegisteredService.class,
             CasRegisteredService.class,
-            RegexRegisteredService.class,
 
             BaseRegisteredServiceAccessStrategy.class,
             AbstractRegisteredServiceAttributeReleasePolicy.class,
