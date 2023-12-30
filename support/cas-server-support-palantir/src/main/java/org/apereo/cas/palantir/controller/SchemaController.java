@@ -3,7 +3,6 @@ package org.apereo.cas.palantir.controller;
 import org.apereo.cas.palantir.PalantirConstants;
 import org.apereo.cas.palantir.schema.SchemaGenerator;
 import org.apereo.cas.services.BaseRegisteredService;
-import org.apereo.cas.services.RegexRegisteredService;
 import lombok.val;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +30,7 @@ public class SchemaController {
         consumes = MediaType.APPLICATION_JSON_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity schema() {
-        val results = SchemaGenerator.generate(BaseRegisteredService.class, List.of(RegexRegisteredService.class.getName()));
+        val results = SchemaGenerator.generate(BaseRegisteredService.class, List.of());
         return ResponseEntity.ok(results);
     }
 }
