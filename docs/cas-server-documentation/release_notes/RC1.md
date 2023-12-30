@@ -64,7 +64,7 @@ are now configured to run with parallelism enabled.
 ### Deprecations & Removals
 
 - Dedicated GoogleApps support, deprecated since CAS `6.2.x`, is now removed from the CAS codebase.
-- The `RegexRegisteredService` service type, deprecated since CAS `7.0.x`, is now removed from the CAS codebase.
+- The `RegexRegisteredService` service type, deprecated since CAS `6.6.x`, is now removed from the CAS codebase.
 
 ## Other Stuff
 
