@@ -47,10 +47,8 @@ public class DefaultServicesManagerRegisteredServiceLocator implements ServicesM
 
     @Override
     public boolean supports(final RegisteredService registeredService, final Service service) {
-        return (getRegisteredServiceIndexedType().isAssignableFrom(registeredService.getClass())
-                && registeredService.getFriendlyName().equalsIgnoreCase(CasRegisteredService.FRIENDLY_NAME))
-               || (RegexRegisteredService.class.isAssignableFrom(registeredService.getClass())
-                   && registeredService.getFriendlyName().equalsIgnoreCase(CasRegisteredService.FRIENDLY_NAME));
+        return getRegisteredServiceIndexedType().isAssignableFrom(registeredService.getClass())
+                && registeredService.getFriendlyName().equalsIgnoreCase(CasRegisteredService.FRIENDLY_NAME);
     }
 
     @Override
