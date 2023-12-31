@@ -55,11 +55,6 @@ public class CasConfigurationMetadataRepository {
         repository = builder.build();
     }
 
-    /**
-     * Instantiates a new Cas configuration metadata repository.
-     *
-     * @param resource the resource
-     */
     public CasConfigurationMetadataRepository(final Resource resource) {
         val builder = CasConfigurationMetadataRepositoryJsonBuilder.create();
         FunctionUtils.doUnchecked(__ -> {

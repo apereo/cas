@@ -24,6 +24,8 @@ public class ConfigurationMetadataCatalogQuery {
 
     private final QueryTypes queryType;
 
+    private Boolean requiredPropertiesOnly;
+    
     @Builder.Default
     private final Predicate<ConfigurationMetadataProperty> queryFilter = casReferenceProperty -> true;
 
