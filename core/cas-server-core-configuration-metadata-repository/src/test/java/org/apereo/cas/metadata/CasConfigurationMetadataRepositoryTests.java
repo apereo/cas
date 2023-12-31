@@ -4,10 +4,14 @@ import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationPropert
 import org.apereo.cas.configuration.model.support.mfa.gauth.GoogleAuthenticatorMultifactorProperties;
 
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -56,5 +60,26 @@ class CasConfigurationMetadataRepositoryTests {
             .queryType(ConfigurationMetadataCatalogQuery.QueryTypes.THIRD_PARTY)
             .build());
         assertTrue(properties.properties().isEmpty());
+    }
+
+    @Test
+    void verifyRequiredProps() throws Throwable {
+        val query = ConfigurationMetadataCatalogQuery
+            .builder()
+            .modules(List.of("cas-server-support-ldap"))
+            .queryType(ConfigurationMetadataCatalogQuery.QueryTypes.CAS)
+            .requiredPropertiesOnly(Boolean.TRUE)
+            .build();
+        val file = Arrays.stream(new PathMatchingResourcePatternResolver()
+                .getResources("classpath*:META-INF/spring-configuration-metadata.json"))
+            .filter(Unchecked.predicate(r -> r.isFile() && r.getURL().getFile().contains("cas-server-core-api-configuration-model")))
+            .findFirst()
+            .orElseThrow()
+            .getFile();
+        val rootDir = file.getParentFile().getParentFile().getParentFile().getParentFile().getParentFile();
+        val resource = new FileSystemResource(new File(rootDir, "build/generated/spring-configuration-metadata/META-INF/spring-configuration-metadata.json"));
+        val repository = new CasConfigurationMetadataRepository(resource);
+        val properties = CasConfigurationMetadataCatalog.query(query, repository);
+        assertFalse(properties.properties().isEmpty());
     }
 }
