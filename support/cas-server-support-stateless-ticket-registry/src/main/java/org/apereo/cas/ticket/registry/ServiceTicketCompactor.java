@@ -1,6 +1,8 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationManager;
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -14,6 +16,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.expiration.FixedInstantExpirationPolicy;
 import org.apereo.cas.util.DateTimeUtils;
+import com.google.common.base.Splitter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
@@ -51,7 +54,9 @@ public class ServiceTicketCompactor implements TicketCompactor<ServiceTicket> {
         if (ticket instanceof final AuthenticationAwareTicket aat && aat.getAuthentication() != null) {
             val handlers = String.join("#", aat.getAuthentication().getSuccesses().keySet());
             val principalId = aat.getAuthentication().getPrincipal().getId();
-            builder.append(String.format("%s%s:%s", DELIMITER, principalId, handlers));
+            val credentialTypes = aat.getAuthentication().getCredentials().stream()
+                .map(credential -> credential.getClass().getSimpleName()).collect(Collectors.joining("#"));
+            builder.append(String.format("%s%s:%s:%s", DELIMITER, principalId, handlers, credentialTypes));
         } else {
             builder.append("%s*".formatted(DELIMITER));
         }
@@ -71,17 +76,19 @@ public class ServiceTicketCompactor implements TicketCompactor<ServiceTicket> {
         val service = serviceFactory.createService(structure.ticketElements().get(2));
         val credentialsProvided = BooleanUtils.toBoolean(structure.ticketElements().get(3));
 
-        val principalAndHandlers = structure.ticketElements().get(4);
-        val principal = principalFactory.createPrincipal(StringUtils.substringBefore(principalAndHandlers, ":"));
-        val handlers = Arrays.stream(StringUtils.substringAfter(principalAndHandlers, ":")
-            .split("#")).collect(Collectors.toSet());
+        val authenticationData = Splitter.on(":").splitToList(structure.ticketElements().get(4));
+        val principal = principalFactory.createPrincipal(authenticationData.getFirst());
+        val handlers = Arrays.stream(authenticationData.get(1).split("#")).collect(Collectors.toSet());
+        val credentialTypes = Arrays.stream(authenticationData.get(2).split("#")).collect(Collectors.toSet());
 
         val authentication = DefaultAuthenticationBuilder
             .newInstance()
             .setPrincipal(principal)
+            .addAttribute(Credential.CREDENTIAL_TYPE_ATTRIBUTE, credentialTypes)
             .addAttribute(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS, handlers)
             .setSuccesses(handlers.stream().collect(Collectors.toMap(Function.identity(),
                 name -> new DefaultAuthenticationHandlerExecutionResult(name, principal))))
+            .addAttribute(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE, handlers)
             .build();
         val serviceTicket = serviceTicketFactory.create(service, authentication, credentialsProvided, getTicketType());
         serviceTicket.setExpirationPolicy(new FixedInstantExpirationPolicy(structure.expirationTime()));
