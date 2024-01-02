@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 import java.io.Serial;
 
@@ -18,6 +19,7 @@ import java.io.Serial;
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @NoArgsConstructor
+@Accessors(chain = true)
 public class ProxyTicketImpl extends ServiceTicketImpl implements ProxyTicket {
 
     @Serial

@@ -40,50 +40,19 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
      */
     private String suffix;
 
-    /**
-     * Creates an instance of DefaultUniqueTicketIdGenerator with default values
-     * including a {@link DefaultLongNumericGenerator} with a starting value of
-     * 1.
-     */
     public DefaultUniqueTicketIdGenerator() {
         this(TICKET_SIZE);
     }
 
-    /**
-     * Creates an instance of DefaultUniqueTicketIdGenerator with a specified
-     * maximum length for the random portion.
-     *
-     * @param maxLength the maximum length of the random string used to generate
-     *                  the id.
-     */
     public DefaultUniqueTicketIdGenerator(final long maxLength) {
         this(maxLength, null);
     }
 
-    /**
-     * Creates an instance of DefaultUniqueTicketIdGenerator with a specified
-     * maximum length for the random portion.
-     *
-     * @param maxLength the maximum length of the random string used to generate
-     *                  the id.
-     * @param suffix    the value to append at the end of the unique id to ensure
-     *                  uniqueness across JVMs.
-     */
     public DefaultUniqueTicketIdGenerator(final long maxLength, final String suffix) {
         setMaxLength(maxLength);
         setSuffix(suffix);
     }
 
-    /**
-     * Creates an instance of DefaultUniqueTicketIdGenerator with a specified
-     * maximum length for the random portion.
-     *
-     * @param numericGenerator      the numeric generator
-     * @param randomStringGenerator the random string generator
-     * @param suffix                the value to append at the end of the unique id to ensure
-     *                              uniqueness across JVMs.
-     * @since 4.1.0
-     */
     public DefaultUniqueTicketIdGenerator(final NumericGenerator numericGenerator,
                                           final RandomStringGenerator randomStringGenerator,
                                           final String suffix) {

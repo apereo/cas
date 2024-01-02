@@ -69,7 +69,7 @@ public interface Ticket extends Serializable, Comparable<Ticket> {
      *
      * @return true/false
      */
-    default boolean isCompact() {
+    default boolean isStateless() {
         return false;
     }
 
@@ -125,9 +125,9 @@ public interface Ticket extends Serializable, Comparable<Ticket> {
     default void update() {}
 
     /**
-     * Mark this ticket as compact. A compact ticket usually is self contained, such as a JWT.
+     * Mark this ticket as compact and stateless. A stateless ticket usually is self contained, such as a JWT.
      */
-    default Ticket markTicketCompact() {
+    default Ticket markTicketStateless() {
         return this;
     }
 }

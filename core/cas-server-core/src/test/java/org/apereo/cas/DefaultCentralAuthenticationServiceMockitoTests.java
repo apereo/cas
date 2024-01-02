@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordA
 import org.apereo.cas.authentication.policy.AtLeastOneCredentialValidatedAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.DefaultServiceMatchingStrategy;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
@@ -92,6 +93,9 @@ class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCoreTests {
     @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
+    @Autowired
+    @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+    private PrincipalResolver principalResolver;
 
     private void addServices(final Service service1, final Service service2) {
         val mockRegSvc1 = createMockRegisteredService(service1.getId(), true, getServiceProxyPolicy(false));
@@ -165,6 +169,7 @@ class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCoreTests {
             .cipherExecutor(CipherExecutor.noOpOfStringToString())
             .registeredServiceAccessStrategyEnforcer(enforcer)
             .serviceMatchingStrategy(new DefaultServiceMatchingStrategy(servicesManager))
+            .principalResolver(principalResolver)
             .build();
         cas = new DefaultCentralAuthenticationService(context);
     }
