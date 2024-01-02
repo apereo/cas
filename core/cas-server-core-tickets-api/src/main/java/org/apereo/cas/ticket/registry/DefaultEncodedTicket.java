@@ -42,7 +42,7 @@ public class DefaultEncodedTicket implements EncodedTicket {
 
     private final String prefix;
 
-    private boolean compact;
+    private boolean stateless;
 
     @JsonCreator
     public DefaultEncodedTicket(@JsonProperty("encoded") final String encodedTicket,
@@ -68,8 +68,8 @@ public class DefaultEncodedTicket implements EncodedTicket {
 
     @Override
     @CanIgnoreReturnValue
-    public Ticket markTicketCompact() {
-        compact = true;
+    public Ticket markTicketStateless() {
+        stateless = true;
         return this;
     }
 }

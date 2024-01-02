@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategyConfi
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.DefaultServiceMatchingStrategy;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceMatchingStrategy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
@@ -100,6 +101,8 @@ public class CasCoreConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CentralAuthenticationServiceContext centralAuthenticationServiceContext(
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+            final PrincipalResolver principalResolver,
             @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
             final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
             @Qualifier("protocolTicketCipherExecutor")
@@ -133,6 +136,7 @@ public class CasCoreConfiguration {
                 .applicationContext(applicationContext)
                 .servicesManager(servicesManager)
                 .authenticationPolicy(authenticationPolicy)
+                .principalResolver(principalResolver)
                 .build();
         }
     }

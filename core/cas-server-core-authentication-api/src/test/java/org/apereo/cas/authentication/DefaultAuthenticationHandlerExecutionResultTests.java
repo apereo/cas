@@ -29,4 +29,12 @@ class DefaultAuthenticationHandlerExecutionResultTests {
         assertTrue(res.getWarnings().isEmpty());
     }
 
+    @Test
+    void verifySourceWithPrincipal() throws Throwable {
+        val res = new DefaultAuthenticationHandlerExecutionResult("Handler1", CoreAuthenticationTestUtils.getPrincipal("casuser"));
+        assertTrue(res.getWarnings().isEmpty());
+        assertNotNull(res.getCredential());
+        assertEquals(res.getCredential().getId(), res.getPrincipal().getId());
+    }
+    
 }

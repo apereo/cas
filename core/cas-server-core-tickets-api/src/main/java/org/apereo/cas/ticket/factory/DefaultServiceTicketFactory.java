@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.factory;
 
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.CasModelRegisteredService;
@@ -48,14 +49,15 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
     private final ServicesManager servicesManager;
 
     @Override
-    public <T extends Ticket> T create(final Service service, final boolean credentialsProvided, final Class<T> clazz) throws Throwable {
+    public <T extends Ticket> T create(final Service service, final Authentication authentication,
+                                       final boolean credentialsProvided, final Class<T> clazz) throws Throwable {
         val expirationPolicyToUse = determineExpirationPolicyForService(service);
         val ticketId = produceTicketIdentifier(service, null, credentialsProvided);
-        val result = new ServiceTicketImpl(ticketId, null, service, credentialsProvided, expirationPolicyToUse);
+        val result = new ServiceTicketImpl(ticketId, null, service, credentialsProvided, expirationPolicyToUse).setAuthentication(authentication);
         if (!clazz.isAssignableFrom(result.getClass())) {
             throw new ClassCastException("Result [%s] is of type %s when we were expecting %s".formatted(result, result.getClass(), clazz));
         }
-        result.markTicketCompact();
+        result.markTicketStateless();
         return (T) result;
     }
 

@@ -49,11 +49,11 @@ public class ImmutableAssertion implements Assertion {
     @JsonProperty
     private final List<Authentication> chainedAuthentications;
 
-    /**
-     * Was this the result of a new login.
-     */
     @JsonProperty
     private final boolean fromNewLogin;
+
+    @JsonProperty
+    private final boolean stateless;
 
     @JsonProperty
     private final Service service;

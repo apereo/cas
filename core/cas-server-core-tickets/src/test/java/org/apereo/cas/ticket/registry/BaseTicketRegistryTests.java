@@ -374,14 +374,21 @@ public abstract class BaseTicketRegistryTests {
         assertTrue(services.isEmpty(), () -> "Ticket services should be empty. useEncryption[" + useEncryption + ']');
 
         val service = RegisteredServiceTestUtils.getService("TGT_UPDATE_TEST");
-        tgt.grantServiceTicket("ST-1", service, NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy);
+        val serviceTicket = tgt.grantServiceTicket("ST-1", service, NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy);
+        assertNotNull(serviceTicket);
+        
         val updatedTgt = ticketRegistry.updateTicket(tgt);
-        val tgtResult = updatedTgt.isCompact()
+        val tgtResult = updatedTgt.isStateless()
             ? ticketRegistry.getTicket(updatedTgt.getId(), TicketGrantingTicket.class)
             : ticketRegistry.getTicket(tgt.getId(), TicketGrantingTicket.class);
         assertInstanceOf(TicketGrantingTicket.class, tgtResult);
         services = tgtResult.getServices();
         assertEquals(Collections.singleton("ST-1"), services.keySet());
+
+        val stResult = ticketRegistry.addTicket(serviceTicket);
+        assertTrue(stResult.isStateless());
+        val foundServiceTicket = ticketRegistry.getTicket(stResult.getId(), ServiceTicket.class);
+        assertEquals(serviceTicket.getAuthentication().getPrincipal(), foundServiceTicket.getAuthentication().getPrincipal());
     }
 
     @RepeatedTest(2)

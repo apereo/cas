@@ -31,6 +31,8 @@ public class DefaultAssertionBuilder {
     private final Service service;
 
     private final boolean newLogin;
+    
+    private final boolean stateless;
 
     private final RegisteredService registeredService;
 
@@ -43,6 +45,6 @@ public class DefaultAssertionBuilder {
      */
     public Assertion assemble() {
         return new ImmutableAssertion(this.primaryAuthentication, this.originalAuthentication,
-            this.authentications, this.newLogin, this.service, this.registeredService, this.context);
+            this.authentications, this.newLogin, this.stateless, this.service, this.registeredService, this.context);
     }
 }

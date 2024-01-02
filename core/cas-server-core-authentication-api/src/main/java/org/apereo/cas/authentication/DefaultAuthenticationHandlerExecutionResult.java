@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.principal.Principal;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
@@ -59,7 +60,6 @@ public class DefaultAuthenticationHandlerExecutionResult implements Authenticati
         this(source, credential, null, new ArrayList<>(0));
     }
 
-
     public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final Credential credential,
                                                        final Principal principal) {
         this(source, credential, principal, new ArrayList<>(0));
@@ -74,6 +74,10 @@ public class DefaultAuthenticationHandlerExecutionResult implements Authenticati
     public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final Credential credential,
                                                        final Principal principal, final @NonNull List<MessageDescriptor> warnings) {
         this(StringUtils.isBlank(source.getName()) ? source.getClass().getSimpleName() : source.getName(), credential, principal, warnings);
+    }
+
+    public DefaultAuthenticationHandlerExecutionResult(final String source, final Principal principal) {
+        this(source, new BasicIdentifiableCredential(principal.getId()), principal, new ArrayList<>());
     }
 
     @Override

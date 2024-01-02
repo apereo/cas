@@ -71,12 +71,12 @@ class DefaultServiceTicketFactoryTests extends BaseTicketFactoryTests {
 
         assertThrows(ClassCastException.class,
             () -> factory.create(RegisteredServiceTestUtils.getService("defaultExpirationPolicy"),
-                true, ProxyTicket.class));
+                CoreAuthenticationTestUtils.getAuthentication(), true, ProxyTicket.class));
 
         val serviceTicket = factory.create(RegisteredServiceTestUtils.getService("defaultExpirationPolicy"),
-            true, ServiceTicket.class);
-        assertTrue(serviceTicket.isCompact());
-        assertNull(serviceTicket.getAuthentication());
+            CoreAuthenticationTestUtils.getAuthentication(), true, ServiceTicket.class);
+        assertTrue(serviceTicket.isStateless());
+        assertNotNull(serviceTicket.getAuthentication());
 
         val pgtIssuer = (ProxyGrantingTicketIssuerTicket) serviceTicket;
         assertNull(pgtIssuer.grantProxyGrantingTicket("PGT-123", CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE));

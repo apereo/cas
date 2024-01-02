@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -117,11 +118,13 @@ public class StatelessTicketRegistryConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public TicketCompactor serviceTicketCompactor(
+        @Qualifier(PrincipalFactory.BEAN_NAME)
+        final PrincipalFactory principalFactory,
         @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
         final ServiceFactory serviceFactory,
         @Qualifier(TicketFactory.BEAN_NAME)
         final ObjectProvider<TicketFactory> ticketFactory) {
-        return new ServiceTicketCompactor(ticketFactory, serviceFactory);
+        return new ServiceTicketCompactor(ticketFactory, serviceFactory, principalFactory);
     }
 
     @ConditionalOnMissingBean(name = "transientTicketCompactor")

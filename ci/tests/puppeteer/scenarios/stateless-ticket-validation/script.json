@@ -1,0 +1,19 @@
+{
+  "dependencies": "stateless-ticket-registry,reports,generic",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.service-registry.core.init-from-json=true",
+
+    "--cas.ticket.st.time-to-kill-in-seconds=900",
+
+    "--cas.audit.engine.enabled=true",
+    "--cas.audit.slf4j.use-single-line=true",
+    "--cas.audit.engine.audit-format=JSON",
+    "--cas.audit.engine.include-validation-assertion=true",
+
+    "--cas.authn.attribute-repository.json[0].location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/attribute-repository.json",
+    "--cas.authn.attribute-repository.json[0].id=MyJson"
+  ]
+}
