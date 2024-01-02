@@ -17,6 +17,10 @@ env:
 
 ##########################################################################
 
+concurrency:
+  group: "workflow = ${{ github.workflow }}, ref = ${{ github.event.ref }}, pr = ${{ github.event.pull_request.id }}"
+  cancel-in-progress: ${{ github.event_name == 'pull_request' || github.repository != 'apereo/cas' }}
+
 on:
   schedule:
     - cron: '0 23 * * *'
@@ -29,17 +33,6 @@ on:
 ##########################################################################
 
 jobs:
-  cancel-previous-runs:
-    if: ${{ (github.event_name == 'schedule' || contains(github.event.pull_request.labels.*.name, 'Bot')) }}
-    runs-on: macos-latest
-    timeout-minutes: 1
-    steps:
-      - uses: styfle/cancel-workflow-action@0.12.0
-        with:
-          access_token: ${{ github.token }}
-
-  ##########################################################################
-
   initialize:
     if: ${{ (github.event_name == 'schedule' || contains(github.event.pull_request.labels.*.name, 'Bot')) }}
     runs-on: macos-latest
