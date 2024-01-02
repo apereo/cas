@@ -14,6 +14,10 @@ env:
 
 ##########################################################################
 
+concurrency:
+  group: "workflow = ${{ github.workflow }}, ref = ${{ github.event.ref }}, pr = ${{ github.event.pull_request.id }}"
+  cancel-in-progress: ${{ github.event_name == 'pull_request' || github.repository != 'apereo/cas' }}
+
 on:
 #  push:
 #    branches:
@@ -24,19 +28,8 @@ on:
 ##########################################################################
 
 jobs:
-  cancel-previous-runs:
-    runs-on: macos-latest
-    timeout-minutes: 1
-    steps:
-      - uses: styfle/cancel-workflow-action@0.12.0
-        with:
-          access_token: ${{ github.token }}
-
-##########################################################################
-
   initialize:
     runs-on: macos-latest
-    needs: [cancel-previous-runs]
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK
