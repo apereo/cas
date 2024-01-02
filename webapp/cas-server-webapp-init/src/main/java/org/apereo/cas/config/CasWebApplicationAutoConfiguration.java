@@ -17,7 +17,7 @@ import org.springframework.core.Ordered;
 import org.springframework.scheduling.annotation.EnableAsync;
 
 /**
- * This is {@link CasWebApplicationConfiguration}.
+ * This is {@link CasWebApplicationAutoConfiguration}.
  *
  * @author Hal Deadman
  * @since 6.6.0
@@ -27,7 +27,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableAsync(proxyTargetClass = false)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.WebApplication)
 @AutoConfiguration
-public class CasWebApplicationConfiguration {
+public class CasWebApplicationAutoConfiguration {
 
     @ConditionalOnMissingBean(name = "casWebApplicationReadyListener")
     @Bean

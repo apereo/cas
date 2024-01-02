@@ -16,14 +16,14 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * This is {@link CasWebApplicationConfigurationTests}.
+ * This is {@link CasWebApplicationAutoConfigurationTests}.
  *
  * @author Misagh Moayyed
  * @since 6.6.0
  */
-@SpringBootTest(classes = CasWebApplicationConfiguration.class)
+@SpringBootTest(classes = CasWebApplicationAutoConfiguration.class)
 @Tag("CasConfiguration")
-class CasWebApplicationConfigurationTests {
+class CasWebApplicationAutoConfigurationTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 

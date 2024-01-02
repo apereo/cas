@@ -1,1 +1,1 @@
-org.apereo.cas.config.CasEmbeddedContainerJettyConfiguration
+org.apereo.cas.config.CasEmbeddedContainerJettyAutoConfiguration

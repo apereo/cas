@@ -1,6 +1,6 @@
 package org.apereo.cas.web;
 
-import org.apereo.cas.config.CasWebApplicationConfiguration;
+import org.apereo.cas.config.CasWebApplicationAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasWebApplicationConfiguration.class
+    CasWebApplicationAutoConfiguration.class
 },
     properties = {
         "server.port=8588",

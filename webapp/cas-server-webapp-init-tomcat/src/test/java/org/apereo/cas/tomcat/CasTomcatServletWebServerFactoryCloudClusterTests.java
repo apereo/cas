@@ -1,7 +1,6 @@
 package org.apereo.cas.tomcat;
 
-import org.apereo.cas.config.CasEmbeddedContainerTomcatConfiguration;
-import org.apereo.cas.config.CasEmbeddedContainerTomcatFiltersConfiguration;
+import org.apereo.cas.config.CasEmbeddedContainerTomcatAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import lombok.val;
 import org.apache.catalina.Container;
@@ -31,15 +30,10 @@ import static org.mockito.Mockito.*;
  * @author Hal Deadman
  * @since 6.2.0
  */
-@SpringBootTest(classes = {
-    CasEmbeddedContainerTomcatConfiguration.class,
-    CasEmbeddedContainerTomcatFiltersConfiguration.class
-},
-    properties = {
-        "server.port=8183",
-        "server.ssl.enabled=false"
-    },
-    webEnvironment = SpringBootTest.WebEnvironment.MOCK)
+@SpringBootTest(classes = CasEmbeddedContainerTomcatAutoConfiguration.class, properties = {
+    "server.port=8183",
+    "server.ssl.enabled=false"
+}, webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @EnableConfigurationProperties({CasConfigurationProperties.class, ServerProperties.class})
 @Tag("WebApp")
 class CasTomcatServletWebServerFactoryCloudClusterTests {
