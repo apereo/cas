@@ -11,14 +11,14 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.core.Ordered;
 
 /**
- * This is {@link CasEmbeddedContainerJettyConfiguration}.
+ * This is {@link CasEmbeddedContainerUndertowAutoConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
-@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Jetty)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Undertow)
 @AutoConfiguration(before = ServletWebServerFactoryAutoConfiguration.class)
-public class CasEmbeddedContainerJettyConfiguration {
+public class CasEmbeddedContainerUndertowAutoConfiguration {
 }

@@ -5,19 +5,17 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.tomcat.CasTomcatServletWebServerFactory;
 import org.apereo.cas.tomcat.CasTomcatServletWebServerFactoryCustomizer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
 import org.apache.catalina.startup.Tomcat;
 import org.apache.coyote.http2.Http2Protocol;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
-import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 
 /**
@@ -30,8 +28,8 @@ import org.springframework.core.Ordered;
 @ConditionalOnClass({Tomcat.class, Http2Protocol.class})
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.ApacheTomcat)
-@AutoConfiguration(before = ServletWebServerFactoryAutoConfiguration.class)
-public class CasEmbeddedContainerTomcatConfiguration {
+@Configuration
+class CasEmbeddedContainerTomcatConfiguration {
 
     @ConditionalOnMissingBean(name = "casServletWebServerFactory")
     @Bean
