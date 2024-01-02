@@ -15,6 +15,10 @@ env:
 
 ##########################################################################
 
+concurrency:
+  group: "workflow = ${{ github.workflow }}, ref = ${{ github.event.ref }}, pr = ${{ github.event.pull_request.id }}"
+  cancel-in-progress: ${{ github.event_name == 'pull_request' || github.repository != 'apereo/cas' }}
+
 on:
   push:
     branches: [ master ]
@@ -25,18 +29,8 @@ on:
 ##########################################################################
 
 jobs:
-  cancel-previous-runs:
-    runs-on: ubuntu-latest
-    if: ${{ (github.event_name == 'push' || contains(github.event.pull_request.labels.*.name, 'CI')) && !contains(github.event.pull_request.labels.*.name, 'Renovate') && !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
-    timeout-minutes: 1
-    steps:
-      - uses: styfle/cancel-workflow-action@0.12.0
-        with:
-          access_token: ${{ github.token }}
-          
   initialize:
     runs-on: ubuntu-latest
-    needs: [cancel-previous-runs]
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK
