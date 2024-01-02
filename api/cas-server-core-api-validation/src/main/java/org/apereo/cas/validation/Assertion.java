@@ -53,6 +53,13 @@ public interface Assertion extends Serializable {
     boolean isFromNewLogin();
 
     /**
+     * True if the validated ticket was self-contained and stateless.
+     * 
+     * @return true if validated ticket was stateless
+     */
+    boolean isStateless();
+
+    /**
      * Method to obtain the service for which we are asserting this ticket is
      * valid for.
      *

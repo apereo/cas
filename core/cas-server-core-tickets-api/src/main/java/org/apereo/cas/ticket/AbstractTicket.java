@@ -90,7 +90,7 @@ public abstract class AbstractTicket implements TicketGrantingTicketAwareTicket,
      */
     private Boolean expired = Boolean.FALSE;
     
-    private Boolean compact = Boolean.FALSE;
+    private Boolean stateless = Boolean.FALSE;
 
     @Getter
     private Map<String, Object> properties = new HashMap<>(0);
@@ -108,8 +108,8 @@ public abstract class AbstractTicket implements TicketGrantingTicketAwareTicket,
     }
 
     @Override
-    public boolean isCompact() {
-        return this.compact;
+    public boolean isStateless() {
+        return this.stateless;
     }
 
     @Override
@@ -119,8 +119,8 @@ public abstract class AbstractTicket implements TicketGrantingTicketAwareTicket,
 
     @Override
     @CanIgnoreReturnValue
-    public Ticket markTicketCompact() {
-        this.compact = Boolean.TRUE;
+    public Ticket markTicketStateless() {
+        this.stateless = Boolean.TRUE;
         return this;
     }
 

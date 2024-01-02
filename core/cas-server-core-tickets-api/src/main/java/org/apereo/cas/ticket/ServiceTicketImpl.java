@@ -12,10 +12,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.io.Serial;
+import java.util.Objects;
 
 /**
  * Domain object representing a Service Ticket. A service ticket grants specific
@@ -31,6 +33,7 @@ import java.io.Serial;
 @Setter
 @NoArgsConstructor
 @Getter
+@Accessors(chain = true)
 public class ServiceTicketImpl extends AbstractTicket
     implements ServiceTicket, RenewableServiceTicket, ProxyGrantingTicketIssuerTicket {
 
@@ -40,14 +43,11 @@ public class ServiceTicketImpl extends AbstractTicket
     @JsonProperty("ticketGrantingTicket")
     private TicketGrantingTicket ticketGrantingTicket;
 
-    /**
-     * The service this ticket is valid for.
-     */
+    @JsonProperty("authentication")
+    private Authentication authentication;
+
     private Service service;
 
-    /**
-     * Is this service ticket the result of a new login?
-     */
     private boolean fromNewLogin;
 
     private Boolean grantedTicketAlready = Boolean.FALSE;
@@ -86,7 +86,7 @@ public class ServiceTicketImpl extends AbstractTicket
     @Override
     @JsonIgnore
     public Authentication getAuthentication() {
-        return ticketGrantingTicket != null ? ticketGrantingTicket.getAuthentication() : null;
+        return Objects.requireNonNullElseGet(authentication, () -> ticketGrantingTicket != null ? ticketGrantingTicket.getAuthentication() : null);
     }
 
     @Override
