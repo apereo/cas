@@ -13,15 +13,21 @@ import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.TypeReference;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.binding.validation.ValidationContext;
+import org.springframework.webflow.conversation.impl.ContainedConversation;
 import org.springframework.webflow.conversation.impl.ConversationContainer;
 import org.springframework.webflow.core.AnnotatedObject;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.definition.StateDefinition;
 import org.springframework.webflow.definition.TransitionDefinition;
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.FlowExecutionExceptionHandlerSet;
 import org.springframework.webflow.engine.TransitionSet;
+import org.springframework.webflow.engine.builder.ViewFactoryCreator;
 import org.springframework.webflow.engine.impl.FlowExecutionImpl;
 import org.springframework.webflow.execution.Action;
+import org.springframework.webflow.execution.FlowExecution;
+import org.springframework.webflow.execution.FlowSession;
+import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.mvc.builder.MvcViewFactoryCreator;
 import java.util.List;
 
@@ -47,22 +53,23 @@ public class CasCoreWebflowRuntimeHints implements CasRuntimeHintsRegistrar {
         ));
 
         registerSerializationHints(hints,
+            ContainedConversation.class,
             ClientFlowExecutionRepository.SerializedFlowExecutionState.class,
             ConversationContainer.class,
             LocalAttributeMap.class);
 
         registerReflectionHints(hints, findSubclassesInPackage(MessageContext.class, "org.springframework.binding"));
         registerReflectionHints(hints, findSubclassesInPackage(ValidationContext.class, "org.springframework.binding"));
+        registerReflectionHints(hints, findSubclassesInPackage(RequestContext.class, "org.springframework.webflow"));
+        registerReflectionHints(hints, findSubclassesInPackage(FlowSession.class, "org.springframework.webflow"));
+        registerReflectionHints(hints, findSubclassesInPackage(ViewFactoryCreator.class, "org.springframework.webflow"));
+        registerReflectionHints(hints, findSubclassesInPackage(FlowExecution.class, "org.springframework.webflow"));
 
         registerReflectionHints(hints, List.of(
-            MvcViewFactoryCreator.class,
             CasWebflowEventResolver.class,
-            TypeReference.of("org.springframework.webflow.engine.impl.RequestControlContextImpl"),
-            TypeReference.of("org.springframework.webflow.engine.impl.FlowSessionImpl"),
             TransitionSet.class,
-            FlowExecutionImpl.class,
-            FlowExecutionExceptionHandlerSet.class,
-            WebflowConversationStateCipherExecutor.class
+            FlowDefinitionRegistry.class,
+            FlowExecutionExceptionHandlerSet.class
         ));
 
         registerReflectionHints(hints,
