@@ -1,7 +1,9 @@
 package org.apereo.cas;
 
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.config.StatelessTicketRegistryConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -38,6 +40,8 @@ public class StatelessTicketManagementTests extends AbstractCentralAuthenticatio
         val authentication = validatedAssertion.getPrimaryAuthentication();
         assertTrue(authentication.getSuccesses().containsKey(SimpleTestUsernamePasswordAuthenticationHandler.class.getSimpleName()));
         assertTrue(authentication.getAttributes().containsKey(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS));
+        assertTrue(authentication.getAttributes().containsKey(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE));
+        assertTrue(authentication.getAttributes().containsKey(Credential.CREDENTIAL_TYPE_ATTRIBUTE));
         assertEquals("developer", authentication.getPrincipal().getId());
         val attributes = authentication.getPrincipal().getAttributes();
         assertTrue(attributes.containsKey("groupMembership"));
