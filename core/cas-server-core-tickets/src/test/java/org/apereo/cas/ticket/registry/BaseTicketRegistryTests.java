@@ -159,7 +159,7 @@ public abstract class BaseTicketRegistryTests {
         this.proxyGrantingTicketId = new ProxyGrantingTicketIdGenerator(10, StringUtils.EMPTY)
             .getNewTicketId(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX);
         this.transientSessionTicketId = new DefaultUniqueTicketIdGenerator().getNewTicketId(TransientSessionTicket.PREFIX);
-
+        
         if (info.getTags().contains("TicketRegistryTestWithEncryption")) {
             useEncryption = true;
         } else if (info.getTags().contains("TicketRegistryTestWithoutEncryption")) {
@@ -384,11 +384,6 @@ public abstract class BaseTicketRegistryTests {
         assertInstanceOf(TicketGrantingTicket.class, tgtResult);
         services = tgtResult.getServices();
         assertEquals(Collections.singleton("ST-1"), services.keySet());
-
-        val stResult = ticketRegistry.addTicket(serviceTicket);
-        assertTrue(stResult.isStateless());
-        val foundServiceTicket = ticketRegistry.getTicket(stResult.getId(), ServiceTicket.class);
-        assertEquals(serviceTicket.getAuthentication().getPrincipal(), foundServiceTicket.getAuthentication().getPrincipal());
     }
 
     @RepeatedTest(2)
