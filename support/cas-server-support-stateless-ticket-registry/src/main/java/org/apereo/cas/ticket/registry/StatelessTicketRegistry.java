@@ -70,7 +70,8 @@ public class StatelessTicketRegistry extends AbstractTicketRegistry {
         val finalTicketId = ticket.getPrefix() + UniqueTicketIdGenerator.SEPARATOR + encoded64;
         LOGGER.debug("Compacted ticket in encoded form is [{}]", finalTicketId);
         if (ticket instanceof ServiceTicket) {
-            Assert.isTrue(finalTicketId.length() <= MAX_TICKET_LENGTH, "Final ticket id length exceeds %s characters".formatted(MAX_TICKET_LENGTH));
+            Assert.isTrue(finalTicketId.length() <= MAX_TICKET_LENGTH,
+                "Final ticket id %s length %s exceeds %s characters".formatted(finalTicketId, finalTicketId.length(), MAX_TICKET_LENGTH));
         }
         return new DefaultEncodedTicket(finalTicketId, ticket.getPrefix()).markTicketStateless();
     }

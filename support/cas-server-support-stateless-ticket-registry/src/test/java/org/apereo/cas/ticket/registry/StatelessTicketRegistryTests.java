@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.registry;
 import org.apereo.cas.config.StatelessTicketRegistryConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.RenewableServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.TransientSessionTicket;
@@ -33,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("Tickets")
+@Tag("TicketRegistryTestWithoutEncryption")
 @Import({
     StatelessTicketRegistryConfiguration.class,
     BaseWebflowConfigurerTests.SharedTestConfiguration.class
@@ -84,10 +86,13 @@ public class StatelessTicketRegistryTests extends BaseTicketRegistryTests {
             new MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy(1, 100),
             true, TicketTrackingPolicy.noOp());
         val addedServiceTicket = newTicketRegistry.addTicket(serviceTicket);
-        val retrievedTicket = newTicketRegistry.getTicket(addedServiceTicket.getId());
+        assertTrue(addedServiceTicket.isStateless());
+
+        val retrievedTicket = (RenewableServiceTicket) newTicketRegistry.getTicket(addedServiceTicket.getId());
         assertNotNull(retrievedTicket);
         assertTrue(retrievedTicket.isStateless());
-        assertTrue(((RenewableServiceTicket) retrievedTicket).isFromNewLogin());
+        assertTrue(retrievedTicket.isFromNewLogin());
+        assertEquals(serviceTicket.getAuthentication().getPrincipal(), ((AuthenticationAwareTicket) retrievedTicket).getAuthentication().getPrincipal());
     }
 
     @RepeatedTest(2)
