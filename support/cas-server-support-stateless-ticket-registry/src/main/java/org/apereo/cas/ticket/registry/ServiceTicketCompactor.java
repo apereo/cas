@@ -2,9 +2,11 @@ package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationManager;
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
+import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
@@ -52,13 +54,15 @@ public class ServiceTicketCompactor implements TicketCompactor<ServiceTicket> {
             builder.append("%s0".formatted(DELIMITER));
         }
         if (ticket instanceof final AuthenticationAwareTicket aat && aat.getAuthentication() != null) {
-            val handlers = String.join("#", aat.getAuthentication().getSuccesses().keySet());
-            val principalId = aat.getAuthentication().getPrincipal().getId();
-            val credentialTypes = aat.getAuthentication().getCredentials().stream()
+            val authentication = aat.getAuthentication();
+            val handlers = String.join("#", authentication.getSuccesses().keySet());
+            val principalId = authentication.getPrincipal().getId();
+            val credentialTypes = authentication.getCredentials().stream()
                 .map(credential -> credential.getClass().getSimpleName()).collect(Collectors.joining("#"));
             builder.append(String.format("%s%s:%s:%s", DELIMITER, principalId, handlers, credentialTypes));
+            builder.append(String.format("%s%s", DELIMITER, BooleanUtils.toString(CoreAuthenticationUtils.isRememberMeAuthentication(authentication), "1", "0")));
         } else {
-            builder.append("%s*".formatted(DELIMITER));
+            builder.append("%s*%s0".formatted(DELIMITER, DELIMITER));
         }
         return builder.toString();
     }
@@ -80,10 +84,12 @@ public class ServiceTicketCompactor implements TicketCompactor<ServiceTicket> {
         val principal = principalFactory.createPrincipal(authenticationData.getFirst());
         val handlers = Arrays.stream(authenticationData.get(1).split("#")).collect(Collectors.toSet());
         val credentialTypes = Arrays.stream(authenticationData.get(2).split("#")).collect(Collectors.toSet());
+        val rememberMe = BooleanUtils.toBoolean(structure.ticketElements().get(5));
 
         val authentication = DefaultAuthenticationBuilder
             .newInstance()
             .setPrincipal(principal)
+            .addAttribute(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, rememberMe)
             .addAttribute(Credential.CREDENTIAL_TYPE_ATTRIBUTE, credentialTypes)
             .addAttribute(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS, handlers)
             .setSuccesses(handlers.stream().collect(Collectors.toMap(Function.identity(),

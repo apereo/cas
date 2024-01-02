@@ -7,12 +7,10 @@ const cas = require("../../cas.js");
     const page = await cas.newPage(browser);
 
     const service = "https://apereo.github.io";
-    await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
-
-    await cas.attributeValue(page, "#username", "autocapitalize", "none");
-    await cas.attributeValue(page, "#username", "spellcheck", "false");
-    await cas.attributeValue(page, "#username", "autocomplete", "username");
+    await cas.gotoLogin(page, service);
+    await cas.click(page, "#rememberMe");
     await cas.loginWith(page);
+    await page.waitForTimeout(1000);
     const ticket = await cas.assertTicketParameter(page);
     await browser.close();
 
@@ -28,23 +26,23 @@ const cas = require("../../cas.js");
     assert(body.includes("<cas:firstName>Bob</cas:firstName>"));
     assert(body.includes("<cas:lastName>Johnson</cas:lastName>"));
     assert(body.includes("<cas:employeeNumber>123456</cas:employeeNumber>"));
-    assert(body.includes("<cas:credentialType>UsernamePasswordCredential</cas:credentialType>"));
+    assert(body.includes("<cas:credentialType>RememberMeUsernamePasswordCredential</cas:credentialType>"));
     assert(body.includes("<cas:authenticationMethod>STATIC</cas:authenticationMethod>"));
     assert(body.includes("<cas:isFromNewLogin>true</cas:isFromNewLogin>"));
     assert(body.includes("<cas:successfulAuthenticationHandlers>STATIC</cas:successfulAuthenticationHandlers>"));
-    assert(body.includes("<cas:longTermAuthenticationRequestTokenUsed>false</cas:longTermAuthenticationRequestTokenUsed>"));
+    assert(body.includes("<cas:longTermAuthenticationRequestTokenUsed>true</cas:longTermAuthenticationRequestTokenUsed>"));
 
     body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
     await cas.log(body);
     const json = JSON.parse(body);
     const authenticationSuccess = json.serviceResponse.authenticationSuccess;
     assert(authenticationSuccess.user === "casuser");
-    assert(authenticationSuccess.attributes.credentialType[0] === "UsernamePasswordCredential");
+    assert(authenticationSuccess.attributes.credentialType[0] === "RememberMeUsernamePasswordCredential");
     assert(authenticationSuccess.attributes.isFromNewLogin[0] === true);
     assert(authenticationSuccess.attributes.authenticationDate[0] !== null);
     assert(authenticationSuccess.attributes.authenticationMethod[0] === "STATIC");
     assert(authenticationSuccess.attributes.successfulAuthenticationHandlers[0] === "STATIC");
-    assert(authenticationSuccess.attributes.longTermAuthenticationRequestTokenUsed[0] === false);
+    assert(authenticationSuccess.attributes.longTermAuthenticationRequestTokenUsed[0] === true);
     assert(authenticationSuccess.attributes.firstName[0] === "Bob");
     assert(authenticationSuccess.attributes.lastName[0] === "Johnson");
     assert(authenticationSuccess.attributes.employeeNumber[0] === "123456");
