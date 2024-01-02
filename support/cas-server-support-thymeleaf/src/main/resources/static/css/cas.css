@@ -436,7 +436,8 @@ button.close {
 
 .mdc-button--outline:not(:disabled, .reveal-password) {
     background-color: var(--cas-theme-secondary, #018077);
-    border-radius: 12px 4px;
+    border-radius: 8px 8px 8px 8px;
+    filter: drop-shadow(2px 2px 4px #018077);
 }
 
 .mdc-button--raised:not(:disabled, .reveal-password) {

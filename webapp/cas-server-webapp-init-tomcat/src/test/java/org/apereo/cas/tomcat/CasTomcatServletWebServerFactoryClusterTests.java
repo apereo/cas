@@ -1,7 +1,6 @@
 package org.apereo.cas.tomcat;
 
-import org.apereo.cas.config.CasEmbeddedContainerTomcatConfiguration;
-import org.apereo.cas.config.CasEmbeddedContainerTomcatFiltersConfiguration;
+import org.apereo.cas.config.CasEmbeddedContainerTomcatAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
@@ -33,8 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
-    CasEmbeddedContainerTomcatConfiguration.class,
-    CasEmbeddedContainerTomcatFiltersConfiguration.class
+    CasEmbeddedContainerTomcatAutoConfiguration.class
 },
     properties = {
         "server.port=8183",
