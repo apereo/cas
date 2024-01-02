@@ -354,7 +354,7 @@ public interface CasFeatureModule {
         private static final Set<String> PRESENT_FEATURES = Collections.synchronizedSet(new TreeSet<>());
 
         public static Set<String> getRegisteredFeatures() {
-            return Set.copyOf(PRESENT_FEATURES);
+            return new TreeSet<>(PRESENT_FEATURES);
         }
 
         /**
@@ -370,11 +370,7 @@ public interface CasFeatureModule {
          * @param module the module
          */
         public void register(final String module) {
-            var featureName = name();
-            if (StringUtils.isNotBlank(module)) {
-                featureName += '.' + module;
-            }
-            PRESENT_FEATURES.add(featureName);
+            PRESENT_FEATURES.add(toFullFeatureName(module));
         }
 
         /**
@@ -384,11 +380,7 @@ public interface CasFeatureModule {
          * @return true/false
          */
         public boolean isRegistered(final String module) {
-            var featureName = name();
-            if (StringUtils.isNotBlank(module)) {
-                featureName += '.' + module;
-            }
-            return PRESENT_FEATURES.contains(featureName);
+            return PRESENT_FEATURES.contains(toFullFeatureName(module));
         }
 
         /**
@@ -407,13 +399,16 @@ public interface CasFeatureModule {
          * @return the string
          */
         public String toProperty(final String module) {
+            return toFullFeatureName(module) + ".enabled";
+        }
+
+        private String toFullFeatureName(final String module) {
             var propertyName = CasFeatureModule.class.getSimpleName() + '.' + name();
             if (StringUtils.isNotBlank(module)) {
                 propertyName += '.' + module;
             }
-            propertyName += ".enabled";
             return propertyName;
         }
-
     }
+
 }
