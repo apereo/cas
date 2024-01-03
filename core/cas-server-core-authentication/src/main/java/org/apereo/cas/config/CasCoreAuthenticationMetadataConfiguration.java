@@ -21,7 +21,6 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -40,8 +39,8 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Authentication)
-@AutoConfiguration
-public class CasCoreAuthenticationMetadataConfiguration {
+@Configuration(proxyBeanMethods = false)
+class CasCoreAuthenticationMetadataConfiguration {
     private static final BeanCondition CONDITION_CLEARPASS = BeanCondition.on("cas.clearpass.cache-credential").isTrue();
 
     @Configuration(value = "CasCoreAuthenticationMetadataCipherConfiguration", proxyBeanMethods = false)

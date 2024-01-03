@@ -4,11 +4,7 @@ import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.config.CasCookieAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
@@ -61,8 +57,6 @@ public abstract class BaseSurrogateAuthenticationTests {
         CasCoreAuditAutoConfiguration.class,
         SurrogateAuthenticationAuditConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
-        CasCoreAuthenticationPolicyConfiguration.class,
-        CasCoreAuthenticationPrincipalConfiguration.class,
         CasCoreMultifactorAuthenticationConfiguration.class,
         CasMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasWebflowAutoConfiguration.class,
@@ -70,9 +64,7 @@ public abstract class BaseSurrogateAuthenticationTests {
         CasThemesConfiguration.class,
         CasCoreAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
-        CasCoreAuthenticationSupportConfiguration.class,
-        CasCoreAuthenticationConfiguration.class,
-        CasCoreAuthenticationHandlersConfiguration.class,
+        CasCoreAuthenticationAutoConfiguration.class,
         CasPersonDirectoryTestConfiguration.class,
         CasCookieAutoConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class
