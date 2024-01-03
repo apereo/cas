@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
- * This is {@link CasLdapThrottlingConfiguration}.
+ * This is {@link CasLdapThrottlingAutoConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
@@ -28,7 +28,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Throttling, module = "ldap")
 @AutoConfiguration
-public class CasLdapThrottlingConfiguration {
+public class CasLdapThrottlingAutoConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

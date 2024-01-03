@@ -22,14 +22,14 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import java.util.List;
 
 /**
- * This is {@link CasSwaggerConfiguration}.
+ * This is {@link CasSwaggerAutoConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Discovery)
 @AutoConfiguration
-public class CasSwaggerConfiguration {
+public class CasSwaggerAutoConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

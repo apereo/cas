@@ -21,7 +21,7 @@ import software.amazon.awssdk.services.secretsmanager.model.SecretListEntry;
 import java.util.Properties;
 
 /**
- * This is {@link AmazonSecretsManagerCloudConfigBootstrapConfiguration}.
+ * This is {@link AmazonSecretsManagerCloudConfigBootstrapAutoConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
@@ -30,7 +30,7 @@ import java.util.Properties;
 @Getter
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.CasConfiguration, module = "aws-secretsmanager")
 @AutoConfiguration
-public class AmazonSecretsManagerCloudConfigBootstrapConfiguration implements PropertySourceLocator {
+public class AmazonSecretsManagerCloudConfigBootstrapAutoConfiguration implements PropertySourceLocator {
     /**
      * Configuration prefix for amazon secrets manager.
      */

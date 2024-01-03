@@ -38,7 +38,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
 /**
- * This is {@link CasConsentWebflowConfiguration}.
+ * This is {@link CasConsentWebflowAutoConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
@@ -47,7 +47,7 @@ import org.springframework.webflow.execution.Action;
 @ConditionalOnBean(name = ConsentRepository.BEAN_NAME)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Consent)
 @AutoConfiguration
-public class CasConsentWebflowConfiguration {
+public class CasConsentWebflowAutoConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.consent.core.enabled").isTrue().evenIfMissing();
     @Configuration(value = "CasConsentWebflowActionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)

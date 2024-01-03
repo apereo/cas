@@ -9,14 +9,14 @@ import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.context.annotation.Bean;
 
 /**
- * This is {@link RestfulCloudConfigBootstrapConfiguration}.
+ * This is {@link RestfulCloudConfigBootstrapAutoConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
  */
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.CasConfiguration, module = "rest")
 @AutoConfiguration
-public class RestfulCloudConfigBootstrapConfiguration {
+public class RestfulCloudConfigBootstrapAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "restfulPropertySourceLocator")
