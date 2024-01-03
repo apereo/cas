@@ -8,7 +8,7 @@ import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasSupportMongoDbAuditConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
@@ -34,7 +34,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreAuditAutoConfiguration.class,
     CasSupportMongoDbAuditConfiguration.class,
-    CasCoreUtilConfiguration.class,
+    CasCoreUtilAutoConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketsSerializationConfiguration.class,

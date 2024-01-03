@@ -12,7 +12,7 @@ import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
@@ -67,7 +67,7 @@ public abstract class BaseAuditConfigurationTests {
         CasWebApplicationServiceFactoryConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
-        CasCoreUtilConfiguration.class,
+        CasCoreUtilAutoConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
         CasCoreWebflowConfiguration.class,
         CasWebflowContextConfiguration.class,

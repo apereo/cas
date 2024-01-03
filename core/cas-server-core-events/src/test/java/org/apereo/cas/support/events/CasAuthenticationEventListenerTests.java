@@ -4,7 +4,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.config.CasCoreEventsAutoConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.support.events.authentication.CasAuthenticationPolicyFailureEvent;
 import org.apereo.cas.support.events.authentication.CasAuthenticationTransactionFailureEvent;
@@ -57,7 +57,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = {
     CasAuthenticationEventListenerTests.EventTestConfiguration.class,
     CasCoreEventsAutoConfiguration.class,
-    CasCoreUtilConfiguration.class,
+    CasCoreUtilAutoConfiguration.class,
     RefreshAutoConfiguration.class
 })
 @Tag("Events")

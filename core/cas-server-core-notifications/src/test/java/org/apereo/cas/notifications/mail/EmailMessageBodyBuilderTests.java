@@ -1,6 +1,6 @@
 package org.apereo.cas.notifications.mail;
 
-import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.util.CollectionUtils;
@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasCoreUtilConfiguration.class
+    CasCoreUtilAutoConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class EmailMessageBodyBuilderTests {

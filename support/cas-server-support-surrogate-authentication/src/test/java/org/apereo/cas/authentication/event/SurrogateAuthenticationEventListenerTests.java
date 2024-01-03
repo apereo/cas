@@ -2,7 +2,7 @@ package org.apereo.cas.authentication.event;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.sms.MockSmsSender;
@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.*;
     SurrogateAuthenticationEventListenerTests.SurrogateAuthenticationEventListenerTestConfiguration.class,
     RefreshAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
-    CasCoreUtilConfiguration.class,
+    CasCoreUtilAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
     MailSenderAutoConfiguration.class,
     MailSenderValidatorAutoConfiguration.class

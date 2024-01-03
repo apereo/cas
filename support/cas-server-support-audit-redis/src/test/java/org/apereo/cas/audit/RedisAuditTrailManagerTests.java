@@ -8,7 +8,7 @@ import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasSupportRedisAuditConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
@@ -36,7 +36,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CasCoreTicketsSerializationConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreServicesConfiguration.class,
-    CasCoreUtilConfiguration.class,
+    CasCoreUtilAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
     CasSupportRedisAuditConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,

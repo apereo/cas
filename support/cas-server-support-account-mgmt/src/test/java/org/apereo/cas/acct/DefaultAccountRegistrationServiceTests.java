@@ -1,6 +1,7 @@
 package org.apereo.cas.acct;
 
 import org.apereo.cas.acct.provision.AccountRegistrationProvisioner;
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import lombok.val;

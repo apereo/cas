@@ -1,6 +1,6 @@
 package org.apereo.cas.hibernate;
 
-import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasHibernateJpaConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
     CasHibernateJpaConfiguration.class,
-    CasCoreUtilConfiguration.class
+    CasCoreUtilAutoConfiguration.class
 })
 @Tag("Hibernate")
 @EnableTransactionManagement(proxyTargetClass = false)

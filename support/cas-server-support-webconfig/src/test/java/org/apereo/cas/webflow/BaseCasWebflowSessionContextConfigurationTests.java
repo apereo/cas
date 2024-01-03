@@ -23,7 +23,7 @@ import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreValidationAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowConfiguration;
@@ -109,7 +109,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasLoggingAutoConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasSupportActionsConfiguration.class,
-    CasCoreUtilConfiguration.class,
+    CasCoreUtilAutoConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,
     CasCookieAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class,

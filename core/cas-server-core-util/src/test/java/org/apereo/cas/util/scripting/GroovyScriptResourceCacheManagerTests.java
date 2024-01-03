@@ -1,6 +1,6 @@
 package org.apereo.cas.util.scripting;
 
-import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasCoreUtilConfiguration.class
+    CasCoreUtilAutoConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class GroovyScriptResourceCacheManagerTests {

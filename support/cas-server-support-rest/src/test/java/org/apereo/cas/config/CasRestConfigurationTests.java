@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-    CasCoreUtilConfiguration.class,
+    CasCoreUtilAutoConfiguration.class,
     CasThrottlingConfiguration.class,
     CasCoreAuditAutoConfiguration.class,
     CasCookieAutoConfiguration.class,

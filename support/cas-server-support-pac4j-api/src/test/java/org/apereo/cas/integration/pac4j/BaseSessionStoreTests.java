@@ -16,7 +16,7 @@ import org.apereo.cas.config.CasCoreTicketComponentSerializationConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
@@ -71,7 +71,7 @@ public abstract class BaseSessionStoreTests {
         CasCoreLogoutAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreServicesConfiguration.class,
-        CasCoreUtilConfiguration.class
+        CasCoreUtilAutoConfiguration.class
     })
     static class SharedTestConfiguration {
     }

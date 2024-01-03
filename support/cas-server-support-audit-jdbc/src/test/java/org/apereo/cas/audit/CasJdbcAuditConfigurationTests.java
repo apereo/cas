@@ -8,7 +8,7 @@ import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasHibernateJpaConfiguration;
 import org.apereo.cas.config.CasJdbcAuditConfiguration;
@@ -47,7 +47,7 @@ import java.util.stream.IntStream;
         CasCoreAuditAutoConfiguration.class,
         CasJdbcAuditConfiguration.class,
         CasHibernateJpaConfiguration.class,
-        CasCoreUtilConfiguration.class,
+        CasCoreUtilAutoConfiguration.class,
         CasCoreConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasCoreTicketsSerializationConfiguration.class,

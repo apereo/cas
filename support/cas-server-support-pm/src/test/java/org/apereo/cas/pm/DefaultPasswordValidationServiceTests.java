@@ -9,7 +9,7 @@ import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.PasswordManagementConfiguration;
 import lombok.val;
@@ -44,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreServicesConfiguration.class,
     CasCoreWebAutoConfiguration.class,
     CasCoreAuditAutoConfiguration.class,
-    CasCoreUtilConfiguration.class
+    CasCoreUtilAutoConfiguration.class
 }, properties = {
     "cas.authn.pm.core.enabled=true",
     "cas.authn.pm.history.core.enabled=true",
