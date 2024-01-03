@@ -13,11 +13,10 @@ import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryGrouperConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
-import org.apereo.cas.config.GrouperMultifactorAuthenticationConfiguration;
+import org.apereo.cas.config.GrouperAutoConfiguration;
 import org.apereo.cas.grouper.GrouperFacade;
 import org.apereo.cas.util.CollectionUtils;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGetGroupsResult;
@@ -62,15 +61,14 @@ public abstract class BaseGrouperConfigurationTests {
         CasCoreUtilAutoConfiguration.class,
         CasPersonDirectoryConfiguration.class,
         CasPersonDirectoryStubConfiguration.class,
-        CasPersonDirectoryGrouperConfiguration.class,
-        GrouperTestConfiguration.class,
-        GrouperMultifactorAuthenticationConfiguration.class
+        GrouperAutoConfiguration.class,
+        GrouperTestConfiguration.class
     })
     public static class SharedTestConfiguration {
     }
 
     @TestConfiguration(value = "GrouperTestConfiguration",
-                       proxyBeanMethods = false)
+        proxyBeanMethods = false)
     public static class GrouperTestConfiguration {
         @Bean
         public GrouperFacade grouperFacade() {
