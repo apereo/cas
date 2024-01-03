@@ -1,11 +1,10 @@
 package org.apereo.cas.token;
 
-import org.apereo.cas.config.TokenCoreConfiguration;
+import org.apereo.cas.config.TokenCoreAutoConfiguration;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.web.report.AbstractCasEndpointTests;
-
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.bouncycastle.util.io.pem.PemReader;
@@ -14,9 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-
 import java.io.StringReader;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -27,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     AbstractCasEndpointTests.SharedTestConfiguration.class,
-    TokenCoreConfiguration.class
+    TokenCoreAutoConfiguration.class
 },
     properties = {
         "management.endpoints.web.exposure.include=*",
