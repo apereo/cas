@@ -2,7 +2,7 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.TriStateBoolean;
@@ -58,7 +58,7 @@ class ReturnAllowedAttributeReleasePolicyTests {
         CasPersonDirectoryConfiguration.class,
         CasCoreAuthenticationPrincipalConfiguration.class,
         ReturnAllowedAttributeReleasePolicyTestConfiguration.class,
-        CasCoreUtilConfiguration.class,
+        CasCoreUtilAutoConfiguration.class,
         RefreshAutoConfiguration.class
     },
         properties = {
@@ -121,7 +121,7 @@ class ReturnAllowedAttributeReleasePolicyTests {
         CasPersonDirectoryConfiguration.class,
         CasCoreAuthenticationPrincipalConfiguration.class,
         ReturnAllowedAttributeReleasePolicyTestConfiguration.class,
-        CasCoreUtilConfiguration.class,
+        CasCoreUtilAutoConfiguration.class,
         RefreshAutoConfiguration.class
     },
         properties = {

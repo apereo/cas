@@ -9,7 +9,7 @@ import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.LdapPasswordManagementConfiguration;
 import org.apereo.cas.config.PasswordManagementConfiguration;
@@ -40,7 +40,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CasCoreWebAutoConfiguration.class,
     CasCoreAuditAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
-    CasCoreUtilConfiguration.class
+    CasCoreUtilAutoConfiguration.class
 })
 public abstract class BaseLdapPasswordManagementServiceTests {
     @Autowired

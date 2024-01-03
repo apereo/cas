@@ -2,7 +2,7 @@ package org.apereo.cas.notifications;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.GoogleFirebaseCloudMessagingConfiguration;
 import org.apereo.cas.notifications.push.NotificationSender;
 import com.google.common.io.Files;
@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
     WebMvcAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
     GoogleFirebaseCloudMessagingConfiguration.class,
-    CasCoreUtilConfiguration.class
+    CasCoreUtilAutoConfiguration.class
 }, properties = {
     "cas.google-firebase-messaging.service-account-key.location=file:${java.io.tmpdir}/account-key.json",
     "cas.google-firebase-messaging.database-url=https://cassso-2531381995058.firebaseio.com",

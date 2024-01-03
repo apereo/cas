@@ -7,7 +7,7 @@ import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguratio
 import org.apereo.cas.config.CasCoreAuthenticationComponentSerializationConfiguration;
 import org.apereo.cas.config.CasCoreServicesComponentSerializationConfiguration;
 import org.apereo.cas.config.CasCoreTicketComponentSerializationConfiguration;
-import org.apereo.cas.config.CasCoreUtilSerializationConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasOAuth20ComponentSerializationConfiguration;
 import org.apereo.cas.config.MemcachedTicketRegistryConfiguration;
 import org.apereo.cas.mock.MockServiceTicket;
@@ -53,7 +53,7 @@ import static org.mockito.Mockito.*;
  */
 @Import({
     MemcachedTicketRegistryConfiguration.class,
-    CasCoreUtilSerializationConfiguration.class,
+    CasCoreUtilAutoConfiguration.class,
     CasCoreTicketComponentSerializationConfiguration.class,
     CasCoreAuthenticationComponentSerializationConfiguration.class,
     CasCoreServicesComponentSerializationConfiguration.class,

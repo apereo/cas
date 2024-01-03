@@ -8,7 +8,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.soap.generated.GetSoapAuthenticationResponse;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.SoapAuthenticationConfiguration;
 import org.apereo.cas.config.SoapAuthenticationServerTestConfiguration;
@@ -50,7 +50,7 @@ import static org.mockito.Mockito.*;
     SoapAuthenticationServerTestConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasRegisteredServicesTestConfiguration.class,
-    CasCoreUtilConfiguration.class,
+    CasCoreUtilAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
     SoapAuthenticationConfiguration.class
 },

@@ -22,7 +22,7 @@ import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
@@ -130,7 +130,7 @@ public abstract class BaseWebflowConfigurerTests {
         CasMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
-        CasCoreUtilConfiguration.class
+        CasCoreUtilAutoConfiguration.class
     })
     public static class SharedTestConfiguration {
 

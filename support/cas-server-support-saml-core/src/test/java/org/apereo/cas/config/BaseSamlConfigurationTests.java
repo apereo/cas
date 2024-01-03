@@ -35,7 +35,7 @@ public abstract class BaseSamlConfigurationTests {
         CasCoreTicketIdGeneratorsConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-        CasCoreUtilConfiguration.class,
+        CasCoreUtilAutoConfiguration.class,
         CoreSamlConfiguration.class,
         CasCoreTicketCatalogConfiguration.class,
         CasCoreTicketsSerializationConfiguration.class,
