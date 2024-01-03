@@ -1,8 +1,8 @@
 package org.apereo.cas.monitor;
 
 import org.apereo.cas.config.CasCoreHttpConfiguration;
-import org.apereo.cas.config.CasCoreMonitorConfiguration;
-import org.apereo.cas.config.CasCoreNotificationsConfiguration;
+import org.apereo.cas.config.CasCoreMonitorAutoConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
@@ -35,13 +35,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link CasCoreMonitorConfigurationTests}.
+ * This is {@link CasCoreMonitorAutoConfigurationTests}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
  */
 @SpringBootTest(
-    classes = CasCoreMonitorConfigurationTests.SharedTestConfiguration.class,
+    classes = CasCoreMonitorAutoConfigurationTests.SharedTestConfiguration.class,
     properties = {
         "management.metrics.export.simple.enabled=true",
 
@@ -56,7 +56,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Metrics")
 @AutoConfigureObservability
-class CasCoreMonitorConfigurationTests {
+class CasCoreMonitorAutoConfigurationTests {
     @Autowired
     @Qualifier("defaultExecutableObserver")
     private ExecutableObserver defaultExecutableObserver;
@@ -108,11 +108,11 @@ class CasCoreMonitorConfigurationTests {
         CasCoreTicketsSerializationConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasCoreTicketIdGeneratorsConfiguration.class,
-        CasCoreMonitorConfiguration.class,
+        CasCoreMonitorAutoConfiguration.class,
         CasCoreHttpConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasCoreUtilConfiguration.class,
-        CasCoreNotificationsConfiguration.class,
+        CasCoreNotificationsAutoConfiguration.class,
         CasCoreWebConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class
     })

@@ -1,7 +1,7 @@
 package org.apereo.cas.notifications.call;
 
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.config.CasCoreNotificationsConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
     PhoneCallOperatorTests.PhoneCallOperatorTestConfiguration.class,
-    CasCoreNotificationsConfiguration.class
+    CasCoreNotificationsAutoConfiguration.class
 })
 @Tag("SMS")
 public class PhoneCallOperatorTests {

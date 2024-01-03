@@ -53,7 +53,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * This is {@link CasCoreLogoutConfiguration}.
+ * This is {@link CasCoreLogoutAutoConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
@@ -62,7 +62,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Logout)
 @AutoConfiguration
-public class CasCoreLogoutConfiguration {
+public class CasCoreLogoutAutoConfiguration {
 
     @Configuration(value = "CasCoreLogoutUrlBuilderConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)

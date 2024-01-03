@@ -1,6 +1,6 @@
 package org.apereo.cas;
 
-import org.apereo.cas.config.CasCookieConfiguration;
+import org.apereo.cas.config.CasCookieAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -9,9 +9,9 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
-import org.apereo.cas.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
-import org.apereo.cas.config.CasCoreNotificationsConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
@@ -20,7 +20,7 @@ import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasCoreWebflowConfiguration;
-import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
+import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
@@ -86,7 +86,7 @@ public abstract class BaseCoreWsSecurityIdentityProviderConfigurationTests {
     @SpringBootConfiguration
     @Import({
         CoreSamlConfiguration.class,
-        CasCoreLogoutConfiguration.class,
+        CasCoreLogoutAutoConfiguration.class,
         CasWebflowContextConfiguration.class,
         CasCoreWebflowConfiguration.class,
         CasCoreServicesConfiguration.class,
@@ -103,13 +103,13 @@ public abstract class BaseCoreWsSecurityIdentityProviderConfigurationTests {
         CasCoreTicketCatalogConfiguration.class,
         CasCoreTicketsSerializationConfiguration.class,
         CasRegisteredServicesTestConfiguration.class,
-        CasCookieConfiguration.class,
+        CasCookieAutoConfiguration.class,
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,
         CasPersonDirectoryTestConfiguration.class,
-        CasCoreNotificationsConfiguration.class,
+        CasCoreNotificationsAutoConfiguration.class,
         CasCoreMultifactorAuthenticationConfiguration.class,
-        CasMultifactorAuthenticationWebflowConfiguration.class,
+        CasMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasCoreConfiguration.class,
 
         CoreWsSecurityIdentityProviderComponentSerializationConfiguration.class,

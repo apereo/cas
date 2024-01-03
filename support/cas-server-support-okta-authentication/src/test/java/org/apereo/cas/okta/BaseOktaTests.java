@@ -7,8 +7,8 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
-import org.apereo.cas.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.config.CasCoreNotificationsConfiguration;
+import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
@@ -47,7 +47,7 @@ public abstract class BaseOktaTests {
     @Import({
         CasCoreConfiguration.class,
         CasCoreTicketsConfiguration.class,
-        CasCoreLogoutConfiguration.class,
+        CasCoreLogoutAutoConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasCoreTicketIdGeneratorsConfiguration.class,
         CasCoreTicketCatalogConfiguration.class,
@@ -60,7 +60,7 @@ public abstract class BaseOktaTests {
         CasCoreUtilConfiguration.class,
         CasPersonDirectoryConfiguration.class,
         CasPersonDirectoryStubConfiguration.class,
-        CasCoreNotificationsConfiguration.class,
+        CasCoreNotificationsAutoConfiguration.class,
         CasRegisteredServicesTestConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,
         CasAuthenticationEventExecutionPlanTestConfiguration.class,

@@ -1,10 +1,10 @@
 package org.apereo.cas.audit;
 
 import org.apereo.cas.audit.spi.BaseAuditConfigurationTests;
-import org.apereo.cas.config.CasCoreAuditConfiguration;
+import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
-import org.apereo.cas.config.CasCoreNotificationsConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
@@ -31,7 +31,7 @@ import software.amazon.awssdk.core.SdkSystemSetting;
  * @since 6.1.0
  */
 @SpringBootTest(classes = {
-    CasCoreAuditConfiguration.class,
+    CasCoreAuditAutoConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasSupportDynamoDbAuditConfiguration.class,
@@ -41,7 +41,7 @@ import software.amazon.awssdk.core.SdkSystemSetting;
     CasCoreTicketsSerializationConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreWebConfiguration.class,
-    CasCoreNotificationsConfiguration.class,
+    CasCoreNotificationsAutoConfiguration.class,
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class
 },

@@ -1,16 +1,16 @@
 package org.apereo.cas;
 
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
-import org.apereo.cas.config.CasCookieConfiguration;
+import org.apereo.cas.config.CasCookieAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
-import org.apereo.cas.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
-import org.apereo.cas.config.CasCoreNotificationsConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
@@ -20,7 +20,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
-import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
+import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryGrouperConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
@@ -58,12 +58,12 @@ public abstract class BaseGrouperConfigurationTests {
     @SpringBootConfiguration
     @Import({
         CasCoreMultifactorAuthenticationConfiguration.class,
-        CasMultifactorAuthenticationWebflowConfiguration.class,
+        CasMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasCoreWebflowConfiguration.class,
         CasWebflowContextConfiguration.class,
-        CasCoreNotificationsConfiguration.class,
+        CasCoreNotificationsAutoConfiguration.class,
         CasCoreServicesConfiguration.class,
-        CasCoreLogoutConfiguration.class,
+        CasCoreLogoutAutoConfiguration.class,
         CasCoreWebConfiguration.class,
         CasCoreHttpConfiguration.class,
         CasCoreConfiguration.class,
@@ -74,7 +74,7 @@ public abstract class BaseGrouperConfigurationTests {
         CasCoreTicketCatalogConfiguration.class,
         CasCoreTicketsSerializationConfiguration.class,
         CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-        CasCookieConfiguration.class,
+        CasCookieAutoConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,
         CasCoreAuthenticationSupportConfiguration.class,
         CasCoreAuthenticationPrincipalConfiguration.class,

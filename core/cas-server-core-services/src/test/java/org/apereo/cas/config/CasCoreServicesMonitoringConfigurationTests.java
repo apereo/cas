@@ -35,11 +35,11 @@ import static org.junit.jupiter.api.Assertions.*;
     ObservationAutoConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreServicesMonitoringConfigurationTests.CasCoreServicesMonitoringTestConfiguration.class,
-    CasCoreMonitorConfiguration.class,
+    CasCoreMonitorAutoConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
-    CasCoreNotificationsConfiguration.class,
+    CasCoreNotificationsAutoConfiguration.class,
     CasCoreServicesMonitoringConfiguration.class
 })
 @Tag("RegisteredService")

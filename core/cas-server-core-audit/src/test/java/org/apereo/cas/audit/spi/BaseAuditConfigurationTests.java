@@ -1,21 +1,21 @@
 package org.apereo.cas.audit.spi;
 
-import org.apereo.cas.config.CasCookieConfiguration;
-import org.apereo.cas.config.CasCoreAuditConfiguration;
+import org.apereo.cas.config.CasCookieAutoConfiguration;
+import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
-import org.apereo.cas.config.CasCoreNotificationsConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasCoreWebflowConfiguration;
-import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
+import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CasWebflowContextConfiguration;
 import org.apereo.cas.util.RandomUtils;
@@ -66,13 +66,13 @@ public abstract class BaseAuditConfigurationTests {
         CasCoreServicesConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,
         CasCoreWebConfiguration.class,
-        CasCoreNotificationsConfiguration.class,
+        CasCoreNotificationsAutoConfiguration.class,
         CasCoreUtilConfiguration.class,
-        CasCoreAuditConfiguration.class,
+        CasCoreAuditAutoConfiguration.class,
         CasCoreWebflowConfiguration.class,
         CasWebflowContextConfiguration.class,
-        CasCookieConfiguration.class,
-        CasMultifactorAuthenticationWebflowConfiguration.class,
+        CasCookieAutoConfiguration.class,
+        CasMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasCoreMultifactorAuthenticationConfiguration.class
     })
     public static class SharedTestConfiguration {

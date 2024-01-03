@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreUtilConfiguration.class,
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
-    CasCoreNotificationsConfiguration.class
+    CasCoreNotificationsAutoConfiguration.class
 },
     properties = {
         "cas.service-registry.core.management-type=DOMAIN",

@@ -1,7 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
-import org.apereo.cas.config.CasCoreNotificationsConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
@@ -32,7 +32,7 @@ import software.amazon.awssdk.core.SdkSystemSetting;
     CasCoreUtilConfiguration.class,
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
-    CasCoreNotificationsConfiguration.class,
+    CasCoreNotificationsAutoConfiguration.class,
     CasCoreAuthenticationMetadataConfiguration.class,
     WebMvcAutoConfiguration.class,
     RefreshAutoConfiguration.class

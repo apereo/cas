@@ -1,7 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
-import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
+import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.TokenAuthenticationConfiguration;
 import org.apereo.cas.config.TokenAuthenticationWebflowConfiguration;
 
@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Import({
     CasCoreMultifactorAuthenticationConfiguration.class,
-    CasMultifactorAuthenticationWebflowConfiguration.class,
+    CasMultifactorAuthenticationWebflowAutoConfiguration.class,
     TokenAuthenticationConfiguration.class,
     TokenAuthenticationWebflowConfiguration.class
 })

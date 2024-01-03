@@ -38,7 +38,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * This is {@link CasCoreNotificationsConfiguration}.
+ * This is {@link CasCoreNotificationsAutoConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
@@ -48,7 +48,7 @@ import java.util.stream.Collectors;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Notifications)
 @AutoConfiguration
-public class CasCoreNotificationsConfiguration {
+public class CasCoreNotificationsAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = CommunicationsManager.BEAN_NAME)
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

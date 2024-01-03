@@ -1,14 +1,14 @@
 package org.apereo.cas.ticket;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.config.CasCookieConfiguration;
+import org.apereo.cas.config.CasCookieAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
-import org.apereo.cas.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.config.CasCoreNotificationsConfiguration;
+import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
@@ -63,11 +63,11 @@ import static org.mockito.Mockito.*;
     WebMvcAutoConfiguration.class,
     CasOAuth20Configuration.class,
     CasOAuth20EndpointsConfiguration.class,
-    CasCoreNotificationsConfiguration.class,
+    CasCoreNotificationsAutoConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreTicketsConfiguration.class,
-    CasCookieConfiguration.class,
+    CasCookieAutoConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreTicketsSerializationConfiguration.class,
@@ -79,7 +79,7 @@ import static org.mockito.Mockito.*;
     CasCoreAuthenticationConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
-    CasCoreLogoutConfiguration.class,
+    CasCoreLogoutAutoConfiguration.class,
     CasOAuth20ComponentSerializationConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasOAuth20AuthenticationServiceSelectionStrategyConfiguration.class

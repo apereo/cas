@@ -6,17 +6,17 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.config.CasAcceptableUsagePolicyWebflowConfiguration;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
-import org.apereo.cas.config.CasCookieConfiguration;
-import org.apereo.cas.config.CasCoreAuditConfiguration;
+import org.apereo.cas.config.CasCookieAutoConfiguration;
+import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
-import org.apereo.cas.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
-import org.apereo.cas.config.CasCoreNotificationsConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
@@ -26,7 +26,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
-import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
+import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
@@ -135,12 +135,12 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
         CasCoreTicketCatalogConfiguration.class,
         CasCoreTicketsSerializationConfiguration.class,
         CasCoreWebConfiguration.class,
-        CasCookieConfiguration.class,
-        CasCoreAuditConfiguration.class,
+        CasCookieAutoConfiguration.class,
+        CasCoreAuditAutoConfiguration.class,
         CasRegisteredServicesTestConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,
         CasCoreMultifactorAuthenticationConfiguration.class,
-        CasMultifactorAuthenticationWebflowConfiguration.class,
+        CasMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasCoreAuthenticationConfiguration.class,
         CasAuthenticationEventExecutionPlanTestConfiguration.class,
         CasDefaultServiceTicketIdGeneratorsConfiguration.class,
@@ -152,8 +152,8 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
         CasWebflowContextConfiguration.class,
         CasCoreWebflowConfiguration.class,
         CasCoreConfiguration.class,
-        CasCoreNotificationsConfiguration.class,
-        CasCoreLogoutConfiguration.class,
+        CasCoreNotificationsAutoConfiguration.class,
+        CasCoreLogoutAutoConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasPersonDirectoryTestConfiguration.class,
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class

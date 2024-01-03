@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
- * This is {@link CasCloudBusEventsConfigEnvironmentConfiguration}.
+ * This is {@link CasCloudBusEventsConfigEnvironmentAutoConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
@@ -26,7 +26,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.CasConfiguration)
 @AutoConfiguration
-public class CasCloudBusEventsConfigEnvironmentConfiguration {
+public class CasCloudBusEventsConfigEnvironmentAutoConfiguration {
 
     @ConditionalOnMissingBean(name = "casCloudBusConfigurationEventListener")
     @Bean

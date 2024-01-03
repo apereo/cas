@@ -33,7 +33,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
- * This is {@link CasCoreMonitorConfiguration}.
+ * This is {@link CasCoreMonitorAutoConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
@@ -43,7 +43,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Monitoring)
 @AutoConfiguration
 @EnableAspectJAutoProxy(proxyTargetClass = false)
-public class CasCoreMonitorConfiguration {
+public class CasCoreMonitorAutoConfiguration {
 
     @ConditionalOnMissingBean(name = ExecutableObserver.BEAN_NAME)
     @Bean

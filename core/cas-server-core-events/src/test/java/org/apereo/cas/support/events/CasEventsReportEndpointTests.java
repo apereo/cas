@@ -1,7 +1,7 @@
 package org.apereo.cas.support.events;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.config.CasCoreEventsConfiguration;
+import org.apereo.cas.config.CasCoreEventsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.events.authentication.CasAuthenticationTransactionFailureEvent;
@@ -52,7 +52,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     CasEventsReportEndpointTests.CasEventsReportEndpointTestConfiguration.class,
-    CasCoreEventsConfiguration.class,
+    CasCoreEventsAutoConfiguration.class,
     CasCoreUtilConfiguration.class,
     RefreshAutoConfiguration.class
 })

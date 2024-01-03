@@ -6,7 +6,7 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
-import org.apereo.cas.config.CasCookieConfiguration;
+import org.apereo.cas.config.CasCookieAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
@@ -14,8 +14,8 @@ import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
-import org.apereo.cas.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.config.CasCoreNotificationsConfiguration;
+import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketComponentSerializationConfiguration;
@@ -199,7 +199,7 @@ public abstract class BaseOAuth20AuthenticatorTests {
         CasCoreHttpConfiguration.class,
         CasCoreUtilConfiguration.class,
         CasPersonDirectoryTestConfiguration.class,
-        CasCoreNotificationsConfiguration.class,
+        CasCoreNotificationsAutoConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasCoreAuthenticationConfiguration.class,
         CasCoreAuthenticationPolicyConfiguration.class,
@@ -212,9 +212,9 @@ public abstract class BaseOAuth20AuthenticatorTests {
         CasCoreTicketsConfiguration.class,
         CasCoreTicketComponentSerializationConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,
-        CasCoreLogoutConfiguration.class,
+        CasCoreLogoutAutoConfiguration.class,
         CasCoreWebConfiguration.class,
-        CasCookieConfiguration.class,
+        CasCookieAutoConfiguration.class,
         CasCoreConfiguration.class,
         CasAuthenticationEventExecutionPlanTestConfiguration.class,
         CasOAuth20AuthenticationServiceSelectionStrategyConfiguration.class,

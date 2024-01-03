@@ -1,1 +1,1 @@
-org.apereo.cas.config.CasCoreEventsConfiguration
+org.apereo.cas.config.CasCoreEventsAutoConfiguration

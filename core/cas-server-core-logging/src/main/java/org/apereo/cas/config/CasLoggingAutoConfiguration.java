@@ -32,7 +32,7 @@ import org.springframework.core.io.ResourceLoader;
 import java.util.HashMap;
 
 /**
- * This is {@link CasLoggingConfiguration}.
+ * This is {@link CasLoggingAutoConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
@@ -40,7 +40,7 @@ import java.util.HashMap;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Core)
 @AutoConfiguration
-public class CasLoggingConfiguration {
+public class CasLoggingAutoConfiguration {
 
     @ConditionalOnBean(TicketRegistry.class)
     public static class CasMdcLoggingConfiguration {

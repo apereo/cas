@@ -16,7 +16,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link CasCoreNotificationsConfigurationTests}.
+ * This is {@link CasCoreNotificationsAutoConfigurationTests}.
  *
  * @author Misagh Moayyed
  * @since 6.3.0
@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasCoreNotificationsConfiguration.class,
+    CasCoreNotificationsAutoConfiguration.class,
     MailSenderAutoConfiguration.class,
     MailSenderValidatorAutoConfiguration.class
 },
@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @Tag("Mail")
 @EnabledIfListeningOnPort(port = 25000)
-class CasCoreNotificationsConfigurationTests {
+class CasCoreNotificationsAutoConfigurationTests {
     @Autowired
     @Qualifier("notificationSender")
     private NotificationSender notificationSender;
