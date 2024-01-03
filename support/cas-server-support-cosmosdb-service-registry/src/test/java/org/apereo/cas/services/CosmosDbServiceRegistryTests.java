@@ -5,7 +5,7 @@ import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CosmosDbServiceRegistryConfiguration;
+import org.apereo.cas.config.CosmosDbServiceRegistryAutoConfiguration;
 import org.apereo.cas.cosmosdb.CosmosDbObjectFactory;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import lombok.Getter;
@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationAutoConfiguration.class,
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CosmosDbServiceRegistryConfiguration.class
+    CosmosDbServiceRegistryAutoConfiguration.class
 }, properties = {
     "cas.http-client.host-name-verifier=none",
     "cas.service-registry.cosmos-db.uri=${#environmentVariables['COSMOS_DB_URL']}",

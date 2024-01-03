@@ -1,1 +1,1 @@
-org.apereo.cas.config.CasSpringBootAdminConfiguration
+org.apereo.cas.config.CasSpringBootAdminAutoConfiguration

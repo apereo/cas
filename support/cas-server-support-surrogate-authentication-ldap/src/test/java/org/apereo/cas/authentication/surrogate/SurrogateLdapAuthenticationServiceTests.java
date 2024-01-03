@@ -2,12 +2,11 @@ package org.apereo.cas.authentication.surrogate;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.config.SurrogateLdapAuthenticationConfiguration;
+import org.apereo.cas.config.SurrogateLdapAuthenticationAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.surrogate.SurrogateLdapAuthenticationProperties;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.Cleanup;
 import lombok.Getter;
@@ -22,11 +21,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
-
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -38,7 +35,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("LdapRepository")
 @SpringBootTest(classes = {
-    SurrogateLdapAuthenticationConfiguration.class,
+    SurrogateLdapAuthenticationAutoConfiguration.class,
     BaseSurrogateAuthenticationServiceTests.SharedTestConfiguration.class
 }, properties = {
     "cas.authn.surrogate.ldap.ldap-url=ldap://localhost:10389",

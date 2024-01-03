@@ -10,8 +10,8 @@ import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasInterruptConfiguration;
-import org.apereo.cas.config.CasInterruptWebflowConfiguration;
+import org.apereo.cas.config.CasInterruptAutoConfiguration;
+import org.apereo.cas.config.CasInterruptWebflowAutoConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.springframework.boot.SpringBootConfiguration;
@@ -45,8 +45,8 @@ public abstract class BaseInterruptFlowActionTests {
         CasCoreTicketsAutoConfiguration.class,
         CasWebflowAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
-        CasInterruptConfiguration.class,
-        CasInterruptWebflowConfiguration.class
+        CasInterruptAutoConfiguration.class,
+        CasInterruptWebflowAutoConfiguration.class
     })
     public static class SharedTestConfiguration {
     }

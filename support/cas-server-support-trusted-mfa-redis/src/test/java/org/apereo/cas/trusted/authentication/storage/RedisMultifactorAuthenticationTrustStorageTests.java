@@ -1,12 +1,11 @@
 package org.apereo.cas.trusted.authentication.storage;
 
 
-import org.apereo.cas.config.RedisMultifactorAuthenticationTrustConfiguration;
+import org.apereo.cas.config.RedisMultifactorAuthenticationTrustAutoConfiguration;
 import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,13 +15,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
-
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -32,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("Redis")
-@Import(RedisMultifactorAuthenticationTrustConfiguration.class)
+@Import(RedisMultifactorAuthenticationTrustAutoConfiguration.class)
 @TestPropertySource(
     properties = {
         "cas.authn.mfa.trusted.redis.host=localhost",

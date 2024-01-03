@@ -14,10 +14,10 @@ import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguratio
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
-import org.apereo.cas.config.CoreSamlConfiguration;
+import org.apereo.cas.config.CoreSamlAutoConfiguration;
 import org.apereo.cas.config.WsFedAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.WsFederationAuthenticationConfiguration;
-import org.apereo.cas.config.WsFederationAuthenticationWebflowConfiguration;
+import org.apereo.cas.config.WsFederationAuthenticationWebflowAutoConfiguration;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -49,7 +49,7 @@ class BaseWsFederationWebflowTests {
         CasRegisteredServicesTestConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
         CasCookieAutoConfiguration.class,
-        CoreSamlConfiguration.class,
+        CoreSamlAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasPersonDirectoryTestConfiguration.class,
@@ -57,7 +57,7 @@ class BaseWsFederationWebflowTests {
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasMultifactorAuthenticationWebflowAutoConfiguration.class,
         WsFedAuthenticationEventExecutionPlanConfiguration.class,
-        WsFederationAuthenticationWebflowConfiguration.class,
+        WsFederationAuthenticationWebflowAutoConfiguration.class,
         WsFederationAuthenticationConfiguration.class
     })
     static class SharedTestConfiguration {

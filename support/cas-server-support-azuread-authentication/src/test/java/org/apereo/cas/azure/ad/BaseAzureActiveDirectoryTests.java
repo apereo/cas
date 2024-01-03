@@ -1,6 +1,6 @@
 package org.apereo.cas.azure.ad;
 
-import org.apereo.cas.config.AzureActiveDirectoryAuthenticationConfiguration;
+import org.apereo.cas.config.AzureActiveDirectoryAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
@@ -27,7 +27,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    AzureActiveDirectoryAuthenticationConfiguration.class,
+    AzureActiveDirectoryAuthenticationAutoConfiguration.class,
     CasCoreAutoConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,

@@ -5,7 +5,7 @@ import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.GoogleCloudFirestoreServiceRegistryConfiguration;
+import org.apereo.cas.config.GoogleCloudFirestoreServiceRegistryAutoConfiguration;
 import com.google.api.gax.grpc.InstantiatingGrpcChannelProvider;
 import com.google.cloud.firestore.FirestoreOptions;
 import com.google.cloud.spring.autoconfigure.core.GcpContextAutoConfiguration;
@@ -37,7 +37,7 @@ import static org.mockito.Mockito.*;
 @Tag("GCP")
 @SpringBootTest(classes = {
     GoogleCloudFirestoreServiceRegistryTests.GoogleCloudFirestoreTestConfiguration.class,
-    GoogleCloudFirestoreServiceRegistryConfiguration.class,
+    GoogleCloudFirestoreServiceRegistryAutoConfiguration.class,
 
     CasCoreServicesAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,

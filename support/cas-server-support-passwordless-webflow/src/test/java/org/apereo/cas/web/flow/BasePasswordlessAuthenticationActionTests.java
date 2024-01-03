@@ -17,12 +17,12 @@ import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguratio
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
-import org.apereo.cas.config.CoreSamlConfiguration;
+import org.apereo.cas.config.CoreSamlAutoConfiguration;
 import org.apereo.cas.config.DelegatedAuthenticationConfiguration;
 import org.apereo.cas.config.DelegatedAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.DelegatedAuthenticationWebflowConfiguration;
-import org.apereo.cas.config.PasswordlessAuthenticationConfiguration;
-import org.apereo.cas.config.PasswordlessAuthenticationWebflowConfiguration;
+import org.apereo.cas.config.PasswordlessAuthenticationAutoConfiguration;
+import org.apereo.cas.config.PasswordlessAuthenticationWebflowAutoConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
@@ -51,7 +51,7 @@ import org.springframework.context.annotation.Bean;
     DelegatedAuthenticationEventExecutionPlanConfiguration.class,
     DelegatedAuthenticationWebflowConfiguration.class,
     CasWebflowAutoConfiguration.class,
-    CoreSamlConfiguration.class,
+    CoreSamlAutoConfiguration.class,
     CasCoreAutoConfiguration.class,
     CasCookieAutoConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,
@@ -66,8 +66,8 @@ import org.springframework.context.annotation.Bean;
     CasRegisteredServicesTestConfiguration.class,
     CasAuthenticationEventExecutionPlanTestConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
-    PasswordlessAuthenticationConfiguration.class,
-    PasswordlessAuthenticationWebflowConfiguration.class
+    PasswordlessAuthenticationAutoConfiguration.class,
+    PasswordlessAuthenticationWebflowAutoConfiguration.class
 })
 public abstract class BasePasswordlessAuthenticationActionTests {
     @Autowired

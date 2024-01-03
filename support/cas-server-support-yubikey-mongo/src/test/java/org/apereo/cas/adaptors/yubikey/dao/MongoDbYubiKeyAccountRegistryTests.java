@@ -3,11 +3,10 @@ package org.apereo.cas.adaptors.yubikey.dao;
 import org.apereo.cas.adaptors.yubikey.AbstractYubiKeyAccountRegistryTests;
 import org.apereo.cas.adaptors.yubikey.BaseYubiKeyTests;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
-import org.apereo.cas.config.MongoDbYubiKeyConfiguration;
+import org.apereo.cas.config.MongoDbYubiKeyAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import lombok.Getter;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  */
 @Tag("MongoDbMFA")
 @SpringBootTest(classes = {
-    MongoDbYubiKeyConfiguration.class,
+    MongoDbYubiKeyAutoConfiguration.class,
     BaseYubiKeyTests.SharedTestConfiguration.class
 },
     properties = {

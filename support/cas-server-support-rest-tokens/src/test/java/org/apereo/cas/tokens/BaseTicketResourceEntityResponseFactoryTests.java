@@ -18,7 +18,7 @@ import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguratio
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasRestAutoConfiguration;
-import org.apereo.cas.config.CasRestTokensConfiguration;
+import org.apereo.cas.config.CasRestTokensAutoConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.config.TokenCoreConfiguration;
 import org.apereo.cas.rest.factory.ServiceTicketResourceEntityResponseFactory;
@@ -47,7 +47,7 @@ import java.util.List;
     WebMvcAutoConfiguration.class,
     BaseTicketResourceEntityResponseFactoryTests.TicketResourceTestConfiguration.class,
     CasCoreRestAutoConfiguration.class,
-    CasRestTokensConfiguration.class,
+    CasRestTokensAutoConfiguration.class,
     CasRestAutoConfiguration.class,
     TokenCoreConfiguration.class,
     CasCoreAutoConfiguration.class,

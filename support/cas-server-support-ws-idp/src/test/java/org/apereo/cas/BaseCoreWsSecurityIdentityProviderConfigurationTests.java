@@ -16,7 +16,7 @@ import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.config.CasWsSecurityTokenTicketCatalogConfiguration;
 import org.apereo.cas.config.CasWsSecurityTokenTicketComponentSerializationConfiguration;
-import org.apereo.cas.config.CoreSamlConfiguration;
+import org.apereo.cas.config.CoreSamlAutoConfiguration;
 import org.apereo.cas.config.CoreWsSecurityIdentityProviderComponentSerializationConfiguration;
 import org.apereo.cas.config.CoreWsSecurityIdentityProviderConfiguration;
 import org.apereo.cas.config.CoreWsSecurityIdentityProviderWebflowConfiguration;
@@ -74,7 +74,7 @@ public abstract class BaseCoreWsSecurityIdentityProviderConfigurationTests {
     })
     @SpringBootConfiguration
     @Import({
-        CoreSamlConfiguration.class,
+        CoreSamlAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
         CasWebflowAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,

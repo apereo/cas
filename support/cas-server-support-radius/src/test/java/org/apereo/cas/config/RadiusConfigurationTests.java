@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasMultifactorAuthenticationWebflowAutoConfiguration.class,
     CasWebflowAutoConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
-    RadiusConfiguration.class,
+    RadiusAutoConfiguration.class,
     CasCoreAutoConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
@@ -80,7 +80,7 @@ class RadiusConfigurationTests {
     void emptyAddress() {
         val clientProperties = new RadiusClientProperties();
         clientProperties.setInetAddress("  ");
-        val ips = RadiusConfiguration.getClientIps(clientProperties);
+        val ips = RadiusAutoConfiguration.getClientIps(clientProperties);
         assertEquals(0, ips.size());
     }
 
@@ -88,7 +88,7 @@ class RadiusConfigurationTests {
     void someAddressesWithSpaces() {
         val clientProperties = new RadiusClientProperties();
         clientProperties.setInetAddress("localhost,  localguest  ");
-        val ips = RadiusConfiguration.getClientIps(clientProperties);
+        val ips = RadiusAutoConfiguration.getClientIps(clientProperties);
         assertEquals(2, ips.size());
         assertTrue(ips.contains("localhost"));
         assertTrue(ips.contains("localguest"));

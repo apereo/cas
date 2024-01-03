@@ -22,9 +22,9 @@ import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguratio
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasPropertiesConfiguration;
-import org.apereo.cas.config.CasSupportActionsConfiguration;
-import org.apereo.cas.config.CasThemesConfiguration;
-import org.apereo.cas.config.CasThymeleafConfiguration;
+import org.apereo.cas.config.CasSupportActionsAutoConfiguration;
+import org.apereo.cas.config.CasThemesAutoConfiguration;
+import org.apereo.cas.config.CasThymeleafAutoConfiguration;
 import org.apereo.cas.config.CasWebAppConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -72,8 +72,8 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
     CasWebflowAutoConfiguration.class,
-    CasThemesConfiguration.class,
-    CasThymeleafConfiguration.class,
+    CasThemesAutoConfiguration.class,
+    CasThymeleafAutoConfiguration.class,
     CasFiltersConfiguration.class,
     CasPropertiesConfiguration.class,
     CasWebAppConfiguration.class,
@@ -83,7 +83,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
     CasLoggingAutoConfiguration.class,
-    CasSupportActionsConfiguration.class,
+    CasSupportActionsAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,
     CasCookieAutoConfiguration.class,

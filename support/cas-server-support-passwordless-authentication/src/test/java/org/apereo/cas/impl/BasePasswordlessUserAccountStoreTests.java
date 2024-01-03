@@ -12,9 +12,9 @@ import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
-import org.apereo.cas.config.CasThemesConfiguration;
+import org.apereo.cas.config.CasThemesAutoConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
-import org.apereo.cas.config.PasswordlessAuthenticationConfiguration;
+import org.apereo.cas.config.PasswordlessAuthenticationAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -43,7 +43,7 @@ public abstract class BasePasswordlessUserAccountStoreTests {
     })
     @SpringBootConfiguration
     @Import({
-        PasswordlessAuthenticationConfiguration.class,
+        PasswordlessAuthenticationAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
@@ -57,7 +57,7 @@ public abstract class BasePasswordlessUserAccountStoreTests {
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
         CasCookieAutoConfiguration.class,
-        CasThemesConfiguration.class
+        CasThemesAutoConfiguration.class
     })
     static class SharedTestConfiguration {
     }

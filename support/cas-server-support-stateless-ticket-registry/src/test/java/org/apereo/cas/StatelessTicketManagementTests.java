@@ -5,7 +5,7 @@ import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
-import org.apereo.cas.config.StatelessTicketRegistryConfiguration;
+import org.apereo.cas.config.StatelessTicketRegistryAutoConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("CAS")
-@Import(StatelessTicketRegistryConfiguration.class)
+@Import(StatelessTicketRegistryAutoConfiguration.class)
 public class StatelessTicketManagementTests extends AbstractCentralAuthenticationServiceTests {
     @Test
     void verifyGrantServiceTicketAndValidate() throws Throwable {

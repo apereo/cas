@@ -2,7 +2,7 @@ package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.RedisCoreAutoConfiguration;
-import org.apereo.cas.config.RedisTicketRegistryConfiguration;
+import org.apereo.cas.config.RedisTicketRegistryAutoConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
@@ -254,7 +254,7 @@ class RedisServerTicketRegistryTests {
     @SpringBootTest(
         classes = {
             RedisCoreAutoConfiguration.class,
-            RedisTicketRegistryConfiguration.class,
+            RedisTicketRegistryAutoConfiguration.class,
             BaseTicketRegistryTests.SharedTestConfiguration.class
         }, properties = {
             "cas.ticket.tgt.core.only-track-most-recent-session=true",

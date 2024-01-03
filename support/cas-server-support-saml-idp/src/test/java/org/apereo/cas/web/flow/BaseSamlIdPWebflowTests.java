@@ -1,6 +1,6 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.config.CoreSamlConfiguration;
+import org.apereo.cas.config.CoreSamlAutoConfiguration;
 import org.apereo.cas.config.SamlIdPAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.SamlIdPConfiguration;
 import org.apereo.cas.config.SamlIdPEndpointsConfiguration;
@@ -16,7 +16,6 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
-
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -31,11 +30,9 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.io.FileSystemResource;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.UUID;
-
 import static org.mockito.Mockito.*;
 
 /**
@@ -46,7 +43,7 @@ import static org.mockito.Mockito.*;
  */
 @Import({
     BaseSamlIdPWebflowTests.SamlIdPMetadataTestConfiguration.class,
-    CoreSamlConfiguration.class,
+    CoreSamlAutoConfiguration.class,
     SamlIdPConfiguration.class,
     SamlIdPThrottleConfiguration.class,
     SamlIdPTicketSerializationConfiguration.class,

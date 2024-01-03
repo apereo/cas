@@ -1,1 +1,1 @@
-org.apereo.cas.config.CasCaptchaConfiguration
+org.apereo.cas.config.CasCaptchaAutoConfiguration

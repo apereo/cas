@@ -16,7 +16,7 @@ import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
-import org.apereo.cas.config.CasThrottlingConfiguration;
+import org.apereo.cas.config.CasThrottlingAutoConfiguration;
 import org.apereo.cas.util.MockRequestContext;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -158,7 +158,7 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
         CasCoreWebAutoConfiguration.class,
         CasRegisteredServicesTestConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
-        CasThrottlingConfiguration.class
+        CasThrottlingAutoConfiguration.class
     })
     static class SharedTestConfiguration {
     }

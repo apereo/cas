@@ -10,7 +10,7 @@ import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
-import org.apereo.cas.config.DynamoDbCoreConfiguration;
+import org.apereo.cas.config.DynamoDbCoreAutoConfiguration;
 import org.apereo.cas.config.DynamoDbTicketRegistryConfiguration;
 import org.apereo.cas.config.DynamoDbTicketRegistryTicketCatalogConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,7 @@ import software.amazon.awssdk.core.SdkSystemSetting;
  * @since 6.4.0
  */
 @SpringBootTest(classes = {
-    DynamoDbCoreConfiguration.class,
+    DynamoDbCoreAutoConfiguration.class,
     DynamoDbTicketRegistryConfiguration.class,
     DynamoDbTicketRegistryTicketCatalogConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,

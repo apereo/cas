@@ -1,9 +1,8 @@
 package org.apereo.cas.gauth.credential;
 
-import org.apereo.cas.config.GoogleAuthenticatorDynamoDbConfiguration;
+import org.apereo.cas.config.GoogleAuthenticatorDynamoDbAutoConfiguration;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import lombok.Getter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -22,7 +21,7 @@ import software.amazon.awssdk.core.SdkSystemSetting;
  * @since 6.5.0
  */
 @SpringBootTest(classes = {
-    GoogleAuthenticatorDynamoDbConfiguration.class,
+    GoogleAuthenticatorDynamoDbAutoConfiguration.class,
     BaseOneTimeTokenCredentialRepositoryTests.SharedTestConfiguration.class
 },
     properties = {

@@ -11,7 +11,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.flow.passwordless.SurrogatePasswordlessAuthenticationPreProcessor;
 import org.apereo.cas.web.flow.passwordless.SurrogatePasswordlessAuthenticationRequestParser;
-
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -32,7 +31,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
     CasFeatureModule.FeatureCatalog.PasswordlessAuthn,
     CasFeatureModule.FeatureCatalog.SurrogateAuthentication
 })
-@ConditionalOnClass(PasswordlessAuthenticationWebflowConfiguration.class)
+@ConditionalOnClass(PasswordlessAuthenticationWebflowAutoConfiguration.class)
 @AutoConfiguration
 public class SurrogateAuthenticationPasswordlessConfiguration {
 

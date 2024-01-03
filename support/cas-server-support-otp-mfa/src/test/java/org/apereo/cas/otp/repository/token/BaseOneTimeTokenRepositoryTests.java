@@ -14,7 +14,7 @@ import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguratio
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
-import org.apereo.cas.config.OneTimeTokenAuthenticationConfiguration;
+import org.apereo.cas.config.OneTimeTokenAuthenticationAutoConfiguration;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -42,7 +42,7 @@ public abstract class BaseOneTimeTokenRepositoryTests {
     })
     @SpringBootConfiguration
     @Import({
-        OneTimeTokenAuthenticationConfiguration.class,
+        OneTimeTokenAuthenticationAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,

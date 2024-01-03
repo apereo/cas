@@ -1,8 +1,7 @@
 package org.apereo.cas.consent;
 
-import org.apereo.cas.config.CasConsentDynamoDbConfiguration;
+import org.apereo.cas.config.CasConsentDynamoDbAutoConfiguration;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import lombok.Getter;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,7 @@ import software.amazon.awssdk.core.SdkSystemSetting;
  * @since 5.3.0
  */
 @SpringBootTest(classes = {
-    CasConsentDynamoDbConfiguration.class,
+    CasConsentDynamoDbAutoConfiguration.class,
     BaseConsentRepositoryTests.SharedTestConfiguration.class
 },
     properties = {

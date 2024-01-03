@@ -1,7 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
-import org.apereo.cas.config.CasAcceptableUsagePolicyWebflowConfiguration;
+import org.apereo.cas.config.CasAcceptableUsagePolicyWebflowAutoConfiguration;
 import org.apereo.cas.config.CasCookieAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
@@ -32,7 +32,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasAcceptableUsagePolicyWebflowConfiguration.class,
+    CasAcceptableUsagePolicyWebflowAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasWebflowAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class,

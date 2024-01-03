@@ -1,7 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
-import org.apereo.cas.config.CasBasicAuthenticationConfiguration;
+import org.apereo.cas.config.CasBasicAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCookieAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @SpringBootTest(classes = {
-    CasBasicAuthenticationConfiguration.class,
+    CasBasicAuthenticationAutoConfiguration.class,
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
     CasCoreMultifactorAuthenticationAutoConfiguration.class,
