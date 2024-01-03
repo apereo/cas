@@ -4,7 +4,7 @@ import org.apereo.cas.config.CasCookieAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
-import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
@@ -50,7 +50,7 @@ import org.springframework.webflow.execution.Action;
     CasCoreServicesAutoConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
-    CasCoreMultifactorAuthenticationConfiguration.class
+    CasCoreMultifactorAuthenticationAutoConfiguration.class
 }, properties = {
     "cas.authn.spnego.system.kerberos-conf=classpath:kerb5.conf",
     "cas.authn.spnego.system.login-conf=classpath:jaas.conf"

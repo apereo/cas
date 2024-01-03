@@ -1,6 +1,6 @@
 package org.apereo.cas.oidc.web.flow;
 
-import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasOAuth20AuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasOAuth20Configuration;
@@ -57,7 +57,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasOAuth20AuthenticationServiceSelectionStrategyConfiguration.class,
     CasOAuth20ThrottleConfiguration.class,
     CasOAuth20WebflowConfiguration.class,
-    CasCoreMultifactorAuthenticationConfiguration.class,
+    CasCoreMultifactorAuthenticationAutoConfiguration.class,
     CasMultifactorAuthenticationWebflowAutoConfiguration.class
 })
 @TestPropertySource(properties = {

@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.duo.web.flow;
 
-import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.DuoSecurityAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.DuoSecurityConfiguration;
@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class DuoSecuritySurrogateWebflowConfigurerTests {
 
     @Import({
-        CasCoreMultifactorAuthenticationConfiguration.class,
+        CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasMultifactorAuthenticationWebflowAutoConfiguration.class,
         SurrogateAuthenticationConfiguration.class,
         SurrogateAuthenticationAuditConfiguration.class,
