@@ -1,6 +1,6 @@
 package org.apereo.cas;
 
-import org.apereo.cas.config.MongoDbCloudConfigBootstrapConfiguration;
+import org.apereo.cas.config.MongoDbCloudConfigBootstrapAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.val;
@@ -18,7 +18,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link MongoDbCloudConfigBootstrapConfigurationTests}.
+ * This is {@link MongoDbCloudConfigBootstrapAutoConfigurationTests}.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
@@ -29,10 +29,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    MongoDbCloudConfigBootstrapConfiguration.class
+    MongoDbCloudConfigBootstrapAutoConfiguration.class
 },
-    properties = "cas.spring.cloud.mongo.uri=" + MongoDbCloudConfigBootstrapConfigurationTests.MONGODB_URI)
-class MongoDbCloudConfigBootstrapConfigurationTests {
+    properties = "cas.spring.cloud.mongo.uri=" + MongoDbCloudConfigBootstrapAutoConfigurationTests.MONGODB_URI)
+class MongoDbCloudConfigBootstrapAutoConfigurationTests {
     static final String MONGODB_URI = "mongodb://root:secret@localhost:27017/admin";
 
     private static final String STATIC_AUTHN_USERS = "casuser::WHATEVER";
