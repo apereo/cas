@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasPersonDirectoryTestConfiguration.class,
     CasCoreAutoConfiguration.class,
     CasWebflowAutoConfiguration.class,
-    CasCoreMultifactorAuthenticationConfiguration.class,
+    CasCoreMultifactorAuthenticationAutoConfiguration.class,
     CasMultifactorAuthenticationWebflowAutoConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,

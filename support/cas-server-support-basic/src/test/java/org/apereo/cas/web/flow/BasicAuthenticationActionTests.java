@@ -6,7 +6,7 @@ import org.apereo.cas.config.CasCookieAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
-import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasBasicAuthenticationConfiguration.class,
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasCoreMultifactorAuthenticationConfiguration.class,
+    CasCoreMultifactorAuthenticationAutoConfiguration.class,
     CasMultifactorAuthenticationWebflowAutoConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,
     CasWebflowAutoConfiguration.class,

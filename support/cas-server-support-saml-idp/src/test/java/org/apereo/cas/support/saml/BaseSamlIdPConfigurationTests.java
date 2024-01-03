@@ -12,7 +12,7 @@ import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMonitorAutoConfiguration;
-import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
@@ -368,7 +368,7 @@ public abstract class BaseSamlIdPConfigurationTests {
         CasCoreLogoutAutoConfiguration.class,
         CasCookieAutoConfiguration.class,
         CasCoreValidationAutoConfiguration.class,
-        CasCoreMultifactorAuthenticationConfiguration.class,
+        CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
         CoreSamlConfiguration.class,

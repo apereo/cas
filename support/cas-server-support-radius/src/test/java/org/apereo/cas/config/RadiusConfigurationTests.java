@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @SpringBootTest(classes = {
-    CasCoreMultifactorAuthenticationConfiguration.class,
+    CasCoreMultifactorAuthenticationAutoConfiguration.class,
     CasMultifactorAuthenticationWebflowAutoConfiguration.class,
     CasWebflowAutoConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,

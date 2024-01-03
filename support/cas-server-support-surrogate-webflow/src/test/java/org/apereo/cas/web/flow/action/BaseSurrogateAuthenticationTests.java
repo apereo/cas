@@ -7,7 +7,7 @@ import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
-import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
@@ -56,7 +56,7 @@ public abstract class BaseSurrogateAuthenticationTests {
         CasCoreAuditAutoConfiguration.class,
         SurrogateAuthenticationAuditConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
-        CasCoreMultifactorAuthenticationConfiguration.class,
+        CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasWebflowAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
