@@ -520,8 +520,7 @@ public abstract class AbstractOidcTests {
     @Import({
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
-        CasCoreUtilAutoConfiguration.class,
-        CasCoreUtilAutoConfiguration.class,
+                CasCoreUtilAutoConfiguration.class,
         CasWebflowAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasCoreAutoConfiguration.class,

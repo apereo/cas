@@ -33,11 +33,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasCoreServicesAutoConfiguration.class,
-    CasCoreTicketsAutoConfiguration.class,
-    CasCoreTicketsAutoConfiguration.class,
-    CasCoreTicketsAutoConfiguration.class,
-    CasCoreTicketsAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
     CasCoreServicesAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
@@ -45,8 +40,6 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCookieAutoConfiguration.class,
     CasCoreAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
-    CasCoreAuthenticationAutoConfiguration.class,
-    CasCoreAuthenticationAutoConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,
     CasCoreLogoutAutoConfiguration.class
 }, properties = "cas.ticket.track-descendant-tickets=true")

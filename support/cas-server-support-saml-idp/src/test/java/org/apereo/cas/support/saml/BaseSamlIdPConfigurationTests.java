@@ -364,7 +364,6 @@ public abstract class BaseSamlIdPConfigurationTests {
         SamlIdPEndpointsConfiguration.class,
         SamlIdPMetadataConfiguration.class,
         SamlIdPTicketSerializationConfiguration.class,
-        CasCoreTicketsAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
         CasCookieAutoConfiguration.class,
         CasCoreValidationAutoConfiguration.class,
@@ -374,7 +373,6 @@ public abstract class BaseSamlIdPConfigurationTests {
         CoreSamlConfiguration.class,
         CasPersonDirectoryConfiguration.class,
         CasPersonDirectoryStubConfiguration.class,
-        CasCoreUtilAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class
     })
     public static class SharedTestConfiguration {

@@ -28,10 +28,6 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreServicesAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
-    CasCoreServicesAutoConfiguration.class,
-    CasCoreTicketsAutoConfiguration.class,
-    CasCoreTicketsAutoConfiguration.class,
-    CasCoreTicketsAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
     CasHazelcastThrottlingConfiguration.class
 })
