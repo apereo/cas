@@ -1,6 +1,6 @@
 package org.apereo.cas.ticket.monitoring;
 
-import org.apereo.cas.config.CasCoreMonitorConfiguration;
+import org.apereo.cas.config.CasCoreMonitorAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsMonitoringConfiguration;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.ticket.registry.BaseTicketRegistryTests;
@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     CasCoreTicketsMonitoringConfigurationTests.CasCoreTicketsMonitoringTestConfiguration.class,
-    CasCoreMonitorConfiguration.class,
+    CasCoreMonitorAutoConfiguration.class,
     CasCoreTicketsMonitoringConfiguration.class,
     BaseTicketRegistryTests.SharedTestConfiguration.class
 })

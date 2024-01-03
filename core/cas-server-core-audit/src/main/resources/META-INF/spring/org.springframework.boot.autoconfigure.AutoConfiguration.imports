@@ -1,1 +1,1 @@
-org.apereo.cas.config.CasCoreAuditConfiguration
+org.apereo.cas.config.CasCoreAuditAutoConfiguration

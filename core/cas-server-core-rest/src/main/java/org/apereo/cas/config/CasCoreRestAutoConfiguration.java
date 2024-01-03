@@ -33,7 +33,7 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import java.util.List;
 
 /**
- * This is {@link CasCoreRestConfiguration}.
+ * This is {@link CasCoreRestAutoConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 6.4.0
@@ -41,7 +41,7 @@ import java.util.List;
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.RestProtocol)
 @AutoConfiguration
-public class CasCoreRestConfiguration {
+public class CasCoreRestAutoConfiguration {
 
     @Configuration(value = "CasCoreRestAuthenticationConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)

@@ -19,8 +19,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasCoreLogoutConfiguration.class,
-    CasCoreNotificationsConfiguration.class,
+    CasCoreLogoutAutoConfiguration.class,
+    CasCoreNotificationsAutoConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreWebConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasWebflowContextConfiguration.class,
     CasCoreWebflowConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,
-    CasMultifactorAuthenticationWebflowConfiguration.class,
+    CasMultifactorAuthenticationWebflowAutoConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreTicketsConfiguration.class,
@@ -42,9 +42,9 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasThrottlingConfiguration.class,
-    CasCoreAuditConfiguration.class,
-    CasCookieConfiguration.class,
-    CasCoreRestConfiguration.class,
+    CasCoreAuditAutoConfiguration.class,
+    CasCookieAutoConfiguration.class,
+    CasCoreRestAutoConfiguration.class,
     CasRestConfiguration.class
 })
 @Tag("CasConfiguration")

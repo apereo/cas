@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
- * This is {@link CasCoreConfigurationMetadataConfiguration}.
+ * This is {@link CasCoreConfigurationMetadataAutoConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
@@ -23,7 +23,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.CasConfiguration)
 @AutoConfiguration
-public class CasCoreConfigurationMetadataConfiguration {
+public class CasCoreConfigurationMetadataAutoConfiguration {
     @Bean
     @ConditionalOnAvailableEndpoint
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

@@ -2,9 +2,9 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.api.AuthenticationRiskNotifier;
 import org.apereo.cas.api.AuthenticationRiskScore;
-import org.apereo.cas.config.CasCoreEventsConfiguration;
+import org.apereo.cas.config.CasCoreEventsAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
-import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
+import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.ElectronicFenceConfiguration;
 import org.apereo.cas.config.ElectronicFenceWebflowConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -30,9 +30,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Import({
-    CasCoreEventsConfiguration.class,
+    CasCoreEventsAutoConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,
-    CasMultifactorAuthenticationWebflowConfiguration.class,
+    CasMultifactorAuthenticationWebflowAutoConfiguration.class,
     ElectronicFenceConfiguration.class,
     ElectronicFenceWebflowConfiguration.class
 })

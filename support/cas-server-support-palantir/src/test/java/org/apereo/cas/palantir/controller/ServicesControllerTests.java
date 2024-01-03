@@ -1,6 +1,6 @@
 package org.apereo.cas.palantir.controller;
 
-import org.apereo.cas.config.CasCoreNotificationsConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPalantirConfiguration;
@@ -45,7 +45,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         CasRegisteredServicesTestConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasCoreWebConfiguration.class,
-        CasCoreNotificationsConfiguration.class,
+        CasCoreNotificationsAutoConfiguration.class,
         CasPalantirConfiguration.class
     },
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)

@@ -1,7 +1,7 @@
 package org.apereo.cas.web.flow.account;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.config.CasCoreAuditConfiguration;
+import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
 import org.apereo.cas.config.CasWebflowAccountProfileConfiguration;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = "CasFeatureModule.AccountManagement.enabled=true")
 @Import({
     CasWebflowAccountProfileConfiguration.class,
-    CasCoreAuditConfiguration.class
+    CasCoreAuditAutoConfiguration.class
 })
 class AccountProfileRemoveSingleSignOnSessionTests extends AbstractWebflowActionsTests {
     @Autowired

@@ -6,7 +6,7 @@ import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeExcepti
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.soap.generated.GetSoapAuthenticationResponse;
-import org.apereo.cas.config.CasCoreNotificationsConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
@@ -51,7 +51,7 @@ import static org.mockito.Mockito.*;
     CasCoreServicesConfiguration.class,
     CasRegisteredServicesTestConfiguration.class,
     CasCoreUtilConfiguration.class,
-    CasCoreNotificationsConfiguration.class,
+    CasCoreNotificationsAutoConfiguration.class,
     SoapAuthenticationConfiguration.class
 },
     properties = {

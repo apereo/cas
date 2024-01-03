@@ -25,7 +25,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link CasCoreLogoutConfigurationTests}.
+ * This is {@link CasCoreLogoutAutoConfigurationTests}.
  *
  * @author Misagh Moayyed
  * @since 6.4.0
@@ -44,16 +44,16 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreUtilConfiguration.class,
     CasCoreWebConfiguration.class,
     CasCoreHttpConfiguration.class,
-    CasCookieConfiguration.class,
+    CasCookieAutoConfiguration.class,
     CasCoreConfiguration.class,
-    CasCoreNotificationsConfiguration.class,
+    CasCoreNotificationsAutoConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
-    CasCoreLogoutConfiguration.class
+    CasCoreLogoutAutoConfiguration.class
 }, properties = "cas.ticket.track-descendant-tickets=true")
 @Tag("CasConfiguration")
-class CasCoreLogoutConfigurationTests {
+class CasCoreLogoutAutoConfigurationTests {
     @Autowired
     @Qualifier(TicketTrackingPolicy.BEAN_NAME_SERVICE_TICKET_TRACKING)
     private TicketTrackingPolicy serviceTicketSessionTrackingPolicy;

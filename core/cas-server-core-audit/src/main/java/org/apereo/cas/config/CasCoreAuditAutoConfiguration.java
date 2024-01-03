@@ -69,7 +69,7 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * This is {@link CasCoreAuditConfiguration}.
+ * This is {@link CasCoreAuditAutoConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
@@ -79,7 +79,7 @@ import java.util.Locale;
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Audit)
 @AutoConfiguration
-public class CasCoreAuditConfiguration {
+public class CasCoreAuditAutoConfiguration {
     private static final BeanCondition CONDITION_AUDIT = BeanCondition.on("cas.audit.engine.enabled").isTrue().evenIfMissing();
 
     @Configuration(value = "CasCoreAuditPrincipalConfiguration", proxyBeanMethods = false)

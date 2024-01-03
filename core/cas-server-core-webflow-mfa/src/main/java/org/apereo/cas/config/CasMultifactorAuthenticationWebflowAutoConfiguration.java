@@ -79,7 +79,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * This is {@link CasMultifactorAuthenticationWebflowConfiguration}.
+ * This is {@link CasMultifactorAuthenticationWebflowAutoConfiguration}.
  *
  * @author Travis Schmidt
  * @since 6.0.0
@@ -88,7 +88,7 @@ import java.util.stream.Collectors;
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Webflow)
 @ConditionalOnWebApplication
 @AutoConfiguration
-public class CasMultifactorAuthenticationWebflowConfiguration {
+public class CasMultifactorAuthenticationWebflowAutoConfiguration {
 
     @Configuration(value = "CasMultifactorAuthenticationWebflowRankedEventConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
