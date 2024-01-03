@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuditAutoConfiguration.class,
     CasCookieAutoConfiguration.class,
     CasCoreRestAutoConfiguration.class,
-    CasRestConfiguration.class
+    CasRestAutoConfiguration.class
 })
 @Tag("CasConfiguration")
 class CasRestConfigurationTests {

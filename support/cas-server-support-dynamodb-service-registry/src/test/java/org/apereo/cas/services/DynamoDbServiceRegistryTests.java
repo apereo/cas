@@ -5,7 +5,7 @@ import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.DynamoDbServiceRegistryConfiguration;
+import org.apereo.cas.config.DynamoDbServiceRegistryAutoConfiguration;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
 import org.junit.jupiter.api.MethodOrderer;
@@ -25,7 +25,7 @@ import software.amazon.awssdk.core.SdkSystemSetting;
  * @since 5.1.0
  */
 @SpringBootTest(classes = {
-    DynamoDbServiceRegistryConfiguration.class,
+    DynamoDbServiceRegistryAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class,
     CasCoreServicesAutoConfiguration.class,

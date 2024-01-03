@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasJdbcSessionConfigurationTests.TransactionTestConfiguration.class,
     TransactionAutoConfiguration.class,
     JdbcHttpSessionConfiguration.class,
-    CasJdbcSessionConfiguration.class
+    CasJdbcSessionAutoConfiguration.class
 }, properties = {
     "spring.datasource.url=jdbc:hsqldb:mem:cas-hsql-database",
     "spring.datasource.username=sa",

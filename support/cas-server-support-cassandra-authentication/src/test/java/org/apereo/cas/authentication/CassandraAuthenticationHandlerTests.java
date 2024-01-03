@@ -10,7 +10,7 @@ import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
-import org.apereo.cas.config.CassandraAuthenticationConfiguration;
+import org.apereo.cas.config.CassandraAuthenticationAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.val;
@@ -45,7 +45,7 @@ import static org.mockito.Mockito.*;
     CasCoreUtilAutoConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,
     CasCoreAutoConfiguration.class,
-    CassandraAuthenticationConfiguration.class
+    CassandraAuthenticationAutoConfiguration.class
 }, properties = {
     "cas.authn.cassandra.table-name=users_table",
     "cas.authn.cassandra.local-dc=datacenter1",

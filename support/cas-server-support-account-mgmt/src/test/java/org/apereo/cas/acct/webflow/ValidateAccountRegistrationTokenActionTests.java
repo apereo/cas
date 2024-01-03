@@ -1,7 +1,7 @@
 package org.apereo.cas.acct.webflow;
 
 import org.apereo.cas.acct.AccountRegistrationUtils;
-import org.apereo.cas.config.CasAccountManagementWebflowConfiguration;
+import org.apereo.cas.config.CasAccountManagementWebflowAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfListeningOnPort(port = 25000)
 @Import({
     CasCoreTicketsAutoConfiguration.class,
-    CasAccountManagementWebflowConfiguration.class
+    CasAccountManagementWebflowAutoConfiguration.class
 })
 @TestPropertySource(properties = {
     "spring.mail.host=localhost",

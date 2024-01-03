@@ -1,10 +1,9 @@
 package org.apereo.cas.acct.webflow;
 
-import org.apereo.cas.config.CasAccountManagementWebflowConfiguration;
+import org.apereo.cas.config.CasAccountManagementWebflowAutoConfiguration;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -12,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
 import org.springframework.webflow.execution.Action;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -22,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.5.0
  */
 @Tag("WebflowAccountActions")
-@Import(CasAccountManagementWebflowConfiguration.class)
+@Import(CasAccountManagementWebflowAutoConfiguration.class)
 class LoadAccountRegistrationPropertiesActionTests extends BaseWebflowConfigurerTests {
 
     @Autowired

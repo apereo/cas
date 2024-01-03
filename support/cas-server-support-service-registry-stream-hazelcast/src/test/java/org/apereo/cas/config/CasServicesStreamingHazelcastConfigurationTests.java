@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasServicesStreamingHazelcastConfiguration.class,
+    CasServicesStreamingHazelcastAutoConfiguration.class,
     CasServicesStreamingConfiguration.class
 }, properties = {
     "cas.service-registry.stream.hazelcast.config.cluster.core.instance-name=servicesRegistryStream",

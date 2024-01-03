@@ -1,6 +1,6 @@
 package org.apereo.cas.audit;
 
-import org.apereo.cas.config.CasSupportRestAuditConfiguration;
+import org.apereo.cas.config.CasSupportRestAuditAutoConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasSupportRestAuditConfiguration.class
+    CasSupportRestAuditAutoConfiguration.class
 }, properties = {
     "cas.audit.rest.url=http://localhost:9296",
     "cas.audit.rest.asynchronous=false"

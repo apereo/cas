@@ -1,10 +1,9 @@
 package org.apereo.cas.trusted.authentication.storage;
 
-import org.apereo.cas.config.DynamoDbMultifactorAuthenticationTrustConfiguration;
+import org.apereo.cas.config.DynamoDbMultifactorAuthenticationTrustAutoConfiguration;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -12,11 +11,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 import software.amazon.awssdk.core.SdkSystemSetting;
-
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -25,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Import(DynamoDbMultifactorAuthenticationTrustConfiguration.class)
+@Import(DynamoDbMultifactorAuthenticationTrustAutoConfiguration.class)
 @TestPropertySource(properties = {
     "cas.authn.mfa.trusted.dynamo-db.endpoint=http://localhost:8000",
     "cas.authn.mfa.trusted.dynamo-db.drop-tables-on-startup=true",
