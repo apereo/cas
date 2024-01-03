@@ -34,8 +34,7 @@ public abstract class BaseSamlConfigurationTests {
         CasCoreAuthenticationHandlersConfiguration.class,
         CasCoreTicketIdGeneratorsConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
-        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-        CasCoreUtilAutoConfiguration.class,
+                CasCoreUtilAutoConfiguration.class,
         CoreSamlConfiguration.class,
         CasCoreTicketCatalogConfiguration.class,
         CasCoreTicketsSerializationConfiguration.class,
@@ -45,7 +44,7 @@ public abstract class BaseSamlConfigurationTests {
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
-        CasCoreConfiguration.class
+        CasCoreAutoConfiguration.class
     })
     public static class SharedTestConfiguration {
     }

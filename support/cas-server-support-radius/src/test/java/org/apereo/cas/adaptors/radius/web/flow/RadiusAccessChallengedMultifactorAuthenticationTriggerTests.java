@@ -7,9 +7,8 @@ import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.config.CasCookieAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
-import org.apereo.cas.config.CasCoreConfiguration;
+import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
@@ -56,8 +55,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasPersonDirectoryTestConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,
     CasMultifactorAuthenticationWebflowAutoConfiguration.class,
-    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-    CasCoreWebAutoConfiguration.class,
+        CasCoreWebAutoConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasWebflowAutoConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
@@ -70,7 +68,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreLogoutAutoConfiguration.class,
     CasCookieAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
-    CasCoreConfiguration.class
+    CasCoreAutoConfiguration.class
 }, properties = {
     "cas.authn.radius.server.protocol=PAP",
     "cas.authn.radius.client.shared-secret=testing123",

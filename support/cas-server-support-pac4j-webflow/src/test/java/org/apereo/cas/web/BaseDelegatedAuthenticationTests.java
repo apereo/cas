@@ -7,9 +7,8 @@ import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
-import org.apereo.cas.config.CasCoreConfiguration;
+import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
@@ -87,8 +86,7 @@ public abstract class BaseDelegatedAuthenticationTests {
         CasCoreAuthenticationPolicyConfiguration.class,
         CasCoreAuthenticationMetadataConfiguration.class,
         CasCoreAuthenticationSupportConfiguration.class,
-        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-        CasCoreNotificationsAutoConfiguration.class,
+                CasCoreNotificationsAutoConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasWebflowAutoConfiguration.class,
@@ -98,7 +96,7 @@ public abstract class BaseDelegatedAuthenticationTests {
         CasPersonDirectoryTestConfiguration.class,
         CasCookieAutoConfiguration.class,
         CasThymeleafConfiguration.class,
-        CasCoreConfiguration.class,
+        CasCoreAutoConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class
     })
