@@ -1,1 +1,1 @@
-org.apereo.cas.config.CasCoreConfigurationWatchConfiguration
+org.apereo.cas.config.CasCoreConfigurationWatchAutoConfiguration
