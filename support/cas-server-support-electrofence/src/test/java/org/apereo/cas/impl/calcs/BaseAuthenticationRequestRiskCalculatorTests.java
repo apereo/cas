@@ -15,13 +15,13 @@ import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasEventsInMemoryRepositoryConfiguration;
+import org.apereo.cas.config.CasEventsInMemoryRepositoryAutoConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.config.ElectronicFenceConfiguration;
-import org.apereo.cas.config.GoogleMapsGeoCodingConfiguration;
+import org.apereo.cas.config.GoogleMapsGeoCodingAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.impl.mock.MockTicketGrantingTicketCreatedEventProducer;
 import org.apereo.cas.notifications.sms.MockSmsSender;
@@ -106,7 +106,7 @@ public abstract class BaseAuthenticationRequestRiskCalculatorTests {
         CasMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasPersonDirectoryConfiguration.class,
         CasPersonDirectoryStubConfiguration.class,
-        GoogleMapsGeoCodingConfiguration.class,
+        GoogleMapsGeoCodingAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasWebflowAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
@@ -115,7 +115,7 @@ public abstract class BaseAuthenticationRequestRiskCalculatorTests {
         CasCookieAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
-        CasEventsInMemoryRepositoryConfiguration.class,
+        CasEventsInMemoryRepositoryAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreEventsAutoConfiguration.class
     })

@@ -10,8 +10,8 @@ import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasHibernateJpaConfiguration;
-import org.apereo.cas.config.CasJdbcAuthenticationConfiguration;
+import org.apereo.cas.config.CasHibernateJpaAutoConfiguration;
+import org.apereo.cas.config.CasJdbcAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasHibernateJpaConfiguration.class,
+    CasHibernateJpaAutoConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,
     CasCoreAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
@@ -48,7 +48,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreServicesAutoConfiguration.class,
     CasRegisteredServicesTestConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
-    CasJdbcAuthenticationConfiguration.class
+    CasJdbcAuthenticationAutoConfiguration.class
 }, properties = {
     "cas.authn.jdbc.encode[0].sql=SELECT * FROM users WHERE uid=?",
 

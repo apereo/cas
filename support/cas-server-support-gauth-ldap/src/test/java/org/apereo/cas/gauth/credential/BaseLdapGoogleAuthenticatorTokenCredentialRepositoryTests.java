@@ -16,8 +16,8 @@ import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.config.GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfiguration;
-import org.apereo.cas.config.GoogleAuthenticatorLdapConfiguration;
-import org.apereo.cas.config.OneTimeTokenAuthenticationConfiguration;
+import org.apereo.cas.config.GoogleAuthenticatorLdapAutoConfiguration;
+import org.apereo.cas.config.OneTimeTokenAuthenticationAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import lombok.Getter;
@@ -58,8 +58,8 @@ public abstract class BaseLdapGoogleAuthenticatorTokenCredentialRepositoryTests 
     })
     @SpringBootConfiguration
     @Import({
-        GoogleAuthenticatorLdapConfiguration.class,
-        OneTimeTokenAuthenticationConfiguration.class,
+        GoogleAuthenticatorLdapAutoConfiguration.class,
+        OneTimeTokenAuthenticationAutoConfiguration.class,
         GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration.class,
         GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,

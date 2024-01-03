@@ -1,7 +1,6 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.config.GraphicalUserAuthenticationConfiguration;
-
+import org.apereo.cas.config.GraphicalUserAuthenticationAutoConfiguration;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -9,7 +8,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.TransitionableState;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -18,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Import(GraphicalUserAuthenticationConfiguration.class)
+@Import(GraphicalUserAuthenticationAutoConfiguration.class)
 @TestPropertySource(properties = "cas.authn.gua.simple.casuser=classpath:image.jpg")
 @Tag("WebflowConfig")
 class GraphicalUserAuthenticationWebflowConfigurerTests extends BaseWebflowConfigurerTests {

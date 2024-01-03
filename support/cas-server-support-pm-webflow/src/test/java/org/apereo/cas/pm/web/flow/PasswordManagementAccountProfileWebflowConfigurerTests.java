@@ -1,6 +1,6 @@
 package org.apereo.cas.pm.web.flow;
 
-import org.apereo.cas.config.PasswordManagementConfiguration;
+import org.apereo.cas.config.PasswordManagementAutoConfiguration;
 import org.apereo.cas.config.PasswordManagementWebflowConfiguration;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.6.0
  */
 @Import({
-    PasswordManagementConfiguration.class,
+    PasswordManagementAutoConfiguration.class,
     PasswordManagementWebflowConfiguration.class
 })
 @Tag("WebflowConfig")

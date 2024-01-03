@@ -4,7 +4,7 @@ import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.MongoDbServiceRegistryConfiguration;
+import org.apereo.cas.config.MongoDbServiceRegistryAutoConfiguration;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.2.0
  */
 @SpringBootTest(classes = {
-    MongoDbServiceRegistryConfiguration.class,
+    MongoDbServiceRegistryAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class,
     CasCoreServicesAutoConfiguration.class,

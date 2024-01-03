@@ -1,11 +1,10 @@
 package org.apereo.cas.authentication.principal.provision;
 
 import org.apereo.cas.BaseCasCoreTests;
-import org.apereo.cas.config.CasScimConfiguration;
+import org.apereo.cas.config.CasScimAutoConfiguration;
 import org.apereo.cas.config.DelegatedAuthenticationProvisioningConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -15,10 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
-
 import java.util.UUID;
 import java.util.function.Supplier;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -31,7 +28,7 @@ import static org.mockito.Mockito.*;
 @Tag("SCIM")
 @EnabledIfListeningOnPort(port = 9666)
 @Import({
-    CasScimConfiguration.class,
+    CasScimAutoConfiguration.class,
     DelegatedAuthenticationProvisioningConfiguration.class
 })
 @TestPropertySource(properties = {

@@ -1,7 +1,7 @@
 package org.apereo.cas.interrupt.webflow;
 
-import org.apereo.cas.config.CasInterruptConfiguration;
-import org.apereo.cas.config.CasInterruptWebflowConfiguration;
+import org.apereo.cas.config.CasInterruptAutoConfiguration;
+import org.apereo.cas.config.CasInterruptWebflowAutoConfiguration;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -30,8 +30,8 @@ class InterruptWebflowConfigurerTests {
         RefreshAutoConfiguration.class
     })
     @Import({
-        CasInterruptConfiguration.class,
-        CasInterruptWebflowConfiguration.class
+        CasInterruptAutoConfiguration.class,
+        CasInterruptWebflowAutoConfiguration.class
     })
     static class SharedTestConfiguration {
     }

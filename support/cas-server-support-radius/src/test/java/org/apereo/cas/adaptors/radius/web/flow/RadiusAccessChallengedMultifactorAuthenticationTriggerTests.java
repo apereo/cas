@@ -17,7 +17,7 @@ import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
-import org.apereo.cas.config.RadiusConfiguration;
+import org.apereo.cas.config.RadiusAutoConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import net.jradius.dictionary.Attr_ReplyMessage;
@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @SpringBootTest(classes = {
-    RadiusConfiguration.class,
+    RadiusAutoConfiguration.class,
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,

@@ -22,13 +22,13 @@ import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguratio
 import org.apereo.cas.config.CasOAuth20AuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasOAuth20Configuration;
 import org.apereo.cas.config.CasOAuth20EndpointsConfiguration;
-import org.apereo.cas.config.CasOAuth20ProtocolTicketCatalogConfiguration;
+import org.apereo.cas.config.CasOAuth20ProtocolTicketCatalogAutoConfiguration;
 import org.apereo.cas.config.CasOAuth20ThrottleConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
-import org.apereo.cas.config.CasThemesConfiguration;
-import org.apereo.cas.config.CasThrottlingConfiguration;
-import org.apereo.cas.config.CasThymeleafConfiguration;
+import org.apereo.cas.config.CasThemesAutoConfiguration;
+import org.apereo.cas.config.CasThrottlingAutoConfiguration;
+import org.apereo.cas.config.CasThymeleafAutoConfiguration;
 import org.apereo.cas.config.CasWebSecurityConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.config.OidcAuditConfiguration;
@@ -530,10 +530,10 @@ public abstract class AbstractOidcTests {
         CasPersonDirectoryTestConfiguration.class,
         CasRegisteredServicesTestConfiguration.class,
         CasCookieAutoConfiguration.class,
-        CasThemesConfiguration.class,
-        CasThymeleafConfiguration.class,
+        CasThemesAutoConfiguration.class,
+        CasThymeleafAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
-        CasThrottlingConfiguration.class,
+        CasThrottlingAutoConfiguration.class,
         CasMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         OidcConfiguration.class,
@@ -545,7 +545,7 @@ public abstract class AbstractOidcTests {
         OidcComponentSerializationConfiguration.class,
         OidcAuditConfiguration.class,
         CasOAuth20Configuration.class,
-        CasOAuth20ProtocolTicketCatalogConfiguration.class,
+        CasOAuth20ProtocolTicketCatalogAutoConfiguration.class,
         CasOAuth20EndpointsConfiguration.class,
         CasOAuth20ThrottleConfiguration.class,
         CasOAuth20AuthenticationServiceSelectionStrategyConfiguration.class,

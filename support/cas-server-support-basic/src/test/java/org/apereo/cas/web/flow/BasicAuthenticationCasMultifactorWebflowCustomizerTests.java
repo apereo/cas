@@ -1,16 +1,14 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.config.CasBasicAuthenticationConfiguration;
+import org.apereo.cas.config.CasBasicAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
-
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -20,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Import({
-    CasBasicAuthenticationConfiguration.class,
+    CasBasicAuthenticationAutoConfiguration.class,
     CasCoreMultifactorAuthenticationAutoConfiguration.class,
     CasMultifactorAuthenticationWebflowAutoConfiguration.class
 })

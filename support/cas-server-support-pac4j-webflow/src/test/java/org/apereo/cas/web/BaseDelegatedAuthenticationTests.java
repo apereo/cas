@@ -13,9 +13,9 @@ import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
-import org.apereo.cas.config.CasThymeleafConfiguration;
+import org.apereo.cas.config.CasThymeleafAutoConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
-import org.apereo.cas.config.CoreSamlConfiguration;
+import org.apereo.cas.config.CoreSamlAutoConfiguration;
 import org.apereo.cas.config.DelegatedAuthenticationConfiguration;
 import org.apereo.cas.config.DelegatedAuthenticationDynamicDiscoverySelectionConfiguration;
 import org.apereo.cas.config.DelegatedAuthenticationEventExecutionPlanConfiguration;
@@ -66,7 +66,7 @@ public abstract class BaseDelegatedAuthenticationTests {
         DelegatedAuthenticationWebflowConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
-        CoreSamlConfiguration.class,
+        CoreSamlAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
@@ -77,7 +77,7 @@ public abstract class BaseDelegatedAuthenticationTests {
         CasCoreLogoutAutoConfiguration.class,
         CasPersonDirectoryTestConfiguration.class,
         CasCookieAutoConfiguration.class,
-        CasThymeleafConfiguration.class,
+        CasThymeleafAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
         CasCoreAuditAutoConfiguration.class
     })

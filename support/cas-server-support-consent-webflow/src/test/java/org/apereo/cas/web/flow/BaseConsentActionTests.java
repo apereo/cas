@@ -1,7 +1,7 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.config.CasConsentCoreConfiguration;
-import org.apereo.cas.config.CasConsentWebflowConfiguration;
+import org.apereo.cas.config.CasConsentCoreAutoConfiguration;
+import org.apereo.cas.config.CasConsentWebflowAutoConfiguration;
 import org.apereo.cas.config.CasCookieAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
@@ -40,8 +40,8 @@ import org.springframework.webflow.execution.Action;
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
     MailSenderAutoConfiguration.class,
-    CasConsentCoreConfiguration.class,
-    CasConsentWebflowConfiguration.class,
+    CasConsentCoreAutoConfiguration.class,
+    CasConsentWebflowAutoConfiguration.class,
     CasCoreAuditAutoConfiguration.class,
     CasRegisteredServicesTestConfiguration.class,
     CasCookieAutoConfiguration.class,

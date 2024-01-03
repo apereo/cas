@@ -2,13 +2,11 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
 import org.apereo.cas.aup.BaseAcceptableUsagePolicyRepositoryTests;
-
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -19,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("CasConfiguration")
 @SpringBootTest(classes = {
-    CasAcceptableUsagePolicyRestConfiguration.class,
+    CasAcceptableUsagePolicyRestAutoConfiguration.class,
     BaseAcceptableUsagePolicyRepositoryTests.SharedTestConfiguration.class
 })
 class CasAcceptableUsagePolicyRestConfigurationTests {

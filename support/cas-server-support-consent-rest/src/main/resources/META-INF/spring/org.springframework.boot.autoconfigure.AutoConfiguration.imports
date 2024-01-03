@@ -1,1 +1,1 @@
-org.apereo.cas.config.CasConsentRestConfiguration
+org.apereo.cas.config.CasConsentRestAutoConfiguration
