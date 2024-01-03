@@ -3,9 +3,8 @@ package org.apereo.cas;
 import org.apereo.cas.config.CasCookieAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
-import org.apereo.cas.config.CasCoreConfiguration;
+import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
@@ -50,7 +49,7 @@ public abstract class BaseCasGoogleAnalyticsTests {
         CasCoreServicesConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasPersonDirectoryTestConfiguration.class,
-        CasCoreConfiguration.class,
+        CasCoreAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreAuthenticationConfiguration.class,
         CasCoreTicketsConfiguration.class,
@@ -65,8 +64,7 @@ public abstract class BaseCasGoogleAnalyticsTests {
         CasWebApplicationServiceFactoryConfiguration.class,
         CasCoreAuthenticationSupportConfiguration.class,
         CasCoreAuthenticationPrincipalConfiguration.class,
-        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-        CasCoreUtilAutoConfiguration.class
+                CasCoreUtilAutoConfiguration.class
     })
     public static class SharedTestConfiguration {
     }

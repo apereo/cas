@@ -1,7 +1,6 @@
 package org.apereo.cas.support.oauth.web.flow;
 
-import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
-import org.apereo.cas.config.CasCoreConfiguration;
+import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasOAuth20AuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasOAuth20Configuration;
 import org.apereo.cas.config.CasOAuth20ServicesConfiguration;
@@ -35,11 +34,10 @@ public abstract class BaseOAuth20WebflowTests {
     @Import({
         CasThemesConfiguration.class,
         CasThymeleafConfiguration.class,
-        CasCoreConfiguration.class,
+        CasCoreAutoConfiguration.class,
         CasOAuth20Configuration.class,
         CasOAuth20AuthenticationServiceSelectionStrategyConfiguration.class,
-        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-        CasOAuth20WebflowConfiguration.class,
+                CasOAuth20WebflowConfiguration.class,
         CasOAuth20ServicesConfiguration.class,
         BaseWebflowConfigurerTests.SharedTestConfiguration.class
     })

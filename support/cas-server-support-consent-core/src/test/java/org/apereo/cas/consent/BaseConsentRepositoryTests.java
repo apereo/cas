@@ -10,9 +10,8 @@ import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
-import org.apereo.cas.config.CasCoreConfiguration;
+import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
@@ -142,8 +141,7 @@ public abstract class BaseConsentRepositoryTests {
         CasWebApplicationServiceFactoryConfiguration.class,
         CasCoreMultifactorAuthenticationConfiguration.class,
         CasMultifactorAuthenticationWebflowAutoConfiguration.class,
-        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-        CasPersonDirectoryTestConfiguration.class,
+                CasPersonDirectoryTestConfiguration.class,
         CasCoreAuthenticationConfiguration.class,
         CasCoreAuthenticationMetadataConfiguration.class,
         CasCoreAuthenticationPrincipalConfiguration.class,
@@ -155,7 +153,7 @@ public abstract class BaseConsentRepositoryTests {
         CasCoreTicketIdGeneratorsConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
-        CasCoreConfiguration.class
+        CasCoreAutoConfiguration.class
     })
     static class SharedTestConfiguration {
     }

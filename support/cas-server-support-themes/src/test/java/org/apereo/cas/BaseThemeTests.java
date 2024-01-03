@@ -2,9 +2,8 @@ package org.apereo.cas;
 
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
-import org.apereo.cas.config.CasCoreConfiguration;
+import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
@@ -76,9 +75,8 @@ public abstract class BaseThemeTests {
         CasCoreAuthenticationConfiguration.class,
         CasCoreAuthenticationSupportConfiguration.class,
         CasCoreAuthenticationPrincipalConfiguration.class,
-        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
-        CasCoreConfiguration.class,
+                CasWebApplicationServiceFactoryConfiguration.class,
+        CasCoreAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class
     })
     public static class SharedTestConfiguration {

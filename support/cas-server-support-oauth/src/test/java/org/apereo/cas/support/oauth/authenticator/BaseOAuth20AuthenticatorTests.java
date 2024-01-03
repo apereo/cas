@@ -12,7 +12,7 @@ import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
-import org.apereo.cas.config.CasCoreConfiguration;
+import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
@@ -213,7 +213,7 @@ public abstract class BaseOAuth20AuthenticatorTests {
         CasCoreLogoutAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasCookieAutoConfiguration.class,
-        CasCoreConfiguration.class,
+        CasCoreAutoConfiguration.class,
         CasAuthenticationEventExecutionPlanTestConfiguration.class,
         CasOAuth20AuthenticationServiceSelectionStrategyConfiguration.class,
         CasOAuth20ComponentSerializationConfiguration.class,

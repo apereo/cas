@@ -14,9 +14,8 @@ import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
-import org.apereo.cas.config.CasCoreConfiguration;
+import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
@@ -536,7 +535,7 @@ public abstract class AbstractOidcTests {
         CasCoreUtilAutoConfiguration.class,
         CasWebflowAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
-        CasCoreConfiguration.class,
+        CasCoreAutoConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasCoreTicketCatalogConfiguration.class,
         CasCoreTicketIdGeneratorsConfiguration.class,
@@ -560,8 +559,7 @@ public abstract class AbstractOidcTests {
         CasThrottlingConfiguration.class,
         CasMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasCoreMultifactorAuthenticationConfiguration.class,
-        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-        OidcConfiguration.class,
+                OidcConfiguration.class,
         OidcJwksConfiguration.class,
         OidcEndpointsConfiguration.class,
         OidcResponseConfiguration.class,

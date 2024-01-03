@@ -9,9 +9,8 @@ import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
-import org.apereo.cas.config.CasCoreConfiguration;
+import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
@@ -68,7 +67,7 @@ import org.springframework.context.annotation.Bean;
     DelegatedAuthenticationWebflowConfiguration.class,
     CasWebflowAutoConfiguration.class,
     CoreSamlConfiguration.class,
-    CasCoreConfiguration.class,
+    CasCoreAutoConfiguration.class,
     CasCookieAutoConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,
@@ -79,8 +78,7 @@ import org.springframework.context.annotation.Bean;
     CasCoreAuditAutoConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,
     CasMultifactorAuthenticationWebflowAutoConfiguration.class,
-    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-    CasCoreWebAutoConfiguration.class,
+        CasCoreWebAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
     CasCoreUtilAutoConfiguration.class,

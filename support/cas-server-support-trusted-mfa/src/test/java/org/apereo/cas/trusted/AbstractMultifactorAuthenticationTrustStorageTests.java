@@ -7,8 +7,7 @@ import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
-import org.apereo.cas.config.CasCoreConfiguration;
+import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
@@ -128,7 +127,7 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
     })
     @SpringBootConfiguration
     @Import({
-        CasCoreConfiguration.class,
+        CasCoreAutoConfiguration.class,
         CasCoreAuthenticationPrincipalConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
@@ -137,8 +136,7 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
         CasCoreAuditAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,
-        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-        GeoLocationServiceTestConfiguration.class,
+                GeoLocationServiceTestConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasCoreTicketsSerializationConfiguration.class,
         MultifactorAuthnTrustWebflowConfiguration.class,

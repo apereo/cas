@@ -4,9 +4,8 @@ import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.config.CasCookieAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
-import org.apereo.cas.config.CasCoreConfiguration;
+import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
@@ -62,7 +61,7 @@ public abstract class BaseGrouperConfigurationTests {
         CasCoreServicesConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
-        CasCoreConfiguration.class,
+        CasCoreAutoConfiguration.class,
         CasCoreAuthenticationConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasRegisteredServicesTestConfiguration.class,
@@ -74,8 +73,7 @@ public abstract class BaseGrouperConfigurationTests {
         CasWebApplicationServiceFactoryConfiguration.class,
         CasCoreAuthenticationSupportConfiguration.class,
         CasCoreAuthenticationPrincipalConfiguration.class,
-        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-        CasCoreUtilAutoConfiguration.class,
+                CasCoreUtilAutoConfiguration.class,
         CasPersonDirectoryConfiguration.class,
         CasPersonDirectoryStubConfiguration.class,
         CasPersonDirectoryGrouperConfiguration.class,

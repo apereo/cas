@@ -4,9 +4,8 @@ import org.apereo.cas.config.CasCookieAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
-import org.apereo.cas.config.CasCoreConfiguration;
+import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
@@ -55,14 +54,13 @@ public abstract class BaseAuditConfigurationTests {
     })
     @SpringBootConfiguration
     @Import({
-        CasCoreConfiguration.class,
+        CasCoreAutoConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasCoreTicketsSerializationConfiguration.class,
         CasCoreAuthenticationConfiguration.class,
         CasCoreAuthenticationSupportConfiguration.class,
         CasCoreAuthenticationPrincipalConfiguration.class,
-        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-        CasCoreServicesConfiguration.class,
+                CasCoreServicesConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,

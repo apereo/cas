@@ -3,7 +3,7 @@ package org.apereo.cas.audit;
 import org.apereo.cas.audit.spi.BaseAuditConfigurationTests;
 import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
-import org.apereo.cas.config.CasCoreConfiguration;
+import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
@@ -30,7 +30,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
  * @since 5.2.0
  */
 @SpringBootTest(classes = {
-    CasCoreConfiguration.class,
+    CasCoreAutoConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreAuditAutoConfiguration.class,
     CasSupportMongoDbAuditConfiguration.class,
