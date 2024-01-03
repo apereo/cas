@@ -13,11 +13,7 @@ import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
-import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
-import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
-import org.apereo.cas.config.CasCoreTicketsConfiguration;
-import org.apereo.cas.config.CasCoreTicketsSchedulingConfiguration;
-import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
+import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
@@ -679,11 +675,7 @@ public abstract class BaseTicketRegistryTests {
     })
     @SpringBootConfiguration
     @Import({
-        CasCoreTicketsConfiguration.class,
-        CasCoreTicketCatalogConfiguration.class,
-        CasCoreTicketIdGeneratorsConfiguration.class,
-        CasCoreTicketsSchedulingConfiguration.class,
-        CasCoreTicketsSerializationConfiguration.class,
+        CasCoreTicketsAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
         CasPersonDirectoryConfiguration.class,
         CasPersonDirectoryStubConfiguration.class,
@@ -697,7 +689,7 @@ public abstract class BaseTicketRegistryTests {
         CasCoreAuthenticationHandlersConfiguration.class,
         CasCoreAutoConfiguration.class,
         CasCookieAutoConfiguration.class,
-                CasCoreServicesConfiguration.class,
+        CasCoreServicesConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class

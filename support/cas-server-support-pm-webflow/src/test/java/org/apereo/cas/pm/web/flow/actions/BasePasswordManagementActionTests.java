@@ -15,10 +15,7 @@ import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
-import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
-import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
-import org.apereo.cas.config.CasCoreTicketsConfiguration;
-import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
+import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
@@ -132,17 +129,14 @@ public abstract class BasePasswordManagementActionTests {
         PasswordManagementForgotUsernameConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasCoreServicesAuthenticationConfiguration.class,
-        CasCoreTicketsConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,
-        CasCoreTicketCatalogConfiguration.class,
-        CasCoreTicketsSerializationConfiguration.class,
+        CasCoreTicketsAutoConfiguration.class,
         CasCoreAuthenticationSupportConfiguration.class,
         CasCoreAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
         CasCoreAuthenticationConfiguration.class,
-                CasCoreAuthenticationPrincipalConfiguration.class,
+        CasCoreAuthenticationPrincipalConfiguration.class,
         CasCoreAuthenticationMetadataConfiguration.class,
-        CasCoreTicketIdGeneratorsConfiguration.class,
         CasCookieAutoConfiguration.class,
         CasThemesConfiguration.class,
         CasCoreUtilAutoConfiguration.class,

@@ -5,8 +5,7 @@ import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
-import org.apereo.cas.config.CasCoreTicketsConfiguration;
-import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
+import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.MultifactorAuthnTrustConfiguration;
@@ -20,7 +19,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -37,13 +35,11 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
-
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -61,8 +57,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreUtilAutoConfiguration.class,
     CasCoreAutoConfiguration.class,
     CasCoreServicesConfiguration.class,
-    CasCoreTicketsConfiguration.class,
-    CasCoreTicketsSerializationConfiguration.class,
+    CasCoreTicketsAutoConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreWebAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,

@@ -1,11 +1,10 @@
 package org.apereo.cas.ticket.monitoring;
 
 import org.apereo.cas.config.CasCoreMonitorAutoConfiguration;
-import org.apereo.cas.config.CasCoreTicketsMonitoringConfiguration;
+import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.ticket.registry.BaseTicketRegistryTests;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationHandler;
 import io.micrometer.observation.ObservationTextPublisher;
@@ -19,10 +18,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -34,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     CasCoreTicketsMonitoringConfigurationTests.CasCoreTicketsMonitoringTestConfiguration.class,
     CasCoreMonitorAutoConfiguration.class,
-    CasCoreTicketsMonitoringConfiguration.class,
+    CasCoreTicketsAutoConfiguration.class,
     BaseTicketRegistryTests.SharedTestConfiguration.class
 })
 @Tag("Tickets")

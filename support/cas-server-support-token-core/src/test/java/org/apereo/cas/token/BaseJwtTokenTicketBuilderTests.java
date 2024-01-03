@@ -6,13 +6,9 @@ import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
-import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
-import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
-import org.apereo.cas.config.CasCoreTicketsConfiguration;
-import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
+import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
@@ -50,20 +46,16 @@ import static org.mockito.Mockito.*;
     BaseJwtTokenTicketBuilderTests.TokenTicketBuilderTestConfiguration.class,
     TokenCoreConfiguration.class,
     TokenCoreComponentSerializationConfiguration.class,
-    CasCoreTicketsConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasRegisteredServicesTestConfiguration.class,
-    CasCoreTicketCatalogConfiguration.class,
-    CasCoreTicketsSerializationConfiguration.class,
-    CasCoreTicketIdGeneratorsConfiguration.class,
+    CasCoreTicketsAutoConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreWebAutoConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreAutoConfiguration.class,
-    CasPersonDirectoryTestConfiguration.class,
-        CasDefaultServiceTicketIdGeneratorsConfiguration.class
+    CasPersonDirectoryTestConfiguration.class
 })
 public abstract class BaseJwtTokenTicketBuilderTests {
     @Autowired

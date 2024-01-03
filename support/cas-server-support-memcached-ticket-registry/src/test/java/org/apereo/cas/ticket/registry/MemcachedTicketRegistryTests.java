@@ -6,7 +6,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationComponentSerializationConfiguration;
 import org.apereo.cas.config.CasCoreServicesComponentSerializationConfiguration;
-import org.apereo.cas.config.CasCoreTicketComponentSerializationConfiguration;
+import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasOAuth20ComponentSerializationConfiguration;
 import org.apereo.cas.config.MemcachedTicketRegistryConfiguration;
@@ -26,7 +26,6 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.util.serialization.ComponentSerializationPlan;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
-
 import lombok.Getter;
 import lombok.val;
 import net.spy.memcached.MemcachedClientIF;
@@ -38,9 +37,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
-
 import java.util.HashMap;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -54,7 +51,7 @@ import static org.mockito.Mockito.*;
 @Import({
     MemcachedTicketRegistryConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
-    CasCoreTicketComponentSerializationConfiguration.class,
+    CasCoreTicketsAutoConfiguration.class,
     CasCoreAuthenticationComponentSerializationConfiguration.class,
     CasCoreServicesComponentSerializationConfiguration.class,
     CasOAuth20ComponentSerializationConfiguration.class,
