@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.config.CasWebflowAccountProfileConfiguration;
 import org.apereo.cas.config.StatelessTicketRegistryConfiguration;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -24,10 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@Import({
-    StatelessTicketRegistryConfiguration.class,
-    CasWebflowAccountProfileConfiguration.class
-})
+@Import(StatelessTicketRegistryConfiguration.class)
 @Tag("WebflowConfig")
 @TestPropertySource(properties = "CasFeatureModule.AccountManagement.enabled=true")
 public class StatelessTicketRegistryWebflowConfigurerTests extends BaseWebflowConfigurerTests {

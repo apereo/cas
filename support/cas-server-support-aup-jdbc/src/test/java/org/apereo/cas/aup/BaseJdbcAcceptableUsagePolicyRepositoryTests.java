@@ -21,13 +21,12 @@ import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.config.CasWebflowContextConfiguration;
+import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.support.WebUtils;
@@ -69,8 +68,7 @@ import java.util.Map;
     CasAcceptableUsagePolicyWebflowConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
-    CasWebflowContextConfiguration.class,
-    CasCoreWebflowConfiguration.class,
+    CasWebflowAutoConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,
     CasMultifactorAuthenticationWebflowAutoConfiguration.class,
     CasCoreConfiguration.class,
@@ -97,7 +95,7 @@ public abstract class BaseJdbcAcceptableUsagePolicyRepositoryTests extends BaseA
     @Autowired
     @Qualifier("jdbcAcceptableUsagePolicyTransactionTemplate")
     protected TransactionOperations jdbcAcceptableUsagePolicyTransactionTemplate;
-    
+
     protected String determinePrincipalId(final String actualPrincipalId,
                                           final Map<String, List<Object>> profileAttributes) throws Exception {
         val aupProperties = casProperties.getAcceptableUsagePolicy();
@@ -113,7 +111,7 @@ public abstract class BaseJdbcAcceptableUsagePolicyRepositoryTests extends BaseA
         WebUtils.putAuthentication(auth, context);
         return jdbcAupRepository.determinePrincipalId(principal);
     }
-    
+
     @Override
     public boolean hasLiveUpdates() {
         return false;
