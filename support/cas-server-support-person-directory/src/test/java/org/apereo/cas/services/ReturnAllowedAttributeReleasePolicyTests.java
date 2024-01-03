@@ -1,7 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -56,7 +56,7 @@ class ReturnAllowedAttributeReleasePolicyTests {
 
     @SpringBootTest(classes = {
         CasPersonDirectoryConfiguration.class,
-        CasCoreAuthenticationPrincipalConfiguration.class,
+        CasCoreAuthenticationAutoConfiguration.class,
         ReturnAllowedAttributeReleasePolicyTestConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
         RefreshAutoConfiguration.class
@@ -119,7 +119,7 @@ class ReturnAllowedAttributeReleasePolicyTests {
 
     @SpringBootTest(classes = {
         CasPersonDirectoryConfiguration.class,
-        CasCoreAuthenticationPrincipalConfiguration.class,
+        CasCoreAuthenticationAutoConfiguration.class,
         ReturnAllowedAttributeReleasePolicyTestConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
         RefreshAutoConfiguration.class

@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreTicketsAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
-    CasCoreTicketsAutoConfiguration.class.class,
+    CasCoreTicketsAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
@@ -45,9 +45,9 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCookieAutoConfiguration.class,
     CasCoreAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
-    CasCoreAuthenticationConfiguration.class,
-    CasCoreAuthenticationSupportConfiguration.class,
-    CasCoreAuthenticationPrincipalConfiguration.class,
+    CasCoreAuthenticationAutoConfiguration.class,
+    CasCoreAuthenticationAutoConfiguration.class,
+    CasCoreAuthenticationAutoConfiguration.class,
     CasCoreLogoutAutoConfiguration.class
 }, properties = "cas.ticket.track-descendant-tickets=true")
 @Tag("CasConfiguration")

@@ -1,8 +1,6 @@
 package org.apereo.cas;
 
-import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
@@ -65,10 +63,8 @@ public abstract class BaseThemeTests {
         CasCoreWebAutoConfiguration.class,
         CasPersonDirectoryConfiguration.class,
         CasPersonDirectoryStubConfiguration.class,
-        CasCoreAuthenticationConfiguration.class,
-        CasCoreAuthenticationSupportConfiguration.class,
-        CasCoreAuthenticationPrincipalConfiguration.class,
-                CasWebApplicationServiceFactoryConfiguration.class,
+        CasCoreAuthenticationAutoConfiguration.class,
+        CasWebApplicationServiceFactoryConfiguration.class,
         CasCoreAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class
     })
