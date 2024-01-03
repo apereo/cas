@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
 
 /**
- * This is {@link CasCoreConfigurationWatchConfiguration}.
+ * This is {@link CasCoreConfigurationWatchAutoConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 6.5.0
@@ -23,7 +23,7 @@ import org.springframework.context.annotation.Lazy;
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.CasConfiguration)
 @AutoConfiguration
 @Lazy(false)
-public class CasCoreConfigurationWatchConfiguration {
+public class CasCoreConfigurationWatchAutoConfiguration {
     @Bean
     public InitializingBean casConfigurationWatchService(
         final ConfigurableApplicationContext applicationContext) {

@@ -1,8 +1,8 @@
 package org.apereo.cas.configuration.loader;
 
-import org.apereo.cas.config.CasCoreConfigurationWatchConfiguration;
-import org.apereo.cas.config.CasCoreEnvironmentBootstrapConfiguration;
-import org.apereo.cas.config.CasCoreStandaloneBootstrapConfiguration;
+import org.apereo.cas.config.CasCoreConfigurationWatchAutoConfiguration;
+import org.apereo.cas.config.CasCoreEnvironmentBootstrapAutoConfiguration;
+import org.apereo.cas.config.CasCoreStandaloneBootstrapAutoConfiguration;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -20,9 +20,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @SpringBootTest(classes = {
-    CasCoreEnvironmentBootstrapConfiguration.class,
-    CasCoreConfigurationWatchConfiguration.class,
-    CasCoreStandaloneBootstrapConfiguration.class
+    CasCoreEnvironmentBootstrapAutoConfiguration.class,
+    CasCoreConfigurationWatchAutoConfiguration.class,
+    CasCoreStandaloneBootstrapAutoConfiguration.class
 })
 @ActiveProfiles("dev")
 @Tag("Groovy")

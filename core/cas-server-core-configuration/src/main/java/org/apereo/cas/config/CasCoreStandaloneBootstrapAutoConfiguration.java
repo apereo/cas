@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Import;
 
 /**
- * This is {@link CasCoreStandaloneBootstrapConfiguration}.
+ * This is {@link CasCoreStandaloneBootstrapAutoConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
@@ -18,5 +18,5 @@ import org.springframework.context.annotation.Import;
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.CasConfiguration)
 @AutoConfiguration
 @Import(CasCoreBaseStandaloneConfiguration.class)
-public class CasCoreStandaloneBootstrapConfiguration {
+public class CasCoreStandaloneBootstrapAutoConfiguration {
 }
