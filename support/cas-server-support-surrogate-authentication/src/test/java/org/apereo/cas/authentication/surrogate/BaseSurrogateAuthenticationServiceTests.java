@@ -22,12 +22,11 @@ import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasThemesConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.config.CasWebflowContextConfiguration;
+import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.config.SurrogateAuthenticationAuditConfiguration;
 import org.apereo.cas.config.SurrogateAuthenticationConfiguration;
 import org.apereo.cas.config.SurrogateAuthenticationMetadataConfiguration;
@@ -127,8 +126,7 @@ public abstract class BaseSurrogateAuthenticationServiceTests {
         CasCoreWebAutoConfiguration.class,
         CasCoreServicesAuthenticationConfiguration.class,
         CasCoreServicesConfiguration.class,
-        CasCoreWebflowConfiguration.class,
-        CasWebflowContextConfiguration.class,
+        CasWebflowAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
         CasCoreMultifactorAuthenticationConfiguration.class,
         CasMultifactorAuthenticationWebflowAutoConfiguration.class,

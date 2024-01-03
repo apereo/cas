@@ -31,7 +31,6 @@ import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasOAuth20AuthenticationServiceSelectionStrategyConfiguration;
@@ -46,7 +45,7 @@ import org.apereo.cas.config.CasThemesConfiguration;
 import org.apereo.cas.config.CasThrottlingConfiguration;
 import org.apereo.cas.config.CasThymeleafConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.config.CasWebflowContextConfiguration;
+import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.mock.MockServiceTicket;
@@ -796,8 +795,7 @@ public abstract class AbstractOAuth20Tests {
         CasCoreLogoutAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
-        CasCoreWebflowConfiguration.class,
-        CasWebflowContextConfiguration.class,
+        CasWebflowAutoConfiguration.class,
         CasCoreMultifactorAuthenticationConfiguration.class,
         CasMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasOAuth20AuthenticationServiceSelectionStrategyConfiguration.class,

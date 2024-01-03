@@ -19,17 +19,15 @@ import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.config.CasWebflowContextConfiguration;
+import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.config.FileAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.GroovyAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.JsonResourceAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.RejectUsersAuthenticationEventExecutionPlanConfiguration;
-
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +35,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -50,8 +47,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,
-    CasCoreWebflowConfiguration.class,
-    CasWebflowContextConfiguration.class,
+    CasWebflowAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreWebAutoConfiguration.class,

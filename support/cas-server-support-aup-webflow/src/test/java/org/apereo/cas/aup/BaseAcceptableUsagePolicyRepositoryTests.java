@@ -23,13 +23,12 @@ import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.config.CasWebflowContextConfiguration;
+import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredService;
@@ -147,8 +146,7 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
         CasCoreAuthenticationPrincipalConfiguration.class,
         CasAcceptableUsagePolicyWebflowConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
-        CasWebflowContextConfiguration.class,
-        CasCoreWebflowConfiguration.class,
+        CasWebflowAutoConfiguration.class,
         CasCoreConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,

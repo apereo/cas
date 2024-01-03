@@ -5,7 +5,7 @@ import org.apereo.cas.audit.AuditTrailExecutionPlanConfigurer;
 import org.apereo.cas.audit.spi.MockAuditTrailManager;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
-import org.apereo.cas.config.CasWebflowAccountProfileConfiguration;
+import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Import({
     PrepareAccountProfileViewActionTests.AuditTestConfiguration.class,
-    CasWebflowAccountProfileConfiguration.class,
+    CasWebflowAutoConfiguration.class,
     CasCoreAuditAutoConfiguration.class
 })
 class PrepareAccountProfileViewActionTests extends AbstractWebflowActionsTests {

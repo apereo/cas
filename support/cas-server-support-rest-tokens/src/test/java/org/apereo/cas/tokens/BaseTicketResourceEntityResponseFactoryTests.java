@@ -22,7 +22,6 @@ import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
@@ -30,7 +29,7 @@ import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasRestConfiguration;
 import org.apereo.cas.config.CasRestTokensConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.config.CasWebflowContextConfiguration;
+import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.config.TokenCoreConfiguration;
 import org.apereo.cas.rest.factory.ServiceTicketResourceEntityResponseFactory;
 import org.apereo.cas.rest.factory.TicketGrantingTicketResourceEntityResponseFactory;
@@ -38,7 +37,6 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.crypto.CipherExecutor;
-
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -46,7 +44,6 @@ import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguratio
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-
 import java.util.List;
 
 /**
@@ -85,8 +82,7 @@ import java.util.List;
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,
     CasMultifactorAuthenticationWebflowAutoConfiguration.class,
-    CasWebflowContextConfiguration.class,
-    CasCoreWebflowConfiguration.class,
+    CasWebflowAutoConfiguration.class,
     CasCookieAutoConfiguration.class,
     CasCoreTicketsConfiguration.class
 })

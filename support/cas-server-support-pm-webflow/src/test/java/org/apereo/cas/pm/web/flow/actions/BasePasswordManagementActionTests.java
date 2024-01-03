@@ -22,12 +22,11 @@ import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasThemesConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.config.CasWebflowContextConfiguration;
+import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.config.PasswordManagementConfiguration;
 import org.apereo.cas.config.PasswordManagementForgotUsernameConfiguration;
 import org.apereo.cas.config.PasswordManagementWebflowConfiguration;
@@ -151,11 +150,10 @@ public abstract class BasePasswordManagementActionTests {
         CasCoreUtilAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
-        CasCoreWebflowConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreMultifactorAuthenticationConfiguration.class,
         CasMultifactorAuthenticationWebflowAutoConfiguration.class,
-        CasWebflowContextConfiguration.class,
+        CasWebflowAutoConfiguration.class,
         CasPersonDirectoryTestConfiguration.class
     })
     static class SharedTestConfiguration {

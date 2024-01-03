@@ -17,7 +17,6 @@ import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
@@ -29,7 +28,7 @@ import org.apereo.cas.config.CasSimpleMultifactorAuthenticationMultifactorProvid
 import org.apereo.cas.config.CasSimpleMultifactorAuthenticationRestConfiguration;
 import org.apereo.cas.config.CasSimpleMultifactorAuthenticationTicketCatalogConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.config.CasWebflowContextConfiguration;
+import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.config.MultifactorAuthnTrustWebflowConfiguration;
 import org.apereo.cas.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration;
@@ -77,8 +76,7 @@ public abstract class BaseCasSimpleMultifactorAuthenticationTests {
         CasSimpleMultifactorAuthenticationMultifactorProviderBypassConfiguration.class,
 
         CasCoreLogoutAutoConfiguration.class,
-        CasWebflowContextConfiguration.class,
-        CasCoreWebflowConfiguration.class,
+        CasWebflowAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasCoreWebAutoConfiguration.class,

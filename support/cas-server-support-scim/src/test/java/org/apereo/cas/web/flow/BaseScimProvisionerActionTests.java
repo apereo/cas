@@ -17,12 +17,11 @@ import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasScimConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.config.CasWebflowContextConfiguration;
+import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
@@ -38,12 +37,11 @@ import org.springframework.webflow.execution.Action;
  * @since 6.1.0
  */
 @SpringBootTest(classes = {
-    CasCoreWebflowConfiguration.class,
+    CasWebflowAutoConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreWebAutoConfiguration.class,
     CasCookieAutoConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
-    CasWebflowContextConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasCoreConfiguration.class,

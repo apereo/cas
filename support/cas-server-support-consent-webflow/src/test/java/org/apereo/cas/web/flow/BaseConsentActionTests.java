@@ -21,13 +21,12 @@ import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.config.CasWebflowContextConfiguration;
+import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,8 +54,7 @@ import org.springframework.webflow.execution.Action;
     CasCoreAuditAutoConfiguration.class,
     CasRegisteredServicesTestConfiguration.class,
     CasCookieAutoConfiguration.class,
-    CasCoreWebflowConfiguration.class,
-    CasWebflowContextConfiguration.class,
+    CasWebflowAutoConfiguration.class,
     CasPersonDirectoryConfiguration.class,
     CasPersonDirectoryStubConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,

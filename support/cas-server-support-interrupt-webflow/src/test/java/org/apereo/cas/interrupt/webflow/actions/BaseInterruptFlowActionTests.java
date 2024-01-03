@@ -16,13 +16,12 @@ import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsSchedulingConfiguration;
 import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasInterruptConfiguration;
 import org.apereo.cas.config.CasInterruptWebflowConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.config.CasWebflowContextConfiguration;
+import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
@@ -60,8 +59,7 @@ public abstract class BaseInterruptFlowActionTests {
         CasCoreTicketIdGeneratorsConfiguration.class,
         CasCoreTicketsSchedulingConfiguration.class,
         CasCoreTicketsSerializationConfiguration.class,
-        CasCoreWebflowConfiguration.class,
-        CasWebflowContextConfiguration.class,
+        CasWebflowAutoConfiguration.class,
         CasCoreConfiguration.class,
         CasInterruptConfiguration.class,
         CasInterruptWebflowConfiguration.class

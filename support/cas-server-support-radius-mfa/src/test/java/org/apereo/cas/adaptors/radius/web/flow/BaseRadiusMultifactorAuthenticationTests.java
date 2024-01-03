@@ -17,11 +17,10 @@ import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.config.CasWebflowContextConfiguration;
+import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.config.MultifactorAuthnTrustWebflowConfiguration;
 import org.apereo.cas.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration;
@@ -70,8 +69,7 @@ public abstract class BaseRadiusMultifactorAuthenticationTests {
         CasCookieAutoConfiguration.class,
         CasCoreConfiguration.class,
         CasCoreWebAutoConfiguration.class,
-        CasCoreWebflowConfiguration.class,
-        CasWebflowContextConfiguration.class,
+        CasWebflowAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
 
