@@ -25,8 +25,8 @@ public abstract class BaseSamlConfigurationTests {
     @Import({
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
-        CasCoreServicesAuthenticationConfiguration.class,
+        CasCoreServicesAutoConfiguration.class,
+        CasCoreServicesAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
@@ -42,7 +42,7 @@ public abstract class BaseSamlConfigurationTests {
         CasPersonDirectoryConfiguration.class,
         CasPersonDirectoryStubConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
-        CasCoreServicesConfiguration.class,
+        CasCoreServicesAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
         CasCoreAutoConfiguration.class
     })

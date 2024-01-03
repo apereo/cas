@@ -4,7 +4,7 @@ import org.apereo.cas.BasePrincipalAttributeRepositoryTests;
 import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -34,7 +34,7 @@ public class DefaultAttributeRepositoryResolverTests {
 
     @Nested
     @SpringBootTest(classes = {
-        CasCoreServicesConfiguration.class,
+        CasCoreServicesAutoConfiguration.class,
         BasePrincipalAttributeRepositoryTests.SharedTestConfiguration.class
     })
     @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -96,7 +96,7 @@ public class DefaultAttributeRepositoryResolverTests {
 
     @Nested
     @SpringBootTest(classes = {
-        CasCoreServicesConfiguration.class,
+        CasCoreServicesAutoConfiguration.class,
         BasePrincipalAttributeRepositoryTests.SharedTestConfiguration.class
     }, properties = {
         "cas.person-directory.attribute-repository-selection.handler1=stub,other",

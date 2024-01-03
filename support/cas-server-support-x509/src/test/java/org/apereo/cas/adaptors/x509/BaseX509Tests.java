@@ -4,8 +4,7 @@ import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
@@ -13,7 +12,6 @@ import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryGroovyConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryJsonConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
-import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.X509AuthenticationComponentSerializationConfiguration;
 import org.apereo.cas.config.X509AuthenticationConfiguration;
 import org.apereo.cas.config.X509CertificateExtractorConfiguration;
@@ -42,7 +40,6 @@ public abstract class BaseX509Tests {
         X509CertificateExtractorConfiguration.class,
         X509AuthenticationComponentSerializationConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasPersonDirectoryConfiguration.class,
@@ -50,9 +47,8 @@ public abstract class BaseX509Tests {
         CasPersonDirectoryJsonConfiguration.class,
         CasPersonDirectoryGroovyConfiguration.class,
         CasCoreWebAutoConfiguration.class,
-        CasCoreServicesAuthenticationConfiguration.class,
+        CasCoreServicesAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
-        CasCoreServicesConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
         CasCoreAutoConfiguration.class
     })

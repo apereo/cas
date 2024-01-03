@@ -5,12 +5,11 @@ import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasSupportDynamoDbAuditConfiguration;
-import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
 import org.apereo.inspektr.audit.AuditTrailManager;
@@ -34,9 +33,8 @@ import software.amazon.awssdk.core.SdkSystemSetting;
     CasCoreAuthenticationAutoConfiguration.class,
     CasSupportDynamoDbAuditConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
+    CasCoreServicesAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
-    CasCoreServicesConfiguration.class,
     CasCoreWebAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
     RefreshAutoConfiguration.class,

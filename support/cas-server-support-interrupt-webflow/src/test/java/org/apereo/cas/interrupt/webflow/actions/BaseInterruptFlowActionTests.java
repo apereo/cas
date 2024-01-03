@@ -7,13 +7,12 @@ import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasInterruptConfiguration;
 import org.apereo.cas.config.CasInterruptWebflowConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
-import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -36,14 +35,13 @@ public abstract class BaseInterruptFlowActionTests {
     @Import({
         CasCoreWebAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
+        CasCoreServicesAutoConfiguration.class,
         CasAuthenticationEventExecutionPlanTestConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationConfiguration.class,
         CasMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasCookieAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
-        CasCoreServicesConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasWebflowAutoConfiguration.class,
         CasCoreAutoConfiguration.class,

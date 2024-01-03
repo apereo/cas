@@ -65,7 +65,7 @@ public class CasFiltersConfiguration {
 
     @Configuration(value = "CasFiltersResponseHeadersConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    @AutoConfigureAfter(CasCoreServicesConfiguration.class)
+    @AutoConfigureAfter(CasCoreServicesAutoConfiguration.class)
     public static class CasFiltersResponseHeadersConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean

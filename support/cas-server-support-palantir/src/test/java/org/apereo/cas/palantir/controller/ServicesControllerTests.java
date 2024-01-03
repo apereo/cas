@@ -1,7 +1,7 @@
 package org.apereo.cas.palantir.controller;
 
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasPalantirConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
@@ -43,7 +43,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         WebMvcAutoConfiguration.class,
         ServletWebServerFactoryAutoConfiguration.class,
         CasRegisteredServicesTestConfiguration.class,
-        CasCoreServicesConfiguration.class,
+        CasCoreServicesAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasPalantirConfiguration.class

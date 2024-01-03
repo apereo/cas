@@ -1,10 +1,9 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.JsonServiceRegistryConfiguration;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -27,11 +26,10 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreUtilAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
-    CasCoreServicesConfiguration.class,
+    CasCoreServicesAutoConfiguration.class,
     JsonServiceRegistryConfiguration.class
 },
-properties = "cas.service-registry.json.location=classpath:/services")
+    properties = "cas.service-registry.json.location=classpath:/services")
 @Tag("FileSystem")
 class JsonServiceRegistryConfigurationTests {
     @Autowired

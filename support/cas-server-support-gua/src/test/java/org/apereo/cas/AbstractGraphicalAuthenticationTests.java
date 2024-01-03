@@ -6,15 +6,13 @@ import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
-import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.config.GraphicalUserAuthenticationConfiguration;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -65,8 +63,7 @@ public abstract class AbstractGraphicalAuthenticationTests {
     @Import({
         GraphicalUserAuthenticationConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
-        CasCoreServicesConfiguration.class,
-        CasCoreServicesAuthenticationConfiguration.class,
+        CasCoreServicesAutoConfiguration.class,
         CasRegisteredServicesTestConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasPersonDirectoryTestConfiguration.class,
@@ -76,7 +73,6 @@ public abstract class AbstractGraphicalAuthenticationTests {
         CasCoreMultifactorAuthenticationConfiguration.class,
         CasMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
         CasWebflowAutoConfiguration.class,
         CasCookieAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class

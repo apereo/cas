@@ -27,12 +27,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasCoreServicesConfiguration.class,
+    CasCoreServicesAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
-    CasCoreNotificationsAutoConfiguration.class,
-    CasServiceRegistryInitializationConfiguration.class
+    CasCoreServicesAutoConfiguration.class,
+    CasCoreNotificationsAutoConfiguration.class
 },
     properties = "cas.service-registry.core.init-from-json=true"
 )

@@ -6,13 +6,12 @@ import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
-import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.config.RestServiceRegistryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -61,7 +60,7 @@ import org.springframework.web.bind.annotation.RestController;
     RestfulServiceRegistryTests.RestfulServiceRegistryTestConfiguration.class,
 
     CasCoreTicketsAutoConfiguration.class,
-    CasCoreServicesConfiguration.class,
+    CasCoreServicesAutoConfiguration.class,
     RestServiceRegistryConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class,
@@ -72,7 +71,6 @@ import org.springframework.web.bind.annotation.RestController;
     CasMultifactorAuthenticationWebflowAutoConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreAutoConfiguration.class,
     CasWebflowAutoConfiguration.class
 },

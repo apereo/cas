@@ -7,14 +7,13 @@ import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasThemesConfiguration;
-import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.config.MultifactorAuthnTrustWebflowConfiguration;
@@ -63,7 +62,6 @@ public abstract class BaseYubiKeyTests {
         YubiKeyRestConfiguration.class,
         YubiKeyAuthenticationWebflowConfiguration.class,
         YubiKeyConfiguration.class,
-        CasCoreServicesConfiguration.class,
         CasWebflowAutoConfiguration.class,
         CasThemesConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
@@ -78,7 +76,7 @@ public abstract class BaseYubiKeyTests {
         CasCoreWebAutoConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class
+        CasCoreServicesAutoConfiguration.class
     })
     public static class SharedTestConfiguration {
     }

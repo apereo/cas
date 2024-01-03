@@ -2,11 +2,10 @@ package org.apereo.cas.monitor;
 
 import org.apereo.cas.config.CasCoreMonitorAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -85,7 +84,7 @@ class CasCoreMonitorAutoConfigurationTests {
     @Test
     void verifyObserabilityRunner() throws Throwable {
         val result = new AtomicBoolean(false);
-        defaultExecutableObserver.run(new MonitorableTask("verifyObserabilityRunner"), () -> result.set(true));
+        defaultExecutableObserver.run(new MonitorableTask("verifyObservabilityRunner"), () -> result.set(true));
         assertTrue(result.get());
     }
 
@@ -102,11 +101,10 @@ class CasCoreMonitorAutoConfigurationTests {
     @Import({
         CasCoreTicketsAutoConfiguration.class,
         CasCoreMonitorAutoConfiguration.class,
-        CasCoreServicesConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class
+        CasCoreServicesAutoConfiguration.class
     })
     public static class SharedTestConfiguration {
     }

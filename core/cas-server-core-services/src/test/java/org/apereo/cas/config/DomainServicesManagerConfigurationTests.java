@@ -22,10 +22,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasCoreServicesConfiguration.class,
+    CasCoreServicesAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
+    CasCoreServicesAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class
 },
     properties = {
@@ -36,10 +36,10 @@ import static org.junit.jupiter.api.Assertions.*;
 class DomainServicesManagerConfigurationTests {
     @Autowired
     @Qualifier("defaultServicesManagerExecutionPlanConfigurer")
-    private ServicesManagerExecutionPlanConfigurer domainServicesManagerExecutionPlanConfigurer;
+    private ServicesManagerExecutionPlanConfigurer defaultServicesManagerExecutionPlanConfigurer;
 
     @Test
     void verifyOperation() throws Throwable {
-        assertNotNull(domainServicesManagerExecutionPlanConfigurer);
+        assertNotNull(defaultServicesManagerExecutionPlanConfigurer);
     }
 }
