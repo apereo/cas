@@ -5,7 +5,7 @@ import org.apereo.cas.config.CasCookieAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
-import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
@@ -38,7 +38,7 @@ public abstract class BaseInterruptFlowActionTests {
         CasCoreServicesAutoConfiguration.class,
         CasAuthenticationEventExecutionPlanTestConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
-        CasCoreMultifactorAuthenticationConfiguration.class,
+        CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasCookieAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
