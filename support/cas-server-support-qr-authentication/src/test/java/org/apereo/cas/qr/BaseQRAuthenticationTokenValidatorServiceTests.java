@@ -6,7 +6,7 @@ import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
@@ -14,7 +14,6 @@ import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguratio
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
-import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.config.QRAuthenticationConfiguration;
 import org.apereo.cas.config.TokenCoreConfiguration;
@@ -45,14 +44,13 @@ public abstract class BaseQRAuthenticationTokenValidatorServiceTests {
         CasCoreMultifactorAuthenticationConfiguration.class,
         CasMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasWebflowAutoConfiguration.class,
-        CasCoreServicesConfiguration.class,
+        CasCoreServicesAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasRegisteredServicesTestConfiguration.class,
         CasCookieAutoConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
         CasPersonDirectoryConfiguration.class,
         CasPersonDirectoryStubConfiguration.class,

@@ -9,8 +9,7 @@ import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
@@ -18,7 +17,6 @@ import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguratio
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
-import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
@@ -50,12 +48,10 @@ import org.springframework.webflow.execution.Action;
     CasWebflowAutoConfiguration.class,
     CasPersonDirectoryConfiguration.class,
     CasPersonDirectoryStubConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
-    CasCoreServicesAuthenticationConfiguration.class,
+    CasCoreServicesAutoConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,
     CasMultifactorAuthenticationWebflowAutoConfiguration.class,
     CasCoreAutoConfiguration.class,
-    CasCoreServicesConfiguration.class,
     CasCoreWebAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,

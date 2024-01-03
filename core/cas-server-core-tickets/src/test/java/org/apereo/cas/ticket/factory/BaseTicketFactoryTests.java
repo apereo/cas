@@ -5,13 +5,12 @@ import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
-import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
@@ -66,9 +65,8 @@ public abstract class BaseTicketFactoryTests {
     })
     @SpringBootConfiguration
     @Import({
-        CasCoreServicesConfiguration.class,
+        CasCoreServicesAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasCookieAutoConfiguration.class,

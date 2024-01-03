@@ -14,8 +14,7 @@ import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
@@ -30,7 +29,6 @@ import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasThemesConfiguration;
 import org.apereo.cas.config.CasThrottlingConfiguration;
 import org.apereo.cas.config.CasThymeleafConfiguration;
-import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CasWebSecurityConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.config.OidcAuditConfiguration;
@@ -521,7 +519,7 @@ public abstract class AbstractOidcTests {
     @SpringBootConfiguration
     @Import({
         CasCoreNotificationsAutoConfiguration.class,
-        CasCoreServicesConfiguration.class,
+        CasCoreServicesAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
         CasWebflowAutoConfiguration.class,
@@ -535,9 +533,7 @@ public abstract class AbstractOidcTests {
         CasCookieAutoConfiguration.class,
         CasThemesConfiguration.class,
         CasThymeleafConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
-        CasCoreServicesAuthenticationConfiguration.class,
         CasThrottlingConfiguration.class,
         CasMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasCoreMultifactorAuthenticationConfiguration.class,

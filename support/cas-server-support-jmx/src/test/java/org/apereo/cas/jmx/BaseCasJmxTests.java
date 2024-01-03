@@ -1,12 +1,11 @@
 package org.apereo.cas.jmx;
 
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasJmxConfiguration;
-import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -30,10 +29,9 @@ public abstract class BaseCasJmxTests {
     @SpringBootConfiguration
     @Import({
         CasJmxConfiguration.class,
-        CasCoreServicesConfiguration.class,
+        CasCoreServicesAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class
     })

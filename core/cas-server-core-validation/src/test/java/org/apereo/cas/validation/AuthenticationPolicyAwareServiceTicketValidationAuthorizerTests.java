@@ -20,13 +20,11 @@ import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
-import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import lombok.val;
@@ -57,16 +55,14 @@ import static org.mockito.Mockito.*;
     WebMvcAutoConfiguration.class,
     BaseCasCoreTests.SharedTestConfiguration.AttributeRepositoryTestConfiguration.class,
     CasRegisteredServicesTestConfiguration.class,
-    CasCoreServicesAuthenticationConfiguration.class,
+    CasCoreServicesAutoConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,
     CasCoreAutoConfiguration.class,
-    CasCoreNotificationsAutoConfiguration.class,
-    CasCoreServicesConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class
+    CasCoreNotificationsAutoConfiguration.class
 })
 @Tag("AuthenticationPolicy")
 class AuthenticationPolicyAwareServiceTicketValidationAuthorizerTests {

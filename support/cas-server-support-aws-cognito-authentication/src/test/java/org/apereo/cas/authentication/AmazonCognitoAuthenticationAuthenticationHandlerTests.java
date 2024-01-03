@@ -7,12 +7,11 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.AmazonCognitoAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
-import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import com.nimbusds.jwt.JWTClaimsSet;
@@ -56,9 +55,8 @@ import static org.mockito.Mockito.*;
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
-    CasCoreServicesConfiguration.class,
     CasCoreWebAutoConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
+    CasCoreServicesAutoConfiguration.class,
     CasRegisteredServicesTestConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,

@@ -11,8 +11,7 @@ import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreValidationAutoConfiguration;
@@ -27,7 +26,6 @@ import org.apereo.cas.config.CasSupportActionsConfiguration;
 import org.apereo.cas.config.CasThemesConfiguration;
 import org.apereo.cas.config.CasThymeleafConfiguration;
 import org.apereo.cas.config.CasWebAppConfiguration;
-import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.MockRequestContext;
@@ -81,12 +79,10 @@ import static org.junit.jupiter.api.Assertions.*;
     CasWebAppConfiguration.class,
     BaseCasWebflowSessionContextConfigurationTests.TestWebflowContextConfiguration.class,
     CasMultifactorAuthenticationWebflowAutoConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
-    CasCoreServicesAuthenticationConfiguration.class,
+    CasCoreServicesAutoConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
     CasLoggingAutoConfiguration.class,
-    CasCoreServicesConfiguration.class,
     CasSupportActionsConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,

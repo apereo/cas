@@ -4,14 +4,12 @@ import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
-import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.HazelcastMonitorConfiguration;
 import org.apereo.cas.config.HazelcastTicketRegistryConfiguration;
 import org.apereo.cas.config.HazelcastTicketRegistryTicketCatalogConfiguration;
@@ -50,13 +48,11 @@ import static org.mockito.Mockito.*;
     CasPersonDirectoryConfiguration.class,
     CasPersonDirectoryStubConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,
-    CasCoreServicesAuthenticationConfiguration.class,
+    CasCoreServicesAutoConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,
     CasCoreAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
-    CasCoreServicesConfiguration.class,
-    CasCoreWebAutoConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class
+    CasCoreWebAutoConfiguration.class
 },
     properties = "cas.ticket.registry.hazelcast.cluster.instance-name=testlocalmonitor")
 @Tag("Hazelcast")

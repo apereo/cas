@@ -6,7 +6,7 @@ import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
@@ -15,7 +15,6 @@ import org.apereo.cas.config.CasOAuth20ComponentSerializationConfiguration;
 import org.apereo.cas.config.CasOAuth20Configuration;
 import org.apereo.cas.config.CasOAuth20EndpointsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
-import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
@@ -57,7 +56,7 @@ import static org.mockito.Mockito.*;
     CasOAuth20Configuration.class,
     CasOAuth20EndpointsConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
-    CasCoreServicesConfiguration.class,
+    CasCoreServicesAutoConfiguration.class,
     CasCoreAutoConfiguration.class,
     CasCookieAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
@@ -65,7 +64,6 @@ import static org.mockito.Mockito.*;
     CasCoreUtilAutoConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,
     CasOAuth20ComponentSerializationConfiguration.class,
     CasOAuth20AuthenticationServiceSelectionStrategyConfiguration.class

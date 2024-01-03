@@ -4,14 +4,12 @@ import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
-import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.DynamoDbCoreConfiguration;
 import org.apereo.cas.config.DynamoDbTicketRegistryConfiguration;
 import org.apereo.cas.config.DynamoDbTicketRegistryTicketCatalogConfiguration;
@@ -34,13 +32,11 @@ import software.amazon.awssdk.core.SdkSystemSetting;
     DynamoDbTicketRegistryTicketCatalogConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,
-    CasCoreServicesConfiguration.class,
-    CasCoreServicesAuthenticationConfiguration.class,
+    CasCoreServicesAutoConfiguration.class,
     CasCoreAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,
     CasPersonDirectoryConfiguration.class,
     CasPersonDirectoryStubConfiguration.class,

@@ -1,17 +1,15 @@
 package org.apereo.cas.adaptors.cassandra.services;
 
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CassandraServiceRegistryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.AbstractServiceRegistryTests;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import lombok.Getter;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -30,7 +28,6 @@ import org.springframework.test.context.TestContext;
 import org.springframework.test.context.TestExecutionListener;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -41,10 +38,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     CassandraServiceRegistryConfiguration.class,
-    CasCoreServicesConfiguration.class,
+    CasCoreServicesAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
     RefreshAutoConfiguration.class
