@@ -3,9 +3,8 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
-import org.apereo.cas.config.CasCoreConfiguration;
+import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
@@ -49,8 +48,7 @@ import static org.mockito.Mockito.*;
     CasCoreAuthenticationConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
-    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
+        CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreTicketsSerializationConfiguration.class,
@@ -58,7 +56,7 @@ import static org.mockito.Mockito.*;
     CasCoreWebAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,
-    CasCoreConfiguration.class,
+    CasCoreAutoConfiguration.class,
     CassandraAuthenticationConfiguration.class
 }, properties = {
     "cas.authn.cassandra.table-name=users_table",

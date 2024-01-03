@@ -26,7 +26,6 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -41,7 +40,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import java.util.List;
 
 /**
- * This is {@link CasCoreConfiguration}.
+ * This is {@link CasCoreAutoConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
@@ -50,8 +49,8 @@ import java.util.List;
 @EnableTransactionManagement(proxyTargetClass = false)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Core)
-@AutoConfiguration(after = CasCoreServicesConfiguration.class)
-public class CasCoreConfiguration {
+@Configuration(proxyBeanMethods = false)
+class CasCoreConfiguration {
 
     @Configuration(value = "CasCorePolicyConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)

@@ -6,9 +6,8 @@ import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
-import org.apereo.cas.config.CasCoreConfiguration;
+import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
@@ -59,13 +58,12 @@ import javax.sql.DataSource;
     CasPersonDirectoryConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
-    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-    CasCoreWebAutoConfiguration.class,
+        CasCoreWebAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,
-    CasCoreConfiguration.class,
+    CasCoreAutoConfiguration.class,
     CasHibernateJpaConfiguration.class,
     JdbcPasswordManagementConfiguration.class,
     JdbcPasswordHistoryManagementConfiguration.class,

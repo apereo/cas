@@ -3,8 +3,7 @@ package org.apereo.cas.token;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
-import org.apereo.cas.config.CasCoreConfiguration;
+import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
@@ -62,10 +61,9 @@ import static org.mockito.Mockito.*;
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreWebAutoConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
-    CasCoreConfiguration.class,
+    CasCoreAutoConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
-    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-    CasDefaultServiceTicketIdGeneratorsConfiguration.class
+        CasDefaultServiceTicketIdGeneratorsConfiguration.class
 })
 public abstract class BaseJwtTokenTicketBuilderTests {
     @Autowired

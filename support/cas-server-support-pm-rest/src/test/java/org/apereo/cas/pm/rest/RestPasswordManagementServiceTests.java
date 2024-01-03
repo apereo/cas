@@ -3,7 +3,7 @@ package org.apereo.cas.pm.rest;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
-import org.apereo.cas.config.CasCoreConfiguration;
+import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
@@ -62,7 +62,7 @@ class RestPasswordManagementServiceTests {
         RestPasswordManagementConfiguration.class,
         PasswordManagementConfiguration.class,
         RestTemplateAutoConfiguration.class,
-        CasCoreConfiguration.class,
+        CasCoreAutoConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasCoreTicketCatalogConfiguration.class,
         CasCoreTicketsSerializationConfiguration.class,

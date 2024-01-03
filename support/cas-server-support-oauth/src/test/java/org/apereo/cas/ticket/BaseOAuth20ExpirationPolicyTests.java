@@ -5,7 +5,7 @@ import org.apereo.cas.config.CasCookieAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
-import org.apereo.cas.config.CasCoreConfiguration;
+import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
@@ -64,7 +64,7 @@ import static org.mockito.Mockito.*;
     CasOAuth20EndpointsConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
     CasCoreServicesConfiguration.class,
-    CasCoreConfiguration.class,
+    CasCoreAutoConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCookieAutoConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,

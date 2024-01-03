@@ -5,9 +5,8 @@ import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
-import org.apereo.cas.config.CasCoreConfiguration;
+import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
@@ -70,9 +69,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationHandlersConfiguration.class,
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasCoreConfiguration.class,
-    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-    CasCoreNotificationsAutoConfiguration.class,
+    CasCoreAutoConfiguration.class,
+        CasCoreNotificationsAutoConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreWebAutoConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class

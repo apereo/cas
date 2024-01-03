@@ -25,8 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationConfiguration.class,
     CasCoreAuthenticationHandlersConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
-    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
+        CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
@@ -37,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasPersonDirectoryConfiguration.class,
     CasPersonDirectoryStubConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,
-    CasCoreConfiguration.class,
+    CasCoreAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
     CloudDirectoryAuthenticationConfiguration.class
 },

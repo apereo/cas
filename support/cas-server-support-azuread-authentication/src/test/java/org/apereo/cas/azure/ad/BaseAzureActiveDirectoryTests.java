@@ -4,9 +4,8 @@ import org.apereo.cas.config.AzureActiveDirectoryAuthenticationConfiguration;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
-import org.apereo.cas.config.CasCoreConfiguration;
+import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
@@ -36,7 +35,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
     AzureActiveDirectoryAuthenticationConfiguration.class,
-    CasCoreConfiguration.class,
+    CasCoreAutoConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
@@ -46,8 +45,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CasCoreTicketsSerializationConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
-    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-    CasCoreWebAutoConfiguration.class,
+        CasCoreWebAutoConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasRegisteredServicesTestConfiguration.class,
