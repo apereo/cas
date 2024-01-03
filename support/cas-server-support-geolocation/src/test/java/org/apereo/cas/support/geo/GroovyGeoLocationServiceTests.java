@@ -1,7 +1,7 @@
 package org.apereo.cas.support.geo;
 
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
-import org.apereo.cas.config.CasGeoLocationConfiguration;
+import org.apereo.cas.config.CasGeoLocationAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasGeoLocationConfiguration.class
+    CasGeoLocationAutoConfiguration.class
 }, properties = "cas.geo-location.groovy.location=classpath:/GroovyGeoLocation.groovy")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class GroovyGeoLocationServiceTests {

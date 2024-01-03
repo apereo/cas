@@ -1,6 +1,6 @@
 package org.apereo.cas.trusted.authentication.storage;
 
-import org.apereo.cas.config.MongoDbMultifactorAuthenticationTrustConfiguration;
+import org.apereo.cas.config.MongoDbMultifactorAuthenticationTrustAutoConfiguration;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("MongoDbMFA")
-@Import(MongoDbMultifactorAuthenticationTrustConfiguration.class)
+@Import(MongoDbMultifactorAuthenticationTrustAutoConfiguration.class)
 @TestPropertySource(
     properties = {
         "cas.authn.mfa.trusted.mongo.database-name=mfa-trusted",

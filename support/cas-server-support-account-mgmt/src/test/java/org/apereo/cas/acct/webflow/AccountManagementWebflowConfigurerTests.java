@@ -1,12 +1,11 @@
 package org.apereo.cas.acct.webflow;
 
 import org.apereo.cas.acct.AccountRegistrationUtils;
-import org.apereo.cas.config.CasAccountManagementWebflowConfiguration;
+import org.apereo.cas.config.CasAccountManagementWebflowAutoConfiguration;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -21,7 +20,6 @@ import org.springframework.webflow.engine.SubflowState;
 import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestControlContext;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -30,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
-@Import(CasAccountManagementWebflowConfiguration.class)
+@Import(CasAccountManagementWebflowAutoConfiguration.class)
 @Tag("WebflowConfig")
 class AccountManagementWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test

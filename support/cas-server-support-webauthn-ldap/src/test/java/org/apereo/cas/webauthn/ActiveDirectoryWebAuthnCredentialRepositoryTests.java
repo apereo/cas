@@ -1,6 +1,6 @@
 package org.apereo.cas.webauthn;
 
-import org.apereo.cas.config.LdapWebAuthnConfiguration;
+import org.apereo.cas.config.LdapWebAuthnAutoConfiguration;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.webauthn.storage.BaseWebAuthnCredentialRepositoryTests;
 import com.unboundid.ldap.sdk.LDAPConnection;
@@ -40,7 +40,7 @@ import org.springframework.test.context.TestPropertySource;
 @Tag("ActiveDirectory")
 @EnabledIfListeningOnPort(port = 10636)
 @Getter
-@Import(LdapWebAuthnConfiguration.class)
+@Import(LdapWebAuthnAutoConfiguration.class)
 class ActiveDirectoryWebAuthnCredentialRepositoryTests extends BaseWebAuthnCredentialRepositoryTests {
     @Override
     protected String getUsername() throws Exception {

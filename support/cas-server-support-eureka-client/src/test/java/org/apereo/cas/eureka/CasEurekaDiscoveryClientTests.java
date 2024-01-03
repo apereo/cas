@@ -1,6 +1,6 @@
 package org.apereo.cas.eureka;
 
-import org.apereo.cas.config.CasEurekaDiscoveryClientConfiguration;
+import org.apereo.cas.config.CasEurekaDiscoveryClientAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebApp")
 public class CasEurekaDiscoveryClientTests {
     @SpringBootTest(classes = {
-        CasEurekaDiscoveryClientConfiguration.class,
+        CasEurekaDiscoveryClientAutoConfiguration.class,
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         UtilAutoConfiguration.class,
@@ -51,7 +51,7 @@ public class CasEurekaDiscoveryClientTests {
     }
 
     @SpringBootTest(classes = {
-        CasEurekaDiscoveryClientConfiguration.class,
+        CasEurekaDiscoveryClientAutoConfiguration.class,
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         UtilAutoConfiguration.class,

@@ -1,7 +1,7 @@
 package org.apereo.cas.support.geo.google;
 
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
-import org.apereo.cas.config.CasGeoLocationConfiguration;
+import org.apereo.cas.config.CasGeoLocationAutoConfiguration;
 import org.apereo.cas.config.GoogleMapsGeoCodingConfiguration;
 import com.google.maps.GeoApiContext;
 import com.google.maps.model.GeocodingResult;
@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasGeoLocationConfiguration.class,
+    CasGeoLocationAutoConfiguration.class,
     GoogleMapsGeoCodingConfiguration.class
 }, properties = "cas.geo-location.google-maps.api-key=AIzaSyCea6zDOkwJVIOm0vZyAI5eHYrz9Vzlhi9")
 @Tag("GeoLocation")

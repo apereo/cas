@@ -1,7 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.config.RedisCoreConfiguration;
+import org.apereo.cas.config.RedisCoreAutoConfiguration;
 import org.apereo.cas.config.RedisTicketRegistryConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.ServiceTicket;
@@ -253,7 +253,7 @@ class RedisServerTicketRegistryTests {
     @Nested
     @SpringBootTest(
         classes = {
-            RedisCoreConfiguration.class,
+            RedisCoreAutoConfiguration.class,
             RedisTicketRegistryConfiguration.class,
             BaseTicketRegistryTests.SharedTestConfiguration.class
         }, properties = {

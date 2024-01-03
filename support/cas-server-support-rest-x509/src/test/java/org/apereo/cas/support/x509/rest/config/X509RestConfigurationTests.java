@@ -13,7 +13,7 @@ import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
-import org.apereo.cas.config.CasRestConfiguration;
+import org.apereo.cas.config.CasRestAutoConfiguration;
 import org.apereo.cas.config.CasThrottlingConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.config.X509CertificateExtractorConfiguration;
@@ -54,7 +54,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasWebflowAutoConfiguration.class,
     CasCookieAutoConfiguration.class,
     CasCoreRestAutoConfiguration.class,
-    CasRestConfiguration.class
+    CasRestAutoConfiguration.class
 },
     properties = "cas.rest.x509.tls-client-auth=true")
 @Tag("X509")

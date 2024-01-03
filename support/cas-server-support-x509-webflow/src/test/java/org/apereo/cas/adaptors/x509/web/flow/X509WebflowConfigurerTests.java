@@ -3,13 +3,12 @@ package org.apereo.cas.adaptors.x509.web.flow;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.X509AuthenticationConfiguration;
-import org.apereo.cas.config.X509AuthenticationWebflowConfiguration;
+import org.apereo.cas.config.X509AuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.X509CertificateExtractorConfiguration;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -18,7 +17,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.TransitionableState;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -30,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Import({
     X509AuthenticationConfiguration.class,
     X509CertificateExtractorConfiguration.class,
-    X509AuthenticationWebflowConfiguration.class,
+    X509AuthenticationWebflowAutoConfiguration.class,
     CasCoreMultifactorAuthenticationAutoConfiguration.class,
     CasMultifactorAuthenticationWebflowAutoConfiguration.class
 })
