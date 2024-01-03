@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
- * This is {@link CasCoreEventsConfigEnvironmentConfiguration}.
+ * This is {@link CasCoreEventsConfigEnvironmentAutoConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
@@ -28,7 +28,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.CasConfiguration)
 @AutoConfiguration
-public class CasCoreEventsConfigEnvironmentConfiguration {
+public class CasCoreEventsConfigEnvironmentAutoConfiguration {
 
     @ConditionalOnMissingBean(name = "casConfigurationEventListener")
     @Bean

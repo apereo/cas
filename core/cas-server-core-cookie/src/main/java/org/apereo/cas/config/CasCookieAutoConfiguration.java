@@ -29,7 +29,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
- * This is {@link CasCookieConfiguration}.
+ * This is {@link CasCookieAutoConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
@@ -38,7 +38,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Core)
 @AutoConfiguration
-public class CasCookieConfiguration {
+public class CasCookieAutoConfiguration {
 
     @Configuration(value = "CasCookieCoreConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)

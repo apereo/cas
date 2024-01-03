@@ -38,7 +38,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import java.util.List;
 
 /**
- * This is {@link CasCoreValidationConfiguration}.
+ * This is {@link CasCoreValidationAutoConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
@@ -47,7 +47,7 @@ import java.util.List;
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Validation)
 @AutoConfiguration
-public class CasCoreValidationConfiguration {
+public class CasCoreValidationAutoConfiguration {
     private static final BeanCondition CONDITION_PROXY_AUTHN = BeanCondition.on("cas.sso.proxy-authn-enabled").isTrue().evenIfMissing();
 
     @Configuration(value = "CasCoreValidationProxyConfiguration", proxyBeanMethods = false)

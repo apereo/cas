@@ -1,6 +1,6 @@
 package org.apereo.cas.support.events.listener;
 
-import org.apereo.cas.config.CasCloudBusEventsConfigEnvironmentConfiguration;
+import org.apereo.cas.config.CasCloudBusEventsConfigEnvironmentAutoConfiguration;
 import org.apereo.cas.config.CasCoreEnvironmentBootstrapConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @SpringBootTest(classes = {
-    CasCloudBusEventsConfigEnvironmentConfiguration.class,
+    CasCloudBusEventsConfigEnvironmentAutoConfiguration.class,
     CasCoreEnvironmentBootstrapConfiguration.class,
     RefreshAutoConfiguration.class
 })

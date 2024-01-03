@@ -1,7 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
-import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
+import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CoreSamlConfiguration;
 import org.apereo.cas.config.DelegatedAuthenticationConfiguration;
 import org.apereo.cas.config.DelegatedAuthenticationEventExecutionPlanConfiguration;
@@ -38,7 +38,7 @@ import static org.mockito.Mockito.*;
     ErrorMvcAutoConfiguration.class,
     CoreSamlConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,
-    CasMultifactorAuthenticationWebflowConfiguration.class,
+    CasMultifactorAuthenticationWebflowAutoConfiguration.class,
     DelegatedAuthenticationConfiguration.class,
     DelegatedAuthenticationEventExecutionPlanConfiguration.class,
     DelegatedAuthenticationWebflowConfiguration.class,

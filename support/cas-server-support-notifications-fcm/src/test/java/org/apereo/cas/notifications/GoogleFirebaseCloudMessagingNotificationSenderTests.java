@@ -1,7 +1,7 @@
 package org.apereo.cas.notifications;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.config.CasCoreNotificationsConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.GoogleFirebaseCloudMessagingConfiguration;
 import org.apereo.cas.notifications.push.NotificationSender;
@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasCoreNotificationsConfiguration.class,
+    CasCoreNotificationsAutoConfiguration.class,
     GoogleFirebaseCloudMessagingConfiguration.class,
     CasCoreUtilConfiguration.class
 }, properties = {

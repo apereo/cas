@@ -1,7 +1,7 @@
 package org.apereo.cas.adaptors.duo.web.flow;
 
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
-import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
+import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.DuoSecurityAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.DuoSecurityConfiguration;
 import org.apereo.cas.config.DuoSecurityMultifactorProviderBypassConfiguration;
@@ -36,7 +36,7 @@ class DuoSecuritySurrogateWebflowConfigurerTests {
 
     @Import({
         CasCoreMultifactorAuthenticationConfiguration.class,
-        CasMultifactorAuthenticationWebflowConfiguration.class,
+        CasMultifactorAuthenticationWebflowAutoConfiguration.class,
         SurrogateAuthenticationConfiguration.class,
         SurrogateAuthenticationAuditConfiguration.class,
         SurrogateAuthenticationWebflowConfiguration.class

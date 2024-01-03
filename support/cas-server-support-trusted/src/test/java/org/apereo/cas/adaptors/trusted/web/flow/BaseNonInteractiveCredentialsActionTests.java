@@ -2,7 +2,7 @@ package org.apereo.cas.adaptors.trusted.web.flow;
 
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
-import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
+import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.TrustedAuthenticationConfiguration;
 
 import org.springframework.context.annotation.Import;
@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Import;
  * @since 6.0.0
  */
 @Import({
-    CasMultifactorAuthenticationWebflowConfiguration.class,
+    CasMultifactorAuthenticationWebflowAutoConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,
     TrustedAuthenticationConfiguration.class
 })

@@ -3,7 +3,7 @@ package org.apereo.cas.aws;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.config.AmazonCoreConfiguration;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
-import org.apereo.cas.config.CasCoreRestConfiguration;
+import org.apereo.cas.config.CasCoreRestAutoConfiguration;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.report.AbstractCasEndpointTests;
@@ -43,7 +43,7 @@ class AmazonSecurityTokenServiceEndpointTests {
     })
     @Import({
         AmazonCoreConfiguration.class,
-        CasCoreRestConfiguration.class,
+        CasCoreRestAutoConfiguration.class,
         CasAuthenticationEventExecutionPlanTestConfiguration.class
     })
     static class BaseAmazonSecurityTokenServiceEndpointTests extends AbstractCasEndpointTests {

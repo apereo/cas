@@ -1,9 +1,9 @@
 package org.apereo.cas.pm.history;
 
-import org.apereo.cas.config.CasCoreAuditConfiguration;
+import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
-import org.apereo.cas.config.CasCoreNotificationsConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
@@ -40,8 +40,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreTicketsSerializationConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreWebConfiguration.class,
-    CasCoreNotificationsConfiguration.class,
-    CasCoreAuditConfiguration.class,
+    CasCoreNotificationsAutoConfiguration.class,
+    CasCoreAuditAutoConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreUtilConfiguration.class

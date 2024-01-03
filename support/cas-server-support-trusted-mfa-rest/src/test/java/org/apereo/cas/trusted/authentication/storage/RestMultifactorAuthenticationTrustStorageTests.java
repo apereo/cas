@@ -1,9 +1,9 @@
 package org.apereo.cas.trusted.authentication.storage;
 
-import org.apereo.cas.config.CasCoreAuditConfiguration;
+import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
-import org.apereo.cas.config.CasCoreNotificationsConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
@@ -57,7 +57,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RestMultifactorAuthenticationTrustConfiguration.class,
     MultifactorAuthnTrustedDeviceFingerprintConfiguration.class,
     MultifactorAuthnTrustConfiguration.class,
-    CasCoreAuditConfiguration.class,
+    CasCoreAuditAutoConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreServicesConfiguration.class,
@@ -65,7 +65,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreTicketsSerializationConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreWebConfiguration.class,
-    CasCoreNotificationsConfiguration.class,
+    CasCoreNotificationsAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
     RefreshAutoConfiguration.class
 },
