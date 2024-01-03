@@ -1,6 +1,6 @@
 package org.apereo.cas.support.events;
 
-import org.apereo.cas.config.CasEventsDynamoDbRepositoryConfiguration;
+import org.apereo.cas.config.CasEventsDynamoDbRepositoryAutoConfiguration;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.Getter;
@@ -20,7 +20,7 @@ import software.amazon.awssdk.core.SdkSystemSetting;
  */
 @Tag("DynamoDb")
 @SpringBootTest(classes = {
-    CasEventsDynamoDbRepositoryConfiguration.class,
+    CasEventsDynamoDbRepositoryAutoConfiguration.class,
     RefreshAutoConfiguration.class
 },
     properties = {

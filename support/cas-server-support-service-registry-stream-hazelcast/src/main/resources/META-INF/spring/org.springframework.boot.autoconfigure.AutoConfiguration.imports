@@ -1,1 +1,1 @@
-org.apereo.cas.config.CasServicesStreamingHazelcastConfiguration
+org.apereo.cas.config.CasServicesStreamingHazelcastAutoConfiguration

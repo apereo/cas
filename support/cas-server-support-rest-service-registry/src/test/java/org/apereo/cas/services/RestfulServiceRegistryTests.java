@@ -13,7 +13,7 @@ import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
-import org.apereo.cas.config.RestServiceRegistryConfiguration;
+import org.apereo.cas.config.RestServiceRegistryAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -61,7 +61,7 @@ import org.springframework.web.bind.annotation.RestController;
 
     CasCoreTicketsAutoConfiguration.class,
     CasCoreServicesAutoConfiguration.class,
-    RestServiceRegistryConfiguration.class,
+    RestServiceRegistryAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,
