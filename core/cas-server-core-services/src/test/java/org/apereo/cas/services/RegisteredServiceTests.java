@@ -4,10 +4,9 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
-import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
-
 import com.google.common.collect.ArrayListMultimap;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -16,12 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
-
 import java.io.Serial;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -32,7 +29,7 @@ import static org.mockito.Mockito.*;
  * @since 3.4.12
  */
 @Tag("RegisteredService")
-@SpringBootTest(classes = CasCoreHttpConfiguration.class)
+@SpringBootTest(classes = CasCoreWebAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class RegisteredServiceTests {
     private static final long ID = 1000;

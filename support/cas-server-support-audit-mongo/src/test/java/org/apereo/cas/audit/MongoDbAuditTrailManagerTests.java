@@ -4,13 +4,12 @@ import org.apereo.cas.audit.spi.BaseAuditConfigurationTests;
 import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
-import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasSupportMongoDbAuditConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
@@ -36,7 +35,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CasCoreAuditAutoConfiguration.class,
     CasSupportMongoDbAuditConfiguration.class,
     CasCoreUtilConfiguration.class,
-    CasCoreHttpConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketsSerializationConfiguration.class,
@@ -44,7 +42,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CasCoreNotificationsAutoConfiguration.class,
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasCoreWebConfiguration.class
+    CasCoreWebAutoConfiguration.class
 },
     properties = {
         "cas.audit.mongo.host=localhost",

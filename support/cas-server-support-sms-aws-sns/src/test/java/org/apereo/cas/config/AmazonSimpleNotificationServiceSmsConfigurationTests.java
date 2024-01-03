@@ -20,7 +20,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasCoreHttpConfiguration.class,
     AmazonSimpleNotificationServiceSmsConfiguration.class
 }, properties = {
     "cas.sms-provider.sns.endpoint=http://127.0.0.1:8811",

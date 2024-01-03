@@ -13,7 +13,6 @@ import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
-import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
@@ -23,7 +22,7 @@ import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasOAuth20AuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasOAuth20ComponentSerializationConfiguration;
 import org.apereo.cas.config.CasOAuth20Configuration;
@@ -196,7 +195,6 @@ public abstract class BaseOAuth20AuthenticatorTests {
     })
     @SpringBootConfiguration
     @Import({
-        CasCoreHttpConfiguration.class,
         CasCoreUtilConfiguration.class,
         CasPersonDirectoryTestConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
@@ -213,7 +211,7 @@ public abstract class BaseOAuth20AuthenticatorTests {
         CasCoreTicketComponentSerializationConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
-        CasCoreWebConfiguration.class,
+        CasCoreWebAutoConfiguration.class,
         CasCookieAutoConfiguration.class,
         CasCoreConfiguration.class,
         CasAuthenticationEventExecutionPlanTestConfiguration.class,

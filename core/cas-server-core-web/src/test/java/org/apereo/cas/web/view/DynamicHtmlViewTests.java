@@ -1,6 +1,6 @@
 package org.apereo.cas.web.view;
 
-import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import lombok.val;
@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasCoreWebConfiguration.class
+    CasCoreWebAutoConfiguration.class
 })
 class DynamicHtmlViewTests {
     @Autowired

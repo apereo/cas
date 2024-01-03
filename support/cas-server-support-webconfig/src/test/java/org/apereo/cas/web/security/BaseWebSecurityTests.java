@@ -1,6 +1,6 @@
 package org.apereo.cas.web.security;
 
-import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CasWebSecurityConfiguration;
 import org.springframework.boot.SpringBootConfiguration;
@@ -50,7 +50,7 @@ public abstract class BaseWebSecurityTests {
     @SpringBootConfiguration
     @Import({
         CasWebApplicationServiceFactoryConfiguration.class,
-        CasCoreWebConfiguration.class,
+        CasCoreWebAutoConfiguration.class,
         CasWebSecurityConfiguration.class
     })
     public static class SharedTestConfiguration {

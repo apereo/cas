@@ -2,11 +2,10 @@ package org.apereo.cas;
 
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.attribute.DefaultAttributeDefinitionStore;
-import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryGroovyConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryJdbcConfiguration;
@@ -50,8 +49,7 @@ public abstract class BasePrincipalAttributeRepositoryTests {
         CasPersonDirectoryStubConfiguration.class,
         CasCoreUtilConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
-        CasCoreWebConfiguration.class,
-        CasCoreHttpConfiguration.class,
+        CasCoreWebAutoConfiguration.class,
         CasCoreServicesConfiguration.class,
 
         SharedTestConfiguration.AttributeDefinitionsTestConfiguration.class

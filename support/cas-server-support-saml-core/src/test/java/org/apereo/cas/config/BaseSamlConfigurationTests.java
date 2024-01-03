@@ -24,7 +24,7 @@ public abstract class BaseSamlConfigurationTests {
     @SpringBootConfiguration
     @Import({
         CasCoreAuthenticationConfiguration.class,
-        CasCoreWebConfiguration.class,
+        CasCoreWebAutoConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,
         CasCoreServicesAuthenticationConfiguration.class,
         CasCoreAuthenticationPrincipalConfiguration.class,
@@ -35,7 +35,6 @@ public abstract class BaseSamlConfigurationTests {
         CasCoreTicketIdGeneratorsConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-        CasCoreHttpConfiguration.class,
         CasCoreUtilConfiguration.class,
         CoreSamlConfiguration.class,
         CasCoreTicketCatalogConfiguration.class,

@@ -20,7 +20,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasCoreHttpConfiguration.class,
     TwilioConfiguration.class
 }, properties = {
     "cas.sms-provider.twilio.phone-calls-enabled=true",

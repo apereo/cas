@@ -11,7 +11,7 @@ import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.PasswordManagementConfiguration;
 import org.apereo.cas.config.RestPasswordManagementConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -69,7 +69,7 @@ class RestPasswordManagementServiceTests {
         CasCoreTicketIdGeneratorsConfiguration.class,
         CasCoreAuthenticationPrincipalConfiguration.class,
         CasCoreServicesConfiguration.class,
-        CasCoreWebConfiguration.class,
+        CasCoreWebAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
         CasCoreUtilConfiguration.class

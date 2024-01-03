@@ -1,7 +1,6 @@
 package org.apereo.cas.acct;
 
 import org.apereo.cas.acct.provision.AccountRegistrationProvisioner;
-import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import lombok.val;
@@ -31,7 +30,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasCoreHttpConfiguration.class
+    CasCoreWebAutoConfiguration.class
 },
     properties = "cas.server.prefix=https://sso.example.org/cas")
 @EnableConfigurationProperties(CasConfigurationProperties.class)

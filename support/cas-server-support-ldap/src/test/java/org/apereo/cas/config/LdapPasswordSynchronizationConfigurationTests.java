@@ -40,9 +40,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreLogoutAutoConfiguration.class,
     CasPersonDirectoryConfiguration.class,
     CasPersonDirectoryStubConfiguration.class,
-    CasCoreHttpConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
-    CasCoreWebConfiguration.class,
+    CasCoreWebAutoConfiguration.class,
     CasCoreUtilConfiguration.class,
     LdapPasswordSynchronizationConfiguration.class
 },
