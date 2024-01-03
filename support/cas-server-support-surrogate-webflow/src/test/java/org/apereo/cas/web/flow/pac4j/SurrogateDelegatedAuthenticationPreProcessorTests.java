@@ -6,7 +6,7 @@ import org.apereo.cas.authentication.principal.DelegatedAuthenticationPreProcess
 import org.apereo.cas.authentication.surrogate.SurrogateCredentialTrait;
 import org.apereo.cas.config.DelegatedAuthenticationConfiguration;
 import org.apereo.cas.config.DelegatedAuthenticationEventExecutionPlanConfiguration;
-import org.apereo.cas.config.SurrogateAuthenticationDelegationConfiguration;
+import org.apereo.cas.config.SurrogateAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.web.flow.action.BaseSurrogateAuthenticationTests;
 import lombok.val;
@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("Delegation")
 @SpringBootTest(classes = {
-    SurrogateAuthenticationDelegationConfiguration.class,
+    SurrogateAuthenticationWebflowAutoConfiguration.class,
     DelegatedAuthenticationConfiguration.class,
     DelegatedAuthenticationEventExecutionPlanConfiguration.class,
     BaseSurrogateAuthenticationTests.SharedTestConfiguration.class

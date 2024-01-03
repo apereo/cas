@@ -23,7 +23,6 @@ import org.apereo.cas.web.flow.configurer.MultifactorAuthenticationAccountProfil
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -45,8 +44,8 @@ import org.springframework.webflow.execution.Action;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication, module = "duo")
-@AutoConfiguration
-public class DuoSecurityConfiguration {
+@Configuration(proxyBeanMethods = false)
+class DuoSecurityConfiguration {
     @Configuration(value = "DuoSecurityCoreWebflowConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class DuoSecurityCoreWebflowConfiguration {
