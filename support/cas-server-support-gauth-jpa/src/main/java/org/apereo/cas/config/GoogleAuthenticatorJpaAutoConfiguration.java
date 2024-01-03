@@ -32,8 +32,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.support.TransactionTemplate;
-import javax.sql.DataSource;
 import jakarta.persistence.EntityManagerFactory;
+import javax.sql.DataSource;
 
 /**
  * This is {@link GoogleAuthenticatorJpaAutoConfiguration}.
