@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.DelegatedAuthenticationSAMLConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.BaseHazelcastProperties;
@@ -37,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
     DelegatedAuthenticationSAMLConfigurationTests.SAMLTestConfiguration.class,
     DelegatedAuthenticationClientsTestConfiguration.class,
     DelegatedAuthenticationSAMLConfiguration.class,
-    CasCoreHttpConfiguration.class
+    CasCoreWebAutoConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class DelegatedAuthenticationSAMLConfigurationTests {

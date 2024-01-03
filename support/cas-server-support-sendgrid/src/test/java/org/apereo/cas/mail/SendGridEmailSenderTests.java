@@ -1,6 +1,6 @@
 package org.apereo.cas.mail;
 
-import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasSendGridConfiguration;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.notifications.mail.EmailMessageRequest;
@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
     SendGridAutoConfiguration.class,
-    CasCoreWebConfiguration.class,
+    CasCoreWebAutoConfiguration.class,
     CasSendGridConfiguration.class
 }, properties = "spring.sendgrid.api-key=12345667890")
 @Tag("Mail")

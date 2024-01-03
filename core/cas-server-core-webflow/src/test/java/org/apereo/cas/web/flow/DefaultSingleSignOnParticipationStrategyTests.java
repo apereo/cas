@@ -6,7 +6,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.sso.SingleSignOnProperties;
 import org.apereo.cas.configuration.support.TriStateBoolean;
@@ -37,7 +37,7 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @Tag("Webflow")
-@SpringBootTest(classes = CasCoreHttpConfiguration.class)
+@SpringBootTest(classes = CasCoreWebAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class DefaultSingleSignOnParticipationStrategyTests {
 

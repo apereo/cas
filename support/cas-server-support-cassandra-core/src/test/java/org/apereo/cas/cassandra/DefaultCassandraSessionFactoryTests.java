@@ -1,7 +1,6 @@
 package org.apereo.cas.cassandra;
 
 import org.apereo.cas.authentication.CasSSLContext;
-import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.val;
@@ -26,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasCoreHttpConfiguration.class
+    CasCoreWebAutoConfiguration.class
 }, properties = {
     "cas.authn.cassandra.table-name=users_table",
     "cas.authn.cassandra.local-dc=datacenter1",

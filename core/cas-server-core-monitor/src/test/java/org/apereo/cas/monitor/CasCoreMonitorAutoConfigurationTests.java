@@ -1,6 +1,5 @@
 package org.apereo.cas.monitor;
 
-import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreMonitorAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
@@ -9,7 +8,7 @@ import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import lombok.val;
@@ -109,11 +108,10 @@ class CasCoreMonitorAutoConfigurationTests {
         CasCoreTicketsConfiguration.class,
         CasCoreTicketIdGeneratorsConfiguration.class,
         CasCoreMonitorAutoConfiguration.class,
-        CasCoreHttpConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasCoreUtilConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
-        CasCoreWebConfiguration.class,
+        CasCoreWebAutoConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class
     })
     public static class SharedTestConfiguration {
