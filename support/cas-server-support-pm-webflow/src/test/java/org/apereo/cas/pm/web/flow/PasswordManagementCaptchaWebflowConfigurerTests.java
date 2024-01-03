@@ -1,6 +1,6 @@
 package org.apereo.cas.pm.web.flow;
 
-import org.apereo.cas.config.PasswordManagementConfiguration;
+import org.apereo.cas.config.PasswordManagementAutoConfiguration;
 import org.apereo.cas.config.PasswordManagementForgotUsernameConfiguration;
 import org.apereo.cas.config.PasswordManagementWebflowConfiguration;
 import org.apereo.cas.util.MockRequestContext;
@@ -8,7 +8,6 @@ import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -19,7 +18,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.TransitionableState;
 import org.springframework.webflow.execution.Action;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -29,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Import({
-    PasswordManagementConfiguration.class,
+    PasswordManagementAutoConfiguration.class,
     PasswordManagementWebflowConfiguration.class,
     PasswordManagementForgotUsernameConfiguration.class
 })

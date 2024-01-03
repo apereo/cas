@@ -16,9 +16,9 @@ import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
-import org.apereo.cas.config.CasThemesConfiguration;
+import org.apereo.cas.config.CasThemesAutoConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
-import org.apereo.cas.config.PasswordManagementConfiguration;
+import org.apereo.cas.config.PasswordManagementAutoConfiguration;
 import org.apereo.cas.config.PasswordManagementForgotUsernameConfiguration;
 import org.apereo.cas.config.PasswordManagementWebflowConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -119,7 +119,7 @@ public abstract class BasePasswordManagementActionTests {
     })
     @SpringBootConfiguration
     @Import({
-        PasswordManagementConfiguration.class,
+        PasswordManagementAutoConfiguration.class,
         PasswordManagementWebflowConfiguration.class,
         PasswordManagementForgotUsernameConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
@@ -128,7 +128,7 @@ public abstract class BasePasswordManagementActionTests {
         CasCoreLogoutAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasCookieAutoConfiguration.class,
-        CasThemesConfiguration.class,
+        CasThemesAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasCoreAuditAutoConfiguration.class,

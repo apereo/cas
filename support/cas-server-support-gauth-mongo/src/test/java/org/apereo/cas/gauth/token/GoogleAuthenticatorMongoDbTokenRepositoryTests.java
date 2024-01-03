@@ -16,7 +16,7 @@ import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.config.GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfiguration;
-import org.apereo.cas.config.GoogleAuthenticatorMongoDbConfiguration;
+import org.apereo.cas.config.GoogleAuthenticatorMongoDbAutoConfiguration;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,7 +37,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  */
 @Tag("MongoDbMFA")
 @SpringBootTest(classes = {
-    GoogleAuthenticatorMongoDbConfiguration.class,
+    GoogleAuthenticatorMongoDbAutoConfiguration.class,
     CasCoreMultifactorAuthenticationAutoConfiguration.class,
     CasMultifactorAuthenticationWebflowAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,

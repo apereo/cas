@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
     CasServicesStreamingHazelcastAutoConfiguration.class,
-    CasServicesStreamingConfiguration.class
+    CasServicesStreamingAutoConfiguration.class
 }, properties = {
     "cas.service-registry.stream.hazelcast.config.cluster.core.instance-name=servicesRegistryStream",
     "cas.service-registry.stream.core.enabled=true"

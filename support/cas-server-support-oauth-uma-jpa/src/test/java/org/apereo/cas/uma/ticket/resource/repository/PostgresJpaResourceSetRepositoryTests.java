@@ -1,22 +1,19 @@
 package org.apereo.cas.uma.ticket.resource.repository;
 
-import org.apereo.cas.config.CasHibernateJpaConfiguration;
-import org.apereo.cas.config.CasOAuthUmaJpaConfiguration;
+import org.apereo.cas.config.CasHibernateJpaAutoConfiguration;
+import org.apereo.cas.config.CasOAuthUmaJpaAutoConfiguration;
 import org.apereo.cas.uma.ticket.resource.ResourceSet;
 import org.apereo.cas.uma.ticket.resource.ResourceSetPolicy;
 import org.apereo.cas.uma.ticket.resource.ResourceSetPolicyPermission;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointControllerTests;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
-
 import java.util.LinkedHashMap;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -28,8 +25,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfListeningOnPort(port = 5432)
 @Tag("Postgres")
 @Import({
-    CasOAuthUmaJpaConfiguration.class,
-    CasHibernateJpaConfiguration.class
+    CasOAuthUmaJpaAutoConfiguration.class,
+    CasHibernateJpaAutoConfiguration.class
 })
 @TestPropertySource(properties = {
     "cas.authn.oauth.uma.resource-set.jpa.user=postgres",

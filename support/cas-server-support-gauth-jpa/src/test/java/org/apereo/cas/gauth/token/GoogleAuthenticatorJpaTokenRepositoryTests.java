@@ -10,14 +10,14 @@ import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasHibernateJpaConfiguration;
+import org.apereo.cas.config.CasHibernateJpaAutoConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.config.GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfiguration;
-import org.apereo.cas.config.GoogleAuthenticatorJpaConfiguration;
+import org.apereo.cas.config.GoogleAuthenticatorJpaAutoConfiguration;
 import lombok.Getter;
 import org.junit.jupiter.api.Tag;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -36,9 +36,9 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * @since 5.2.0
  */
 @SpringBootTest(classes = {
-    GoogleAuthenticatorJpaConfiguration.class,
+    GoogleAuthenticatorJpaAutoConfiguration.class,
     GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfiguration.class,
-    CasHibernateJpaConfiguration.class,
+    CasHibernateJpaAutoConfiguration.class,
     CasCookieAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,

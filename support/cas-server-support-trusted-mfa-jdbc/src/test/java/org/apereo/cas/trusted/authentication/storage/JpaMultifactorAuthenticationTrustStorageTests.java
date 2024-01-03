@@ -1,11 +1,10 @@
 package org.apereo.cas.trusted.authentication.storage;
 
-import org.apereo.cas.config.CasHibernateJpaConfiguration;
-import org.apereo.cas.config.JdbcMultifactorAuthnTrustConfiguration;
+import org.apereo.cas.config.CasHibernateJpaAutoConfiguration;
+import org.apereo.cas.config.JdbcMultifactorAuthnTrustAutoConfiguration;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.util.DateTimeUtils;
-
 import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.AfterEach;
@@ -17,13 +16,11 @@ import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Set;
 import java.util.stream.Stream;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -33,8 +30,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Import({
-    JdbcMultifactorAuthnTrustConfiguration.class,
-    CasHibernateJpaConfiguration.class
+    JdbcMultifactorAuthnTrustAutoConfiguration.class,
+    CasHibernateJpaAutoConfiguration.class
 })
 @EnableTransactionManagement(proxyTargetClass = false)
 @EnableAspectJAutoProxy(proxyTargetClass = false)

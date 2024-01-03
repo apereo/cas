@@ -1,1 +1,1 @@
-org.apereo.cas.config.CasAcceptableUsagePolicyWebflowConfiguration
+org.apereo.cas.config.CasAcceptableUsagePolicyWebflowAutoConfiguration

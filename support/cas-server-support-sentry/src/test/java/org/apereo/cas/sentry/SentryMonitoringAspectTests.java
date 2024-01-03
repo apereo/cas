@@ -1,6 +1,6 @@
 package org.apereo.cas.sentry;
 
-import org.apereo.cas.config.CasSentryConfiguration;
+import org.apereo.cas.config.CasSentryAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.monitor.Monitorable;
 import org.junit.jupiter.api.Tag;
@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
     WebMvcAutoConfiguration.class,
     AopAutoConfiguration.class,
     SentryAutoConfiguration.class,
-    CasSentryConfiguration.class,
+    CasSentryAutoConfiguration.class,
     SentryMonitoringAspectTests.SentryMonitoringTestConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)

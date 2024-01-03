@@ -1,7 +1,7 @@
 package org.apereo.cas.web;
 
 import org.apereo.cas.bucket4j.consumer.BucketConsumer;
-import org.apereo.cas.config.CasBucket4jThrottlingConfiguration;
+import org.apereo.cas.config.CasBucket4jThrottlingAutoConfiguration;
 import org.apereo.cas.throttle.ThrottledRequestExecutor;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasBucket4jThrottlingConfiguration.class
+    CasBucket4jThrottlingAutoConfiguration.class
 })
 public abstract class BaseBucket4jThrottledRequestTests {
     @Autowired

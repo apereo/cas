@@ -7,9 +7,9 @@ import org.apereo.cas.config.CasOAuth20Configuration;
 import org.apereo.cas.config.CasOAuth20EndpointsConfiguration;
 import org.apereo.cas.config.CasOAuth20ThrottleConfiguration;
 import org.apereo.cas.config.CasOAuth20WebflowAutoConfiguration;
-import org.apereo.cas.config.CasThemesConfiguration;
-import org.apereo.cas.config.CasThrottlingConfiguration;
-import org.apereo.cas.config.CasThymeleafConfiguration;
+import org.apereo.cas.config.CasThemesAutoConfiguration;
+import org.apereo.cas.config.CasThrottlingAutoConfiguration;
+import org.apereo.cas.config.CasThymeleafAutoConfiguration;
 import org.apereo.cas.config.OidcComponentSerializationConfiguration;
 import org.apereo.cas.config.OidcConfiguration;
 import org.apereo.cas.config.OidcEndpointsConfiguration;
@@ -21,7 +21,6 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.throttle.ThrottledRequestFilter;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -32,7 +31,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.engine.Flow;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -42,9 +40,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Import({
-    CasThymeleafConfiguration.class,
-    CasThrottlingConfiguration.class,
-    CasThemesConfiguration.class,
+    CasThymeleafAutoConfiguration.class,
+    CasThrottlingAutoConfiguration.class,
+    CasThemesAutoConfiguration.class,
     OidcConfiguration.class,
     OidcResponseConfiguration.class,
     OidcLogoutConfiguration.class,

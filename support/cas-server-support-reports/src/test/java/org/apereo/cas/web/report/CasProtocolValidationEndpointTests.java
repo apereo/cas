@@ -3,8 +3,8 @@ package org.apereo.cas.web.report;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
-import org.apereo.cas.config.CasThymeleafConfiguration;
-import org.apereo.cas.config.CasValidationConfiguration;
+import org.apereo.cas.config.CasThymeleafAutoConfiguration;
+import org.apereo.cas.config.CasValidationAutoConfiguration;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
@@ -36,8 +36,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("ActuatorEndpoint")
 @Import({
     CasProtocolValidationEndpointTests.TestAuthenticationConfiguration.class,
-    CasThymeleafConfiguration.class,
-    CasValidationConfiguration.class
+    CasThymeleafAutoConfiguration.class,
+    CasValidationAutoConfiguration.class
 })
 class CasProtocolValidationEndpointTests extends AbstractCasEndpointTests {
     @Autowired

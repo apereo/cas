@@ -21,7 +21,7 @@ import org.apereo.cas.config.GoogleAuthenticatorConfiguration;
 import org.apereo.cas.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.config.MultifactorAuthnTrustWebflowConfiguration;
 import org.apereo.cas.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration;
-import org.apereo.cas.config.OneTimeTokenAuthenticationConfiguration;
+import org.apereo.cas.config.OneTimeTokenAuthenticationAutoConfiguration;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -46,7 +46,7 @@ public abstract class BaseGoogleAuthenticatorTests {
     @Import({
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasMultifactorAuthenticationWebflowAutoConfiguration.class,
-        OneTimeTokenAuthenticationConfiguration.class,
+        OneTimeTokenAuthenticationAutoConfiguration.class,
         CasPersonDirectoryTestConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,

@@ -1,6 +1,6 @@
 package org.apereo.cas.web.support;
 
-import org.apereo.cas.config.CasRedisThrottlingConfiguration;
+import org.apereo.cas.config.CasRedisThrottlingAutoConfiguration;
 import org.apereo.cas.config.CasSupportRedisAuditAutoConfiguration;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
@@ -17,7 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  */
 @Tag("Redis")
 @SpringBootTest(classes = {
-    CasRedisThrottlingConfiguration.class,
+    CasRedisThrottlingAutoConfiguration.class,
     CasSupportRedisAuditAutoConfiguration.class,
     BaseThrottledSubmissionHandlerInterceptorAdapterTests.SharedTestConfiguration.class
 },

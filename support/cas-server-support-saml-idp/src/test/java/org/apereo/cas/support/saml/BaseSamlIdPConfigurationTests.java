@@ -22,9 +22,9 @@ import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
-import org.apereo.cas.config.CasThrottlingConfiguration;
+import org.apereo.cas.config.CasThrottlingAutoConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
-import org.apereo.cas.config.CoreSamlConfiguration;
+import org.apereo.cas.config.CoreSamlAutoConfiguration;
 import org.apereo.cas.config.SamlIdPAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.SamlIdPComponentSerializationConfiguration;
 import org.apereo.cas.config.SamlIdPConfiguration;
@@ -354,7 +354,7 @@ public abstract class BaseSamlIdPConfigurationTests {
         CasCoreWebAutoConfiguration.class,
         CasCoreMonitorAutoConfiguration.class,
         CasWebflowAutoConfiguration.class,
-        CasThrottlingConfiguration.class,
+        CasThrottlingAutoConfiguration.class,
         SamlIdPConfiguration.class,
         SamlIdPThrottleConfiguration.class,
         SamlIdPMonitoringConfiguration.class,
@@ -370,7 +370,7 @@ public abstract class BaseSamlIdPConfigurationTests {
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
-        CoreSamlConfiguration.class,
+        CoreSamlAutoConfiguration.class,
         CasPersonDirectoryConfiguration.class,
         CasPersonDirectoryStubConfiguration.class,
         CasCoreUtilAutoConfiguration.class

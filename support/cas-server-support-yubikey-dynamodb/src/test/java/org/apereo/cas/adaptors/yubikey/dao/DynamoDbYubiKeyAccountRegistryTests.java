@@ -3,11 +3,10 @@ package org.apereo.cas.adaptors.yubikey.dao;
 import org.apereo.cas.adaptors.yubikey.AbstractYubiKeyAccountRegistryTests;
 import org.apereo.cas.adaptors.yubikey.BaseYubiKeyTests;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
-import org.apereo.cas.config.DynamoDbYubiKeyConfiguration;
+import org.apereo.cas.config.DynamoDbYubiKeyAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import lombok.Getter;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,7 @@ import software.amazon.awssdk.core.SdkSystemSetting;
  */
 @Tag("DynamoDb")
 @SpringBootTest(classes = {
-    DynamoDbYubiKeyConfiguration.class,
+    DynamoDbYubiKeyAutoConfiguration.class,
     BaseYubiKeyTests.SharedTestConfiguration.class
 },
     properties = {

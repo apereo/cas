@@ -9,7 +9,7 @@ import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasMongoAuthenticationConfiguration;
+import org.apereo.cas.config.CasMongoAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -39,7 +39,7 @@ import static org.mockito.Mockito.*;
  * @since 4.2
  */
 @SpringBootTest(classes = {
-    CasMongoAuthenticationConfiguration.class,
+    CasMongoAuthenticationAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,

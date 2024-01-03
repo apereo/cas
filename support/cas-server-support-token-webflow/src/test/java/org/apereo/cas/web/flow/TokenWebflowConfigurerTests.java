@@ -2,16 +2,14 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
-import org.apereo.cas.config.TokenAuthenticationConfiguration;
-import org.apereo.cas.config.TokenAuthenticationWebflowConfiguration;
-
+import org.apereo.cas.config.TokenAuthenticationAutoConfiguration;
+import org.apereo.cas.config.TokenAuthenticationWebflowAutoConfiguration;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Import;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.TransitionableState;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -23,8 +21,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @Import({
     CasCoreMultifactorAuthenticationAutoConfiguration.class,
     CasMultifactorAuthenticationWebflowAutoConfiguration.class,
-    TokenAuthenticationConfiguration.class,
-    TokenAuthenticationWebflowConfiguration.class
+    TokenAuthenticationAutoConfiguration.class,
+    TokenAuthenticationWebflowAutoConfiguration.class
 })
 @Tag("WebflowConfig")
 class TokenWebflowConfigurerTests extends BaseWebflowConfigurerTests {

@@ -16,7 +16,7 @@ import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
-import org.apereo.cas.config.CasRestAuthenticationConfiguration;
+import org.apereo.cas.config.CasRestAuthenticationAutoConfiguration;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import lombok.val;
@@ -50,7 +50,7 @@ import static org.mockito.Mockito.*;
  * @since 5.0.0
  */
 @SpringBootTest(classes = {
-    CasRestAuthenticationConfiguration.class,
+    CasRestAuthenticationAutoConfiguration.class,
     AopAutoConfiguration.class,
     CasCoreServicesAutoConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,

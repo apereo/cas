@@ -1,14 +1,12 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.config.CasScimConfiguration;
-
+import org.apereo.cas.config.CasScimAutoConfiguration;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.engine.Flow;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -17,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Import(CasScimConfiguration.class)
+@Import(CasScimAutoConfiguration.class)
 @TestPropertySource(properties = "cas.scim.target=http://localhost:8218")
 @Tag("SCIM")
 class ScimWebflowConfigurerTests extends BaseWebflowConfigurerTests {

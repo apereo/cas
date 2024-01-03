@@ -22,7 +22,7 @@ import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguratio
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
-import org.apereo.cas.config.CasReportsConfiguration;
+import org.apereo.cas.config.CasReportsAutoConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
@@ -77,7 +77,7 @@ public abstract class AbstractCasEndpointTests {
     })
     @SpringBootConfiguration
     @Import({
-        CasReportsConfiguration.class,
+        CasReportsAutoConfiguration.class,
         CasLoggingAutoConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
         AbstractCasEndpointTests.AuditTestConfiguration.class,

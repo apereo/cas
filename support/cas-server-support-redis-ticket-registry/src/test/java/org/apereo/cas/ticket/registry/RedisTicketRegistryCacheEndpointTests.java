@@ -2,7 +2,7 @@ package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.RedisCoreAutoConfiguration;
-import org.apereo.cas.config.RedisTicketRegistryConfiguration;
+import org.apereo.cas.config.RedisTicketRegistryAutoConfiguration;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("ActuatorEndpoint")
 @Import({
     RedisCoreAutoConfiguration.class,
-    RedisTicketRegistryConfiguration.class
+    RedisTicketRegistryAutoConfiguration.class
 })
 class RedisTicketRegistryCacheEndpointTests extends AbstractCasEndpointTests {
     @Autowired

@@ -2,7 +2,7 @@ package org.apereo.cas.pm.web.flow;
 
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.config.CasSimpleMultifactorAuthenticationAutoConfiguration;
-import org.apereo.cas.config.PasswordManagementConfiguration;
+import org.apereo.cas.config.PasswordManagementAutoConfiguration;
 import org.apereo.cas.config.PasswordManagementForgotUsernameConfiguration;
 import org.apereo.cas.config.PasswordManagementWebflowConfiguration;
 import org.apereo.cas.util.MockRequestContext;
@@ -46,7 +46,7 @@ class PasswordManagementWebflowConfigurerTests {
         "cas.authn.pm.core.enabled=false"
     })
     @Import({
-        PasswordManagementConfiguration.class,
+        PasswordManagementAutoConfiguration.class,
         PasswordManagementWebflowConfiguration.class,
         PasswordManagementForgotUsernameConfiguration.class
     })
@@ -98,7 +98,7 @@ class PasswordManagementWebflowConfigurerTests {
     @TestPropertySource(properties = "cas.authn.pm.core.enabled=true")
     @Import({
         CasSimpleMultifactorAuthenticationAutoConfiguration.class,
-        PasswordManagementConfiguration.class,
+        PasswordManagementAutoConfiguration.class,
         PasswordManagementWebflowConfiguration.class,
         PasswordManagementForgotUsernameConfiguration.class
     })

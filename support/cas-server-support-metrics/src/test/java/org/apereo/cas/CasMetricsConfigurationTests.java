@@ -1,7 +1,6 @@
 package org.apereo.cas;
 
 import org.apereo.cas.config.CasMetricsAutoConfiguration;
-import org.apereo.cas.config.CasMetricsRepositoryConfiguration;
 import io.micrometer.core.aop.TimedAspect;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;

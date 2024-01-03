@@ -5,8 +5,8 @@ import org.apereo.cas.config.CasOAuth20AuthenticationServiceSelectionStrategyCon
 import org.apereo.cas.config.CasOAuth20Configuration;
 import org.apereo.cas.config.CasOAuth20ServicesConfiguration;
 import org.apereo.cas.config.CasOAuth20WebflowAutoConfiguration;
-import org.apereo.cas.config.CasThemesConfiguration;
-import org.apereo.cas.config.CasThymeleafConfiguration;
+import org.apereo.cas.config.CasThemesAutoConfiguration;
+import org.apereo.cas.config.CasThymeleafAutoConfiguration;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -23,7 +23,7 @@ import org.springframework.context.annotation.Import;
  * @since 6.3.0
  */
 public abstract class BaseOAuth20WebflowTests {
-    
+
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         MailSenderAutoConfiguration.class,
@@ -32,8 +32,8 @@ public abstract class BaseOAuth20WebflowTests {
     })
     @SpringBootConfiguration
     @Import({
-        CasThemesConfiguration.class,
-        CasThymeleafConfiguration.class,
+        CasThemesAutoConfiguration.class,
+        CasThymeleafAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
         CasOAuth20Configuration.class,
         CasOAuth20AuthenticationServiceSelectionStrategyConfiguration.class,

@@ -19,7 +19,7 @@ import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
-import org.apereo.cas.config.CasThemesConfiguration;
+import org.apereo.cas.config.CasThemesAutoConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.config.DuoSecurityAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.DuoSecurityComponentSerializationConfiguration;
@@ -112,7 +112,7 @@ public abstract class BaseDuoSecurityTests {
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
         CasWebflowAutoConfiguration.class,
-        CasThemesConfiguration.class,
+        CasThemesAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
         CasCoreMultifactorAuthenticationAutoConfiguration.class,

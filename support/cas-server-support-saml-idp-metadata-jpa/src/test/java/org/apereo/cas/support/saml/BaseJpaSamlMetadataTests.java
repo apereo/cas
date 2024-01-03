@@ -1,13 +1,12 @@
 package org.apereo.cas.support.saml;
 
-import org.apereo.cas.config.CasHibernateJpaConfiguration;
+import org.apereo.cas.config.CasHibernateJpaAutoConfiguration;
 import org.apereo.cas.config.SamlIdPJpaIdPMetadataConfiguration;
 import org.apereo.cas.config.SamlIdPJpaRegisteredServiceMetadataConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataResolver;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -24,7 +23,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @SpringBootTest(classes = {
     SamlIdPJpaRegisteredServiceMetadataConfiguration.class,
     SamlIdPJpaIdPMetadataConfiguration.class,
-    CasHibernateJpaConfiguration.class,
+    CasHibernateJpaAutoConfiguration.class,
     BaseSamlIdPMetadataTests.SharedTestConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)

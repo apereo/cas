@@ -1,9 +1,8 @@
 package org.apereo.cas.consent;
 
-import org.apereo.cas.config.CasConsentRestConfiguration;
+import org.apereo.cas.config.CasConsentRestAutoConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.val;
@@ -25,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +38,7 @@ import java.util.stream.Collectors;
 @Tag("RestfulApi")
 @SpringBootTest(classes = {
     RestfulConsentRepositoryTests.RestConsentRepositoryTestConfiguration.class,
-    CasConsentRestConfiguration.class,
+    CasConsentRestAutoConfiguration.class,
     BaseConsentRepositoryTests.SharedTestConfiguration.class
 }, properties = {
     "spring.main.allow-bean-definition-overriding=true",

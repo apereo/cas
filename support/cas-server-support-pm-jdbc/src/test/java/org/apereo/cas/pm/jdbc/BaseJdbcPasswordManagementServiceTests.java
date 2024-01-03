@@ -9,11 +9,11 @@ import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasHibernateJpaConfiguration;
+import org.apereo.cas.config.CasHibernateJpaAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.JdbcPasswordHistoryManagementConfiguration;
 import org.apereo.cas.config.JdbcPasswordManagementConfiguration;
-import org.apereo.cas.config.PasswordManagementConfiguration;
+import org.apereo.cas.config.PasswordManagementAutoConfiguration;
 import org.apereo.cas.pm.PasswordHistoryService;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,10 +44,10 @@ import javax.sql.DataSource;
     CasCoreUtilAutoConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,
     CasCoreAutoConfiguration.class,
-    CasHibernateJpaConfiguration.class,
+    CasHibernateJpaAutoConfiguration.class,
     JdbcPasswordManagementConfiguration.class,
     JdbcPasswordHistoryManagementConfiguration.class,
-    PasswordManagementConfiguration.class
+    PasswordManagementAutoConfiguration.class
 }, properties = {
     "cas.jdbc.show-sql=false",
     "cas.authn.pm.core.enabled=true",

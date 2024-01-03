@@ -1,6 +1,6 @@
 package org.apereo.cas.aws.s3.services;
 
-import org.apereo.cas.config.AmazonS3ServiceRegistryConfiguration;
+import org.apereo.cas.config.AmazonS3ServiceRegistryAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @SpringBootTest(classes = {
-    AmazonS3ServiceRegistryConfiguration.class,
+    AmazonS3ServiceRegistryAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class,
     CasCoreServicesAutoConfiguration.class,

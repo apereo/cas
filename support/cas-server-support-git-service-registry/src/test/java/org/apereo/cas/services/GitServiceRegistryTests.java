@@ -5,7 +5,7 @@ import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.GitServiceRegistryConfiguration;
+import org.apereo.cas.config.GitServiceRegistryAutoConfiguration;
 import org.apereo.cas.configuration.model.support.git.services.GitServiceRegistryProperties;
 import org.apereo.cas.git.GitRepository;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
@@ -50,7 +50,7 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @SpringBootTest(classes = {
-    GitServiceRegistryConfiguration.class,
+    GitServiceRegistryAutoConfiguration.class,
     CasCoreServicesAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,

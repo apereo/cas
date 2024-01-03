@@ -15,11 +15,11 @@ import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguratio
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
-import org.apereo.cas.config.CasThemesConfiguration;
-import org.apereo.cas.config.CasThymeleafConfiguration;
-import org.apereo.cas.config.CasValidationConfiguration;
+import org.apereo.cas.config.CasThemesAutoConfiguration;
+import org.apereo.cas.config.CasThymeleafAutoConfiguration;
+import org.apereo.cas.config.CasValidationAutoConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
-import org.apereo.cas.config.CoreSamlConfiguration;
+import org.apereo.cas.config.CoreSamlAutoConfiguration;
 import org.apereo.cas.config.SamlRestConfiguration;
 import org.apereo.cas.config.SamlUniqueTicketIdGeneratorConfiguration;
 import org.apereo.cas.services.RegisteredServicesTemplatesManager;
@@ -120,10 +120,10 @@ public abstract class AbstractOpenSamlTests {
     })
     @SpringBootConfiguration
     @Import({
-        CasThymeleafConfiguration.class,
-        CasThemesConfiguration.class,
+        CasThymeleafAutoConfiguration.class,
+        CasThemesAutoConfiguration.class,
         CasRegisteredServicesTestConfiguration.class,
-        CoreSamlConfiguration.class,
+        CoreSamlAutoConfiguration.class,
         SamlUniqueTicketIdGeneratorConfiguration.class,
         SamlRestConfiguration.class,
         CasCoreWebAutoConfiguration.class,
@@ -132,7 +132,7 @@ public abstract class AbstractOpenSamlTests {
         CasPersonDirectoryStubConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreValidationAutoConfiguration.class,
-        CasValidationConfiguration.class,
+        CasValidationAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,

@@ -1,8 +1,8 @@
 package org.apereo.cas.aup;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.config.CasAcceptableUsagePolicyJdbcConfiguration;
-import org.apereo.cas.config.CasAcceptableUsagePolicyWebflowConfiguration;
+import org.apereo.cas.config.CasAcceptableUsagePolicyJdbcAutoConfiguration;
+import org.apereo.cas.config.CasAcceptableUsagePolicyWebflowAutoConfiguration;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.config.CasCookieAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
@@ -50,8 +50,8 @@ import java.util.Map;
     CasAuthenticationEventExecutionPlanTestConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,
-    CasAcceptableUsagePolicyJdbcConfiguration.class,
-    CasAcceptableUsagePolicyWebflowConfiguration.class,
+    CasAcceptableUsagePolicyJdbcAutoConfiguration.class,
+    CasAcceptableUsagePolicyWebflowAutoConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasWebflowAutoConfiguration.class,

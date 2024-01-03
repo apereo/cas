@@ -4,7 +4,7 @@ import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.LdapServiceRegistryConfiguration;
+import org.apereo.cas.config.LdapServiceRegistryAutoConfiguration;
 import org.apereo.cas.services.AbstractServiceRegistryTests;
 import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.RegisteredServiceDefinition;
@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @EnableScheduling
 @SpringBootTest(classes = {
-    LdapServiceRegistryConfiguration.class,
+    LdapServiceRegistryAutoConfiguration.class,
     CasCoreServicesAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,

@@ -3,10 +3,10 @@ package org.apereo.cas.support.saml.web;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
-import org.apereo.cas.config.CasThemesConfiguration;
-import org.apereo.cas.config.CasThymeleafConfiguration;
-import org.apereo.cas.config.CasValidationConfiguration;
-import org.apereo.cas.config.CoreSamlConfiguration;
+import org.apereo.cas.config.CasThemesAutoConfiguration;
+import org.apereo.cas.config.CasThymeleafAutoConfiguration;
+import org.apereo.cas.config.CasValidationAutoConfiguration;
+import org.apereo.cas.config.CoreSamlAutoConfiguration;
 import org.apereo.cas.config.SamlAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.SamlConfiguration;
 import org.apereo.cas.config.SamlServiceFactoryConfiguration;
@@ -32,16 +32,16 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     AbstractCasEndpointTests.SharedTestConfiguration.class,
-    CoreSamlConfiguration.class,
+    CoreSamlAutoConfiguration.class,
     SamlConfiguration.class,
     CasPersonDirectoryConfiguration.class,
     CasPersonDirectoryStubConfiguration.class,
     SamlServiceFactoryConfiguration.class,
     SamlUniqueTicketIdGeneratorConfiguration.class,
     SamlAuthenticationEventExecutionPlanConfiguration.class,
-    CasThemesConfiguration.class,
-    CasThymeleafConfiguration.class,
-    CasValidationConfiguration.class
+    CasThemesAutoConfiguration.class,
+    CasThymeleafAutoConfiguration.class,
+    CasValidationAutoConfiguration.class
 },
     properties = {
         "management.endpoints.web.exposure.include=*",

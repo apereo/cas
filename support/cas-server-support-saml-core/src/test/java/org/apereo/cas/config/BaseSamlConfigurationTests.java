@@ -29,7 +29,7 @@ public abstract class BaseSamlConfigurationTests {
         CasCoreTicketsAutoConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
-        CoreSamlConfiguration.class,
+        CoreSamlAutoConfiguration.class,
         CasPersonDirectoryConfiguration.class,
         CasPersonDirectoryStubConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,

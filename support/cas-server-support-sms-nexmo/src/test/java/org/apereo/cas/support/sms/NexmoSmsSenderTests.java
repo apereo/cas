@@ -1,6 +1,6 @@
 package org.apereo.cas.support.sms;
 
-import org.apereo.cas.config.NexmoSmsConfiguration;
+import org.apereo.cas.config.NexmoSmsAutoConfiguration;
 import org.apereo.cas.notifications.sms.SmsSender;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    NexmoSmsConfiguration.class
+    NexmoSmsAutoConfiguration.class
 }, properties = {
     "cas.sms-provider.nexmo.api-token=123456",
     "cas.sms-provider.nexmo.api-secret=123456",

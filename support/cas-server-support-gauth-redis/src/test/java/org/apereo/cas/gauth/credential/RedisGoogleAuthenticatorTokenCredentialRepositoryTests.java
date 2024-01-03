@@ -1,7 +1,7 @@
 package org.apereo.cas.gauth.credential;
 
 import org.apereo.cas.authentication.OneTimeTokenAccount;
-import org.apereo.cas.config.GoogleAuthenticatorRedisConfiguration;
+import org.apereo.cas.config.GoogleAuthenticatorRedisAutoConfiguration;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.0.0
  */
 @SpringBootTest(classes = {
-    GoogleAuthenticatorRedisConfiguration.class,
+    GoogleAuthenticatorRedisAutoConfiguration.class,
     BaseOneTimeTokenCredentialRepositoryTests.SharedTestConfiguration.class
 }, properties = {
     "cas.authn.mfa.gauth.redis.host=localhost",

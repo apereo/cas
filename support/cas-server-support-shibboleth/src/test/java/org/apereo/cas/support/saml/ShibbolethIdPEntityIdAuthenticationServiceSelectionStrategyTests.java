@@ -11,7 +11,7 @@ import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.ExternalShibbolethIdPAuthenticationServiceSelectionStrategyConfiguration;
+import org.apereo.cas.config.ShibbolethIdPAutoConfiguration;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockRequestContext;
@@ -55,7 +55,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreWebAutoConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,
     CasCoreAutoConfiguration.class,
-    ExternalShibbolethIdPAuthenticationServiceSelectionStrategyConfiguration.class
+    ShibbolethIdPAutoConfiguration.class
 }, properties = "cas.authn.shib-idp.server-url=https://sso.shibboleth.org/idp/Authn/External")
 @Tag("SAML")
 class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategyTests {

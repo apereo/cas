@@ -4,7 +4,7 @@ import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CassandraServiceRegistryConfiguration;
+import org.apereo.cas.config.CassandraServiceRegistryAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.AbstractServiceRegistryTests;
 import org.apereo.cas.services.RegisteredService;
@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @SpringBootTest(classes = {
-    CassandraServiceRegistryConfiguration.class,
+    CassandraServiceRegistryAutoConfiguration.class,
     CasCoreServicesAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class,

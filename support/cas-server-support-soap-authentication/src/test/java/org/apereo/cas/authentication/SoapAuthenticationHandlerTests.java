@@ -10,7 +10,7 @@ import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
-import org.apereo.cas.config.SoapAuthenticationConfiguration;
+import org.apereo.cas.config.SoapAuthenticationAutoConfiguration;
 import org.apereo.cas.config.SoapAuthenticationServerTestConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
@@ -49,7 +49,7 @@ import static org.mockito.Mockito.*;
     CasRegisteredServicesTestConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
-    SoapAuthenticationConfiguration.class
+    SoapAuthenticationAutoConfiguration.class
 },
     properties = {
         "server.port=8080",

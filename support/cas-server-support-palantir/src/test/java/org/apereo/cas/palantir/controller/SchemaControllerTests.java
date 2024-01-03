@@ -1,6 +1,6 @@
 package org.apereo.cas.palantir.controller;
 
-import org.apereo.cas.config.CasPalantirConfiguration;
+import org.apereo.cas.config.CasPalantirAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         ServletWebServerFactoryAutoConfiguration.class,
-        CasPalantirConfiguration.class
+        CasPalantirAutoConfiguration.class
     },
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EnableConfigurationProperties(CasConfigurationProperties.class)

@@ -10,7 +10,7 @@ import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
-import org.apereo.cas.config.HazelcastMonitorConfiguration;
+import org.apereo.cas.config.HazelcastMonitorAutoConfiguration;
 import org.apereo.cas.config.HazelcastTicketRegistryConfiguration;
 import org.apereo.cas.config.HazelcastTicketRegistryTicketCatalogConfiguration;
 import com.hazelcast.internal.memory.MemoryStats;
@@ -42,7 +42,7 @@ import static org.mockito.Mockito.*;
     MailSenderAutoConfiguration.class,
     HazelcastTicketRegistryConfiguration.class,
     HazelcastTicketRegistryTicketCatalogConfiguration.class,
-    HazelcastMonitorConfiguration.class,
+    HazelcastMonitorAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasPersonDirectoryConfiguration.class,

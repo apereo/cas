@@ -14,10 +14,10 @@ import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasRestAutoConfiguration;
-import org.apereo.cas.config.CasThrottlingConfiguration;
+import org.apereo.cas.config.CasThrottlingAutoConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
-import org.apereo.cas.config.X509CertificateExtractorConfiguration;
-import org.apereo.cas.config.X509RestConfiguration;
+import org.apereo.cas.config.X509CertificateExtractorAutoConfiguration;
+import org.apereo.cas.config.X509RestAutoConfiguration;
 import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -37,8 +37,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    X509CertificateExtractorConfiguration.class,
-    X509RestConfiguration.class,
+    X509CertificateExtractorAutoConfiguration.class,
+    X509RestAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
     CasCoreServicesAutoConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,
@@ -47,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreTicketsAutoConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,
     CasCoreAutoConfiguration.class,
-    CasThrottlingConfiguration.class,
+    CasThrottlingAutoConfiguration.class,
     CasCoreAuditAutoConfiguration.class,
     CasCoreMultifactorAuthenticationAutoConfiguration.class,
     CasMultifactorAuthenticationWebflowAutoConfiguration.class,

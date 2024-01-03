@@ -1,6 +1,6 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.config.CasServicesStreamingConfiguration;
+import org.apereo.cas.config.CasServicesStreamingAutoConfiguration;
 import org.apereo.cas.config.CasServicesStreamingKafkaAutoConfiguration;
 import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.cache.DistributedCacheManager;
@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
     CasServicesStreamingKafkaAutoConfiguration.class,
-    CasServicesStreamingConfiguration.class
+    CasServicesStreamingAutoConfiguration.class
 }, properties = {
     "cas.service-registry.stream.kafka.bootstrap-address=localhost:9092",
     "cas.service-registry.stream.core.enabled=true"

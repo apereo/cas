@@ -1,6 +1,6 @@
 package org.apereo.cas.interrupt;
 
-import org.apereo.cas.config.CasInterruptConfiguration;
+import org.apereo.cas.config.CasInterruptAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasInterruptConfiguration.class
+    CasInterruptAutoConfiguration.class
 }, properties = {
     "cas.interrupt.regex.attribute-name=attr-name",
     "cas.interrupt.regex.attribute-value=attr-value",

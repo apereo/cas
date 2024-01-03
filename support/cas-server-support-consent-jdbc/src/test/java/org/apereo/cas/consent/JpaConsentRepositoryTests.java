@@ -1,10 +1,9 @@
 package org.apereo.cas.consent;
 
-import org.apereo.cas.config.CasConsentJdbcConfiguration;
-import org.apereo.cas.config.CasHibernateJpaConfiguration;
+import org.apereo.cas.config.CasConsentJdbcAutoConfiguration;
+import org.apereo.cas.config.CasHibernateJpaAutoConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
-
 import lombok.Getter;
 import lombok.val;
 import org.apache.commons.lang3.time.StopWatch;
@@ -13,11 +12,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -27,8 +24,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.2.0
  */
 @SpringBootTest(classes = {
-    CasConsentJdbcConfiguration.class,
-    CasHibernateJpaConfiguration.class,
+    CasConsentJdbcAutoConfiguration.class,
+    CasHibernateJpaAutoConfiguration.class,
     BaseConsentRepositoryTests.SharedTestConfiguration.class
 }, properties = {
     "cas.jdbc.show-sql=false",

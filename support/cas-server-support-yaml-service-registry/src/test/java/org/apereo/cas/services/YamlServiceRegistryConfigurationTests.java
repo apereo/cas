@@ -4,7 +4,7 @@ import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.YamlServiceRegistryConfiguration;
+import org.apereo.cas.config.YamlServiceRegistryAutoConfiguration;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
     WebMvcAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
-    YamlServiceRegistryConfiguration.class
+    YamlServiceRegistryAutoConfiguration.class
 },
     properties = "cas.service-registry.yaml.location=classpath:/services")
 @Tag("FileSystem")

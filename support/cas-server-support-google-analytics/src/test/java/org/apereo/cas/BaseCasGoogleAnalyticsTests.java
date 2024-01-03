@@ -10,7 +10,7 @@ import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasGoogleAnalyticsConfiguration;
+import org.apereo.cas.config.CasGoogleAnalyticsAutoConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
@@ -36,7 +36,7 @@ public abstract class BaseCasGoogleAnalyticsTests {
     })
     @SpringBootConfiguration
     @Import({
-        CasGoogleAnalyticsConfiguration.class,
+        CasGoogleAnalyticsAutoConfiguration.class,
         CasWebflowAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,

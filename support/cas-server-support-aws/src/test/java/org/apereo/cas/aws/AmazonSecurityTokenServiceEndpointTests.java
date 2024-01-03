@@ -1,7 +1,7 @@
 package org.apereo.cas.aws;
 
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
-import org.apereo.cas.config.AmazonCoreConfiguration;
+import org.apereo.cas.config.AmazonCoreAutoConfiguration;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.config.CasCoreRestAutoConfiguration;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
@@ -42,7 +42,7 @@ class AmazonSecurityTokenServiceEndpointTests {
         "management.endpoint.awsSts.enabled=true"
     })
     @Import({
-        AmazonCoreConfiguration.class,
+        AmazonCoreAutoConfiguration.class,
         CasCoreRestAutoConfiguration.class,
         CasAuthenticationEventExecutionPlanTestConfiguration.class
     })

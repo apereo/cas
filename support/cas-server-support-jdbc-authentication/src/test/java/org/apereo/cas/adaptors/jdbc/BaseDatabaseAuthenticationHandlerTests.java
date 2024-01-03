@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.jdbc;
 
-import org.apereo.cas.config.CasHibernateJpaConfiguration;
+import org.apereo.cas.config.CasHibernateJpaAutoConfiguration;
 import org.apereo.cas.config.DatabaseAuthenticationTestConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
@@ -17,7 +17,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasHibernateJpaConfiguration.class,
+    CasHibernateJpaAutoConfiguration.class,
     DatabaseAuthenticationTestConfiguration.class
 })
 public abstract class BaseDatabaseAuthenticationHandlerTests {

@@ -1,16 +1,14 @@
 package org.apereo.cas.qr.web.flow;
 
-import org.apereo.cas.config.QRAuthenticationConfiguration;
+import org.apereo.cas.config.QRAuthenticationAutoConfiguration;
 import org.apereo.cas.config.TokenCoreConfiguration;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Import;
 import org.springframework.webflow.engine.Flow;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -20,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Import({
-    QRAuthenticationConfiguration.class,
+    QRAuthenticationAutoConfiguration.class,
     TokenCoreConfiguration.class
 })
 @Tag("WebflowConfig")

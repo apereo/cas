@@ -9,8 +9,8 @@ import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasHibernateJpaConfiguration;
-import org.apereo.cas.config.CasJdbcAuditConfiguration;
+import org.apereo.cas.config.CasHibernateJpaAutoConfiguration;
+import org.apereo.cas.config.CasJdbcAuditAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.thread.Cleanable;
@@ -44,8 +44,8 @@ import java.util.stream.IntStream;
 @SpringBootTest(
     classes = {
         CasCoreAuditAutoConfiguration.class,
-        CasJdbcAuditConfiguration.class,
-        CasHibernateJpaConfiguration.class,
+        CasJdbcAuditAutoConfiguration.class,
+        CasHibernateJpaAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,

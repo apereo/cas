@@ -19,7 +19,7 @@ import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.config.X509AuthenticationConfiguration;
 import org.apereo.cas.config.X509AuthenticationWebflowAutoConfiguration;
-import org.apereo.cas.config.X509CertificateExtractorConfiguration;
+import org.apereo.cas.config.X509CertificateExtractorAutoConfiguration;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -58,7 +58,7 @@ import org.springframework.webflow.execution.Action;
     CasCoreNotificationsAutoConfiguration.class,
     X509AuthenticationWebflowAutoConfiguration.class,
     X509AuthenticationConfiguration.class,
-    X509CertificateExtractorConfiguration.class
+    X509CertificateExtractorAutoConfiguration.class
 },
     properties = {
         "cas.authn.attribute-repository.stub.attributes.uid=uid",

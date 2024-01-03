@@ -9,7 +9,7 @@ import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.PasswordManagementConfiguration;
+import org.apereo.cas.config.PasswordManagementAutoConfiguration;
 import org.apereo.cas.config.RestPasswordManagementAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordChangeRequest;
@@ -57,7 +57,7 @@ class RestPasswordManagementServiceTests {
     @SpringBootConfiguration
     @Import({
         RestPasswordManagementAutoConfiguration.class,
-        PasswordManagementConfiguration.class,
+        PasswordManagementAutoConfiguration.class,
         RestTemplateAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,

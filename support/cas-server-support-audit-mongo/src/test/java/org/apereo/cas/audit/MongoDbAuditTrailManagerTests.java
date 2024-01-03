@@ -9,7 +9,7 @@ import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasSupportMongoDbAuditConfiguration;
+import org.apereo.cas.config.CasSupportMongoDbAuditAutoConfiguration;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
 import org.apereo.inspektr.audit.AuditTrailManager;
@@ -30,7 +30,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CasCoreAutoConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,
     CasCoreAuditAutoConfiguration.class,
-    CasSupportMongoDbAuditConfiguration.class,
+    CasSupportMongoDbAuditAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasCoreServicesAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
