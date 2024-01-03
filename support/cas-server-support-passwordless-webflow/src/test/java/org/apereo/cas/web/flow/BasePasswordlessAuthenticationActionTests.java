@@ -56,7 +56,6 @@ import org.springframework.context.annotation.Bean;
     CasCookieAutoConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,
     CasCoreServicesAutoConfiguration.class,
-    CasCoreTicketsAutoConfiguration.class,
     CasCoreAuditAutoConfiguration.class,
     CasCoreMultifactorAuthenticationAutoConfiguration.class,
     CasMultifactorAuthenticationWebflowAutoConfiguration.class,
