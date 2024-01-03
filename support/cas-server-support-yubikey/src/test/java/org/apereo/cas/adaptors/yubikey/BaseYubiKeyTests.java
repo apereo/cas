@@ -10,13 +10,9 @@ import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
-import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
-import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
-import org.apereo.cas.config.CasCoreTicketsConfiguration;
-import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
+import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasThemesConfiguration;
@@ -73,12 +69,10 @@ public abstract class BaseYubiKeyTests {
         CasWebflowAutoConfiguration.class,
         CasThemesConfiguration.class,
         CasCoreAuthenticationConfiguration.class,
-        CasCoreTicketsConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
         CasCoreMultifactorAuthenticationConfiguration.class,
         CasMultifactorAuthenticationWebflowAutoConfiguration.class,
-                CasCoreAuthenticationPrincipalConfiguration.class,
-        CasCoreTicketIdGeneratorsConfiguration.class,
+        CasCoreAuthenticationPrincipalConfiguration.class,
         CasCoreAutoConfiguration.class,
         CasPersonDirectoryTestConfiguration.class,
         CasCoreAuthenticationSupportConfiguration.class,
@@ -87,9 +81,7 @@ public abstract class BaseYubiKeyTests {
         CasCoreUtilAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
-        CasCoreTicketCatalogConfiguration.class,
-        CasCoreTicketsSerializationConfiguration.class,
-        CasDefaultServiceTicketIdGeneratorsConfiguration.class,
+        CasCoreTicketsAutoConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class
     })
     public static class SharedTestConfiguration {

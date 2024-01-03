@@ -15,12 +15,12 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.autoconfigure.tracing.ConditionalOnEnabledTracing;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.Ordered;
 
@@ -36,11 +36,11 @@ import org.springframework.core.Ordered;
     CasFeatureModule.FeatureCatalog.TicketRegistry
 })
 @ConditionalOnBean(name = ExecutableObserver.BEAN_NAME)
-@AutoConfiguration
+@Configuration(proxyBeanMethods = false)
 @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
 @Lazy(false)
 @ConditionalOnEnabledTracing
-public class CasCoreTicketsMonitoringConfiguration {
+class CasCoreTicketsMonitoringConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "ticketRegistryMonitoringAspect")
