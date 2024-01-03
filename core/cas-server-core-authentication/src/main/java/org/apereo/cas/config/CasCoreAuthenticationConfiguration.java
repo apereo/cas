@@ -27,7 +27,6 @@ import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -51,8 +50,8 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Authentication)
-@AutoConfiguration(after = CasCoreServicesConfiguration.class)
-public class CasCoreAuthenticationConfiguration {
+@Configuration(proxyBeanMethods = false)
+class CasCoreAuthenticationConfiguration {
 
     @Configuration(value = "CasCoreAuthenticationBaseConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)

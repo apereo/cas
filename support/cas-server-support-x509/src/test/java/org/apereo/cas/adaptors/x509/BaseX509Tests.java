@@ -1,11 +1,6 @@
 package org.apereo.cas.adaptors.x509;
 
-import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
@@ -46,11 +41,7 @@ public abstract class BaseX509Tests {
         X509AuthenticationConfiguration.class,
         X509CertificateExtractorConfiguration.class,
         X509AuthenticationComponentSerializationConfiguration.class,
-        CasCoreAuthenticationPrincipalConfiguration.class,
-        CasCoreAuthenticationPolicyConfiguration.class,
-        CasCoreAuthenticationMetadataConfiguration.class,
-        CasCoreAuthenticationSupportConfiguration.class,
-        CasCoreAuthenticationHandlersConfiguration.class,
+        CasCoreAuthenticationAutoConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
@@ -58,7 +49,6 @@ public abstract class BaseX509Tests {
         CasPersonDirectoryStubConfiguration.class,
         CasPersonDirectoryJsonConfiguration.class,
         CasPersonDirectoryGroovyConfiguration.class,
-        CasCoreAuthenticationConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasCoreServicesAuthenticationConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,

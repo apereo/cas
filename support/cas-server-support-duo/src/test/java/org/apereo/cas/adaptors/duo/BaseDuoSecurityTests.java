@@ -8,9 +8,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.config.CasCookieAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
@@ -116,15 +114,13 @@ public abstract class BaseDuoSecurityTests {
         CasCoreServicesConfiguration.class,
         CasWebflowAutoConfiguration.class,
         CasThemesConfiguration.class,
-        CasCoreAuthenticationConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
         CasCoreMultifactorAuthenticationConfiguration.class,
         CasMultifactorAuthenticationWebflowAutoConfiguration.class,
-        CasCoreAuthenticationPrincipalConfiguration.class,
+        CasCoreAuthenticationAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
         CasPersonDirectoryTestConfiguration.class,
-        CasCoreAuthenticationSupportConfiguration.class,
         CasCookieAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,

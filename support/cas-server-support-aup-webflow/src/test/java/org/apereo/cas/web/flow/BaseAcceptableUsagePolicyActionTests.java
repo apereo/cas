@@ -4,9 +4,7 @@ import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
 import org.apereo.cas.config.CasAcceptableUsagePolicyWebflowConfiguration;
 import org.apereo.cas.config.CasCookieAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
@@ -49,9 +47,7 @@ import org.springframework.context.ConfigurableApplicationContext;
     CasCoreLogoutAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
-    CasCoreAuthenticationPrincipalConfiguration.class,
-    CasCoreAuthenticationConfiguration.class,
-    CasCoreAuthenticationSupportConfiguration.class,
+    CasCoreAuthenticationAutoConfiguration.class,
     CasPersonDirectoryTestConfiguration.class
 })
 public abstract class BaseAcceptableUsagePolicyActionTests {

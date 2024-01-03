@@ -8,9 +8,7 @@ import org.apereo.cas.config.CasAcceptableUsagePolicyWebflowConfiguration;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.config.CasCookieAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
@@ -131,10 +129,8 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
         CasWebApplicationServiceFactoryConfiguration.class,
         CasCoreMultifactorAuthenticationConfiguration.class,
         CasMultifactorAuthenticationWebflowAutoConfiguration.class,
-        CasCoreAuthenticationConfiguration.class,
         CasAuthenticationEventExecutionPlanTestConfiguration.class,
-        CasCoreAuthenticationSupportConfiguration.class,
-        CasCoreAuthenticationPrincipalConfiguration.class,
+        CasCoreAuthenticationAutoConfiguration.class,
         CasAcceptableUsagePolicyWebflowConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
         CasWebflowAutoConfiguration.class,

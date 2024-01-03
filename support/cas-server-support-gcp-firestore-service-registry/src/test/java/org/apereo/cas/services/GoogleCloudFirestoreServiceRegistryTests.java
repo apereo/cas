@@ -1,6 +1,6 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
@@ -45,7 +45,7 @@ import static org.mockito.Mockito.*;
     CasCoreUtilAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
-    CasCoreAuthenticationMetadataConfiguration.class,
+    CasCoreAuthenticationAutoConfiguration.class,
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
     MailSenderAutoConfiguration.class,
