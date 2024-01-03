@@ -15,12 +15,12 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.autoconfigure.tracing.ConditionalOnEnabledTracing;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.Ordered;
@@ -33,7 +33,7 @@ import jakarta.servlet.http.HttpServletRequest;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@AutoConfiguration
+@Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = {
     CasFeatureModule.FeatureCatalog.Monitoring,
@@ -44,7 +44,7 @@ import jakarta.servlet.http.HttpServletRequest;
 @EnableAspectJAutoProxy
 @Lazy(false)
 @ConditionalOnEnabledTracing
-public class CasWebflowMonitoringConfiguration {
+class CasWebflowMonitoringConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "casWebflowMonitoringAspect")
     public CasWebflowMonitoringAspect casWebflowMonitoringAspect(final ObjectProvider<ExecutableObserver> observer) {
