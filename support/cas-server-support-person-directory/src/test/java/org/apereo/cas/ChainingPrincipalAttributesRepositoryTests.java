@@ -3,7 +3,7 @@ package org.apereo.cas;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.ChainingPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.services.ServicesManager;
@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
     WebMvcAutoConfiguration.class,
     ChainingPrincipalAttributesRepositoryTests.ChainingPrincipalAttributesRepositoryTestConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
-    CasCoreUtilConfiguration.class
+    CasCoreUtilAutoConfiguration.class
 })
 class ChainingPrincipalAttributesRepositoryTests {
     @Autowired

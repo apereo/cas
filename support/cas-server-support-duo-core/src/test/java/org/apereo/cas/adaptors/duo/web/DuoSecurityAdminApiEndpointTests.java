@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.duo.web;
 
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.duo.authn.UniversalPromptDuoSecurityAuthenticationService;
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.util.CollectionUtils;

@@ -4,7 +4,7 @@ import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 
@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
     WebMvcAutoConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
-    CasCoreUtilConfiguration.class,
+    CasCoreUtilAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class
 }, properties = "cas.access-strategy.groovy.location=classpath:ServiceAccessStrategy.groovy")

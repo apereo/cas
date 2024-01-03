@@ -3,7 +3,7 @@ package org.apereo.cas.aws.s3.services;
 import org.apereo.cas.config.AmazonS3ServiceRegistryConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.services.AbstractServiceRegistryTests;
@@ -39,7 +39,7 @@ import static org.mockito.Mockito.*;
     CasCoreWebAutoConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreServicesConfiguration.class,
-    CasCoreUtilConfiguration.class,
+    CasCoreUtilAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
     RefreshAutoConfiguration.class
 }, properties = {

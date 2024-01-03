@@ -2,7 +2,7 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.YamlServiceRegistryConfiguration;
@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasWebApplicationServiceFactoryConfiguration.class,
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasCoreUtilConfiguration.class,
+    CasCoreUtilAutoConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
     YamlServiceRegistryConfiguration.class

@@ -13,7 +13,7 @@ import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
@@ -130,7 +130,7 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
     @Import({
         CasCoreConfiguration.class,
         CasCoreAuthenticationPrincipalConfiguration.class,
-        CasCoreUtilConfiguration.class,
+        CasCoreUtilAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasRegisteredServicesTestConfiguration.class,

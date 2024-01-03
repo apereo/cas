@@ -1,6 +1,7 @@
 package org.apereo.cas.cassandra;
 
 import org.apereo.cas.authentication.CasSSLContext;
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.val;

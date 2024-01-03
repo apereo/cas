@@ -1,6 +1,6 @@
 package org.apereo.cas.monitor;
 
-import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.LdapMonitorConfiguration;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     LdapMonitorConfiguration.class,
-    CasCoreUtilConfiguration.class,
+    CasCoreUtilAutoConfiguration.class,
     RefreshAutoConfiguration.class
 },
     properties = {

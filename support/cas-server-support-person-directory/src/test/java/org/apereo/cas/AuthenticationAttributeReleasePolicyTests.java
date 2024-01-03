@@ -17,7 +17,7 @@ import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreMonitorAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
@@ -58,7 +58,7 @@ import static org.mockito.Mockito.*;
     ObservationAutoConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
     CasCoreServicesConfiguration.class,
-    CasCoreUtilConfiguration.class,
+    CasCoreUtilAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class,
     CasCoreMonitorAutoConfiguration.class,

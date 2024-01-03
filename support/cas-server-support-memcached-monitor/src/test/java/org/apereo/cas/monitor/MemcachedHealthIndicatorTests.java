@@ -1,6 +1,6 @@
 package org.apereo.cas.monitor;
 
-import org.apereo.cas.config.CasCoreUtilSerializationConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.MemcachedMonitorConfiguration;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.val;
@@ -33,7 +33,7 @@ import static org.mockito.Mockito.*;
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
     MemcachedMonitorConfiguration.class,
-    CasCoreUtilSerializationConfiguration.class
+    CasCoreUtilAutoConfiguration.class
 }, properties = {
     "cas.monitor.memcached.servers=localhost:11212",
     "cas.monitor.memcached.failure-mode=Redistribute",

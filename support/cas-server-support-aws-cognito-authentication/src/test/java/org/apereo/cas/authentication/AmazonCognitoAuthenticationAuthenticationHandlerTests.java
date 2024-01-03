@@ -8,7 +8,7 @@ import org.apereo.cas.config.AmazonCognitoAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
@@ -64,7 +64,7 @@ import static org.mockito.Mockito.*;
     CasCoreWebAutoConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasRegisteredServicesTestConfiguration.class,
-    CasCoreUtilConfiguration.class,
+    CasCoreUtilAutoConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     AmazonCognitoAuthenticationConfiguration.class
