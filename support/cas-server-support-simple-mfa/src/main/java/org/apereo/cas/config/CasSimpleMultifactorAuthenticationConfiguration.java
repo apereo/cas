@@ -67,8 +67,8 @@ import java.io.Serial;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SimpleMFA)
-@AutoConfiguration
-public class CasSimpleMultifactorAuthenticationConfiguration {
+@Configuration(proxyBeanMethods = false)
+class CasSimpleMultifactorAuthenticationConfiguration {
     private static final int WEBFLOW_CONFIGURER_ORDER = 100;
 
     private static final BeanCondition CONDITION_BUCKET4J_ENABLED = BeanCondition.on("cas.authn.mfa.simple.bucket4j.enabled").isTrue();
@@ -287,42 +287,6 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
             @Qualifier("casSimpleMultifactorAuthenticationTicketFactory")
             final CasSimpleMultifactorAuthenticationTicketFactory casSimpleMultifactorAuthenticationTicketFactory) {
             return () -> casSimpleMultifactorAuthenticationTicketFactory;
-        }
-    }
-
-    @ConditionalOnClass(MultifactorAuthnTrustConfiguration.class)
-    @Configuration(value = "CasSimpleMultifactorTrustConfiguration", proxyBeanMethods = false)
-    @DependsOn("casSimpleMultifactorAuthenticationTicketFactoryConfigurer")
-    public static class CasSimpleMultifactorTrustConfiguration {
-
-        @ConditionalOnMissingBean(name = "mfaSimpleMultifactorTrustWebflowConfigurer")
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public CasWebflowConfigurer mfaSimpleMultifactorTrustWebflowConfigurer(
-            @Qualifier("mfaSimpleAuthenticatorFlowRegistry")
-            final FlowDefinitionRegistry mfaSimpleAuthenticatorFlowRegistry,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
-            final FlowBuilderServices flowBuilderServices,
-            final CasConfigurationProperties casProperties,
-            final ConfigurableApplicationContext applicationContext) {
-            val cfg = new CasSimpleMultifactorTrustedDeviceWebflowConfigurer(flowBuilderServices,
-                loginFlowDefinitionRegistry,
-                mfaSimpleAuthenticatorFlowRegistry,
-                applicationContext, casProperties,
-                MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
-            cfg.setOrder(WEBFLOW_CONFIGURER_ORDER + 1);
-            return cfg;
-        }
-
-        @ConditionalOnMissingBean(name = "casSimpleMultifactorTrustWebflowExecutionPlanConfigurer")
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public CasWebflowExecutionPlanConfigurer casSimpleMultifactorTrustWebflowExecutionPlanConfigurer(
-            @Qualifier("mfaSimpleMultifactorTrustWebflowConfigurer")
-            final CasWebflowConfigurer mfaSimpleMultifactorTrustWebflowConfigurer) {
-            return plan -> plan.registerWebflowConfigurer(mfaSimpleMultifactorTrustWebflowConfigurer);
         }
     }
 

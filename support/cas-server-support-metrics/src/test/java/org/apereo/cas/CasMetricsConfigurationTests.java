@@ -1,6 +1,6 @@
 package org.apereo.cas;
 
-import org.apereo.cas.config.CasMetricsConfiguration;
+import org.apereo.cas.config.CasMetricsAutoConfiguration;
 import org.apereo.cas.config.CasMetricsRepositoryConfiguration;
 import io.micrometer.core.aop.TimedAspect;
 import org.junit.jupiter.api.Tag;
@@ -24,8 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     MetricsAutoConfiguration.class,
     SimpleMetricsExportAutoConfiguration.class,
-    CasMetricsConfiguration.class,
-    CasMetricsRepositoryConfiguration.class,
+    CasMetricsAutoConfiguration.class,
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
     AopAutoConfiguration.class
