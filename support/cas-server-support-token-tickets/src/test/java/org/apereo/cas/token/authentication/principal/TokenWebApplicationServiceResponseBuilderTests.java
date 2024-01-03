@@ -20,7 +20,7 @@ import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
-import org.apereo.cas.config.TokenCoreConfiguration;
+import org.apereo.cas.config.TokenCoreAutoConfiguration;
 import org.apereo.cas.config.TokenTicketsAutoConfiguration;
 import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
@@ -57,7 +57,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreTicketsAutoConfiguration.class,
     CasCoreServicesAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
-    TokenCoreConfiguration.class,
+    TokenCoreAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
     CasPersonDirectoryConfiguration.class,
     CasPersonDirectoryStubConfiguration.class,
