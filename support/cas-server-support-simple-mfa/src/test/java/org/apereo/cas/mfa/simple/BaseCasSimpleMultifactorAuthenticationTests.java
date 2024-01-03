@@ -15,12 +15,7 @@ import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguratio
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
-import org.apereo.cas.config.CasSimpleMultifactorAuthenticationComponentSerializationConfiguration;
-import org.apereo.cas.config.CasSimpleMultifactorAuthenticationConfiguration;
-import org.apereo.cas.config.CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration;
-import org.apereo.cas.config.CasSimpleMultifactorAuthenticationMultifactorProviderBypassConfiguration;
-import org.apereo.cas.config.CasSimpleMultifactorAuthenticationRestConfiguration;
-import org.apereo.cas.config.CasSimpleMultifactorAuthenticationTicketCatalogConfiguration;
+import org.apereo.cas.config.CasSimpleMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.config.MultifactorAuthnTrustWebflowConfiguration;
@@ -59,14 +54,9 @@ public abstract class BaseCasSimpleMultifactorAuthenticationTests {
         MultifactorAuthnTrustConfiguration.class,
         MultifactorAuthnTrustedDeviceFingerprintConfiguration.class,
         MultifactorAuthnTrustWebflowConfiguration.class,
-        CasSimpleMultifactorAuthenticationConfiguration.CasSimpleMultifactorTrustConfiguration.class,
-
-        CasSimpleMultifactorAuthenticationComponentSerializationConfiguration.class,
-        CasSimpleMultifactorAuthenticationConfiguration.class,
-        CasSimpleMultifactorAuthenticationRestConfiguration.class,
-        CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration.class,
-        CasSimpleMultifactorAuthenticationTicketCatalogConfiguration.class,
-        CasSimpleMultifactorAuthenticationMultifactorProviderBypassConfiguration.class,
+        
+        CasSimpleMultifactorAuthenticationAutoConfiguration.CasSimpleMultifactorTrustConfiguration.class,
+        CasSimpleMultifactorAuthenticationAutoConfiguration.class,
 
         CasCoreLogoutAutoConfiguration.class,
         CasWebflowAutoConfiguration.class,
