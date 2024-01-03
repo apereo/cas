@@ -12,10 +12,7 @@ import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
-import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
-import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
-import org.apereo.cas.config.CasCoreTicketsConfiguration;
-import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
+import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
@@ -39,7 +36,6 @@ import org.springframework.context.ConfigurableApplicationContext;
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
     CasAcceptableUsagePolicyWebflowConfiguration.class,
-    CasCoreTicketsConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasWebflowAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class,
@@ -47,17 +43,15 @@ import org.springframework.context.ConfigurableApplicationContext;
     CasCoreServicesConfiguration.class,
     CasCookieAutoConfiguration.class,
     CasCoreAuditAutoConfiguration.class,
-        CasCoreMultifactorAuthenticationConfiguration.class,
+    CasCoreMultifactorAuthenticationConfiguration.class,
     CasMultifactorAuthenticationWebflowAutoConfiguration.class,
     CasCoreAutoConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,
-    CasCoreTicketCatalogConfiguration.class,
-    CasCoreTicketsSerializationConfiguration.class,
+    CasCoreTicketsAutoConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
-    CasCoreTicketIdGeneratorsConfiguration.class,
     CasPersonDirectoryTestConfiguration.class
 })
 public abstract class BaseAcceptableUsagePolicyActionTests {

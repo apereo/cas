@@ -17,13 +17,9 @@ import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
-import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
-import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
-import org.apereo.cas.config.CasCoreTicketsConfiguration;
-import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
+import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
@@ -106,11 +102,7 @@ public abstract class BaseWebflowConfigurerTests {
         CasCoreAuthenticationPolicyConfiguration.class,
         CasCoreAuthenticationPrincipalConfiguration.class,
         CasCoreAuthenticationSupportConfiguration.class,
-        CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-        CasCoreTicketsConfiguration.class,
-        CasCoreTicketCatalogConfiguration.class,
-        CasCoreTicketIdGeneratorsConfiguration.class,
-        CasCoreTicketsSerializationConfiguration.class,
+        CasCoreTicketsAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
         CasWebflowAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
@@ -119,7 +111,7 @@ public abstract class BaseWebflowConfigurerTests {
         CasCoreWebAutoConfiguration.class,
         CasCookieAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
-                CasCoreMultifactorAuthenticationConfiguration.class,
+        CasCoreMultifactorAuthenticationConfiguration.class,
         CasCoreMultifactorAuthenticationAuditConfiguration.class,
         CasMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,

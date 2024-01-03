@@ -10,8 +10,7 @@ import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
-import org.apereo.cas.config.CasCoreTicketsConfiguration;
-import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
+import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
@@ -136,9 +135,8 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
         CasCoreAuditAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,
-                GeoLocationServiceTestConfiguration.class,
-        CasCoreTicketsConfiguration.class,
-        CasCoreTicketsSerializationConfiguration.class,
+        GeoLocationServiceTestConfiguration.class,
+        CasCoreTicketsAutoConfiguration.class,
         MultifactorAuthnTrustWebflowConfiguration.class,
         MultifactorAuthnTrustConfiguration.class,
         MultifactorAuthnTrustedDeviceFingerprintConfiguration.class

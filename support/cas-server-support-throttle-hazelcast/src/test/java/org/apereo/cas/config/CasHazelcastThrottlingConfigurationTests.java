@@ -29,10 +29,10 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreUtilAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
     CasCoreServicesConfiguration.class,
-    CasCoreTicketsConfiguration.class,
-    CasCoreTicketCatalogConfiguration.class,
-    CasCoreTicketsSerializationConfiguration.class,
-    CasCoreTicketIdGeneratorsConfiguration.class,
+    CasCoreTicketsAutoConfiguration.class,
+    CasCoreTicketsAutoConfiguration.class,
+    CasCoreTicketsAutoConfiguration.class,
+    CasCoreTicketsAutoConfiguration.class,
     CasHazelcastThrottlingConfiguration.class
 })
 @Tag("Hazelcast")
