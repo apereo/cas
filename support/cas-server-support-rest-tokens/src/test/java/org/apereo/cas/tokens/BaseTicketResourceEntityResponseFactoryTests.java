@@ -20,7 +20,7 @@ import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasRestAutoConfiguration;
 import org.apereo.cas.config.CasRestTokensAutoConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
-import org.apereo.cas.config.TokenCoreConfiguration;
+import org.apereo.cas.config.TokenCoreAutoConfiguration;
 import org.apereo.cas.rest.factory.ServiceTicketResourceEntityResponseFactory;
 import org.apereo.cas.rest.factory.TicketGrantingTicketResourceEntityResponseFactory;
 import org.apereo.cas.services.RegisteredService;
@@ -49,7 +49,7 @@ import java.util.List;
     CasCoreRestAutoConfiguration.class,
     CasRestTokensAutoConfiguration.class,
     CasRestAutoConfiguration.class,
-    TokenCoreConfiguration.class,
+    TokenCoreAutoConfiguration.class,
     CasCoreAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,
