@@ -7,11 +7,10 @@ import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.ExternalShibbolethIdPAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -46,10 +45,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
+    CasCoreServicesAutoConfiguration.class,
     ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategyTests.ShibbolethServicesTestConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
-    CasCoreServicesConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,

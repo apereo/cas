@@ -2,10 +2,9 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CosmosDbServiceRegistryConfiguration;
 import org.apereo.cas.cosmosdb.CosmosDbObjectFactory;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
@@ -31,10 +30,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Azure")
 @SpringBootTest(classes = {
-    CasCoreServicesConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
+    CasCoreServicesAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,
     RefreshAutoConfiguration.class,

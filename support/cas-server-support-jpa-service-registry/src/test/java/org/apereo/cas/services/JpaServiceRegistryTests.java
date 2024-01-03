@@ -1,11 +1,10 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasHibernateJpaConfiguration;
-import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.JpaServiceRegistryConfiguration;
 import lombok.Getter;
 import lombok.val;
@@ -35,11 +34,10 @@ import static org.junit.jupiter.api.Assertions.*;
     AopAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
     JpaServiceRegistryConfiguration.class,
     CasHibernateJpaConfiguration.class,
-    CasCoreServicesConfiguration.class
+    CasCoreServicesAutoConfiguration.class
 },
     properties = "cas.jdbc.show-sql=false")
 @Tag("JDBC")

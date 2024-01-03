@@ -10,7 +10,7 @@ import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreRestAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
@@ -19,7 +19,6 @@ import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasRestConfiguration;
 import org.apereo.cas.config.CasRestTokensConfiguration;
-import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.config.TokenCoreConfiguration;
 import org.apereo.cas.rest.factory.ServiceTicketResourceEntityResponseFactory;
@@ -53,7 +52,6 @@ import java.util.List;
     TokenCoreConfiguration.class,
     CasCoreAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
-    CasCoreServicesConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class,
@@ -62,7 +60,7 @@ import java.util.List;
     CasCoreAuthenticationAutoConfiguration.class,
     CasRegisteredServicesTestConfiguration.class,
     CasAuthenticationEventExecutionPlanTestConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
+    CasCoreServicesAutoConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,
     CasMultifactorAuthenticationWebflowAutoConfiguration.class,
     CasWebflowAutoConfiguration.class,

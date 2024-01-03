@@ -11,7 +11,7 @@ import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
@@ -19,7 +19,6 @@ import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguratio
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
-import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.config.TokenCoreConfiguration;
 import org.apereo.cas.config.TokenTicketsConfiguration;
@@ -56,11 +55,10 @@ import static org.junit.jupiter.api.Assertions.*;
     MailSenderAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
+    CasCoreServicesAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     TokenCoreConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
-    CasCoreServicesConfiguration.class,
     CasPersonDirectoryConfiguration.class,
     CasPersonDirectoryStubConfiguration.class,
     CasCoreWebAutoConfiguration.class,

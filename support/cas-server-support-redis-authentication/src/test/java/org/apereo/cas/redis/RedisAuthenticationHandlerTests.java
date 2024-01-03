@@ -8,14 +8,12 @@ import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
-import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.RedisAuthenticationConfiguration;
 import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.util.CollectionUtils;
@@ -47,12 +45,10 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = {
     RedisAuthenticationConfiguration.class,
-    CasCoreServicesAuthenticationConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
-    CasCoreServicesConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
+    CasCoreServicesAutoConfiguration.class,
     CasPersonDirectoryConfiguration.class,
     CasPersonDirectoryStubConfiguration.class,
     CasCoreWebAutoConfiguration.class,

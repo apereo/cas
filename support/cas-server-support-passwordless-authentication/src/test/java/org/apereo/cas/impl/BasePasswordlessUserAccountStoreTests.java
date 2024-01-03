@@ -6,15 +6,13 @@ import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasThemesConfiguration;
-import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.config.PasswordlessAuthenticationConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -47,15 +45,13 @@ public abstract class BasePasswordlessUserAccountStoreTests {
     @Import({
         PasswordlessAuthenticationConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
         CasMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasCoreMultifactorAuthenticationConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasPersonDirectoryTestConfiguration.class,
         CasCoreWebAutoConfiguration.class,
-        CasCoreServicesAuthenticationConfiguration.class,
-        CasCoreServicesConfiguration.class,
+        CasCoreServicesAutoConfiguration.class,
         CasWebflowAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,

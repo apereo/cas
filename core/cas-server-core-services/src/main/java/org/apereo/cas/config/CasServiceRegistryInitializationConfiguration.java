@@ -27,7 +27,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
@@ -68,8 +67,8 @@ import java.util.stream.Collectors;
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 @EnableAsync(proxyTargetClass = false)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.ServiceRegistry)
-@AutoConfiguration(after = CasCoreServicesConfiguration.class)
-public class CasServiceRegistryInitializationConfiguration {
+@Configuration(proxyBeanMethods = false)
+class CasServiceRegistryInitializationConfiguration {
 
     private static final BeanCondition CONDITION = BeanCondition.on("cas.service-registry.core.init-from-json").isTrue();
 

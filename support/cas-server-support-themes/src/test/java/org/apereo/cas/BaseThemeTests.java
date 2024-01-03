@@ -4,14 +4,13 @@ import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasThemesConfiguration;
-import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.services.ServicesManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,14 +56,13 @@ public abstract class BaseThemeTests {
     @Import({
         CasThemesConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
-        CasCoreServicesConfiguration.class,
+        CasCoreServicesAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasPersonDirectoryConfiguration.class,
         CasPersonDirectoryStubConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
         CasCoreAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class
     })

@@ -2,10 +2,9 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.DynamoDbServiceRegistryConfiguration;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
@@ -27,10 +26,9 @@ import software.amazon.awssdk.core.SdkSystemSetting;
  */
 @SpringBootTest(classes = {
     DynamoDbServiceRegistryConfiguration.class,
-    CasCoreServicesConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
+    CasCoreServicesAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,
     WebMvcAutoConfiguration.class,

@@ -6,12 +6,11 @@ import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
-import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.util.RandomUtils;
 import lombok.val;
@@ -54,8 +53,7 @@ public abstract class BaseAuditConfigurationTests {
         CasCoreAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
-        CasCoreServicesConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
+        CasCoreServicesAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,

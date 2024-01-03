@@ -1,11 +1,10 @@
 package org.apereo.cas.ticket.serialization;
 
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.Ticket;
@@ -34,12 +33,11 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasCoreServicesConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class
+    CasCoreServicesAutoConfiguration.class
 })
 @Tag("Tickets")
 class DefaultTicketStringSerializationManagerTests {

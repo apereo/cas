@@ -63,7 +63,6 @@ import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -99,8 +98,8 @@ import java.util.stream.Collectors;
 @EnableAsync(proxyTargetClass = false)
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.ServiceRegistry)
-@AutoConfiguration
-public class CasCoreServicesConfiguration {
+@Configuration(proxyBeanMethods = false)
+class CasCoreServicesConfiguration {
     @Configuration(value = "CasCoreServicesResponseLocatorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreServicesResponseLocatorConfiguration {

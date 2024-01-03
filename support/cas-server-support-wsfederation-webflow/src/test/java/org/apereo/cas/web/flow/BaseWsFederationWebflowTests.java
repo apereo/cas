@@ -6,14 +6,13 @@ import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
-import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.config.CoreSamlConfiguration;
 import org.apereo.cas.config.WsFedAuthenticationEventExecutionPlanConfiguration;
@@ -43,7 +42,7 @@ class BaseWsFederationWebflowTests {
     @SpringBootConfiguration
     @Import({
         CasWebflowAutoConfiguration.class,
-        CasCoreServicesConfiguration.class,
+        CasCoreServicesAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
@@ -54,7 +53,6 @@ class BaseWsFederationWebflowTests {
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasPersonDirectoryTestConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationConfiguration.class,
         CasMultifactorAuthenticationWebflowAutoConfiguration.class,

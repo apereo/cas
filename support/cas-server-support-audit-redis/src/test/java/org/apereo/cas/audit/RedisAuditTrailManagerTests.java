@@ -5,12 +5,11 @@ import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasSupportRedisAuditConfiguration;
-import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
 import org.apereo.inspektr.audit.AuditTrailManager;
@@ -32,11 +31,10 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CasCoreAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,
-    CasCoreServicesConfiguration.class,
+    CasCoreServicesAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
     CasSupportRedisAuditConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class

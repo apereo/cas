@@ -33,14 +33,13 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
     ObservationAutoConfiguration.class,
-    CasCoreServicesConfiguration.class,
+    CasCoreServicesAutoConfiguration.class,
     CasCoreServicesMonitoringConfigurationTests.CasCoreServicesMonitoringTestConfiguration.class,
     CasCoreMonitorAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
-    CasCoreNotificationsAutoConfiguration.class,
-    CasCoreServicesMonitoringConfiguration.class
+    CasCoreServicesAutoConfiguration.class,
+    CasCoreNotificationsAutoConfiguration.class
 })
 @Tag("RegisteredService")
 @EnableAspectJAutoProxy(proxyTargetClass = false)

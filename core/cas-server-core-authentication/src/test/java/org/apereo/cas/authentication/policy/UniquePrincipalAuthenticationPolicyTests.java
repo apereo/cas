@@ -4,11 +4,10 @@ import org.apereo.cas.authentication.AuthenticationPolicy;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.exceptions.UniquePrincipalRequiredException;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -45,8 +44,7 @@ import static org.mockito.Mockito.*;
     CasCoreWebAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
-    CasCoreServicesConfiguration.class
+    CasCoreServicesAutoConfiguration.class
 })
 @Tag("AuthenticationPolicy")
 class UniquePrincipalAuthenticationPolicyTests {

@@ -7,15 +7,13 @@ import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
-import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.config.GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfiguration;
@@ -231,9 +229,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
         CasCoreTicketsAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
-        CasCoreServicesConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
-        CasCoreServicesAuthenticationConfiguration.class,
+        CasCoreServicesAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasPersonDirectoryConfiguration.class,
         CasPersonDirectoryStubConfiguration.class,

@@ -2,15 +2,13 @@ package org.apereo.cas.aws.s3.services;
 
 import org.apereo.cas.config.AmazonS3ServiceRegistryConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.services.AbstractServiceRegistryTests;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.MethodOrderer;
@@ -23,7 +21,6 @@ import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguratio
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import software.amazon.awssdk.services.s3.S3Client;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -37,8 +34,7 @@ import static org.mockito.Mockito.*;
     AmazonS3ServiceRegistryConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
-    CasCoreServicesConfiguration.class,
+    CasCoreServicesAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
     RefreshAutoConfiguration.class
