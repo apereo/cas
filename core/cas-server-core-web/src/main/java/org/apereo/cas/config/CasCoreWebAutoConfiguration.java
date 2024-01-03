@@ -16,6 +16,6 @@ import org.springframework.context.annotation.Import;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Core)
 @AutoConfiguration
-@Import({CasCoreHttpConfiguration.class, CasCoreWebAutoConfiguration.class})
+@Import({CasCoreHttpConfiguration.class, CasCoreWebConfiguration.class})
 public class CasCoreWebAutoConfiguration {
 }

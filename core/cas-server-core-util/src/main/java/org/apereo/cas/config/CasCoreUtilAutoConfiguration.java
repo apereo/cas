@@ -22,8 +22,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Core)
 @AutoConfiguration
 @Import({
-    CasCoreUtilAutoConfiguration.class,
-    CasCoreUtilAutoConfiguration.class
+    CasCoreUtilConfiguration.class,
+    CasCoreUtilSerializationConfiguration.class
 })
 public class CasCoreUtilAutoConfiguration {
 }

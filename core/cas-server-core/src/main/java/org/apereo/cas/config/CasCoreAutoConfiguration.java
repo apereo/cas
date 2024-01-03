@@ -18,6 +18,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement(proxyTargetClass = false)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Core)
 @AutoConfiguration
-@Import({CasCoreAutoConfiguration.class, CasCoreAuthenticationServiceSelectionStrategyConfiguration.class})
+@Import({CasCoreConfiguration.class, CasCoreAuthenticationServiceSelectionStrategyConfiguration.class})
 public class CasCoreAutoConfiguration {
 }
