@@ -21,7 +21,6 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import lombok.val;
 import org.ldaptive.SearchOperation;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;

@@ -19,7 +19,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -34,8 +33,8 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 5.3.0
  */
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SurrogateAuthentication)
-@AutoConfiguration
-public class SurrogateAuthenticationAuditConfiguration {
+@Configuration(proxyBeanMethods = false)
+class SurrogateAuthenticationAuditConfiguration {
 
     @Configuration(value = "SurrogateAuthenticationAuditPrincipalConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)

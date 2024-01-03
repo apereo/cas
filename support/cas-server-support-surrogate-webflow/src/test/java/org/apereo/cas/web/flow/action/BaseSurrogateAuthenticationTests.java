@@ -17,9 +17,8 @@ import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguratio
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasThemesAutoConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
-import org.apereo.cas.config.SurrogateAuthenticationAuditConfiguration;
-import org.apereo.cas.config.SurrogateAuthenticationConfiguration;
-import org.apereo.cas.config.SurrogateAuthenticationWebflowConfiguration;
+import org.apereo.cas.config.SurrogateAuthenticationAutoConfiguration;
+import org.apereo.cas.config.SurrogateAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -48,13 +47,12 @@ public abstract class BaseSurrogateAuthenticationTests {
     @SpringBootConfiguration
     @Import({
         BaseSurrogateAuthenticationTests.TestAuthenticationConfiguration.class,
-        SurrogateAuthenticationConfiguration.class,
-        SurrogateAuthenticationWebflowConfiguration.class,
+        SurrogateAuthenticationAutoConfiguration.class,
+        SurrogateAuthenticationWebflowAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
-        SurrogateAuthenticationAuditConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasMultifactorAuthenticationWebflowAutoConfiguration.class,

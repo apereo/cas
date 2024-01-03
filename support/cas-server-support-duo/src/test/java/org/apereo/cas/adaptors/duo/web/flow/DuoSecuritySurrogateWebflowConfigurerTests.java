@@ -2,12 +2,9 @@ package org.apereo.cas.adaptors.duo.web.flow;
 
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
-import org.apereo.cas.config.DuoSecurityAuthenticationEventExecutionPlanConfiguration;
-import org.apereo.cas.config.DuoSecurityConfiguration;
-import org.apereo.cas.config.DuoSecurityMultifactorProviderBypassConfiguration;
-import org.apereo.cas.config.SurrogateAuthenticationAuditConfiguration;
-import org.apereo.cas.config.SurrogateAuthenticationConfiguration;
-import org.apereo.cas.config.SurrogateAuthenticationWebflowConfiguration;
+import org.apereo.cas.config.DuoSecurityAutoConfiguration;
+import org.apereo.cas.config.SurrogateAuthenticationAutoConfiguration;
+import org.apereo.cas.config.SurrogateAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
@@ -37,9 +34,8 @@ class DuoSecuritySurrogateWebflowConfigurerTests {
     @Import({
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasMultifactorAuthenticationWebflowAutoConfiguration.class,
-        SurrogateAuthenticationConfiguration.class,
-        SurrogateAuthenticationAuditConfiguration.class,
-        SurrogateAuthenticationWebflowConfiguration.class
+        SurrogateAuthenticationAutoConfiguration.class,
+        SurrogateAuthenticationWebflowAutoConfiguration.class
     })
     static class SharedTestConfiguration {
     }
@@ -64,9 +60,7 @@ class DuoSecuritySurrogateWebflowConfigurerTests {
 
     @Nested
     @Import({
-        DuoSecurityConfiguration.class,
-        DuoSecurityAuthenticationEventExecutionPlanConfiguration.class,
-        DuoSecurityMultifactorProviderBypassConfiguration.class,
+        DuoSecurityAutoConfiguration.class,
         DuoSecuritySurrogateWebflowConfigurerTests.SharedTestConfiguration.class
     })
     @TestPropertySource(properties = {

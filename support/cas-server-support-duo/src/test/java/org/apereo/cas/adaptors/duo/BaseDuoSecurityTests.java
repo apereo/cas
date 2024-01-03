@@ -21,11 +21,7 @@ import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguratio
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasThemesAutoConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
-import org.apereo.cas.config.DuoSecurityAuthenticationEventExecutionPlanConfiguration;
-import org.apereo.cas.config.DuoSecurityComponentSerializationConfiguration;
-import org.apereo.cas.config.DuoSecurityConfiguration;
-import org.apereo.cas.config.DuoSecurityMultifactorProviderBypassConfiguration;
-import org.apereo.cas.config.DuoSecurityRestConfiguration;
+import org.apereo.cas.config.DuoSecurityAutoConfiguration;
 import org.apereo.cas.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.config.MultifactorAuthnTrustWebflowConfiguration;
 import org.apereo.cas.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration;
@@ -103,11 +99,7 @@ public abstract class BaseDuoSecurityTests {
         MultifactorAuthnTrustedDeviceFingerprintConfiguration.class,
         MultifactorAuthnTrustWebflowConfiguration.class,
 
-        DuoSecurityAuthenticationEventExecutionPlanConfiguration.class,
-        DuoSecurityComponentSerializationConfiguration.class,
-        DuoSecurityMultifactorProviderBypassConfiguration.class,
-        DuoSecurityRestConfiguration.class,
-        DuoSecurityConfiguration.class,
+        DuoSecurityAutoConfiguration.class,
 
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
