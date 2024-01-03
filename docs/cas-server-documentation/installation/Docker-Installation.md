@@ -13,10 +13,20 @@ to the Apereo CAS repository on [Docker Hub](https://hub.docker.com/r/apereo/cas
 Images can be pulled down via the following command:
 
 ```bash
-docker pull apereo/cas:v[A.B.C]
+docker pull apereo/cas
 ```
 
 ...where `[A.B.C]` represents the image tag that is mapped to the CAS server version.
+        
+Then:
+
+```bash
+docker run --rm \
+  -e SERVER_SSL_ENABLED=false -e SERVER_PORT=8080 \
+  -p 8080:8080 --name casserver apereo/cas
+```
+
+CAS should be running on http://localhost:8080/cas.
 
 ## Overview
 
