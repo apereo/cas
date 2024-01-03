@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Import;
 
 /**
- * This is {@link CasCoreEnvironmentBootstrapConfiguration}.
+ * This is {@link CasCoreEnvironmentBootstrapAutoConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
@@ -15,5 +15,5 @@ import org.springframework.context.annotation.Import;
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.CasConfiguration)
 @AutoConfiguration
 @Import(CasCoreBaseEnvironmentConfiguration.class)
-public class CasCoreEnvironmentBootstrapConfiguration {
+public class CasCoreEnvironmentBootstrapAutoConfiguration {
 }

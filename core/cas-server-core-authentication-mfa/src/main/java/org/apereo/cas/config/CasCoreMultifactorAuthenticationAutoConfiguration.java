@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Import;
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication)
 @AutoConfiguration(after = CasCoreServicesAutoConfiguration.class)
 @Import({
-    CasCoreMultifactorAuthenticationAutoConfiguration.class,
+    CasCoreMultifactorAuthenticationConfiguration.class,
     CasCoreMultifactorAuthenticationAuditConfiguration.class
 })
 public class CasCoreMultifactorAuthenticationAutoConfiguration {
