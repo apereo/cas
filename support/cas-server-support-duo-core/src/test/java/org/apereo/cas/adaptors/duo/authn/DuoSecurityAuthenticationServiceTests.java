@@ -33,9 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class
-}, properties = "cas.http-client.host-name-verifier=none")
+@SpringBootTest(classes = RefreshAutoConfiguration.class, properties = "cas.http-client.host-name-verifier=none")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("DuoSecurity")
 public class DuoSecurityAuthenticationServiceTests {
