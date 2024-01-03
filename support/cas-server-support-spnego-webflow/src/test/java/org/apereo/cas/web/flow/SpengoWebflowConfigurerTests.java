@@ -3,8 +3,7 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.SpnegoAutoConfiguration;
-import org.apereo.cas.config.SpnegoWebflowActionsConfiguration;
-import org.apereo.cas.config.SpnegoWebflowConfiguration;
+import org.apereo.cas.config.SpnegoWebflowAutoConfiguration;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -24,8 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreMultifactorAuthenticationAutoConfiguration.class,
     CasMultifactorAuthenticationWebflowAutoConfiguration.class,
     SpnegoAutoConfiguration.class,
-    SpnegoWebflowConfiguration.class,
-    SpnegoWebflowActionsConfiguration.class
+    SpnegoWebflowAutoConfiguration.class
 })
 @Tag("Spnego")
 @TestPropertySource(properties = {

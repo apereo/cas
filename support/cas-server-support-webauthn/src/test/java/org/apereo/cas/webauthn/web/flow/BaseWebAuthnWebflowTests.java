@@ -18,10 +18,7 @@ import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.config.MultifactorAuthnTrustWebflowConfiguration;
 import org.apereo.cas.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration;
-import org.apereo.cas.config.WebAuthnComponentSerializationConfiguration;
-import org.apereo.cas.config.WebAuthnConfiguration;
-import org.apereo.cas.config.WebAuthnMultifactorProviderBypassConfiguration;
-import org.apereo.cas.config.WebAuthnWebflowConfiguration;
+import org.apereo.cas.config.WebAuthnAutoConfiguration;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -63,10 +60,7 @@ public abstract class BaseWebAuthnWebflowTests {
         MultifactorAuthnTrustConfiguration.class,
         MultifactorAuthnTrustedDeviceFingerprintConfiguration.class,
         CasSupportActionsAutoConfiguration.class,
-        WebAuthnComponentSerializationConfiguration.class,
-        WebAuthnMultifactorProviderBypassConfiguration.class,
-        WebAuthnConfiguration.class,
-        WebAuthnWebflowConfiguration.class
+        WebAuthnAutoConfiguration.class
     })
     public static class SharedTestConfiguration {
     }
