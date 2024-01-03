@@ -22,7 +22,7 @@ import java.util.Arrays;
 import java.util.Properties;
 
 /**
- * This is {@link AmazonSimpleSystemsManagementCloudConfigBootstrapConfiguration}.
+ * This is {@link AmazonSimpleSystemsManagementCloudConfigBootstrapAutoConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
@@ -31,7 +31,7 @@ import java.util.Properties;
 @Getter
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.CasConfiguration, module = "aws-ssm")
 @AutoConfiguration
-public class AmazonSimpleSystemsManagementCloudConfigBootstrapConfiguration implements PropertySourceLocator {
+public class AmazonSimpleSystemsManagementCloudConfigBootstrapAutoConfiguration implements PropertySourceLocator {
     /**
      * Configuration prefix for amazon secrets manager.
      */

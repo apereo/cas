@@ -1,7 +1,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.aws.AmazonEnvironmentAwareClientBuilder;
-import org.apereo.cas.config.AmazonS3BucketsCloudConfigBootstrapConfiguration;
+import org.apereo.cas.config.AmazonS3BucketsCloudConfigBootstrapAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +27,7 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link AmazonS3BucketsCloudConfigBootstrapConfigurationTests}.
+ * This is {@link AmazonS3BucketsCloudConfigBootstrapAutoConfigurationTests}.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
@@ -35,19 +35,19 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    AmazonS3BucketsCloudConfigBootstrapConfiguration.class
+    AmazonS3BucketsCloudConfigBootstrapAutoConfiguration.class
 }, properties = {
     "cas.spring.cloud.aws.s3.region=us-east-1",
-    "cas.spring.cloud.aws.s3.bucket-name=" + AmazonS3BucketsCloudConfigBootstrapConfigurationTests.BUCKET_NAME,
-    "cas.spring.cloud.aws.s3.endpoint=" + AmazonS3BucketsCloudConfigBootstrapConfigurationTests.ENDPOINT,
-    "cas.spring.cloud.aws.s3.credential-access-key=" + AmazonS3BucketsCloudConfigBootstrapConfigurationTests.CREDENTIAL_ACCESS_KEY,
-    "cas.spring.cloud.aws.s3.credential-secret-key=" + AmazonS3BucketsCloudConfigBootstrapConfigurationTests.CREDENTIAL_SECRET_KEY
+    "cas.spring.cloud.aws.s3.bucket-name=" + AmazonS3BucketsCloudConfigBootstrapAutoConfigurationTests.BUCKET_NAME,
+    "cas.spring.cloud.aws.s3.endpoint=" + AmazonS3BucketsCloudConfigBootstrapAutoConfigurationTests.ENDPOINT,
+    "cas.spring.cloud.aws.s3.credential-access-key=" + AmazonS3BucketsCloudConfigBootstrapAutoConfigurationTests.CREDENTIAL_ACCESS_KEY,
+    "cas.spring.cloud.aws.s3.credential-secret-key=" + AmazonS3BucketsCloudConfigBootstrapAutoConfigurationTests.CREDENTIAL_SECRET_KEY
 })
 @EnabledIfListeningOnPort(port = 4566)
 @Tag("AmazonWebServices")
 @Slf4j
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-class AmazonS3BucketsCloudConfigBootstrapConfigurationTests {
+class AmazonS3BucketsCloudConfigBootstrapAutoConfigurationTests {
     static final String BUCKET_NAME = "config-bucket";
 
     static final String ENDPOINT = "http://localhost:4566";
@@ -64,12 +64,12 @@ class AmazonS3BucketsCloudConfigBootstrapConfigurationTests {
     @BeforeAll
     public static void initialize() {
         val environment = new MockEnvironment();
-        environment.setProperty(AmazonS3BucketsCloudConfigBootstrapConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "endpoint", ENDPOINT);
-        environment.setProperty(AmazonS3BucketsCloudConfigBootstrapConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "region", Region.US_EAST_1.id());
-        environment.setProperty(AmazonS3BucketsCloudConfigBootstrapConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "credential-access-key", CREDENTIAL_ACCESS_KEY);
-        environment.setProperty(AmazonS3BucketsCloudConfigBootstrapConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "credential-secret-key", CREDENTIAL_SECRET_KEY);
+        environment.setProperty(AmazonS3BucketsCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "endpoint", ENDPOINT);
+        environment.setProperty(AmazonS3BucketsCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "region", Region.US_EAST_1.id());
+        environment.setProperty(AmazonS3BucketsCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "credential-access-key", CREDENTIAL_ACCESS_KEY);
+        environment.setProperty(AmazonS3BucketsCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "credential-secret-key", CREDENTIAL_SECRET_KEY);
         val clientBuilder = S3Client.builder().serviceConfiguration(S3Configuration.Builder::pathStyleAccessEnabled).forcePathStyle(true);
-        val builder = new AmazonEnvironmentAwareClientBuilder(AmazonS3BucketsCloudConfigBootstrapConfiguration.CAS_CONFIGURATION_PREFIX, environment);
+        val builder = new AmazonEnvironmentAwareClientBuilder(AmazonS3BucketsCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX, environment);
         val s3Client = builder.build(clientBuilder, S3Client.class);
         deleteBucket(s3Client);
         s3Client.createBucket(CreateBucketRequest.builder().bucket(BUCKET_NAME).build());

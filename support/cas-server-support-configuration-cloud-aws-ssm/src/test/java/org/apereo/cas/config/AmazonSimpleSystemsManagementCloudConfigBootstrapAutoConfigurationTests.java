@@ -21,7 +21,7 @@ import software.amazon.awssdk.services.ssm.model.PutParameterRequest;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link AmazonSimpleSystemsManagementCloudConfigBootstrapConfigurationTests}.
+ * This is {@link AmazonSimpleSystemsManagementCloudConfigBootstrapAutoConfigurationTests}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
@@ -29,18 +29,18 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    AmazonSimpleSystemsManagementCloudConfigBootstrapConfiguration.class
+    AmazonSimpleSystemsManagementCloudConfigBootstrapAutoConfiguration.class
 }, properties = {
-    "cas.spring.cloud.aws.ssm.endpoint=" + AmazonSimpleSystemsManagementCloudConfigBootstrapConfigurationTests.ENDPOINT,
+    "cas.spring.cloud.aws.ssm.endpoint=" + AmazonSimpleSystemsManagementCloudConfigBootstrapAutoConfigurationTests.ENDPOINT,
     "cas.spring.cloud.aws.ssm.region=us-east-1",
-    "cas.spring.cloud.aws.ssm.credential-access-key=" + AmazonSimpleSystemsManagementCloudConfigBootstrapConfigurationTests.CREDENTIAL_ACCESS_KEY,
-    "cas.spring.cloud.aws.ssm.credential-secret-key=" + AmazonSimpleSystemsManagementCloudConfigBootstrapConfigurationTests.CREDENTIAL_SECRET_KEY
+    "cas.spring.cloud.aws.ssm.credential-access-key=" + AmazonSimpleSystemsManagementCloudConfigBootstrapAutoConfigurationTests.CREDENTIAL_ACCESS_KEY,
+    "cas.spring.cloud.aws.ssm.credential-secret-key=" + AmazonSimpleSystemsManagementCloudConfigBootstrapAutoConfigurationTests.CREDENTIAL_SECRET_KEY
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnabledIfListeningOnPort(port = 4566)
 @Tag("AmazonWebServices")
 @ActiveProfiles("example")
-class AmazonSimpleSystemsManagementCloudConfigBootstrapConfigurationTests {
+class AmazonSimpleSystemsManagementCloudConfigBootstrapAutoConfigurationTests {
     static final String ENDPOINT = "http://localhost:4566";
 
     static final String CREDENTIAL_SECRET_KEY = "test";
@@ -56,13 +56,13 @@ class AmazonSimpleSystemsManagementCloudConfigBootstrapConfigurationTests {
     public static void initialize() {
         val environment = new MockEnvironment();
 
-        environment.setProperty(AmazonSimpleSystemsManagementCloudConfigBootstrapConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "endpoint", ENDPOINT);
-        environment.setProperty(AmazonSimpleSystemsManagementCloudConfigBootstrapConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "region", Region.US_EAST_1.id());
-        environment.setProperty(AmazonSimpleSystemsManagementCloudConfigBootstrapConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "credential-access-key", CREDENTIAL_ACCESS_KEY);
-        environment.setProperty(AmazonSimpleSystemsManagementCloudConfigBootstrapConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "credential-secret-key", CREDENTIAL_SECRET_KEY);
+        environment.setProperty(AmazonSimpleSystemsManagementCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "endpoint", ENDPOINT);
+        environment.setProperty(AmazonSimpleSystemsManagementCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "region", Region.US_EAST_1.id());
+        environment.setProperty(AmazonSimpleSystemsManagementCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "credential-access-key", CREDENTIAL_ACCESS_KEY);
+        environment.setProperty(AmazonSimpleSystemsManagementCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "credential-secret-key", CREDENTIAL_SECRET_KEY);
 
         val builder = new AmazonEnvironmentAwareClientBuilder(
-            AmazonSimpleSystemsManagementCloudConfigBootstrapConfiguration.CAS_CONFIGURATION_PREFIX, environment);
+            AmazonSimpleSystemsManagementCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX, environment);
         try (val client = builder.build(SsmClient.builder(), SsmClient.class)) {
             var request = PutParameterRequest.builder().name("/cas/cas.authn.accept.users")
                 .type(ParameterType.STRING)

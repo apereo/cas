@@ -39,7 +39,7 @@ import org.springframework.webflow.execution.Action;
 import java.util.stream.Collectors;
 
 /**
- * This is {@link GraphicalUserAuthenticationConfiguration}.
+ * This is {@link GraphicalUserAuthenticationAutoConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
@@ -47,7 +47,7 @@ import java.util.stream.Collectors;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Authentication, module = "gua")
 @AutoConfiguration
-public class GraphicalUserAuthenticationConfiguration {
+public class GraphicalUserAuthenticationAutoConfiguration {
 
     @ConditionalOnMissingBean(name = "graphicalUserAuthenticationWebflowConfigurer")
     @Bean
