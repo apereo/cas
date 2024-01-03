@@ -5,7 +5,7 @@ import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 
 import lombok.val;
@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreServicesConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
     CasCoreUtilConfiguration.class,
-    CasCoreWebConfiguration.class,
+    CasCoreWebAutoConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class
 }, properties = "cas.access-strategy.groovy.location=classpath:ServiceAccessStrategy.groovy")
 class GroovyRegisteredServiceAccessStrategyEnforcerTests {

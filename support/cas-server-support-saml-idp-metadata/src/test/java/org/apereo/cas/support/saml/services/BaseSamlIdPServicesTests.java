@@ -1,6 +1,5 @@
 package org.apereo.cas.support.saml.services;
 
-import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CoreSamlConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -28,7 +27,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasCoreHttpConfiguration.class,
     CoreSamlConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)

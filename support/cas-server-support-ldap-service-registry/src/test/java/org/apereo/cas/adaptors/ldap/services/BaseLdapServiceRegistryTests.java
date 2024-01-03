@@ -3,7 +3,7 @@ package org.apereo.cas.adaptors.ldap.services;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.LdapServiceRegistryConfiguration;
 import org.apereo.cas.services.AbstractServiceRegistryTests;
@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     LdapServiceRegistryConfiguration.class,
     CasCoreServicesConfiguration.class,
-    CasCoreWebConfiguration.class,
+    CasCoreWebAutoConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,

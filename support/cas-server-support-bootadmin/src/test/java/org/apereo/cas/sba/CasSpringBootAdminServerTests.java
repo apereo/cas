@@ -1,6 +1,5 @@
 package org.apereo.cas.sba;
 
-import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasSpringBootAdminConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
@@ -53,7 +52,6 @@ import static org.mockito.Mockito.*;
     AdminServerInstanceWebClientConfiguration.class,
 
     SpringBootAdminClientAutoConfiguration.class,
-    CasCoreHttpConfiguration.class,
     CasSpringBootAdminConfiguration.class
 }, properties = {
     "cas.host.name=CASInstance",

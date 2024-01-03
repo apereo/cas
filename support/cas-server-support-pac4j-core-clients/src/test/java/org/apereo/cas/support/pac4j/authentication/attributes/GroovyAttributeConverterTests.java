@@ -1,7 +1,7 @@
 package org.apereo.cas.support.pac4j.authentication.attributes;
 
-import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
     CasCoreUtilConfiguration.class,
-    CasCoreHttpConfiguration.class
+    CasCoreWebAutoConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Groovy")

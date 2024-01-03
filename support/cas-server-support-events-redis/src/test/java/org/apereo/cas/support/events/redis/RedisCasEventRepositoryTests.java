@@ -1,6 +1,5 @@
 package org.apereo.cas.support.events.redis;
 
-import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.RedisEventsConfiguration;
 import org.apereo.cas.support.events.AbstractCasEventRepositoryTests;
 import org.apereo.cas.support.events.CasEventRepository;
@@ -22,7 +21,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 @Tag("Redis")
 @SpringBootTest(classes = {
     RedisEventsConfiguration.class,
-    CasCoreHttpConfiguration.class,
     RefreshAutoConfiguration.class
 },
     properties = {

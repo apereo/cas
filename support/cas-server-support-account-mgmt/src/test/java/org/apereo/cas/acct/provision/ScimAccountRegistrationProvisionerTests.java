@@ -2,7 +2,6 @@ package org.apereo.cas.acct.provision;
 
 import org.apereo.cas.acct.AccountRegistrationRequest;
 import org.apereo.cas.config.CasAccountManagementWebflowConfiguration;
-import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasScimConfiguration;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
@@ -32,7 +31,6 @@ import static org.junit.jupiter.api.Assertions.*;
         WebMvcAutoConfiguration.class,
         CasAccountManagementWebflowConfiguration.class,
         BaseWebflowConfigurerTests.SharedTestConfiguration.class,
-        CasCoreHttpConfiguration.class,
         CasScimConfiguration.class
     },
     properties = {

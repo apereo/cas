@@ -1,6 +1,6 @@
 package org.apereo.cas.authentication;
 
-import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -33,7 +33,7 @@ class DefaultCasSSLContextTests {
 
     @ImportAutoConfiguration(RefreshAutoConfiguration.class)
     @SpringBootConfiguration
-    @Import(CasCoreHttpConfiguration.class)
+    @Import(CasCoreWebAutoConfiguration.class)
     static class SharedTestConfiguration {
         static String contactUrl(final String addr, final CasSSLContext context) throws Exception {
             val url = new URI(addr).toURL();
