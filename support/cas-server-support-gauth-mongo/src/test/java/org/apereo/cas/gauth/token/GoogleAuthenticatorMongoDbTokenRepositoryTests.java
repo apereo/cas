@@ -13,8 +13,7 @@ import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
-import org.apereo.cas.config.GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration;
-import org.apereo.cas.config.GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfiguration;
+import org.apereo.cas.config.GoogleAuthenticatorAutoConfiguration;
 import org.apereo.cas.config.GoogleAuthenticatorMongoDbAutoConfiguration;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
@@ -46,8 +45,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     CasCoreServicesAutoConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,
     CasPersonDirectoryAutoConfiguration.class,
-    GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfiguration.class,
-    GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration.class,
+    GoogleAuthenticatorAutoConfiguration.class,
     AopAutoConfiguration.class,
     CasCoreAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
