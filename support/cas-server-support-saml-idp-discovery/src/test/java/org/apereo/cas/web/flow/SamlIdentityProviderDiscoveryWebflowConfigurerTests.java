@@ -1,9 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.config.CoreSamlAutoConfiguration;
-import org.apereo.cas.config.DelegatedAuthenticationConfiguration;
-import org.apereo.cas.config.DelegatedAuthenticationEventExecutionPlanConfiguration;
-import org.apereo.cas.config.DelegatedAuthenticationWebflowConfiguration;
+import org.apereo.cas.config.DelegatedAuthenticationAutoConfiguration;
 import org.apereo.cas.config.SamlIdentityProviderDiscoveryAutoConfiguration;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -26,9 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
     MockMvcAutoConfiguration.class,
     ErrorMvcAutoConfiguration.class,
     CoreSamlAutoConfiguration.class,
-    DelegatedAuthenticationEventExecutionPlanConfiguration.class,
-    DelegatedAuthenticationConfiguration.class,
-    DelegatedAuthenticationWebflowConfiguration.class,
+    DelegatedAuthenticationAutoConfiguration.class,
     SamlIdentityProviderDiscoveryAutoConfiguration.class
 })
 @Tag("SAML2Web")

@@ -24,7 +24,6 @@ import org.pac4j.saml.store.HazelcastSAMLMessageStoreFactory;
 import org.pac4j.saml.store.SAMLMessageStoreFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -42,9 +41,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
  * @since 6.5.0
  */
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.DelegatedAuthentication, module = "saml")
-@AutoConfiguration
+@Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class DelegatedAuthenticationSAMLConfiguration {
+class DelegatedAuthenticationSAMLConfiguration {
 
     @ConditionalOnClass(SamlIdPResponseCustomizer.class)
     @Configuration(value = "DelegatedAuthenticationSAML2IdPConfiguration", proxyBeanMethods = false)

@@ -2,7 +2,7 @@ package org.apereo.cas.okta;
 
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
-import org.apereo.cas.config.OktaPersonDirectoryConfiguration;
+import org.apereo.cas.config.OktaAuthenticationAutoConfiguration;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import com.okta.sdk.client.Client;
 import com.okta.sdk.resource.user.User;
@@ -55,7 +55,7 @@ class OktaPersonAttributeDaoTests {
     }
 
     @SpringBootTest(classes = {
-        OktaPersonDirectoryConfiguration.class,
+        OktaAuthenticationAutoConfiguration.class,
         CasPersonDirectoryAutoConfiguration.class,
         BaseOktaTests.SharedTestConfiguration.class
     }, properties = {
@@ -86,7 +86,7 @@ class OktaPersonAttributeDaoTests {
 
     @SpringBootTest(classes = {
         OktaPersonAttributeDaoTests.OktaClientMockTestConfiguration.class,
-        OktaPersonDirectoryConfiguration.class,
+        OktaAuthenticationAutoConfiguration.class,
         CasPersonDirectoryAutoConfiguration.class,
         BaseOktaTests.SharedTestConfiguration.class
     }, properties = {

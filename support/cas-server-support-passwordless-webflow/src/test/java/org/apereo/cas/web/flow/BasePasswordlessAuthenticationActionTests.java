@@ -18,9 +18,7 @@ import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.config.CoreSamlAutoConfiguration;
-import org.apereo.cas.config.DelegatedAuthenticationConfiguration;
-import org.apereo.cas.config.DelegatedAuthenticationEventExecutionPlanConfiguration;
-import org.apereo.cas.config.DelegatedAuthenticationWebflowConfiguration;
+import org.apereo.cas.config.DelegatedAuthenticationAutoConfiguration;
 import org.apereo.cas.config.PasswordlessAuthenticationAutoConfiguration;
 import org.apereo.cas.config.PasswordlessAuthenticationWebflowAutoConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,9 +45,7 @@ import org.springframework.context.annotation.Bean;
     MockMvcAutoConfiguration.class,
     ErrorMvcAutoConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,
-    DelegatedAuthenticationConfiguration.class,
-    DelegatedAuthenticationEventExecutionPlanConfiguration.class,
-    DelegatedAuthenticationWebflowConfiguration.class,
+    DelegatedAuthenticationAutoConfiguration.class,
     CasWebflowAutoConfiguration.class,
     CoreSamlAutoConfiguration.class,
     CasCoreAutoConfiguration.class,
