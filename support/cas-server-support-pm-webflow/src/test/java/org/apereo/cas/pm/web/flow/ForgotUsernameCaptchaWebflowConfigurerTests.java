@@ -2,8 +2,7 @@ package org.apereo.cas.pm.web.flow;
 
 import org.apereo.cas.config.CasSupportActionsAutoConfiguration;
 import org.apereo.cas.config.PasswordManagementAutoConfiguration;
-import org.apereo.cas.config.PasswordManagementForgotUsernameConfiguration;
-import org.apereo.cas.config.PasswordManagementWebflowConfiguration;
+import org.apereo.cas.config.PasswordManagementWebflowAutoConfiguration;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -30,8 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Import({
     CasSupportActionsAutoConfiguration.class,
     PasswordManagementAutoConfiguration.class,
-    PasswordManagementWebflowConfiguration.class,
-    PasswordManagementForgotUsernameConfiguration.class
+    PasswordManagementWebflowAutoConfiguration.class
 })
 @TestPropertySource(properties = {
     "cas.authn.pm.forgot-username.google-recaptcha.enabled=true",
