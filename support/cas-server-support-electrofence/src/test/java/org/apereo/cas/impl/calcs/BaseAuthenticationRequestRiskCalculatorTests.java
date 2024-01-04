@@ -19,7 +19,7 @@ import org.apereo.cas.config.CasEventsInMemoryRepositoryAutoConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
-import org.apereo.cas.config.ElectronicFenceConfiguration;
+import org.apereo.cas.config.ElectronicFenceAutoConfiguration;
 import org.apereo.cas.config.GoogleMapsGeoCodingAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.impl.mock.MockTicketGrantingTicketCreatedEventProducer;
@@ -98,7 +98,7 @@ public abstract class BaseAuthenticationRequestRiskCalculatorTests {
     @SpringBootConfiguration
     @Import({
         ElectronicFenceTestConfiguration.class,
-        ElectronicFenceConfiguration.class,
+        ElectronicFenceAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
