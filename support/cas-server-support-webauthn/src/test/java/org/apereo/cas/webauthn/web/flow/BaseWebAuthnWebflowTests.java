@@ -15,9 +15,7 @@ import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguratio
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasSupportActionsAutoConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
-import org.apereo.cas.config.MultifactorAuthnTrustConfiguration;
-import org.apereo.cas.config.MultifactorAuthnTrustWebflowConfiguration;
-import org.apereo.cas.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration;
+import org.apereo.cas.config.MultifactorAuthnTrustAutoConfiguration;
 import org.apereo.cas.config.WebAuthnAutoConfiguration;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -45,7 +43,6 @@ public abstract class BaseWebAuthnWebflowTests {
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasMultifactorAuthenticationWebflowAutoConfiguration.class,
-        MultifactorAuthnTrustWebflowConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
         CasCookieAutoConfiguration.class,
@@ -57,8 +54,7 @@ public abstract class BaseWebAuthnWebflowTests {
         CasWebflowAutoConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
         CasPersonDirectoryTestConfiguration.class,
-        MultifactorAuthnTrustConfiguration.class,
-        MultifactorAuthnTrustedDeviceFingerprintConfiguration.class,
+        MultifactorAuthnTrustAutoConfiguration.class,
         CasSupportActionsAutoConfiguration.class,
         WebAuthnAutoConfiguration.class
     })

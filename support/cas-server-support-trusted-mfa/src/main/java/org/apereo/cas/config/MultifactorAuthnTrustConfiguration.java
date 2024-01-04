@@ -31,7 +31,6 @@ import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -52,8 +51,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthenticationTrustedDevices)
-@AutoConfiguration
-public class MultifactorAuthnTrustConfiguration {
+@Configuration(proxyBeanMethods = false)
+class MultifactorAuthnTrustConfiguration {
 
     private static final int INITIAL_CACHE_SIZE = 50;
 
