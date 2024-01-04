@@ -69,7 +69,6 @@ import org.apache.wss4j.dom.validate.Validator;
 import org.opensaml.saml.saml2.core.NameIDType;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
@@ -97,8 +96,8 @@ import java.util.Map;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.WsFederationIdentityProvider)
 @ImportResource(locations = "classpath:jaxws-realms.xml")
-@AutoConfiguration
-public class CoreWsSecuritySecurityTokenServiceConfiguration {
+@Configuration(proxyBeanMethods = false)
+class CoreWsSecuritySecurityTokenServiceConfiguration {
 
     @Configuration(value = "CoreWsSecuritySecurityTokenServiceDelegationConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)

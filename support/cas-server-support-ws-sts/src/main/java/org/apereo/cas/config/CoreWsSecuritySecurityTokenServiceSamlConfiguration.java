@@ -10,8 +10,9 @@ import org.apache.wss4j.common.saml.OpenSAMLUtil;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.util.ReflectionUtils;
 
@@ -24,8 +25,9 @@ import org.springframework.util.ReflectionUtils;
  */
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.WsFederationIdentityProvider)
-@AutoConfiguration(after = CoreSamlAutoConfiguration.class)
-public class CoreWsSecuritySecurityTokenServiceSamlConfiguration {
+@AutoConfigureAfter(CoreSamlAutoConfiguration.class)
+@Configuration(proxyBeanMethods = false)
+class CoreWsSecuritySecurityTokenServiceSamlConfiguration {
     private static void findFieldAndSetValue(final String fieldName, final Object value) {
         LOGGER.trace("Locating field name [{}]", fieldName);
         val field = ReflectionUtils.findField(OpenSAMLUtil.class, fieldName);

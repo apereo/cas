@@ -14,12 +14,8 @@ import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguratio
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
-import org.apereo.cas.config.CasWsSecurityTokenTicketCatalogConfiguration;
-import org.apereo.cas.config.CasWsSecurityTokenTicketComponentSerializationConfiguration;
+import org.apereo.cas.config.CasWsSecuritySecurityTokenAutoConfiguration;
 import org.apereo.cas.config.CoreSamlAutoConfiguration;
-import org.apereo.cas.config.CoreWsSecuritySecurityTokenServiceConfiguration;
-import org.apereo.cas.config.CoreWsSecuritySecurityTokenServiceSamlConfiguration;
-import org.apereo.cas.config.CoreWsSecuritySecurityTokenTicketConfiguration;
 import org.apereo.cas.config.WsSecurityIdentityProviderAutoConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringBootConfiguration;
@@ -87,14 +83,8 @@ public abstract class BaseCoreWsSecurityIdentityProviderConfigurationTests {
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
-
         WsSecurityIdentityProviderAutoConfiguration.class,
-
-        CasWsSecurityTokenTicketCatalogConfiguration.class,
-        CasWsSecurityTokenTicketComponentSerializationConfiguration.class,
-        CoreWsSecuritySecurityTokenServiceConfiguration.class,
-        CoreWsSecuritySecurityTokenTicketConfiguration.class,
-        CoreWsSecuritySecurityTokenServiceSamlConfiguration.class
+        CasWsSecuritySecurityTokenAutoConfiguration.class
     })
     static class SharedTestConfiguration {
     }

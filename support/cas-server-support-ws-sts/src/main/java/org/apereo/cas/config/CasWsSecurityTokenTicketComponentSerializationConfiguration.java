@@ -9,10 +9,10 @@ import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.io.Serial;
@@ -25,8 +25,8 @@ import java.io.Serial;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.WsFederationIdentityProvider)
-@AutoConfiguration
-public class CasWsSecurityTokenTicketComponentSerializationConfiguration {
+@Configuration(proxyBeanMethods = false)
+class CasWsSecurityTokenTicketComponentSerializationConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
