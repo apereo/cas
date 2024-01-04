@@ -5,8 +5,7 @@ import org.apereo.cas.api.AuthenticationRiskScore;
 import org.apereo.cas.config.CasCoreEventsAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
-import org.apereo.cas.config.ElectronicFenceConfiguration;
-import org.apereo.cas.config.ElectronicFenceWebflowConfiguration;
+import org.apereo.cas.config.ElectronicFenceAutoConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockRequestContext;
 import lombok.val;
@@ -33,8 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreEventsAutoConfiguration.class,
     CasCoreMultifactorAuthenticationAutoConfiguration.class,
     CasMultifactorAuthenticationWebflowAutoConfiguration.class,
-    ElectronicFenceConfiguration.class,
-    ElectronicFenceWebflowConfiguration.class
+    ElectronicFenceAutoConfiguration.class
 })
 @TestPropertySource(properties = "cas.authn.adaptive.risk.ip.enabled=true")
 @Tag("WebflowActions")
