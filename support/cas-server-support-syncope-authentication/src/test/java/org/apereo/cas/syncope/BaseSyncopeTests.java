@@ -16,8 +16,7 @@ import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguratio
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
-import org.apereo.cas.config.SyncopeAuthenticationConfiguration;
-import org.apereo.cas.config.SyncopePersonDirectoryConfiguration;
+import org.apereo.cas.config.SyncopeAutoConfiguration;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -107,8 +106,7 @@ public abstract class BaseSyncopeTests {
     })
     @SpringBootConfiguration
     @Import({
-        SyncopeAuthenticationConfiguration.class,
-        SyncopePersonDirectoryConfiguration.class,
+        SyncopeAutoConfiguration.class,
 
         CasCoreAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,

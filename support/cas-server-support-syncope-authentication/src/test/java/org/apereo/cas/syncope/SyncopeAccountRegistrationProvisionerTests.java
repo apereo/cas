@@ -3,7 +3,7 @@ package org.apereo.cas.syncope;
 import org.apereo.cas.acct.AccountRegistrationRequest;
 import org.apereo.cas.acct.provision.AccountRegistrationProvisioner;
 import org.apereo.cas.config.CasAccountManagementWebflowAutoConfiguration;
-import org.apereo.cas.config.SyncopeAccountManagementConfiguration;
+import org.apereo.cas.config.SyncopeAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnabledIfListeningOnPort(port = 18080)
 @SpringBootTest(classes = {
-    SyncopeAccountManagementConfiguration.class,
+    SyncopeAutoConfiguration.class,
     CasAccountManagementWebflowAutoConfiguration.class,
     BaseSyncopeTests.SharedTestConfiguration.class
 }, properties = {

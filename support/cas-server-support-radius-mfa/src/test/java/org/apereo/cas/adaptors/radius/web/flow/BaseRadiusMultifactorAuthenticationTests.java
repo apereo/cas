@@ -17,10 +17,7 @@ import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.config.MultifactorAuthnTrustWebflowConfiguration;
 import org.apereo.cas.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration;
-import org.apereo.cas.config.RadiusMultifactorConfiguration;
-import org.apereo.cas.config.RadiusTokenAuthenticationComponentSerializationConfiguration;
-import org.apereo.cas.config.RadiusTokenAuthenticationEventExecutionPlanConfiguration;
-import org.apereo.cas.config.RadiusTokenAuthenticationMultifactorProviderBypassConfiguration;
+import org.apereo.cas.config.RadiusMultifactorAuthenticationAutoConfiguration;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -62,12 +59,8 @@ public abstract class BaseRadiusMultifactorAuthenticationTests {
         MultifactorAuthnTrustConfiguration.class,
         MultifactorAuthnTrustedDeviceFingerprintConfiguration.class,
         MultifactorAuthnTrustWebflowConfiguration.class,
-        RadiusMultifactorConfiguration.RadiusMultifactorTrustConfiguration.class,
-
-        RadiusMultifactorConfiguration.class,
-        RadiusTokenAuthenticationComponentSerializationConfiguration.class,
-        RadiusTokenAuthenticationEventExecutionPlanConfiguration.class,
-        RadiusTokenAuthenticationMultifactorProviderBypassConfiguration.class
+        RadiusMultifactorAuthenticationAutoConfiguration.RadiusMultifactorTrustConfiguration.class,
+        RadiusMultifactorAuthenticationAutoConfiguration.class
     })
     public static class SharedTestConfiguration {
     }
