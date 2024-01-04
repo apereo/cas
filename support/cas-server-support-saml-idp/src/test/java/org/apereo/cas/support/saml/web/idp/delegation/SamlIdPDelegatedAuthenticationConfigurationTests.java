@@ -1,12 +1,10 @@
 package org.apereo.cas.support.saml.web.idp.delegation;
 
-import org.apereo.cas.config.SamlIdPDelegatedAuthenticationConfiguration;
 import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationRequestCustomizer;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
 import org.apereo.cas.support.saml.idp.SamlIdPSessionManager;
-
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Tag;
@@ -22,10 +20,8 @@ import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.context.SAML2ConfigurationContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -36,7 +32,6 @@ import static org.mockito.Mockito.*;
  * @since 6.4.0
  */
 @Tag("SAML2")
-@Import(SamlIdPDelegatedAuthenticationConfiguration.class)
 class SamlIdPDelegatedAuthenticationConfigurationTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("saml2DelegatedClientAuthenticationRequestCustomizer")
@@ -65,7 +60,7 @@ class SamlIdPDelegatedAuthenticationConfigurationTests extends BaseSamlIdPConfig
 
         val request = new MockHttpServletRequest();
         request.addParameter(SamlIdPConstants.AUTHN_REQUEST_ID, authnRequest.getID());
-        
+
         val response = new MockHttpServletResponse();
         val webContext = new JEEContext(request, response);
 

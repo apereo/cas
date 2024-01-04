@@ -24,15 +24,7 @@ import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasThrottlingAutoConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.config.CoreSamlAutoConfiguration;
-import org.apereo.cas.config.SamlIdPAuthenticationServiceSelectionStrategyConfiguration;
-import org.apereo.cas.config.SamlIdPComponentSerializationConfiguration;
-import org.apereo.cas.config.SamlIdPConfiguration;
-import org.apereo.cas.config.SamlIdPEndpointsConfiguration;
-import org.apereo.cas.config.SamlIdPMetadataConfiguration;
-import org.apereo.cas.config.SamlIdPMonitoringConfiguration;
-import org.apereo.cas.config.SamlIdPThrottleConfiguration;
-import org.apereo.cas.config.SamlIdPTicketCatalogConfiguration;
-import org.apereo.cas.config.SamlIdPTicketSerializationConfiguration;
+import org.apereo.cas.config.SamlIdPAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.apereo.cas.services.RegisteredServicesTemplatesManager;
@@ -354,15 +346,7 @@ public abstract class BaseSamlIdPConfigurationTests {
         CasCoreMonitorAutoConfiguration.class,
         CasWebflowAutoConfiguration.class,
         CasThrottlingAutoConfiguration.class,
-        SamlIdPConfiguration.class,
-        SamlIdPThrottleConfiguration.class,
-        SamlIdPMonitoringConfiguration.class,
-        SamlIdPComponentSerializationConfiguration.class,
-        SamlIdPTicketCatalogConfiguration.class,
-        SamlIdPAuthenticationServiceSelectionStrategyConfiguration.class,
-        SamlIdPEndpointsConfiguration.class,
-        SamlIdPMetadataConfiguration.class,
-        SamlIdPTicketSerializationConfiguration.class,
+        SamlIdPAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
         CasCookieAutoConfiguration.class,
         CasCoreValidationAutoConfiguration.class,
