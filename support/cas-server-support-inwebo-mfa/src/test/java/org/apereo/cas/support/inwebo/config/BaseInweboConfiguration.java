@@ -14,10 +14,7 @@ import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
-import org.apereo.cas.config.InweboAuthenticationConfiguration;
-import org.apereo.cas.config.InweboAuthenticationMultifactorProviderBypassConfiguration;
-import org.apereo.cas.config.InweboServiceConfiguration;
-import org.apereo.cas.config.InweboWebflowConfiguration;
+import org.apereo.cas.config.InweboMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.config.MultifactorAuthnTrustWebflowConfiguration;
 import org.apereo.cas.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration;
@@ -64,10 +61,7 @@ public class BaseInweboConfiguration {
         MultifactorAuthnTrustedDeviceFingerprintConfiguration.class,
         MultifactorAuthnTrustWebflowConfiguration.class,
 
-        InweboAuthenticationConfiguration.class,
-        InweboAuthenticationMultifactorProviderBypassConfiguration.class,
-        InweboServiceConfiguration.class,
-        InweboWebflowConfiguration.class
+        InweboMultifactorAuthenticationAutoConfiguration.class
     })
     public static class SharedTestConfiguration {
     }

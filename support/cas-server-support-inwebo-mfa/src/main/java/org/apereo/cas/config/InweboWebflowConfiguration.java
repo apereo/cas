@@ -22,7 +22,6 @@ import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurat
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -48,8 +47,8 @@ import org.springframework.webflow.execution.Action;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication, module = "inwebo")
-@AutoConfiguration
-public class InweboWebflowConfiguration {
+@Configuration(proxyBeanMethods = false)
+class InweboWebflowConfiguration {
     private static final int WEBFLOW_CONFIGURER_ORDER = 100;
 
     @ConditionalOnMissingBean(name = "inweboMultifactorWebflowConfigurer")

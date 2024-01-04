@@ -22,8 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    HazelcastTicketRegistryConfiguration.class,
-    HazelcastTicketRegistryTicketCatalogConfiguration.class,
+    HazelcastTicketRegistryAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class,
     CasCoreServicesAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
