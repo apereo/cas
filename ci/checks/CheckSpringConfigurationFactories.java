@@ -4,7 +4,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -16,15 +17,26 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 6.3.0
  */
 public class CheckSpringConfigurationFactories {
+    private static final String ANSI_RESET = "\u001B[0m";
+    private static final String ANSI_BLACK = "\u001B[30m";
+    private static final String ANSI_RED = "\u001B[31m";
+    private static final String ANSI_GREEN = "\u001B[32m";
+    private static final String ANSI_YELLOW = "\u001B[33m";
+    private static final String ANSI_BLUE = "\u001B[34m";
+    private static final String ANSI_PURPLE = "\u001B[35m";
+    private static final String ANSI_CYAN = "\u001B[36m";
+    private static final String ANSI_WHITE = "\u001B[37m";
+        
     public static void main(final String[] args) throws Exception {
         checkSpringFactoryConfigurations(args[0]);
         checkMissingSpringFactoryConfigurations(args[0]);
+        checkMissingSpringAutoConfigurations(args[0]);
     }
 
-    private static void print(final String message, final Object... args) {
+    private static void error(final String message, final Object... args) {
         //CHECKSTYLE:OFF
-        System.out.printf(message, args);
-        System.out.println();
+        System.err.printf(ANSI_RED + message + ANSI_RESET, args);
+        System.err.println();
         //CHECKSTYLE:ON
     }
 
@@ -54,17 +66,25 @@ public class CheckSpringConfigurationFactories {
         return pass.get();
     }
 
+    private static List<File> getSpringConfigurationFiles(final String projectPath, final String configurations, final String splitBy) {
+        var list = new ArrayList<File>();
+        var classes = configurations.split(splitBy);
+        for (var it : classes) {
+            var sourcePath = "/src/main/java/".replace("/", String.valueOf(File.separator)).trim();
+            var clazz = projectPath + sourcePath + it.trim().replace(".", String.valueOf(File.separator)) + ".java";
+            list.add(new File(clazz));
+        }
+        return list;
+    }
+
     private static boolean checkForSpringConfigurationFactories(final String projectPath,
                                                                 final String configurations,
                                                                 final File springFactoriesFile,
                                                                 final String splitBy) {
-        var classes = configurations.split(splitBy);
-        for (var it : Arrays.asList(classes)) {
-            var sourcePath = "/src/main/java/".replace("/", String.valueOf(File.separator)).trim();
-            var clazz = projectPath + sourcePath + it.trim().replace(".", String.valueOf(File.separator)) + ".java";
-            var configurationFile = new File(clazz);
-            if (!configurationFile.exists()) {
-                print("Spring configuration class %s does not exist in %s", clazz, springFactoriesFile);
+        var classes = getSpringConfigurationFiles(projectPath, configurations, splitBy);
+        for (var it : classes) {
+            if (!it.exists()) {
+                error("Spring configuration class %s does not exist in %s", it, springFactoriesFile);
                 return false;
             }
         }
@@ -73,9 +93,12 @@ public class CheckSpringConfigurationFactories {
 
     protected static void checkMissingSpringFactoryConfigurations(final String arg) throws IOException {
         Files.walk(Paths.get(arg))
-            .filter(f -> Files.isRegularFile(f) && f.toFile().getName().endsWith("Configuration.java"))
+            .filter(f -> Files.isRegularFile(f)
+                && f.toFile().getName().endsWith("Configuration.java")
+                && !f.toFile().getName().contains("Bootstrap"))
             .forEach(file -> {
-                if (readFile(file).contains("@Configuration")) {
+                var text = readFile(file);
+                if (text.contains("@AutoConfiguration")) {
                     var parent = file.getParent();
                     while (parent != null && !parent.toFile().getName().equals("src")) {
                         parent = parent.getParent();
@@ -83,12 +106,57 @@ public class CheckSpringConfigurationFactories {
                     var springFactoriesFile = new File(parent.toFile(),
                         "main/resources/META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports");
                     if (!springFactoriesFile.exists()) {
-                        print("Configuration class %s is missing from %s",
+                        error("Configuration class %s is missing from %s",
                             file.toFile().getAbsolutePath(), springFactoriesFile.getAbsolutePath());
                         System.exit(1);
                     }
+
+                    var className = file.toFile().getName().replace(".java", "");
+                    if (file.toFile().getName().endsWith("AutoConfiguration.java")) {
+                        var imports = readFile(springFactoriesFile.toPath());
+                        if (!imports.contains(className)) {
+                            error("AutoConfiguration class %s is not registered with Spring Boot's %s",
+                                file.toFile().getAbsolutePath(), springFactoriesFile);
+                            System.exit(1);
+                        }
+                    }
+
                 }
             });
+    }
+
+    private static void checkMissingSpringAutoConfigurations(final String arg) throws IOException {
+        var count = new AtomicInteger(0);
+
+        try (var results = Files.list(Paths.get(arg))) {
+            results.filter(path -> path.toFile().isDirectory()).forEach(path -> {
+                try {
+                    var sourceDir = new File(path.toFile(), "src/main/java");
+                    var files = sourceDir.exists()
+                        ? Files.walk(sourceDir.toPath())
+                        .filter(srcFile -> Files.isRegularFile(srcFile)
+                            && srcFile.toFile().getName().endsWith("Configuration.java")
+                            && !srcFile.toFile().getName().endsWith("AutoConfiguration.java")
+                            && readFile(srcFile).contains("@AutoConfiguration")).toList()
+                        : List.<Path>of();
+                    
+                    files.forEach(ff -> {
+                        var foundFile = ff.toFile();
+                        var classname = foundFile.getName().replace(".java", "");
+                        var name = foundFile.getName().replace("Configuration.java", "AutoConfiguration.java");
+                        var newClassName = classname.replace("Configuration", "AutoConfiguration");
+                        error("Configuration class %s must be renamed to %s", classname, newClassName);
+                        count.incrementAndGet();
+                    });
+                } catch (final Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        }
+
+        if (count.intValue() > 0) {
+            System.exit(1);
+        }
     }
 
     protected static void checkSpringFactoryConfigurations(final String arg) throws IOException {
@@ -107,6 +175,16 @@ public class CheckSpringConfigurationFactories {
                         if (!checkForSpringConfigurationFactories(projectPath, classes, autoConfigImportFile, "\n")) {
                             count.incrementAndGet();
                         }
+
+                        var configFiles = getSpringConfigurationFiles(projectPath, classes, "\n");
+                        configFiles.forEach(file -> {
+                            var text = readFile(file.toPath());
+                            if (text.contains("@Configuration") && !text.contains("@AutoConfiguration")) {
+                                error("Configuration class %s is registered as an AutoConfiguration in %s",
+                                    file.getAbsolutePath(), springFactoriesFile.getAbsolutePath());
+                                count.incrementAndGet();
+                            }
+                        });
                     }
 
                     if (springFactoriesFile.exists()) {
@@ -115,7 +193,7 @@ public class CheckSpringConfigurationFactories {
                         properties.load(new FileReader(springFactoriesFile));
 
                         if (properties.isEmpty()) {
-                            print("spring.factories file %s is empty", springFactoriesFile);
+                            error("spring.factories file %s is empty", springFactoriesFile);
                             count.incrementAndGet();
                         }
 
@@ -130,7 +208,18 @@ public class CheckSpringConfigurationFactories {
                             if (!checkForSpringConfigurationFactories(projectPath, classes, springFactoriesFile, ",")) {
                                 count.incrementAndGet();
                             }
+
+                            var configFiles = getSpringConfigurationFiles(projectPath, classes, ",");
+                            configFiles.forEach(file -> {
+                                var text = readFile(file.toPath());
+                                if (text.contains("@Configuration") && !text.contains("@AutoConfiguration")) {
+                                    error("Configuration class %s is registered as an AutoConfiguration in %s",
+                                        file.getAbsolutePath(), springFactoriesFile.getAbsolutePath());
+                                    count.incrementAndGet();
+                                }
+                            });
                         }
+
                     } else {
                         var c1 = checkProjectContainsSpringConfigurations(projectPath, springFactoriesFile, "@Configuration");
                         var c2 = checkProjectContainsSpringConfigurations(projectPath, autoConfigImportFile, "@AutoConfiguration");

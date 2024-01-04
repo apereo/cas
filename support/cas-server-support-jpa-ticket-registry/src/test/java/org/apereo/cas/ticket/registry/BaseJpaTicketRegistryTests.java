@@ -8,8 +8,7 @@ import org.apereo.cas.config.CasOAuth20ProtocolTicketCatalogAutoConfiguration;
 import org.apereo.cas.config.CasOAuth20TicketSerializationConfiguration;
 import org.apereo.cas.config.CasWsSecurityTokenTicketCatalogConfiguration;
 import org.apereo.cas.config.CasWsSecurityTokenTicketComponentSerializationConfiguration;
-import org.apereo.cas.config.JpaTicketRegistryConfiguration;
-import org.apereo.cas.config.JpaTicketRegistryTicketCatalogConfiguration;
+import org.apereo.cas.config.JpaTicketRegistryAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.CloseableDataSource;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -145,8 +144,7 @@ public abstract class BaseJpaTicketRegistryTests extends BaseTicketRegistryTests
     }
     
     @Import({
-        JpaTicketRegistryTicketCatalogConfiguration.class,
-        JpaTicketRegistryConfiguration.class,
+        JpaTicketRegistryAutoConfiguration.class,
         CasHibernateJpaAutoConfiguration.class,
         BaseTicketRegistryTests.SharedTestConfiguration.class,
         CasWsSecurityTokenTicketComponentSerializationConfiguration.class,

@@ -15,15 +15,21 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketFactoryExecutionPlanConfigurer;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.serialization.TicketSerializationExecutionPlanConfigurer;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.uma.UmaConfigurationContext;
 import org.apereo.cas.uma.claim.DefaultUmaResourceSetClaimPermissionExaminer;
 import org.apereo.cas.uma.claim.UmaResourceSetClaimPermissionExaminer;
 import org.apereo.cas.uma.discovery.UmaServerDiscoverySettings;
 import org.apereo.cas.uma.discovery.UmaServerDiscoverySettingsFactory;
+import org.apereo.cas.uma.ticket.permission.DefaultUmaPermissionTicket;
 import org.apereo.cas.uma.ticket.permission.DefaultUmaPermissionTicketFactory;
+import org.apereo.cas.uma.ticket.permission.UmaPermissionTicket;
 import org.apereo.cas.uma.ticket.permission.UmaPermissionTicketExpirationPolicyBuilder;
 import org.apereo.cas.uma.ticket.permission.UmaPermissionTicketFactory;
+import org.apereo.cas.uma.ticket.resource.ResourceSet;
+import org.apereo.cas.uma.ticket.resource.ResourceSetPolicy;
+import org.apereo.cas.uma.ticket.resource.ResourceSetPolicyPermission;
 import org.apereo.cas.uma.ticket.resource.repository.ResourceSetRepository;
 import org.apereo.cas.uma.ticket.resource.repository.impl.DefaultResourceSetRepository;
 import org.apereo.cas.uma.ticket.rpt.UmaIdTokenGeneratorService;
@@ -44,11 +50,12 @@ import org.apereo.cas.uma.web.controllers.resource.UmaFindResourceSetRegistratio
 import org.apereo.cas.uma.web.controllers.resource.UmaUpdateResourceSetRegistrationEndpointController;
 import org.apereo.cas.uma.web.controllers.rpt.UmaRequestingPartyTokenJwksEndpointController;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
+import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
+import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 import org.apereo.cas.util.spring.RefreshableHandlerInterceptor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.web.SecurityLogicInterceptor;
-
 import lombok.val;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.session.SessionStore;
@@ -69,14 +76,14 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
 import jakarta.annotation.Nonnull;
+import java.io.Serial;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * This is {@link CasOAuthUmaConfiguration}.
+ * This is {@link CasOAuthUmaAutoConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
@@ -84,12 +91,12 @@ import java.util.stream.Stream;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OAuth, module = "uma")
 @AutoConfiguration
-public class CasOAuthUmaConfiguration {
+public class CasOAuthUmaAutoConfiguration {
 
     @Configuration(value = "CasOAuthUmaTokenConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasOAuthUmaTokenConfiguration {
-
+        
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "umaRequestingPartyTokenGenerator")
@@ -284,6 +291,18 @@ public class CasOAuthUmaConfiguration {
     @Configuration(value = "CasOAuthUmaTicketsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasOAuthUmaTicketsConfiguration {
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "umaComponentSerializationPlanConfigurer")
+        public ComponentSerializationPlanConfigurer umaComponentSerializationPlanConfigurer() {
+            return plan -> {
+                plan.registerSerializableClass(DefaultUmaPermissionTicket.class);
+                plan.registerSerializableClass(ResourceSet.class);
+                plan.registerSerializableClass(ResourceSetPolicy.class);
+                plan.registerSerializableClass(ResourceSetPolicyPermission.class);
+            };
+        }
+        
         @ConditionalOnMissingBean(name = "umaPermissionTicketIdGenerator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -309,7 +328,30 @@ public class CasOAuthUmaConfiguration {
             return new DefaultUmaPermissionTicketFactory(umaPermissionTicketIdGenerator, umaPermissionTicketExpirationPolicy);
         }
 
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "oauthUmaTicketSerializationExecutionPlanConfigurer")
+        public TicketSerializationExecutionPlanConfigurer oauthUmaTicketSerializationExecutionPlanConfigurer() {
+            return plan -> {
+                plan.registerTicketSerializer(new UmaPermissionTicketStringSerializer());
+                plan.registerTicketSerializer(UmaPermissionTicket.class.getName(), new UmaPermissionTicketStringSerializer());
+            };
+        }
 
+        private static final class UmaPermissionTicketStringSerializer extends AbstractJacksonBackedStringSerializer<DefaultUmaPermissionTicket> {
+            @Serial
+            private static final long serialVersionUID = -2198623586274810263L;
+
+            UmaPermissionTicketStringSerializer() {
+                super(MINIMAL_PRETTY_PRINTER);
+            }
+
+            @Override
+            public Class<DefaultUmaPermissionTicket> getTypeToSerialize() {
+                return DefaultUmaPermissionTicket.class;
+            }
+        }
+        
     }
 
     @Configuration(value = "CasOAuthUmaTicketFactoryPlanConfiguration", proxyBeanMethods = false)

@@ -6,13 +6,7 @@ import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryGroovyConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryJdbcConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryJsonConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryLdapConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryRestConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import lombok.val;
 import org.springframework.boot.SpringBootConfiguration;
@@ -40,13 +34,7 @@ public abstract class BasePrincipalAttributeRepositoryTests {
     })
     @SpringBootConfiguration
     @Import({
-        CasPersonDirectoryConfiguration.class,
-        CasPersonDirectoryJdbcConfiguration.class,
-        CasPersonDirectoryLdapConfiguration.class,
-        CasPersonDirectoryGroovyConfiguration.class,
-        CasPersonDirectoryRestConfiguration.class,
-        CasPersonDirectoryJsonConfiguration.class,
-        CasPersonDirectoryStubConfiguration.class,
+        CasPersonDirectoryAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,

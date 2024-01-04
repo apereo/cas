@@ -27,8 +27,7 @@ import org.apereo.cas.config.CasOAuth20Configuration;
 import org.apereo.cas.config.CasOAuth20EndpointsConfiguration;
 import org.apereo.cas.config.CasOAuth20ServicesConfiguration;
 import org.apereo.cas.config.CasOAuth20ThrottleConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasThemesAutoConfiguration;
 import org.apereo.cas.config.CasThrottlingAutoConfiguration;
 import org.apereo.cas.config.CasThymeleafAutoConfiguration;
@@ -760,8 +759,7 @@ public abstract class AbstractOAuth20Tests {
         CasCookieAutoConfiguration.class,
         CasThrottlingAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
-                CasPersonDirectoryConfiguration.class,
-        CasPersonDirectoryStubConfiguration.class,
+                CasPersonDirectoryAutoConfiguration.class,
         AbstractOAuth20Tests.OAuth20TestConfiguration.class,
         CasThymeleafAutoConfiguration.class,
         CasThemesAutoConfiguration.class,
