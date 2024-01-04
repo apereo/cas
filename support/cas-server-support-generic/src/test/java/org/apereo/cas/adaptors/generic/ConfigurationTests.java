@@ -14,10 +14,7 @@ import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
-import org.apereo.cas.config.FileAuthenticationEventExecutionPlanConfiguration;
-import org.apereo.cas.config.GroovyAuthenticationEventExecutionPlanConfiguration;
-import org.apereo.cas.config.JsonResourceAuthenticationEventExecutionPlanConfiguration;
-import org.apereo.cas.config.RejectUsersAuthenticationEventExecutionPlanConfiguration;
+import org.apereo.cas.config.GenericAuthenticationAutoConfiguration;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,10 +46,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCookieAutoConfiguration.class,
     CasPersonDirectoryAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
-    FileAuthenticationEventExecutionPlanConfiguration.class,
-    GroovyAuthenticationEventExecutionPlanConfiguration.class,
-    JsonResourceAuthenticationEventExecutionPlanConfiguration.class,
-    RejectUsersAuthenticationEventExecutionPlanConfiguration.class
+    GenericAuthenticationAutoConfiguration.class
 }, properties = {
     "cas.authn.file.filename=classpath:authentication.txt",
     "cas.authn.groovy.location=classpath:GroovyAuthnHandler.groovy",
