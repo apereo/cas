@@ -18,12 +18,7 @@ import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.config.MultifactorAuthnTrustWebflowConfiguration;
 import org.apereo.cas.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration;
-import org.apereo.cas.config.YubiKeyAuthenticationEventExecutionPlanConfiguration;
-import org.apereo.cas.config.YubiKeyAuthenticationMultifactorProviderBypassConfiguration;
-import org.apereo.cas.config.YubiKeyAuthenticationWebflowConfiguration;
-import org.apereo.cas.config.YubiKeyComponentSerializationConfiguration;
-import org.apereo.cas.config.YubiKeyConfiguration;
-import org.apereo.cas.config.YubiKeyRestConfiguration;
+import org.apereo.cas.config.YubiKeyAutoConfiguration;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -55,13 +50,7 @@ public abstract class BaseYubiKeyTests {
         MultifactorAuthnTrustConfiguration.class,
         MultifactorAuthnTrustedDeviceFingerprintConfiguration.class,
         MultifactorAuthnTrustWebflowConfiguration.class,
-        YubiKeyAuthenticationWebflowConfiguration.YubiKeyMultifactorTrustConfiguration.class,
-        YubiKeyAuthenticationEventExecutionPlanConfiguration.class,
-        YubiKeyAuthenticationMultifactorProviderBypassConfiguration.class,
-        YubiKeyComponentSerializationConfiguration.class,
-        YubiKeyRestConfiguration.class,
-        YubiKeyAuthenticationWebflowConfiguration.class,
-        YubiKeyConfiguration.class,
+        YubiKeyAutoConfiguration.class,
         CasWebflowAutoConfiguration.class,
         CasThemesAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
