@@ -86,7 +86,6 @@ import org.pac4j.jee.context.session.JEESessionStore;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -109,8 +108,8 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProvider)
-@AutoConfiguration
-public class SamlIdPEndpointsConfiguration {
+@Configuration(proxyBeanMethods = false)
+class SamlIdPEndpointsConfiguration {
 
     private static final String SAML_SERVER_SUPPORT_PREFIX = "SamlServerSupport";
 

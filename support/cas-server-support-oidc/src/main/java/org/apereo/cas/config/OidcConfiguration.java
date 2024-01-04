@@ -143,7 +143,6 @@ import org.pac4j.http.client.direct.HeaderClient;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -169,8 +168,8 @@ import java.util.Set;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OpenIDConnect)
-@AutoConfiguration
-public class OidcConfiguration {
+@Configuration(proxyBeanMethods = false)
+class OidcConfiguration {
 
     @Configuration(value = "OidcServicesConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)

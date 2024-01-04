@@ -16,12 +16,7 @@ import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguratio
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.config.CoreSamlAutoConfiguration;
-import org.apereo.cas.config.SamlIdPAuthenticationServiceSelectionStrategyConfiguration;
-import org.apereo.cas.config.SamlIdPConfiguration;
-import org.apereo.cas.config.SamlIdPEndpointsConfiguration;
-import org.apereo.cas.config.SamlIdPMetadataConfiguration;
-import org.apereo.cas.config.SamlIdPMonitoringConfiguration;
-import org.apereo.cas.config.SamlIdPThrottleConfiguration;
+import org.apereo.cas.config.SamlIdPAutoConfiguration;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.actuate.autoconfigure.observation.ObservationAutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -53,12 +48,7 @@ public abstract class BaseSamlIdPMetadataTests {
         CasCoreMonitorAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasWebflowAutoConfiguration.class,
-        SamlIdPConfiguration.class,
-        SamlIdPThrottleConfiguration.class,
-        SamlIdPMonitoringConfiguration.class,
-        SamlIdPAuthenticationServiceSelectionStrategyConfiguration.class,
-        SamlIdPEndpointsConfiguration.class,
-        SamlIdPMetadataConfiguration.class,
+        SamlIdPAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
         CasCookieAutoConfiguration.class,

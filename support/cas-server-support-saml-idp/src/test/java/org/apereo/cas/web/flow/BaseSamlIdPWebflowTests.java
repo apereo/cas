@@ -1,13 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.config.CoreSamlAutoConfiguration;
-import org.apereo.cas.config.SamlIdPAuthenticationServiceSelectionStrategyConfiguration;
-import org.apereo.cas.config.SamlIdPConfiguration;
-import org.apereo.cas.config.SamlIdPEndpointsConfiguration;
-import org.apereo.cas.config.SamlIdPMetadataConfiguration;
-import org.apereo.cas.config.SamlIdPThrottleConfiguration;
-import org.apereo.cas.config.SamlIdPTicketSerializationConfiguration;
-import org.apereo.cas.config.SamlIdPWebflowConfiguration;
+import org.apereo.cas.config.SamlIdPAutoConfiguration;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.idp.metadata.locator.FileSystemSamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
@@ -44,13 +38,7 @@ import static org.mockito.Mockito.*;
 @Import({
     BaseSamlIdPWebflowTests.SamlIdPMetadataTestConfiguration.class,
     CoreSamlAutoConfiguration.class,
-    SamlIdPConfiguration.class,
-    SamlIdPThrottleConfiguration.class,
-    SamlIdPTicketSerializationConfiguration.class,
-    SamlIdPAuthenticationServiceSelectionStrategyConfiguration.class,
-    SamlIdPMetadataConfiguration.class,
-    SamlIdPEndpointsConfiguration.class,
-    SamlIdPWebflowConfiguration.class
+    SamlIdPAutoConfiguration.class
 })
 public abstract class BaseSamlIdPWebflowTests extends BaseWebflowConfigurerTests {
 
@@ -79,7 +67,7 @@ public abstract class BaseSamlIdPWebflowTests extends BaseWebflowConfigurerTests
             adaptor, response, request, SAMLConstants.SAML2_POST_BINDING_URI,
             authnRequest, messageContext);
     }
-    
+
     protected static AuthnRequest getAuthnRequestFor(final String service) {
         val authnRequest = mock(AuthnRequest.class);
         when(authnRequest.getID()).thenReturn(UUID.randomUUID().toString());
