@@ -19,8 +19,7 @@ import org.apereo.cas.config.CasThymeleafAutoConfiguration;
 import org.apereo.cas.config.CasValidationAutoConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.config.CoreSamlAutoConfiguration;
-import org.apereo.cas.config.SamlRestConfiguration;
-import org.apereo.cas.config.SamlUniqueTicketIdGeneratorConfiguration;
+import org.apereo.cas.config.SamlAutoConfiguration;
 import org.apereo.cas.services.RegisteredServicesTemplatesManager;
 import net.shibboleth.shared.xml.ParserPool;
 import org.junit.jupiter.api.Test;
@@ -123,8 +122,7 @@ public abstract class AbstractOpenSamlTests {
         CasThemesAutoConfiguration.class,
         CasRegisteredServicesTestConfiguration.class,
         CoreSamlAutoConfiguration.class,
-        SamlUniqueTicketIdGeneratorConfiguration.class,
-        SamlRestConfiguration.class,
+        SamlAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasWebflowAutoConfiguration.class,
         CasPersonDirectoryAutoConfiguration.class,

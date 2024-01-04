@@ -61,7 +61,6 @@ import org.pac4j.jee.context.session.JEESessionStore;
 import org.pac4j.saml.store.SAMLMessageStoreFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -88,8 +87,8 @@ import java.util.stream.Collectors;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.DelegatedAuthentication)
-@AutoConfiguration
-public class DelegatedAuthenticationEventExecutionPlanConfiguration {
+@Configuration(proxyBeanMethods = false)
+class DelegatedAuthenticationEventExecutionPlanConfiguration {
 
     private static final String AUTHENTICATION_DELEGATION_PREFIX = "AuthnDelegation";
 
