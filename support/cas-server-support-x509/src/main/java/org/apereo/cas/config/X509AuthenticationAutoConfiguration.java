@@ -7,6 +7,7 @@ import org.apereo.cas.adaptors.x509.authentication.ldap.LdaptiveResourceCRLFetch
 import org.apereo.cas.adaptors.x509.authentication.principal.DefaultX509AttributeExtractor;
 import org.apereo.cas.adaptors.x509.authentication.principal.EDIPIX509AttributeExtractor;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509AttributeExtractor;
+import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CommonNameEDIPIPrincipalResolver;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509SerialNumberAndIssuerDNPrincipalResolver;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509SerialNumberPrincipalResolver;
@@ -39,6 +40,7 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.RegexUtils;
+import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
@@ -57,7 +59,7 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 /**
- * This is {@link X509AuthenticationConfiguration}.
+ * This is {@link X509AuthenticationAutoConfiguration}.
  *
  * @author Misagh Moayyed
  * @author Dmitriy Kopylenko
@@ -66,7 +68,7 @@ import java.util.stream.Collectors;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.X509)
 @AutoConfiguration
-public class X509AuthenticationConfiguration {
+public class X509AuthenticationAutoConfiguration {
 
     private static final int HEX = 16;
 
@@ -521,5 +523,12 @@ public class X509AuthenticationConfiguration {
             return new EDIPIX509AttributeExtractor();
         }
         return new DefaultX509AttributeExtractor();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "x509ComponentSerializationPlanConfigurer")
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public ComponentSerializationPlanConfigurer x509ComponentSerializationPlanConfigurer() {
+        return plan -> plan.registerSerializableClass(X509CertificateCredential.class);
     }
 }
