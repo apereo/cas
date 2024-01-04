@@ -1,12 +1,11 @@
 package org.apereo.cas.web.saml2;
 
-import org.apereo.cas.config.DelegatedAuthenticationSAMLConfiguration;
+import org.apereo.cas.config.DelegatedAuthenticationAutoConfiguration;
 import org.apereo.cas.support.saml.util.Saml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.AuthenticatedAssertionContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlIdPResponseCustomizer;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -18,12 +17,10 @@ import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -35,7 +32,7 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = {
     BaseDelegatedAuthenticationTests.SharedTestConfiguration.class,
-    DelegatedAuthenticationSAMLConfiguration.class
+    DelegatedAuthenticationAutoConfiguration.class
 },
     properties = {
         "cas.authn.pac4j.saml[0].metadata.service-provider.file-system.location=/tmp/sp-metadata.xml",

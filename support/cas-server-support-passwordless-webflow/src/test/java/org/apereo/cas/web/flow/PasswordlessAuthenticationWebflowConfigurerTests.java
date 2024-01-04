@@ -3,9 +3,7 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CoreSamlAutoConfiguration;
-import org.apereo.cas.config.DelegatedAuthenticationConfiguration;
-import org.apereo.cas.config.DelegatedAuthenticationEventExecutionPlanConfiguration;
-import org.apereo.cas.config.DelegatedAuthenticationWebflowConfiguration;
+import org.apereo.cas.config.DelegatedAuthenticationAutoConfiguration;
 import org.apereo.cas.config.PasswordlessAuthenticationAutoConfiguration;
 import org.apereo.cas.config.PasswordlessAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowConfigurer;
@@ -39,9 +37,7 @@ import static org.mockito.Mockito.*;
     CoreSamlAutoConfiguration.class,
     CasCoreMultifactorAuthenticationAutoConfiguration.class,
     CasMultifactorAuthenticationWebflowAutoConfiguration.class,
-    DelegatedAuthenticationConfiguration.class,
-    DelegatedAuthenticationEventExecutionPlanConfiguration.class,
-    DelegatedAuthenticationWebflowConfiguration.class,
+    DelegatedAuthenticationAutoConfiguration.class,
     PasswordlessAuthenticationAutoConfiguration.class,
     PasswordlessAuthenticationWebflowAutoConfiguration.class
 })

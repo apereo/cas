@@ -3,8 +3,7 @@ package org.apereo.cas.web.flow.pac4j;
 import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.authentication.principal.DelegatedAuthenticationCredentialExtractor;
 import org.apereo.cas.authentication.surrogate.SurrogateCredentialTrait;
-import org.apereo.cas.config.DelegatedAuthenticationConfiguration;
-import org.apereo.cas.config.DelegatedAuthenticationEventExecutionPlanConfiguration;
+import org.apereo.cas.config.DelegatedAuthenticationAutoConfiguration;
 import org.apereo.cas.config.SurrogateAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.PasswordlessWebflowUtils;
@@ -34,8 +33,7 @@ import static org.mockito.Mockito.*;
 @Tag("Delegation")
 @SpringBootTest(classes = {
     SurrogateAuthenticationWebflowAutoConfiguration.class,
-    DelegatedAuthenticationConfiguration.class,
-    DelegatedAuthenticationEventExecutionPlanConfiguration.class,
+    DelegatedAuthenticationAutoConfiguration.class,
     BaseSurrogateAuthenticationTests.SharedTestConfiguration.class
 },
     properties = "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate")
