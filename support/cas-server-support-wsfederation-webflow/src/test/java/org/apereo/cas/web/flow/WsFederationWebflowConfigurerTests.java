@@ -3,8 +3,7 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CoreSamlAutoConfiguration;
-import org.apereo.cas.config.WsFedAuthenticationEventExecutionPlanConfiguration;
-import org.apereo.cas.config.WsFederationAuthenticationConfiguration;
+import org.apereo.cas.config.WsFederationAuthenticationAutoConfiguration;
 import org.apereo.cas.config.WsFederationAuthenticationWebflowAutoConfiguration;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -23,8 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Import({
     CoreSamlAutoConfiguration.class,
-    WsFederationAuthenticationConfiguration.class,
-    WsFedAuthenticationEventExecutionPlanConfiguration.class,
+    WsFederationAuthenticationAutoConfiguration.class,
     WsFederationAuthenticationWebflowAutoConfiguration.class,
     CasCoreMultifactorAuthenticationAutoConfiguration.class,
     CasMultifactorAuthenticationWebflowAutoConfiguration.class
@@ -43,7 +41,7 @@ class WsFederationWebflowConfigurerTests extends BaseWebflowConfigurerTests {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
         val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);
-        var state = (TransitionableState) flow.getState(CasWebflowConstants.STATE_ID_WS_FEDERATION_START);
+        val state = (TransitionableState) flow.getState(CasWebflowConstants.STATE_ID_WS_FEDERATION_START);
         assertNotNull(state);
     }
 }
