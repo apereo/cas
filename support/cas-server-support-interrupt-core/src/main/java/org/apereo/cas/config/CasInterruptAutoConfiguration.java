@@ -56,7 +56,7 @@ public class CasInterruptAutoConfiguration {
 
     @Configuration(value = "CasInterruptTrackingConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasInterruptTrackingConfiguration {
+    static class CasInterruptTrackingConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "interruptCookieCipherExecutor")
@@ -118,7 +118,7 @@ public class CasInterruptAutoConfiguration {
 
     @Configuration(value = "CasInterruptInquiryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasInterruptInquiryConfiguration {
+    static class CasInterruptInquiryConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "interruptInquirer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -139,7 +139,7 @@ public class CasInterruptAutoConfiguration {
 
     @Configuration(value = "CasInterruptPlansConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasInterruptPlansConfiguration {
+    static class CasInterruptPlansConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "jsonInterruptInquiryExecutionPlanConfigurer")

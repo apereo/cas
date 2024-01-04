@@ -52,7 +52,7 @@ class CasPersonDirectoryJdbcConfiguration {
 
     @Configuration(value = "JdbcAttributeRepositoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class JdbcAttributeRepositoryConfiguration {
+    static class JdbcAttributeRepositoryConfiguration {
         @ConditionalOnMissingBean(name = "jdbcAttributeRepositories")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -133,7 +133,7 @@ class CasPersonDirectoryJdbcConfiguration {
 
     @Configuration(value = "JdbcAttributeRepositoryPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class JdbcAttributeRepositoryPlanConfiguration {
+    static class JdbcAttributeRepositoryPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "jdbcPersonDirectoryAttributeRepositoryPlanConfigurer")

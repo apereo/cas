@@ -60,7 +60,7 @@ class MultifactorAuthnTrustConfiguration {
 
     @Configuration(value = "MultifactorAuthnTrustGeneratorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class MultifactorAuthnTrustGeneratorConfiguration {
+    static class MultifactorAuthnTrustGeneratorConfiguration {
 
         @ConditionalOnMissingBean(name = "mfaTrustRecordKeyGenerator")
         @Bean
@@ -72,7 +72,7 @@ class MultifactorAuthnTrustConfiguration {
 
     @Configuration(value = "MultifactorAuthnTrustCoreConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class MultifactorAuthnTrustCoreConfiguration {
+    static class MultifactorAuthnTrustCoreConfiguration {
         @ConditionalOnMissingBean(name = "mfaTrustDeviceNamingStrategy")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -118,7 +118,7 @@ class MultifactorAuthnTrustConfiguration {
 
     @Configuration(value = "MultifactorAuthnTrustCryptoConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class MultifactorAuthnTrustCryptoConfiguration {
+    static class MultifactorAuthnTrustCryptoConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "mfaTrustCipherExecutor")
@@ -137,7 +137,7 @@ class MultifactorAuthnTrustConfiguration {
 
     @Configuration(value = "MultifactorAuthnTrustSchedulerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class MultifactorAuthnTrustSchedulerConfiguration {
+    static class MultifactorAuthnTrustSchedulerConfiguration {
         @ConditionalOnMatchingHostname(name = "cas.authn.mfa.trusted.cleaner.schedule.enabled-on-host")
         @ConditionalOnMissingBean(name = "mfaTrustStorageCleaner")
         @Bean
@@ -157,7 +157,7 @@ class MultifactorAuthnTrustConfiguration {
 
     @Configuration(value = "MultifactorAuthnTrustAuditConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class MultifactorAuthnTrustAuditConfiguration {
+    static class MultifactorAuthnTrustAuditConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuditTrailRecordResolutionPlanConfigurer casMfaTrustAuditTrailRecordResolutionPlanConfigurer(
@@ -173,7 +173,7 @@ class MultifactorAuthnTrustConfiguration {
 
     @Configuration(value = "MultifactorAuthnTrustWebConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class MultifactorAuthnTrustWebConfiguration {
+    static class MultifactorAuthnTrustWebConfiguration {
         @Bean
         @ConditionalOnAvailableEndpoint
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

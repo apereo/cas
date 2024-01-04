@@ -37,7 +37,7 @@ class CasCoreTicketsSerializationConfiguration {
 
     @Configuration(value = "CasCoreTicketsSerializationPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreTicketsSerializationPlanConfiguration {
+    static class CasCoreTicketsSerializationPlanConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "ticketSerializationExecutionPlan")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -53,7 +53,7 @@ class CasCoreTicketsSerializationConfiguration {
 
     @Configuration(value = "CasCoreTicketsSerializationManagementConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreTicketsSerializationManagementConfiguration {
+    static class CasCoreTicketsSerializationManagementConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = TicketSerializationManager.BEAN_NAME)

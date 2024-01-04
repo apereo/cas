@@ -24,10 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
-@Import({
-    CasAccountManagementWebflowAutoConfiguration.class,
-    CasAccountManagementWebflowAutoConfiguration.CasAccountManagementRegistrationCaptchaConfiguration.class
-})
+@Import(CasAccountManagementWebflowAutoConfiguration.class)
 @TestPropertySource(properties = {
     "cas.account-registration.core.crypto.enabled=false",
     "cas.account-registration.google-recaptcha.enabled=true"

@@ -55,6 +55,6 @@ public abstract class BaseCaptchaConfigurationTests {
         CasThemesAutoConfiguration.class
 
     })
-    static class SharedTestConfiguration {
+    public static class SharedTestConfiguration {
     }
 }

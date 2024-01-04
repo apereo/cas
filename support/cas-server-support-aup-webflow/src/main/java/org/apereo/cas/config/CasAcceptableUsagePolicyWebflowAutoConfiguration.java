@@ -54,7 +54,7 @@ public class CasAcceptableUsagePolicyWebflowAutoConfiguration {
 
     @Configuration(value = "CasAcceptableUsagePolicyWebflowCoreConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasAcceptableUsagePolicyWebflowCoreConfiguration {
+    static class CasAcceptableUsagePolicyWebflowCoreConfiguration {
 
         @ConditionalOnMissingBean(name = "acceptableUsagePolicyWebflowConfigurer")
         @Bean
@@ -76,7 +76,7 @@ public class CasAcceptableUsagePolicyWebflowAutoConfiguration {
 
     @Configuration(value = "CasAcceptableUsagePolicyWebflowRepositoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasAcceptableUsagePolicyWebflowRepositoryConfiguration {
+    static class CasAcceptableUsagePolicyWebflowRepositoryConfiguration {
         @ConditionalOnMissingBean(name = AcceptableUsagePolicyRepository.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -102,7 +102,7 @@ public class CasAcceptableUsagePolicyWebflowAutoConfiguration {
 
     @Configuration(value = "CasAcceptableUsagePolicyWebflowPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasAcceptableUsagePolicyWebflowPlanConfiguration {
+    static class CasAcceptableUsagePolicyWebflowPlanConfiguration {
         @ConditionalOnMissingBean(name = "casAcceptableUsagePolicyWebflowExecutionPlanConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -115,7 +115,7 @@ public class CasAcceptableUsagePolicyWebflowAutoConfiguration {
 
     @Configuration(value = "CasAcceptableUsagePolicyWebflowActionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasAcceptableUsagePolicyWebflowActionConfiguration {
+    static class CasAcceptableUsagePolicyWebflowActionConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_AUP_SUBMIT)
@@ -208,7 +208,7 @@ public class CasAcceptableUsagePolicyWebflowAutoConfiguration {
 
     @Configuration(value = "CasAcceptableUsagePolicyWebflowAuditConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasAcceptableUsagePolicyWebflowAuditConfiguration {
+    static class CasAcceptableUsagePolicyWebflowAuditConfiguration {
         @ConditionalOnMissingBean(name = "casAcceptableUsagePolicyAuditTrailRecordResolutionPlanConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

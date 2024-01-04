@@ -49,7 +49,7 @@ public class JdbcMultifactorAuthnTrustAutoConfiguration {
 
     @Configuration(value = "JdbcMultifactorAuthnTrustTransactionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class JdbcMultifactorAuthnTrustTransactionConfiguration {
+    static class JdbcMultifactorAuthnTrustTransactionConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PlatformTransactionManager jpaMfaTrustTransactionManager(
@@ -78,7 +78,7 @@ public class JdbcMultifactorAuthnTrustAutoConfiguration {
 
     @Configuration(value = "JdbcMultifactorAuthnTrustEngineConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class JdbcMultifactorAuthnTrustEngineConfiguration {
+    static class JdbcMultifactorAuthnTrustEngineConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "jpaMfaTrustEngine")
@@ -99,7 +99,7 @@ public class JdbcMultifactorAuthnTrustAutoConfiguration {
 
     @Configuration(value = "JdbcMultifactorAuthnTrustEntityConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class JdbcMultifactorAuthnTrustEntityConfiguration {
+    static class JdbcMultifactorAuthnTrustEntityConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "jpaMfaTrustedAuthnVendorAdapter")
@@ -138,7 +138,7 @@ public class JdbcMultifactorAuthnTrustAutoConfiguration {
 
     @Configuration(value = "JdbcMultifactorAuthnTrustDataConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class JdbcMultifactorAuthnTrustDataConfiguration {
+    static class JdbcMultifactorAuthnTrustDataConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "dataSourceMfaTrustedAuthn")

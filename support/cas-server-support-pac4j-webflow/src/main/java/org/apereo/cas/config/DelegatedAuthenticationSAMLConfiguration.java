@@ -47,7 +47,7 @@ class DelegatedAuthenticationSAMLConfiguration {
 
     @ConditionalOnClass(SamlIdPResponseCustomizer.class)
     @Configuration(value = "DelegatedAuthenticationSAML2IdPConfiguration", proxyBeanMethods = false)
-    public static class DelegatedAuthenticationSAML2IdPConfiguration {
+    static class DelegatedAuthenticationSAML2IdPConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "delegatedSaml2IdPResponseCustomizer")
@@ -60,7 +60,7 @@ class DelegatedAuthenticationSAMLConfiguration {
 
     @ConditionalOnClass(HazelcastInstance.class)
     @Configuration(value = "DelegatedAuthenticationSAMLHazelcastConfiguration", proxyBeanMethods = false)
-    public static class DelegatedAuthenticationSAMLHazelcastConfiguration {
+    static class DelegatedAuthenticationSAMLHazelcastConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnBean(name = "casTicketRegistryHazelcastInstance")
@@ -75,7 +75,7 @@ class DelegatedAuthenticationSAMLConfiguration {
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.DelegatedAuthentication, module = "saml-jdbc", enabledByDefault = false)
     @Configuration(value = "DelegatedAuthenticationSAMLJdbcConfiguration", proxyBeanMethods = false)
     @ConditionalOnClass(JpaBeanFactory.class)
-    public static class DelegatedAuthenticationSAMLJdbcConfiguration {
+    static class DelegatedAuthenticationSAMLJdbcConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -104,7 +104,7 @@ class DelegatedAuthenticationSAMLConfiguration {
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.DelegatedAuthentication, module = "saml-mongodb", enabledByDefault = false)
     @Configuration(value = "DelegatedAuthenticationSAMLMongoDbConfiguration", proxyBeanMethods = false)
     @ConditionalOnClass(CasMongoOperations.class)
-    public static class DelegatedAuthenticationSAMLMongoDbConfiguration {
+    static class DelegatedAuthenticationSAMLMongoDbConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

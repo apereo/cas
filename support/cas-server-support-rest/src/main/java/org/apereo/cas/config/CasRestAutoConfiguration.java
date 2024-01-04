@@ -69,7 +69,7 @@ public class CasRestAutoConfiguration {
 
     @Configuration(value = "CasRestResponseFactoryPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasRestResponseFactoryPlanConfiguration {
+    static class CasRestResponseFactoryPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "restServiceTicketResourceEntityResponseFactoryConfigurer")
@@ -81,7 +81,7 @@ public class CasRestAutoConfiguration {
 
     @Configuration(value = "CasRestResponseFactoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasRestResponseFactoryConfiguration {
+    static class CasRestResponseFactoryConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "serviceTicketResourceEntityResponseFactory")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -109,7 +109,7 @@ public class CasRestAutoConfiguration {
 
     @Configuration(value = "CasRestWebConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasRestWebConfiguration {
+    static class CasRestWebConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "restProtocolEndpointConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -127,7 +127,7 @@ public class CasRestAutoConfiguration {
     @Configuration(value = "CasRestThrottleConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @ConditionalOnBean(AuthenticationThrottlingExecutionPlan.class)
-    public static class CasRestThrottleConfiguration {
+    static class CasRestThrottleConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "restAuthenticationThrottle")
@@ -153,7 +153,7 @@ public class CasRestAutoConfiguration {
     @Configuration(value = "CasRestControllerResourcesConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
-    public static class CasRestControllerResourcesConfiguration {
+    static class CasRestControllerResourcesConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TicketStatusResource ticketStatusResource(
@@ -211,7 +211,7 @@ public class CasRestAutoConfiguration {
 
     @Configuration(value = "CasRestAuditConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasRestAuditConfiguration {
+    static class CasRestAuditConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "restAuditTrailRecordResolutionPlanConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

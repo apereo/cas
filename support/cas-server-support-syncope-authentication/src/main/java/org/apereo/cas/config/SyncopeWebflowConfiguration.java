@@ -39,7 +39,7 @@ class SyncopeWebflowConfiguration {
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Provisioning, module = "syncope")
     @Configuration(value = "SyncopeProvisioningWebflowConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SyncopeProvisioningWebflowConfiguration {
+    static class SyncopeProvisioningWebflowConfiguration {
         private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.syncope.provisioning.enabled").isTrue().evenIfMissing();
 
         @Bean

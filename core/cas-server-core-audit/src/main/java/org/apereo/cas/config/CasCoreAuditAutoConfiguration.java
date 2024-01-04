@@ -84,7 +84,7 @@ public class CasCoreAuditAutoConfiguration {
 
     @Configuration(value = "CasCoreAuditPrincipalConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreAuditPrincipalConfiguration {
+    static class CasCoreAuditPrincipalConfiguration {
         @ConditionalOnMissingBean(name = "auditablePrincipalResolver")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -105,7 +105,7 @@ public class CasCoreAuditAutoConfiguration {
 
     @Configuration(value = "CasCoreAuditResourcesConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreAuditResourcesConfiguration {
+    static class CasCoreAuditResourcesConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "credentialsAsFirstParameterResourceResolver")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -213,7 +213,7 @@ public class CasCoreAuditAutoConfiguration {
 
     @Configuration(value = "CasCoreAuditActionsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreAuditActionsConfiguration {
+    static class CasCoreAuditActionsConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "defaultAuditActionResolver")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -276,7 +276,7 @@ public class CasCoreAuditAutoConfiguration {
 
     @Configuration(value = "CasCoreAuditEventsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreAuditEventsConfiguration {
+    static class CasCoreAuditEventsConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "inMemoryAuditEventRepository")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -292,7 +292,7 @@ public class CasCoreAuditAutoConfiguration {
 
     @Configuration(value = "CasCoreAuditManagementConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreAuditManagementConfiguration {
+    static class CasCoreAuditManagementConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "auditTrailManagementAspect")
@@ -357,7 +357,7 @@ public class CasCoreAuditAutoConfiguration {
     @Configuration(value = "CasCoreAuditResolutionPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
-    public static class CasCoreAuditResolutionPlanConfiguration {
+    static class CasCoreAuditResolutionPlanConfiguration {
         @ConditionalOnMissingBean(name = "auditTrailRecordResolutionPlan")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -480,7 +480,7 @@ public class CasCoreAuditAutoConfiguration {
     @Configuration(value = "CasCoreAuditExecutionPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
-    public static class CasCoreAuditExecutionPlanConfiguration {
+    static class CasCoreAuditExecutionPlanConfiguration {
         @ConditionalOnMissingBean(name = AuditTrailExecutionPlan.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

@@ -66,7 +66,7 @@ import java.util.List;
 class ElectronicFenceWebflowConfiguration {
 
     @Configuration(value = "RiskAuthenticationCoreConfiguration", proxyBeanMethods = false)
-    public static class RiskAuthenticationCoreConfiguration {
+    static class RiskAuthenticationCoreConfiguration {
         @ConditionalOnMissingBean(name = "riskAwareCasWebflowExceptionConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -111,7 +111,7 @@ class ElectronicFenceWebflowConfiguration {
     }
 
     @Configuration(value = "RiskAuthenticationVerificationConfiguration", proxyBeanMethods = false)
-    public static class RiskAuthenticationVerificationConfiguration {
+    static class RiskAuthenticationVerificationConfiguration {
         private static final FlowExecutionListener[] FLOW_EXECUTION_LISTENERS = new FlowExecutionListener[0];
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

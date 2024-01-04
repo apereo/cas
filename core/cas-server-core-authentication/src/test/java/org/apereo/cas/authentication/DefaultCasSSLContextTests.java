@@ -34,7 +34,7 @@ class DefaultCasSSLContextTests {
     @ImportAutoConfiguration(RefreshAutoConfiguration.class)
     @SpringBootConfiguration
     @Import(CasCoreWebAutoConfiguration.class)
-    static class SharedTestConfiguration {
+    public static class SharedTestConfiguration {
         static String contactUrl(final String addr, final CasSSLContext context) throws Exception {
             val url = new URI(addr).toURL();
             val connection = (HttpsURLConnection) url.openConnection();

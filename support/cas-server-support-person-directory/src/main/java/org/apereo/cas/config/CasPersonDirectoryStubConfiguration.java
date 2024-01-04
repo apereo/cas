@@ -31,7 +31,7 @@ class CasPersonDirectoryStubConfiguration {
 
     @Configuration(value = "StubAttributeRepositoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class StubAttributeRepositoryConfiguration {
+    static class StubAttributeRepositoryConfiguration {
         @ConditionalOnMissingBean(name = "stubAttributeRepositories")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -49,7 +49,7 @@ class CasPersonDirectoryStubConfiguration {
 
     @Configuration(value = "StubAttributeRepositoryPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class StubAttributeRepositoryPlanConfiguration {
+    static class StubAttributeRepositoryPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "stubPersonDirectoryAttributeRepositoryPlanConfigurer")

@@ -51,7 +51,7 @@ class YubiKeyAuthenticationWebflowConfiguration {
 
     @Configuration(value = "YubiKeyAuthenticationWebflowPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class YubiKeyAuthenticationWebflowPlanConfiguration {
+    static class YubiKeyAuthenticationWebflowPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "yubikeyCasWebflowExecutionPlanConfigurer")
@@ -64,7 +64,7 @@ class YubiKeyAuthenticationWebflowConfiguration {
 
     @Configuration(value = "YubiKeyAuthenticationWebflowCoreConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class YubiKeyAuthenticationWebflowCoreConfiguration {
+    static class YubiKeyAuthenticationWebflowCoreConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "yubikeyFlowRegistry")
@@ -113,7 +113,7 @@ class YubiKeyAuthenticationWebflowConfiguration {
 
     @Configuration(value = "YubiKeyAuthenticationWebflowActionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class YubiKeyAuthenticationWebflowActionConfiguration {
+    static class YubiKeyAuthenticationWebflowActionConfiguration {
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
@@ -154,7 +154,7 @@ class YubiKeyAuthenticationWebflowConfiguration {
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthenticationTrustedDevices, module = "yubikey")
     @Configuration(value = "YubiMultifactorTrustConfiguration", proxyBeanMethods = false)
     @DependsOn("yubikeyMultifactorWebflowConfigurer")
-    public static class YubiKeyMultifactorTrustConfiguration {
+    static class YubiKeyMultifactorTrustConfiguration {
         private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.mfa.yubikey.trusted-device-enabled")
             .isTrue().evenIfMissing();
 

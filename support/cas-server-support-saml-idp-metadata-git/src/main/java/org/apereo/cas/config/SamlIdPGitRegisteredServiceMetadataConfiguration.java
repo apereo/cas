@@ -107,7 +107,7 @@ class SamlIdPGitRegisteredServiceMetadataConfiguration {
 
     @RequiredArgsConstructor
     @Slf4j
-    public static class GitSamlRegisteredServiceRepositoryScheduler implements Runnable {
+    static class GitSamlRegisteredServiceRepositoryScheduler implements Runnable {
         private final GitRepository gitRepository;
 
         @Scheduled(initialDelayString = "${cas.authn.saml-idp.metadata.git.schedule.start-delay:PT60S}",

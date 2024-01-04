@@ -59,6 +59,6 @@ public abstract class BasePasswordlessUserAccountStoreTests {
         CasCookieAutoConfiguration.class,
         CasThemesAutoConfiguration.class
     })
-    static class SharedTestConfiguration {
+    public static class SharedTestConfiguration {
     }
 }

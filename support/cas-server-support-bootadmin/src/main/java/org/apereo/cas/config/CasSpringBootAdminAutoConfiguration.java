@@ -52,7 +52,7 @@ public class CasSpringBootAdminAutoConfiguration {
     @Configuration(value = "SpringBootAdminClientConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties({CasConfigurationProperties.class, ClientProperties.class})
     @Conditional(SpringBootAdminClientEnabledCondition.class)
-    public static class SpringBootAdminClientConfiguration {
+    static class SpringBootAdminClientConfiguration {
         @Bean
         public RegistrationClient registrationClient(
             final ObjectMapper objectMapper,
@@ -80,7 +80,7 @@ public class CasSpringBootAdminAutoConfiguration {
     @Configuration(value = "SpringBootAdminServerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties({CasConfigurationProperties.class, AdminServerProperties.class})
     @Conditional(SpringBootAdminServerEnabledCondition.class)
-    public static class SpringBootAdminServerConfiguration {
+    static class SpringBootAdminServerConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "springBootAdminWebClientCustomizer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

@@ -57,7 +57,7 @@ import java.util.Optional;
 class CasCoreAuthenticationPrincipalConfiguration {
     @Configuration(value = "CasCoreAuthenticationPrincipalResolutionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreAuthenticationPrincipalResolutionConfiguration {
+    static class CasCoreAuthenticationPrincipalResolutionConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
@@ -86,7 +86,7 @@ class CasCoreAuthenticationPrincipalConfiguration {
 
     @Configuration(value = "CasCoreAuthenticationPrincipalElectionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreAuthenticationPrincipalElectionConfiguration {
+    static class CasCoreAuthenticationPrincipalElectionConfiguration {
         @ConditionalOnMissingBean(name = PrincipalElectionStrategy.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -139,7 +139,7 @@ class CasCoreAuthenticationPrincipalConfiguration {
 
     @Configuration(value = "CasCoreAuthenticationPrincipalFactoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreAuthenticationPrincipalFactoryConfiguration {
+    static class CasCoreAuthenticationPrincipalFactoryConfiguration {
 
         @ConditionalOnMissingBean(name = PrincipalFactory.BEAN_NAME)
         @Bean
@@ -165,7 +165,7 @@ class CasCoreAuthenticationPrincipalConfiguration {
 
     @Configuration(value = "CasCoreAuthenticationAttributeDefinitionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreAuthenticationAttributeDefinitionConfiguration {
+    static class CasCoreAuthenticationAttributeDefinitionConfiguration {
         @ConditionalOnMissingBean(name = AttributeDefinitionStore.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

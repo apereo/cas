@@ -194,7 +194,7 @@ public abstract class BaseOAuth20AuthenticatorTests {
         CasAuthenticationEventExecutionPlanTestConfiguration.class,
         CasOAuth20AutoConfiguration.class
     })
-    static class SharedTestConfiguration {
+    public static class SharedTestConfiguration {
     }
 
     protected static OAuth20AccessToken getAccessToken() {

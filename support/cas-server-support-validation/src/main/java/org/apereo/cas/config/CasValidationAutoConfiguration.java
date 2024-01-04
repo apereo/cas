@@ -80,7 +80,7 @@ public class CasValidationAutoConfiguration {
 
     @Configuration(value = "CasValidationContextConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasValidationContextConfiguration {
+    static class CasValidationContextConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -130,7 +130,7 @@ public class CasValidationAutoConfiguration {
 
     @Configuration(value = "CasValidationViewRegistrationConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasValidationViewRegistrationConfiguration {
+    static class CasValidationViewRegistrationConfiguration {
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
@@ -171,7 +171,7 @@ public class CasValidationAutoConfiguration {
 
     @Configuration(value = "CasValidationRendererConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasValidationRendererConfiguration {
+    static class CasValidationRendererConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "cas3ProtocolAttributesRenderer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -196,7 +196,7 @@ public class CasValidationAutoConfiguration {
 
     @Configuration(value = "CasValidationViewFactoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasValidationViewFactoryConfiguration {
+    static class CasValidationViewFactoryConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "serviceValidationViewFactory")
@@ -211,7 +211,7 @@ public class CasValidationAutoConfiguration {
 
     @Configuration(value = "CasValidationSpecificationConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasValidationSpecificationConfiguration {
+    static class CasValidationSpecificationConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "v3ServiceValidateControllerValidationSpecification")
@@ -283,7 +283,7 @@ public class CasValidationAutoConfiguration {
 
     @Configuration(value = "CasValidationViewsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasValidationViewsConfiguration {
+    static class CasValidationViewsConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -486,7 +486,7 @@ public class CasValidationAutoConfiguration {
 
     @Configuration(value = "CasValidationControllerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasValidationControllerConfiguration {
+    static class CasValidationControllerConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "proxyController")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

@@ -45,7 +45,7 @@ class MultifactorAuthnTrustWebflowConfiguration {
 
     @Configuration(value = "MultifactorAuthnTrustCoreWebflowConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class MultifactorAuthnTrustCoreWebflowConfiguration {
+    static class MultifactorAuthnTrustCoreWebflowConfiguration {
         @ConditionalOnMissingBean(name = "mfaTrustedDeviceBypassEvaluator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -139,7 +139,7 @@ class MultifactorAuthnTrustWebflowConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AccountManagement, enabledByDefault = false)
     @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
-    public static class MultifactorAuthnTrustAccountProfileWebflowConfiguration {
+    static class MultifactorAuthnTrustAccountProfileWebflowConfiguration {
         @ConditionalOnMissingBean(name = "multifactorAuthenticationTrustedDeviceProviderAction")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

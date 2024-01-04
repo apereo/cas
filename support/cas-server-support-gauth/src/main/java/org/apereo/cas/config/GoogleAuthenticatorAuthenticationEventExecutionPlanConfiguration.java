@@ -96,7 +96,7 @@ class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
 
     @Configuration(value = "GoogleAuthenticatorAuthenticationEventExecutionPlaHandlerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class GoogleAuthenticatorAuthenticationEventExecutionPlaHandlerConfiguration {
+    static class GoogleAuthenticatorAuthenticationEventExecutionPlaHandlerConfiguration {
         @ConditionalOnMissingBean(name = "googleAuthenticatorAuthenticationHandler")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -120,7 +120,7 @@ class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
 
     @Configuration(value = "GoogleAuthenticatorMultifactorAuthenticationCoreConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class GoogleAuthenticatorMultifactorAuthenticationCoreConfiguration {
+    static class GoogleAuthenticatorMultifactorAuthenticationCoreConfiguration {
         private static final BeanCondition CONDITION_SCRATCH_CODE =
             BeanCondition.on("cas.authn.mfa.gauth.core.scratch-codes.encryption.key");
 
@@ -180,7 +180,7 @@ class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
 
     @Configuration(value = "GoogleAuthenticatorAuthenticationEventExecutionPlanMetadataConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class GoogleAuthenticatorAuthenticationEventExecutionPlanMetadataConfiguration {
+    static class GoogleAuthenticatorAuthenticationEventExecutionPlanMetadataConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "googleAuthenticatorAuthenticationMetaDataPopulator")
@@ -212,7 +212,7 @@ class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
 
     @Configuration(value = "GoogleAuthenticatorMultifactorAuthenticationWebConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class GoogleAuthenticatorMultifactorAuthenticationWebConfiguration {
+    static class GoogleAuthenticatorMultifactorAuthenticationWebConfiguration {
         @Bean
         @ConditionalOnAvailableEndpoint
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -226,7 +226,7 @@ class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
 
     @Configuration(value = "GoogleAuthenticatorMultifactorAuthenticationPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class GoogleAuthenticatorMultifactorAuthenticationPlanConfiguration {
+    static class GoogleAuthenticatorMultifactorAuthenticationPlanConfiguration {
         @ConditionalOnMissingBean(name = "googleAuthenticatorAuthenticationEventExecutionPlanConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -251,7 +251,7 @@ class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
 
     @Configuration(value = "GoogleAuthenticatorMultifactorAuthenticationTokenConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class GoogleAuthenticatorMultifactorAuthenticationTokenConfiguration {
+    static class GoogleAuthenticatorMultifactorAuthenticationTokenConfiguration {
         @ConditionalOnMissingBean(name = "googleAuthenticatorOneTimeTokenCredentialValidator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -308,7 +308,7 @@ class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
 
     @Configuration(value = "GoogleAuthenticatorMultifactorAuthenticationWebflowConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class GoogleAuthenticatorMultifactorAuthenticationWebflowConfiguration {
+    static class GoogleAuthenticatorMultifactorAuthenticationWebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_GOOGLE_VALIDATE_SELECTED_REGISTRATION)
@@ -454,7 +454,7 @@ class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
 
     @Configuration(value = "GoogleAuthenticatorMultifactorAuthenticationProviderConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class GoogleAuthenticatorMultifactorAuthenticationProviderConfiguration {
+    static class GoogleAuthenticatorMultifactorAuthenticationProviderConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "googleAuthenticatorMultifactorAuthenticationProvider")
@@ -478,7 +478,7 @@ class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AccountManagement, enabledByDefault = false)
     @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
-    public static class GoogleAuthenticatorAccountProfileWebflowConfiguration {
+    static class GoogleAuthenticatorAccountProfileWebflowConfiguration {
 
         @ConditionalOnMissingBean(name = "googleAccountProfileWebflowConfigurer")
         @Bean

@@ -52,7 +52,7 @@ class InweboAuthenticationConfiguration {
 
     @Configuration(value = "InweboAuthenticationProviderConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class InweboAuthenticationProviderConfiguration {
+    static class InweboAuthenticationProviderConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "inweboMultifactorAuthenticationProvider")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -75,7 +75,7 @@ class InweboAuthenticationConfiguration {
 
     @Configuration(value = "InweboAuthenticationHandlerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class InweboAuthenticationHandlerConfiguration {
+    static class InweboAuthenticationHandlerConfiguration {
         @ConditionalOnMissingBean(name = "inweboAuthenticationHandler")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -98,7 +98,7 @@ class InweboAuthenticationConfiguration {
 
     @Configuration(value = "InweboAuthenticationMetadataConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class InweboAuthenticationMetadataConfiguration {
+    static class InweboAuthenticationMetadataConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "inweboMultifactorProviderAuthenticationMetadataPopulator")
@@ -137,7 +137,7 @@ class InweboAuthenticationConfiguration {
 
     @Configuration(value = "InweboAuthenticationPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class InweboAuthenticationPlanConfiguration {
+    static class InweboAuthenticationPlanConfiguration {
         @ConditionalOnMissingBean(name = "inweboAuthenticationEventExecutionPlanConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

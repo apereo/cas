@@ -35,7 +35,7 @@ class CasCoreMultifactorAuthenticationConfiguration {
 
     @Configuration(value = "CasCoreMultifactorAuthenticationContextConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreMultifactorAuthenticationContextConfiguration {
+    static class CasCoreMultifactorAuthenticationContextConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "requestedContextValidator")
@@ -51,7 +51,7 @@ class CasCoreMultifactorAuthenticationConfiguration {
 
     @Configuration(value = "CasCoreMultifactorAuthenticationFailureConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreMultifactorAuthenticationFailureConfiguration {
+    static class CasCoreMultifactorAuthenticationFailureConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = MultifactorAuthenticationContextValidator.BEAN_NAME)

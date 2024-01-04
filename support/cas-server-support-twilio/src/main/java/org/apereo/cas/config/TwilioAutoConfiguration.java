@@ -33,7 +33,7 @@ public class TwilioAutoConfiguration {
 
 
     @Configuration(value = "TwilioSmsConfiguration", proxyBeanMethods = false)
-    public static class TwilioSmsConfiguration {
+    static class TwilioSmsConfiguration {
         private static final BeanCondition TWILIO_SMS_CONDITION = BeanCondition
             .on("cas.sms-provider.twilio.enabled").isTrue().evenIfMissing();
 
@@ -52,7 +52,7 @@ public class TwilioAutoConfiguration {
     }
 
     @Configuration(value = "TwilioPhoneCallConfiguration", proxyBeanMethods = false)
-    public static class TwilioPhoneCallConfiguration {
+    static class TwilioPhoneCallConfiguration {
         private static final BeanCondition TWILIO_PHONE_CONDITION = BeanCondition
             .on("cas.sms-provider.twilio.phone-calls-enabled").isTrue();
         

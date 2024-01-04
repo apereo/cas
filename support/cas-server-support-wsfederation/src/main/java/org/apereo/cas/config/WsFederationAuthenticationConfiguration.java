@@ -43,7 +43,7 @@ class WsFederationAuthenticationConfiguration {
 
     @Configuration(value = "WsFederationAuthenticationHelperConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class WsFederationAuthenticationHelperConfiguration {
+    static class WsFederationAuthenticationHelperConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "wsFederationAuthenticationComponentSerializationPlanConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -82,7 +82,7 @@ class WsFederationAuthenticationConfiguration {
 
     @Configuration(value = "WsFederationAuthenticationCookieConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class WsFederationAuthenticationCookieConfiguration {
+    static class WsFederationAuthenticationCookieConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "wsFederationCookieManager")
@@ -97,7 +97,7 @@ class WsFederationAuthenticationConfiguration {
 
     @Configuration(value = "WsFederationAuthenticationControllerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class WsFederationAuthenticationControllerConfiguration {
+    static class WsFederationAuthenticationControllerConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public WsFederationNavigationController wsFederationNavigationController(

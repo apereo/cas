@@ -39,7 +39,7 @@ class SamlIdPThrottleConfiguration {
 
     @Configuration(value = "SamlIdPThrottleWebMvcConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SamlIdPThrottleWebMvcConfiguration {
+    static class SamlIdPThrottleWebMvcConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "samlIdPThrottleWebMvcConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

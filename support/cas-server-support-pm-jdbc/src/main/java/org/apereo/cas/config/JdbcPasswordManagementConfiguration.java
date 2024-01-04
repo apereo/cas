@@ -41,7 +41,7 @@ class JdbcPasswordManagementConfiguration {
 
     @Configuration(value = "JdbcPasswordManagementServiceConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class JdbcPasswordManagementServiceConfiguration {
+    static class JdbcPasswordManagementServiceConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "jdbcPasswordChangeService")
@@ -66,7 +66,7 @@ class JdbcPasswordManagementConfiguration {
 
     @Configuration(value = "JdbcPasswordManagementDataConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class JdbcPasswordManagementDataConfiguration {
+    static class JdbcPasswordManagementDataConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "jdbcPasswordManagementDataSource")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -77,7 +77,7 @@ class JdbcPasswordManagementConfiguration {
 
     @Configuration(value = "JdbcPasswordManagementTransactionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class JdbcPasswordManagementTransactionConfiguration {
+    static class JdbcPasswordManagementTransactionConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PlatformTransactionManager jdbcPasswordManagementTransactionManager(

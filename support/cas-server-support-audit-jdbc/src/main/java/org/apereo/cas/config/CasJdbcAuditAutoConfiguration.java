@@ -63,7 +63,7 @@ public class CasJdbcAuditAutoConfiguration {
 
     @Configuration(value = "CasSupportJdbcAuditEntityConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasSupportJdbcAuditEntityConfiguration {
+    static class CasSupportJdbcAuditEntityConfiguration {
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
@@ -117,7 +117,7 @@ public class CasJdbcAuditAutoConfiguration {
 
     @Configuration(value = "CasSupportJdbcAuditTransactionTemplateConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasSupportJdbcAuditTransactionTemplateConfiguration {
+    static class CasSupportJdbcAuditTransactionTemplateConfiguration {
 
         @ConditionalOnMissingBean(name = "inspektrAuditTransactionTemplate")
         @Bean
@@ -142,7 +142,7 @@ public class CasJdbcAuditAutoConfiguration {
 
     @Configuration(value = "CasSupportJdbcAuditManagerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasSupportJdbcAuditManagerConfiguration {
+    static class CasSupportJdbcAuditManagerConfiguration {
         private static String getAuditTableNameFrom(final AuditJdbcProperties jdbc) {
             var tableName = JdbcAuditTrailEntity.AUDIT_TRAIL_TABLE_NAME;
             if (StringUtils.isNotBlank(jdbc.getDefaultSchema())) {
@@ -186,7 +186,7 @@ public class CasJdbcAuditAutoConfiguration {
 
     @Configuration(value = "CasSupportJdbcAuditExecutionPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasSupportJdbcAuditExecutionPlanConfiguration {
+    static class CasSupportJdbcAuditExecutionPlanConfiguration {
         @ConditionalOnMissingBean(name = "jdbcAuditTrailExecutionPlanConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -203,7 +203,7 @@ public class CasJdbcAuditAutoConfiguration {
 
     @Configuration(value = "CasSupportJdbcAuditScheduleConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasSupportJdbcAuditScheduleConfiguration {
+    static class CasSupportJdbcAuditScheduleConfiguration {
 
         @ConditionalOnMissingBean(name = "inspektrAuditTrailCleaner")
         @Bean
@@ -223,7 +223,7 @@ public class CasJdbcAuditAutoConfiguration {
 
     @Configuration(value = "CasSupportJdbcAuditTransactionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasSupportJdbcAuditTransactionConfiguration {
+    static class CasSupportJdbcAuditTransactionConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "inspektrAuditTransactionManager")
@@ -241,7 +241,7 @@ public class CasJdbcAuditAutoConfiguration {
 
     @Configuration(value = "CasSupportJdbcAuditDataConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasSupportJdbcAuditDataConfiguration {
+    static class CasSupportJdbcAuditDataConfiguration {
 
         @ConditionalOnMissingBean(name = "inspektrAuditTrailDataSource")
         @Bean

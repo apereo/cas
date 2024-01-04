@@ -34,7 +34,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 class DelegatedAuthenticationConfiguration {
     @Configuration(value = "DelegatedAuthenticationBaseConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class DelegatedAuthenticationBaseConfiguration {
+    static class DelegatedAuthenticationBaseConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = AuditableExecution.AUDITABLE_EXECUTION_DELEGATED_AUTHENTICATION_ACCESS)
@@ -45,7 +45,7 @@ class DelegatedAuthenticationConfiguration {
 
     @Configuration(value = "DelegatedAuthenticationAuthorizerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class DelegatedAuthenticationAuthorizerConfiguration {
+    static class DelegatedAuthenticationAuthorizerConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ServiceTicketValidationAuthorizer pac4jServiceTicketValidationAuthorizer(
@@ -68,7 +68,7 @@ class DelegatedAuthenticationConfiguration {
 
     @Configuration(value = "DelegatedAuthenticationSingleSignOnConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class DelegatedAuthenticationSingleSignOnConfiguration {
+    static class DelegatedAuthenticationSingleSignOnConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "pac4jDelegatedAuthenticationSingleSignOnParticipationStrategy")

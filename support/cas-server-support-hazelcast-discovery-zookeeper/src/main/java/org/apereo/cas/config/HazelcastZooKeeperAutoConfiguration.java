@@ -38,7 +38,7 @@ public class HazelcastZooKeeperAutoConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @ConditionalOnClass(HazelcastTicketRegistry.class)
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistryLocking, module = "hazelcast")
-    public static class HazelcastTicketRegistryZooKeeperLockingConfiguration {
+    static class HazelcastTicketRegistryZooKeeperLockingConfiguration {
         private static final int CONNECTION_TIMEOUT_MILLIS = 3000;
         private static final BeanCondition CONDITION = BeanCondition.on("cas.ticket.registry.core.enable-locking").isTrue().evenIfMissing();
 

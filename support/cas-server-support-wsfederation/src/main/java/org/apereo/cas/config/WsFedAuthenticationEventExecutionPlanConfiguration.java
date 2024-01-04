@@ -62,7 +62,7 @@ class WsFedAuthenticationEventExecutionPlanConfiguration {
 
     @Configuration(value = "WsFedAuthenticationProvidersConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class WsFedAuthenticationProvidersConfiguration {
+    static class WsFedAuthenticationProvidersConfiguration {
         private static WsFederationAttributeMutator getAttributeMutatorForWsFederationConfig(final WsFederationDelegationProperties wsfed) {
             val location = wsfed.getAttributeMutatorScript().getLocation();
             return location != null
@@ -142,7 +142,7 @@ class WsFedAuthenticationEventExecutionPlanConfiguration {
 
     @Configuration(value = "WsFedAuthenticationEventExecutionPlanPrincipalConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class WsFedAuthenticationEventExecutionPlanPrincipalConfiguration {
+    static class WsFedAuthenticationEventExecutionPlanPrincipalConfiguration {
         @ConditionalOnMissingBean(name = "wsfedPrincipalFactory")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -155,7 +155,7 @@ class WsFedAuthenticationEventExecutionPlanConfiguration {
 
     @Configuration(value = "WsFedAuthenticationEventExecutionPlanBaseConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class WsFedAuthenticationEventExecutionPlanBaseConfiguration {
+    static class WsFedAuthenticationEventExecutionPlanBaseConfiguration {
         @ConditionalOnMissingBean(name = "wsfedAuthenticationEventExecutionPlanConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

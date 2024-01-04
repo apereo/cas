@@ -40,7 +40,7 @@ class OidcLogoutConfiguration {
 
     @Configuration(value = "OidcLogoutBuilderConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OidcLogoutBuilderConfiguration {
+    static class OidcLogoutBuilderConfiguration {
 
         @ConditionalOnMissingBean(name = "oidcSingleLogoutServiceLogoutUrlBuilderConfigurer")
         @Bean
@@ -56,7 +56,7 @@ class OidcLogoutConfiguration {
 
     @Configuration(value = "OidcLogoutMessageConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OidcLogoutMessageConfiguration {
+    static class OidcLogoutMessageConfiguration {
 
         @ConditionalOnMissingBean(name = "oidcSingleLogoutMessageCreator")
         @Bean
@@ -70,7 +70,7 @@ class OidcLogoutConfiguration {
 
     @Configuration(value = "OidcLogoutHandlerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OidcLogoutHandlerConfiguration {
+    static class OidcLogoutHandlerConfiguration {
 
         @ConditionalOnMissingBean(name = "oidcSingleLogoutServiceMessageHandler")
         @Bean
@@ -102,7 +102,7 @@ class OidcLogoutConfiguration {
 
     @Configuration(value = "OidcLogoutExecutionPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OidcLogoutExecutionPlanConfiguration {
+    static class OidcLogoutExecutionPlanConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "oidcLogoutExecutionPlanConfigurer")

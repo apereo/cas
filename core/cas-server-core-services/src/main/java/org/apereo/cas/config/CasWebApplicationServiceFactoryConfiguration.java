@@ -33,7 +33,7 @@ class CasWebApplicationServiceFactoryConfiguration {
 
     @Configuration(value = "CasWebApplicationServiceFactoryBaseConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasWebApplicationServiceFactoryBaseConfiguration {
+    static class CasWebApplicationServiceFactoryBaseConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = WebApplicationService.BEAN_NAME_FACTORY)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -44,7 +44,7 @@ class CasWebApplicationServiceFactoryConfiguration {
 
     @Configuration(value = "CasWebApplicationServiceFactoryPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasWebApplicationServiceFactoryPlanConfiguration {
+    static class CasWebApplicationServiceFactoryPlanConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "casWebApplicationServiceFactoryConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

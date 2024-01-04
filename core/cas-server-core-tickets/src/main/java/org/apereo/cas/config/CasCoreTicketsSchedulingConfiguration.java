@@ -91,7 +91,7 @@ class CasCoreTicketsSchedulingConfiguration {
      * with transaction semantics of the cleaner.
      */
     @RequiredArgsConstructor
-    public static class TicketRegistryCleanerScheduler implements Runnable {
+    static class TicketRegistryCleanerScheduler implements Runnable {
         private final TicketRegistryCleaner ticketRegistryCleaner;
 
         @Scheduled(initialDelayString = "${cas.ticket.registry.cleaner.schedule.start-delay:PT30S}",

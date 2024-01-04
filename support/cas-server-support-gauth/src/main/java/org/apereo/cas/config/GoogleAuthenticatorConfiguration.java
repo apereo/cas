@@ -39,7 +39,7 @@ class GoogleAuthenticatorConfiguration {
 
     @Configuration(value = "GoogleAuthenticatorMultifactorWebflowConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class GoogleAuthenticatorMultifactorWebflowConfiguration {
+    static class GoogleAuthenticatorMultifactorWebflowConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "googleAuthenticatorFlowRegistry")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

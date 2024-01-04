@@ -84,7 +84,7 @@ class InweboWebflowConfiguration {
 
     @Configuration(value = "InweboWebflowRegistryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class InweboWebflowRegistryConfiguration {
+    static class InweboWebflowRegistryConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public FlowDefinitionRegistry inweboFlowRegistry(
@@ -102,7 +102,7 @@ class InweboWebflowConfiguration {
 
     @Configuration(value = "InweboWebflowExecutionPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class InweboWebflowExecutionPlanConfiguration {
+    static class InweboWebflowExecutionPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "inweboCasWebflowExecutionPlanConfigurer")
@@ -115,7 +115,7 @@ class InweboWebflowConfiguration {
 
     @Configuration(value = "InweboWebflowActionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class InweboWebflowActionConfiguration {
+    static class InweboWebflowActionConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_INWEBO_PUSH_AUTHENTICATION)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -170,7 +170,7 @@ class InweboWebflowConfiguration {
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthenticationTrustedDevices, module = "inwebo")
     @Configuration(value = "InweboMultifactorTrustConfiguration", proxyBeanMethods = false)
     @DependsOn("inweboMultifactorWebflowConfigurer")
-    public static class InweboMultifactorTrustConfiguration {
+    static class InweboMultifactorTrustConfiguration {
         private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.mfa.inwebo.trusted-device-enabled")
             .isTrue().evenIfMissing();
 

@@ -33,12 +33,12 @@ import java.util.Optional;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.CasConfiguration)
-public class CasCoreBaseStandaloneConfiguration {
+class CasCoreBaseStandaloneConfiguration {
 
     @Configuration(value = "CasCoreBootstrapStandaloneSourcesConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @Lazy(false)
-    public static class CasCoreBootstrapStandaloneSourcesConfiguration implements PriorityOrdered {
+    static class CasCoreBootstrapStandaloneSourcesConfiguration implements PriorityOrdered {
 
         @Bean
         public static PropertySourceLocator casCoreBootstrapPropertySourceLocator(
@@ -71,7 +71,7 @@ public class CasCoreBaseStandaloneConfiguration {
         CasConfigurationPropertiesSourceLocator.PROFILE_EMBEDDED
     })
     @Lazy(false)
-    public static class CasCoreBootstrapStandaloneLocatorConfiguration {
+    static class CasCoreBootstrapStandaloneLocatorConfiguration {
         @ConditionalOnMissingBean(name = "casConfigurationPropertiesSourceLocator")
         @Bean
         public static CasConfigurationPropertiesSourceLocator casConfigurationPropertiesSourceLocator(

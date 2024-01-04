@@ -39,7 +39,7 @@ public class TrustedAuthenticationWebflowAutoConfiguration {
 
     @Configuration(value = "TrustedAuthenticationWebflowBaseConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class TrustedAuthenticationWebflowBaseConfiguration {
+    static class TrustedAuthenticationWebflowBaseConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "trustedAuthnComponentSerializationPlanConfigurer")
@@ -83,7 +83,7 @@ public class TrustedAuthenticationWebflowAutoConfiguration {
 
     @Configuration(value = "TrustedAuthenticationWebflowPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class TrustedAuthenticationWebflowPlanConfiguration {
+    static class TrustedAuthenticationWebflowPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "trustedCasWebflowExecutionPlanConfigurer")

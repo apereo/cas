@@ -95,7 +95,7 @@ public class CasOAuthUmaAutoConfiguration {
 
     @Configuration(value = "CasOAuthUmaTokenConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasOAuthUmaTokenConfiguration {
+    static class CasOAuthUmaTokenConfiguration {
         
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -109,7 +109,7 @@ public class CasOAuthUmaAutoConfiguration {
 
     @Configuration(value = "CasOAuthUmaResourcesConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasOAuthUmaResourcesConfiguration {
+    static class CasOAuthUmaResourcesConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "umaResourceSetClaimPermissionExaminer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -128,7 +128,7 @@ public class CasOAuthUmaAutoConfiguration {
 
     @Configuration(value = "CasOAuthUmaContextConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasOAuthUmaContextConfiguration {
+    static class CasOAuthUmaContextConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -192,7 +192,7 @@ public class CasOAuthUmaAutoConfiguration {
 
     @Configuration(value = "CasOAuthUmaInterceptorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasOAuthUmaInterceptorConfiguration {
+    static class CasOAuthUmaInterceptorConfiguration {
         private static SecurityLogicInterceptor getSecurityInterceptor(
             final Authenticator authenticator,
             final String clientName,
@@ -241,7 +241,7 @@ public class CasOAuthUmaAutoConfiguration {
 
     @Configuration(value = "CasOAuthUmaDiscoveryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasOAuthUmaDiscoveryConfiguration {
+    static class CasOAuthUmaDiscoveryConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -254,7 +254,7 @@ public class CasOAuthUmaAutoConfiguration {
 
     @Configuration(value = "CasOAuthUmaWebMvcConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasOAuthUmaWebMvcConfiguration {
+    static class CasOAuthUmaWebMvcConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "umaWebMvcConfigurer")
@@ -290,7 +290,7 @@ public class CasOAuthUmaAutoConfiguration {
 
     @Configuration(value = "CasOAuthUmaTicketsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasOAuthUmaTicketsConfiguration {
+    static class CasOAuthUmaTicketsConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "umaComponentSerializationPlanConfigurer")
@@ -356,7 +356,7 @@ public class CasOAuthUmaAutoConfiguration {
 
     @Configuration(value = "CasOAuthUmaTicketFactoryPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasOAuthUmaTicketFactoryPlanConfiguration {
+    static class CasOAuthUmaTicketFactoryPlanConfiguration {
         @ConditionalOnMissingBean(name = "defaultUmaPermissionTicketFactoryConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -370,7 +370,7 @@ public class CasOAuthUmaAutoConfiguration {
 
     @Configuration(value = "CasOAuthUmaControllersConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasOAuthUmaControllersConfiguration {
+    static class CasOAuthUmaControllersConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public UmaAuthorizationRequestEndpointController umaAuthorizationRequestEndpointController(

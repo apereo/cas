@@ -70,7 +70,7 @@ class CasWebSecurityConfiguration {
 
     @Configuration(value = "CasWebAppSecurityMvcConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasWebAppSecurityMvcConfiguration {
+    static class CasWebAppSecurityMvcConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "casWebAppSecurityWebMvcConfigurer")
         public WebMvcConfigurer casWebAppSecurityWebMvcConfigurer(final CasConfigurationProperties casProperties) {
@@ -89,7 +89,7 @@ class CasWebSecurityConfiguration {
 
     @Configuration(value = "CasWebappCoreSecurityConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasWebappCoreSecurityConfiguration {
+    static class CasWebappCoreSecurityConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "securityContextRepository")
@@ -168,7 +168,7 @@ class CasWebSecurityConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @ConditionalOnProperty(name = "cas.monitor.endpoints.jdbc.query")
     @SuppressWarnings("ConditionalOnProperty")
-    public static class CasWebAppSecurityJdbcConfiguration {
+    static class CasWebAppSecurityJdbcConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "jdbcUserDetailsPasswordEncoder")
         public static PasswordEncoder jdbcUserDetailsPasswordEncoder(

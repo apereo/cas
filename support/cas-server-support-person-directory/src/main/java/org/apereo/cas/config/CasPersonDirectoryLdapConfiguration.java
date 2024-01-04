@@ -48,7 +48,7 @@ class CasPersonDirectoryLdapConfiguration {
 
     @Configuration(value = "LdapAttributeRepositoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class LdapAttributeRepositoryConfiguration {
+    static class LdapAttributeRepositoryConfiguration {
 
         private static final LdapEntryHandler[] LDAP_ENTRY_HANDLERS = new LdapEntryHandler[0];
 
@@ -135,7 +135,7 @@ class CasPersonDirectoryLdapConfiguration {
 
     @Configuration(value = "LdapAttributeRepositoryPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class LdapAttributeRepositoryPlanConfiguration {
+    static class LdapAttributeRepositoryPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "ldapPersonDirectoryAttributeRepositoryPlanConfigurer")

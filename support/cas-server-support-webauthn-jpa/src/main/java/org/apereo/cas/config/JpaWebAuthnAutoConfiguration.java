@@ -45,7 +45,7 @@ public class JpaWebAuthnAutoConfiguration {
 
     @Configuration(value = "JpaWebAuthnTransactionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class JpaWebAuthnTransactionConfiguration {
+    static class JpaWebAuthnTransactionConfiguration {
         @ConditionalOnMissingBean(name = "webAuthnTransactionTemplate")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -73,7 +73,7 @@ public class JpaWebAuthnAutoConfiguration {
 
     @Configuration(value = "JpaWebAuthnRepositoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class JpaWebAuthnRepositoryConfiguration {
+    static class JpaWebAuthnRepositoryConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public WebAuthnCredentialRepository webAuthnCredentialRepository(
@@ -90,7 +90,7 @@ public class JpaWebAuthnAutoConfiguration {
 
     @Configuration(value = "JpaWebAuthnEntityConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class JpaWebAuthnEntityConfiguration {
+    static class JpaWebAuthnEntityConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public JpaVendorAdapter jpaWebAuthnVendorAdapter(
@@ -132,7 +132,7 @@ public class JpaWebAuthnAutoConfiguration {
 
     @Configuration(value = "JpaWebAuthnDataConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class JpaWebAuthnDataConfiguration {
+    static class JpaWebAuthnDataConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "dataSourceWebAuthn")

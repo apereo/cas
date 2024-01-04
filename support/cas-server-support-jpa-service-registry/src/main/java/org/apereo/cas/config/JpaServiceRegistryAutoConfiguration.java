@@ -61,7 +61,7 @@ public class JpaServiceRegistryAutoConfiguration {
 
     @Configuration(value = "JpaServiceRegistryPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class JpaServiceRegistryPlanConfiguration {
+    static class JpaServiceRegistryPlanConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "jpaServiceRegistryExecutionPlanConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -93,7 +93,7 @@ public class JpaServiceRegistryAutoConfiguration {
 
     @Configuration(value = "JpaServiceRegistryEntityConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class JpaServiceRegistryEntityConfiguration {
+    static class JpaServiceRegistryEntityConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public JpaVendorAdapter jpaServiceVendorAdapter(
@@ -158,7 +158,7 @@ public class JpaServiceRegistryAutoConfiguration {
 
     @Configuration(value = "JpaServiceRegistryTransactionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class JpaServiceRegistryTransactionConfiguration {
+    static class JpaServiceRegistryTransactionConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PlatformTransactionManager transactionManagerServiceReg(
@@ -197,7 +197,7 @@ public class JpaServiceRegistryAutoConfiguration {
 
     @Configuration(value = "JpaServiceRegistryDataConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class JpaServiceRegistryDataConfiguration {
+    static class JpaServiceRegistryDataConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "dataSourceService")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -214,7 +214,7 @@ public class JpaServiceRegistryAutoConfiguration {
 
     @Configuration(value = "JpaServiceRegistryBaseConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class JpaServiceRegistryBaseConfiguration {
+    static class JpaServiceRegistryBaseConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

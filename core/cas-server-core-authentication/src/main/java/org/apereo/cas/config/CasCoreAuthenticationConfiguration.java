@@ -55,7 +55,7 @@ class CasCoreAuthenticationConfiguration {
 
     @Configuration(value = "CasCoreAuthenticationBaseConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreAuthenticationBaseConfiguration {
+    static class CasCoreAuthenticationBaseConfiguration {
 
         @ConditionalOnMissingBean(name = "authenticationResultBuilderFactory")
         @Bean
@@ -90,7 +90,7 @@ class CasCoreAuthenticationConfiguration {
 
     @Configuration(value = "CasCoreAuthenticationManagerConfiguration", proxyBeanMethods = false)
     @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
-    public static class CasCoreAuthenticationManagerConfiguration {
+    static class CasCoreAuthenticationManagerConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "authenticationTransactionManager")
@@ -117,7 +117,7 @@ class CasCoreAuthenticationConfiguration {
 
     @Configuration(value = "CasCoreAuthenticationPlanConfiguration", proxyBeanMethods = false)
     @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
-    public static class CasCoreAuthenticationPlanConfiguration {
+    static class CasCoreAuthenticationPlanConfiguration {
         @ConditionalOnMissingBean(name = AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

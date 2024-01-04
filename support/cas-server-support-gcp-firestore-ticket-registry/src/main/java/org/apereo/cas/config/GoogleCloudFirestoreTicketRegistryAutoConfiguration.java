@@ -53,7 +53,7 @@ public class GoogleCloudFirestoreTicketRegistryAutoConfiguration {
 
     @Configuration(value = "GoogleCloudFirestoreTicketCatalogProviderConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class GoogleCloudFirestoreTicketCatalogProviderConfiguration {
+    static class GoogleCloudFirestoreTicketCatalogProviderConfiguration {
         @ConditionalOnMissingBean(name = "googleCloudFirestoreTicketCatalogConfigurationValuesProvider")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
