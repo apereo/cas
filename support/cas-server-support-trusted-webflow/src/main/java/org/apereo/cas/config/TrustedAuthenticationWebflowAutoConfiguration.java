@@ -1,8 +1,10 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.adaptors.trusted.authentication.principal.PrincipalBearingCredential;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.util.RegexUtils;
+import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -25,7 +27,7 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
 /**
- * This is {@link TrustedAuthenticationWebflowConfiguration}.
+ * This is {@link TrustedAuthenticationWebflowAutoConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
@@ -33,11 +35,18 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Authentication, module = "trusted")
 @AutoConfiguration
-public class TrustedAuthenticationWebflowConfiguration {
+public class TrustedAuthenticationWebflowAutoConfiguration {
 
     @Configuration(value = "TrustedAuthenticationWebflowBaseConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class TrustedAuthenticationWebflowBaseConfiguration {
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "trustedAuthnComponentSerializationPlanConfigurer")
+        public ComponentSerializationPlanConfigurer trustedAuthnComponentSerializationPlanConfigurer() {
+            return plan -> plan.registerSerializableClass(PrincipalBearingCredential.class);
+        }
+
         @ConditionalOnMissingBean(name = "trustedWebflowConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
