@@ -1,9 +1,6 @@
 package org.apereo.cas.ws.idp.web.flow;
 
-import org.apereo.cas.config.CasWsSecurityTokenTicketCatalogConfiguration;
-import org.apereo.cas.config.CasWsSecurityTokenTicketComponentSerializationConfiguration;
-import org.apereo.cas.config.CoreWsSecuritySecurityTokenServiceConfiguration;
-import org.apereo.cas.config.CoreWsSecuritySecurityTokenTicketConfiguration;
+import org.apereo.cas.config.CasWsSecuritySecurityTokenAutoConfiguration;
 import org.apereo.cas.config.WsSecurityIdentityProviderAutoConfiguration;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
@@ -25,10 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Import({
-    CasWsSecurityTokenTicketCatalogConfiguration.class,
-    CasWsSecurityTokenTicketComponentSerializationConfiguration.class,
-    CoreWsSecuritySecurityTokenServiceConfiguration.class,
-    CoreWsSecuritySecurityTokenTicketConfiguration.class,
+    CasWsSecuritySecurityTokenAutoConfiguration.class,
     WsSecurityIdentityProviderAutoConfiguration.class
 })
 @TestPropertySource(properties = {
