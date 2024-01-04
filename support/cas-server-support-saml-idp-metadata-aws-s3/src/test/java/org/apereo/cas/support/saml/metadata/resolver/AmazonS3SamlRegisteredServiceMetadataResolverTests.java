@@ -1,15 +1,12 @@
 package org.apereo.cas.support.saml.metadata.resolver;
 
-import org.apereo.cas.config.AmazonS3SamlIdPMetadataConfiguration;
-import org.apereo.cas.config.AmazonS3SamlMetadataConfiguration;
-import org.apereo.cas.config.SamlIdPAmazonS3RegisteredServiceMetadataConfiguration;
+import org.apereo.cas.config.AmazonS3SamlMetadataAutoConfiguration;
 import org.apereo.cas.support.saml.BaseSamlIdPMetadataTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataResolver;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Tag;
@@ -18,9 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
-
 import java.nio.charset.StandardCharsets;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -30,9 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @SpringBootTest(classes = {
-    AmazonS3SamlMetadataConfiguration.class,
-    AmazonS3SamlIdPMetadataConfiguration.class,
-    SamlIdPAmazonS3RegisteredServiceMetadataConfiguration.class,
+    AmazonS3SamlMetadataAutoConfiguration.class,
     BaseSamlIdPMetadataTests.SharedTestConfiguration.class
 }, properties = {
     "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/saml22",

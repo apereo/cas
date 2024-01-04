@@ -1,23 +1,18 @@
 package org.apereo.cas.support.saml.idp.metadata;
 
-import org.apereo.cas.config.AmazonS3SamlIdPMetadataConfiguration;
-import org.apereo.cas.config.AmazonS3SamlMetadataConfiguration;
-import org.apereo.cas.config.SamlIdPAmazonS3RegisteredServiceMetadataConfiguration;
+import org.apereo.cas.config.AmazonS3SamlMetadataAutoConfiguration;
 import org.apereo.cas.support.saml.BaseSamlIdPMetadataTests;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-
 import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -27,9 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @SpringBootTest(classes = {
-    AmazonS3SamlMetadataConfiguration.class,
-    AmazonS3SamlIdPMetadataConfiguration.class,
-    SamlIdPAmazonS3RegisteredServiceMetadataConfiguration.class,
+    AmazonS3SamlMetadataAutoConfiguration.class,
     BaseSamlIdPMetadataTests.SharedTestConfiguration.class
 }, properties = {
     "cas.authn.saml-idp.metadata.amazon-s3.idp-metadata-bucket-name=thebucket",
