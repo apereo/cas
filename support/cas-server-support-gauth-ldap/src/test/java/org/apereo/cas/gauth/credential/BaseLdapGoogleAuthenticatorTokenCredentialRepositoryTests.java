@@ -13,8 +13,7 @@ import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
-import org.apereo.cas.config.GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration;
-import org.apereo.cas.config.GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfiguration;
+import org.apereo.cas.config.GoogleAuthenticatorAutoConfiguration;
 import org.apereo.cas.config.GoogleAuthenticatorLdapAutoConfiguration;
 import org.apereo.cas.config.OneTimeTokenAuthenticationAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -59,8 +58,7 @@ public abstract class BaseLdapGoogleAuthenticatorTokenCredentialRepositoryTests 
     @Import({
         GoogleAuthenticatorLdapAutoConfiguration.class,
         OneTimeTokenAuthenticationAutoConfiguration.class,
-        GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration.class,
-        GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfiguration.class,
+        GoogleAuthenticatorAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
         CasCookieAutoConfiguration.class,
