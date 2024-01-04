@@ -60,7 +60,7 @@ public class PasswordManagementAutoConfiguration {
 
     @Configuration(value = "PasswordManagementValidationConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class PasswordManagementValidationConfiguration {
+    static class PasswordManagementValidationConfiguration {
         @ConditionalOnMissingBean(name = PasswordValidationService.BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
@@ -73,7 +73,7 @@ public class PasswordManagementAutoConfiguration {
 
     @Configuration(value = "PasswordManagementHistoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class PasswordManagementHistoryConfiguration {
+    static class PasswordManagementHistoryConfiguration {
         @ConditionalOnMissingBean(name = PasswordHistoryService.BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
@@ -92,7 +92,7 @@ public class PasswordManagementAutoConfiguration {
 
     @Configuration(value = "PasswordManagementAuditConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class PasswordManagementAuditConfiguration {
+    static class PasswordManagementAuditConfiguration {
         @ConditionalOnMissingBean(name = "passwordManagementReturnValueResourceResolver")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -120,7 +120,7 @@ public class PasswordManagementAutoConfiguration {
 
     @Configuration(value = "PasswordManagementCipherConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class PasswordManagementCipherConfiguration {
+    static class PasswordManagementCipherConfiguration {
         @ConditionalOnMissingBean(name = "passwordManagementCipherExecutor")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
@@ -136,7 +136,7 @@ public class PasswordManagementAutoConfiguration {
 
     @Configuration(value = "PasswordManagementCoreConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class PasswordManagementCoreConfiguration {
+    static class PasswordManagementCoreConfiguration {
 
         @ConditionalOnMissingBean(name = PasswordResetUrlBuilder.BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

@@ -88,7 +88,7 @@ class PasswordManagementWebflowConfiguration {
 
     @Configuration(value = "PasswordManagementWebflowSingleSignOnConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class PasswordManagementWebflowSingleSignOnConfiguration {
+    static class PasswordManagementWebflowSingleSignOnConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "passwordManagementSingleSignOnParticipationStrategy")
@@ -111,7 +111,7 @@ class PasswordManagementWebflowConfiguration {
 
     @Configuration(value = "PasswordManagementWebflowAdapterConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class PasswordManagementWebflowAdapterConfiguration {
+    static class PasswordManagementWebflowAdapterConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public HandlerAdapter passwordResetHandlerAdapter(
@@ -130,7 +130,7 @@ class PasswordManagementWebflowConfiguration {
 
     @Configuration(value = "PasswordManagementWebflowBaseConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class PasswordManagementWebflowBaseConfiguration {
+    static class PasswordManagementWebflowBaseConfiguration {
         @ConditionalOnMissingBean(name = "passwordManagementWebflowConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -166,7 +166,7 @@ class PasswordManagementWebflowConfiguration {
 
     @Configuration(value = "PasswordManagementWebflowActionsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class PasswordManagementWebflowActionsConfiguration {
+    static class PasswordManagementWebflowActionsConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_UNLOCK_PREPARE)
@@ -353,7 +353,7 @@ class PasswordManagementWebflowConfiguration {
     }
 
     @Configuration(value = "PasswordManagementPolicyConfiguration", proxyBeanMethods = false)
-    public static class PasswordManagementPolicyConfiguration {
+    static class PasswordManagementPolicyConfiguration {
         private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.pm.core.password-policy-pattern");
 
         @ConditionalOnMissingBean(name = "passwordStrengthAuthenticationPostProcessor")
@@ -398,7 +398,7 @@ class PasswordManagementWebflowConfiguration {
 
     @Configuration(value = "PasswordManagementCaptchaConfiguration", proxyBeanMethods = false)
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.PasswordManagement, module = "captcha")
-    public static class PasswordManagementCaptchaConfiguration {
+    static class PasswordManagementCaptchaConfiguration {
         private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.pm.google-recaptcha.enabled").isTrue();
 
         @ConditionalOnMissingBean(name = "passwordManagementCaptchaWebflowConfigurer")
@@ -488,7 +488,7 @@ class PasswordManagementWebflowConfiguration {
     @Configuration(value = "PasswordManagementAccountProfileConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AccountManagement, enabledByDefault = false)
-    public static class PasswordManagementAccountProfileConfiguration {
+    static class PasswordManagementAccountProfileConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

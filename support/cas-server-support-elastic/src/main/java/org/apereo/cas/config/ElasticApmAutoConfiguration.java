@@ -31,7 +31,7 @@ public class ElasticApmAutoConfiguration {
 
     @Configuration(value = "ElasticApmTracerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class ElasticApmTracerConfiguration {
+    static class ElasticApmTracerConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "elasticApmMonitoringAspect")
         @Lazy(false)

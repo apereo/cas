@@ -48,7 +48,7 @@ class CasCoreHttpConfiguration {
 
     @Configuration(value = "CasCoreHttpSslFactoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreHttpSslFactoryConfiguration {
+    static class CasCoreHttpSslFactoryConfiguration {
         @ConditionalOnMissingBean(name = "trustStoreSslSocketFactory")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -61,7 +61,7 @@ class CasCoreHttpConfiguration {
 
     @Configuration(value = "CasCoreHttpHostnameConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreHttpHostnameConfiguration {
+    static class CasCoreHttpHostnameConfiguration {
         @ConditionalOnMissingBean(name = "hostnameVerifier")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -75,7 +75,7 @@ class CasCoreHttpConfiguration {
 
     @Configuration(value = "CasCoreHttpTlsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreHttpTlsConfiguration {
+    static class CasCoreHttpTlsConfiguration {
         @ConditionalOnMissingBean(name = CasSSLContext.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -96,7 +96,7 @@ class CasCoreHttpConfiguration {
 
     @Configuration(value = "CasCoreHttpClientConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreHttpClientConfiguration {
+    static class CasCoreHttpClientConfiguration {
         private static SimpleHttpClientFactoryBean buildHttpClientFactoryBean(
             final CasSSLContext casSslContext,
             final LayeredConnectionSocketFactory trustStoreSslSocketFactory,

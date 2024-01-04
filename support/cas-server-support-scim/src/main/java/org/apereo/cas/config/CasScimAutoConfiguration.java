@@ -44,7 +44,7 @@ public class CasScimAutoConfiguration {
 
     @Configuration(value = "CasScimWebflowConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasScimWebflowConfiguration {
+    static class CasScimWebflowConfiguration {
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SCIM_PROVISIONING_PRINCIPAL)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -92,7 +92,7 @@ public class CasScimAutoConfiguration {
     
     @Configuration(value = "CasScimCoreConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasScimCoreConfiguration {
+    static class CasScimCoreConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "scim2PrincipalAttributeMapper")

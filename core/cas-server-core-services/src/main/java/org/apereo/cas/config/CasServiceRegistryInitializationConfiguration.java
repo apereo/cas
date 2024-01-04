@@ -74,7 +74,7 @@ class CasServiceRegistryInitializationConfiguration {
 
     @Configuration(value = "CasServiceRegistryInitializationEventsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasServiceRegistryInitializationEventsConfiguration {
+    static class CasServiceRegistryInitializationEventsConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Lazy(false)
@@ -92,7 +92,7 @@ class CasServiceRegistryInitializationConfiguration {
 
     @Configuration(value = "CasServiceRegistryInitializationBaseConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasServiceRegistryInitializationBaseConfiguration {
+    static class CasServiceRegistryInitializationBaseConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Lazy(false)
@@ -115,7 +115,7 @@ class CasServiceRegistryInitializationConfiguration {
 
     @Configuration(value = "CasServiceRegistryEmbeddedConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasServiceRegistryEmbeddedConfiguration {
+    static class CasServiceRegistryEmbeddedConfiguration {
         private static Resource getServiceRegistryInitializerServicesDirectoryResource(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext) {
@@ -183,7 +183,7 @@ class CasServiceRegistryInitializationConfiguration {
      * The embedded service registry that processes built-in JSON service files
      * on the classpath.
      */
-    public static class EmbeddedResourceBasedServiceRegistry extends AbstractResourceBasedServiceRegistry {
+    static class EmbeddedResourceBasedServiceRegistry extends AbstractResourceBasedServiceRegistry {
         EmbeddedResourceBasedServiceRegistry(final ConfigurableApplicationContext applicationContext,
                                              final Resource location,
                                              final Collection<ServiceRegistryListener> serviceRegistryListeners,

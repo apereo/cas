@@ -47,7 +47,7 @@ class JdbcPasswordHistoryManagementConfiguration {
 
     @Configuration(value = "JdbcPasswordHistoryManagementEntityConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class JdbcPasswordHistoryManagementEntityConfiguration {
+    static class JdbcPasswordHistoryManagementEntityConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public JpaVendorAdapter jpaPasswordHistoryVendorAdapter(
@@ -99,7 +99,7 @@ class JdbcPasswordHistoryManagementConfiguration {
 
     @Configuration(value = "JdbcPasswordHistoryManagementTransactionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class JdbcPasswordHistoryManagementTransactionConfiguration {
+    static class JdbcPasswordHistoryManagementTransactionConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PlatformTransactionManager transactionManagerPasswordHistory(
@@ -121,7 +121,7 @@ class JdbcPasswordHistoryManagementConfiguration {
 
     @Configuration(value = "JdbcPasswordHistoryManagementServiceConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class JdbcPasswordHistoryManagementServiceConfiguration {
+    static class JdbcPasswordHistoryManagementServiceConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public PasswordHistoryService passwordHistoryService(final ConfigurableApplicationContext applicationContext) {

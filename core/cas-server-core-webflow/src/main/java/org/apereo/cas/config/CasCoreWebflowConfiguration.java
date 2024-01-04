@@ -103,7 +103,7 @@ class CasCoreWebflowConfiguration {
 
     @Configuration(value = "CasCoreWebflowEventResolutionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreWebflowEventResolutionConfiguration {
+    static class CasCoreWebflowEventResolutionConfiguration {
         @ConditionalOnMissingBean(name = "serviceTicketRequestWebflowEventResolver")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -142,7 +142,7 @@ class CasCoreWebflowConfiguration {
 
     @Configuration(value = "CasCoreWebflowContextConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreWebflowContextConfiguration {
+    static class CasCoreWebflowContextConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -203,7 +203,7 @@ class CasCoreWebflowConfiguration {
 
     @Configuration(value = "CasCoreWebflowActionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreWebflowActionConfiguration {
+    static class CasCoreWebflowActionConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_CLEAR_WEBFLOW_CREDENTIALS)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -305,7 +305,7 @@ class CasCoreWebflowConfiguration {
 
     @Configuration(value = "CasCoreWebflowExceptionHandlingConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreWebflowExceptionHandlingConfiguration {
+    static class CasCoreWebflowExceptionHandlingConfiguration {
         @ConditionalOnMissingBean(name = "groovyCasWebflowAuthenticationExceptionHandler")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -354,7 +354,7 @@ class CasCoreWebflowConfiguration {
 
     @Configuration(value = "CasCoreWebflowExceptionCatalogConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreWebflowExceptionCatalogConfiguration {
+    static class CasCoreWebflowExceptionCatalogConfiguration {
 
         /**
          * Handled authentication exceptions set.
@@ -407,7 +407,7 @@ class CasCoreWebflowConfiguration {
 
     @Configuration(value = "CasCoreWebflowSingleSignOnConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreWebflowSingleSignOnConfiguration {
+    static class CasCoreWebflowSingleSignOnConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = SingleSignOnParticipationStrategy.BEAN_NAME)
@@ -476,7 +476,7 @@ class CasCoreWebflowConfiguration {
 
     @Configuration(value = "CasCoreWebflowAuthenticationConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreWebflowAuthenticationConfiguration {
+    static class CasCoreWebflowAuthenticationConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowCredentialProvider.BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -487,7 +487,7 @@ class CasCoreWebflowConfiguration {
 
     @Configuration(value = "CasCoreWebflowDecoratorsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreWebflowDecoratorsConfiguration {
+    static class CasCoreWebflowDecoratorsConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "groovyLoginWebflowDecorator")
@@ -530,7 +530,7 @@ class CasCoreWebflowConfiguration {
     
     @Configuration(value = "CasCoreWebflowStorageActionsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreWebflowStorageActionsConfiguration {
+    static class CasCoreWebflowStorageActionsConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_WRITE_BROWSER_STORAGE)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

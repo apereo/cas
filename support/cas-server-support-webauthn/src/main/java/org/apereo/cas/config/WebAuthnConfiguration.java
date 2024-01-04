@@ -107,7 +107,7 @@ class WebAuthnConfiguration {
     @Configuration(value = "WebAuthnMetadataServiceConfiguration",
         proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class WebAuthnMetadataServiceConfiguration {
+    static class WebAuthnMetadataServiceConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "webAuthnMetadataService")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -171,7 +171,7 @@ class WebAuthnConfiguration {
     @Configuration(value = "WebAuthnCoreConfiguration",
         proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class WebAuthnCoreConfiguration {
+    static class WebAuthnCoreConfiguration {
         @ConditionalOnMissingBean(name = "webAuthnSessionManager")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
@@ -194,7 +194,7 @@ class WebAuthnConfiguration {
     @Configuration(value = "WebAuthnSchedulerConfiguration",
         proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class WebAuthnSchedulerConfiguration {
+    static class WebAuthnSchedulerConfiguration {
         @ConditionalOnMissingBean(name = "webAuthnDeviceRepositoryCleanerScheduler")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -211,7 +211,7 @@ class WebAuthnConfiguration {
     }
 
     @RequiredArgsConstructor
-    public static class WebAuthnDeviceRepositoryCleanerScheduler implements Cleanable {
+    static class WebAuthnDeviceRepositoryCleanerScheduler implements Cleanable {
 
         private final WebAuthnCredentialRepository repository;
 
@@ -226,7 +226,7 @@ class WebAuthnConfiguration {
 
     @Configuration(value = "WebAuthnServerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class WebAuthnServerConfiguration {
+    static class WebAuthnServerConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "webAuthnServer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -270,7 +270,7 @@ class WebAuthnConfiguration {
 
     @Configuration(value = "WebAuthnHandlerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class WebAuthnHandlerConfiguration {
+    static class WebAuthnHandlerConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "webAuthnAuthenticationHandler")
@@ -298,7 +298,7 @@ class WebAuthnConfiguration {
 
     @Configuration(value = "WebAuthnMetadataConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class WebAuthnMetadataConfiguration {
+    static class WebAuthnMetadataConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "webAuthnMultifactorProviderAuthenticationMetadataPopulator")
@@ -333,7 +333,7 @@ class WebAuthnConfiguration {
 
     @Configuration(value = "WebAuthnAuthenticationPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class WebAuthnAuthenticationPlanConfiguration {
+    static class WebAuthnAuthenticationPlanConfiguration {
         @ConditionalOnMissingBean(name = "webAuthnAuthenticationEventExecutionPlanConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -359,7 +359,7 @@ class WebAuthnConfiguration {
 
     @Configuration(value = "WebAuthnRepositoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class WebAuthnRepositoryConfiguration {
+    static class WebAuthnRepositoryConfiguration {
         @ConditionalOnMissingBean(name = WebAuthnCredentialRepository.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -382,7 +382,7 @@ class WebAuthnConfiguration {
 
         @Configuration(value = "WebAuthnMultifactorProviderConfiguration", proxyBeanMethods = false)
         @EnableConfigurationProperties(CasConfigurationProperties.class)
-        public static class WebAuthnMultifactorProviderConfiguration {
+        static class WebAuthnMultifactorProviderConfiguration {
             @ConditionalOnMissingBean(name = "webAuthnMultifactorAuthenticationProvider")
             @Bean
             @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -410,7 +410,7 @@ class WebAuthnConfiguration {
 
         @Configuration(value = "WebAuthnControllerConfiguration", proxyBeanMethods = false)
         @EnableConfigurationProperties(CasConfigurationProperties.class)
-        public static class WebAuthnControllerConfiguration {
+        static class WebAuthnControllerConfiguration {
             @Bean
             @ConditionalOnAvailableEndpoint
             @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -432,7 +432,7 @@ class WebAuthnConfiguration {
 
         @Configuration(value = "WebAuthnCryptoConfiguration", proxyBeanMethods = false)
         @EnableConfigurationProperties(CasConfigurationProperties.class)
-        public static class WebAuthnCryptoConfiguration {
+        static class WebAuthnCryptoConfiguration {
             @ConditionalOnMissingBean(name = "webAuthnCredentialRegistrationCipherExecutor")
             @Bean
             @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -456,7 +456,7 @@ class WebAuthnConfiguration {
 
         @Configuration(value = "WebAuthnSecurityConfiguration", proxyBeanMethods = false)
         @Order(CasWebSecurityConstants.SECURITY_CONFIGURATION_ORDER - 1)
-        public static class WebAuthnSecurityConfiguration {
+        static class WebAuthnSecurityConfiguration {
 
             @Bean
             @ConditionalOnMissingBean(name = "webAuthnCsrfTokenRepository")

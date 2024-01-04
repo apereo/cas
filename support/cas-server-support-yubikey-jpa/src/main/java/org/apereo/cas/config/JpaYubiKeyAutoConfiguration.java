@@ -45,7 +45,7 @@ public class JpaYubiKeyAutoConfiguration {
 
     @Configuration(value = "JpaYubiKeyEntityConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class JpaYubiKeyEntityConfiguration {
+    static class JpaYubiKeyEntityConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public JpaVendorAdapter jpaYubiKeyVendorAdapter(final CasConfigurationProperties casProperties,
@@ -86,7 +86,7 @@ public class JpaYubiKeyAutoConfiguration {
 
     @Configuration(value = "JpaYubiKeyTransactionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class JpaYubiKeyTransactionConfiguration {
+    static class JpaYubiKeyTransactionConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PlatformTransactionManager transactionManagerYubiKey(
@@ -100,7 +100,7 @@ public class JpaYubiKeyAutoConfiguration {
 
     @Configuration(value = "JpaYubiKeyRegistryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class JpaYubiKeyRegistryConfiguration {
+    static class JpaYubiKeyRegistryConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public YubiKeyAccountRegistry yubiKeyAccountRegistry(
@@ -117,7 +117,7 @@ public class JpaYubiKeyAutoConfiguration {
 
     @Configuration(value = "JpaYubiKeyDataConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class JpaYubiKeyDataConfiguration {
+    static class JpaYubiKeyDataConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "dataSourceYubiKey")

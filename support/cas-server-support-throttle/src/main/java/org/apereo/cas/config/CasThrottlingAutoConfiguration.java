@@ -50,7 +50,7 @@ public class CasThrottlingAutoConfiguration {
 
     @Configuration(value = "CasThrottlingInterceptorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasThrottlingInterceptorConfiguration {
+    static class CasThrottlingInterceptorConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = ThrottledSubmissionHandlerInterceptor.BEAN_NAME)
         @Bean
@@ -76,7 +76,7 @@ public class CasThrottlingAutoConfiguration {
 
     @Configuration(value = "CasThrottlingContextConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasThrottlingContextConfiguration {
+    static class CasThrottlingContextConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -105,7 +105,7 @@ public class CasThrottlingAutoConfiguration {
 
     @Configuration(value = "CasThrottlingCoreConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasThrottlingCoreConfiguration {
+    static class CasThrottlingCoreConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "throttledRequestResponseHandler")
@@ -139,7 +139,7 @@ public class CasThrottlingAutoConfiguration {
 
     @Configuration(value = "CasThrottlingPlanExecutionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasThrottlingPlanExecutionConfiguration {
+    static class CasThrottlingPlanExecutionConfiguration {
         @ConditionalOnMissingBean(name = AuthenticationThrottlingExecutionPlan.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -156,7 +156,7 @@ public class CasThrottlingAutoConfiguration {
 
     @Configuration(value = "CasThrottlingPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasThrottlingPlanConfiguration {
+    static class CasThrottlingPlanConfiguration {
         @ConditionalOnMissingBean(name = "authenticationThrottlingExecutionPlanConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -174,7 +174,7 @@ public class CasThrottlingAutoConfiguration {
 
     @Configuration(value = "CasThrottlingWebConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasThrottlingWebConfiguration {
+    static class CasThrottlingWebConfiguration {
         @Bean
         @ConditionalOnAvailableEndpoint
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -187,7 +187,7 @@ public class CasThrottlingAutoConfiguration {
 
     @Configuration(value = "CasThrottlingSchedulerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasThrottlingSchedulerConfiguration {
+    static class CasThrottlingSchedulerConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Lazy(false)

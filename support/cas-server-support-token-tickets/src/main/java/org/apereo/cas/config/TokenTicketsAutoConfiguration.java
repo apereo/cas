@@ -29,7 +29,7 @@ public class TokenTicketsAutoConfiguration {
 
     @Configuration(value = "TokenTicketsBuilderConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class TokenTicketsBuilderConfiguration {
+    static class TokenTicketsBuilderConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ResponseBuilder webApplicationServiceResponseBuilder(

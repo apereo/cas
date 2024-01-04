@@ -46,7 +46,7 @@ class CasPersonDirectoryRestConfiguration {
 
     @Configuration(value = "RestfulAttributeRepositoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class RestfulAttributeRepositoryConfiguration {
+    static class RestfulAttributeRepositoryConfiguration {
         @ConditionalOnMissingBean(name = "restfulAttributeRepositories")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -96,7 +96,7 @@ class CasPersonDirectoryRestConfiguration {
 
     @Configuration(value = "RestfulAttributeRepositoryPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class RestfulAttributeRepositoryPlanConfiguration {
+    static class RestfulAttributeRepositoryPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "restfulPersonDirectoryAttributeRepositoryPlanConfigurer")

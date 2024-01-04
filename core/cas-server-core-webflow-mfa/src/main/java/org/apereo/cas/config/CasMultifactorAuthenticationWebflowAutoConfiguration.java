@@ -92,7 +92,7 @@ public class CasMultifactorAuthenticationWebflowAutoConfiguration {
 
     @Configuration(value = "CasMultifactorAuthenticationWebflowRankedEventConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasMultifactorAuthenticationWebflowRankedEventConfiguration {
+    static class CasMultifactorAuthenticationWebflowRankedEventConfiguration {
         @ConditionalOnMissingBean(name = "rankedAuthenticationProviderWebflowEventResolver")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -112,7 +112,7 @@ public class CasMultifactorAuthenticationWebflowAutoConfiguration {
 
     @Configuration(value = "CasMultifactorAuthenticationWebflowTriggersConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasMultifactorAuthenticationWebflowTriggersConfiguration {
+    static class CasMultifactorAuthenticationWebflowTriggersConfiguration {
         @ConditionalOnMissingBean(name = "groovyScriptAuthenticationPolicyWebflowEventResolver")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -392,7 +392,7 @@ public class CasMultifactorAuthenticationWebflowAutoConfiguration {
 
     @Configuration(value = "CasMultifactorAuthenticationWebflowResolverConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasMultifactorAuthenticationWebflowResolverConfiguration {
+    static class CasMultifactorAuthenticationWebflowResolverConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = MultifactorAuthenticationProviderResolver.BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -412,7 +412,7 @@ public class CasMultifactorAuthenticationWebflowAutoConfiguration {
 
     @Configuration(value = "CasMultifactorAuthenticationWebflowSelectorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasMultifactorAuthenticationWebflowSelectorConfiguration {
+    static class CasMultifactorAuthenticationWebflowSelectorConfiguration {
 
         @ConditionalOnMissingBean(name = MultifactorAuthenticationProviderSelector.BEAN_NAME)
         @Bean
@@ -434,7 +434,7 @@ public class CasMultifactorAuthenticationWebflowAutoConfiguration {
 
     @Configuration(value = "CasMultifactorAuthenticationWebflowContextConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasMultifactorAuthenticationWebflowContextConfiguration {
+    static class CasMultifactorAuthenticationWebflowContextConfiguration {
         @ConditionalOnMissingBean(name = "initialAuthenticationAttemptWebflowEventResolver")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -477,7 +477,7 @@ public class CasMultifactorAuthenticationWebflowAutoConfiguration {
 
     @Configuration(value = "CasMultifactorAuthenticationWebflowActionsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasMultifactorAuthenticationWebflowActionsConfiguration {
+    static class CasMultifactorAuthenticationWebflowActionsConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -569,7 +569,7 @@ public class CasMultifactorAuthenticationWebflowAutoConfiguration {
 
     @Configuration(value = "CasCoreMultifactorAuthenticationProviderSelectiveConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreMultifactorAuthenticationProviderSelectiveConfiguration {
+    static class CasCoreMultifactorAuthenticationProviderSelectiveConfiguration {
         @ConditionalOnMissingBean(name = "selectiveAuthenticationProviderWebflowEventResolver")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -587,7 +587,7 @@ public class CasMultifactorAuthenticationWebflowAutoConfiguration {
 
     @Configuration(value = "CasCoreMultifactorAuthenticationProviderCompositeConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreMultifactorAuthenticationProviderCompositeConfiguration {
+    static class CasCoreMultifactorAuthenticationProviderCompositeConfiguration {
         private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.mfa.core.provider-selection.provider-selection-enabled").isTrue();
         private static final BeanCondition COOKIE_CONDITION = CONDITION.toStartWith().and("cas.authn.mfa.core.provider-selection.cookie.enabled").isTrue().evenIfMissing();
 

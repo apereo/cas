@@ -99,7 +99,7 @@ import java.util.concurrent.ConcurrentHashMap;
 class CasCoreTicketsConfiguration {
     @Configuration(value = "CasCoreTicketsBaseConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreTicketsBaseConfiguration {
+    static class CasCoreTicketsBaseConfiguration {
 
         @ConditionalOnMissingBean(name = TicketTrackingPolicy.BEAN_NAME_SERVICE_TICKET_TRACKING)
         @Bean
@@ -135,7 +135,7 @@ class CasCoreTicketsConfiguration {
 
     @Configuration(value = "CasCoreTicketsAuthenticationPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreTicketsAuthenticationPlanConfiguration {
+    static class CasCoreTicketsAuthenticationPlanConfiguration {
         private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.policy.unique-principal.enabled").isTrue();
         
         @ConditionalOnMissingBean(name = "ticketAuthenticationPolicyExecutionPlanConfigurer")
@@ -159,7 +159,7 @@ class CasCoreTicketsConfiguration {
 
     @Configuration(value = "CasCoreTicketRegistryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreTicketRegistryConfiguration {
+    static class CasCoreTicketRegistryConfiguration {
 
         @ConditionalOnMissingBean(name = TicketRegistry.BEAN_NAME)
         @Bean
@@ -255,7 +255,7 @@ class CasCoreTicketsConfiguration {
 
     @Configuration(value = "CasCoreTicketIdGeneratorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreTicketIdGeneratorConfiguration {
+    static class CasCoreTicketIdGeneratorConfiguration {
         @ConditionalOnMissingBean(name = "proxyGrantingTicketUniqueIdGenerator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -289,7 +289,7 @@ class CasCoreTicketsConfiguration {
 
     @Configuration(value = "CasCoreProxyGrantingTicketExecutionPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreProxyGrantingTicketExecutionPlanConfiguration {
+    static class CasCoreProxyGrantingTicketExecutionPlanConfiguration {
         @ConditionalOnMissingBean(name = "defaultProxyGrantingTicketFactoryConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -302,7 +302,7 @@ class CasCoreTicketsConfiguration {
 
     @Configuration(value = "CasCoreProxyTicketExecutionPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreProxyTicketExecutionPlanConfiguration {
+    static class CasCoreProxyTicketExecutionPlanConfiguration {
         @ConditionalOnMissingBean(name = "defaultProxyTicketFactoryConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -315,7 +315,7 @@ class CasCoreTicketsConfiguration {
 
     @Configuration(value = "CasCoreServiceTicketExecutionPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreServiceTicketExecutionPlanConfiguration {
+    static class CasCoreServiceTicketExecutionPlanConfiguration {
         @ConditionalOnMissingBean(name = "defaultServiceTicketFactoryConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -328,7 +328,7 @@ class CasCoreTicketsConfiguration {
 
     @Configuration(value = "CasCoreTransientSessionTicketExecutionPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreTransientSessionTicketExecutionPlanConfiguration {
+    static class CasCoreTransientSessionTicketExecutionPlanConfiguration {
         @ConditionalOnMissingBean(name = "defaultTransientSessionTicketFactoryConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -341,7 +341,7 @@ class CasCoreTicketsConfiguration {
 
     @Configuration(value = "CasCoreTicketGrantingTicketExecutionPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreTicketGrantingTicketExecutionPlanConfiguration {
+    static class CasCoreTicketGrantingTicketExecutionPlanConfiguration {
         @ConditionalOnMissingBean(name = "defaultTicketGrantingTicketFactoryConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -354,7 +354,7 @@ class CasCoreTicketsConfiguration {
 
     @Configuration(value = "CasCoreTicketGrantingTicketFactoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreTicketGrantingTicketFactoryConfiguration {
+    static class CasCoreTicketGrantingTicketFactoryConfiguration {
         @ConditionalOnMissingBean(name = "defaultTicketGrantingTicketFactory")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -375,7 +375,7 @@ class CasCoreTicketsConfiguration {
 
     @Configuration(value = "CasCoreServiceTicketFactoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreServiceTicketFactoryConfiguration {
+    static class CasCoreServiceTicketFactoryConfiguration {
         @ConditionalOnMissingBean(name = "defaultServiceTicketFactory")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -405,7 +405,7 @@ class CasCoreTicketsConfiguration {
 
     @Configuration(value = "CasCoreProxyTicketFactoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreProxyTicketFactoryConfiguration {
+    static class CasCoreProxyTicketFactoryConfiguration {
         @ConditionalOnMissingBean(name = "defaultProxyTicketFactory")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
@@ -427,7 +427,7 @@ class CasCoreTicketsConfiguration {
 
     @Configuration(value = "CasCoreTransientSessionTicketFactoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreTransientSessionTicketFactoryConfiguration {
+    static class CasCoreTransientSessionTicketFactoryConfiguration {
 
         @ConditionalOnMissingBean(name = "defaultTransientSessionTicketFactory")
         @Bean
@@ -441,7 +441,7 @@ class CasCoreTicketsConfiguration {
 
     @Configuration(value = "CasCoreProxyGrantingTicketFactoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreProxyGrantingTicketFactoryConfiguration {
+    static class CasCoreProxyGrantingTicketFactoryConfiguration {
         @ConditionalOnMissingBean(name = "defaultProxyGrantingTicketFactory")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -464,7 +464,7 @@ class CasCoreTicketsConfiguration {
 
     @Configuration(value = "CasCoreTicketPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreTicketPlanConfiguration {
+    static class CasCoreTicketPlanConfiguration {
         @ConditionalOnMissingBean(name = TicketFactory.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -481,7 +481,7 @@ class CasCoreTicketsConfiguration {
 
     @Configuration(value = "CasCoreTicketExpirationPolicyConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreTicketExpirationPolicyConfiguration {
+    static class CasCoreTicketExpirationPolicyConfiguration {
         @ConditionalOnMissingBean(name = ExpirationPolicyBuilder.BEAN_NAME_TRANSIENT_SESSION_TICKET_EXPIRATION_POLICY)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -527,7 +527,7 @@ class CasCoreTicketsConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @EnableTransactionManagement(proxyTargetClass = false)
     @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
-    public static class CasCoreTicketTransactionConfiguration {
+    static class CasCoreTicketTransactionConfiguration {
         @ConditionalOnMissingBean(name = "ticketTransactionManager")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -538,7 +538,7 @@ class CasCoreTicketsConfiguration {
 
     @Configuration(value = "CasCoreTicketLockingConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreTicketLockingConfiguration {
+    static class CasCoreTicketLockingConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = LockRepository.BEAN_NAME)

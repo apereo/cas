@@ -36,7 +36,7 @@ public class DynamoDbTicketRegistryAutoConfiguration {
 
     @Configuration(value = "DynamoDbTicketRegistryBaseConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class DynamoDbTicketRegistryBaseConfiguration {
+    static class DynamoDbTicketRegistryBaseConfiguration {
         @ConditionalOnMissingBean(name = "dynamoDbTicketCatalogConfigurationValuesProvider")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -88,7 +88,7 @@ public class DynamoDbTicketRegistryAutoConfiguration {
 
     @Configuration(value = "DynamoDbTicketRegistryHelperConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class DynamoDbTicketRegistryHelperConfiguration {
+    static class DynamoDbTicketRegistryHelperConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public DynamoDbTicketRegistryFacilitator dynamoDbTicketRegistryFacilitator(
@@ -109,7 +109,7 @@ public class DynamoDbTicketRegistryAutoConfiguration {
 
     @Configuration(value = "DynamoDbTicketRegistryClientConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class DynamoDbTicketRegistryClientConfiguration {
+    static class DynamoDbTicketRegistryClientConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "amazonDynamoDbTicketRegistryClient")

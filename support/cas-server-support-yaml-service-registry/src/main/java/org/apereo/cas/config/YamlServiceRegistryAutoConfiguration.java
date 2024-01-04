@@ -39,7 +39,7 @@ public class YamlServiceRegistryAutoConfiguration {
 
     @Configuration(value = "YamlServiceRegistryCoreConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class YamlServiceRegistryCoreConfiguration {
+    static class YamlServiceRegistryCoreConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "yamlServiceRegistry")
@@ -67,7 +67,7 @@ public class YamlServiceRegistryAutoConfiguration {
 
     @Configuration(value = "YamlServiceRegistryPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class YamlServiceRegistryPlanConfiguration {
+    static class YamlServiceRegistryPlanConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "yamlServiceRegistryExecutionPlanConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

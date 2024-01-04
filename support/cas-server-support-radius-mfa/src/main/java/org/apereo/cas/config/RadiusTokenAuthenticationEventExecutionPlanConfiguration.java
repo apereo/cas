@@ -56,7 +56,7 @@ class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
 
     @Configuration(value = "RadiusTokenAuthenticationServerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class RadiusTokenAuthenticationServerConfiguration {
+    static class RadiusTokenAuthenticationServerConfiguration {
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
@@ -107,7 +107,7 @@ class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
 
     @Configuration(value = "RadiusTokenAuthenticationEventExecutionPlanProviderConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class RadiusTokenAuthenticationEventExecutionPlanProviderConfiguration {
+    static class RadiusTokenAuthenticationEventExecutionPlanProviderConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "radiusMultifactorAuthenticationProvider")
@@ -139,7 +139,7 @@ class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
 
     @Configuration(value = "RadiusTokenAuthenticationEventExecutionPlanHandlerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class RadiusTokenAuthenticationEventExecutionPlanHandlerConfiguration {
+    static class RadiusTokenAuthenticationEventExecutionPlanHandlerConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "radiusTokenAuthenticationHandler")
@@ -170,7 +170,7 @@ class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
 
     @Configuration(value = "RadiusTokenAuthenticationEventExecutionPlanMetadataConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class RadiusTokenAuthenticationEventExecutionPlanMetadataConfiguration {
+    static class RadiusTokenAuthenticationEventExecutionPlanMetadataConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -210,7 +210,7 @@ class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
 
     @Configuration(value = "RadiusTokenAuthenticationEventExecutionPlanBaseConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class RadiusTokenAuthenticationEventExecutionPlanBaseConfiguration {
+    static class RadiusTokenAuthenticationEventExecutionPlanBaseConfiguration {
         @ConditionalOnMissingBean(name = "radiusTokenAuthenticationEventExecutionPlanConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

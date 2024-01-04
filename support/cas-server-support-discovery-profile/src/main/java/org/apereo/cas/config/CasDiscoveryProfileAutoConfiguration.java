@@ -41,7 +41,7 @@ public class CasDiscoveryProfileAutoConfiguration {
 
     @Configuration(value = "DiscoveryProfileCoreConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class DiscoveryProfileCoreConfiguration {
+    static class DiscoveryProfileCoreConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasServerProfileRegistrar.BEAN_NAME)
@@ -57,7 +57,7 @@ public class CasDiscoveryProfileAutoConfiguration {
 
     @Configuration(value = "DiscoveryProfileWebConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class DiscoveryProfileWebConfiguration {
+    static class DiscoveryProfileWebConfiguration {
         @Bean
         @ConditionalOnAvailableEndpoint
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -70,7 +70,7 @@ public class CasDiscoveryProfileAutoConfiguration {
 
     @Configuration(value = "DiscoveryProfileAttributesConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class DiscoveryProfileAttributesConfiguration {
+    static class DiscoveryProfileAttributesConfiguration {
         private static Set<String> transformAttributes(final List<String> attributes) {
             val attributeSet = new LinkedHashSet<String>(attributes.size());
             CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(attributes).values().forEach(v -> attributeSet.add(v.toString()));

@@ -52,7 +52,7 @@ public class CasCoreValidationAutoConfiguration {
 
     @Configuration(value = "CasCoreValidationProxyConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreValidationProxyConfiguration {
+    static class CasCoreValidationProxyConfiguration {
         @ConditionalOnMissingBean(name = "proxy10Handler")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -81,7 +81,7 @@ public class CasCoreValidationAutoConfiguration {
 
     @Configuration(value = "CasCoreValidationSpecificationConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreValidationSpecificationConfiguration {
+    static class CasCoreValidationSpecificationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -105,7 +105,7 @@ public class CasCoreValidationAutoConfiguration {
 
     @Configuration(value = "CasCoreValidationExecutionPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreValidationExecutionPlanConfiguration {
+    static class CasCoreValidationExecutionPlanConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "serviceValidationAuthorizers")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -122,7 +122,7 @@ public class CasCoreValidationAutoConfiguration {
 
     @Configuration(value = "CasCoreValidationAuthorizerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreValidationAuthorizerConfiguration {
+    static class CasCoreValidationAuthorizerConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "casCoreServiceTicketValidationAuthorizerConfigurer")

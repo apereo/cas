@@ -94,7 +94,7 @@ class SamlIdPMetadataConfiguration {
 
     @Configuration(value = "SamlIdPMetadataEndpointConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SamlIdPMetadataEndpointConfiguration {
+    static class SamlIdPMetadataEndpointConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -181,7 +181,7 @@ class SamlIdPMetadataConfiguration {
 
     @Configuration(value = "SamlIdPDefaultMetadataResolversConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SamlIdPDefaultMetadataResolversConfiguration {
+    static class SamlIdPDefaultMetadataResolversConfiguration {
 
         @ConditionalOnMissingBean(name = "metadataQueryProtocolMetadataResolver")
         @Bean
@@ -265,7 +265,7 @@ class SamlIdPMetadataConfiguration {
 
     @Configuration(value = "SamlIdPMetadataResolutionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SamlIdPMetadataResolutionConfiguration {
+    static class SamlIdPMetadataResolutionConfiguration {
         @ConditionalOnMissingBean(name = "samlRegisteredServiceMetadataResolvers")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -305,7 +305,7 @@ class SamlIdPMetadataConfiguration {
     @Configuration(value = "SamlIdPMetadataGenerationConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @Lazy(false)
-    public static class SamlIdPMetadataGenerationConfiguration {
+    static class SamlIdPMetadataGenerationConfiguration {
         @ConditionalOnMissingBean(name = SamlIdPMetadataGenerator.BEAN_NAME)
         @Bean(initMethod = "initialize")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -340,7 +340,7 @@ class SamlIdPMetadataConfiguration {
 
     @Configuration(value = "SamlIdPMetadataLocatorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SamlIdPMetadataLocatorConfiguration {
+    static class SamlIdPMetadataLocatorConfiguration {
         @ConditionalOnMissingBean(name = "samlIdPMetadataLocator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -357,7 +357,7 @@ class SamlIdPMetadataConfiguration {
 
     @Configuration(value = "SamlIdPMetadataCacheConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SamlIdPMetadataCacheConfiguration {
+    static class SamlIdPMetadataCacheConfiguration {
 
         @ConditionalOnMissingBean(name = "samlIdPMetadataCache")
         @Bean
@@ -386,7 +386,7 @@ class SamlIdPMetadataConfiguration {
 
     @Configuration(value = "SamlIdPMetadataResolverConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SamlIdPMetadataResolverConfiguration {
+    static class SamlIdPMetadataResolverConfiguration {
 
         @ConditionalOnMissingBean(name = SamlRegisteredServiceCachingMetadataResolver.BEAN_NAME)
         @Bean
@@ -404,7 +404,7 @@ class SamlIdPMetadataConfiguration {
 
     @Configuration(value = "SamlIdPMetadataContextConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SamlIdPMetadataContextConfiguration {
+    static class SamlIdPMetadataContextConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "samlIdPMetadataGeneratorConfigurationContext")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -435,7 +435,7 @@ class SamlIdPMetadataConfiguration {
 
     @Configuration(value = "SamlIdPMetadataInitializationConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SamlIdPMetadataInitializationConfiguration {
+    static class SamlIdPMetadataInitializationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Lazy(false)

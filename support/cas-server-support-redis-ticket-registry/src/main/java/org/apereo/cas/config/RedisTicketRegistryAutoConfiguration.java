@@ -72,7 +72,7 @@ public class RedisTicketRegistryAutoConfiguration {
     @Configuration(value = "RedisTicketRegistryCoreConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @Lazy(false)
-    public static class RedisTicketRegistryCoreConfiguration {
+    static class RedisTicketRegistryCoreConfiguration {
 
         @Bean
         @ConditionalOnAvailableEndpoint
@@ -256,7 +256,7 @@ public class RedisTicketRegistryAutoConfiguration {
     @Configuration(value = "RedisTicketRegistryLockingConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistryLocking, module = "redis")
-    public static class RedisTicketRegistryLockingConfiguration {
+    static class RedisTicketRegistryLockingConfiguration {
         private static final BeanCondition CONDITION_LOCKING =
             BeanCondition.on("cas.ticket.registry.core.enable-locking").isTrue().evenIfMissing();
 

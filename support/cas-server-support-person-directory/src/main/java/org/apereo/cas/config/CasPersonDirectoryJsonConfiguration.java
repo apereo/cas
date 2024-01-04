@@ -41,7 +41,7 @@ class CasPersonDirectoryJsonConfiguration {
 
     @Configuration(value = "JsonAttributeRepositoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class JsonAttributeRepositoryConfiguration {
+    static class JsonAttributeRepositoryConfiguration {
         @ConditionalOnMissingBean(name = "jsonAttributeRepositories")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -84,7 +84,7 @@ class CasPersonDirectoryJsonConfiguration {
 
     @Configuration(value = "JsonAttributeRepositoryPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class JsonAttributeRepositoryPlanConfiguration {
+    static class JsonAttributeRepositoryPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "jsonPersonDirectoryAttributeRepositoryPlanConfigurer")

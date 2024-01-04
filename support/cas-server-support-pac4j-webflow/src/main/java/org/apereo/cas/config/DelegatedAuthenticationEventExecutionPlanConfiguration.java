@@ -94,7 +94,7 @@ class DelegatedAuthenticationEventExecutionPlanConfiguration {
 
     @Configuration(value = "DelegatedAuthenticationEventExecutionPlanSessionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class DelegatedAuthenticationEventExecutionPlanSessionConfiguration {
+    static class DelegatedAuthenticationEventExecutionPlanSessionConfiguration {
         @ConditionalOnMissingBean(name = "delegatedClientDistributedSessionStore")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -116,7 +116,7 @@ class DelegatedAuthenticationEventExecutionPlanConfiguration {
 
     @Configuration(value = "DelegatedAuthenticationEventExecutionPlanCoreConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class DelegatedAuthenticationEventExecutionPlanCoreConfiguration {
+    static class DelegatedAuthenticationEventExecutionPlanCoreConfiguration {
 
         @ConditionalOnMissingBean(name = "delegatedClientDistributedSessionCookieCipherExecutor")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -169,7 +169,7 @@ class DelegatedAuthenticationEventExecutionPlanConfiguration {
 
     @Configuration(value = "DelegatedAuthenticationEventExecutionPlanMetadataConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class DelegatedAuthenticationEventExecutionPlanMetadataConfiguration {
+    static class DelegatedAuthenticationEventExecutionPlanMetadataConfiguration {
         @ConditionalOnMissingBean(name = "clientAuthenticationMetaDataPopulator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -180,7 +180,7 @@ class DelegatedAuthenticationEventExecutionPlanConfiguration {
 
     @Configuration(value = "DelegatedAuthenticationEventExecutionPlanHandlerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class DelegatedAuthenticationEventExecutionPlanHandlerConfiguration {
+    static class DelegatedAuthenticationEventExecutionPlanHandlerConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "clientAuthenticationHandler")
@@ -205,7 +205,7 @@ class DelegatedAuthenticationEventExecutionPlanConfiguration {
 
     @Configuration(value = "DelegatedAuthenticationEventExecutionPlanProvisionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class DelegatedAuthenticationEventExecutionPlanProvisionConfiguration {
+    static class DelegatedAuthenticationEventExecutionPlanProvisionConfiguration {
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
@@ -223,7 +223,7 @@ class DelegatedAuthenticationEventExecutionPlanConfiguration {
 
     @Configuration(value = "DelegatedAuthenticationEventExecutionPlanClientFactoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class DelegatedAuthenticationEventExecutionPlanClientFactoryConfiguration {
+    static class DelegatedAuthenticationEventExecutionPlanClientFactoryConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "pac4jDelegatedClientNameExtractor")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -263,7 +263,7 @@ class DelegatedAuthenticationEventExecutionPlanConfiguration {
 
     @Configuration(value = "DelegatedAuthenticationEventExecutionPlanClientConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class DelegatedAuthenticationEventExecutionPlanClientConfiguration {
+    static class DelegatedAuthenticationEventExecutionPlanClientConfiguration {
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
@@ -285,7 +285,7 @@ class DelegatedAuthenticationEventExecutionPlanConfiguration {
 
     @Configuration(value = "DelegatedAuthenticationEventExecutionPlanAuditConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class DelegatedAuthenticationEventExecutionPlanAuditConfiguration {
+    static class DelegatedAuthenticationEventExecutionPlanAuditConfiguration {
         @ConditionalOnMissingBean(name = "delegatedAuthenticationAuditResourceResolver")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -296,7 +296,7 @@ class DelegatedAuthenticationEventExecutionPlanConfiguration {
 
     @Configuration(value = "DelegatedAuthenticationEventExecutionPlanAuditPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class DelegatedAuthenticationEventExecutionPlanAuditPlanConfiguration {
+    static class DelegatedAuthenticationEventExecutionPlanAuditPlanConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "delegatedAuthenticationAuditTrailRecordResolutionPlanConfigurer")
@@ -314,7 +314,7 @@ class DelegatedAuthenticationEventExecutionPlanConfiguration {
 
     @Configuration(value = "DelegatedAuthenticationEventExecutionPlanLogoutConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class DelegatedAuthenticationEventExecutionPlanLogoutConfiguration {
+    static class DelegatedAuthenticationEventExecutionPlanLogoutConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "delegatedAuthenticationLogoutExecutionPlanConfigurer")
@@ -339,7 +339,7 @@ class DelegatedAuthenticationEventExecutionPlanConfiguration {
 
     @Configuration(value = "DelegatedAuthenticationEventExecutionPlanBaseConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class DelegatedAuthenticationEventExecutionPlanBaseConfiguration {
+    static class DelegatedAuthenticationEventExecutionPlanBaseConfiguration {
         @ConditionalOnMissingBean(name = "pac4jAuthenticationEventExecutionPlanConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -363,7 +363,7 @@ class DelegatedAuthenticationEventExecutionPlanConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @ConditionalOnClass(CasServerProfileCustomizer.class)
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Discovery)
-    public static class DelegatedAuthenticationDiscoveryConfiguration {
+    static class DelegatedAuthenticationDiscoveryConfiguration {
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "delegatedAuthenticationCasServerProfileCustomizer")

@@ -127,7 +127,7 @@ public class CasAccountManagementWebflowAutoConfiguration {
 
     @Configuration(value = "CasAccountManagementProvisioningConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasAccountManagementProvisioningConfiguration {
+    static class CasAccountManagementProvisioningConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -184,7 +184,7 @@ public class CasAccountManagementWebflowAutoConfiguration {
     @Configuration(value = "CasAccountManagementScimProvisioningConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AccountRegistration, module = "scim")
-    public static class CasAccountManagementScimProvisioningConfiguration {
+    static class CasAccountManagementScimProvisioningConfiguration {
         @ConditionalOnMissingBean(name = "scimAccountRegistrationProvisionerConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -204,7 +204,7 @@ public class CasAccountManagementWebflowAutoConfiguration {
 
     @Configuration(value = "CasAccountManagementWebflowCoreConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasAccountManagementWebflowCoreConfiguration {
+    static class CasAccountManagementWebflowCoreConfiguration {
         @ConditionalOnMissingBean(name = "accountMgmtWebflowConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -222,7 +222,7 @@ public class CasAccountManagementWebflowAutoConfiguration {
 
     @Configuration(value = "CasAccountManagementWebflowPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasAccountManagementWebflowPlanConfiguration {
+    static class CasAccountManagementWebflowPlanConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -236,7 +236,7 @@ public class CasAccountManagementWebflowAutoConfiguration {
 
     @Configuration(value = "CasAccountManagementWebflowActionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasAccountManagementWebflowActionConfiguration {
+    static class CasAccountManagementWebflowActionConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_VALIDATE_ACCOUNT_REGISTRATION_TOKEN)
@@ -317,7 +317,7 @@ public class CasAccountManagementWebflowAutoConfiguration {
 
     @Configuration(value = "CasAccountManagementWebflowAuditConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasAccountManagementWebflowAuditConfiguration {
+    static class CasAccountManagementWebflowAuditConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "accountMgmtRegistrationAuditPrincipalIdResolver")
@@ -351,7 +351,7 @@ public class CasAccountManagementWebflowAutoConfiguration {
 
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AccountRegistration, module = "captcha")
     @Configuration(value = "CasAccountManagementRegistrationCaptchaConfiguration", proxyBeanMethods = false)
-    public static class CasAccountManagementRegistrationCaptchaConfiguration {
+    static class CasAccountManagementRegistrationCaptchaConfiguration {
         private static final BeanCondition CONDITION = BeanCondition.on("cas.account-registration.google-recaptcha.enabled").isTrue();
 
         @ConditionalOnMissingBean(name = "accountMgmtRegistrationCaptchaWebflowConfigurer")

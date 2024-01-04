@@ -38,7 +38,7 @@ public class X509RestAutoConfiguration {
 
     @Configuration(value = "X509RestCredentialFactoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class X509RestCredentialFactoryConfiguration {
+    static class X509RestCredentialFactoryConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -80,7 +80,7 @@ public class X509RestAutoConfiguration {
 
     @Configuration(value = "X509RestCredentialFactoryPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class X509RestCredentialFactoryPlanConfiguration {
+    static class X509RestCredentialFactoryPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "x509RestHttpRequestCredentialFactoryConfigurer")

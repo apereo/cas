@@ -54,7 +54,7 @@ class CasCoreConfiguration {
 
     @Configuration(value = "CasCorePolicyConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCorePolicyConfiguration {
+    static class CasCorePolicyConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "serviceMatchingStrategy")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -86,7 +86,7 @@ class CasCoreConfiguration {
 
     @Configuration(value = "CasCoreContextConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreContextConfiguration {
+    static class CasCoreContextConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = CentralAuthenticationService.BEAN_NAME)
@@ -142,7 +142,7 @@ class CasCoreConfiguration {
 
     @Configuration(value = "CasCoreAuthenticationServiceSelectionConfiguration", proxyBeanMethods = false)
     @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
-    public static class CasCoreAuthenticationServiceSelectionConfiguration {
+    static class CasCoreAuthenticationServiceSelectionConfiguration {
         @ConditionalOnMissingBean(name = AuthenticationServiceSelectionPlan.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

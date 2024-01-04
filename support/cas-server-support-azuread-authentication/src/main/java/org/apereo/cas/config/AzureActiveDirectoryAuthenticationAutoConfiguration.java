@@ -46,7 +46,7 @@ import java.util.List;
 public class AzureActiveDirectoryAuthenticationAutoConfiguration {
 
     @Configuration(value = "AzureActiveDirectoryAttributeConfiguration", proxyBeanMethods = false)
-    public static class AzureActiveDirectoryAttributeConfiguration {
+    static class AzureActiveDirectoryAttributeConfiguration {
 
         @ConditionalOnMissingBean(name = "microsoftAzureActiveDirectoryAttributeRepositories")
         @Bean
@@ -91,7 +91,7 @@ public class AzureActiveDirectoryAuthenticationAutoConfiguration {
     }
 
     @Configuration(value = "AzureActiveDirectoryAuthenticationHandlerConfiguration", proxyBeanMethods = false)
-    public static class AzureActiveDirectoryAuthenticationHandlerConfiguration {
+    static class AzureActiveDirectoryAuthenticationHandlerConfiguration {
         private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.azure-active-directory.client-id")
             .and("cas.authn.azure-active-directory.enabled").isTrue().evenIfMissing();
 

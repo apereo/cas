@@ -45,7 +45,7 @@ class CasCoreAuthenticationMetadataConfiguration {
 
     @Configuration(value = "CasCoreAuthenticationMetadataCipherConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreAuthenticationMetadataCipherConfiguration {
+    static class CasCoreAuthenticationMetadataCipherConfiguration {
         @ConditionalOnMissingBean(name = "cacheCredentialsCipherExecutor")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -68,7 +68,7 @@ class CasCoreAuthenticationMetadataConfiguration {
 
     @Configuration(value = "CasCoreAuthenticationMetadataPopulatorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreAuthenticationMetadataPopulatorConfiguration {
+    static class CasCoreAuthenticationMetadataPopulatorConfiguration {
         @ConditionalOnMissingBean(name = "authenticationCredentialTypeMetaDataPopulator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -115,7 +115,7 @@ class CasCoreAuthenticationMetadataConfiguration {
 
     @Configuration(value = "CasCoreAuthenticationMetadataClearPassConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreAuthenticationMetadataClearPassConfiguration {
+    static class CasCoreAuthenticationMetadataClearPassConfiguration {
         @ConditionalOnMissingBean(name = "cacheCredentialsMetaDataPopulator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -136,7 +136,7 @@ class CasCoreAuthenticationMetadataConfiguration {
 
     @Configuration(value = "CasCoreAuthenticationMetadataExecutionPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreAuthenticationMetadataExecutionPlanConfiguration {
+    static class CasCoreAuthenticationMetadataExecutionPlanConfiguration {
         @ConditionalOnMissingBean(name = "casCoreAuthenticationMetadataAuthenticationEventExecutionPlanConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

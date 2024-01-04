@@ -56,7 +56,7 @@ class CasOAuth20ThrottleConfiguration {
     @Configuration(value = "CasOAuth20ThrottlePlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
-    public static class CasOAuth20ThrottlePlanConfiguration {
+    static class CasOAuth20ThrottlePlanConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "oauthThrottleWebMvcConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -79,7 +79,7 @@ class CasOAuth20ThrottleConfiguration {
 
     @Configuration(value = "CasOAuth20ThrottleMvcConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasOAuth20ThrottleMvcConfiguration {
+    static class CasOAuth20ThrottleMvcConfiguration {
 
         @ConditionalOnMissingBean(name = "oauthHandlerInterceptorAdapter")
         @Bean
@@ -123,7 +123,7 @@ class CasOAuth20ThrottleConfiguration {
 
     @Configuration(value = "CasOAuth20ThrottleInterceptorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasOAuth20ThrottleInterceptorConfiguration {
+    static class CasOAuth20ThrottleInterceptorConfiguration {
         @ConditionalOnMissingBean(name = "requiresAuthenticationAuthorizeInterceptor")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

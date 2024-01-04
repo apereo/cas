@@ -28,7 +28,7 @@ class SurrogateAuthenticationMetadataConfiguration {
 
     @Configuration(value = "SurrogateAuthenticationMetadataBaseConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SurrogateAuthenticationMetadataBaseConfiguration {
+    static class SurrogateAuthenticationMetadataBaseConfiguration {
 
         @ConditionalOnMissingBean(name = "surrogateAuthenticationMetadataPopulator")
         @Bean
@@ -41,7 +41,7 @@ class SurrogateAuthenticationMetadataConfiguration {
 
     @Configuration(value = "SurrogateAuthenticationMetadataPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SurrogateAuthenticationMetadataPlanConfiguration {
+    static class SurrogateAuthenticationMetadataPlanConfiguration {
         @ConditionalOnMissingBean(name = "surrogateAuthenticationMetadataConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

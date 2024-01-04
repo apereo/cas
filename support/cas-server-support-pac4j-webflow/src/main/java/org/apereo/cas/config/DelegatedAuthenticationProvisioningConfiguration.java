@@ -40,7 +40,7 @@ class DelegatedAuthenticationProvisioningConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @ConditionalOnClass(ScimV2PrincipalAttributeMapper.class)
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Provisioning, module = "pac4j")
-    public static class DelegatedAuthenticationScimProvisioningConfiguration {
+    static class DelegatedAuthenticationScimProvisioningConfiguration {
         private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.pac4j.provisioning.scim.enabled").isTrue();
         @Bean
         @ConditionalOnMissingBean(name = "pac4jScimDelegatedClientUserProfileProvisioner")
@@ -59,7 +59,7 @@ class DelegatedAuthenticationProvisioningConfiguration {
 
     @Configuration(value = "DelegatedAuthenticationEventExecutionPlanProvisionerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class DelegatedAuthenticationEventExecutionPlanProvisionerConfiguration {
+    static class DelegatedAuthenticationEventExecutionPlanProvisionerConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "groovyDelegatedClientUserProfileProvisioner")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

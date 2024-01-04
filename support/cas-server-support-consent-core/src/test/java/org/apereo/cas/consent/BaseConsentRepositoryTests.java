@@ -137,6 +137,6 @@ public abstract class BaseConsentRepositoryTests {
         CasCoreAuditAutoConfiguration.class,
         CasCoreAutoConfiguration.class
     })
-    static class SharedTestConfiguration {
+    public static class SharedTestConfiguration {
     }
 }

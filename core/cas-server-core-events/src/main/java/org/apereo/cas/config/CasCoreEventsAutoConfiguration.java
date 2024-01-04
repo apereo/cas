@@ -40,7 +40,7 @@ public class CasCoreEventsAutoConfiguration {
 
     @Configuration(value = "CasCoreEventsListenerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreEventsListenerConfiguration {
+    static class CasCoreEventsListenerConfiguration {
         @ConditionalOnMissingBean(name = "defaultCasEventListener")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -61,7 +61,7 @@ public class CasCoreEventsAutoConfiguration {
 
     @Configuration(value = "CasCoreEventsWebConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreEventsWebConfiguration {
+    static class CasCoreEventsWebConfiguration {
 
         @Bean
         @ConditionalOnAvailableEndpoint
@@ -75,7 +75,7 @@ public class CasCoreEventsAutoConfiguration {
 
     @Configuration(value = "CasCoreEventsRepositoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreEventsRepositoryConfiguration {
+    static class CasCoreEventsRepositoryConfiguration {
         @ConditionalOnMissingBean(name = CasEventRepository.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

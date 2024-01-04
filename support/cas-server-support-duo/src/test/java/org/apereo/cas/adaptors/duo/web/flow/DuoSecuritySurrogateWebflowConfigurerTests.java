@@ -37,7 +37,7 @@ class DuoSecuritySurrogateWebflowConfigurerTests {
         SurrogateAuthenticationAutoConfiguration.class,
         SurrogateAuthenticationWebflowAutoConfiguration.class
     })
-    static class SharedTestConfiguration {
+    public static class SharedTestConfiguration {
     }
 
     @Nested

@@ -1,6 +1,6 @@
 package org.apereo.cas.web.report;
 
-import org.apereo.cas.config.CasCoreBaseEnvironmentConfiguration;
+import org.apereo.cas.config.CasCoreEnvironmentBootstrapAutoConfiguration;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "management.endpoint.casConfig.enabled=true"
 })
 @Tag("ActuatorEndpoint")
-@Import(CasCoreBaseEnvironmentConfiguration.class)
+@Import(CasCoreEnvironmentBootstrapAutoConfiguration.class)
 class ConfigurationJasyptCipherEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("casConfigurationCipherEndpoint")

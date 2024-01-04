@@ -33,7 +33,7 @@ class InterruptWebflowConfigurerTests {
         CasInterruptAutoConfiguration.class,
         CasInterruptWebflowAutoConfiguration.class
     })
-    static class SharedTestConfiguration {
+    public static class SharedTestConfiguration {
     }
 
     @Import(SharedTestConfiguration.class)

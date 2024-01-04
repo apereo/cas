@@ -50,6 +50,6 @@ public abstract class BaseSessionStoreTests {
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class
     })
-    static class SharedTestConfiguration {
+    public static class SharedTestConfiguration {
     }
 }

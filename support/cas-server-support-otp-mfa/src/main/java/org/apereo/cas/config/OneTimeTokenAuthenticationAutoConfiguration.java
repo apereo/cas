@@ -47,7 +47,7 @@ public class OneTimeTokenAuthenticationAutoConfiguration {
 
     @Configuration(value = "OneTimeTokenAuthenticationWebflowConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OneTimeTokenAuthenticationWebflowConfiguration {
+    static class OneTimeTokenAuthenticationWebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oneTimeTokenAuthenticationWebflowEventResolver")
@@ -61,7 +61,7 @@ public class OneTimeTokenAuthenticationAutoConfiguration {
 
     @Configuration(value = "OneTimeTokenAuthenticationActionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OneTimeTokenAuthenticationActionConfiguration {
+    static class OneTimeTokenAuthenticationActionConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -84,7 +84,7 @@ public class OneTimeTokenAuthenticationAutoConfiguration {
 
     @Configuration(value = "OneTimeTokenAuthenticationRepositoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OneTimeTokenAuthenticationRepositoryConfiguration {
+    static class OneTimeTokenAuthenticationRepositoryConfiguration {
         @ConditionalOnMissingBean(name = "oneTimeTokenAuthenticatorTokenRepository")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

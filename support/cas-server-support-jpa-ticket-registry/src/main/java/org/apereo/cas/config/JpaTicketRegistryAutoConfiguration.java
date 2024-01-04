@@ -61,7 +61,7 @@ public class JpaTicketRegistryAutoConfiguration {
 
     @Configuration(value = "JpaTicketRegistryDataConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class JpaTicketRegistryDataConfiguration {
+    static class JpaTicketRegistryDataConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "dataSourceTicket")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -79,7 +79,7 @@ public class JpaTicketRegistryAutoConfiguration {
 
     @Configuration(value = "JpaTicketRegistryEntityConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class JpaTicketRegistryEntityConfiguration {
+    static class JpaTicketRegistryEntityConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public BeanContainer<String> ticketPackagesToScan(
@@ -127,7 +127,7 @@ public class JpaTicketRegistryAutoConfiguration {
 
     @Configuration(value = "JpaTicketRegistryTransactionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class JpaTicketRegistryTransactionConfiguration {
+    static class JpaTicketRegistryTransactionConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PlatformTransactionManager ticketTransactionManager(
@@ -144,7 +144,7 @@ public class JpaTicketRegistryAutoConfiguration {
 
     @Configuration(value = "JpaTicketRegistryCoreConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class JpaTicketRegistryCoreConfiguration {
+    static class JpaTicketRegistryCoreConfiguration {
         @ConditionalOnMissingBean(name = "jpaTicketCatalogConfigurationValuesProvider")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -212,7 +212,7 @@ public class JpaTicketRegistryAutoConfiguration {
     @Configuration(value = "JpaTicketRegistryLockingConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistryLocking, module = "jpa")
-    public static class JpaTicketRegistryLockingConfiguration {
+    static class JpaTicketRegistryLockingConfiguration {
         private static final BeanCondition CONDITION = BeanCondition.on("cas.ticket.registry.core.enable-locking").isTrue().evenIfMissing();
 
         @Bean

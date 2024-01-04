@@ -56,7 +56,7 @@ class CasOAuth20ServicesConfiguration {
     @Configuration(value = "CasOAuth20ServicesCoreConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
-    public static class CasOAuth20ServicesCoreConfiguration {
+    static class CasOAuth20ServicesCoreConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "oauthServicesManagerRegisteredServiceLocator")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

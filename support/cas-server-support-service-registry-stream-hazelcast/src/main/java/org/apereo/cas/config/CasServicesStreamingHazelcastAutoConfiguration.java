@@ -47,7 +47,7 @@ public class CasServicesStreamingHazelcastAutoConfiguration {
 
     @Configuration(value = "CasServicesStreamingHazelcastCacheConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasServicesStreamingHazelcastCacheConfiguration {
+    static class CasServicesStreamingHazelcastCacheConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -71,7 +71,7 @@ public class CasServicesStreamingHazelcastAutoConfiguration {
 
     @Configuration(value = "CasServicesStreamingHazelcastCoreConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasServicesStreamingHazelcastCoreConfiguration {
+    static class CasServicesStreamingHazelcastCoreConfiguration {
         @Bean(destroyMethod = "shutdown")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "casRegisteredServiceHazelcastInstance")

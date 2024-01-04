@@ -41,7 +41,7 @@ public class CasConsentJdbcAutoConfiguration {
 
     @Configuration(value = "CasConsentJdbcRepositoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasConsentJdbcRepositoryConfiguration {
+    static class CasConsentJdbcRepositoryConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ConsentRepository consentRepository() {
@@ -51,7 +51,7 @@ public class CasConsentJdbcAutoConfiguration {
 
     @Configuration(value = "CasConsentJdbcDataConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasConsentJdbcDataConfiguration {
+    static class CasConsentJdbcDataConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "dataSourceConsent")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -63,7 +63,7 @@ public class CasConsentJdbcAutoConfiguration {
 
     @Configuration(value = "CasConsentJdbcEntityConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasConsentJdbcEntityConfiguration {
+    static class CasConsentJdbcEntityConfiguration {
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
@@ -105,7 +105,7 @@ public class CasConsentJdbcAutoConfiguration {
 
     @Configuration(value = "CasConsentJdbcTransactionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasConsentJdbcTransactionConfiguration {
+    static class CasConsentJdbcTransactionConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PlatformTransactionManager transactionManagerConsent(

@@ -25,7 +25,7 @@ class MongoDbTicketRegistryTicketCatalogConfiguration {
 
     @Configuration(value = "MongoDbTicketRegistryTicketCatalogProviderConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class MongoDbTicketRegistryTicketCatalogProviderConfiguration {
+    static class MongoDbTicketRegistryTicketCatalogProviderConfiguration {
         @ConditionalOnMissingBean(name = "mongoDbTicketCatalogConfigurationValuesProvider")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

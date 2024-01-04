@@ -45,7 +45,7 @@ class SamlIdPJpaRegisteredServiceMetadataConfiguration {
 
     @Configuration(value = "SamlIdPJpaRegisteredServiceMetadataResolverConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SamlIdPJpaRegisteredServiceMetadataResolverConfiguration {
+    static class SamlIdPJpaRegisteredServiceMetadataResolverConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "jpaSamlRegisteredServiceMetadataResolver")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -61,7 +61,7 @@ class SamlIdPJpaRegisteredServiceMetadataConfiguration {
 
     @Configuration(value = "SamlIdPJpaRegisteredServiceMetadataDataConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SamlIdPJpaRegisteredServiceMetadataDataConfiguration {
+    static class SamlIdPJpaRegisteredServiceMetadataDataConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "dataSourceSamlMetadata")
@@ -75,7 +75,7 @@ class SamlIdPJpaRegisteredServiceMetadataConfiguration {
 
     @Configuration(value = "SamlIdPJpaRegisteredServiceMetadataEntityConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SamlIdPJpaRegisteredServiceMetadataEntityConfiguration {
+    static class SamlIdPJpaRegisteredServiceMetadataEntityConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public JpaVendorAdapter jpaSamlMetadataVendorAdapter(final CasConfigurationProperties casProperties,
@@ -113,7 +113,7 @@ class SamlIdPJpaRegisteredServiceMetadataConfiguration {
 
     @Configuration(value = "SamlIdPJpaRegisteredServiceMetadataTransactionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SamlIdPJpaRegisteredServiceMetadataTransactionConfiguration {
+    static class SamlIdPJpaRegisteredServiceMetadataTransactionConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PlatformTransactionManager transactionManagerSamlMetadata(
@@ -127,7 +127,7 @@ class SamlIdPJpaRegisteredServiceMetadataConfiguration {
 
     @Configuration(value = "SamlIdPJpaRegisteredServiceMetadataPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SamlIdPJpaRegisteredServiceMetadataPlanConfiguration {
+    static class SamlIdPJpaRegisteredServiceMetadataPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "jpaSamlRegisteredServiceMetadataResolutionPlanConfigurer")

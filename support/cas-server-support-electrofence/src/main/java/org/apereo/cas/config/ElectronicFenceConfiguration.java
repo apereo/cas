@@ -61,7 +61,7 @@ class ElectronicFenceConfiguration {
 
     @Configuration(value = "ElectronicFenceMitigatorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class ElectronicFenceMitigatorConfiguration {
+    static class ElectronicFenceMitigatorConfiguration {
 
         @ConditionalOnMissingBean(name = "authenticationRiskMitigator")
         @Bean
@@ -81,7 +81,7 @@ class ElectronicFenceConfiguration {
 
     @Configuration(value = "ElectronicFenceEvaluatorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class ElectronicFenceEvaluatorConfiguration {
+    static class ElectronicFenceEvaluatorConfiguration {
         @ConditionalOnMissingBean(name = "authenticationRiskEvaluator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -100,7 +100,7 @@ class ElectronicFenceConfiguration {
 
     @Configuration(value = "ElectronicFenceContingencyConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class ElectronicFenceContingencyConfiguration {
+    static class ElectronicFenceContingencyConfiguration {
 
         private static void configureContingencyPlan(final BaseAuthenticationRiskContingencyPlan plan,
                                                      final CasConfigurationProperties casProperties,
@@ -150,7 +150,7 @@ class ElectronicFenceConfiguration {
 
     @Configuration(value = "ElectronicFenceNotifierConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class ElectronicFenceNotifierConfiguration {
+    static class ElectronicFenceNotifierConfiguration {
 
         @ConditionalOnMissingBean(name = "authenticationRiskEmailNotifier")
         @Bean
@@ -186,7 +186,7 @@ class ElectronicFenceConfiguration {
 
     @Configuration(value = "ElectronicFenceCalculatorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class ElectronicFenceCalculatorConfiguration {
+    static class ElectronicFenceCalculatorConfiguration {
 
         @ConditionalOnMissingBean(name = "ipAddressAuthenticationRequestRiskCalculator")
         @Bean
@@ -237,7 +237,7 @@ class ElectronicFenceConfiguration {
     @ConditionalOnBean(name = GeoLocationService.BEAN_NAME)
     @Configuration(value = "ElectronicFenceGeoLocationConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class ElectronicFenceGeoLocationConfiguration {
+    static class ElectronicFenceGeoLocationConfiguration {
         @ConditionalOnMissingBean(name = "geoLocationAuthenticationRequestRiskCalculator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -258,7 +258,7 @@ class ElectronicFenceConfiguration {
 
     @Configuration(value = "ElectronicFenceAuditConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class ElectronicFenceAuditConfiguration {
+    static class ElectronicFenceAuditConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "casElectrofenceAuditTrailRecordResolutionPlanConfigurer")

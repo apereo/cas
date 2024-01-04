@@ -1,6 +1,8 @@
 package org.apereo.cas.ws.idp.web.flow;
 
+import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasWsSecuritySecurityTokenAutoConfiguration;
+import org.apereo.cas.config.CoreSamlAutoConfiguration;
 import org.apereo.cas.config.WsSecurityIdentityProviderAutoConfiguration;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
@@ -22,6 +24,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Import({
+    CasCoreAutoConfiguration.class,
+    CoreSamlAutoConfiguration.class,
     CasWsSecuritySecurityTokenAutoConfiguration.class,
     WsSecurityIdentityProviderAutoConfiguration.class
 })

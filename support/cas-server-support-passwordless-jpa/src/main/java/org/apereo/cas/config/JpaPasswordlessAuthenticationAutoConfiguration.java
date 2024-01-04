@@ -49,7 +49,7 @@ public class JpaPasswordlessAuthenticationAutoConfiguration {
 
     @Configuration(value = "JpaPasswordlessAuthenticationEntityConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class JpaPasswordlessAuthenticationEntityConfiguration {
+    static class JpaPasswordlessAuthenticationEntityConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -79,7 +79,7 @@ public class JpaPasswordlessAuthenticationAutoConfiguration {
 
     @Configuration(value = "JpaPasswordlessAuthenticationDataConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class JpaPasswordlessAuthenticationDataConfiguration {
+    static class JpaPasswordlessAuthenticationDataConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "passwordlessDataSource")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -90,7 +90,7 @@ public class JpaPasswordlessAuthenticationAutoConfiguration {
 
     @Configuration(value = "JpaPasswordlessAuthenticationTransactionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class JpaPasswordlessAuthenticationTransactionConfiguration {
+    static class JpaPasswordlessAuthenticationTransactionConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -104,7 +104,7 @@ public class JpaPasswordlessAuthenticationAutoConfiguration {
 
     @Configuration(value = "JpaPasswordlessAuthenticationRepositoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class JpaPasswordlessAuthenticationRepositoryConfiguration {
+    static class JpaPasswordlessAuthenticationRepositoryConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PasswordlessTokenRepository passwordlessTokenRepository(
@@ -118,7 +118,7 @@ public class JpaPasswordlessAuthenticationAutoConfiguration {
 
     @Configuration(value = "JpaPasswordlessAuthenticationCleanerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class JpaPasswordlessAuthenticationCleanerConfiguration {
+    static class JpaPasswordlessAuthenticationCleanerConfiguration {
 
         @ConditionalOnMissingBean(name = "jpaPasswordlessAuthenticationTokenRepositoryCleaner")
         @Bean
@@ -137,7 +137,7 @@ public class JpaPasswordlessAuthenticationAutoConfiguration {
     }
 
     @RequiredArgsConstructor
-    public static class JpaPasswordlessAuthenticationTokenRepositoryCleaner implements Cleanable {
+    static class JpaPasswordlessAuthenticationTokenRepositoryCleaner implements Cleanable {
         private final CasReentrantLock lock = new CasReentrantLock();
 
         private final PasswordlessTokenRepository repository;

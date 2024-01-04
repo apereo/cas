@@ -50,7 +50,7 @@ public class GoogleAuthenticatorJpaAutoConfiguration {
 
     @Configuration(value = "GoogleAuthenticatorJpaTransactionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class GoogleAuthenticatorJpaTransactionConfiguration {
+    static class GoogleAuthenticatorJpaTransactionConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "transactionManagerGoogleAuthenticator")
@@ -66,7 +66,7 @@ public class GoogleAuthenticatorJpaAutoConfiguration {
 
     @Configuration(value = "GoogleAuthenticatorJpaRepositoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class GoogleAuthenticatorJpaRepositoryConfiguration {
+    static class GoogleAuthenticatorJpaRepositoryConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "googleAuthenticatorAccountRegistry")
@@ -96,7 +96,7 @@ public class GoogleAuthenticatorJpaAutoConfiguration {
 
     @Configuration(value = "GoogleAuthenticatorJpaDataConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class GoogleAuthenticatorJpaDataConfiguration {
+    static class GoogleAuthenticatorJpaDataConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "dataSourceGoogleAuthenticator")
@@ -109,7 +109,7 @@ public class GoogleAuthenticatorJpaAutoConfiguration {
 
     @Configuration(value = "GoogleAuthenticatorJpaEntityConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class GoogleAuthenticatorJpaEntityConfiguration {
+    static class GoogleAuthenticatorJpaEntityConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "jpaPackagesToScanGoogleAuthenticator")

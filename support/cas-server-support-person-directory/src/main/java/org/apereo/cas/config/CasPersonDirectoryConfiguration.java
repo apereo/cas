@@ -62,7 +62,7 @@ class CasPersonDirectoryConfiguration {
 
     @Configuration(value = "CasPersonDirectoryPrincipalResolutionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasPersonDirectoryPrincipalResolutionConfiguration {
+    static class CasPersonDirectoryPrincipalResolutionConfiguration {
         @ConditionalOnMissingBean(name = "personDirectoryPrincipalFactory")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -116,7 +116,7 @@ class CasPersonDirectoryConfiguration {
 
     @Configuration(value = "CasPersonDirectoryAttributeRepositoryPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasPersonDirectoryAttributeRepositoryPlanConfiguration {
+    static class CasPersonDirectoryAttributeRepositoryPlanConfiguration {
         @ConditionalOnMissingBean(name = "personDirectoryAttributeRepositoryPlan")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -134,7 +134,7 @@ class CasPersonDirectoryConfiguration {
 
     @Configuration(value = "CasPersonDirectoryAttributeRepositoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasPersonDirectoryAttributeRepositoryConfiguration {
+    static class CasPersonDirectoryAttributeRepositoryConfiguration {
         private static AbstractAggregatingDefaultQueryPersonAttributeDao getAggregateAttributeRepository(
             final CasConfigurationProperties casProperties) {
             val properties = casProperties.getAuthn().getAttributeRepository();

@@ -51,7 +51,7 @@ public class CasConsentWebflowAutoConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.consent.core.enabled").isTrue().evenIfMissing();
     @Configuration(value = "CasConsentWebflowActionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasConsentWebflowActionConfiguration {
+    static class CasConsentWebflowActionConfiguration {
 
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_CHECK_CONSENT_REQUIRED)
         @Bean
@@ -116,7 +116,7 @@ public class CasConsentWebflowAutoConfiguration {
 
     @Configuration(value = "CasConsentWebflowBaseConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasConsentWebflowBaseConfiguration {
+    static class CasConsentWebflowBaseConfiguration {
 
         @ConditionalOnMissingBean(name = "consentWebflowConfigurer")
         @Bean
@@ -153,7 +153,7 @@ public class CasConsentWebflowAutoConfiguration {
     @Configuration(value = "CasConsentAccountProfileConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AccountManagement, enabledByDefault = false)
-    public static class CasConsentAccountProfileConfiguration {
+    static class CasConsentAccountProfileConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_CONSENT_ACCOUNT_PROFILE_PREPARE)

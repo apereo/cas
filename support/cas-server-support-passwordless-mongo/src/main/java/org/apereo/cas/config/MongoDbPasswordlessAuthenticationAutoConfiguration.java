@@ -42,7 +42,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 public class MongoDbPasswordlessAuthenticationAutoConfiguration {
     @Configuration(value = "MongoDbPasswordlessAuthenticationAccountsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class MongoDbPasswordlessAuthenticationAccountsConfiguration {
+    static class MongoDbPasswordlessAuthenticationAccountsConfiguration {
 
         @ConditionalOnMissingBean(name = "mongoDbPasswordlessAuthenticationTemplate")
         @Bean
@@ -69,7 +69,7 @@ public class MongoDbPasswordlessAuthenticationAutoConfiguration {
 
     @Configuration(value = "MongoDbPasswordlessAuthenticationRepositoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class MongoDbPasswordlessAuthenticationRepositoryConfiguration {
+    static class MongoDbPasswordlessAuthenticationRepositoryConfiguration {
 
         @ConditionalOnMissingBean(name = "mongoDbPasswordlessAuthenticationTokensTemplate")
         @Bean
@@ -99,7 +99,7 @@ public class MongoDbPasswordlessAuthenticationAutoConfiguration {
 
     @Configuration(value = "MongoDbPasswordlessAuthenticationCleanerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class MongoDbPasswordlessAuthenticationCleanerConfiguration {
+    static class MongoDbPasswordlessAuthenticationCleanerConfiguration {
 
         @ConditionalOnMissingBean(name = "mongoPasswordlessAuthenticationTokenRepositoryCleaner")
         @Bean
@@ -118,7 +118,7 @@ public class MongoDbPasswordlessAuthenticationAutoConfiguration {
     }
 
     @RequiredArgsConstructor
-    public static class MongoDbPasswordlessAuthenticationTokenRepositoryCleaner implements Cleanable {
+    static class MongoDbPasswordlessAuthenticationTokenRepositoryCleaner implements Cleanable {
         private final CasReentrantLock lock = new CasReentrantLock();
 
         private final PasswordlessTokenRepository repository;

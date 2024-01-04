@@ -42,7 +42,7 @@ public class GoogleFirebaseCloudMessagingAutoConfiguration {
 
 
     @Configuration(value = "GoogleFirebaseCloudMessagingInternalConfiguration", proxyBeanMethods = false)
-    public static class GoogleFirebaseCloudMessagingInternalConfiguration {
+    static class GoogleFirebaseCloudMessagingInternalConfiguration {
 
         private static GoogleCredentials getCredentials(final CasConfigurationProperties casProperties) throws Exception {
             try {

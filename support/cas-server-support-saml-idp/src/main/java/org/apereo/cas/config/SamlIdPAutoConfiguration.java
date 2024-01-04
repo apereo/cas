@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Import;
 @AutoConfiguration
 @Import({
     SamlIdPConfiguration.class,
+    SamlIdPThrottleConfiguration.class,
     SamlIdPAuthenticationServiceSelectionStrategyConfiguration.class,
     SamlIdPComponentSerializationConfiguration.class,
     SamlIdPWebflowConfiguration.class,

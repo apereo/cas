@@ -55,7 +55,7 @@ import java.util.List;
 public class CasConsentCoreAutoConfiguration {
     @Configuration(value = "CasConsentCoreEngineConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasConsentCoreEngineConfiguration {
+    static class CasConsentCoreEngineConfiguration {
 
         @ConditionalOnMissingBean(name = ConsentEngine.BEAN_NAME)
         @Bean
@@ -76,7 +76,7 @@ public class CasConsentCoreAutoConfiguration {
 
     @Configuration(value = "CasConsentCoreBuilderConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasConsentCoreBuilderConfiguration {
+    static class CasConsentCoreBuilderConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "defaultConsentableAttributeBuilder")
@@ -109,7 +109,7 @@ public class CasConsentCoreAutoConfiguration {
 
     @Configuration(value = "CasConsentCoreActivationConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasConsentCoreActivationConfiguration {
+    static class CasConsentCoreActivationConfiguration {
         @ConditionalOnMissingBean(name = ConsentActivationStrategy.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -128,7 +128,7 @@ public class CasConsentCoreAutoConfiguration {
 
     @Configuration(value = "CasConsentCoreRepositoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasConsentCoreRepositoryConfiguration {
+    static class CasConsentCoreRepositoryConfiguration {
         @ConditionalOnMissingBean(name = ConsentRepository.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -154,7 +154,7 @@ public class CasConsentCoreAutoConfiguration {
 
     @Configuration(value = "CasConsentCoreAuditConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasConsentCoreAuditConfiguration {
+    static class CasConsentCoreAuditConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "casConsentAuditTrailRecordResolutionPlanConfigurer")
@@ -175,7 +175,7 @@ public class CasConsentCoreAutoConfiguration {
 
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @Configuration(value = "CasConsentCoreWebConfiguration", proxyBeanMethods = false)
-    public static class CasConsentCoreWebConfiguration {
+    static class CasConsentCoreWebConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

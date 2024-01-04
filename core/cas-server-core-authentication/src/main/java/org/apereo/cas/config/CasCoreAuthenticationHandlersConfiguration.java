@@ -60,7 +60,7 @@ class CasCoreAuthenticationHandlersConfiguration {
 
     @Configuration(value = "CasCoreAuthenticationHandlersProxyConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreAuthenticationHandlersProxyConfiguration {
+    static class CasCoreAuthenticationHandlersProxyConfiguration {
         private static final BeanCondition CONDITION = BeanCondition.on("cas.sso.proxy-authn-enabled").isTrue().evenIfMissing();
 
         @Bean
@@ -121,7 +121,7 @@ class CasCoreAuthenticationHandlersConfiguration {
 
     @Configuration(value = "CasCoreAuthenticationHandlersAcceptConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreAuthenticationHandlersAcceptConfiguration {
+    static class CasCoreAuthenticationHandlersAcceptConfiguration {
 
         private static Map<String, String> getParsedUsers(final CasConfigurationProperties casProperties) {
             val accept = casProperties.getAuthn().getAccept();
@@ -184,7 +184,7 @@ class CasCoreAuthenticationHandlersConfiguration {
 
     @Configuration(value = "CasCoreAuthenticationHandlersJaasConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreAuthenticationHandlersJaasConfiguration {
+    static class CasCoreAuthenticationHandlersJaasConfiguration {
 
         @ConditionalOnMissingBean(name = "jaasPasswordPolicyConfiguration")
         @Bean

@@ -87,7 +87,7 @@ public class CasSupportActionsAutoConfiguration {
 
     @Configuration(value = "CasSupportActionsExceptionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasSupportActionsExceptionConfiguration {
+    static class CasSupportActionsExceptionConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public HandlerExceptionResolver errorHandlerResolver() {
@@ -97,7 +97,7 @@ public class CasSupportActionsAutoConfiguration {
 
     @Configuration(value = "CasSupportActionsExecutionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasSupportActionsExecutionConfiguration {
+    static class CasSupportActionsExecutionConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -648,7 +648,7 @@ public class CasSupportActionsAutoConfiguration {
     @Configuration(value = "CasSupportActionsAccountProfileConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AccountManagement, enabledByDefault = false)
-    public static class CasSupportActionsAccountProfileConfiguration {
+    static class CasSupportActionsAccountProfileConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_REMOVE_SINGLE_SIGNON_SESSION)

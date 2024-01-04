@@ -43,7 +43,7 @@ class CasOAuth20EndpointsConfiguration {
 
     @Configuration(value = "CasOAuth20EndpointControllersConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasOAuth20EndpointControllersConfiguration {
+    static class CasOAuth20EndpointControllersConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "callbackAuthorizeController")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -125,7 +125,7 @@ class CasOAuth20EndpointsConfiguration {
 
     @Configuration(value = "CasOAuth20EndpointSecurityConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasOAuth20EndpointSecurityConfiguration {
+    static class CasOAuth20EndpointSecurityConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "oauth20ProtocolEndpointConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

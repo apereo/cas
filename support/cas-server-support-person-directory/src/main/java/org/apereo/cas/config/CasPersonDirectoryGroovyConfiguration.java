@@ -42,7 +42,7 @@ class CasPersonDirectoryGroovyConfiguration {
 
     @Configuration(value = "GroovyAttributeRepositoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class GroovyAttributeRepositoryConfiguration {
+    static class GroovyAttributeRepositoryConfiguration {
         @ConditionalOnMissingBean(name = "groovyAttributeRepositories")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -76,7 +76,7 @@ class CasPersonDirectoryGroovyConfiguration {
 
     @Configuration(value = "GroovyAttributeRepositoryPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class GroovyAttributeRepositoryPlanConfiguration {
+    static class GroovyAttributeRepositoryPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "groovyPersonDirectoryAttributeRepositoryPlanConfigurer")

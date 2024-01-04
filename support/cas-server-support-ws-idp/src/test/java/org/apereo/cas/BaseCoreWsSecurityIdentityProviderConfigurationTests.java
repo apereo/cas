@@ -86,6 +86,6 @@ public abstract class BaseCoreWsSecurityIdentityProviderConfigurationTests {
         WsSecurityIdentityProviderAutoConfiguration.class,
         CasWsSecuritySecurityTokenAutoConfiguration.class
     })
-    static class SharedTestConfiguration {
+    public static class SharedTestConfiguration {
     }
 }

@@ -40,7 +40,7 @@ public class CasOAuth20WebflowAutoConfiguration {
 
     @Configuration(value = "CasOAuth20WebflowActionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasOAuth20WebflowActionConfiguration {
+    static class CasOAuth20WebflowActionConfiguration {
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_OAUTH20_REGISTERED_SERVICE_UI)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -55,7 +55,7 @@ public class CasOAuth20WebflowAutoConfiguration {
 
     @Configuration(value = "CasOAuth20ViewsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasOAuth20ViewsConfiguration {
+    static class CasOAuth20ViewsConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public View oauthConfirmView(
@@ -95,7 +95,7 @@ public class CasOAuth20WebflowAutoConfiguration {
 
     @Configuration(value = "CasOAuth20WebflowLogoutConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasOAuth20WebflowLogoutConfiguration {
+    static class CasOAuth20WebflowLogoutConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oauth20CasLogoutWebflowExecutionPlanConfigurer")

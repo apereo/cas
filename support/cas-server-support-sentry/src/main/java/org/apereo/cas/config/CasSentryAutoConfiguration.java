@@ -31,7 +31,7 @@ public class CasSentryAutoConfiguration {
 
     @Configuration(value = "SentryTracerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SentryTracerConfiguration {
+    static class SentryTracerConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "sentryMonitoringAspect")
         @Lazy(false)

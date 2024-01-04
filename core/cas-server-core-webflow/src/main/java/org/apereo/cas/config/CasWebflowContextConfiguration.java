@@ -90,7 +90,7 @@ class CasWebflowContextConfiguration {
 
     @Configuration(value = "CasWebflowContextFlowHandlerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasWebflowContextFlowHandlerConfiguration {
+    static class CasWebflowContextFlowHandlerConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public FlowUrlHandler loginFlowUrlHandler() {
@@ -154,7 +154,7 @@ class CasWebflowContextConfiguration {
 
     @Configuration(value = "CasWebflowContextFlowExecutorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasWebflowContextFlowExecutorConfiguration {
+    static class CasWebflowContextFlowExecutorConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public FlowExecutor logoutFlowExecutor(
@@ -182,7 +182,7 @@ class CasWebflowContextConfiguration {
 
     @Configuration(value = "CasWebflowContextInterceptorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasWebflowContextInterceptorConfiguration {
+    static class CasWebflowContextInterceptorConfiguration {
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
@@ -212,7 +212,7 @@ class CasWebflowContextConfiguration {
 
     @Configuration(value = "CasWebflowContextExecutionPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasWebflowContextExecutionPlanConfiguration {
+    static class CasWebflowContextExecutionPlanConfiguration {
         @ConditionalOnMissingBean(name = "defaultWebflowConfigurer")
         @Bean
         @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -288,7 +288,7 @@ class CasWebflowContextConfiguration {
 
     @Configuration(value = "CasWebflowContextBuilderConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasWebflowContextBuilderConfiguration {
+    static class CasWebflowContextBuilderConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public FlowBuilderServices flowBuilderServices(
@@ -342,7 +342,7 @@ class CasWebflowContextConfiguration {
     }
 
     @Configuration(value = "CasWebflowDefinitionsConfiguration", proxyBeanMethods = false)
-    public static class CasWebflowDefinitionsConfiguration {
+    static class CasWebflowDefinitionsConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -368,7 +368,7 @@ class CasWebflowContextConfiguration {
     }
 
     @Configuration(value = "CasWebflowExecutionConfiguration", proxyBeanMethods = false)
-    public static class CasWebflowExecutionConfiguration {
+    static class CasWebflowExecutionConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowExecutionPlan casWebflowExecutionPlan(final ConfigurableApplicationContext applicationContext) {

@@ -63,7 +63,7 @@ class SamlConfiguration {
 
     @Configuration(value = "SamlViewFactoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SamlViewFactoryConfiguration {
+    static class SamlViewFactoryConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "samlServiceValidationViewFactoryConfigurer")
@@ -78,7 +78,7 @@ class SamlConfiguration {
 
     @Configuration(value = "SamlBuilderConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SamlBuilderConfiguration {
+    static class SamlBuilderConfiguration {
 
         @ConditionalOnMissingBean(name = "samlResponseBuilder")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -121,7 +121,7 @@ class SamlConfiguration {
 
     @Configuration(value = "SamlViewsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SamlViewsConfiguration {
+    static class SamlViewsConfiguration {
 
         @ConditionalOnMissingBean(name = "casSamlServiceSuccessView")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -168,7 +168,7 @@ class SamlConfiguration {
 
     @Configuration(value = "SamlWebSecurityConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SamlWebSecurityConfiguration {
+    static class SamlWebSecurityConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebSecurityConfigurer<Void> samlProtocolEndpointConfigurer() {
@@ -184,7 +184,7 @@ class SamlConfiguration {
 
     @Configuration(value = "SamlWebConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SamlWebConfiguration {
+    static class SamlWebConfiguration {
         @Bean
         @ConditionalOnAvailableEndpoint
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

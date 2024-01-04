@@ -66,7 +66,7 @@ class CasCoreUtilConfiguration {
 
     @Configuration(value = "CasCoreUtilContextConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreUtilContextConfiguration {
+    static class CasCoreUtilContextConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Lazy(false)
@@ -86,7 +86,7 @@ class CasCoreUtilConfiguration {
     @Configuration(value = "CasCoreUtilConverterConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @Lazy(false)
-    public static class CasCoreUtilConverterConfiguration {
+    static class CasCoreUtilConverterConfiguration {
         @Bean
         public static MessageInterpolator messageInterpolator() {
             return new SpringAwareMessageMessageInterpolator();
@@ -112,7 +112,7 @@ class CasCoreUtilConfiguration {
     @Configuration(value = "CasCoreUtilEssentialConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @Lazy(false)
-    public static class CasCoreUtilEssentialConfiguration {
+    static class CasCoreUtilEssentialConfiguration {
 
         /**
          * Create casBeanValidationPostProcessor bean.
@@ -143,7 +143,7 @@ class CasCoreUtilConfiguration {
 
     @Configuration(value = "CasCoreMessageSanitationConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreMessageSanitationConfiguration {
+    static class CasCoreMessageSanitationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "ticketCatalogMessageSanitationContributor")

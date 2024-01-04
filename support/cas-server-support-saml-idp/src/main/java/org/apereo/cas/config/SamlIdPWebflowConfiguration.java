@@ -60,7 +60,7 @@ class SamlIdPWebflowConfiguration {
 
     @Configuration(value = "SamlIdPWebflowCoreConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SamlIdPWebflowCoreConfiguration {
+    static class SamlIdPWebflowCoreConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "samlIdPCasWebflowExecutionPlanConfigurer")
@@ -86,7 +86,7 @@ class SamlIdPWebflowConfiguration {
 
     @Configuration(value = "SamlIdPWebflowActionsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SamlIdPWebflowActionsConfiguration {
+    static class SamlIdPWebflowActionsConfiguration {
 
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SAML_IDP_METADATA_UI_PARSER)
         @Bean
@@ -104,7 +104,7 @@ class SamlIdPWebflowConfiguration {
 
     @Configuration(value = "SamlIdPWebflowSingleSignOnConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SamlIdPWebflowSingleSignOnConfiguration {
+    static class SamlIdPWebflowSingleSignOnConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "samlIdPSingleSignOnParticipationStrategy")
@@ -127,7 +127,7 @@ class SamlIdPWebflowConfiguration {
 
     @Configuration(value = "SamlIdPWebflowSingleSignOnPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SamlIdPWebflowSingleSignOnPlanConfiguration {
+    static class SamlIdPWebflowSingleSignOnPlanConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "samlIdPSingleSignOnParticipationStrategyConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -140,7 +140,7 @@ class SamlIdPWebflowConfiguration {
 
     @Configuration(value = "SamlIdPWebflowMultifactorAuthenticationConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SamlIdPWebflowMultifactorAuthenticationConfiguration {
+    static class SamlIdPWebflowMultifactorAuthenticationConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "samlIdPMultifactorAuthenticationTrigger")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -153,7 +153,7 @@ class SamlIdPWebflowConfiguration {
 
     @Configuration(value = "SamlIdPWebflowEventsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SamlIdPWebflowEventsConfiguration {
+    static class SamlIdPWebflowEventsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "samlIdPAuthenticationContextWebflowEventResolver")
@@ -174,7 +174,7 @@ class SamlIdPWebflowConfiguration {
 
     @Configuration(value = "SamlIdPConsentWebflowConfiguration", proxyBeanMethods = false)
     @ConditionalOnBean(name = ConsentEngine.BEAN_NAME)
-    public static class SamlIdPConsentWebflowConfiguration {
+    static class SamlIdPConsentWebflowConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "samlIdPConsentableAttributeBuilder")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -188,7 +188,7 @@ class SamlIdPWebflowConfiguration {
     @Configuration(value = "SamlIdPConsentSingleSignOnWebflowConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @ConditionalOnBean(name = ConsentEngine.BEAN_NAME)
-    public static class SamlIdPConsentSingleSignOnWebflowConfiguration {
+    static class SamlIdPConsentSingleSignOnWebflowConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "samlIdPConsentSingleSignOnParticipationStrategyConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

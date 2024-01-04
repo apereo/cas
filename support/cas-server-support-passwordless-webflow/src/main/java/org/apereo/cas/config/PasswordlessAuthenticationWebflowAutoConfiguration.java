@@ -235,7 +235,7 @@ public class PasswordlessAuthenticationWebflowAutoConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.DelegatedAuthentication)
     @ConditionalOnClass(DelegatedAuthenticationWebflowConfiguration.class)
-    public static class PasswordlessDelegatedAuthenticationConfiguration {
+    static class PasswordlessDelegatedAuthenticationConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "passwordlessDelegatedClientAuthenticationWebflowStateContributor")

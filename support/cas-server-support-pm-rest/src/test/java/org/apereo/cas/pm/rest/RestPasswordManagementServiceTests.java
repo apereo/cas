@@ -68,7 +68,7 @@ class RestPasswordManagementServiceTests {
         CasCoreAuditAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class
     })
-    static class SharedTestConfiguration {
+    public static class SharedTestConfiguration {
     }
 
     @Nested

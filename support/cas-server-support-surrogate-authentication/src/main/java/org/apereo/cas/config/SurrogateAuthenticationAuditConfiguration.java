@@ -38,7 +38,7 @@ class SurrogateAuthenticationAuditConfiguration {
 
     @Configuration(value = "SurrogateAuthenticationAuditPrincipalConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SurrogateAuthenticationAuditPrincipalConfiguration {
+    static class SurrogateAuthenticationAuditPrincipalConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "surrogateAuditPrincipalIdProvider")
@@ -50,7 +50,7 @@ class SurrogateAuthenticationAuditConfiguration {
 
     @Configuration(value = "SurrogateAuthenticationAuditExecutionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SurrogateAuthenticationAuditExecutionConfiguration {
+    static class SurrogateAuthenticationAuditExecutionConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "surrogateEligibilityAuditableExecution")
@@ -61,7 +61,7 @@ class SurrogateAuthenticationAuditConfiguration {
 
     @Configuration(value = "SurrogateAuthenticationAuditResourcesConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SurrogateAuthenticationAuditResourcesConfiguration {
+    static class SurrogateAuthenticationAuditResourcesConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "surrogateEligibilityVerificationAuditResourceResolver")
@@ -80,7 +80,7 @@ class SurrogateAuthenticationAuditConfiguration {
 
     @Configuration(value = "SurrogateAuthenticationAuditPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SurrogateAuthenticationAuditPlanConfiguration {
+    static class SurrogateAuthenticationAuditPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "surrogateAuditTrailRecordResolutionPlanConfigurer")

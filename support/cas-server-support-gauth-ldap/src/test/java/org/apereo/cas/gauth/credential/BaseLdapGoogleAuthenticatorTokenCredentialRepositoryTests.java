@@ -74,6 +74,6 @@ public abstract class BaseLdapGoogleAuthenticatorTokenCredentialRepositoryTests 
         CasMultifactorAuthenticationWebflowAutoConfiguration.class
 
     })
-    static class SharedTestConfiguration {
+    public static class SharedTestConfiguration {
     }
 }

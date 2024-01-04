@@ -89,7 +89,7 @@ public class CasCoreMonitorAutoConfiguration {
     }
 
     @Configuration(value = "SystemHealthIndicatorConfiguration", proxyBeanMethods = false)
-    public static class SystemHealthIndicatorConfiguration {
+    static class SystemHealthIndicatorConfiguration {
         @ConditionalOnMissingBean(name = "systemHealthIndicator")
         @Bean
         @ConditionalOnEnabledHealthIndicator("systemHealthIndicator")
