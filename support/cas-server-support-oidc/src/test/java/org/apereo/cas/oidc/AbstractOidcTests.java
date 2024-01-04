@@ -19,11 +19,8 @@ import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
-import org.apereo.cas.config.CasOAuth20AuthenticationServiceSelectionStrategyConfiguration;
-import org.apereo.cas.config.CasOAuth20Configuration;
-import org.apereo.cas.config.CasOAuth20EndpointsConfiguration;
+import org.apereo.cas.config.CasOAuth20AutoConfiguration;
 import org.apereo.cas.config.CasOAuth20ProtocolTicketCatalogAutoConfiguration;
-import org.apereo.cas.config.CasOAuth20ThrottleConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasThemesAutoConfiguration;
@@ -544,11 +541,8 @@ public abstract class AbstractOidcTests {
         OidcThrottleConfiguration.class,
         OidcComponentSerializationConfiguration.class,
         OidcAuditConfiguration.class,
-        CasOAuth20Configuration.class,
         CasOAuth20ProtocolTicketCatalogAutoConfiguration.class,
-        CasOAuth20EndpointsConfiguration.class,
-        CasOAuth20ThrottleConfiguration.class,
-        CasOAuth20AuthenticationServiceSelectionStrategyConfiguration.class,
+        CasOAuth20AutoConfiguration.class,
         CasWebAppAutoConfiguration.class
     })
     public static class SharedTestConfiguration {

@@ -2,10 +2,7 @@ package org.apereo.cas.oidc.web.flow;
 
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
-import org.apereo.cas.config.CasOAuth20AuthenticationServiceSelectionStrategyConfiguration;
-import org.apereo.cas.config.CasOAuth20Configuration;
-import org.apereo.cas.config.CasOAuth20EndpointsConfiguration;
-import org.apereo.cas.config.CasOAuth20ThrottleConfiguration;
+import org.apereo.cas.config.CasOAuth20AutoConfiguration;
 import org.apereo.cas.config.CasOAuth20WebflowAutoConfiguration;
 import org.apereo.cas.config.CasThemesAutoConfiguration;
 import org.apereo.cas.config.CasThrottlingAutoConfiguration;
@@ -50,10 +47,7 @@ import static org.junit.jupiter.api.Assertions.*;
     OidcEndpointsConfiguration.class,
     OidcComponentSerializationConfiguration.class,
     OidcThrottleConfiguration.class,
-    CasOAuth20Configuration.class,
-    CasOAuth20EndpointsConfiguration.class,
-    CasOAuth20AuthenticationServiceSelectionStrategyConfiguration.class,
-    CasOAuth20ThrottleConfiguration.class,
+    CasOAuth20AutoConfiguration.class,
     CasOAuth20WebflowAutoConfiguration.class,
     CasCoreMultifactorAuthenticationAutoConfiguration.class,
     CasMultifactorAuthenticationWebflowAutoConfiguration.class
