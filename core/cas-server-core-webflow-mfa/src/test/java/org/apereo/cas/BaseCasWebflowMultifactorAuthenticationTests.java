@@ -58,7 +58,7 @@ import static org.mockito.Mockito.*;
     WebMvcAutoConfiguration.class,
     AopAutoConfiguration.class,
 
-    BaseCasWebflowMultifactorAuthenticationTests.TestAuthenticationConfiguration.class,
+    BaseCasWebflowMultifactorAuthenticationTests.AuthenticationTestConfiguration.class,
     BaseCasWebflowMultifactorAuthenticationTests.AttributeRepositoryTestConfiguration.class,
     CasAuthenticationEventExecutionPlanTestConfiguration.class,
     CasCoreMultifactorAuthenticationAutoConfiguration.class,
@@ -94,8 +94,8 @@ public abstract class BaseCasWebflowMultifactorAuthenticationTests {
     @Qualifier(TicketRegistry.BEAN_NAME)
     protected TicketRegistry ticketRegistry;
 
-    @TestConfiguration(value = "TestAuthenticationConfiguration", proxyBeanMethods = false)
-    static class TestAuthenticationConfiguration {
+    @TestConfiguration(value = "AuthenticationTestConfiguration", proxyBeanMethods = false)
+    static class AuthenticationTestConfiguration {
         @Bean
         public AuthenticationEventExecutionPlanConfigurer surrogateAuthenticationEventExecutionPlanConfigurer() {
             return plan -> plan.registerAuthenticationHandler(new AcceptUsersAuthenticationHandler(CollectionUtils.wrap("casuser", "Mellon")));

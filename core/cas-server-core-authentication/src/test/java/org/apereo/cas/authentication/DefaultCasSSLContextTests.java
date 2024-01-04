@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -28,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("Authentication")
-@EnableConfigurationProperties(CasConfigurationProperties.class)
+@EnableConfigurationProperties({CasConfigurationProperties.class, WebProperties.class})
 class DefaultCasSSLContextTests {
 
     @ImportAutoConfiguration(RefreshAutoConfiguration.class)

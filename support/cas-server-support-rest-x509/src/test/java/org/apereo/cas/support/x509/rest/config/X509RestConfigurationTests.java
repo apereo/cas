@@ -13,6 +13,7 @@ import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasRestAutoConfiguration;
 import org.apereo.cas.config.CasThrottlingAutoConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
@@ -47,6 +48,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreTicketsAutoConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,
     CasCoreAutoConfiguration.class,
+    CasPersonDirectoryAutoConfiguration.class,
     CasThrottlingAutoConfiguration.class,
     CasCoreAuditAutoConfiguration.class,
     CasCoreMultifactorAuthenticationAutoConfiguration.class,

@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @EnableScheduling
 @SpringBootTest(classes = {
-    InMemoryThrottledSubmissionThrottledWindowTests.TestAuthenticationConfiguration.class,
+    InMemoryThrottledSubmissionThrottledWindowTests.AuthenticationTestConfiguration.class,
     BaseThrottledSubmissionHandlerInterceptorAdapterTests.SharedTestConfiguration.class
 },
     properties = {
@@ -64,8 +64,8 @@ class InMemoryThrottledSubmissionThrottledWindowTests
         assertEquals(HttpStatus.SC_OK, result.getStatus());
     }
 
-    @TestConfiguration(value = "TestAuthenticationConfiguration", proxyBeanMethods = false)
-    static class TestAuthenticationConfiguration {
+    @TestConfiguration(value = "AuthenticationTestConfiguration", proxyBeanMethods = false)
+    static class AuthenticationTestConfiguration {
         @Bean
         public AuthenticationEventExecutionPlanConfigurer surrogateAuthenticationEventExecutionPlanConfigurer() {
             return plan -> plan.registerAuthenticationHandler(new AcceptUsersAuthenticationHandler(CollectionUtils.wrap("casuser", "Mellon")));
