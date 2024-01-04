@@ -41,6 +41,11 @@ public class CheckSpringConfigurationFactories {
     }
 
     private static String readFile(final Path file) {
+        if (!file.toFile().exists()) {
+            error("File %s does not exist", file);
+            System.exit(1);
+        }
+
         try {
             return Files.readString(file);
         } catch (final IOException e) {

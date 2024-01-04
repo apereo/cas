@@ -26,7 +26,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -54,8 +53,8 @@ import javax.sql.DataSource;
 @EnableTransactionManagement(proxyTargetClass = false)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProviderMetadata, module = "jpa")
-@AutoConfiguration
-public class SamlIdPJpaIdPMetadataConfiguration {
+@Configuration(proxyBeanMethods = false)
+class SamlIdPJpaIdPMetadataConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.saml-idp.metadata.jpa.idp-metadata-enabled").isTrue();
 
     @Configuration(value = "SamlIdPJpaIdPMetadataEntityConfiguration", proxyBeanMethods = false)
