@@ -9,8 +9,7 @@ import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
-import org.apereo.cas.config.HazelcastTicketRegistryConfiguration;
-import org.apereo.cas.config.HazelcastTicketRegistryTicketCatalogConfiguration;
+import org.apereo.cas.config.HazelcastTicketRegistryAutoConfiguration;
 import org.apereo.cas.ticket.catalog.CasTicketCatalogConfigurationValuesProvider;
 import com.hazelcast.core.HazelcastInstance;
 import lombok.extern.slf4j.Slf4j;
@@ -33,9 +32,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    HazelcastTicketRegistryConfiguration.class,
+    HazelcastTicketRegistryAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
-    HazelcastTicketRegistryTicketCatalogConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasPersonDirectoryAutoConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,

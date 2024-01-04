@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.hz.HazelcastConfigurationFactory;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
+import org.apereo.cas.ticket.catalog.CasTicketCatalogConfigurationValuesProvider;
 import org.apereo.cas.ticket.registry.HazelcastTicketHolder;
 import org.apereo.cas.ticket.registry.HazelcastTicketRegistry;
 import org.apereo.cas.ticket.registry.MapAttributeValueExtractor;
@@ -49,8 +50,16 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "hazelcast")
 @AutoConfiguration
-public class HazelcastTicketRegistryConfiguration {
+public class HazelcastTicketRegistryAutoConfiguration {
 
+    @ConditionalOnMissingBean(name = "hazelcastTicketCatalogConfigurationValuesProvider")
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public CasTicketCatalogConfigurationValuesProvider hazelcastTicketCatalogConfigurationValuesProvider() {
+        return new CasTicketCatalogConfigurationValuesProvider() {
+        };
+    }
+    
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public TicketRegistry ticketRegistry(
