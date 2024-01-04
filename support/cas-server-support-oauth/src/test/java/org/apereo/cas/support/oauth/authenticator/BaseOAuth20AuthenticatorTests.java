@@ -15,12 +15,7 @@ import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasOAuth20AuthenticationServiceSelectionStrategyConfiguration;
-import org.apereo.cas.config.CasOAuth20ComponentSerializationConfiguration;
-import org.apereo.cas.config.CasOAuth20Configuration;
-import org.apereo.cas.config.CasOAuth20EndpointsConfiguration;
-import org.apereo.cas.config.CasOAuth20ServicesConfiguration;
-import org.apereo.cas.config.CasOAuth20TicketSerializationConfiguration;
+import org.apereo.cas.config.CasOAuth20AutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
@@ -197,12 +192,7 @@ public abstract class BaseOAuth20AuthenticatorTests {
         CasCookieAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
         CasAuthenticationEventExecutionPlanTestConfiguration.class,
-        CasOAuth20AuthenticationServiceSelectionStrategyConfiguration.class,
-        CasOAuth20ComponentSerializationConfiguration.class,
-        CasOAuth20Configuration.class,
-        CasOAuth20EndpointsConfiguration.class,
-        CasOAuth20ServicesConfiguration.class,
-        CasOAuth20TicketSerializationConfiguration.class
+        CasOAuth20AutoConfiguration.class
     })
     static class SharedTestConfiguration {
     }

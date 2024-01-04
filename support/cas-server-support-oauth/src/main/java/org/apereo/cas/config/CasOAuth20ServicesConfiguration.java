@@ -13,7 +13,6 @@ import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.val;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -32,8 +31,8 @@ import org.springframework.core.Ordered;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OAuth)
-@AutoConfiguration
-public class CasOAuth20ServicesConfiguration {
+@Configuration(proxyBeanMethods = false)
+class CasOAuth20ServicesConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "oauthServiceRegistryExecutionPlanConfigurer")

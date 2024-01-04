@@ -8,7 +8,7 @@ import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
-import org.apereo.cas.config.CasOAuth20ComponentSerializationConfiguration;
+import org.apereo.cas.config.CasOAuth20AutoConfiguration;
 import org.apereo.cas.config.MemcachedTicketRegistryAutoConfiguration;
 import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
@@ -54,7 +54,7 @@ import static org.mockito.Mockito.*;
     CasCoreTicketsAutoConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,
     CasCoreServicesAutoConfiguration.class,
-    CasOAuth20ComponentSerializationConfiguration.class,
+    CasOAuth20AutoConfiguration.class,
     CasAuthenticationEventExecutionPlanTestConfiguration.class,
     MemcachedTicketRegistryTests.MemcachedTicketRegistryTestConfiguration.class
 })

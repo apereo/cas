@@ -10,10 +10,7 @@ import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasOAuth20AuthenticationServiceSelectionStrategyConfiguration;
-import org.apereo.cas.config.CasOAuth20ComponentSerializationConfiguration;
-import org.apereo.cas.config.CasOAuth20Configuration;
-import org.apereo.cas.config.CasOAuth20EndpointsConfiguration;
+import org.apereo.cas.config.CasOAuth20AutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -53,8 +50,6 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasOAuth20Configuration.class,
-    CasOAuth20EndpointsConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
     CasCoreServicesAutoConfiguration.class,
     CasCoreAutoConfiguration.class,
@@ -65,8 +60,7 @@ import static org.mockito.Mockito.*;
     CasPersonDirectoryTestConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,
-    CasOAuth20ComponentSerializationConfiguration.class,
-    CasOAuth20AuthenticationServiceSelectionStrategyConfiguration.class
+    CasOAuth20AutoConfiguration.class
 })
 public abstract class BaseOAuth20ExpirationPolicyTests {
     protected static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
