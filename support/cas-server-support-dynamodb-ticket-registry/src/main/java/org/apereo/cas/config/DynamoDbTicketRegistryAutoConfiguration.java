@@ -4,13 +4,13 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.dynamodb.AmazonDynamoDbClientFactory;
 import org.apereo.cas.ticket.TicketCatalog;
+import org.apereo.cas.ticket.catalog.CasTicketCatalogConfigurationValuesProvider;
 import org.apereo.cas.ticket.registry.DynamoDbTicketRegistry;
 import org.apereo.cas.ticket.registry.DynamoDbTicketRegistryFacilitator;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -21,9 +21,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
+import java.util.function.Function;
 
 /**
- * This is {@link DynamoDbTicketRegistryConfiguration}.
+ * This is {@link DynamoDbTicketRegistryAutoConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
@@ -31,12 +32,43 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "dynamodb")
 @AutoConfiguration
-public class DynamoDbTicketRegistryConfiguration {
-
+public class DynamoDbTicketRegistryAutoConfiguration {
 
     @Configuration(value = "DynamoDbTicketRegistryBaseConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class DynamoDbTicketRegistryBaseConfiguration {
+        @ConditionalOnMissingBean(name = "dynamoDbTicketCatalogConfigurationValuesProvider")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public CasTicketCatalogConfigurationValuesProvider dynamoDbTicketCatalogConfigurationValuesProvider() {
+            return new CasTicketCatalogConfigurationValuesProvider() {
+                @Override
+                public Function<CasConfigurationProperties, String> getServiceTicketStorageName() {
+                    return p -> p.getTicket().getRegistry().getDynamoDb().getServiceTicketsTableName();
+                }
+
+                @Override
+                public Function<CasConfigurationProperties, String> getProxyTicketStorageName() {
+                    return p -> p.getTicket().getRegistry().getDynamoDb().getProxyTicketsTableName();
+                }
+
+                @Override
+                public Function<CasConfigurationProperties, String> getTicketGrantingTicketStorageName() {
+                    return p -> p.getTicket().getRegistry().getDynamoDb().getTicketGrantingTicketsTableName();
+                }
+
+                @Override
+                public Function<CasConfigurationProperties, String> getProxyGrantingTicketStorageName() {
+                    return p -> p.getTicket().getRegistry().getDynamoDb().getProxyGrantingTicketsTableName();
+                }
+
+                @Override
+                public Function<CasConfigurationProperties, String> getTransientSessionStorageName() {
+                    return p -> p.getTicket().getRegistry().getDynamoDb().getTransientSessionTicketsTableName();
+                }
+            };
+        }
+
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public TicketRegistry ticketRegistry(

@@ -2,8 +2,7 @@ package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasOAuth20ProtocolTicketCatalogAutoConfiguration;
-import org.apereo.cas.config.DynamoDbTicketRegistryConfiguration;
-import org.apereo.cas.config.DynamoDbTicketRegistryTicketCatalogConfiguration;
+import org.apereo.cas.config.DynamoDbTicketRegistryAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
@@ -49,8 +48,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("DynamoDb")
 @Import({
-    DynamoDbTicketRegistryConfiguration.class,
-    DynamoDbTicketRegistryTicketCatalogConfiguration.class,
+    DynamoDbTicketRegistryAutoConfiguration.class,
     CasOAuth20ProtocolTicketCatalogAutoConfiguration.class
 })
 @TestPropertySource(

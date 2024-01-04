@@ -2,7 +2,7 @@ package org.apereo.cas.adaptors.x509.web;
 
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
-import org.apereo.cas.config.X509AuthenticationConfiguration;
+import org.apereo.cas.config.X509AuthenticationAutoConfiguration;
 import org.apereo.cas.config.X509AuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.X509CertificateExtractorAutoConfiguration;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Import({
     WebMvcAutoConfiguration.class,
     ServletWebServerFactoryAutoConfiguration.class,
-    X509AuthenticationConfiguration.class,
+    X509AuthenticationAutoConfiguration.class,
     X509CertificateExtractorAutoConfiguration.class,
     X509AuthenticationWebflowAutoConfiguration.class,
     CasCoreMultifactorAuthenticationAutoConfiguration.class,

@@ -17,7 +17,7 @@ import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguratio
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
-import org.apereo.cas.config.X509AuthenticationConfiguration;
+import org.apereo.cas.config.X509AuthenticationAutoConfiguration;
 import org.apereo.cas.config.X509AuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.X509CertificateExtractorAutoConfiguration;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -57,7 +57,7 @@ import org.springframework.webflow.execution.Action;
     CasCoreValidationAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
     X509AuthenticationWebflowAutoConfiguration.class,
-    X509AuthenticationConfiguration.class,
+    X509AuthenticationAutoConfiguration.class,
     X509CertificateExtractorAutoConfiguration.class
 },
     properties = {
