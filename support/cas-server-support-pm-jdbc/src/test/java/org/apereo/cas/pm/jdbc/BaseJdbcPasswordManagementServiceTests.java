@@ -11,8 +11,7 @@ import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasHibernateJpaAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
-import org.apereo.cas.config.JdbcPasswordHistoryManagementConfiguration;
-import org.apereo.cas.config.JdbcPasswordManagementConfiguration;
+import org.apereo.cas.config.JdbcPasswordManagementAutoConfiguration;
 import org.apereo.cas.config.PasswordManagementAutoConfiguration;
 import org.apereo.cas.pm.PasswordHistoryService;
 import org.apereo.cas.pm.PasswordManagementService;
@@ -45,8 +44,7 @@ import javax.sql.DataSource;
     CasCoreLogoutAutoConfiguration.class,
     CasCoreAutoConfiguration.class,
     CasHibernateJpaAutoConfiguration.class,
-    JdbcPasswordManagementConfiguration.class,
-    JdbcPasswordHistoryManagementConfiguration.class,
+    JdbcPasswordManagementAutoConfiguration.class,
     PasswordManagementAutoConfiguration.class
 }, properties = {
     "cas.jdbc.show-sql=false",
