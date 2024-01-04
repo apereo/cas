@@ -21,7 +21,6 @@ import org.apereo.cas.web.flow.actions.MultifactorAuthenticationTrustedDevicePro
 import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 import org.apereo.cas.web.flow.actions.composite.MultifactorProviderSelectionCriteria;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -41,8 +40,8 @@ import org.springframework.webflow.execution.Action;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthenticationTrustedDevices)
-@AutoConfiguration
-public class MultifactorAuthnTrustWebflowConfiguration {
+@Configuration(proxyBeanMethods = false)
+class MultifactorAuthnTrustWebflowConfiguration {
 
     @Configuration(value = "MultifactorAuthnTrustCoreWebflowConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)

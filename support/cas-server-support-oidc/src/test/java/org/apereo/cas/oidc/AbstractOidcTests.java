@@ -29,7 +29,7 @@ import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasThemesAutoConfiguration;
 import org.apereo.cas.config.CasThrottlingAutoConfiguration;
 import org.apereo.cas.config.CasThymeleafAutoConfiguration;
-import org.apereo.cas.config.CasWebSecurityConfiguration;
+import org.apereo.cas.config.CasWebAppAutoConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.config.OidcAuditConfiguration;
 import org.apereo.cas.config.OidcComponentSerializationConfiguration;
@@ -520,7 +520,7 @@ public abstract class AbstractOidcTests {
     @Import({
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
-                CasCoreUtilAutoConfiguration.class,
+        CasCoreUtilAutoConfiguration.class,
         CasWebflowAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
@@ -549,8 +549,7 @@ public abstract class AbstractOidcTests {
         CasOAuth20EndpointsConfiguration.class,
         CasOAuth20ThrottleConfiguration.class,
         CasOAuth20AuthenticationServiceSelectionStrategyConfiguration.class,
-
-        CasWebSecurityConfiguration.class
+        CasWebAppAutoConfiguration.class
     })
     public static class SharedTestConfiguration {
     }
