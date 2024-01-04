@@ -22,9 +22,7 @@ import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasThemesAutoConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.config.DuoSecurityAutoConfiguration;
-import org.apereo.cas.config.MultifactorAuthnTrustConfiguration;
-import org.apereo.cas.config.MultifactorAuthnTrustWebflowConfiguration;
-import org.apereo.cas.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration;
+import org.apereo.cas.config.MultifactorAuthnTrustAutoConfiguration;
 import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.http.HttpRequestUtils;
@@ -95,9 +93,7 @@ public abstract class BaseDuoSecurityTests {
     })
     @SpringBootConfiguration
     @Import({
-        MultifactorAuthnTrustConfiguration.class,
-        MultifactorAuthnTrustedDeviceFingerprintConfiguration.class,
-        MultifactorAuthnTrustWebflowConfiguration.class,
+        MultifactorAuthnTrustAutoConfiguration.class,
 
         DuoSecurityAutoConfiguration.class,
 

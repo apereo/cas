@@ -1,5 +1,1 @@
-org.apereo.cas.config.CasFiltersConfiguration
-org.apereo.cas.config.CasPropertiesConfiguration
-org.apereo.cas.config.CasWebAppConfiguration
-org.apereo.cas.config.CasWebSecurityConfiguration
-org.apereo.cas.config.AcceptUsersAuthenticationEventExecutionPlanConfiguration
+org.apereo.cas.config.CasWebAppAutoConfiguration

@@ -15,9 +15,7 @@ import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguratio
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasThemesAutoConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
-import org.apereo.cas.config.MultifactorAuthnTrustConfiguration;
-import org.apereo.cas.config.MultifactorAuthnTrustWebflowConfiguration;
-import org.apereo.cas.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration;
+import org.apereo.cas.config.MultifactorAuthnTrustAutoConfiguration;
 import org.apereo.cas.config.YubiKeyAutoConfiguration;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -47,9 +45,7 @@ public abstract class BaseYubiKeyTests {
     @SpringBootConfiguration
     @Import({
         YubiKeyTestConfiguration.class,
-        MultifactorAuthnTrustConfiguration.class,
-        MultifactorAuthnTrustedDeviceFingerprintConfiguration.class,
-        MultifactorAuthnTrustWebflowConfiguration.class,
+        MultifactorAuthnTrustAutoConfiguration.class,
         YubiKeyAutoConfiguration.class,
         CasWebflowAutoConfiguration.class,
         CasThemesAutoConfiguration.class,

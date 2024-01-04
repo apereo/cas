@@ -1,7 +1,7 @@
 package org.apereo.cas.oidc.web.controllers.token;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.config.CasWebSecurityConfiguration;
+import org.apereo.cas.config.CasWebAppAutoConfiguration;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.web.controllers.profile.OidcUserProfileEndpointController;
@@ -56,7 +56,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class OidcAccessTokenEndpointControllerTests {
 
     @Nested
-    @Import(CasWebSecurityConfiguration.class)
+    @Import(CasWebAppAutoConfiguration.class)
     @TestPropertySource(properties = "cas.authn.oidc.core.accepted-issuers-pattern=.*")
     class MvcTests extends AbstractOidcTests {
         private MockMvc mvc;

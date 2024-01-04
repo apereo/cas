@@ -1,6 +1,6 @@
 package org.apereo.cas.trusted.web;
 
-import org.apereo.cas.config.MultifactorAuthnTrustConfiguration;
+import org.apereo.cas.config.MultifactorAuthnTrustAutoConfiguration;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.DateTimeUtils;
@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @TestPropertySource(properties = "management.endpoint.multifactorTrustedDevices.enabled=true")
 @Tag("MFATrustedDevices")
-@ImportAutoConfiguration(MultifactorAuthnTrustConfiguration.class)
+@ImportAutoConfiguration(MultifactorAuthnTrustAutoConfiguration.class)
 class MultifactorAuthenticationTrustedDevicesReportEndpointTests extends AbstractCasEndpointTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();

@@ -16,9 +16,7 @@ import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasSimpleMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
-import org.apereo.cas.config.MultifactorAuthnTrustConfiguration;
-import org.apereo.cas.config.MultifactorAuthnTrustWebflowConfiguration;
-import org.apereo.cas.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration;
+import org.apereo.cas.config.MultifactorAuthnTrustAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.push.NotificationSender;
 import org.apereo.cas.notifications.push.NotificationSenderExecutionPlanConfigurer;
@@ -50,9 +48,7 @@ public abstract class BaseCasSimpleMultifactorAuthenticationTests {
     })
     @SpringBootConfiguration
     @Import({
-        MultifactorAuthnTrustConfiguration.class,
-        MultifactorAuthnTrustedDeviceFingerprintConfiguration.class,
-        MultifactorAuthnTrustWebflowConfiguration.class,
+        MultifactorAuthnTrustAutoConfiguration.class,
         
         CasSimpleMultifactorAuthenticationAutoConfiguration.CasSimpleMultifactorTrustConfiguration.class,
         CasSimpleMultifactorAuthenticationAutoConfiguration.class,

@@ -2,15 +2,12 @@ package org.apereo.cas.ws.idp.web.flow;
 
 import org.apereo.cas.config.CasWsSecurityTokenTicketCatalogConfiguration;
 import org.apereo.cas.config.CasWsSecurityTokenTicketComponentSerializationConfiguration;
-import org.apereo.cas.config.CoreWsSecurityIdentityProviderComponentSerializationConfiguration;
-import org.apereo.cas.config.CoreWsSecurityIdentityProviderConfiguration;
-import org.apereo.cas.config.CoreWsSecurityIdentityProviderWebflowConfiguration;
 import org.apereo.cas.config.CoreWsSecuritySecurityTokenServiceConfiguration;
 import org.apereo.cas.config.CoreWsSecuritySecurityTokenTicketConfiguration;
+import org.apereo.cas.config.WsSecurityIdentityProviderAutoConfiguration;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -19,7 +16,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.engine.Flow;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -33,9 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasWsSecurityTokenTicketComponentSerializationConfiguration.class,
     CoreWsSecuritySecurityTokenServiceConfiguration.class,
     CoreWsSecuritySecurityTokenTicketConfiguration.class,
-    CoreWsSecurityIdentityProviderConfiguration.class,
-    CoreWsSecurityIdentityProviderWebflowConfiguration.class,
-    CoreWsSecurityIdentityProviderComponentSerializationConfiguration.class
+    WsSecurityIdentityProviderAutoConfiguration.class
 })
 @TestPropertySource(properties = {
     "cas.authn.wsfed-idp.idp.realm=urn:org:apereo:cas:ws:idp:realm-CAS",
