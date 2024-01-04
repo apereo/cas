@@ -14,7 +14,6 @@ import lombok.val;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -40,8 +39,8 @@ import java.util.List;
 @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
 @ConditionalOnBean(name = AuthenticationThrottlingExecutionPlan.BEAN_NAME)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OpenIDConnect)
-@AutoConfiguration
-public class OidcThrottleConfiguration {
+@Configuration(proxyBeanMethods = false)
+class OidcThrottleConfiguration {
 
     @Configuration(value = "OidcThrottleWebMvcConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)

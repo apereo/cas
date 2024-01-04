@@ -28,14 +28,7 @@ import org.apereo.cas.config.CasThrottlingAutoConfiguration;
 import org.apereo.cas.config.CasThymeleafAutoConfiguration;
 import org.apereo.cas.config.CasWebAppAutoConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
-import org.apereo.cas.config.OidcAuditConfiguration;
-import org.apereo.cas.config.OidcComponentSerializationConfiguration;
-import org.apereo.cas.config.OidcConfiguration;
-import org.apereo.cas.config.OidcEndpointsConfiguration;
-import org.apereo.cas.config.OidcJwksConfiguration;
-import org.apereo.cas.config.OidcLogoutConfiguration;
-import org.apereo.cas.config.OidcResponseConfiguration;
-import org.apereo.cas.config.OidcThrottleConfiguration;
+import org.apereo.cas.config.OidcAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
@@ -138,10 +131,10 @@ import static org.mockito.Mockito.*;
         "spring.mvc.pathmatch.matching-strategy=ant-path-matcher",
 
         "cas.audit.slf4j.use-single-line=true",
-        
+
         "cas.server.name=https://sso.example.org/",
         "cas.server.prefix=https://sso.example.org/cas",
-        
+
         "cas.authn.oidc.core.issuer=https://sso.example.org/cas/oidc",
         "cas.authn.oidc.jwks.file-system.jwks-file=classpath:keystore.jwks"
     })
@@ -183,7 +176,7 @@ public abstract class AbstractOidcTests {
     @Autowired
     @Qualifier("oauthDistributedSessionStore")
     protected SessionStore oauthDistributedSessionStore;
-    
+
     @Autowired
     @Qualifier("oauthInterceptor")
     protected HandlerInterceptor oauthInterceptor;
@@ -533,14 +526,7 @@ public abstract class AbstractOidcTests {
         CasThrottlingAutoConfiguration.class,
         CasMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
-        OidcConfiguration.class,
-        OidcJwksConfiguration.class,
-        OidcEndpointsConfiguration.class,
-        OidcResponseConfiguration.class,
-        OidcLogoutConfiguration.class,
-        OidcThrottleConfiguration.class,
-        OidcComponentSerializationConfiguration.class,
-        OidcAuditConfiguration.class,
+        OidcAutoConfiguration.class,
         CasOAuth20ProtocolTicketCatalogAutoConfiguration.class,
         CasOAuth20AutoConfiguration.class,
         CasWebAppAutoConfiguration.class

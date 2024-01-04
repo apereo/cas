@@ -14,7 +14,6 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperCustomizer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -30,8 +29,8 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProvider)
-@AutoConfiguration
-public class SamlIdPAuthenticationServiceSelectionStrategyConfiguration {
+@Configuration(proxyBeanMethods = false)
+class SamlIdPAuthenticationServiceSelectionStrategyConfiguration {
 
     @Configuration(value = "SamlIdPRegisteredServicesConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)

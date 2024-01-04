@@ -7,13 +7,7 @@ import org.apereo.cas.config.CasOAuth20WebflowAutoConfiguration;
 import org.apereo.cas.config.CasThemesAutoConfiguration;
 import org.apereo.cas.config.CasThrottlingAutoConfiguration;
 import org.apereo.cas.config.CasThymeleafAutoConfiguration;
-import org.apereo.cas.config.OidcComponentSerializationConfiguration;
-import org.apereo.cas.config.OidcConfiguration;
-import org.apereo.cas.config.OidcEndpointsConfiguration;
-import org.apereo.cas.config.OidcJwksConfiguration;
-import org.apereo.cas.config.OidcLogoutConfiguration;
-import org.apereo.cas.config.OidcResponseConfiguration;
-import org.apereo.cas.config.OidcThrottleConfiguration;
+import org.apereo.cas.config.OidcAutoConfiguration;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.throttle.ThrottledRequestFilter;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
@@ -40,13 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasThymeleafAutoConfiguration.class,
     CasThrottlingAutoConfiguration.class,
     CasThemesAutoConfiguration.class,
-    OidcConfiguration.class,
-    OidcResponseConfiguration.class,
-    OidcLogoutConfiguration.class,
-    OidcJwksConfiguration.class,
-    OidcEndpointsConfiguration.class,
-    OidcComponentSerializationConfiguration.class,
-    OidcThrottleConfiguration.class,
+    OidcAutoConfiguration.class,
     CasOAuth20AutoConfiguration.class,
     CasOAuth20WebflowAutoConfiguration.class,
     CasCoreMultifactorAuthenticationAutoConfiguration.class,
