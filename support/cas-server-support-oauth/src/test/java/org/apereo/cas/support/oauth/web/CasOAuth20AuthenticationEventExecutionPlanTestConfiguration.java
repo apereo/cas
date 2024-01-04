@@ -11,14 +11,14 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.TestConfiguration;
 
 /**
- * This is {@link CasOAuth20TestAuthenticationEventExecutionPlanConfiguration}.
+ * This is {@link CasOAuth20AuthenticationEventExecutionPlanTestConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
 @Tag("OAuth")
-@TestConfiguration(value = "casOAuth20TestAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
-public class CasOAuth20TestAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+@TestConfiguration(value = "CasOAuth20AuthenticationEventExecutionPlanTestConfiguration", proxyBeanMethods = false)
+public class CasOAuth20AuthenticationEventExecutionPlanTestConfiguration implements AuthenticationEventExecutionPlanConfigurer {
     @Autowired
     @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
     private PrincipalResolver defaultPrincipalResolver;

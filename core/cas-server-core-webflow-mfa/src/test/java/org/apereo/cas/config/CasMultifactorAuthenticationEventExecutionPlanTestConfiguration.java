@@ -12,13 +12,13 @@ import org.springframework.context.annotation.Bean;
 import java.util.HashMap;
 
 /**
- * This is {@link CasMultifactorTestAuthenticationEventExecutionPlanConfiguration}.
+ * This is {@link CasMultifactorAuthenticationEventExecutionPlanTestConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@TestConfiguration(value = "CasMultifactorTestAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
-public class CasMultifactorTestAuthenticationEventExecutionPlanConfiguration {
+@TestConfiguration(value = "CasMultifactorAuthenticationEventExecutionPlanTestConfiguration", proxyBeanMethods = false)
+public class CasMultifactorAuthenticationEventExecutionPlanTestConfiguration {
     @Bean
     public AuthenticationEventExecutionPlanConfigurer casMultifactorTestAuthenticationEventExecutionPlanConfigurer() {
         return plan -> {
