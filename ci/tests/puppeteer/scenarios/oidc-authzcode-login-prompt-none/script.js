@@ -22,7 +22,7 @@ async function login(page, redirectUrl, params) {
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
-    const redirectUrl = "https://httpbin.org/post";
+    const redirectUrl = "https://localhost:9859/post";
     await login(page, redirectUrl, "response_mode=form_post");
     await cas.logPage(page);
     await page.waitForTimeout(2000);

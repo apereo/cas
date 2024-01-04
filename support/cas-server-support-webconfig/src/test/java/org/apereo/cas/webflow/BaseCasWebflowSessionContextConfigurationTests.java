@@ -34,7 +34,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.autoconfigure.endpoint.EndpointAutoConfiguration;
+import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -68,11 +71,15 @@ import static org.junit.jupiter.api.Assertions.*;
     AopAutoConfiguration.class,
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
+    WebEndpointAutoConfiguration.class,
+    EndpointAutoConfiguration.class,
+    SecurityAutoConfiguration.class,
+    
     CasWebflowAutoConfiguration.class,
     CasThemesAutoConfiguration.class,
     CasThymeleafAutoConfiguration.class,
     CasWebAppAutoConfiguration.class,
-    BaseCasWebflowSessionContextConfigurationTests.TestWebflowContextConfiguration.class,
+    BaseCasWebflowSessionContextConfigurationTests.WebflowContextTestConfiguration.class,
     CasMultifactorAuthenticationWebflowAutoConfiguration.class,
     CasCoreServicesAutoConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,
@@ -111,8 +118,8 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
     /**
      * The type Test webflow context configuration.
      */
-    @TestConfiguration(value = "testWebflowContextConfiguration", proxyBeanMethods = false)
-    static class TestWebflowContextConfiguration {
+    @TestConfiguration(value = "WebflowContextTestConfiguration", proxyBeanMethods = false)
+    static class WebflowContextTestConfiguration {
         private static final String TEST = "test";
 
         @Autowired

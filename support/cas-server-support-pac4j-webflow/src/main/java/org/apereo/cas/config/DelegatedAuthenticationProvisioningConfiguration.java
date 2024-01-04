@@ -14,6 +14,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.util.spring.boot.ConditionalOnMissingGraalVMNativeImage;
 
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -42,16 +43,17 @@ class DelegatedAuthenticationProvisioningConfiguration {
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Provisioning, module = "pac4j")
     static class DelegatedAuthenticationScimProvisioningConfiguration {
         private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.pac4j.provisioning.scim.enabled").isTrue();
+        
         @Bean
         @ConditionalOnMissingBean(name = "pac4jScimDelegatedClientUserProfileProvisioner")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Supplier<DelegatedClientUserProfileProvisioner> pac4jScimDelegatedClientUserProfileProvisioner(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(PrincipalProvisioner.BEAN_NAME)
-            final PrincipalProvisioner principalProvisioner) {
+            final ObjectProvider<PrincipalProvisioner> principalProvisioner) {
             return BeanSupplier.of(Supplier.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> () -> new ScimDelegatedClientUserProfileProvisioner(principalProvisioner))
+                .supply(() -> () -> new ScimDelegatedClientUserProfileProvisioner(principalProvisioner.getObject()))
                 .otherwiseProxy()
                 .get();
         }

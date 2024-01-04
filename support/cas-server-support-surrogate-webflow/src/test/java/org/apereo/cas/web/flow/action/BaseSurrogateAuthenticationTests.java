@@ -46,7 +46,7 @@ public abstract class BaseSurrogateAuthenticationTests {
     })
     @SpringBootConfiguration
     @Import({
-        BaseSurrogateAuthenticationTests.TestAuthenticationConfiguration.class,
+        AuthenticationTestConfiguration.class,
         SurrogateAuthenticationAutoConfiguration.class,
         SurrogateAuthenticationWebflowAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
@@ -69,8 +69,8 @@ public abstract class BaseSurrogateAuthenticationTests {
     public static class SharedTestConfiguration {
     }
 
-    @TestConfiguration(value = "TestAuthenticationConfiguration", proxyBeanMethods = false)
-    static class TestAuthenticationConfiguration {
+    @TestConfiguration(value = "AuthenticationTestConfiguration", proxyBeanMethods = false)
+    static class AuthenticationTestConfiguration {
         @Bean
         public AuthenticationEventExecutionPlanConfigurer surrogateAuthenticationEventExecutionPlanConfigurer() {
             return plan -> plan.registerAuthenticationHandler(new AcceptUsersAuthenticationHandler(CollectionUtils.wrap("casuser", "Mellon")));

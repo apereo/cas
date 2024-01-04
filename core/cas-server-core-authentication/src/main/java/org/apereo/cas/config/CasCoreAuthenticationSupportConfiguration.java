@@ -70,9 +70,9 @@ class CasCoreAuthenticationSupportConfiguration {
         public AuthenticationHandlerResolver registeredServiceAuthenticationHandlerResolver(
             final CasConfigurationProperties casProperties,
             @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
-            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME) final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan) {
-            val resolver = new RegisteredServiceAuthenticationHandlerResolver(servicesManager,
-                authenticationServiceSelectionPlan);
+            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
+            final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan) {
+            val resolver = new RegisteredServiceAuthenticationHandlerResolver(servicesManager, authenticationServiceSelectionPlan);
             resolver.setOrder(casProperties.getAuthn().getCore().getServiceAuthenticationResolution().getOrder());
             return resolver;
         }

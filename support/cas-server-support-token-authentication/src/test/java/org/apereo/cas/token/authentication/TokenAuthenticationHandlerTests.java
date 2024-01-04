@@ -61,7 +61,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasPersonDirectoryAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,
-    TokenAuthenticationHandlerTests.TestTokenAuthenticationConfiguration.class,
+    TokenAuthenticationHandlerTests.TokenAuthenticationTestConfiguration.class,
     CasCoreAutoConfiguration.class,
     TokenAuthenticationAutoConfiguration.class
 }, properties = "cas.authn.token.sso-token-enabled=true")
@@ -150,8 +150,8 @@ class TokenAuthenticationHandlerTests {
         assertNotNull(tokenAuthenticationHandler.authenticate(credential, credential.getService()));
     }
 
-    @TestConfiguration(value = "TokenAuthenticationTests", proxyBeanMethods = false)
-    static class TestTokenAuthenticationConfiguration {
+    @TestConfiguration(value = "TokenAuthenticationTestConfiguration", proxyBeanMethods = false)
+    static class TokenAuthenticationTestConfiguration {
         @Bean
         public List inMemoryRegisteredServices() {
             val services = new ArrayList<RegisteredService>();

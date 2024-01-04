@@ -8,6 +8,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.MockRequestContext;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
@@ -243,7 +244,7 @@ class DefaultDelegatedClientAuthenticationWebflowManagerTests {
 
     private Pair<SAML2Client, SAML2MessageContext> setupTestContextFor(final String spMetadataPath, final String spEntityId) throws Throwable {
         val idpMetadata = new File("src/test/resources/idp-metadata.xml").getCanonicalPath();
-        val keystorePath = new File(FileUtils.getTempDirectory(), "keystore").getCanonicalPath();
+        val keystorePath = new File(FileUtils.getTempDirectory(), "keystore%s".formatted(RandomUtils.randomAlphabetic(4))).getCanonicalPath();
         val saml2ClientConfiguration = new SAML2Configuration(keystorePath, "changeit", "changeit", idpMetadata);
         saml2ClientConfiguration.setServiceProviderEntityId(spEntityId);
         saml2ClientConfiguration.setServiceProviderMetadataPath(spMetadataPath);

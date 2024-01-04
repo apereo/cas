@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = "management.endpoint.casValidate.enabled=true")
 @Tag("ActuatorEndpoint")
 @Import({
-    CasProtocolValidationEndpointTests.TestAuthenticationConfiguration.class,
+    CasProtocolValidationEndpointTests.AuthenticationTestConfiguration.class,
     CasThymeleafAutoConfiguration.class,
     CasValidationAutoConfiguration.class
 })
@@ -77,8 +77,8 @@ class CasProtocolValidationEndpointTests extends AbstractCasEndpointTests {
         return request;
     }
 
-    @TestConfiguration(value = "TestAuthenticationConfiguration", proxyBeanMethods = false)
-    static class TestAuthenticationConfiguration {
+    @TestConfiguration(value = "AuthenticationTestConfiguration", proxyBeanMethods = false)
+    static class AuthenticationTestConfiguration {
         @Bean
         public AuthenticationEventExecutionPlanConfigurer surrogateAuthenticationEventExecutionPlanConfigurer() {
             return plan -> plan.registerAuthenticationHandler(new AcceptUsersAuthenticationHandler(CollectionUtils.wrap("casuser", "Mellon")));

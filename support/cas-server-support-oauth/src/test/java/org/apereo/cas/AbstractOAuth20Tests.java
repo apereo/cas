@@ -41,7 +41,7 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.validator.OAuth20ClientSecretValidator;
-import org.apereo.cas.support.oauth.web.CasOAuth20TestAuthenticationEventExecutionPlanConfiguration;
+import org.apereo.cas.support.oauth.web.CasOAuth20AuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20DeviceUserCodeApprovalEndpointController;
@@ -747,7 +747,7 @@ public abstract class AbstractOAuth20Tests {
     @Import({
         CasCoreServicesAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
-        CasOAuth20TestAuthenticationEventExecutionPlanConfiguration.class,
+        CasOAuth20AuthenticationEventExecutionPlanTestConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
         CasCoreAutoConfiguration.class,

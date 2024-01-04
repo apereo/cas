@@ -32,11 +32,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.0.0
  */
 @SpringBootTest(classes = {
-    CasFiltersConfiguration.class,
-    CasPropertiesConfiguration.class,
-    CasWebAppConfiguration.class,
+    CasWebAppAutoConfiguration.class,
     CasWebflowAutoConfiguration.class,
-    AcceptUsersAuthenticationEventExecutionPlanConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,
     CasCoreServicesAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,

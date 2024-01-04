@@ -30,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -210,10 +211,12 @@ class CasCoreAuthenticationHandlersConfiguration {
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             final CasConfigurationProperties casProperties,
-            @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY) final IPersonAttributeDao attributeRepository,
-            @Qualifier("jaasPrincipalFactory") final PrincipalFactory jaasPrincipalFactory,
+            @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
+            final ObjectProvider<IPersonAttributeDao> attributeRepository,
+            @Qualifier("jaasPrincipalFactory")
+            final PrincipalFactory jaasPrincipalFactory,
             @Qualifier(AttributeRepositoryResolver.BEAN_NAME)
-            final AttributeRepositoryResolver attributeRepositoryResolver) {
+            final ObjectProvider<AttributeRepositoryResolver> attributeRepositoryResolver) {
             val personDirectory = casProperties.getPersonDirectory();
             return BeanContainer.of(casProperties.getAuthn().getJaas()
                 .stream()
@@ -222,8 +225,8 @@ class CasCoreAuthenticationHandlersConfiguration {
                     val jaasPrincipal = jaas.getPrincipal();
                     var attributeMerger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
                     return PersonDirectoryPrincipalResolver.newPersonDirectoryPrincipalResolver(applicationContext, jaasPrincipalFactory,
-                        attributeRepository, attributeMerger, servicesManager, attributeDefinitionStore,
-                        attributeRepositoryResolver, jaasPrincipal, personDirectory);
+                        attributeRepository.getObject(), attributeMerger, servicesManager, attributeDefinitionStore,
+                        attributeRepositoryResolver.getObject(), jaasPrincipal, personDirectory);
                 })
                 .collect(Collectors.toList()));
         }
