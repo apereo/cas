@@ -1,8 +1,7 @@
 package org.apereo.cas.okta;
 
 import org.apereo.cas.authentication.principal.PrincipalResolver;
-import org.apereo.cas.config.CasPersonDirectoryConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.OktaPersonDirectoryConfiguration;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import com.okta.sdk.client.Client;
@@ -57,8 +56,7 @@ class OktaPersonAttributeDaoTests {
 
     @SpringBootTest(classes = {
         OktaPersonDirectoryConfiguration.class,
-        CasPersonDirectoryConfiguration.class,
-        CasPersonDirectoryStubConfiguration.class,
+        CasPersonDirectoryAutoConfiguration.class,
         BaseOktaTests.SharedTestConfiguration.class
     }, properties = {
         "cas.authn.attribute-repository.okta.organization-url=https://dev-668371.oktapreview.com",
@@ -89,8 +87,7 @@ class OktaPersonAttributeDaoTests {
     @SpringBootTest(classes = {
         OktaPersonAttributeDaoTests.OktaClientMockTestConfiguration.class,
         OktaPersonDirectoryConfiguration.class,
-        CasPersonDirectoryConfiguration.class,
-        CasPersonDirectoryStubConfiguration.class,
+        CasPersonDirectoryAutoConfiguration.class,
         BaseOktaTests.SharedTestConfiguration.class
     }, properties = {
         "cas.authn.attribute-repository.okta.organization-url=https://dev-668371.oktapreview.com",

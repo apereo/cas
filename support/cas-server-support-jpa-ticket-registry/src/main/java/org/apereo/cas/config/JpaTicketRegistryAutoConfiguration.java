@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.support.CloseableDataSource;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.jpa.JpaBeanFactory;
 import org.apereo.cas.ticket.TicketCatalog;
+import org.apereo.cas.ticket.catalog.CasTicketCatalogConfigurationValuesProvider;
 import org.apereo.cas.ticket.registry.JpaTicketEntityFactory;
 import org.apereo.cas.ticket.registry.JpaTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -20,7 +21,6 @@ import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.FactoryBean;
@@ -44,11 +44,11 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionOperations;
 import org.springframework.transaction.support.TransactionTemplate;
-
 import jakarta.persistence.EntityManagerFactory;
+import java.util.function.Function;
 
 /**
- * This this {@link JpaTicketRegistryConfiguration}.
+ * This this {@link JpaTicketRegistryAutoConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
@@ -56,7 +56,7 @@ import jakarta.persistence.EntityManagerFactory;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "jpa")
 @AutoConfiguration
-public class JpaTicketRegistryConfiguration {
+public class JpaTicketRegistryAutoConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.ticket.registry.jpa.enabled").isTrue().evenIfMissing();
 
     @Configuration(value = "JpaTicketRegistryDataConfiguration", proxyBeanMethods = false)
@@ -145,6 +145,23 @@ public class JpaTicketRegistryConfiguration {
     @Configuration(value = "JpaTicketRegistryCoreConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class JpaTicketRegistryCoreConfiguration {
+        @ConditionalOnMissingBean(name = "jpaTicketCatalogConfigurationValuesProvider")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public CasTicketCatalogConfigurationValuesProvider jpaTicketCatalogConfigurationValuesProvider() {
+            return new CasTicketCatalogConfigurationValuesProvider() {
+                @Override
+                public Function<ConfigurableApplicationContext, Boolean> getProxyGrantingTicketCascadeRemovals() {
+                    return __ -> Boolean.TRUE;
+                }
+
+                @Override
+                public Function<ConfigurableApplicationContext, Boolean> getTicketGrantingTicketCascadeRemovals() {
+                    return __ -> Boolean.TRUE;
+                }
+            };
+        }
+        
         @ConditionalOnMissingBean(name = "jpaTicketRegistryTransactionTemplate")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
