@@ -1,8 +1,7 @@
 package org.apereo.cas.support.saml.mdui.web.flow;
 
 import org.apereo.cas.config.CoreSamlAutoConfiguration;
-import org.apereo.cas.config.SamlMetadataUIConfiguration;
-import org.apereo.cas.config.SamlMetadataUIWebflowConfiguration;
+import org.apereo.cas.config.SamlMetadataUIAutoConfiguration;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import lombok.val;
@@ -20,8 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Import({
     CoreSamlAutoConfiguration.class,
-    SamlMetadataUIConfiguration.class,
-    SamlMetadataUIWebflowConfiguration.class
+    SamlMetadataUIAutoConfiguration.class
 })
 @Tag("SAMLMetadata")
 class SamlMetadataUIWebflowConfigurerTests extends BaseWebflowConfigurerTests {
