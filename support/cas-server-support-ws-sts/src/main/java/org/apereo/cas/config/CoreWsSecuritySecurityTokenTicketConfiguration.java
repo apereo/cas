@@ -31,7 +31,7 @@ class CoreWsSecuritySecurityTokenTicketConfiguration {
 
     @Configuration(value = "CoreWsSecuritySecurityTokenTicketFactoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CoreWsSecuritySecurityTokenTicketFactoryConfiguration {
+    static class CoreWsSecuritySecurityTokenTicketFactoryConfiguration {
         @ConditionalOnMissingBean(name = "securityTokenTicketFactory")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -54,7 +54,7 @@ class CoreWsSecuritySecurityTokenTicketConfiguration {
 
     @Configuration(value = "CoreWsSecuritySecurityTokenTicketPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CoreWsSecuritySecurityTokenTicketPlanConfiguration {
+    static class CoreWsSecuritySecurityTokenTicketPlanConfiguration {
         @ConditionalOnMissingBean(name = "securityTokenTicketFactoryConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

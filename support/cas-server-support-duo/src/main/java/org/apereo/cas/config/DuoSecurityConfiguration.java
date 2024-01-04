@@ -48,7 +48,7 @@ import org.springframework.webflow.execution.Action;
 class DuoSecurityConfiguration {
     @Configuration(value = "DuoSecurityCoreWebflowConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class DuoSecurityCoreWebflowConfiguration {
+    static class DuoSecurityCoreWebflowConfiguration {
 
         @ConditionalOnMissingBean(name = "duoUniversalPromptSessionStore")
         @Bean
@@ -161,7 +161,7 @@ class DuoSecurityConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AccountManagement, enabledByDefault = false)
     @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
-    public static class DuoSecurityAccountProfileWebflowConfiguration {
+    static class DuoSecurityAccountProfileWebflowConfiguration {
         @ConditionalOnMissingBean(name = "duoMultifactorAuthenticationDeviceProviderAction")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

@@ -40,7 +40,7 @@ class OktaAuthenticationConfiguration {
 
     @Configuration(value = "OktaAuthenticationCoreConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OktaAuthenticationCoreConfiguration {
+    static class OktaAuthenticationCoreConfiguration {
         private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.okta.organization-url");
 
         @ConditionalOnMissingBean(name = "oktaAuthenticationEventExecutionPlanConfigurer")

@@ -62,7 +62,7 @@ class CasCoreWebConfiguration {
 
     @Configuration(value = "CasCoreWebMessageSourceConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreWebMessageSourceConfiguration {
+    static class CasCoreWebMessageSourceConfiguration {
         /**
          * Load property files containing non-i18n fallback values
          * that should be exposed to Thyme templates.
@@ -110,7 +110,7 @@ class CasCoreWebConfiguration {
 
     @Configuration(value = "CasCoreWebRequestsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreWebRequestsConfiguration {
+    static class CasCoreWebRequestsConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = ArgumentExtractor.BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -158,7 +158,7 @@ class CasCoreWebConfiguration {
 
     @Configuration(value = "CasCoreWebViewsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreWebViewsConfiguration {
+    static class CasCoreWebViewsConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.VIEW_ID_DYNAMIC_HTML)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -172,7 +172,7 @@ class CasCoreWebConfiguration {
 
     @Configuration(value = "CasCoreWebEndpointsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreWebEndpointsConfiguration {
+    static class CasCoreWebEndpointsConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "casProtocolEndpointConfigurer")

@@ -1,7 +1,9 @@
 package org.apereo.cas.ticket;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasWsSecuritySecurityTokenAutoConfiguration;
+import org.apereo.cas.config.CoreSamlAutoConfiguration;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.factory.BaseTicketFactoryTests;
 import lombok.val;
@@ -18,7 +20,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("Tickets")
-@Import(CasWsSecuritySecurityTokenAutoConfiguration.class)
+@Import({
+    CasCoreAutoConfiguration.class,
+    CoreSamlAutoConfiguration.class,
+    CasWsSecuritySecurityTokenAutoConfiguration.class
+})
 class DefaultSecurityTokenTicketFactoryTests extends BaseTicketFactoryTests {
 
     @Test

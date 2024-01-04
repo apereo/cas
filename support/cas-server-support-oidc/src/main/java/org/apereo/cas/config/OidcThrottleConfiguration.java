@@ -44,7 +44,7 @@ class OidcThrottleConfiguration {
 
     @Configuration(value = "OidcThrottleWebMvcConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OidcThrottleWebMvcConfiguration {
+    static class OidcThrottleWebMvcConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "oidcThrottleWebMvcConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -69,7 +69,7 @@ class OidcThrottleConfiguration {
 
     @Configuration(value = "OidcThrottleExecutionPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OidcThrottleExecutionPlanConfiguration {
+    static class OidcThrottleExecutionPlanConfiguration {
         @ConditionalOnMissingBean(name = "oidcAuthenticationThrottlingExecutionPlanConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -83,7 +83,7 @@ class OidcThrottleConfiguration {
 
     @Configuration(value = "OidcThrottleFilterConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OidcThrottleFilterConfiguration {
+    static class OidcThrottleFilterConfiguration {
         private static final List<String> THROTTLED_ENDPOINTS = List.of(
             OidcConstants.ACCESS_TOKEN_URL,
             OidcConstants.AUTHORIZE_URL,

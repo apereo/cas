@@ -66,7 +66,7 @@ import java.util.List;
 class SurrogateAuthenticationConfiguration {
     @Configuration(value = "SurrogateAuthenticationProcessorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SurrogateAuthenticationProcessorConfiguration {
+    static class SurrogateAuthenticationProcessorConfiguration {
         @ConditionalOnMissingBean(name = "surrogateAuthenticationPostProcessor")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -88,7 +88,7 @@ class SurrogateAuthenticationConfiguration {
 
     @Configuration(value = "SurrogateAuthenticationMultifactorPrincipalResolutionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SurrogateAuthenticationMultifactorPrincipalResolutionConfiguration {
+    static class SurrogateAuthenticationMultifactorPrincipalResolutionConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "surrogateMultifactorAuthenticationPrincipalResolver")
@@ -102,7 +102,7 @@ class SurrogateAuthenticationConfiguration {
 
     @Configuration(value = "SurrogateAuthenticationExpirationPolicyConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SurrogateAuthenticationExpirationPolicyConfiguration {
+    static class SurrogateAuthenticationExpirationPolicyConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ExpirationPolicyBuilder grantingTicketExpirationPolicy(final CasConfigurationProperties casProperties) {
@@ -114,7 +114,7 @@ class SurrogateAuthenticationConfiguration {
 
     @Configuration(value = "SurrogateAuthenticationEventsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SurrogateAuthenticationEventsConfiguration {
+    static class SurrogateAuthenticationEventsConfiguration {
         @ConditionalOnMissingBean(name = "surrogateAuthenticationEventListener")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -130,7 +130,7 @@ class SurrogateAuthenticationConfiguration {
 
     @Configuration(value = "SurrogateAuthenticationPrincipalElectionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SurrogateAuthenticationPrincipalElectionConfiguration {
+    static class SurrogateAuthenticationPrincipalElectionConfiguration {
         @ConditionalOnMissingBean(name = "surrogatePrincipalElectionStrategyConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -147,7 +147,7 @@ class SurrogateAuthenticationConfiguration {
 
     @Configuration(value = "SurrogateAuthenticationServiceConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SurrogateAuthenticationServiceConfiguration {
+    static class SurrogateAuthenticationServiceConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = SurrogateAuthenticationService.BEAN_NAME)
         @Bean
@@ -173,7 +173,7 @@ class SurrogateAuthenticationConfiguration {
 
     @Configuration(value = "SurrogateAuthenticationPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SurrogateAuthenticationPlanConfiguration {
+    static class SurrogateAuthenticationPlanConfiguration {
         @ConditionalOnMissingBean(name = "surrogateAuthenticationEventExecutionPlanConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -187,7 +187,7 @@ class SurrogateAuthenticationConfiguration {
 
     @Configuration(value = "SurrogateAuthenticationPrincipalBuilderConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SurrogateAuthenticationPrincipalBuilderConfiguration {
+    static class SurrogateAuthenticationPrincipalBuilderConfiguration {
         @ConditionalOnMissingBean(name = SurrogateAuthenticationPrincipalBuilder.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -206,7 +206,7 @@ class SurrogateAuthenticationConfiguration {
     @Configuration(value = "SurrogateAuthenticationPrincipalResolutionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @DependsOn(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
-    public static class SurrogateAuthenticationPrincipalResolutionConfiguration {
+    static class SurrogateAuthenticationPrincipalResolutionConfiguration {
 
         @ConditionalOnMissingBean(name = "surrogatePrincipalResolver")
         @Bean
@@ -242,7 +242,7 @@ class SurrogateAuthenticationConfiguration {
 
     @Configuration(value = "SurrogateAuthenticationPrincipalFactoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SurrogateAuthenticationPrincipalFactoryConfiguration {
+    static class SurrogateAuthenticationPrincipalFactoryConfiguration {
 
         @ConditionalOnMissingBean(name = "surrogatePrincipalFactory")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -254,7 +254,7 @@ class SurrogateAuthenticationConfiguration {
 
     @Configuration(value = "SurrogateAuthenticationPrincipalPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SurrogateAuthenticationPrincipalPlanConfiguration {
+    static class SurrogateAuthenticationPrincipalPlanConfiguration {
 
         @ConditionalOnMissingBean(name = "surrogatePrincipalResolutionExecutionPlanConfigurer")
         @Bean

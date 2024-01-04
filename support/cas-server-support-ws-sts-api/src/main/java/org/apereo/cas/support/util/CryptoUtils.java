@@ -35,14 +35,19 @@ public class CryptoUtils {
      * @return the security properties
      */
     public static Properties getSecurityProperties(final String file, final String psw, final String alias) {
-        val p = new Properties();
-        p.put("org.apache.ws.security.crypto.provider", "org.apache.ws.security.components.crypto.Merlin");
-        p.put("org.apache.ws.security.crypto.merlin.keystore.type", "jks");
-        p.put("org.apache.ws.security.crypto.merlin.keystore.password", psw);
-        p.put("org.apache.ws.security.crypto.merlin.keystore.file", file);
-        if (StringUtils.isNotBlank(alias)) {
-            p.put("org.apache.ws.security.crypto.merlin.keystore.alias", alias);
+        val properties = new Properties();
+        properties.put("org.apache.ws.security.crypto.provider", "org.apache.ws.security.components.crypto.Merlin");
+        properties.put("org.apache.ws.security.crypto.merlin.keystore.type", "jks");
+
+        if (StringUtils.isNotBlank(psw)) {
+            properties.put("org.apache.ws.security.crypto.merlin.keystore.password", psw);
         }
-        return p;
+        if (StringUtils.isNotBlank(file)) {
+            properties.put("org.apache.ws.security.crypto.merlin.keystore.file", file);
+        }
+        if (StringUtils.isNotBlank(alias)) {
+            properties.put("org.apache.ws.security.crypto.merlin.keystore.alias", alias);
+        }
+        return properties;
     }
 }

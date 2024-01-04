@@ -27,7 +27,6 @@ import org.apereo.cas.validation.TicketValidator;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.ws.idp.WSFederationConstants;
-import org.apereo.cas.ws.idp.authentication.WSFederationAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.ws.idp.metadata.WSFederationMetadataController;
 import org.apereo.cas.ws.idp.services.DefaultRelyingPartyTokenProducer;
 import org.apereo.cas.ws.idp.services.DefaultWSFederationRelyingPartyAttributeWriter;
@@ -71,7 +70,7 @@ class CoreWsSecurityIdentityProviderConfiguration {
 
     @Configuration(value = "CoreWsSecurityIdentityProviderWebConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CoreWsSecurityIdentityProviderWebConfiguration {
+    static class CoreWsSecurityIdentityProviderWebConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebSecurityConfigurer<Void> wsFederationProtocolEndpointConfigurer() {
@@ -85,24 +84,9 @@ class CoreWsSecurityIdentityProviderConfiguration {
         }
     }
 
-    @Configuration(value = "CoreWsSecurityIdentityProviderServiceSelectionConfiguration", proxyBeanMethods = false)
-    @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CoreWsSecurityIdentityProviderServiceSelectionConfiguration {
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "wsFederationAuthenticationServiceSelectionStrategy")
-        public AuthenticationServiceSelectionStrategy wsFederationAuthenticationServiceSelectionStrategy(
-            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
-            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) {
-            return new WSFederationAuthenticationServiceSelectionStrategy(servicesManager, webApplicationServiceFactory);
-        }
-    }
-
     @Configuration(value = "CoreWsSecurityIdentityProviderServiceSelectionPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CoreWsSecurityIdentityProviderServiceSelectionPlanConfiguration {
+    static class CoreWsSecurityIdentityProviderServiceSelectionPlanConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "wsFederationAuthenticationServiceSelectionStrategyConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -115,7 +99,7 @@ class CoreWsSecurityIdentityProviderConfiguration {
 
     @Configuration(value = "CoreWsSecurityIdentityProviderServicesConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CoreWsSecurityIdentityProviderServicesConfiguration {
+    static class CoreWsSecurityIdentityProviderServicesConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "wsFederationServicesManagerRegisteredServiceLocator")
@@ -154,7 +138,7 @@ class CoreWsSecurityIdentityProviderConfiguration {
 
     @Configuration(value = "CoreWsSecurityIdentityProviderTicketsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CoreWsSecurityIdentityProviderTicketsConfiguration {
+    static class CoreWsSecurityIdentityProviderTicketsConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -198,7 +182,7 @@ class CoreWsSecurityIdentityProviderConfiguration {
 
     @Configuration(value = "CoreWsSecurityIdentityProviderContextConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CoreWsSecurityIdentityProviderContextConfiguration {
+    static class CoreWsSecurityIdentityProviderContextConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public WSFederationRequestConfigurationContext wsFederationConfigurationContext(
@@ -247,7 +231,7 @@ class CoreWsSecurityIdentityProviderConfiguration {
 
     @Configuration(value = "CoreWsSecurityIdentityProviderControllersConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CoreWsSecurityIdentityProviderControllersConfiguration {
+    static class CoreWsSecurityIdentityProviderControllersConfiguration {
         @ConditionalOnMissingBean(name = "federationValidateRequestController")
         @Bean
         public WSFederationValidateRequestController federationValidateRequestController(

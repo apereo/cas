@@ -95,7 +95,7 @@ class SpnegoWebflowActionsConfiguration {
     @Configuration(value = "SpnegoLdapWebflowActionsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SPNEGO, module = "ldap")
-    public static class SpnegoLdapWebflowActionsConfiguration {
+    static class SpnegoLdapWebflowActionsConfiguration {
         private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.spnego.ldap.ldap-url");
 
         @Bean

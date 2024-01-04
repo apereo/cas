@@ -46,7 +46,7 @@ public class CasOAuthUmaJpaAutoConfiguration {
 
     @Configuration(value = "CasOAuthUmaJpaEntityConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasOAuthUmaJpaEntityConfiguration {
+    static class CasOAuthUmaJpaEntityConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public JpaVendorAdapter jpaUmaVendorAdapter(
@@ -105,7 +105,7 @@ public class CasOAuthUmaJpaAutoConfiguration {
 
     @Configuration(value = "CasOAuthUmaJpaTransactionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasOAuthUmaJpaTransactionConfiguration {
+    static class CasOAuthUmaJpaTransactionConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PlatformTransactionManager umaTransactionManager(
@@ -126,7 +126,7 @@ public class CasOAuthUmaJpaAutoConfiguration {
 
     @Configuration(value = "CasOAuthUmaJpaDataConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasOAuthUmaJpaDataConfiguration {
+    static class CasOAuthUmaJpaDataConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "dataSourceUma")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -143,7 +143,7 @@ public class CasOAuthUmaJpaAutoConfiguration {
 
     @Configuration(value = "CasOAuthUmaJpaRepositoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasOAuthUmaJpaRepositoryConfiguration {
+    static class CasOAuthUmaJpaRepositoryConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "jpaUmaResourceSetRepository")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

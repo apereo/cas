@@ -55,7 +55,7 @@ public class TrustedAuthenticationAutoConfiguration {
 
     @Configuration(value = "TrustedAuthenticationHandlerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class TrustedAuthenticationHandlerConfiguration {
+    static class TrustedAuthenticationHandlerConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "principalBearingCredentialsAuthenticationHandler")
@@ -75,7 +75,7 @@ public class TrustedAuthenticationAutoConfiguration {
 
     @Configuration(value = "TrustedAuthenticationPrincipalConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class TrustedAuthenticationPrincipalConfiguration {
+    static class TrustedAuthenticationPrincipalConfiguration {
         @ConditionalOnMissingBean(name = "trustedPrincipalFactory")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -87,7 +87,7 @@ public class TrustedAuthenticationAutoConfiguration {
 
     @Configuration(value = "TrustedAuthenticationPrincipalResolutionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class TrustedAuthenticationPrincipalResolutionConfiguration {
+    static class TrustedAuthenticationPrincipalResolutionConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -123,7 +123,7 @@ public class TrustedAuthenticationAutoConfiguration {
 
     @Configuration(value = "TrustedAuthenticationExtractorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class TrustedAuthenticationExtractorConfiguration {
+    static class TrustedAuthenticationExtractorConfiguration {
         @ConditionalOnMissingBean(name = "remoteRequestPrincipalAttributesExtractor")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -135,7 +135,7 @@ public class TrustedAuthenticationAutoConfiguration {
 
     @Configuration(value = "TrustedAuthenticationExecutionPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class TrustedAuthenticationExecutionPlanConfiguration {
+    static class TrustedAuthenticationExecutionPlanConfiguration {
 
         @ConditionalOnMissingBean(name = "trustedAuthenticationEventExecutionPlanConfigurer")
         @Bean
@@ -153,7 +153,7 @@ public class TrustedAuthenticationAutoConfiguration {
 
     @Configuration(value = "TrustedAuthenticationActionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class TrustedAuthenticationActionConfiguration {
+    static class TrustedAuthenticationActionConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

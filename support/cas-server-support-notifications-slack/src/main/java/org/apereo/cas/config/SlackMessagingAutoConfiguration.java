@@ -38,7 +38,7 @@ public class SlackMessagingAutoConfiguration {
     }
 
     @Configuration(value = "SlackMessagingInternalConfiguration", proxyBeanMethods = false)
-    public static class SlackMessagingInternalConfiguration {
+    static class SlackMessagingInternalConfiguration {
         private static final BeanCondition CONDITION = BeanCondition.on("cas.slack-messaging.api-token");
 
         @Bean

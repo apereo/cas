@@ -42,7 +42,7 @@ public class CasCookieAutoConfiguration {
 
     @Configuration(value = "CasCookieCoreConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCookieCoreConfiguration {
+    static class CasCookieCoreConfiguration {
         @ConditionalOnMissingBean(name = CookieValueManager.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -83,7 +83,7 @@ public class CasCookieAutoConfiguration {
 
     @Configuration(value = "CasCookieGeneratorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCookieGeneratorConfiguration {
+    static class CasCookieGeneratorConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "warnCookieGenerator")

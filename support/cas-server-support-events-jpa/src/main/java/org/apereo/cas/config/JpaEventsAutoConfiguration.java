@@ -53,7 +53,7 @@ public class JpaEventsAutoConfiguration {
 
     @Configuration(value = "JpaEventsDataConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class JpaEventsDataConfiguration {
+    static class JpaEventsDataConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "dataSourceEvent")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -70,7 +70,7 @@ public class JpaEventsAutoConfiguration {
 
     @Configuration(value = "JpaEventsEntityConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class JpaEventsEntityConfiguration {
+    static class JpaEventsEntityConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public JpaVendorAdapter jpaEventVendorAdapter(
@@ -127,7 +127,7 @@ public class JpaEventsAutoConfiguration {
 
     @Configuration(value = "JpaEventsTransactionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class JpaEventsTransactionConfiguration {
+    static class JpaEventsTransactionConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PlatformTransactionManager transactionManagerEvents(
@@ -141,7 +141,7 @@ public class JpaEventsAutoConfiguration {
 
     @Configuration(value = "JpaEventsRepositoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class JpaEventsRepositoryConfiguration {
+    static class JpaEventsRepositoryConfiguration {
 
         @ConditionalOnMissingBean(name = "jpaEventRepositoryFilter")
         @Bean

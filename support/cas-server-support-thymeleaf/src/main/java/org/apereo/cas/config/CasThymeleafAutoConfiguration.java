@@ -220,7 +220,7 @@ public class CasThymeleafAutoConfiguration {
 
     @Configuration(value = "ThymeleafWebflowConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class ThymeleafWebflowConfiguration {
+    static class ThymeleafWebflowConfiguration {
 
         @ConditionalOnMissingBean(name = "casThymeleafTemplatesDirector")
         @Bean
@@ -233,7 +233,7 @@ public class CasThymeleafAutoConfiguration {
 
     @Configuration(value = "MustacheViewResolverConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class MustacheViewResolverConfiguration {
+    static class MustacheViewResolverConfiguration {
 
         @ConditionalOnMissingBean(name = CasProtocolViewFactory.BEAN_NAME_MUSTACHE_VIEW_FACTORY)
         @Bean
@@ -245,7 +245,7 @@ public class CasThymeleafAutoConfiguration {
 
     @Configuration(value = "ThymeleafViewResolverConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class ThymeleafViewResolverConfiguration {
+    static class ThymeleafViewResolverConfiguration {
 
         @ConditionalOnMissingBean(name = CasProtocolViewFactory.BEAN_NAME_THYMELEAF_VIEW_FACTORY)
         @Bean

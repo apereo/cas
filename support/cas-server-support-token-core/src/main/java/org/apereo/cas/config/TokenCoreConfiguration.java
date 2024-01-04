@@ -31,7 +31,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
 
@@ -46,15 +45,11 @@ import org.springframework.core.Ordered;
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Tokens)
 @Configuration(proxyBeanMethods = false)
-@Import({
-    TokenCoreAutoConfiguration.class,
-    TokenCoreComponentSerializationConfiguration.class
-})
 class TokenCoreConfiguration {
 
     @Configuration(value = "TokenCoreValidatorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class TokenCoreValidatorConfiguration {
+    static class TokenCoreValidatorConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "tokenTicketValidator")
@@ -70,7 +65,7 @@ class TokenCoreConfiguration {
 
     @Configuration(value = "TokenCoreJwtConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class TokenCoreJwtConfiguration {
+    static class TokenCoreJwtConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "tokenCipherExecutor")
@@ -107,7 +102,7 @@ class TokenCoreConfiguration {
 
     @Configuration(value = "TokenCoreBuilderConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class TokenCoreBuilderConfiguration {
+    static class TokenCoreBuilderConfiguration {
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
@@ -125,7 +120,7 @@ class TokenCoreConfiguration {
 
     @Configuration(value = "TokenCoreWebConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class TokenCoreWebConfiguration {
+    static class TokenCoreWebConfiguration {
         @Bean
         @ConditionalOnAvailableEndpoint
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

@@ -102,7 +102,7 @@ class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     @Configuration(value = "DuoSecurityAuthenticationEventExecutionConfiguration",
                    proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class DuoSecurityAuthenticationEventExecutionConfiguration {
+    static class DuoSecurityAuthenticationEventExecutionConfiguration {
         private static BeanContainer<AuthenticationMetaDataPopulator> duoAuthenticationMetaDataPopulator(
             final ConfigurableApplicationContext applicationContext,
             final MultifactorAuthenticationHandler authenticationHandler,
@@ -183,7 +183,7 @@ class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     @Configuration(value = "DuoSecurityAuthenticationMonitorConfiguration",
                    proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class DuoSecurityAuthenticationMonitorConfiguration {
+    static class DuoSecurityAuthenticationMonitorConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnEnabledHealthIndicator("duoSecurityHealthIndicator")
@@ -200,7 +200,7 @@ class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
                    proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @Slf4j
-    public static class DuoSecurityAuthenticationEventExecutionPlanCoreConfiguration {
+    static class DuoSecurityAuthenticationEventExecutionPlanCoreConfiguration {
         private static final int USER_ACCOUNT_CACHE_INITIAL_SIZE = 50;
 
         private static final long USER_ACCOUNT_CACHE_MAX_SIZE = 1_000;
@@ -299,7 +299,7 @@ class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     @Configuration(value = "DuoSecurityAuthenticationWebflowActionsConfiguration",
                    proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class DuoSecurityAuthenticationWebflowActionsConfiguration {
+    static class DuoSecurityAuthenticationWebflowActionsConfiguration {
         @ConditionalOnMissingBean(name = "duoMultifactorWebflowConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -379,7 +379,7 @@ class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     @Configuration(value = "DuoSecurityAuthenticationEventExecutionPlanWebConfiguration",
                    proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class DuoSecurityAuthenticationEventExecutionPlanWebConfiguration {
+    static class DuoSecurityAuthenticationEventExecutionPlanWebConfiguration {
         @Bean
         @ConditionalOnAvailableEndpoint
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -412,7 +412,7 @@ class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
                    proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @ConditionalOnClass(SurrogateAuthenticationService.class)
-    public static class SurrogateAuthenticationDuoSecurityWebflowPlanConfiguration {
+    static class SurrogateAuthenticationDuoSecurityWebflowPlanConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnClass(DuoSecurityAuthenticationService.class)

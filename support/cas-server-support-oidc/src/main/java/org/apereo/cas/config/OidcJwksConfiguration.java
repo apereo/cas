@@ -54,7 +54,7 @@ class OidcJwksConfiguration {
 
     @Configuration(value = "OidcEndpointsJwksRotationConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OidcEndpointsJwksRotationConfiguration {
+    static class OidcEndpointsJwksRotationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcJsonWebKeystoreRotationService")
@@ -98,7 +98,7 @@ class OidcJwksConfiguration {
 
         @RequiredArgsConstructor
         @Slf4j
-        public static class OidcJsonWebKeystoreRotationScheduler implements Runnable {
+        static class OidcJsonWebKeystoreRotationScheduler implements Runnable {
             private final OidcJsonWebKeystoreRotationService rotationService;
 
             @Scheduled(initialDelayString = "${cas.authn.oidc.jwks.rotation.schedule.start-delay:PT60S}",
@@ -114,7 +114,7 @@ class OidcJwksConfiguration {
 
         @RequiredArgsConstructor
         @Slf4j
-        public static class OidcJsonWebKeystoreRevocationScheduler implements Runnable {
+        static class OidcJsonWebKeystoreRevocationScheduler implements Runnable {
             private final OidcJsonWebKeystoreRotationService rotationService;
 
             @Scheduled(initialDelayString = "${cas.authn.oidc.jwks.revocation.schedule.start-delay:PT60S}",
@@ -131,7 +131,7 @@ class OidcJwksConfiguration {
 
     @Configuration(value = "OidcEndpointsJwksGeneratorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OidcEndpointsJwksGeneratorConfiguration {
+    static class OidcEndpointsJwksGeneratorConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "oidcDefaultJsonWebKeystoreCacheLoader")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

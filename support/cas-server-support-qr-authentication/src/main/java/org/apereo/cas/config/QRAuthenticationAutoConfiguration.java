@@ -67,7 +67,7 @@ public class QRAuthenticationAutoConfiguration {
 
     @Configuration(value = "QRAuthenticationServiceConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class QRAuthenticationServiceConfiguration {
+    static class QRAuthenticationServiceConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "qrAuthenticationTokenValidatorService")
@@ -98,7 +98,7 @@ public class QRAuthenticationAutoConfiguration {
 
     @Configuration(value = "QRAuthenticationWebflowPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class QRAuthenticationWebflowPlanConfiguration {
+    static class QRAuthenticationWebflowPlanConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -113,7 +113,7 @@ public class QRAuthenticationAutoConfiguration {
 
     @Configuration(value = "QRAuthenticationWebflowConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class QRAuthenticationWebflowConfiguration {
+    static class QRAuthenticationWebflowConfiguration {
         @ConditionalOnMissingBean(name = "qrAuthenticationWebflowConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -130,7 +130,7 @@ public class QRAuthenticationAutoConfiguration {
 
     @Configuration(value = "QRAuthenticationHandlerPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class QRAuthenticationHandlerPlanConfiguration {
+    static class QRAuthenticationHandlerPlanConfiguration {
         @ConditionalOnMissingBean(name = "qrAuthenticationEventExecutionPlanConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -147,7 +147,7 @@ public class QRAuthenticationAutoConfiguration {
 
     @Configuration(value = "QRAuthenticationHandlerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class QRAuthenticationHandlerConfiguration {
+    static class QRAuthenticationHandlerConfiguration {
         @ConditionalOnMissingBean(name = "qrAuthenticationPrincipalFactory")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -172,7 +172,7 @@ public class QRAuthenticationAutoConfiguration {
 
     @Configuration(value = "QRAuthenticationWebConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class QRAuthenticationWebConfiguration {
+    static class QRAuthenticationWebConfiguration {
 
         @Bean
         @ConditionalOnAvailableEndpoint
@@ -187,7 +187,7 @@ public class QRAuthenticationAutoConfiguration {
 
     @Configuration(value = "QRAuthenticationMvcConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class QRAuthenticationMvcConfiguration {
+    static class QRAuthenticationMvcConfiguration {
         private static final String ENDPOINT_QR_WEBSOCKET = "/qr-websocket";
 
         @Bean
@@ -230,7 +230,7 @@ public class QRAuthenticationAutoConfiguration {
 
     @Configuration(value = "QRAuthenticationControllerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class QRAuthenticationControllerConfiguration {
+    static class QRAuthenticationControllerConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public QRAuthenticationChannelController qrAuthenticationChannelController(
@@ -245,7 +245,7 @@ public class QRAuthenticationAutoConfiguration {
 
     @Configuration(value = "QRAuthenticationWebflowActionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class QRAuthenticationWebflowActionConfiguration {
+    static class QRAuthenticationWebflowActionConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_QR_AUTHENTICATION_VALIDATE_CHANNEL)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

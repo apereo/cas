@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 class CasPersonDirectoryGrouperConfiguration {
     @Configuration(value = "GrouperAttributeRepositoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class GrouperAttributeRepositoryConfiguration {
+    static class GrouperAttributeRepositoryConfiguration {
         @ConditionalOnMissingBean(name = "grouperAttributeRepositories")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -59,7 +59,7 @@ class CasPersonDirectoryGrouperConfiguration {
 
     @Configuration(value = "GrouperAttributeRepositoryPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class GrouperAttributeRepositoryPlanConfiguration {
+    static class GrouperAttributeRepositoryPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "grouperPersonDirectoryAttributeRepositoryPlanConfigurer")

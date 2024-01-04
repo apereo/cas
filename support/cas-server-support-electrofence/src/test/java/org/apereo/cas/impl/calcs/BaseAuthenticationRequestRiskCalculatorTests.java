@@ -117,6 +117,6 @@ public abstract class BaseAuthenticationRequestRiskCalculatorTests {
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreEventsAutoConfiguration.class
     })
-    static class SharedTestConfiguration {
+    public static class SharedTestConfiguration {
     }
 }

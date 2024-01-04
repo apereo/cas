@@ -52,7 +52,7 @@ public class CasGeoLocationAutoConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @Configuration(value = "GroovyGeoLocationConfiguration", proxyBeanMethods = false)
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.GeoLocation)
-    public static class GroovyGeoLocationConfiguration {
+    static class GroovyGeoLocationConfiguration {
         @ConditionalOnMissingBean(name = "groovyGeoLocationService")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

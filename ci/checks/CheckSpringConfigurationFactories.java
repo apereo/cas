@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -26,7 +27,7 @@ public class CheckSpringConfigurationFactories {
     private static final String ANSI_PURPLE = "\u001B[35m";
     private static final String ANSI_CYAN = "\u001B[36m";
     private static final String ANSI_WHITE = "\u001B[37m";
-        
+
     public static void main(final String[] args) throws Exception {
         checkSpringFactoryConfigurations(args[0]);
         checkMissingSpringFactoryConfigurations(args[0]);
@@ -125,7 +126,23 @@ public class CheckSpringConfigurationFactories {
                             System.exit(1);
                         }
                     }
+                }
+                if (text.contains("@Configuration")) {
+                    var autoconfig = Arrays.asList(file.getParent().toFile().listFiles(ff -> ff.getName().endsWith("AutoConfiguration.java")));
+                    var classname = file.toFile().getName().replace(".java", "");
+                    var noneMatch = autoconfig.stream().noneMatch(f -> {
+                        var autoText = readFile(f.toPath());
+                        return autoText.contains(classname);
+                    });
+                    if (noneMatch) {
+                        error("Configuration class %s is not imported by auto configuration(s) %s", classname, autoconfig.toArray());
+                        System.exit(1);
+                    }
 
+                    if (text.contains("public static class " + classname)) {
+                        error("Configuration class %s must be package-private; Remove public modifier from class definition", classname);
+                        System.exit(1);
+                    }
                 }
             });
     }
@@ -144,7 +161,7 @@ public class CheckSpringConfigurationFactories {
                             && !srcFile.toFile().getName().endsWith("AutoConfiguration.java")
                             && readFile(srcFile).contains("@AutoConfiguration")).toList()
                         : List.<Path>of();
-                    
+
                     files.forEach(ff -> {
                         var foundFile = ff.toFile();
                         var classname = foundFile.getName().replace(".java", "");

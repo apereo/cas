@@ -43,7 +43,7 @@ class CasCoreAuthenticationPolicyConfiguration {
 
     @Configuration(value = "CasCoreAuthenticationPolicyPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreAuthenticationPolicyPlanConfiguration {
+    static class CasCoreAuthenticationPolicyPlanConfiguration {
         @ConditionalOnMissingBean(name = "authenticationPolicyExecutionPlanConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

@@ -47,7 +47,7 @@ import java.util.HashMap;
 class CasFiltersConfiguration {
     @Configuration(value = "CasFiltersEncodingConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasFiltersBaseConfiguration {
+    static class CasFiltersBaseConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public FilterRegistrationBean<CharacterEncodingFilter> characterEncodingFilter(
@@ -65,7 +65,7 @@ class CasFiltersConfiguration {
     @Configuration(value = "CasFiltersResponseHeadersConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @AutoConfigureAfter(CasCoreServicesAutoConfiguration.class)
-    public static class CasFiltersResponseHeadersConfiguration {
+    static class CasFiltersResponseHeadersConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public FilterRegistrationBean<AddResponseHeadersFilter> responseHeadersFilter(final CasConfigurationProperties casProperties) {
@@ -151,7 +151,7 @@ class CasFiltersConfiguration {
     }
 
     @Configuration(value = "CasFiltersCorsConfiguration", proxyBeanMethods = false)
-    public static class CasFiltersCorsConfiguration {
+    static class CasFiltersCorsConfiguration {
         private static final BeanCondition CONDITION = BeanCondition.on("cas.http-web-request.cors.enabled").isTrue();
 
         @Bean

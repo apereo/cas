@@ -47,7 +47,7 @@ class RadiusMultifactorConfiguration {
 
     @Configuration(value = "RadiusMultifactorRegistryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class RadiusMultifactorRegistryConfiguration {
+    static class RadiusMultifactorRegistryConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "radiusFlowRegistry")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -72,7 +72,7 @@ class RadiusMultifactorConfiguration {
 
     @Configuration(value = "RadiusMultifactorWebflowActionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class RadiusMultifactorWebflowActionConfiguration {
+    static class RadiusMultifactorWebflowActionConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_RADIUS_AUTHENTICATION)
@@ -91,7 +91,7 @@ class RadiusMultifactorConfiguration {
 
     @Configuration(value = "RadiusMultifactorWebflowEventConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class RadiusMultifactorWebflowEventConfiguration {
+    static class RadiusMultifactorWebflowEventConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "radiusAuthenticationWebflowEventResolver")
@@ -111,7 +111,7 @@ class RadiusMultifactorConfiguration {
 
     @Configuration(value = "RadiusMultifactorWebflowConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class RadiusMultifactorWebflowConfiguration {
+    static class RadiusMultifactorWebflowConfiguration {
         @ConditionalOnMissingBean(name = "radiusMultifactorWebflowConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -141,7 +141,7 @@ class RadiusMultifactorConfiguration {
 
     @Configuration(value = "RadiusMultifactorWebflowPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class RadiusMultifactorWebflowPlanConfiguration {
+    static class RadiusMultifactorWebflowPlanConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "radiusMultifactorCasWebflowExecutionPlanConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

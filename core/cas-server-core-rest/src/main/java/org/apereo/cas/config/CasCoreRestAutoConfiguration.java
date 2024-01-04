@@ -45,7 +45,7 @@ public class CasCoreRestAutoConfiguration {
 
     @Configuration(value = "CasCoreRestAuthenticationConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreRestAuthenticationConfiguration {
+    static class CasCoreRestAuthenticationConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = RestAuthenticationService.DEFAULT_BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -81,7 +81,7 @@ public class CasCoreRestAutoConfiguration {
 
     @Configuration(value = "CasCoreRestCredentialFactoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreRestCredentialFactoryConfiguration {
+    static class CasCoreRestCredentialFactoryConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "restHttpRequestCredentialFactory")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -103,7 +103,7 @@ public class CasCoreRestAutoConfiguration {
 
     @Configuration(value = "CasCoreRestCredentialFactoryPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreRestCredentialFactoryPlanConfiguration {
+    static class CasCoreRestCredentialFactoryPlanConfiguration {
 
         @ConditionalOnMissingBean(name = "restHttpRequestCredentialFactoryConfigurer")
         @Bean

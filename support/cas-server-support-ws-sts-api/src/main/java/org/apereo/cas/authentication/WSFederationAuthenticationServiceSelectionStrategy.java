@@ -1,6 +1,5 @@
-package org.apereo.cas.ws.idp.authentication;
+package org.apereo.cas.authentication;
 
-import org.apereo.cas.authentication.BaseAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;

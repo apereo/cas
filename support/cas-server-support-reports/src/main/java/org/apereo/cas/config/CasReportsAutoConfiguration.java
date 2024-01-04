@@ -77,7 +77,7 @@ public class CasReportsAutoConfiguration {
 
     @Configuration(value = "AttributesEndpointsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class AttributesEndpointsConfiguration {
+    static class AttributesEndpointsConfiguration {
         @Bean
         @ConditionalOnAvailableEndpoint
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -128,7 +128,7 @@ public class CasReportsAutoConfiguration {
 
     @Configuration(value = "SingleSignOnEndpointsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SingleSignOnEndpointsConfiguration {
+    static class SingleSignOnEndpointsConfiguration {
         @Bean
         @ConditionalOnAvailableEndpoint
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -156,7 +156,7 @@ public class CasReportsAutoConfiguration {
 
     @Configuration(value = "AuthenticationEndpointsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class AuthenticationEndpointsConfiguration {
+    static class AuthenticationEndpointsConfiguration {
         @Bean
         @ConditionalOnAvailableEndpoint
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -181,7 +181,7 @@ public class CasReportsAutoConfiguration {
 
     @Configuration(value = "SystemInfoEndpointsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SystemInfoEndpointsConfiguration {
+    static class SystemInfoEndpointsConfiguration {
         @Bean
         @ConditionalOnAvailableEndpoint
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -241,7 +241,7 @@ public class CasReportsAutoConfiguration {
 
     @Configuration(value = "RegisteredServicesEndpointsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class RegisteredServicesEndpointsConfiguration {
+    static class RegisteredServicesEndpointsConfiguration {
         @Bean
         @ConditionalOnAvailableEndpoint
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -267,7 +267,7 @@ public class CasReportsAutoConfiguration {
 
     @Configuration(value = "AuditActivityEndpointsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class AuditActivityEndpointsConfiguration {
+    static class AuditActivityEndpointsConfiguration {
         @Bean
         @ConditionalOnAvailableEndpoint
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -281,7 +281,7 @@ public class CasReportsAutoConfiguration {
 
     @Configuration(value = "TicketingEndpointsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class TicketingEndpointsConfiguration {
+    static class TicketingEndpointsConfiguration {
         @Bean
         @ConditionalOnAvailableEndpoint
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

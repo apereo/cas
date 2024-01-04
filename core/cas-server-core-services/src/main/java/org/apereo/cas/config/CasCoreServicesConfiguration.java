@@ -102,7 +102,7 @@ import java.util.stream.Collectors;
 class CasCoreServicesConfiguration {
     @Configuration(value = "CasCoreServicesResponseLocatorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreServicesResponseLocatorConfiguration {
+    static class CasCoreServicesResponseLocatorConfiguration {
         @ConditionalOnMissingBean(name = "webApplicationResponseBuilderLocator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -116,7 +116,7 @@ class CasCoreServicesConfiguration {
     @Configuration(value = "CasCoreServicesEventsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
-    public static class CasCoreServicesEventsConfiguration {
+    static class CasCoreServicesEventsConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -133,7 +133,7 @@ class CasCoreServicesConfiguration {
 
     @Configuration(value = "CasCoreServicesResponseBuilderConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreServicesResponseBuilderConfiguration {
+    static class CasCoreServicesResponseBuilderConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "webApplicationServiceResponseBuilder")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -148,7 +148,7 @@ class CasCoreServicesConfiguration {
 
     @Configuration(value = "CasCoreServicesBaseConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreServicesBaseConfiguration {
+    static class CasCoreServicesBaseConfiguration {
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
@@ -192,7 +192,7 @@ class CasCoreServicesConfiguration {
 
     @Configuration(value = "CasCoreServicesStrategyConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreServicesStrategyConfiguration {
+    static class CasCoreServicesStrategyConfiguration {
 
         @ConditionalOnMissingBean(name = "registeredServiceReplicationStrategy")
         @Bean
@@ -211,7 +211,7 @@ class CasCoreServicesConfiguration {
 
     @Configuration(value = "CasCoreServiceRegistryPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreServiceRegistryPlanConfiguration {
+    static class CasCoreServiceRegistryPlanConfiguration {
         @ConditionalOnMissingBean(name = "serviceRegistryExecutionPlan")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -231,7 +231,7 @@ class CasCoreServicesConfiguration {
 
     @Configuration(value = "CasCoreServicesListenerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreServicesListenerConfiguration {
+    static class CasCoreServicesListenerConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -244,7 +244,7 @@ class CasCoreServicesConfiguration {
 
     @Configuration(value = "CasCoreServiceRegistryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreServiceRegistryConfiguration {
+    static class CasCoreServiceRegistryConfiguration {
 
         private static Optional<List<RegisteredService>> getInMemoryRegisteredServices(final ApplicationContext applicationContext) {
             if (applicationContext.containsBean("inMemoryRegisteredServices")) {
@@ -279,7 +279,7 @@ class CasCoreServicesConfiguration {
 
     @Configuration(value = "CasCoreServicesManagerExecutionPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreServicesManagerExecutionPlanConfiguration {
+    static class CasCoreServicesManagerExecutionPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ServicesManagerConfigurationContext servicesManagerConfigurationContext(
@@ -334,7 +334,7 @@ class CasCoreServicesConfiguration {
     @Configuration(value = "CasCoreServicesManagerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @AutoConfigureAfter(CasCoreServiceRegistryConfiguration.class)
-    public static class CasCoreServicesManagerConfiguration {
+    static class CasCoreServicesManagerConfiguration {
 
         @ConditionalOnMissingBean(name = RegisteredServicesTemplatesManager.BEAN_NAME)
         @Bean
@@ -374,7 +374,7 @@ class CasCoreServicesConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
     @AutoConfigureAfter({CasCoreServicesManagerConfiguration.class, CasCoreServiceRegistryConfiguration.class})
-    public static class CasCoreServicesSchedulingConfiguration {
+    static class CasCoreServicesSchedulingConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Lazy(false)

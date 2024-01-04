@@ -57,7 +57,7 @@ class OidcResponseConfiguration {
 
     @Configuration(value = "OidcResponseAccessTokenConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OidcResponseAccessTokenConfiguration {
+    static class OidcResponseAccessTokenConfiguration {
 
         @ConditionalOnMissingBean(name = "oidcAccessTokenResponseGenerator")
         @Bean
@@ -77,7 +77,7 @@ class OidcResponseConfiguration {
 
     @Configuration(value = "OidcResponseClientCredentialConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OidcResponseClientCredentialConfiguration {
+    static class OidcResponseClientCredentialConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcClientCredentialsResponseBuilder")
@@ -95,7 +95,7 @@ class OidcResponseConfiguration {
 
     @Configuration(value = "OidcResponseTokenConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OidcResponseTokenConfiguration {
+    static class OidcResponseTokenConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcTokenResponseBuilder")
@@ -112,7 +112,7 @@ class OidcResponseConfiguration {
 
     @Configuration(value = "OidcResponseAuthorizationCodeConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OidcResponseAuthorizationCodeConfiguration {
+    static class OidcResponseAuthorizationCodeConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcAuthorizationCodeResponseBuilder")
@@ -171,7 +171,7 @@ class OidcResponseConfiguration {
 
     @Configuration(value = "OidcResponseImplicitConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OidcResponseImplicitConfiguration {
+    static class OidcResponseImplicitConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -202,7 +202,7 @@ class OidcResponseConfiguration {
 
     @Configuration(value = "OidcResponseResourceOwnerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OidcResponseResourceOwnerConfiguration {
+    static class OidcResponseResourceOwnerConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcResourceOwnerCredentialsResponseBuilder")
@@ -219,7 +219,7 @@ class OidcResponseConfiguration {
 
     @Configuration(value = "OidcResponseTokenGenerationConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OidcResponseTokenGenerationConfiguration {
+    static class OidcResponseTokenGenerationConfiguration {
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcIntrospectionResponseGenerator")

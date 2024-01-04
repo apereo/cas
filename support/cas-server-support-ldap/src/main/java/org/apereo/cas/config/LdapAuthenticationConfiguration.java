@@ -48,7 +48,7 @@ class LdapAuthenticationConfiguration {
 
     @Configuration(value = "LdapCoreAuthenticationConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class LdapCoreAuthenticationConfiguration {
+    static class LdapCoreAuthenticationConfiguration {
         @ConditionalOnMissingBean(name = "ldapPrincipalFactory")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -59,7 +59,7 @@ class LdapAuthenticationConfiguration {
 
     @Configuration(value = "LdapAuthenticationPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class LdapAuthenticationPlanConfiguration {
+    static class LdapAuthenticationPlanConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "ldapAuthenticationHandlers")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -107,7 +107,7 @@ class LdapAuthenticationConfiguration {
 
     @Configuration(value = "LdapSpringSecurityAuthenticationConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class LdapSpringSecurityAuthenticationConfiguration {
+    static class LdapSpringSecurityAuthenticationConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "ldapHttpWebSecurityConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

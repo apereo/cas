@@ -120,7 +120,7 @@ public class X509AuthenticationWebflowAutoConfiguration {
     @Configuration(value = "X509TomcatServletWebServiceFactoryConfiguration", proxyBeanMethods = false)
     @ConditionalOnClass({Tomcat.class, Http2Protocol.class})
     @ConditionalOnProperty("cas.authn.x509.webflow.port")
-    public static class X509TomcatServletWebServiceFactoryConfiguration {
+    static class X509TomcatServletWebServiceFactoryConfiguration {
         @ConditionalOnMissingBean(name = "x509TomcatServletWebServiceFactoryCustomizer")
         @Bean
         public WebServerFactoryCustomizer x509TomcatServletWebServiceFactoryCustomizer(
