@@ -7,13 +7,13 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.TicketDefinitionProperties;
+import org.apereo.cas.ticket.catalog.CasTicketCatalogConfigurationValuesProvider;
 import org.apereo.cas.ticket.registry.IgniteTicketDocument;
 import org.apereo.cas.ticket.registry.IgniteTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
 import lombok.val;
 import org.apache.ignite.cache.CacheAtomicityMode;
 import org.apache.ignite.cache.CacheMode;
@@ -29,15 +29,14 @@ import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder;
 import org.apache.ignite.ssl.SslContextFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.util.StringUtils;
-
 import javax.cache.expiry.CreatedExpiryPolicy;
 import javax.cache.expiry.Duration;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -47,7 +46,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
- * This is {@link IgniteTicketRegistryConfiguration}.
+ * This is {@link IgniteTicketRegistryAutoConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
@@ -55,7 +54,7 @@ import java.util.stream.Collectors;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "ignite")
 @AutoConfiguration
-public class IgniteTicketRegistryConfiguration {
+public class IgniteTicketRegistryAutoConfiguration {
 
     private static Collection<CacheConfiguration> buildIgniteTicketCaches(final IgniteProperties ignite, final TicketCatalog ticketCatalog) {
         val definitions = ticketCatalog.findAll();
@@ -189,5 +188,13 @@ public class IgniteTicketRegistryConfiguration {
             ticketCatalog, igniteConfiguration, igniteProperties);
         registry.initialize();
         return registry;
+    }
+
+    @ConditionalOnMissingBean(name = "igniteTicketCatalogConfigurationValuesProvider")
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public CasTicketCatalogConfigurationValuesProvider igniteTicketCatalogConfigurationValuesProvider() {
+        return new CasTicketCatalogConfigurationValuesProvider() {
+        };
     }
 }

@@ -12,8 +12,7 @@ import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.config.FileAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.GroovyAuthenticationEventExecutionPlanConfiguration;
@@ -48,8 +47,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
     CasCookieAutoConfiguration.class,
-    CasPersonDirectoryConfiguration.class,
-    CasPersonDirectoryStubConfiguration.class,
+    CasPersonDirectoryAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     FileAuthenticationEventExecutionPlanConfiguration.class,
     GroovyAuthenticationEventExecutionPlanConfiguration.class,

@@ -1,8 +1,7 @@
 package org.apereo.cas.uma.web.controllers;
 
 import org.apereo.cas.AbstractOAuth20Tests;
-import org.apereo.cas.config.CasOAuthUmaComponentSerializationConfiguration;
-import org.apereo.cas.config.CasOAuthUmaConfiguration;
+import org.apereo.cas.config.CasOAuthUmaAutoConfiguration;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.uma.claim.UmaResourceSetClaimPermissionExaminer;
 import org.apereo.cas.uma.discovery.UmaServerDiscoverySettings;
@@ -55,7 +54,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Import({CasOAuthUmaConfiguration.class, CasOAuthUmaComponentSerializationConfiguration.class})
+@Import(CasOAuthUmaAutoConfiguration.class)
 @TestPropertySource(properties = {
     "spring.main.allow-bean-definition-overriding=true",
     "cas.authn.oauth.uma.requesting-party-token.jwks-file.location=classpath:uma-keystore.jwks"

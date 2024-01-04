@@ -8,8 +8,7 @@ import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.MongoDbMonitoringAutoConfiguration;
 import org.apereo.cas.mongo.CasMongoOperations;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
@@ -44,8 +43,7 @@ import static org.junit.jupiter.api.Assertions.*;
     MongoDbMonitoringAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
-    CasPersonDirectoryConfiguration.class,
-    CasPersonDirectoryStubConfiguration.class,
+    CasPersonDirectoryAutoConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,
     CasCoreServicesAutoConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,

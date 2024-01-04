@@ -24,10 +24,10 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@Configuration(value = "CasPersonDirectoryStubConfiguration", proxyBeanMethods = false)
+@Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.PersonDirectory)
-public class CasPersonDirectoryStubConfiguration {
+class CasPersonDirectoryStubConfiguration {
 
     @Configuration(value = "StubAttributeRepositoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)

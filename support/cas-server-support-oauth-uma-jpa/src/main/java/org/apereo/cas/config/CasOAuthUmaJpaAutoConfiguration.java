@@ -40,7 +40,7 @@ import javax.sql.DataSource;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = false)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.UMA, module = "jpa")
-@AutoConfiguration(before = CasOAuthUmaConfiguration.class)
+@AutoConfiguration(before = CasOAuthUmaAutoConfiguration.class)
 public class CasOAuthUmaJpaAutoConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.oauth.uma.resource-set.jpa.url");
 

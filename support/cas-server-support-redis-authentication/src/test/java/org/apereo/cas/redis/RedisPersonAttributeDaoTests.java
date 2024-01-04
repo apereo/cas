@@ -11,8 +11,7 @@ import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.RedisAuthenticationAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -53,8 +52,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreServicesAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class,
-    CasPersonDirectoryConfiguration.class,
-    CasPersonDirectoryStubConfiguration.class,
+    CasPersonDirectoryAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,
     CasRegisteredServicesTestConfiguration.class,

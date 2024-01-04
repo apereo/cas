@@ -10,7 +10,7 @@ import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasHibernateJpaAutoConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.JdbcPasswordHistoryManagementConfiguration;
 import org.apereo.cas.config.JdbcPasswordManagementConfiguration;
 import org.apereo.cas.config.PasswordManagementAutoConfiguration;
@@ -38,7 +38,7 @@ import javax.sql.DataSource;
     CasCoreServicesAutoConfiguration.class,
     CasCoreAuditAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
-    CasPersonDirectoryConfiguration.class,
+    CasPersonDirectoryAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,

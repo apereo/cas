@@ -6,11 +6,11 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.cosmosdb.CosmosDbObjectFactory;
 import org.apereo.cas.ticket.CosmosDbTicketRegistry;
 import org.apereo.cas.ticket.TicketCatalog;
+import org.apereo.cas.ticket.catalog.CasTicketCatalogConfigurationValuesProvider;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -22,7 +22,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
- * This is {@link CosmosDbTicketRegistryConfiguration}.
+ * This is {@link CosmosDbTicketRegistryAutoConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 7.0.0
@@ -31,7 +31,16 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "cosmosdb")
 @AutoConfiguration
-public class CosmosDbTicketRegistryConfiguration {
+public class CosmosDbTicketRegistryAutoConfiguration {
+
+    @ConditionalOnMissingBean(name = "cosmosDbTicketCatalogConfigurationValuesProvider")
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public CasTicketCatalogConfigurationValuesProvider cosmodDbTicketCatalogConfigurationValuesProvider() {
+        return new CasTicketCatalogConfigurationValuesProvider() {
+        };
+    }
+
 
     @ConditionalOnMissingBean(name = "cosmosDbTicketRegistryObjectFactory")
     @Bean

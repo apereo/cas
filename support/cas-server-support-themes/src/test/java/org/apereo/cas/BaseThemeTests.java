@@ -8,8 +8,7 @@ import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasThemesAutoConfiguration;
 import org.apereo.cas.services.ServicesManager;
 import org.junit.jupiter.api.BeforeEach;
@@ -60,8 +59,7 @@ public abstract class BaseThemeTests {
         CasCoreTicketsAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
-        CasPersonDirectoryConfiguration.class,
-        CasPersonDirectoryStubConfiguration.class,
+        CasPersonDirectoryAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class

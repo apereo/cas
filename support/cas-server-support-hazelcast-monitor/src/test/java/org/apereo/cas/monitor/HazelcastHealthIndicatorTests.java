@@ -8,8 +8,7 @@ import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.HazelcastMonitorAutoConfiguration;
 import org.apereo.cas.config.HazelcastTicketRegistryConfiguration;
 import org.apereo.cas.config.HazelcastTicketRegistryTicketCatalogConfiguration;
@@ -45,8 +44,7 @@ import static org.mockito.Mockito.*;
     HazelcastMonitorAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
-    CasPersonDirectoryConfiguration.class,
-    CasPersonDirectoryStubConfiguration.class,
+    CasPersonDirectoryAutoConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,
     CasCoreServicesAutoConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,

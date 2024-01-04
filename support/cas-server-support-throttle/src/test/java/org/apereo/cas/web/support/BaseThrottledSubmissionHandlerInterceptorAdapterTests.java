@@ -13,8 +13,7 @@ import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasThrottlingAutoConfiguration;
 import org.apereo.cas.util.MockRequestContext;
@@ -152,8 +151,7 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
         CasCoreUtilAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
-        CasPersonDirectoryConfiguration.class,
-        CasPersonDirectoryStubConfiguration.class,
+        CasPersonDirectoryAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasRegisteredServicesTestConfiguration.class,
