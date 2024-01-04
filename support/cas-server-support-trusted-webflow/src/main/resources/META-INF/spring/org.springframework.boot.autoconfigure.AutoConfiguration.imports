@@ -1,2 +1,2 @@
-org.apereo.cas.config.TrustedAuthenticationWebflowConfiguration
+org.apereo.cas.config.TrustedAuthenticationWebflowAutoConfiguration
 org.apereo.cas.config.TrustedAuthenticationComponentSerializationConfiguration
