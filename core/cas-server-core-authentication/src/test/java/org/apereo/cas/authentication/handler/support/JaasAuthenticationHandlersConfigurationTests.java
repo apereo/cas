@@ -6,10 +6,13 @@ import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
+import org.apereo.cas.services.ChainingServicesManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import lombok.val;
@@ -47,11 +50,13 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    JaasAuthenticationHandlersConfigurationTests.JaasAuthenticationHandlersConfigurationTestConfiguration.class,
+    JaasAuthenticationHandlersConfigurationTests.JaasAuthenticationTestConfiguration.class,
     CasCoreWebAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
     CasCoreServicesAutoConfiguration.class,
+    CasCoreNotificationsAutoConfiguration.class,
+    CasCoreLogoutAutoConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class
 }, properties = {
     "cas.authn.accept.users=casuser::Mellon,casuser2::Mellon",
@@ -88,8 +93,8 @@ class JaasAuthenticationHandlersConfigurationTests {
         }
     }
 
-    @TestConfiguration(value = "JaasAuthenticationHandlersConfigurationTestConfiguration", proxyBeanMethods = false)
-    static class JaasAuthenticationHandlersConfigurationTestConfiguration {
+    @TestConfiguration(value = "JaasAuthenticationTestConfiguration", proxyBeanMethods = false)
+    static class JaasAuthenticationTestConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
@@ -105,8 +110,8 @@ class JaasAuthenticationHandlersConfigurationTests {
 
         @Bean
         @ConditionalOnMissingBean(name = ServicesManager.BEAN_NAME)
-        public ServicesManager servicesManager() {
-            return mock(ServicesManager.class);
+        public ChainingServicesManager servicesManager() {
+            return mock(ChainingServicesManager.class);
         }
 
         @Bean
