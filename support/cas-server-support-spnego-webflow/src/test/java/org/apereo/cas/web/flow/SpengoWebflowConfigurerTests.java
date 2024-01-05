@@ -1,7 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
-import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.SpnegoAutoConfiguration;
 import org.apereo.cas.config.SpnegoWebflowAutoConfiguration;
 import lombok.val;
@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Import({
     CasCoreMultifactorAuthenticationAutoConfiguration.class,
-    CasMultifactorAuthenticationWebflowAutoConfiguration.class,
+    CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
     SpnegoAutoConfiguration.class,
     SpnegoWebflowAutoConfiguration.class
 })
