@@ -2,6 +2,7 @@ package org.apereo.cas;
 
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.attribute.DefaultAttributeDefinitionStore;
+import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
@@ -39,7 +40,7 @@ public abstract class BasePrincipalAttributeRepositoryTests {
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
-
+        CasCoreAuthenticationAutoConfiguration.class,
         SharedTestConfiguration.AttributeDefinitionsTestConfiguration.class
     })
     public static class SharedTestConfiguration {

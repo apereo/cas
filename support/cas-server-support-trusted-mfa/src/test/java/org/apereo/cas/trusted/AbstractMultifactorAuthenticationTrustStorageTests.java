@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
+import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
@@ -133,6 +134,7 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
         CasCoreWebAutoConfiguration.class,
         GeoLocationServiceTestConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
+        CasCoreLogoutAutoConfiguration.class,
         MultifactorAuthnTrustAutoConfiguration.class
     })
     public static class SharedTestConfiguration {

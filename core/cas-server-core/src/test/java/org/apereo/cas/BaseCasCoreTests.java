@@ -10,6 +10,7 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.resolvers.EchoingPrincipalResolver;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
+import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreCookieAutoConfiguration;
@@ -25,9 +26,6 @@ import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.ticket.ExpirationPolicy;
-import org.apereo.cas.ticket.ExpirationPolicyBuilder;
-import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -51,7 +49,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import java.io.Serial;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Optional;
@@ -79,18 +76,6 @@ public abstract class BaseCasCoreTests {
     @Qualifier(TicketTrackingPolicy.BEAN_NAME_SERVICE_TICKET_TRACKING)
     protected TicketTrackingPolicy serviceTicketSessionTrackingPolicy;
 
-    public static ExpirationPolicyBuilder neverExpiresExpirationPolicyBuilder() {
-        return new ExpirationPolicyBuilder() {
-            @Serial
-            private static final long serialVersionUID = -9043565995104313970L;
-
-            @Override
-            public ExpirationPolicy buildTicketExpirationPolicy() {
-                return NeverExpiresExpirationPolicy.INSTANCE;
-            }
-        };
-    }
-
     @ImportAutoConfiguration({
         MailSenderAutoConfiguration.class,
         AopAutoConfiguration.class,
@@ -110,6 +95,7 @@ public abstract class BaseCasCoreTests {
         CasCoreWebAutoConfiguration.class,
         CasCoreWebflowAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
+        CasCoreAuditAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,

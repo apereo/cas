@@ -70,6 +70,8 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
 
     private String canonicalizationMode = CaseCanonicalizationMode.NONE.name();
 
+    private RegisteredServiceAttributeReleaseCondition condition;
+
     /**
      * Post load, after having loaded the bean via JPA, etc.
      */
@@ -188,7 +190,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
         Map<String, List<Object>> attributes) throws Throwable;
 
     protected boolean supports(final RegisteredServiceAttributeReleasePolicyContext context) {
-        return true;
+        return getCondition() == null || getCondition().isSatisfied(context);
     }
 
     protected Map<String, List<Object>> resolveAttributesFromAttributeDefinitionStore(
