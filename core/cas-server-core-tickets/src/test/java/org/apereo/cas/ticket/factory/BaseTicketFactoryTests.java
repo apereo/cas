@@ -1,8 +1,8 @@
 package org.apereo.cas.ticket.factory;
 
-import org.apereo.cas.config.CasCookieAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
+import org.apereo.cas.config.CasCoreCookieAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
@@ -68,7 +68,7 @@ public abstract class BaseTicketFactoryTests {
         CasCoreTicketsAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
-        CasCookieAutoConfiguration.class,
+        CasCoreCookieAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasPersonDirectoryAutoConfiguration.class,

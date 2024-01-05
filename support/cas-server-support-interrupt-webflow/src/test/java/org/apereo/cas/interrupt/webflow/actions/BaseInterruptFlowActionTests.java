@@ -1,20 +1,20 @@
 package org.apereo.cas.interrupt.webflow.actions;
 
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
-import org.apereo.cas.config.CasCookieAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
+import org.apereo.cas.config.CasCoreCookieAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
+import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasInterruptAutoConfiguration;
 import org.apereo.cas.config.CasInterruptWebflowAutoConfiguration;
-import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
-import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
@@ -40,11 +40,11 @@ public abstract class BaseInterruptFlowActionTests {
         CasAuthenticationEventExecutionPlanTestConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
-        CasMultifactorAuthenticationWebflowAutoConfiguration.class,
-        CasCookieAutoConfiguration.class,
+        CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
+        CasCoreCookieAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
-        CasWebflowAutoConfiguration.class,
+        CasCoreWebflowAutoConfiguration.class,
         CasPersonDirectoryAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
         CasInterruptAutoConfiguration.class,

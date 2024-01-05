@@ -1,20 +1,20 @@
 package org.apereo.cas;
 
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
-import org.apereo.cas.config.CasCookieAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
+import org.apereo.cas.config.CasCoreCookieAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
+import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
-import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.config.GrouperAutoConfiguration;
 import org.apereo.cas.grouper.GrouperFacade;
 import org.apereo.cas.util.CollectionUtils;
@@ -46,8 +46,8 @@ public abstract class BaseGrouperConfigurationTests {
     @SpringBootConfiguration
     @Import({
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
-        CasMultifactorAuthenticationWebflowAutoConfiguration.class,
-        CasWebflowAutoConfiguration.class,
+        CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
+        CasCoreWebflowAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
@@ -55,7 +55,7 @@ public abstract class BaseGrouperConfigurationTests {
         CasCoreAutoConfiguration.class,
         CasRegisteredServicesTestConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
-        CasCookieAutoConfiguration.class,
+        CasCoreCookieAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
         CasPersonDirectoryAutoConfiguration.class,

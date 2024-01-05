@@ -1,6 +1,6 @@
 package org.apereo.cas.gauth.web.flow.account;
 
-import org.apereo.cas.config.CasWebflowAutoConfiguration;
+import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.gauth.BaseGoogleAuthenticatorTests;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     BaseGoogleAuthenticatorTests.SharedTestConfiguration.class,
-    CasWebflowAutoConfiguration.class
+    CasCoreWebflowAutoConfiguration.class
 },
     properties = "CasFeatureModule.AccountManagement.enabled=true")
 @Tag("WebflowMfaActions")

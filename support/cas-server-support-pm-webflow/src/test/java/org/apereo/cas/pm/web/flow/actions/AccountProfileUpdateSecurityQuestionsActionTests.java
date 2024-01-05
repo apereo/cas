@@ -1,6 +1,6 @@
 package org.apereo.cas.pm.web.flow.actions;
 
-import org.apereo.cas.config.CasWebflowAutoConfiguration;
+import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.pm.reset.security-questions-enabled=true",
     "CasFeatureModule.AccountManagement.enabled=true"
 })
-@Import(CasWebflowAutoConfiguration.class)
+@Import(CasCoreWebflowAutoConfiguration.class)
 class AccountProfileUpdateSecurityQuestionsActionTests extends BasePasswordManagementActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_UPDATE_SECURITY_QUESTIONS)

@@ -1,8 +1,8 @@
 package org.apereo.cas.support.rest;
 
-import org.apereo.cas.config.CasCookieAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
+import org.apereo.cas.config.CasCoreCookieAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAutoConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
-    CasCookieAutoConfiguration.class,
+    CasCoreCookieAutoConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
     CasCoreUtilAutoConfiguration.class,

@@ -1,22 +1,22 @@
 package org.apereo.cas;
 
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
-import org.apereo.cas.config.CasCookieAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
+import org.apereo.cas.config.CasCoreCookieAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
+import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasRemoteAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasThemesAutoConfiguration;
-import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -46,15 +46,15 @@ public abstract class BaseRemoteAddressTests {
         CasCoreWebAutoConfiguration.class,
         CasPersonDirectoryTestConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
-        CasWebflowAutoConfiguration.class,
+        CasCoreWebflowAutoConfiguration.class,
         CasThemesAutoConfiguration.class,
-        CasCookieAutoConfiguration.class,
+        CasCoreCookieAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasRegisteredServicesTestConfiguration.class,
         CasAuthenticationEventExecutionPlanTestConfiguration.class,
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
-        CasMultifactorAuthenticationWebflowAutoConfiguration.class,
+        CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasRemoteAuthenticationAutoConfiguration.class
     })
     public static class SharedTestConfiguration {

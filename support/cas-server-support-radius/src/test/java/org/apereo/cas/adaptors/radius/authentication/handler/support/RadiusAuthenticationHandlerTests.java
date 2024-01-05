@@ -3,19 +3,19 @@ package org.apereo.cas.adaptors.radius.authentication.handler.support;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.config.CasCookieAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
+import org.apereo.cas.config.CasCoreCookieAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
+import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
-import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.config.RadiusAutoConfiguration;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -43,13 +43,13 @@ import static org.mockito.Mockito.*;
     CasCoreAuthenticationAutoConfiguration.class,
     CasCoreMultifactorAuthenticationAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class,
-    CasMultifactorAuthenticationWebflowAutoConfiguration.class,
-    CasWebflowAutoConfiguration.class,
+    CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
+    CasCoreWebflowAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
     CasCoreServicesAutoConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,
-    CasCookieAutoConfiguration.class,
+    CasCoreCookieAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
     CasCoreAutoConfiguration.class

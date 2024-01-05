@@ -1,7 +1,7 @@
 package org.apereo.cas.adaptors.x509.web;
 
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
-import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.X509AuthenticationAutoConfiguration;
 import org.apereo.cas.config.X509AuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.X509CertificateExtractorAutoConfiguration;
@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
     X509CertificateExtractorAutoConfiguration.class,
     X509AuthenticationWebflowAutoConfiguration.class,
     CasCoreMultifactorAuthenticationAutoConfiguration.class,
-    CasMultifactorAuthenticationWebflowAutoConfiguration.class
+    CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class
 })
 @Tag("WebflowConfig")
 @TestPropertySource(properties = {

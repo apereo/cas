@@ -1,7 +1,7 @@
 package org.apereo.cas.oidc.web.flow;
 
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
-import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasOAuth20AutoConfiguration;
 import org.apereo.cas.config.CasOAuth20WebflowAutoConfiguration;
 import org.apereo.cas.config.CasThemesAutoConfiguration;
@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasOAuth20AutoConfiguration.class,
     CasOAuth20WebflowAutoConfiguration.class,
     CasCoreMultifactorAuthenticationAutoConfiguration.class,
-    CasMultifactorAuthenticationWebflowAutoConfiguration.class
+    CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class
 })
 @TestPropertySource(properties = {
     "spring.mvc.pathmatch.matching-strategy=ant-path-matcher",

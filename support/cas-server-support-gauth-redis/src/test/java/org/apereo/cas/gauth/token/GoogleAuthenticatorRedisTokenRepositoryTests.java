@@ -1,18 +1,18 @@
 package org.apereo.cas.gauth.token;
 
-import org.apereo.cas.config.CasCookieAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
+import org.apereo.cas.config.CasCoreCookieAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
+import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
-import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.config.GoogleAuthenticatorAutoConfiguration;
 import org.apereo.cas.config.GoogleAuthenticatorRedisAutoConfiguration;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
@@ -36,9 +36,9 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Tag("Redis")
 @SpringBootTest(classes = {
     GoogleAuthenticatorRedisAutoConfiguration.class,
-    CasWebflowAutoConfiguration.class,
+    CasCoreWebflowAutoConfiguration.class,
     CasCoreMultifactorAuthenticationAutoConfiguration.class,
-    CasMultifactorAuthenticationWebflowAutoConfiguration.class,
+    CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
@@ -48,7 +48,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     GoogleAuthenticatorAutoConfiguration.class,
     AopAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasCookieAutoConfiguration.class,
+    CasCoreCookieAutoConfiguration.class,
     CasCoreAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     RefreshAutoConfiguration.class,

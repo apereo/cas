@@ -3,21 +3,21 @@ package org.apereo.cas.pm.web.flow.actions;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.config.CasCookieAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
+import org.apereo.cas.config.CasCoreCookieAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
+import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasThemesAutoConfiguration;
-import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.config.PasswordManagementAutoConfiguration;
 import org.apereo.cas.config.PasswordManagementWebflowAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -125,15 +125,15 @@ public abstract class BasePasswordManagementActionTests {
         CasCoreAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
-        CasCookieAutoConfiguration.class,
+        CasCoreCookieAutoConfiguration.class,
         CasThemesAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
-        CasMultifactorAuthenticationWebflowAutoConfiguration.class,
-        CasWebflowAutoConfiguration.class,
+        CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
+        CasCoreWebflowAutoConfiguration.class,
         CasPersonDirectoryTestConfiguration.class
     })
     public static class SharedTestConfiguration {

@@ -28,11 +28,10 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
-
 import java.util.HashMap;
 
 /**
- * This is {@link CasLoggingAutoConfiguration}.
+ * This is {@link CasCoreLoggingAutoConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
@@ -40,7 +39,7 @@ import java.util.HashMap;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Core)
 @AutoConfiguration
-public class CasLoggingAutoConfiguration {
+public class CasCoreLoggingAutoConfiguration {
 
     @ConditionalOnBean(TicketRegistry.class)
     static class CasMdcLoggingConfiguration {

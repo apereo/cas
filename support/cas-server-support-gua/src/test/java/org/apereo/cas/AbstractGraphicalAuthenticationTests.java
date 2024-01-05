@@ -1,19 +1,19 @@
 package org.apereo.cas;
 
-import org.apereo.cas.config.CasCookieAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
+import org.apereo.cas.config.CasCoreCookieAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
+import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
-import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.config.GraphicalUserAuthenticationAutoConfiguration;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,10 +71,10 @@ public abstract class AbstractGraphicalAuthenticationTests {
         CasCoreLogoutAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
-        CasMultifactorAuthenticationWebflowAutoConfiguration.class,
+        CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
-        CasWebflowAutoConfiguration.class,
-        CasCookieAutoConfiguration.class,
+        CasCoreWebflowAutoConfiguration.class,
+        CasCoreCookieAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class
     })
     public static class SharedTestConfiguration {

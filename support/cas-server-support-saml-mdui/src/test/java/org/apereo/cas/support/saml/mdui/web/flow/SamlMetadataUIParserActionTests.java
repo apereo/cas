@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.mdui.web.flow;
 
 import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.config.CasWebflowAutoConfiguration;
+import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.SamlMetadataUIAutoConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.1.0
  */
 @SpringBootTest(classes = {
-    CasWebflowAutoConfiguration.class,
+    CasCoreWebflowAutoConfiguration.class,
     SamlMetadataUIAutoConfiguration.class,
     AbstractOpenSamlTests.SharedTestConfiguration.class
 }, properties = {
