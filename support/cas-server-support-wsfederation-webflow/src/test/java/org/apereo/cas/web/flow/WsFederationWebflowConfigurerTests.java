@@ -1,7 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
-import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CoreSamlAutoConfiguration;
 import org.apereo.cas.config.WsFederationAuthenticationAutoConfiguration;
 import org.apereo.cas.config.WsFederationAuthenticationWebflowAutoConfiguration;
@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
     WsFederationAuthenticationAutoConfiguration.class,
     WsFederationAuthenticationWebflowAutoConfiguration.class,
     CasCoreMultifactorAuthenticationAutoConfiguration.class,
-    CasMultifactorAuthenticationWebflowAutoConfiguration.class
+    CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class
 })
 @TestPropertySource(properties = {
     "cas.authn.wsfed[0].identity-provider-url=https://example.org/adfs/ls/",

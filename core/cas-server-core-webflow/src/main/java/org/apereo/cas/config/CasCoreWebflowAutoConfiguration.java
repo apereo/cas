@@ -9,7 +9,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Import;
 
 /**
- * This is {@link CasWebflowAutoConfiguration}.
+ * This is {@link CasCoreWebflowAutoConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 7.1.0
@@ -24,5 +24,5 @@ import org.springframework.context.annotation.Import;
     CasWebflowContextConfiguration.class,
     CasWebflowMonitoringConfiguration.class
 })
-public class CasWebflowAutoConfiguration {
+public class CasCoreWebflowAutoConfiguration {
 }

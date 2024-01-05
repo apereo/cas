@@ -1,19 +1,19 @@
 package org.apereo.cas.gauth.token;
 
-import org.apereo.cas.config.CasCookieAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
+import org.apereo.cas.config.CasCoreCookieAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
+import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasHibernateJpaAutoConfiguration;
-import org.apereo.cas.config.CasMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
-import org.apereo.cas.config.CasWebflowAutoConfiguration;
 import org.apereo.cas.config.GoogleAuthenticatorAutoConfiguration;
 import org.apereo.cas.config.GoogleAuthenticatorJpaAutoConfiguration;
 import lombok.Getter;
@@ -37,7 +37,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     GoogleAuthenticatorJpaAutoConfiguration.class,
     GoogleAuthenticatorAutoConfiguration.class,
     CasHibernateJpaAutoConfiguration.class,
-    CasCookieAutoConfiguration.class,
+    CasCoreCookieAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,
@@ -45,8 +45,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     CasCoreNotificationsAutoConfiguration.class,
     CasCoreServicesAutoConfiguration.class,
     CasCoreMultifactorAuthenticationAutoConfiguration.class,
-    CasMultifactorAuthenticationWebflowAutoConfiguration.class,
-    CasWebflowAutoConfiguration.class,
+    CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
+    CasCoreWebflowAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasCoreAutoConfiguration.class,
     AopAutoConfiguration.class,

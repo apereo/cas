@@ -56,7 +56,6 @@ import org.apereo.cas.web.flow.resolver.impl.SelectiveMultifactorAuthenticationP
 import org.apereo.cas.web.flow.resolver.impl.mfa.DefaultMultifactorAuthenticationProviderWebflowEventResolver;
 import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
-
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -74,12 +73,11 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * This is {@link CasMultifactorAuthenticationWebflowAutoConfiguration}.
+ * This is {@link CasCoreMultifactorAuthenticationWebflowAutoConfiguration}.
  *
  * @author Travis Schmidt
  * @since 6.0.0
@@ -88,7 +86,7 @@ import java.util.stream.Collectors;
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Webflow)
 @ConditionalOnWebApplication
 @AutoConfiguration
-public class CasMultifactorAuthenticationWebflowAutoConfiguration {
+public class CasCoreMultifactorAuthenticationWebflowAutoConfiguration {
 
     @Configuration(value = "CasMultifactorAuthenticationWebflowRankedEventConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)

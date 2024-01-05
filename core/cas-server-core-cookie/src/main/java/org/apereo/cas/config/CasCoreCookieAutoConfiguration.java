@@ -14,7 +14,6 @@ import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.mgmr.DefaultCasCookieValueManager;
 import org.apereo.cas.web.support.mgmr.DefaultCookieSameSitePolicy;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -29,7 +28,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
- * This is {@link CasCookieAutoConfiguration}.
+ * This is {@link CasCoreCookieAutoConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
@@ -38,7 +37,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Core)
 @AutoConfiguration
-public class CasCookieAutoConfiguration {
+public class CasCoreCookieAutoConfiguration {
 
     @Configuration(value = "CasCookieCoreConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)

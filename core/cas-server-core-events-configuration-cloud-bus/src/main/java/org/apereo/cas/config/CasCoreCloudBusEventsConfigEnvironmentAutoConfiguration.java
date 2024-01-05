@@ -6,7 +6,6 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.support.events.listener.CasCloudBusConfigurationEventListener;
 import org.apereo.cas.support.events.listener.DefaultCasCloudBusConfigurationEventListener;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -18,7 +17,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
- * This is {@link CasCloudBusEventsConfigEnvironmentAutoConfiguration}.
+ * This is {@link CasCoreCloudBusEventsConfigEnvironmentAutoConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
@@ -26,7 +25,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.CasConfiguration)
 @AutoConfiguration
-public class CasCloudBusEventsConfigEnvironmentAutoConfiguration {
+public class CasCoreCloudBusEventsConfigEnvironmentAutoConfiguration {
 
     @ConditionalOnMissingBean(name = "casCloudBusConfigurationEventListener")
     @Bean
