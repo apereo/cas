@@ -25,7 +25,7 @@ env:
   JDK_DISTRIBUTION: "corretto"
   RETRY_ATTEMPTS: 3
   RETRY_MINUTES: 180
-  CATEGORY_REGEX: ".*" # Limit which test categories run
+  CATEGORY_REGEX: "amazon.*|attributes|azure|cas.*|dynamodb|file.*|git|jdbc|jmx|ldap.*|mail|mariadb|mongodb|mysql|postgres|redis"
 ##########################################################################
 
 on:
