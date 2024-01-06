@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.config.CasCoreSamlAutoConfiguration;
 import org.apereo.cas.config.CasHibernateJpaAutoConfiguration;
 import org.apereo.cas.config.CasJpaTicketRegistryAutoConfiguration;
 import org.apereo.cas.config.CasOAuth20AutoConfiguration;
@@ -145,6 +146,7 @@ public abstract class BaseJpaTicketRegistryTests extends BaseTicketRegistryTests
         CasHibernateJpaAutoConfiguration.class,
         BaseTicketRegistryTests.SharedTestConfiguration.class,
         CasWsSecuritySecurityTokenAutoConfiguration.class,
+        CasCoreSamlAutoConfiguration.class,
         CasOAuth20AutoConfiguration.class,
         CasOAuth20ProtocolTicketCatalogAutoConfiguration.class
     })
