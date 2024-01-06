@@ -11,6 +11,7 @@ import org.apereo.cas.services.AllAuthenticationHandlersRegisteredServiceAuthent
 import org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider;
 import org.apereo.cas.services.AnyAuthenticationHandlerRegisteredServiceAuthenticationPolicyCriteria;
 import org.apereo.cas.services.AttributeBasedRegisteredServiceAccessStrategyActivationCriteria;
+import org.apereo.cas.services.AttributeBasedRegisteredServiceAttributeReleaseActivationCriteria;
 import org.apereo.cas.services.CasProtocolVersions;
 import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
@@ -128,6 +129,7 @@ class CasCoreServicesComponentSerializationConfiguration {
             plan.registerSerializableClass(ChainingRegisteredServiceAccessStrategyActivationCriteria.class);
             plan.registerSerializableClass(AttributeBasedRegisteredServiceAccessStrategyActivationCriteria.class);
             plan.registerSerializableClass(GroovyRegisteredServiceAccessStrategyActivationCriteria.class);
+            plan.registerSerializableClass(AttributeBasedRegisteredServiceAttributeReleaseActivationCriteria.class);
 
             plan.registerSerializableClass(ChainingAttributeReleasePolicy.class);
             plan.registerSerializableClass(DenyAllAttributeReleasePolicy.class);
