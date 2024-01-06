@@ -3,6 +3,7 @@ package org.apereo.cas.pm;
 import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
+import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
@@ -38,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreServicesAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class,
     CasCoreAuditAutoConfiguration.class,
+    CasCoreLogoutAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class
 }, properties = {
     "cas.authn.pm.core.enabled=true",

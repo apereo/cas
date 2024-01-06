@@ -6,9 +6,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,19 +17,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("RegisteredService")
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
-    CasCoreUtilAutoConfiguration.class,
-    CasCoreWebAutoConfiguration.class,
-    CasCoreServicesAutoConfiguration.class,
-    CasCoreNotificationsAutoConfiguration.class
-},
-    properties = {
-        "cas.service-registry.core.management-type=DOMAIN",
-        "cas.service-registry.core.init-from-json=true"
-    }
-)
+@SpringBootTest(classes = BaseAutoConfigurationTests.SharedTestConfiguration.class, properties = {
+    "cas.service-registry.core.management-type=DOMAIN",
+    "cas.service-registry.core.init-from-json=true"
+})
 class DomainServicesManagerConfigurationTests {
     @Autowired
     @Qualifier("defaultServicesManagerExecutionPlanConfigurer")
