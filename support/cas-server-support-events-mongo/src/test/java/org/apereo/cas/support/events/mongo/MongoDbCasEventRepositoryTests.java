@@ -1,5 +1,6 @@
 package org.apereo.cas.support.events.mongo;
 
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasMongoDbEventsAutoConfiguration;
 import org.apereo.cas.support.events.AbstractCasEventRepositoryTests;
 import org.apereo.cas.support.events.CasEventRepository;
@@ -20,6 +21,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 @Tag("MongoDb")
 @SpringBootTest(classes = {
     CasMongoDbEventsAutoConfiguration.class,
+    CasCoreWebAutoConfiguration.class,
     RefreshAutoConfiguration.class
 },
     properties = {
