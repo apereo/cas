@@ -35,6 +35,7 @@ import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -156,7 +157,7 @@ class ReturnAllowedAttributeReleasePolicyTests {
             "cas.authn.attribute-repository.attribute-definition-store.json.location=classpath:/return-allowed-definitions.json",
             "cas.authn.attribute-repository.core.default-attributes-to-release=cn,mail"
         })
-    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @EnableConfigurationProperties({CasConfigurationProperties.class, WebProperties.class})
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @Nested
     class DefaultTests {

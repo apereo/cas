@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.ldap.LdapAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreServicesAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
-    LdapAutoConfiguration.class
+    CasLdapAuthenticationAutoConfiguration.class
 },
     properties = {
         "cas.authn.password-sync.ldap[0].ldap-url=ldap://localhost:10389",
