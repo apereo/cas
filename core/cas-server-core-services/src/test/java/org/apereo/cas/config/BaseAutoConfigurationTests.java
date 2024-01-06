@@ -21,7 +21,7 @@ public abstract class BaseAutoConfigurationTests {
         AopAutoConfiguration.class,
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
-        ObservationAutoConfiguration.class,
+        ObservationAutoConfiguration.class
     })
     @SpringBootConfiguration
     @Import({
