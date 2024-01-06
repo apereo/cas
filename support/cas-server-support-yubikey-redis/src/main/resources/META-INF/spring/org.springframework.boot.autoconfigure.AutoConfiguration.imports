@@ -1,1 +1,1 @@
-org.apereo.cas.config.RedisYubiKeyAutoConfiguration
+org.apereo.cas.config.CasRedisYubiKeyAutoConfiguration

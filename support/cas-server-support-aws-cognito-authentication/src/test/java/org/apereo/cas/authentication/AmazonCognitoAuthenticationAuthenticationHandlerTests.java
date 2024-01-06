@@ -4,7 +4,7 @@ import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.config.AmazonCognitoAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasAmazonCognitoAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
@@ -61,7 +61,7 @@ import static org.mockito.Mockito.*;
     CasCoreUtilAutoConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,
-    AmazonCognitoAuthenticationAutoConfiguration.class
+    CasAmazonCognitoAuthenticationAutoConfiguration.class
 }, properties = {
     "cas.authn.cognito.user-pool-id=us-west-2_igeBNHRsb",
     "cas.authn.cognito.region=us-west-2",

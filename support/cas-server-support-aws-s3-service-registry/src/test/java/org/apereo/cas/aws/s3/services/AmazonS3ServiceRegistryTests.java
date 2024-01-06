@@ -1,10 +1,6 @@
 package org.apereo.cas.aws.s3.services;
 
-import org.apereo.cas.config.AmazonS3ServiceRegistryAutoConfiguration;
-import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
-import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
-import org.apereo.cas.config.CasCoreWebAutoConfiguration;
+import org.apereo.cas.config.CasAmazonS3ServiceRegistryAutoConfiguration;
 import org.apereo.cas.services.AbstractServiceRegistryTests;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
@@ -17,9 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import software.amazon.awssdk.services.s3.S3Client;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -31,13 +25,8 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @SpringBootTest(classes = {
-    AmazonS3ServiceRegistryAutoConfiguration.class,
-    CasCoreNotificationsAutoConfiguration.class,
-    CasCoreWebAutoConfiguration.class,
-    CasCoreServicesAutoConfiguration.class,
-    CasCoreUtilAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
-    RefreshAutoConfiguration.class
+    CasAmazonS3ServiceRegistryAutoConfiguration.class,
+    AbstractServiceRegistryTests.SharedTestConfiguration.class
 }, properties = {
     "cas.service-registry.amazon-s3.endpoint=http://127.0.0.1:4566",
     "cas.service-registry.amazon-s3.region=us-east-1",

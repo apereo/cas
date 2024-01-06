@@ -1,2 +1,2 @@
-org.apereo.cas.config.MultifactorAuthnTrustAutoConfiguration
+org.apereo.cas.config.CasMultifactorAuthnTrustAutoConfiguration
 

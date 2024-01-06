@@ -1,6 +1,6 @@
 package org.apereo.cas.support.saml.metadata.resolver;
 
-import org.apereo.cas.config.AmazonS3SamlMetadataAutoConfiguration;
+import org.apereo.cas.config.CasAmazonS3SamlMetadataAutoConfiguration;
 import org.apereo.cas.support.saml.BaseSamlIdPMetadataTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @SpringBootTest(classes = {
-    AmazonS3SamlMetadataAutoConfiguration.class,
+    CasAmazonS3SamlMetadataAutoConfiguration.class,
     BaseSamlIdPMetadataTests.SharedTestConfiguration.class
 }, properties = {
     "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/saml22",

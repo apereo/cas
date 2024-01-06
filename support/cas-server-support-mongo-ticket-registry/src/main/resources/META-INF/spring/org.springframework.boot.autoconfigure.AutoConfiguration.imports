@@ -1,1 +1,1 @@
-org.apereo.cas.config.MongoDbTicketRegistryAutoConfiguration
+org.apereo.cas.config.CasMongoDbTicketRegistryAutoConfiguration

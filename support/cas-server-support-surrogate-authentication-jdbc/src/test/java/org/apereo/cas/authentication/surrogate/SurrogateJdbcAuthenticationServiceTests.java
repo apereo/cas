@@ -1,6 +1,6 @@
 package org.apereo.cas.authentication.surrogate;
 
-import org.apereo.cas.config.SurrogateJdbcAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasSurrogateJdbcAuthenticationAutoConfiguration;
 import lombok.Getter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +18,7 @@ import javax.sql.DataSource;
  * @since 5.3.0
  */
 @SpringBootTest(classes = {
-    SurrogateJdbcAuthenticationAutoConfiguration.class,
+    CasSurrogateJdbcAuthenticationAutoConfiguration.class,
     BaseSurrogateAuthenticationServiceTests.SharedTestConfiguration.class
 }, properties = {
     "cas.authn.surrogate.jdbc.surrogate-search-query=select count(*) from surrogate_accounts where username=? and surrogateAccount=?",

@@ -13,10 +13,10 @@ import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
+import org.apereo.cas.config.CasMultifactorAuthnTrustAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasSimpleMultifactorAuthenticationAutoConfiguration;
-import org.apereo.cas.config.MultifactorAuthnTrustAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.push.NotificationSender;
 import org.apereo.cas.notifications.push.NotificationSenderExecutionPlanConfigurer;
@@ -48,7 +48,7 @@ public abstract class BaseCasSimpleMultifactorAuthenticationTests {
     })
     @SpringBootConfiguration
     @Import({
-        MultifactorAuthnTrustAutoConfiguration.class,
+        CasMultifactorAuthnTrustAutoConfiguration.class,
         
         CasSimpleMultifactorAuthenticationAutoConfiguration.CasSimpleMultifactorTrustConfiguration.class,
         CasSimpleMultifactorAuthenticationAutoConfiguration.class,

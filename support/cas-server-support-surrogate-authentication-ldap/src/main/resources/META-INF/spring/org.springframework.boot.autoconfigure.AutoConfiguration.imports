@@ -1,1 +1,1 @@
-org.apereo.cas.config.SurrogateLdapAuthenticationAutoConfiguration
+org.apereo.cas.config.CasSurrogateLdapAuthenticationAutoConfiguration

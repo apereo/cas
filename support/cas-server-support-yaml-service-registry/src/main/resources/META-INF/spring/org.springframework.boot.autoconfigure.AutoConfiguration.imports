@@ -1,1 +1,1 @@
-org.apereo.cas.config.YamlServiceRegistryAutoConfiguration
+org.apereo.cas.config.CasYamlServiceRegistryAutoConfiguration

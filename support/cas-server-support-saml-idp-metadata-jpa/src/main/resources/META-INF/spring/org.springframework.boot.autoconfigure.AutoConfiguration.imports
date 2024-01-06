@@ -1,1 +1,1 @@
-org.apereo.cas.config.SamlIdPJpaAutoConfiguration
+org.apereo.cas.config.CasSamlIdPJpaAutoConfiguration

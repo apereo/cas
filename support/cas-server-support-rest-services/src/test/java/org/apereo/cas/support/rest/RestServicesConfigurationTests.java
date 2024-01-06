@@ -10,7 +10,7 @@ import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
-import org.apereo.cas.config.RestServicesAutoConfiguration;
+import org.apereo.cas.config.CasRestServicesAutoConfiguration;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreLogoutAutoConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
-    RestServicesAutoConfiguration.class
+    CasRestServicesAutoConfiguration.class
 }, properties = {
     "cas.rest.services.attribute-name=attr-name",
     "cas.rest.services.attribute-value=attr-v"

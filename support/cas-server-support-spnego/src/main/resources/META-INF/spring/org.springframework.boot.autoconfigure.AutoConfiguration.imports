@@ -1,1 +1,1 @@
-org.apereo.cas.config.SpnegoAutoConfiguration
+org.apereo.cas.config.CasSpnegoAutoConfiguration

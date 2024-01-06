@@ -1,6 +1,6 @@
 package org.apereo.cas.support.saml;
 
-import org.apereo.cas.config.SamlIdPGitAutoConfiguration;
+import org.apereo.cas.config.CasSamlIdPGitAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
@@ -18,7 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  * @since 6.0.0
  */
 @SpringBootTest(classes = {
-    SamlIdPGitAutoConfiguration.class,
+    CasSamlIdPGitAutoConfiguration.class,
     BaseSamlIdPMetadataTests.SharedTestConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)

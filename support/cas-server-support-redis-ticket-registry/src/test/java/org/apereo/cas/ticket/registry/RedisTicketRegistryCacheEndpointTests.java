@@ -1,8 +1,8 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.config.RedisCoreAutoConfiguration;
-import org.apereo.cas.config.RedisTicketRegistryAutoConfiguration;
+import org.apereo.cas.config.CasRedisCoreAutoConfiguration;
+import org.apereo.cas.config.CasRedisTicketRegistryAutoConfiguration;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
@@ -30,8 +30,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = "management.endpoint.redisTicketsCache.enabled=true")
 @Tag("ActuatorEndpoint")
 @Import({
-    RedisCoreAutoConfiguration.class,
-    RedisTicketRegistryAutoConfiguration.class
+    CasRedisCoreAutoConfiguration.class,
+    CasRedisTicketRegistryAutoConfiguration.class
 })
 class RedisTicketRegistryCacheEndpointTests extends AbstractCasEndpointTests {
     @Autowired

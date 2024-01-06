@@ -1,6 +1,6 @@
 package org.apereo.cas.zookeeper;
 
-import org.apereo.cas.config.HazelcastZooKeeperAutoConfiguration;
+import org.apereo.cas.config.CasHazelcastZooKeeperAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.util.lock.LockRepository;
@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    HazelcastZooKeeperAutoConfiguration.class
+    CasHazelcastZooKeeperAutoConfiguration.class
 }, properties = {
     "cas.ticket.registry.hazelcast.cluster.discovery.zookeeper.url=localhost:2181",
     "cas.ticket.registry.core.enable-locking=true"

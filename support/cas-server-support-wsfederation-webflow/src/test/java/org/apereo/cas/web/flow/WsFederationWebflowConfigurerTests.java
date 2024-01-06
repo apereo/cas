@@ -2,9 +2,9 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
-import org.apereo.cas.config.CoreSamlAutoConfiguration;
-import org.apereo.cas.config.WsFederationAuthenticationAutoConfiguration;
-import org.apereo.cas.config.WsFederationAuthenticationWebflowAutoConfiguration;
+import org.apereo.cas.config.CasCoreSamlAutoConfiguration;
+import org.apereo.cas.config.CasWsFederationAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasWsFederationAuthenticationWebflowAutoConfiguration;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -21,9 +21,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Import({
-    CoreSamlAutoConfiguration.class,
-    WsFederationAuthenticationAutoConfiguration.class,
-    WsFederationAuthenticationWebflowAutoConfiguration.class,
+    CasCoreSamlAutoConfiguration.class,
+    CasWsFederationAuthenticationAutoConfiguration.class,
+    CasWsFederationAuthenticationWebflowAutoConfiguration.class,
     CasCoreMultifactorAuthenticationAutoConfiguration.class,
     CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class
 })

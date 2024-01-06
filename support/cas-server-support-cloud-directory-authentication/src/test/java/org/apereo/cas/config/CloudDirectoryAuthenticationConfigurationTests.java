@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreLogoutAutoConfiguration.class,
     CasCoreAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
-    CloudDirectoryAuthenticationAutoConfiguration.class
+    CasCloudDirectoryAuthenticationAutoConfiguration.class
 },
     properties = {
         "cas.authn.cloud-directory.username-attribute-name=username",

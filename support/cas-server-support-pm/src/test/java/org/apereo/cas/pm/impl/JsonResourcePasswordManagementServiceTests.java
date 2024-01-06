@@ -10,8 +10,8 @@ import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
+import org.apereo.cas.config.CasPasswordManagementAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
-import org.apereo.cas.config.PasswordManagementAutoConfiguration;
 import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.PasswordManagementService;
@@ -49,7 +49,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     MailSenderAutoConfiguration.class,
-    PasswordManagementAutoConfiguration.class
+    CasPasswordManagementAutoConfiguration.class
 },
     properties = {
         "cas.authn.pm.json.location=classpath:jsonResourcePassword.json",

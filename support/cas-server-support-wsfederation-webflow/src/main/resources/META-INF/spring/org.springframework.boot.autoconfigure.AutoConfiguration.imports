@@ -1,1 +1,1 @@
-org.apereo.cas.config.WsFederationAuthenticationWebflowAutoConfiguration
+org.apereo.cas.config.CasWsFederationAuthenticationWebflowAutoConfiguration

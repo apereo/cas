@@ -13,8 +13,8 @@ import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
+import org.apereo.cas.config.CasGenericAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
-import org.apereo.cas.config.GenericAuthenticationAutoConfiguration;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreCookieAutoConfiguration.class,
     CasPersonDirectoryAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
-    GenericAuthenticationAutoConfiguration.class
+    CasGenericAuthenticationAutoConfiguration.class
 }, properties = {
     "cas.authn.file.filename=classpath:authentication.txt",
     "cas.authn.groovy.location=classpath:GroovyAuthnHandler.groovy",

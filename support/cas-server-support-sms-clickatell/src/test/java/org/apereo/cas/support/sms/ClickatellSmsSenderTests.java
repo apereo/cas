@@ -1,6 +1,6 @@
 package org.apereo.cas.support.sms;
 
-import org.apereo.cas.config.ClickatellSmsAutoConfiguration;
+import org.apereo.cas.config.CasClickatellSmsAutoConfiguration;
 import org.apereo.cas.notifications.sms.SmsSender;
 import org.apereo.cas.util.MockWebServer;
 import lombok.val;
@@ -25,7 +25,7 @@ import static org.springframework.http.HttpStatus.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    ClickatellSmsAutoConfiguration.class
+    CasClickatellSmsAutoConfiguration.class
 }, properties = {
     "cas.sms-provider.clickatell.server-url=http://localhost:8099",
     "cas.sms-provider.clickatell.token=DEMO_TOKEN"

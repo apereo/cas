@@ -1,6 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
-import org.apereo.cas.config.StatelessTicketRegistryAutoConfiguration;
+import org.apereo.cas.config.CasStatelessTicketRegistryAutoConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Tickets")
 @Tag("TicketRegistryTestWithoutEncryption")
 @Import({
-    StatelessTicketRegistryAutoConfiguration.class,
+    CasStatelessTicketRegistryAutoConfiguration.class,
     BaseWebflowConfigurerTests.SharedTestConfiguration.class
 })
 @Getter

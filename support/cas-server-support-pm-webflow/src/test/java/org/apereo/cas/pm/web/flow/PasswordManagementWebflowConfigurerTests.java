@@ -1,9 +1,9 @@
 package org.apereo.cas.pm.web.flow;
 
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
+import org.apereo.cas.config.CasPasswordManagementAutoConfiguration;
+import org.apereo.cas.config.CasPasswordManagementWebflowAutoConfiguration;
 import org.apereo.cas.config.CasSimpleMultifactorAuthenticationAutoConfiguration;
-import org.apereo.cas.config.PasswordManagementAutoConfiguration;
-import org.apereo.cas.config.PasswordManagementWebflowAutoConfiguration;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -45,8 +45,8 @@ class PasswordManagementWebflowConfigurerTests {
         "cas.authn.pm.core.enabled=false"
     })
     @Import({
-        PasswordManagementAutoConfiguration.class,
-        PasswordManagementWebflowAutoConfiguration.class
+        CasPasswordManagementAutoConfiguration.class,
+        CasPasswordManagementWebflowAutoConfiguration.class
     })
     @Nested
     class DisabledTests extends BaseWebflowConfigurerTests {
@@ -96,8 +96,8 @@ class PasswordManagementWebflowConfigurerTests {
     @TestPropertySource(properties = "cas.authn.pm.core.enabled=true")
     @Import({
         CasSimpleMultifactorAuthenticationAutoConfiguration.class,
-        PasswordManagementAutoConfiguration.class,
-        PasswordManagementWebflowAutoConfiguration.class
+        CasPasswordManagementAutoConfiguration.class,
+        CasPasswordManagementWebflowAutoConfiguration.class
     })
     class EnabledTests extends BaseWebflowConfigurerTests {
         @Autowired

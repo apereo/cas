@@ -13,8 +13,8 @@ import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
-import org.apereo.cas.config.SpnegoAutoConfiguration;
-import org.apereo.cas.config.SpnegoWebflowAutoConfiguration;
+import org.apereo.cas.config.CasSpnegoAutoConfiguration;
+import org.apereo.cas.config.CasSpnegoWebflowAutoConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
@@ -34,8 +34,8 @@ import org.springframework.webflow.execution.Action;
     RefreshAutoConfiguration.class,
     MailSenderAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    SpnegoAutoConfiguration.class,
-    SpnegoWebflowAutoConfiguration.class,
+    CasSpnegoAutoConfiguration.class,
+    CasSpnegoWebflowAutoConfiguration.class,
     CasPersonDirectoryAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class,
     CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,

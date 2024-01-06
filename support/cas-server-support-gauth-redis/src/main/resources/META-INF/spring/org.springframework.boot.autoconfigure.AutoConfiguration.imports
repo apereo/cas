@@ -1,1 +1,1 @@
-org.apereo.cas.config.GoogleAuthenticatorRedisAutoConfiguration
+org.apereo.cas.config.CasGoogleAuthenticatorRedisAutoConfiguration

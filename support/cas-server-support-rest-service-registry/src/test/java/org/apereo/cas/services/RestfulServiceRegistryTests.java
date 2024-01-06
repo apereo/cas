@@ -1,19 +1,10 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
-import org.apereo.cas.config.CasCoreAutoConfiguration;
-import org.apereo.cas.config.CasCoreCookieAutoConfiguration;
-import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
-import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
-import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
-import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
-import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
-import org.apereo.cas.config.RestServiceRegistryAutoConfiguration;
+import org.apereo.cas.config.CasRestServiceRegistryAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,14 +16,9 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -51,27 +37,12 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 5.3.0
  */
 @SpringBootTest(classes = {
-    AopAutoConfiguration.class,
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
-    ServletWebServerFactoryAutoConfiguration.class,
-    DispatcherServletAutoConfiguration.class,
-
     RestfulServiceRegistryTests.RestfulServiceRegistryTestConfiguration.class,
-
-    CasCoreTicketsAutoConfiguration.class,
-    CasCoreServicesAutoConfiguration.class,
-    RestServiceRegistryAutoConfiguration.class,
-    CasCoreUtilAutoConfiguration.class,
-    CasCoreWebAutoConfiguration.class,
-    CasCoreLogoutAutoConfiguration.class,
-    CasCoreCookieAutoConfiguration.class,
-    CasCoreNotificationsAutoConfiguration.class,
+    AbstractServiceRegistryTests.SharedTestConfiguration.class,
+    CasRestServiceRegistryAutoConfiguration.class,
     CasCoreMultifactorAuthenticationAutoConfiguration.class,
     CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
-    CasCoreAuthenticationAutoConfiguration.class,
-    CasCoreAutoConfiguration.class,
     CasCoreWebflowAutoConfiguration.class
 },
     properties = {

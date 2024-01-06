@@ -1,6 +1,6 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.config.GraphicalUserAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasGraphicalUserAuthenticationAutoConfiguration;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Import(GraphicalUserAuthenticationAutoConfiguration.class)
+@Import(CasGraphicalUserAuthenticationAutoConfiguration.class)
 @TestPropertySource(properties = "cas.authn.gua.simple.casuser=classpath:image.jpg")
 @Tag("WebflowConfig")
 class GraphicalUserAuthenticationWebflowConfigurerTests extends BaseWebflowConfigurerTests {

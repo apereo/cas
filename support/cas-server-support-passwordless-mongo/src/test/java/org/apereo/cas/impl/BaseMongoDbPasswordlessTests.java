@@ -2,7 +2,7 @@ package org.apereo.cas.impl;
 
 import org.apereo.cas.api.PasswordlessTokenRepository;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
-import org.apereo.cas.config.MongoDbPasswordlessAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasMongoDbPasswordlessAuthenticationAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ import org.springframework.data.mongodb.core.MongoOperations;
  * @since 7.0.0
  */
 @SpringBootTest(classes = {
-    MongoDbPasswordlessAuthenticationAutoConfiguration.class,
+    CasMongoDbPasswordlessAuthenticationAutoConfiguration.class,
     BasePasswordlessUserAccountStoreTests.SharedTestConfiguration.class
 },
     properties = {

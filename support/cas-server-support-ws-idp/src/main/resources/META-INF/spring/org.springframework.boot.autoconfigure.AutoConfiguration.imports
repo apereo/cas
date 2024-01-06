@@ -1,1 +1,1 @@
-org.apereo.cas.config.WsSecurityIdentityProviderAutoConfiguration
+org.apereo.cas.config.CasWsSecurityIdentityProviderAutoConfiguration

@@ -1,17 +1,11 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
-import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
-import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.YamlServiceRegistryAutoConfiguration;
+import org.apereo.cas.config.CasYamlServiceRegistryAutoConfiguration;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -21,13 +15,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @SpringBootTest(classes = {
-    CasCoreWebAutoConfiguration.class,
-    CasCoreServicesAutoConfiguration.class,
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
-    CasCoreUtilAutoConfiguration.class,
-    CasCoreNotificationsAutoConfiguration.class,
-    YamlServiceRegistryAutoConfiguration.class
+    AbstractServiceRegistryTests.SharedTestConfiguration.class,
+    CasYamlServiceRegistryAutoConfiguration.class
 },
     properties = "cas.service-registry.yaml.location=classpath:/services")
 @Tag("FileSystem")

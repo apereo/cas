@@ -1,1 +1,1 @@
-org.apereo.cas.config.GrouperAutoConfiguration
+org.apereo.cas.config.CasGrouperAutoConfiguration

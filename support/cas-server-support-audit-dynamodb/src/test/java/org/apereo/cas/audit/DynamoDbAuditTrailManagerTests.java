@@ -1,14 +1,6 @@
 package org.apereo.cas.audit;
 
 import org.apereo.cas.audit.spi.BaseAuditConfigurationTests;
-import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
-import org.apereo.cas.config.CasCoreAutoConfiguration;
-import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
-import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
-import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
-import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasSupportDynamoDbAuditAutoConfiguration;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
@@ -16,9 +8,7 @@ import org.apereo.inspektr.audit.AuditTrailManager;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import software.amazon.awssdk.core.SdkSystemSetting;
 
 /**
@@ -28,17 +18,8 @@ import software.amazon.awssdk.core.SdkSystemSetting;
  * @since 6.1.0
  */
 @SpringBootTest(classes = {
-    CasCoreAuditAutoConfiguration.class,
-    CasCoreAutoConfiguration.class,
-    CasCoreAuthenticationAutoConfiguration.class,
-    CasSupportDynamoDbAuditAutoConfiguration.class,
-    CasCoreUtilAutoConfiguration.class,
-    CasCoreServicesAutoConfiguration.class,
-    CasCoreTicketsAutoConfiguration.class,
-    CasCoreWebAutoConfiguration.class,
-    CasCoreNotificationsAutoConfiguration.class,
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class
+    BaseAuditConfigurationTests.SharedTestConfiguration.class,
+    CasSupportDynamoDbAuditAutoConfiguration.class
 },
     properties = {
         "cas.audit.dynamo-db.endpoint=http://localhost:8000",

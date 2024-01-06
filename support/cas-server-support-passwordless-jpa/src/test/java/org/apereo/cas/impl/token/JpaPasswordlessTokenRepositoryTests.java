@@ -4,7 +4,7 @@ import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessTokenRepository;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.config.CasHibernateJpaAutoConfiguration;
-import org.apereo.cas.config.JpaPasswordlessAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasJpaPasswordlessAuthenticationAutoConfiguration;
 import org.apereo.cas.impl.BasePasswordlessUserAccountStoreTests;
 import lombok.Getter;
 import lombok.val;
@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("JDBC")
 @Import({
     CasHibernateJpaAutoConfiguration.class,
-    JpaPasswordlessAuthenticationAutoConfiguration.class
+    CasJpaPasswordlessAuthenticationAutoConfiguration.class
 })
 @TestPropertySource(properties = "cas.jdbc.show-sql=false")
 class JpaPasswordlessTokenRepositoryTests extends BasePasswordlessUserAccountStoreTests {

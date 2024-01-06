@@ -3,7 +3,7 @@ package org.apereo.cas.adaptors.yubikey.dao;
 import org.apereo.cas.adaptors.yubikey.AbstractYubiKeyAccountRegistryTests;
 import org.apereo.cas.adaptors.yubikey.BaseYubiKeyTests;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
-import org.apereo.cas.config.RedisYubiKeyAutoConfiguration;
+import org.apereo.cas.config.CasRedisYubiKeyAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
@@ -22,7 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  */
 @Tag("Redis")
 @SpringBootTest(classes = {
-    RedisYubiKeyAutoConfiguration.class,
+    CasRedisYubiKeyAutoConfiguration.class,
     BaseYubiKeyTests.SharedTestConfiguration.class
 },
     properties = {

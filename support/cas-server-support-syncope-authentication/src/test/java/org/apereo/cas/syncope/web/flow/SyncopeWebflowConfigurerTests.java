@@ -1,7 +1,7 @@
 package org.apereo.cas.syncope.web.flow;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.config.SyncopeAutoConfiguration;
+import org.apereo.cas.config.CasSyncopeAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.syncope.BaseSyncopeTests;
@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnabledIfListeningOnPort(port = 18080)
 @Import({
-    SyncopeAutoConfiguration.class,
+    CasSyncopeAutoConfiguration.class,
     BaseSyncopeTests.SharedTestConfiguration.class
 })
 @TestPropertySource(properties = {
