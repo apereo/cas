@@ -112,7 +112,7 @@ public interface RegisteredServiceAttributeReleasePolicy extends Serializable, O
      *
      * @return the condition
      */
-    default RegisteredServiceAttributeReleaseCondition getCondition() {
+    default RegisteredServiceAttributeReleaseActivationCriteria getActivationCriteria() {
         return null;
     }
 }
