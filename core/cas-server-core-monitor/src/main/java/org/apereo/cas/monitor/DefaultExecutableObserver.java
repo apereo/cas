@@ -7,9 +7,9 @@ import io.micrometer.observation.ObservationRegistry;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jooq.lambda.fi.util.function.CheckedSupplier;
 
 import java.util.Map;
-import java.util.function.Supplier;
 
 /**
  * This is {@link DefaultExecutableObserver}.
@@ -29,8 +29,8 @@ public class DefaultExecutableObserver implements ExecutableObserver {
     }
 
     @Override
-    public <T> T supply(final MonitorableTask task, final Supplier<T> supplier) throws Throwable {
-        return prepareObservation(task).observe(supplier);
+    public <T> T supply(final MonitorableTask task, final CheckedSupplier<T> supplier) throws Throwable {
+        return prepareObservation(task).observe(CheckedSupplier.sneaky(supplier));
     }
 
     protected Observation prepareObservation(final MonitorableTask task) {

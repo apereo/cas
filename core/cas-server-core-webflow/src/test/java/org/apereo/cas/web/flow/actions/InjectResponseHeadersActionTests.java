@@ -18,7 +18,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.ConfigurableApplicationContext;
 import java.util.HashMap;
 import java.util.Locale;
 import static org.junit.jupiter.api.Assertions.*;
@@ -39,9 +38,7 @@ class InjectResponseHeadersActionTests extends BaseWebflowConfigurerTests {
     @Autowired
     @Qualifier(UrlValidator.BEAN_NAME)
     private UrlValidator urlValidator;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
+    
     @Test
     void verifyAction() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
