@@ -125,7 +125,7 @@ jobs:
           shell: bash
           command: |
             ./testcas.sh --no-watch --category ${{ matrix.category }}
-            [[ $? -ne 0 ]] && ./testcas.sh --no-watch --with-coverage
+            [[ $? -eq 0 ]] && ./testcas.sh --no-watch --with-coverage
       - name: "Upload to Codecov"
         uses: "codecov/codecov-action@v3"
         continue-on-error: true
