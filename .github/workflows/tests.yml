@@ -25,7 +25,7 @@ env:
   JDK_DISTRIBUTION: "corretto"
   RETRY_ATTEMPTS: 3
   RETRY_MINUTES: 180
-  CATEGORY_REGEX: "amazon.*|attributes|dynamodb|file.*|git|jdbc|ldap.*|mariadb|mongodb|mysql|postgres|redis"
+  CATEGORY_REGEX: "amazon.*|attributes|dynamodb|file.*|jdbc|ldap.*|mariadb|mongodb|mysql|postgres|redis"
 ##########################################################################
 
 on:
