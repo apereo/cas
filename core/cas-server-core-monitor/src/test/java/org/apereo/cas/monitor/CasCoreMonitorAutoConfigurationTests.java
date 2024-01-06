@@ -1,5 +1,6 @@
 package org.apereo.cas.monitor;
 
+import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMonitorAutoConfiguration;
@@ -108,7 +109,8 @@ class CasCoreMonitorAutoConfigurationTests {
         CasCoreWebAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
-        CasCoreAutoConfiguration.class
+        CasCoreAutoConfiguration.class,
+        CasCoreAuthenticationAutoConfiguration.class
     })
     public static class SharedTestConfiguration {
     }

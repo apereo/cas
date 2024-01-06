@@ -12,8 +12,10 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import java.io.Serial;
 import java.util.Arrays;
@@ -29,8 +31,11 @@ import static org.mockito.Mockito.*;
  * @since 3.4.12
  */
 @Tag("RegisteredService")
-@SpringBootTest(classes = CasCoreWebAutoConfiguration.class)
-@EnableConfigurationProperties(CasConfigurationProperties.class)
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
+    CasCoreWebAutoConfiguration.class
+})
+@EnableConfigurationProperties({CasConfigurationProperties.class, WebProperties.class})
 class RegisteredServiceTests {
     private static final long ID = 1000;
 

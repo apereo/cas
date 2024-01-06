@@ -513,6 +513,7 @@ echo -e "***********************************************************************
 
 if [ $retVal == 0 ]; then
     printf "${GREEN}Gradle build finished successfully.${ENDCOLOR}\n"
+    exit 0
 else
     printf "${RED}Gradle build did NOT finish successfully.${ENDCOLOR}"
     exit $retVal
