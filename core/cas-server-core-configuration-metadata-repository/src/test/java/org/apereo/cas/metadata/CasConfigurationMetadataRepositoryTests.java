@@ -42,7 +42,7 @@ class CasConfigurationMetadataRepositoryTests {
             .builder()
             .queryType(ConfigurationMetadataCatalogQuery.QueryTypes.CAS)
             .build());
-        assertTrue(properties.properties().isEmpty());
+        assertFalse(properties.properties().isEmpty());
 
         properties = CasConfigurationMetadataCatalog.query(ConfigurationMetadataCatalogQuery
             .builder()

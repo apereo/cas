@@ -31,7 +31,7 @@ import java.util.Map;
 @Getter
 @EqualsAndHashCode
 @AllArgsConstructor
-@ToString
+@ToString(of = {"principal", "authenticationDate", "attributes"})
 public class DefaultAuthentication implements Authentication {
     @Serial
     private static final long serialVersionUID = 3206127526058061391L;
