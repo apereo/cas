@@ -28,7 +28,8 @@ dependencies {
     implementation libraries.shibutiljavasupport
 
     testImplementation project(":support:cas-server-support-person-directory")
-
+    testImplementation project(":support:cas-server-support-consent-core")
+    
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-tickets")

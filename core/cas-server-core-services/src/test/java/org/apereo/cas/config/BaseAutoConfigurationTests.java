@@ -32,6 +32,7 @@ public abstract class BaseAutoConfigurationTests {
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
+        CasCoreTicketsAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class
     })
     public static class SharedTestConfiguration {
