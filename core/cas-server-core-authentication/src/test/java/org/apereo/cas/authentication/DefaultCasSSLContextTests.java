@@ -35,6 +35,7 @@ class DefaultCasSSLContextTests {
     @ImportAutoConfiguration(RefreshAutoConfiguration.class)
     @SpringBootConfiguration
     @Import(CasCoreWebAutoConfiguration.class)
+    @EnableConfigurationProperties({CasConfigurationProperties.class, WebProperties.class})
     public static class SharedTestConfiguration {
         static String contactUrl(final String addr, final CasSSLContext context) throws Exception {
             val url = new URI(addr).toURL();
@@ -50,6 +51,7 @@ class DefaultCasSSLContextTests {
 
     @Nested
     @SpringBootTest(classes = SharedTestConfiguration.class)
+    @EnableConfigurationProperties({CasConfigurationProperties.class, WebProperties.class})
     public class SystemSslContext {
         @Autowired
         @Qualifier(CasSSLContext.BEAN_NAME)

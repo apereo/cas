@@ -1,5 +1,6 @@
 package org.apereo.cas.support.sms;
 
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasTextMagicSmsAutoConfiguration;
 import org.apereo.cas.notifications.sms.SmsSender;
 import org.junit.jupiter.api.Tag;
@@ -20,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
+    CasCoreWebAutoConfiguration.class,
     CasTextMagicSmsAutoConfiguration.class
 })
 @Tag("SMS")

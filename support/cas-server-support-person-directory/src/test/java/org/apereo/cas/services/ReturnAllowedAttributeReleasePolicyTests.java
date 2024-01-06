@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.TriStateBoolean;
@@ -55,10 +56,11 @@ class ReturnAllowedAttributeReleasePolicyTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @SpringBootTest(classes = {
+        ReturnAllowedAttributeReleasePolicyTestConfiguration.class,
         CasPersonDirectoryAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
-        ReturnAllowedAttributeReleasePolicyTestConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
+        CasCoreWebAutoConfiguration.class,
         RefreshAutoConfiguration.class
     },
         properties = {
@@ -118,10 +120,11 @@ class ReturnAllowedAttributeReleasePolicyTests {
     }
 
     @SpringBootTest(classes = {
+        ReturnAllowedAttributeReleasePolicyTestConfiguration.class,
         CasPersonDirectoryAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
-        ReturnAllowedAttributeReleasePolicyTestConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
+        CasCoreWebAutoConfiguration.class,
         RefreshAutoConfiguration.class
     },
         properties = {
