@@ -1,7 +1,7 @@
 package org.apereo.cas.trusted.authentication.storage;
 
 
-import org.apereo.cas.config.RedisMultifactorAuthenticationTrustAutoConfiguration;
+import org.apereo.cas.config.CasRedisMultifactorAuthenticationTrustAutoConfiguration;
 import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("Redis")
-@Import(RedisMultifactorAuthenticationTrustAutoConfiguration.class)
+@Import(CasRedisMultifactorAuthenticationTrustAutoConfiguration.class)
 @TestPropertySource(
     properties = {
         "cas.authn.mfa.trusted.redis.host=localhost",

@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.services;
 
 import org.apereo.cas.config.CasHibernateJpaAutoConfiguration;
-import org.apereo.cas.config.JpaServiceRegistryAutoConfiguration;
+import org.apereo.cas.config.CasJpaServiceRegistryAutoConfiguration;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Import({
     CasHibernateJpaAutoConfiguration.class,
-    JpaServiceRegistryAutoConfiguration.class
+    CasJpaServiceRegistryAutoConfiguration.class
 })
 @Tag("SAML2")
 @TestPropertySource(properties = {

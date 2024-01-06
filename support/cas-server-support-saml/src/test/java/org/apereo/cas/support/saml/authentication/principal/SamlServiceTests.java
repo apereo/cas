@@ -4,7 +4,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.DefaultServiceMatchingStrategy;
 import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.config.SamlAutoConfiguration;
+import org.apereo.cas.config.CasSamlAutoConfiguration;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.ServicesManagerConfigurationContext;
 import org.apereo.cas.services.mgmt.DefaultServicesManager;
@@ -34,7 +34,7 @@ import static org.mockito.Mockito.*;
  * @author Scott Battaglia
  * @since 3.1
  */
-@Import(SamlAutoConfiguration.class)
+@Import(CasSamlAutoConfiguration.class)
 @Tag("SAML")
 class SamlServiceTests extends AbstractOpenSamlTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "samlService.json");

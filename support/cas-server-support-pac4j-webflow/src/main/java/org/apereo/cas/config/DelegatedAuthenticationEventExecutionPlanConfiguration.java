@@ -95,12 +95,14 @@ class DelegatedAuthenticationEventExecutionPlanConfiguration {
     @Configuration(value = "DelegatedAuthenticationEventExecutionPlanSessionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class DelegatedAuthenticationEventExecutionPlanSessionConfiguration {
+        
         @ConditionalOnMissingBean(name = "delegatedClientDistributedSessionStore")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SessionStore delegatedClientDistributedSessionStore(
             final CasConfigurationProperties casProperties,
-            @Qualifier("delegatedClientDistributedSessionCookieGenerator") final CasCookieBuilder delegatedClientDistributedSessionCookieGenerator,
+            @Qualifier("delegatedClientDistributedSessionCookieGenerator")
+            final CasCookieBuilder delegatedClientDistributedSessionCookieGenerator,
             @Qualifier(TicketFactory.BEAN_NAME) final TicketFactory ticketFactory,
             @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry) {
             val replicationProps = casProperties.getAuthn().getPac4j().getCore().getSessionReplication();

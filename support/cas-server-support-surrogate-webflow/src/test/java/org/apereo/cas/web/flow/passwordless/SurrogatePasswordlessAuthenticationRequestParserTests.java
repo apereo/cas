@@ -1,7 +1,7 @@
 package org.apereo.cas.web.flow.passwordless;
 
 import org.apereo.cas.api.PasswordlessRequestParser;
-import org.apereo.cas.config.SurrogateAuthenticationWebflowAutoConfiguration;
+import org.apereo.cas.config.CasSurrogateAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.web.flow.action.BaseSurrogateAuthenticationTests;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @SpringBootTest(classes = {
-    SurrogateAuthenticationWebflowAutoConfiguration.class,
+    CasSurrogateAuthenticationWebflowAutoConfiguration.class,
     BaseSurrogateAuthenticationTests.SharedTestConfiguration.class
 },
     properties = "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate")

@@ -1,6 +1,6 @@
 package org.apereo.cas.support.saml;
 
-import org.apereo.cas.config.SamlIdPRedisIdPMetadataAutoConfiguration;
+import org.apereo.cas.config.CasSamlIdPRedisIdPMetadataAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.val;
@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    SamlIdPRedisIdPMetadataAutoConfiguration.class
+    CasSamlIdPRedisIdPMetadataAutoConfiguration.class
 })
 @TestPropertySource(properties = "CasFeatureModule.SAMLIdentityProvider.redis.enabled=false")
 @EnabledIfListeningOnPort(port = 6379)

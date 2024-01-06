@@ -1,6 +1,6 @@
 package org.apereo.cas.apm;
 
-import org.apereo.cas.config.ElasticApmAutoConfiguration;
+import org.apereo.cas.config.CasElasticApmAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.util.app.ApplicationEntrypointInitializer;
@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
     AopAutoConfiguration.class,
-    ElasticApmAutoConfiguration.class,
+    CasElasticApmAutoConfiguration.class,
     ElasticApmAgentInitializerTests.ElasticApmTestConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)

@@ -1,7 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
-import org.apereo.cas.config.RedisCoreAutoConfiguration;
-import org.apereo.cas.config.RedisTicketRegistryAutoConfiguration;
+import org.apereo.cas.config.CasRedisCoreAutoConfiguration;
+import org.apereo.cas.config.CasRedisTicketRegistryAutoConfiguration;
 import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.ticket.registry.RedisTicketRegistry.CasRedisTemplates;
 import lombok.Getter;
@@ -19,8 +19,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * @since 6.1.0
  */
 @Import({
-    RedisCoreAutoConfiguration.class,
-    RedisTicketRegistryAutoConfiguration.class
+    CasRedisCoreAutoConfiguration.class,
+    CasRedisTicketRegistryAutoConfiguration.class
 })
 @EnableTransactionManagement(proxyTargetClass = false)
 @EnableAspectJAutoProxy(proxyTargetClass = false)

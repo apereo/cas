@@ -2,8 +2,8 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
-import org.apereo.cas.config.TokenAuthenticationAutoConfiguration;
-import org.apereo.cas.config.TokenAuthenticationWebflowAutoConfiguration;
+import org.apereo.cas.config.CasTokenAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasTokenAuthenticationWebflowAutoConfiguration;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -21,8 +21,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @Import({
     CasCoreMultifactorAuthenticationAutoConfiguration.class,
     CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
-    TokenAuthenticationAutoConfiguration.class,
-    TokenAuthenticationWebflowAutoConfiguration.class
+    CasTokenAuthenticationAutoConfiguration.class,
+    CasTokenAuthenticationWebflowAutoConfiguration.class
 })
 @Tag("WebflowConfig")
 class TokenWebflowConfigurerTests extends BaseWebflowConfigurerTests {

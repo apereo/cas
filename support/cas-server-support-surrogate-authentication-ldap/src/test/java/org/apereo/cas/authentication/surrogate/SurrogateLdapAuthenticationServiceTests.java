@@ -2,7 +2,7 @@ package org.apereo.cas.authentication.surrogate;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.config.SurrogateLdapAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasSurrogateLdapAuthenticationAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.surrogate.SurrogateLdapAuthenticationProperties;
 import org.apereo.cas.util.RandomUtils;
@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("LdapRepository")
 @SpringBootTest(classes = {
-    SurrogateLdapAuthenticationAutoConfiguration.class,
+    CasSurrogateLdapAuthenticationAutoConfiguration.class,
     BaseSurrogateAuthenticationServiceTests.SharedTestConfiguration.class
 }, properties = {
     "cas.authn.surrogate.ldap.ldap-url=ldap://localhost:10389",

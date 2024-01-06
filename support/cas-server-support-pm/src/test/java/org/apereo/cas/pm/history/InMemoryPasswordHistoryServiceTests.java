@@ -3,12 +3,13 @@ package org.apereo.cas.pm.history;
 import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
+import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.PasswordManagementAutoConfiguration;
+import org.apereo.cas.config.CasPasswordManagementAutoConfiguration;
 import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordHistoryService;
 import lombok.val;
@@ -30,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    PasswordManagementAutoConfiguration.class,
+    CasPasswordManagementAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
     CasCoreServicesAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class,
@@ -38,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuditAutoConfiguration.class,
     CasCoreAutoConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,
+    CasCoreLogoutAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class
 }, properties = {
     "cas.authn.pm.core.enabled=true",
@@ -54,7 +56,8 @@ class InMemoryPasswordHistoryServiceTests {
         passwordHistoryService.removeAll();
         assertTrue(passwordHistoryService.fetchAll().isEmpty());
 
-        val request = new PasswordChangeRequest("casuser", "current-psw".toCharArray(), "123456".toCharArray(), "123456".toCharArray());
+        val request = new PasswordChangeRequest("casuser", "current-psw".toCharArray(),
+            "123456".toCharArray(), "123456".toCharArray());
         assertFalse(passwordHistoryService.exists(request));
         assertTrue(passwordHistoryService.store(request));
         assertTrue(passwordHistoryService.exists(request));

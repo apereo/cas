@@ -1,14 +1,6 @@
 package org.apereo.cas.audit;
 
 import org.apereo.cas.audit.spi.BaseAuditConfigurationTests;
-import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
-import org.apereo.cas.config.CasCoreAutoConfiguration;
-import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
-import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
-import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
-import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasHibernateJpaAutoConfiguration;
 import org.apereo.cas.config.CasJdbcAuditAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -23,11 +15,8 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -43,19 +32,9 @@ import java.util.stream.IntStream;
  */
 @SpringBootTest(
     classes = {
-        CasCoreAuditAutoConfiguration.class,
+        BaseAuditConfigurationTests.SharedTestConfiguration.class,
         CasJdbcAuditAutoConfiguration.class,
-        CasHibernateJpaAutoConfiguration.class,
-        CasCoreUtilAutoConfiguration.class,
-        CasCoreAutoConfiguration.class,
-        CasCoreTicketsAutoConfiguration.class,
-        CasCoreAuthenticationAutoConfiguration.class,
-        CasCoreServicesAutoConfiguration.class,
-        CasCoreWebAutoConfiguration.class,
-        CasCoreNotificationsAutoConfiguration.class,
-        AopAutoConfiguration.class,
-        WebMvcAutoConfiguration.class,
-        RefreshAutoConfiguration.class
+        CasHibernateJpaAutoConfiguration.class
     },
     properties = {
         "cas.jdbc.show-sql=true",

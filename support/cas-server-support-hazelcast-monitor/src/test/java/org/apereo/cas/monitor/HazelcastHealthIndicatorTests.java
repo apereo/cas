@@ -8,9 +8,9 @@ import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
+import org.apereo.cas.config.CasHazelcastMonitorAutoConfiguration;
+import org.apereo.cas.config.CasHazelcastTicketRegistryAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
-import org.apereo.cas.config.HazelcastMonitorAutoConfiguration;
-import org.apereo.cas.config.HazelcastTicketRegistryAutoConfiguration;
 import com.hazelcast.internal.memory.MemoryStats;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -38,8 +38,8 @@ import static org.mockito.Mockito.*;
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
     MailSenderAutoConfiguration.class,
-    HazelcastTicketRegistryAutoConfiguration.class,
-    HazelcastMonitorAutoConfiguration.class,
+    CasHazelcastTicketRegistryAutoConfiguration.class,
+    CasHazelcastMonitorAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasPersonDirectoryAutoConfiguration.class,

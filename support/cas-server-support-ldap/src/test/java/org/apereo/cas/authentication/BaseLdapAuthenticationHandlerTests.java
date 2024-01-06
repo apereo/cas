@@ -10,8 +10,8 @@ import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
+import org.apereo.cas.config.CasLdapAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
-import org.apereo.cas.config.LdapAuthenticationAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import lombok.val;
@@ -51,7 +51,7 @@ import static org.mockito.Mockito.*;
     CasCoreNotificationsAutoConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,
     CasCoreAutoConfiguration.class,
-    LdapAuthenticationAutoConfiguration.class
+    CasLdapAuthenticationAutoConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public abstract class BaseLdapAuthenticationHandlerTests {

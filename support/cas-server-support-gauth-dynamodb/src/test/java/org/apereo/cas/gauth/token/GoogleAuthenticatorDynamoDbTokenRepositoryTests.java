@@ -12,9 +12,9 @@ import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
+import org.apereo.cas.config.CasGoogleAuthenticatorAutoConfiguration;
+import org.apereo.cas.config.CasGoogleAuthenticatorDynamoDbAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
-import org.apereo.cas.config.GoogleAuthenticatorAutoConfiguration;
-import org.apereo.cas.config.GoogleAuthenticatorDynamoDbAutoConfiguration;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
@@ -44,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("DynamoDb")
 @SpringBootTest(classes = {
-    GoogleAuthenticatorDynamoDbAutoConfiguration.class,
+    CasGoogleAuthenticatorDynamoDbAutoConfiguration.class,
     CasCoreMultifactorAuthenticationAutoConfiguration.class,
     CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
@@ -54,7 +54,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreServicesAutoConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,
     CasPersonDirectoryAutoConfiguration.class,
-    GoogleAuthenticatorAutoConfiguration.class,
+    CasGoogleAuthenticatorAutoConfiguration.class,
     AopAutoConfiguration.class,
     CasCoreAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,

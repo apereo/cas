@@ -1,6 +1,6 @@
 package org.apereo.cas.support.events.mongo;
 
-import org.apereo.cas.config.MongoDbEventsAutoConfiguration;
+import org.apereo.cas.config.CasMongoDbEventsAutoConfiguration;
 import org.apereo.cas.support.events.AbstractCasEventRepositoryTests;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
@@ -19,7 +19,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
  */
 @Tag("MongoDb")
 @SpringBootTest(classes = {
-    MongoDbEventsAutoConfiguration.class,
+    CasMongoDbEventsAutoConfiguration.class,
     RefreshAutoConfiguration.class
 },
     properties = {

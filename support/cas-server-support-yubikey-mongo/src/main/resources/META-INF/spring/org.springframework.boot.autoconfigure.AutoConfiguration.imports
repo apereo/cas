@@ -1,1 +1,1 @@
-org.apereo.cas.config.MongoDbYubiKeyAutoConfiguration
+org.apereo.cas.config.CasMongoDbYubiKeyAutoConfiguration

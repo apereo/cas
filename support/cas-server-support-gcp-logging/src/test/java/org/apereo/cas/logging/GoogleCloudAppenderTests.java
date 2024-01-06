@@ -1,6 +1,6 @@
 package org.apereo.cas.logging;
 
-import org.apereo.cas.config.GoogleCloudLoggingAutoConfiguration;
+import org.apereo.cas.config.CasGoogleCloudLoggingAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.text.MessageSanitizer;
@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    GoogleCloudLoggingAutoConfiguration.class
+    CasGoogleCloudLoggingAutoConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class GoogleCloudAppenderTests {

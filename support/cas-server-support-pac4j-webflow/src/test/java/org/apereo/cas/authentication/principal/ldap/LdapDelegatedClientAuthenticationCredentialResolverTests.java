@@ -3,7 +3,7 @@ package org.apereo.cas.authentication.principal.ldap;
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.DelegatedClientAuthenticationCredentialResolver;
-import org.apereo.cas.config.DelegatedAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasDelegatedAuthenticationAutoConfiguration;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Ldap")
 @EnabledIfListeningOnPort(port = 10389)
 @SpringBootTest(classes = {
-    DelegatedAuthenticationAutoConfiguration.class,
+    CasDelegatedAuthenticationAutoConfiguration.class,
     BaseDelegatedAuthenticationTests.SharedTestConfiguration.class
 }, properties = {
     "cas.authn.pac4j.profile-selection.ldap.ldap-url=ldap://localhost:10389",

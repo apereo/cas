@@ -15,8 +15,8 @@ import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
+import org.apereo.cas.config.CasSurrogateAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasThemesAutoConfiguration;
-import org.apereo.cas.config.SurrogateAuthenticationAutoConfiguration;
 import org.apereo.cas.services.ServicesManager;
 import lombok.val;
 import org.junit.jupiter.api.Test;
@@ -93,7 +93,7 @@ public abstract class BaseSurrogateAuthenticationServiceTests {
     })
     @SpringBootConfiguration
     @Import({
-        SurrogateAuthenticationAutoConfiguration.class,
+        CasSurrogateAuthenticationAutoConfiguration.class,
         CasCoreRestAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasPersonDirectoryTestConfiguration.class,

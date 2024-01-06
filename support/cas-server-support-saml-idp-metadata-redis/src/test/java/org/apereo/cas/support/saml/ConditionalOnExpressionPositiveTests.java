@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml;
 
+import org.apereo.cas.config.CasSamlIdPRedisIdPMetadataAutoConfiguration;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -12,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This class is testing that the conditional expression on
- * the {@link org.apereo.cas.config.SamlIdPRedisIdPMetadataAutoConfiguration} class works.
+ * the {@link CasSamlIdPRedisIdPMetadataAutoConfiguration} class works.
  *
  * @since 6.4.0
  */

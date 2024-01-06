@@ -1,7 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.config.MongoDbTicketRegistryAutoConfiguration;
+import org.apereo.cas.config.CasMongoDbTicketRegistryAutoConfiguration;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.ticket.DefaultTicketDefinition;
 import org.apereo.cas.ticket.Ticket;
@@ -37,7 +37,7 @@ import static org.mockito.Mockito.*;
  * @since 5.1.0
  */
 @Tag("MongoDb")
-@Import(MongoDbTicketRegistryAutoConfiguration.class)
+@Import(CasMongoDbTicketRegistryAutoConfiguration.class)
 @TestPropertySource(properties = {
     "cas.ticket.registry.mongo.database-name=ticket-registry",
     "cas.ticket.registry.mongo.authentication-database-name=admin",

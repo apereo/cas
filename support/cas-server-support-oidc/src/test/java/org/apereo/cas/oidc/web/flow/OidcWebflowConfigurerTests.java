@@ -4,10 +4,10 @@ import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasOAuth20AutoConfiguration;
 import org.apereo.cas.config.CasOAuth20WebflowAutoConfiguration;
+import org.apereo.cas.config.CasOidcAutoConfiguration;
 import org.apereo.cas.config.CasThemesAutoConfiguration;
 import org.apereo.cas.config.CasThrottlingAutoConfiguration;
 import org.apereo.cas.config.CasThymeleafAutoConfiguration;
-import org.apereo.cas.config.OidcAutoConfiguration;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.throttle.ThrottledRequestFilter;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasThymeleafAutoConfiguration.class,
     CasThrottlingAutoConfiguration.class,
     CasThemesAutoConfiguration.class,
-    OidcAutoConfiguration.class,
+    CasOidcAutoConfiguration.class,
     CasOAuth20AutoConfiguration.class,
     CasOAuth20WebflowAutoConfiguration.class,
     CasCoreMultifactorAuthenticationAutoConfiguration.class,

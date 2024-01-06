@@ -17,8 +17,8 @@ import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasRestAutoConfiguration;
 import org.apereo.cas.config.CasThrottlingAutoConfiguration;
-import org.apereo.cas.config.X509CertificateExtractorAutoConfiguration;
-import org.apereo.cas.config.X509RestAutoConfiguration;
+import org.apereo.cas.config.CasX509CertificateExtractorAutoConfiguration;
+import org.apereo.cas.config.CasX509RestAutoConfiguration;
 import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -38,8 +38,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    X509CertificateExtractorAutoConfiguration.class,
-    X509RestAutoConfiguration.class,
+    CasX509CertificateExtractorAutoConfiguration.class,
+    CasX509RestAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
     CasCoreServicesAutoConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,

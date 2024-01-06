@@ -1,6 +1,6 @@
 package org.apereo.cas.web.saml2;
 
-import org.apereo.cas.config.DelegatedAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasDelegatedAuthenticationAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @SpringBootTest(classes = {
-    DelegatedAuthenticationAutoConfiguration.class,
+    CasDelegatedAuthenticationAutoConfiguration.class,
     BaseDelegatedAuthenticationTests.SharedTestConfiguration.class
 },
     properties = {

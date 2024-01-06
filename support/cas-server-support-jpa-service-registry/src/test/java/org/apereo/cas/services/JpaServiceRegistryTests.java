@@ -1,11 +1,7 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
-import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
-import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasHibernateJpaAutoConfiguration;
-import org.apereo.cas.config.JpaServiceRegistryAutoConfiguration;
+import org.apereo.cas.config.CasJpaServiceRegistryAutoConfiguration;
 import lombok.Getter;
 import lombok.val;
 import org.apache.commons.lang3.time.StopWatch;
@@ -13,10 +9,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
@@ -29,15 +22,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.1.0
  */
 @SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
-    AopAutoConfiguration.class,
-    CasCoreUtilAutoConfiguration.class,
-    CasCoreWebAutoConfiguration.class,
-    CasCoreNotificationsAutoConfiguration.class,
-    JpaServiceRegistryAutoConfiguration.class,
-    CasHibernateJpaAutoConfiguration.class,
-    CasCoreServicesAutoConfiguration.class
+    AbstractServiceRegistryTests.SharedTestConfiguration.class,
+    CasJpaServiceRegistryAutoConfiguration.class,
+    CasHibernateJpaAutoConfiguration.class
 },
     properties = "cas.jdbc.show-sql=false")
 @Tag("JDBC")

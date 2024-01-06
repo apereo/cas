@@ -1,1 +1,1 @@
-org.apereo.cas.config.WsFederationAuthenticationAutoConfiguration
+org.apereo.cas.config.CasWsFederationAuthenticationAutoConfiguration

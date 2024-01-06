@@ -1,10 +1,6 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
-import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
-import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.MongoDbServiceRegistryAutoConfiguration;
+import org.apereo.cas.config.CasMongoDbServiceRegistryAutoConfiguration;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
@@ -16,9 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -28,13 +22,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.2.0
  */
 @SpringBootTest(classes = {
-    MongoDbServiceRegistryAutoConfiguration.class,
-    CasCoreNotificationsAutoConfiguration.class,
-    CasCoreWebAutoConfiguration.class,
-    CasCoreServicesAutoConfiguration.class,
-    CasCoreUtilAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
-    RefreshAutoConfiguration.class
+    CasMongoDbServiceRegistryAutoConfiguration.class,
+    AbstractServiceRegistryTests.SharedTestConfiguration.class
 },
     properties = {
         "cas.service-registry.mongo.database-name=service-registry",

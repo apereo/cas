@@ -18,6 +18,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-logout-api")
     testImplementation project(":core:cas-server-core-monitor")
     testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-audit")
 
     testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core-authentication")

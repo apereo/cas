@@ -2,7 +2,7 @@ package org.apereo.cas.notifications;
 
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
-import org.apereo.cas.config.SlackMessagingAutoConfiguration;
+import org.apereo.cas.config.CasSlackMessagingAutoConfiguration;
 import org.apereo.cas.notifications.push.NotificationSender;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.junit.jupiter.api.Tag;
@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
-    SlackMessagingAutoConfiguration.class,
+    CasSlackMessagingAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class
 }, properties = "cas.slack-messaging.api-token=xoxb-1234567890")
 @Tag("Simple")

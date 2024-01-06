@@ -16,7 +16,7 @@ import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
-import org.apereo.cas.config.SyncopeAutoConfiguration;
+import org.apereo.cas.config.CasSyncopeAutoConfiguration;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -106,7 +106,7 @@ public abstract class BaseSyncopeTests {
     })
     @SpringBootConfiguration
     @Import({
-        SyncopeAutoConfiguration.class,
+        CasSyncopeAutoConfiguration.class,
 
         CasCoreAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,

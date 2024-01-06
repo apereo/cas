@@ -1,7 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.config.GoogleCloudFirestoreTicketRegistryAutoConfiguration;
+import org.apereo.cas.config.CasGoogleCloudFirestoreTicketRegistryAutoConfiguration;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
@@ -41,7 +41,7 @@ import static org.mockito.Mockito.*;
 @Tag("GCP")
 @Import({
     GoogleCloudFirestoreTicketRegistryTests.GoogleCloudFirestoreTestConfiguration.class,
-    GoogleCloudFirestoreTicketRegistryAutoConfiguration.class,
+    CasGoogleCloudFirestoreTicketRegistryAutoConfiguration.class,
     GcpFirestoreAutoConfiguration.class,
     GcpContextAutoConfiguration.class
 })
