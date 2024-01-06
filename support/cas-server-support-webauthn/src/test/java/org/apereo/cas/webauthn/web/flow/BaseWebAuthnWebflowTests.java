@@ -13,10 +13,10 @@ import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
+import org.apereo.cas.config.CasMultifactorAuthnTrustAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasSupportActionsAutoConfiguration;
-import org.apereo.cas.config.MultifactorAuthnTrustAutoConfiguration;
-import org.apereo.cas.config.WebAuthnAutoConfiguration;
+import org.apereo.cas.config.CasWebAuthnAutoConfiguration;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -54,9 +54,9 @@ public abstract class BaseWebAuthnWebflowTests {
         CasCoreWebflowAutoConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
         CasPersonDirectoryTestConfiguration.class,
-        MultifactorAuthnTrustAutoConfiguration.class,
+        CasMultifactorAuthnTrustAutoConfiguration.class,
         CasSupportActionsAutoConfiguration.class,
-        WebAuthnAutoConfiguration.class
+        CasWebAuthnAutoConfiguration.class
     })
     public static class SharedTestConfiguration {
     }

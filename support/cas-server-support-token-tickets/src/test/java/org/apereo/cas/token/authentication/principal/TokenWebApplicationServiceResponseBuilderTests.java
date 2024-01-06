@@ -19,8 +19,8 @@ import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
-import org.apereo.cas.config.TokenCoreAutoConfiguration;
-import org.apereo.cas.config.TokenTicketsAutoConfiguration;
+import org.apereo.cas.config.CasTokenCoreAutoConfiguration;
+import org.apereo.cas.config.CasTokenTicketsAutoConfiguration;
 import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -49,14 +49,14 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     CasRegisteredServicesTestConfiguration.class,
-    TokenTicketsAutoConfiguration.class,
+    CasTokenTicketsAutoConfiguration.class,
     RefreshAutoConfiguration.class,
     MailSenderAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
     CasCoreServicesAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
-    TokenCoreAutoConfiguration.class,
+    CasTokenCoreAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
     CasPersonDirectoryAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class,

@@ -1,7 +1,7 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.config.CoreSamlAutoConfiguration;
-import org.apereo.cas.config.SamlIdPAutoConfiguration;
+import org.apereo.cas.config.CasCoreSamlAutoConfiguration;
+import org.apereo.cas.config.CasSamlIdPAutoConfiguration;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.idp.metadata.locator.FileSystemSamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
@@ -37,8 +37,8 @@ import static org.mockito.Mockito.*;
  */
 @Import({
     BaseSamlIdPWebflowTests.SamlIdPMetadataTestConfiguration.class,
-    CoreSamlAutoConfiguration.class,
-    SamlIdPAutoConfiguration.class
+    CasCoreSamlAutoConfiguration.class,
+    CasSamlIdPAutoConfiguration.class
 })
 public abstract class BaseSamlIdPWebflowTests extends BaseWebflowConfigurerTests {
 

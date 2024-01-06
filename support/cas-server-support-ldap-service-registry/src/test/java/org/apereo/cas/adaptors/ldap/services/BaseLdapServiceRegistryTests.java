@@ -1,10 +1,6 @@
 package org.apereo.cas.adaptors.ldap.services;
 
-import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
-import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
-import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.LdapServiceRegistryAutoConfiguration;
+import org.apereo.cas.config.CasLdapServiceRegistryAutoConfiguration;
 import org.apereo.cas.services.AbstractServiceRegistryTests;
 import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.RegisteredServiceDefinition;
@@ -16,9 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -30,13 +24,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @EnableScheduling
 @SpringBootTest(classes = {
-    LdapServiceRegistryAutoConfiguration.class,
-    CasCoreServicesAutoConfiguration.class,
-    CasCoreWebAutoConfiguration.class,
-    CasCoreUtilAutoConfiguration.class,
-    CasCoreNotificationsAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
-    RefreshAutoConfiguration.class
+    CasLdapServiceRegistryAutoConfiguration.class,
+    AbstractServiceRegistryTests.SharedTestConfiguration.class
 }, properties = {
     "cas.service-registry.ldap.ldap-url=ldap://localhost:10389",
     "cas.service-registry.ldap.base-dn=dc=example,dc=org"

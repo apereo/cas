@@ -1,6 +1,6 @@
 package org.apereo.cas.token;
 
-import org.apereo.cas.config.TokenCoreAutoConfiguration;
+import org.apereo.cas.config.CasTokenCoreAutoConfiguration;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     AbstractCasEndpointTests.SharedTestConfiguration.class,
-    TokenCoreAutoConfiguration.class
+    CasTokenCoreAutoConfiguration.class
 },
     properties = {
         "management.endpoints.web.exposure.include=*",

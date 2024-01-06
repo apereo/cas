@@ -4,7 +4,7 @@ import org.apereo.cas.adaptors.yubikey.AbstractYubiKeyAccountRegistryTests;
 import org.apereo.cas.adaptors.yubikey.BaseYubiKeyTests;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.config.CasHibernateJpaAutoConfiguration;
-import org.apereo.cas.config.JpaYubiKeyAutoConfiguration;
+import org.apereo.cas.config.CasJpaYubiKeyAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import lombok.Getter;
@@ -21,7 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  * @since 5.3.0
  */
 @SpringBootTest(classes = {
-    JpaYubiKeyAutoConfiguration.class,
+    CasJpaYubiKeyAutoConfiguration.class,
     CasHibernateJpaAutoConfiguration.class,
     BaseYubiKeyTests.SharedTestConfiguration.class
 }, properties = {

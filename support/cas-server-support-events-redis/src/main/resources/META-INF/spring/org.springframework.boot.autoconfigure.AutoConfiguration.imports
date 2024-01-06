@@ -1,1 +1,1 @@
-org.apereo.cas.config.RedisEventsAutoConfiguration
+org.apereo.cas.config.CasRedisEventsAutoConfiguration

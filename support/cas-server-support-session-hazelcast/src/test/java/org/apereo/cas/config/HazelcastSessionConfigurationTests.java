@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
     classes = {
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
-        HazelcastSessionAutoConfiguration.class
+        CasHazelcastSessionAutoConfiguration.class
     },
     properties = {
         "cas.webflow.session.server.hazelcast.cluster.network.port-auto-increment=false",

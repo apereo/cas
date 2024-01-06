@@ -19,10 +19,10 @@ import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
+import org.apereo.cas.config.CasDuoSecurityAutoConfiguration;
+import org.apereo.cas.config.CasMultifactorAuthnTrustAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasThemesAutoConfiguration;
-import org.apereo.cas.config.DuoSecurityAutoConfiguration;
-import org.apereo.cas.config.MultifactorAuthnTrustAutoConfiguration;
 import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.http.HttpRequestUtils;
@@ -93,9 +93,9 @@ public abstract class BaseDuoSecurityTests {
     })
     @SpringBootConfiguration
     @Import({
-        MultifactorAuthnTrustAutoConfiguration.class,
+        CasMultifactorAuthnTrustAutoConfiguration.class,
 
-        DuoSecurityAutoConfiguration.class,
+        CasDuoSecurityAutoConfiguration.class,
 
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,

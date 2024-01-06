@@ -1,6 +1,6 @@
 package org.apereo.cas.ticket.registry.queue;
 
-import org.apereo.cas.config.AMQPTicketRegistryAutoConfiguration;
+import org.apereo.cas.config.CasAMQPTicketRegistryAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
@@ -31,7 +31,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 @SpringBootTest(classes = {
     CompositeMeterRegistryAutoConfiguration.class,
     RabbitAutoConfiguration.class,
-    AMQPTicketRegistryAutoConfiguration.class,
+    CasAMQPTicketRegistryAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,

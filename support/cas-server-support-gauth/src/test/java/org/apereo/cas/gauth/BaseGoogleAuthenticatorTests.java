@@ -13,10 +13,10 @@ import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
+import org.apereo.cas.config.CasGoogleAuthenticatorAutoConfiguration;
+import org.apereo.cas.config.CasMultifactorAuthnTrustAutoConfiguration;
+import org.apereo.cas.config.CasOneTimeTokenAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
-import org.apereo.cas.config.GoogleAuthenticatorAutoConfiguration;
-import org.apereo.cas.config.MultifactorAuthnTrustAutoConfiguration;
-import org.apereo.cas.config.OneTimeTokenAuthenticationAutoConfiguration;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -41,7 +41,7 @@ public abstract class BaseGoogleAuthenticatorTests {
     @Import({
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
-        OneTimeTokenAuthenticationAutoConfiguration.class,
+        CasOneTimeTokenAuthenticationAutoConfiguration.class,
         CasPersonDirectoryTestConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
@@ -55,10 +55,10 @@ public abstract class BaseGoogleAuthenticatorTests {
         CasCoreUtilAutoConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
 
-        MultifactorAuthnTrustAutoConfiguration.class,
+        CasMultifactorAuthnTrustAutoConfiguration.class,
 
-        GoogleAuthenticatorAutoConfiguration.GoogleAuthenticatorMultifactorTrustConfiguration.class,
-        GoogleAuthenticatorAutoConfiguration.class
+        CasGoogleAuthenticatorAutoConfiguration.GoogleAuthenticatorMultifactorTrustConfiguration.class,
+        CasGoogleAuthenticatorAutoConfiguration.class
     })
     public static class SharedTestConfiguration {
     }

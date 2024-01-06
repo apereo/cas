@@ -1,6 +1,6 @@
 package org.apereo.cas.trusted.authentication.storage;
 
-import org.apereo.cas.config.DynamoDbMultifactorAuthenticationTrustAutoConfiguration;
+import org.apereo.cas.config.CasDynamoDbMultifactorAuthenticationTrustAutoConfiguration;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Import(DynamoDbMultifactorAuthenticationTrustAutoConfiguration.class)
+@Import(CasDynamoDbMultifactorAuthenticationTrustAutoConfiguration.class)
 @TestPropertySource(properties = {
     "cas.authn.mfa.trusted.dynamo-db.endpoint=http://localhost:8000",
     "cas.authn.mfa.trusted.dynamo-db.drop-tables-on-startup=true",

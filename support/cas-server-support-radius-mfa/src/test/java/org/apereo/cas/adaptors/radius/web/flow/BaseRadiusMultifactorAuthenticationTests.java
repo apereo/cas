@@ -13,9 +13,9 @@ import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
+import org.apereo.cas.config.CasMultifactorAuthnTrustAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
-import org.apereo.cas.config.MultifactorAuthnTrustAutoConfiguration;
-import org.apereo.cas.config.RadiusMultifactorAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasRadiusMultifactorAuthenticationAutoConfiguration;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -54,9 +54,9 @@ public abstract class BaseRadiusMultifactorAuthenticationTests {
         CasCoreUtilAutoConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
 
-        MultifactorAuthnTrustAutoConfiguration.class,
-        RadiusMultifactorAuthenticationAutoConfiguration.RadiusMultifactorTrustConfiguration.class,
-        RadiusMultifactorAuthenticationAutoConfiguration.class
+        CasMultifactorAuthnTrustAutoConfiguration.class,
+        CasRadiusMultifactorAuthenticationAutoConfiguration.RadiusMultifactorTrustConfiguration.class,
+        CasRadiusMultifactorAuthenticationAutoConfiguration.class
     })
     public static class SharedTestConfiguration {
     }

@@ -1,7 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.config.CosmosDbTicketRegistryAutoConfiguration;
+import org.apereo.cas.config.CasCosmosDbTicketRegistryAutoConfiguration;
 import org.apereo.cas.cosmosdb.CosmosDbObjectFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("Azure")
-@Import(CosmosDbTicketRegistryAutoConfiguration.class)
+@Import(CasCosmosDbTicketRegistryAutoConfiguration.class)
 @TestPropertySource(properties = {
     "cas.tgc.crypto.enabled=false",
     "cas.http-client.host-name-verifier=none",

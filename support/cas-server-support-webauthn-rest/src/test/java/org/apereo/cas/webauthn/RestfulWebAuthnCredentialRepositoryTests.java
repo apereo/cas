@@ -1,6 +1,6 @@
 package org.apereo.cas.webauthn;
 
-import org.apereo.cas.config.RestfulWebAuthnAutoConfiguration;
+import org.apereo.cas.config.CasRestfulWebAuthnAutoConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.webauthn.storage.BaseWebAuthnCredentialRepositoryTests;
@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("RestfulApiAuthentication")
 @TestPropertySource(properties = "cas.authn.mfa.web-authn.rest.url=http://localhost:9559")
-@Import(RestfulWebAuthnAutoConfiguration.class)
+@Import(CasRestfulWebAuthnAutoConfiguration.class)
 class RestfulWebAuthnCredentialRepositoryTests extends BaseWebAuthnCredentialRepositoryTests {
 
     @Test

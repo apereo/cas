@@ -1,6 +1,6 @@
 package org.apereo.cas.support.saml;
 
-import org.apereo.cas.config.SamlIdPRedisIdPMetadataAutoConfiguration;
+import org.apereo.cas.config.CasSamlIdPRedisIdPMetadataAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.services.ServicesManager;
@@ -20,7 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  * @since 6.4.0
  */
 @SpringBootTest(classes = {
-    SamlIdPRedisIdPMetadataAutoConfiguration.class,
+    CasSamlIdPRedisIdPMetadataAutoConfiguration.class,
     BaseSamlIdPMetadataTests.SharedTestConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)

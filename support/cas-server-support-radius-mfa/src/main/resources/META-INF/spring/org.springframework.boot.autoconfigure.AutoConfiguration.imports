@@ -1,1 +1,1 @@
-org.apereo.cas.config.RadiusMultifactorAuthenticationAutoConfiguration
+org.apereo.cas.config.CasRadiusMultifactorAuthenticationAutoConfiguration

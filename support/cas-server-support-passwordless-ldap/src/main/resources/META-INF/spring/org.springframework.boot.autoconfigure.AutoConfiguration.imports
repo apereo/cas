@@ -1,1 +1,1 @@
-org.apereo.cas.config.LdapPasswordlessAuthenticationAutoConfiguration
+org.apereo.cas.config.CasLdapPasswordlessAuthenticationAutoConfiguration

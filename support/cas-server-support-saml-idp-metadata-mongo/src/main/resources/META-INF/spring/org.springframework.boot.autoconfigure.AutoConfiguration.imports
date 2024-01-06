@@ -1,1 +1,1 @@
-org.apereo.cas.config.SamlIdPMongoDbAutoConfiguration
+org.apereo.cas.config.CasSamlIdPMongoDbAutoConfiguration

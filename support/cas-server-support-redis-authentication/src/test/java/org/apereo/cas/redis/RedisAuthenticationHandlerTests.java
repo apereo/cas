@@ -13,7 +13,7 @@ import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
-import org.apereo.cas.config.RedisAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasRedisAuthenticationAutoConfiguration;
 import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DigestUtils;
@@ -43,7 +43,7 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @SpringBootTest(classes = {
-    RedisAuthenticationAutoConfiguration.class,
+    CasRedisAuthenticationAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,

@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.autoconfigure.endpoint.EndpointAutoConfiguration;
+import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
@@ -50,9 +52,12 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAutoConfiguration.class,
     CasCoreAuditAutoConfiguration.class,
     CasPersonDirectoryAutoConfiguration.class,
+
     WebMvcAutoConfiguration.class,
     AopAutoConfiguration.class,
     MailSenderAutoConfiguration.class,
+    EndpointAutoConfiguration.class,
+    WebEndpointAutoConfiguration.class,
     RefreshAutoConfiguration.class
 }, properties = {
     "spring.main.allow-bean-definition-overriding=true",

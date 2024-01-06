@@ -10,15 +10,17 @@ import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreSamlAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
+import org.apereo.cas.config.CasDelegatedAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
+import org.apereo.cas.config.CasSurrogateAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasSurrogateAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasThemesAutoConfiguration;
-import org.apereo.cas.config.SurrogateAuthenticationAutoConfiguration;
-import org.apereo.cas.config.SurrogateAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -47,8 +49,8 @@ public abstract class BaseSurrogateAuthenticationTests {
     @SpringBootConfiguration
     @Import({
         AuthenticationTestConfiguration.class,
-        SurrogateAuthenticationAutoConfiguration.class,
-        SurrogateAuthenticationWebflowAutoConfiguration.class,
+        CasSurrogateAuthenticationAutoConfiguration.class,
+        CasSurrogateAuthenticationWebflowAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
@@ -63,8 +65,9 @@ public abstract class BaseSurrogateAuthenticationTests {
         CasCoreLogoutAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasPersonDirectoryTestConfiguration.class,
-        CasCoreCookieAutoConfiguration.class
-
+        CasCoreCookieAutoConfiguration.class,
+        CasCoreSamlAutoConfiguration.class,
+        CasDelegatedAuthenticationAutoConfiguration.class
     })
     public static class SharedTestConfiguration {
     }

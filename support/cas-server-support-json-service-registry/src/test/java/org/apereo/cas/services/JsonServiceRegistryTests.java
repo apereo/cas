@@ -1,7 +1,6 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.AbstractResourceBasedServiceRegistry;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
@@ -15,9 +14,7 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -36,11 +33,7 @@ import static org.mockito.Mockito.*;
  * @since 4.1.0
  */
 @Tag("FileSystem")
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
-    CasCoreUtilAutoConfiguration.class
-})
+@SpringBootTest(classes = AbstractServiceRegistryTests.SharedTestConfiguration.class)
 class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;

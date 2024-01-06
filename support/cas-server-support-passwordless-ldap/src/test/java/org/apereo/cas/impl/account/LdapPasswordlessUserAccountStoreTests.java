@@ -2,7 +2,7 @@ package org.apereo.cas.impl.account;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
-import org.apereo.cas.config.LdapPasswordlessAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasLdapPasswordlessAuthenticationAutoConfiguration;
 import org.apereo.cas.impl.BasePasswordlessUserAccountStoreTests;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import com.unboundid.ldap.sdk.LDAPConnection;
@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.passwordless.accounts.ldap.request-password-attribute=description"
 })
 @Slf4j
-@Import(LdapPasswordlessAuthenticationAutoConfiguration.class)
+@Import(CasLdapPasswordlessAuthenticationAutoConfiguration.class)
 class LdapPasswordlessUserAccountStoreTests extends BasePasswordlessUserAccountStoreTests {
     @Autowired
     @Qualifier(PasswordlessUserAccountStore.BEAN_NAME)

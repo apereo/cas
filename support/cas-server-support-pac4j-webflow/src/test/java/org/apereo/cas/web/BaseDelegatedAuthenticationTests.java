@@ -8,15 +8,15 @@ import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreSamlAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
+import org.apereo.cas.config.CasDelegatedAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasThymeleafAutoConfiguration;
-import org.apereo.cas.config.CoreSamlAutoConfiguration;
-import org.apereo.cas.config.DelegatedAuthenticationAutoConfiguration;
 import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationRequestCustomizer;
 import org.apereo.cas.support.pac4j.authentication.clients.DelegatedAuthenticationClientsTestConfiguration;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
@@ -55,10 +55,10 @@ public abstract class BaseDelegatedAuthenticationTests {
     @Import({
         DelegatedAuthenticationWebflowTestConfiguration.class,
         DelegatedAuthenticationClientsTestConfiguration.class,
-        DelegatedAuthenticationAutoConfiguration.class,
+        CasDelegatedAuthenticationAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
-        CoreSamlAutoConfiguration.class,
+        CasCoreSamlAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,

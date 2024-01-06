@@ -14,8 +14,8 @@ import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
+import org.apereo.cas.config.CasMultifactorAuthnTrustAutoConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
-import org.apereo.cas.config.MultifactorAuthnTrustAutoConfiguration;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecordKeyGenerator;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
@@ -135,7 +135,7 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
         GeoLocationServiceTestConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
-        MultifactorAuthnTrustAutoConfiguration.class
+        CasMultifactorAuthnTrustAutoConfiguration.class
     })
     public static class SharedTestConfiguration {
     }

@@ -1,1 +1,1 @@
-org.apereo.cas.config.MongoDbServiceRegistryAutoConfiguration
+org.apereo.cas.config.CasMongoDbServiceRegistryAutoConfiguration

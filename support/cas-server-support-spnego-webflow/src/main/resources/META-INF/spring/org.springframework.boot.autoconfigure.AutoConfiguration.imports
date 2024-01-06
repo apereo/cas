@@ -1,1 +1,1 @@
-org.apereo.cas.config.SpnegoWebflowAutoConfiguration
+org.apereo.cas.config.CasSpnegoWebflowAutoConfiguration

@@ -1,1 +1,1 @@
-org.apereo.cas.config.RestfulWebAuthnAutoConfiguration
+org.apereo.cas.config.CasRestfulWebAuthnAutoConfiguration

@@ -1,12 +1,12 @@
 package org.apereo.cas.support.saml.web;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.config.CasCoreSamlAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
+import org.apereo.cas.config.CasSamlAutoConfiguration;
 import org.apereo.cas.config.CasThemesAutoConfiguration;
 import org.apereo.cas.config.CasThymeleafAutoConfiguration;
 import org.apereo.cas.config.CasValidationAutoConfiguration;
-import org.apereo.cas.config.CoreSamlAutoConfiguration;
-import org.apereo.cas.config.SamlAutoConfiguration;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apereo.cas.web.report.AbstractCasEndpointTests;
 import lombok.val;
@@ -28,9 +28,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     AbstractCasEndpointTests.SharedTestConfiguration.class,
-    CoreSamlAutoConfiguration.class,
+    CasCoreSamlAutoConfiguration.class,
     CasPersonDirectoryAutoConfiguration.class,
-    SamlAutoConfiguration.class,
+    CasSamlAutoConfiguration.class,
     CasThemesAutoConfiguration.class,
     CasThymeleafAutoConfiguration.class,
     CasValidationAutoConfiguration.class

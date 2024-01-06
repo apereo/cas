@@ -1,6 +1,6 @@
 package org.apereo.cas.webauthn;
 
-import org.apereo.cas.config.DynamoDbWebAuthnAutoConfiguration;
+import org.apereo.cas.config.CasDynamoDbWebAuthnAutoConfiguration;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.webauthn.storage.BaseWebAuthnCredentialRepositoryTests;
 import lombok.Getter;
@@ -25,7 +25,7 @@ import software.amazon.awssdk.core.SdkSystemSetting;
 @Tag("DynamoDb")
 @Getter
 @EnabledIfListeningOnPort(port = 8000)
-@Import(DynamoDbWebAuthnAutoConfiguration.class)
+@Import(CasDynamoDbWebAuthnAutoConfiguration.class)
 class DynamoDbWebAuthnCredentialRepositoryTests extends BaseWebAuthnCredentialRepositoryTests {
     static {
         System.setProperty(SdkSystemSetting.AWS_ACCESS_KEY_ID.property(), "AKIAIPPIGGUNIO74C63Z");

@@ -1,11 +1,6 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
-import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
-import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
-import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CosmosDbServiceRegistryAutoConfiguration;
+import org.apereo.cas.config.CasCosmosDbServiceRegistryAutoConfiguration;
 import org.apereo.cas.cosmosdb.CosmosDbObjectFactory;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import lombok.Getter;
@@ -17,9 +12,7 @@ import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -30,14 +23,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Azure")
 @SpringBootTest(classes = {
-    CasCoreUtilAutoConfiguration.class,
-    CasCoreWebAutoConfiguration.class,
-    CasCoreServicesAutoConfiguration.class,
-    CasCoreNotificationsAutoConfiguration.class,
-    CasCoreAuthenticationAutoConfiguration.class,
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
-    CosmosDbServiceRegistryAutoConfiguration.class
+    AbstractServiceRegistryTests.SharedTestConfiguration.class,
+    CasCosmosDbServiceRegistryAutoConfiguration.class
 }, properties = {
     "cas.http-client.host-name-verifier=none",
     "cas.service-registry.cosmos-db.uri=${#environmentVariables['COSMOS_DB_URL']}",

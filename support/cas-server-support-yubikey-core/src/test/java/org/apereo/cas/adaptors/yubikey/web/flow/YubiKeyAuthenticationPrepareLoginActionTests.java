@@ -7,6 +7,7 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -23,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class
 })
-@EnableConfigurationProperties(CasConfigurationProperties.class)
+@EnableConfigurationProperties({CasConfigurationProperties.class, WebProperties.class})
 class YubiKeyAuthenticationPrepareLoginActionTests extends BaseYubiKeyActionTests {
 
     @Autowired

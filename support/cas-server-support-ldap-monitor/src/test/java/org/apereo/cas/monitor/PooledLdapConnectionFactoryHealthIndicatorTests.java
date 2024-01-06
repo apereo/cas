@@ -1,7 +1,7 @@
 package org.apereo.cas.monitor;
 
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
-import org.apereo.cas.config.LdapMonitorAutoConfiguration;
+import org.apereo.cas.config.CasLdapMonitorAutoConfiguration;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.0.0
  */
 @SpringBootTest(classes = {
-    LdapMonitorAutoConfiguration.class,
+    CasLdapMonitorAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     RefreshAutoConfiguration.class
 },

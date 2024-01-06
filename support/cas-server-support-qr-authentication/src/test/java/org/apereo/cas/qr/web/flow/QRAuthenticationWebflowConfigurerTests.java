@@ -1,7 +1,7 @@
 package org.apereo.cas.qr.web.flow;
 
-import org.apereo.cas.config.QRAuthenticationAutoConfiguration;
-import org.apereo.cas.config.TokenCoreAutoConfiguration;
+import org.apereo.cas.config.CasQRAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasTokenCoreAutoConfiguration;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import lombok.val;
@@ -18,8 +18,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Import({
-    QRAuthenticationAutoConfiguration.class,
-    TokenCoreAutoConfiguration.class
+    CasQRAuthenticationAutoConfiguration.class,
+    CasTokenCoreAutoConfiguration.class
 })
 @Tag("WebflowConfig")
 class QRAuthenticationWebflowConfigurerTests extends BaseWebflowConfigurerTests {

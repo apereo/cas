@@ -1,1 +1,1 @@
-org.apereo.cas.config.SlackMessagingAutoConfiguration
+org.apereo.cas.config.CasSlackMessagingAutoConfiguration

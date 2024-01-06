@@ -1,7 +1,7 @@
 package org.apereo.cas.monitor;
 
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
-import org.apereo.cas.config.MemcachedMonitorAutoConfiguration;
+import org.apereo.cas.config.CasMemcachedMonitorAutoConfiguration;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.val;
 import net.spy.memcached.MemcachedClientIF;
@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    MemcachedMonitorAutoConfiguration.class,
+    CasMemcachedMonitorAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class
 }, properties = {
     "cas.monitor.memcached.servers=localhost:11212",

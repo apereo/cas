@@ -12,8 +12,8 @@ import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
+import org.apereo.cas.config.CasRedisAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
-import org.apereo.cas.config.RedisAuthenticationAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.redis.core.RedisObjectFactory;
 import org.apereo.cas.util.CollectionUtils;
@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    RedisAuthenticationAutoConfiguration.class,
+    CasRedisAuthenticationAutoConfiguration.class,
     CasCoreAutoConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,

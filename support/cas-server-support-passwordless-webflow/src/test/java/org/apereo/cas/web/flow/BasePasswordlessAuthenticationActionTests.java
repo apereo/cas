@@ -10,17 +10,17 @@ import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreSamlAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
+import org.apereo.cas.config.CasDelegatedAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasPasswordlessAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasPasswordlessAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
-import org.apereo.cas.config.CoreSamlAutoConfiguration;
-import org.apereo.cas.config.DelegatedAuthenticationAutoConfiguration;
-import org.apereo.cas.config.PasswordlessAuthenticationAutoConfiguration;
-import org.apereo.cas.config.PasswordlessAuthenticationWebflowAutoConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
@@ -45,9 +45,9 @@ import org.springframework.context.annotation.Bean;
     MockMvcAutoConfiguration.class,
     ErrorMvcAutoConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,
-    DelegatedAuthenticationAutoConfiguration.class,
+    CasDelegatedAuthenticationAutoConfiguration.class,
     CasCoreWebflowAutoConfiguration.class,
-    CoreSamlAutoConfiguration.class,
+    CasCoreSamlAutoConfiguration.class,
     CasCoreAutoConfiguration.class,
     CasCoreCookieAutoConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,
@@ -62,8 +62,8 @@ import org.springframework.context.annotation.Bean;
     CasRegisteredServicesTestConfiguration.class,
     CasAuthenticationEventExecutionPlanTestConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
-    PasswordlessAuthenticationAutoConfiguration.class,
-    PasswordlessAuthenticationWebflowAutoConfiguration.class
+    CasPasswordlessAuthenticationAutoConfiguration.class,
+    CasPasswordlessAuthenticationWebflowAutoConfiguration.class
 })
 public abstract class BasePasswordlessAuthenticationActionTests {
     @Autowired

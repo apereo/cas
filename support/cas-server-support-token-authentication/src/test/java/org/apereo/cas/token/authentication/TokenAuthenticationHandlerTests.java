@@ -13,7 +13,7 @@ import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
-import org.apereo.cas.config.TokenAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasTokenAuthenticationAutoConfiguration;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredService;
@@ -63,7 +63,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreLogoutAutoConfiguration.class,
     TokenAuthenticationHandlerTests.TokenAuthenticationTestConfiguration.class,
     CasCoreAutoConfiguration.class,
-    TokenAuthenticationAutoConfiguration.class
+    CasTokenAuthenticationAutoConfiguration.class
 }, properties = "cas.authn.token.sso-token-enabled=true")
 @Tag("AuthenticationHandler")
 class TokenAuthenticationHandlerTests {

@@ -15,6 +15,7 @@ import org.apereo.cas.config.CasCoreMonitorAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreSamlAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
@@ -22,9 +23,8 @@ import org.apereo.cas.config.CasCoreValidationAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
+import org.apereo.cas.config.CasSamlIdPAutoConfiguration;
 import org.apereo.cas.config.CasThrottlingAutoConfiguration;
-import org.apereo.cas.config.CoreSamlAutoConfiguration;
-import org.apereo.cas.config.SamlIdPAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.apereo.cas.services.RegisteredServicesTemplatesManager;
@@ -346,14 +346,14 @@ public abstract class BaseSamlIdPConfigurationTests {
         CasCoreMonitorAutoConfiguration.class,
         CasCoreWebflowAutoConfiguration.class,
         CasThrottlingAutoConfiguration.class,
-        SamlIdPAutoConfiguration.class,
+        CasSamlIdPAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
         CasCoreCookieAutoConfiguration.class,
         CasCoreValidationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
-        CoreSamlAutoConfiguration.class,
+        CasCoreSamlAutoConfiguration.class,
         CasPersonDirectoryAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class
     })

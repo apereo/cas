@@ -1,6 +1,6 @@
 package org.apereo.cas.webauthn;
 
-import org.apereo.cas.config.MongoDbWebAuthnAutoConfiguration;
+import org.apereo.cas.config.CasMongoDbWebAuthnAutoConfiguration;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.webauthn.storage.BaseWebAuthnCredentialRepositoryTests;
 import lombok.Getter;
@@ -35,7 +35,7 @@ import org.springframework.test.context.TestPropertySource;
 @Tag("MongoDbMFA")
 @Getter
 @EnabledIfListeningOnPort(port = 27017)
-@Import(MongoDbWebAuthnAutoConfiguration.class)
+@Import(CasMongoDbWebAuthnAutoConfiguration.class)
 class MongoDbWebAuthnCredentialRepositoryTests extends BaseWebAuthnCredentialRepositoryTests {
     @Autowired
     @Qualifier("mongoWebAuthnTemplate")

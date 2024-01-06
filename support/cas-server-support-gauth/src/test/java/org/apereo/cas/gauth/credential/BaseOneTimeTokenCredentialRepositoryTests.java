@@ -13,8 +13,8 @@ import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
+import org.apereo.cas.config.CasGoogleAuthenticatorAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
-import org.apereo.cas.config.GoogleAuthenticatorAutoConfiguration;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import com.warrenstrange.googleauth.GoogleAuthenticator;
@@ -223,7 +223,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
         CasCoreWebflowAutoConfiguration.class,
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
-        GoogleAuthenticatorAutoConfiguration.class,
+        CasGoogleAuthenticatorAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,

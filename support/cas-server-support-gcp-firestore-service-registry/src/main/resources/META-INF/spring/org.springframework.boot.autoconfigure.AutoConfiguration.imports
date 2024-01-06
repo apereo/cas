@@ -1,1 +1,1 @@
-org.apereo.cas.config.GoogleCloudFirestoreServiceRegistryAutoConfiguration
+org.apereo.cas.config.CasGoogleCloudFirestoreServiceRegistryAutoConfiguration

@@ -1,1 +1,1 @@
-org.apereo.cas.config.AmazonCoreAutoConfiguration
+org.apereo.cas.config.CasAmazonCoreAutoConfiguration

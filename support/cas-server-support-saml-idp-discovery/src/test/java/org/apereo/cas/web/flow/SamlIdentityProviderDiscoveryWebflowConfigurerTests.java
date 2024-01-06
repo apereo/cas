@@ -1,8 +1,8 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.config.CoreSamlAutoConfiguration;
-import org.apereo.cas.config.DelegatedAuthenticationAutoConfiguration;
-import org.apereo.cas.config.SamlIdentityProviderDiscoveryAutoConfiguration;
+import org.apereo.cas.config.CasCoreSamlAutoConfiguration;
+import org.apereo.cas.config.CasDelegatedAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasSamlIdentityProviderDiscoveryAutoConfiguration;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -23,9 +23,9 @@ import static org.junit.jupiter.api.Assertions.*;
     WebMvcAutoConfiguration.class,
     MockMvcAutoConfiguration.class,
     ErrorMvcAutoConfiguration.class,
-    CoreSamlAutoConfiguration.class,
-    DelegatedAuthenticationAutoConfiguration.class,
-    SamlIdentityProviderDiscoveryAutoConfiguration.class
+    CasCoreSamlAutoConfiguration.class,
+    CasDelegatedAuthenticationAutoConfiguration.class,
+    CasSamlIdentityProviderDiscoveryAutoConfiguration.class
 })
 @Tag("SAML2Web")
 class SamlIdentityProviderDiscoveryWebflowConfigurerTests extends BaseWebflowConfigurerTests {

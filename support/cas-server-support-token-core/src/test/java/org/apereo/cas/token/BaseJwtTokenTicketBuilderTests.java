@@ -12,7 +12,7 @@ import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
-import org.apereo.cas.config.TokenCoreAutoConfiguration;
+import org.apereo.cas.config.CasTokenCoreAutoConfiguration;
 import org.apereo.cas.services.BaseRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty;
@@ -43,7 +43,7 @@ import static org.mockito.Mockito.*;
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
     BaseJwtTokenTicketBuilderTests.TokenTicketBuilderTestConfiguration.class,
-    TokenCoreAutoConfiguration.class,
+    CasTokenCoreAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasRegisteredServicesTestConfiguration.class,

@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication.surrogate;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.config.SurrogateRestAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasSurrogateRestAuthenticationAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("RestfulApi")
 @SpringBootTest(classes = {
-    SurrogateRestAuthenticationAutoConfiguration.class,
+    CasSurrogateRestAuthenticationAutoConfiguration.class,
     BaseSurrogateAuthenticationServiceTests.SharedTestConfiguration.class
 },
     properties = "cas.authn.surrogate.rest.url=http://localhost:9301")

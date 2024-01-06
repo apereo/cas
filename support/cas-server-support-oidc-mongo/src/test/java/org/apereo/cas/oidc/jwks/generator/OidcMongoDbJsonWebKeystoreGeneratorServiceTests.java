@@ -1,6 +1,6 @@
 package org.apereo.cas.oidc.jwks.generator;
 
-import org.apereo.cas.config.OidcJwksMongoDbAutoConfiguration;
+import org.apereo.cas.config.CasOidcJwksMongoDbAutoConfiguration;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.val;
@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.oidc.jwks.mongo.drop-collection=true"
 })
 @EnabledIfListeningOnPort(port = 27017)
-@Import(OidcJwksMongoDbAutoConfiguration.class)
+@Import(CasOidcJwksMongoDbAutoConfiguration.class)
 class OidcMongoDbJsonWebKeystoreGeneratorServiceTests extends AbstractOidcTests {
     @Test
     void verifyOperation() throws Throwable {

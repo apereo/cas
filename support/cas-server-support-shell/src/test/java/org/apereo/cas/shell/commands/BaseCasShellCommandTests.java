@@ -1,7 +1,7 @@
 package org.apereo.cas.shell.commands;
 
 import org.apereo.cas.config.CasCommandLineShellAutoConfiguration;
-import org.apereo.cas.config.CoreSamlAutoConfiguration;
+import org.apereo.cas.config.CasCoreSamlAutoConfiguration;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CommandCatalogAutoConfiguration.class,
     StandardAPIAutoConfiguration.class,
     ShellContextAutoConfiguration.class,
-    CoreSamlAutoConfiguration.class,
+    CasCoreSamlAutoConfiguration.class,
     CasCommandLineShellAutoConfiguration.class
 }, properties = {
     "spring.main.allow-circular-references=true",

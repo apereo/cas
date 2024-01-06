@@ -1,6 +1,6 @@
 package org.apereo.cas.gauth.credential;
 
-import org.apereo.cas.config.GoogleAuthenticatorMongoDbAutoConfiguration;
+import org.apereo.cas.config.CasGoogleAuthenticatorMongoDbAutoConfiguration;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * @since 5.0.0
  */
 @SpringBootTest(classes = {
-    GoogleAuthenticatorMongoDbAutoConfiguration.class,
+    CasGoogleAuthenticatorMongoDbAutoConfiguration.class,
     BaseOneTimeTokenCredentialRepositoryTests.SharedTestConfiguration.class
 },
     properties = {

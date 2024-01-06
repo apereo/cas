@@ -1,1 +1,1 @@
-org.apereo.cas.config.OidcAutoConfiguration
+org.apereo.cas.config.CasOidcAutoConfiguration

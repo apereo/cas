@@ -8,8 +8,8 @@ import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.MultifactorAuthnTrustAutoConfiguration;
-import org.apereo.cas.config.RestMultifactorAuthenticationTrustAutoConfiguration;
+import org.apereo.cas.config.CasMultifactorAuthnTrustAutoConfiguration;
+import org.apereo.cas.config.CasRestMultifactorAuthenticationTrustAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
@@ -49,8 +49,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("RestfulApiAuthentication")
 @SpringBootTest(classes = {
-    RestMultifactorAuthenticationTrustAutoConfiguration.class,
-    MultifactorAuthnTrustAutoConfiguration.class,
+    CasRestMultifactorAuthenticationTrustAutoConfiguration.class,
+    CasMultifactorAuthnTrustAutoConfiguration.class,
     CasCoreAuditAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasCoreAutoConfiguration.class,

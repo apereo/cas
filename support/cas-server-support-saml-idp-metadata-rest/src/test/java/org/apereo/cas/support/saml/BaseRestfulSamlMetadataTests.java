@@ -1,6 +1,6 @@
 package org.apereo.cas.support.saml;
 
-import org.apereo.cas.config.SamlIdPRestfulMetadataAutoConfiguration;
+import org.apereo.cas.config.CasSamlIdPRestfulMetadataAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataResolver;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  * @since 6.0.0
  */
 @SpringBootTest(classes = {
-    SamlIdPRestfulMetadataAutoConfiguration.class,
+    CasSamlIdPRestfulMetadataAutoConfiguration.class,
     BaseSamlIdPMetadataTests.SharedTestConfiguration.class
 },
     properties = {

@@ -1,6 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
-import org.apereo.cas.config.HazelcastTicketRegistryAutoConfiguration;
+import org.apereo.cas.config.CasHazelcastTicketRegistryAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.ticket.DefaultTicketDefinition;
@@ -34,7 +34,7 @@ class HazelcastTicketRegistryTests {
     @Nested
     @Getter
     @Import({
-        HazelcastTicketRegistryAutoConfiguration.class,
+        CasHazelcastTicketRegistryAutoConfiguration.class,
         BaseTicketRegistryTests.SharedTestConfiguration.class
     })
     @TestPropertySource(
@@ -55,7 +55,7 @@ class HazelcastTicketRegistryTests {
     @Nested
     @Getter
     @Import({
-        HazelcastTicketRegistryAutoConfiguration.class,
+        CasHazelcastTicketRegistryAutoConfiguration.class,
         BaseTicketRegistryTests.SharedTestConfiguration.class
     })
     @TestPropertySource(

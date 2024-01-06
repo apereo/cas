@@ -12,9 +12,9 @@ import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
+import org.apereo.cas.config.CasGoogleAuthenticatorAutoConfiguration;
+import org.apereo.cas.config.CasGoogleAuthenticatorMongoDbAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
-import org.apereo.cas.config.GoogleAuthenticatorAutoConfiguration;
-import org.apereo.cas.config.GoogleAuthenticatorMongoDbAutoConfiguration;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +35,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  */
 @Tag("MongoDbMFA")
 @SpringBootTest(classes = {
-    GoogleAuthenticatorMongoDbAutoConfiguration.class,
+    CasGoogleAuthenticatorMongoDbAutoConfiguration.class,
     CasCoreMultifactorAuthenticationAutoConfiguration.class,
     CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
@@ -45,7 +45,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     CasCoreServicesAutoConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,
     CasPersonDirectoryAutoConfiguration.class,
-    GoogleAuthenticatorAutoConfiguration.class,
+    CasGoogleAuthenticatorAutoConfiguration.class,
     AopAutoConfiguration.class,
     CasCoreAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,

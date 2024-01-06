@@ -8,6 +8,7 @@ import org.apereo.cas.config.CasCoreMonitorAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreSamlAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
@@ -15,8 +16,7 @@ import org.apereo.cas.config.CasCoreValidationAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
-import org.apereo.cas.config.CoreSamlAutoConfiguration;
-import org.apereo.cas.config.SamlIdPAutoConfiguration;
+import org.apereo.cas.config.CasSamlIdPAutoConfiguration;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.actuate.autoconfigure.observation.ObservationAutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -48,7 +48,7 @@ public abstract class BaseSamlIdPMetadataTests {
         CasCoreMonitorAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasCoreWebflowAutoConfiguration.class,
-        SamlIdPAutoConfiguration.class,
+        CasSamlIdPAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
         CasCoreCookieAutoConfiguration.class,
@@ -56,7 +56,7 @@ public abstract class BaseSamlIdPMetadataTests {
         CasCoreAutoConfiguration.class,
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
-        CoreSamlAutoConfiguration.class,
+        CasCoreSamlAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasPersonDirectoryAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class

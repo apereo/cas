@@ -1,7 +1,7 @@
 package org.apereo.cas.web;
 
 import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.config.SamlIdentityProviderDiscoveryAutoConfiguration;
+import org.apereo.cas.config.CasSamlIdentityProviderDiscoveryAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DefaultRegisteredServiceDelegatedAuthenticationPolicy;
@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SAML2Web")
 @SpringBootTest(classes = {
     BaseDelegatedAuthenticationTests.SharedTestConfiguration.class,
-    SamlIdentityProviderDiscoveryAutoConfiguration.class
+    CasSamlIdentityProviderDiscoveryAutoConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class SamlIdentityProviderDiscoveryFeedControllerTests {

@@ -16,10 +16,10 @@ import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
+import org.apereo.cas.config.CasPasswordManagementAutoConfiguration;
+import org.apereo.cas.config.CasPasswordManagementWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasThemesAutoConfiguration;
-import org.apereo.cas.config.PasswordManagementAutoConfiguration;
-import org.apereo.cas.config.PasswordManagementWebflowAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.ticket.TicketFactory;
@@ -118,8 +118,8 @@ public abstract class BasePasswordManagementActionTests {
     })
     @SpringBootConfiguration
     @Import({
-        PasswordManagementAutoConfiguration.class,
-        PasswordManagementWebflowAutoConfiguration.class,
+        CasPasswordManagementAutoConfiguration.class,
+        CasPasswordManagementWebflowAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreAutoConfiguration.class,

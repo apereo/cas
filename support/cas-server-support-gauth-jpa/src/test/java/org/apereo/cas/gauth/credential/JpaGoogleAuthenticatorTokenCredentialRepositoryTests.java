@@ -1,7 +1,7 @@
 package org.apereo.cas.gauth.credential;
 
+import org.apereo.cas.config.CasGoogleAuthenticatorJpaAutoConfiguration;
 import org.apereo.cas.config.CasHibernateJpaAutoConfiguration;
-import org.apereo.cas.config.GoogleAuthenticatorJpaAutoConfiguration;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import lombok.Getter;
 import lombok.val;
@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.0.0
  */
 @SpringBootTest(classes = {
-    GoogleAuthenticatorJpaAutoConfiguration.class,
+    CasGoogleAuthenticatorJpaAutoConfiguration.class,
     CasHibernateJpaAutoConfiguration.class,
     BaseOneTimeTokenCredentialRepositoryTests.SharedTestConfiguration.class
 },

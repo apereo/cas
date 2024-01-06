@@ -1,1 +1,1 @@
-org.apereo.cas.config.SamlAutoConfiguration
+org.apereo.cas.config.CasSamlAutoConfiguration

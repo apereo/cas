@@ -9,8 +9,8 @@ import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
-import org.apereo.cas.config.X509AuthenticationAutoConfiguration;
-import org.apereo.cas.config.X509CertificateExtractorAutoConfiguration;
+import org.apereo.cas.config.CasX509AuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasX509CertificateExtractorAutoConfiguration;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -32,8 +32,8 @@ public abstract class BaseX509Tests {
     })
     @SpringBootConfiguration
     @Import({
-        X509AuthenticationAutoConfiguration.class,
-        X509CertificateExtractorAutoConfiguration.class,
+        CasX509AuthenticationAutoConfiguration.class,
+        CasX509CertificateExtractorAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,

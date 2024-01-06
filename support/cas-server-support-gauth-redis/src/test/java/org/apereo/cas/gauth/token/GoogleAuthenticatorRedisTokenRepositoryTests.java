@@ -12,9 +12,9 @@ import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
+import org.apereo.cas.config.CasGoogleAuthenticatorAutoConfiguration;
+import org.apereo.cas.config.CasGoogleAuthenticatorRedisAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
-import org.apereo.cas.config.GoogleAuthenticatorAutoConfiguration;
-import org.apereo.cas.config.GoogleAuthenticatorRedisAutoConfiguration;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +35,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  */
 @Tag("Redis")
 @SpringBootTest(classes = {
-    GoogleAuthenticatorRedisAutoConfiguration.class,
+    CasGoogleAuthenticatorRedisAutoConfiguration.class,
     CasCoreWebflowAutoConfiguration.class,
     CasCoreMultifactorAuthenticationAutoConfiguration.class,
     CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
@@ -45,7 +45,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     CasCoreServicesAutoConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,
     CasPersonDirectoryAutoConfiguration.class,
-    GoogleAuthenticatorAutoConfiguration.class,
+    CasGoogleAuthenticatorAutoConfiguration.class,
     AopAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
     CasCoreCookieAutoConfiguration.class,

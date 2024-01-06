@@ -1,6 +1,6 @@
 package org.apereo.cas.web.saml2;
 
-import org.apereo.cas.config.DelegatedAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasDelegatedAuthenticationAutoConfiguration;
 import org.apereo.cas.support.saml.util.Saml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.AuthenticatedAssertionContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = {
     BaseDelegatedAuthenticationTests.SharedTestConfiguration.class,
-    DelegatedAuthenticationAutoConfiguration.class
+    CasDelegatedAuthenticationAutoConfiguration.class
 },
     properties = {
         "cas.authn.pac4j.saml[0].metadata.service-provider.file-system.location=/tmp/sp-metadata.xml",

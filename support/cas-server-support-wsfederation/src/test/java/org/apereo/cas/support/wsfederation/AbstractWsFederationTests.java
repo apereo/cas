@@ -1,7 +1,7 @@
 package org.apereo.cas.support.wsfederation;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.config.WsFederationAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasWsFederationAuthenticationAutoConfiguration;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredential;
@@ -94,7 +94,7 @@ public abstract class AbstractWsFederationTests extends AbstractOpenSamlTests {
     })
     @SpringBootConfiguration
     @Import({
-        WsFederationAuthenticationAutoConfiguration.class,
+        CasWsFederationAuthenticationAutoConfiguration.class,
         AbstractOpenSamlTests.SharedTestConfiguration.class
     })
     public static class SharedTestConfiguration {

@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.authentication.principal;
 
 import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.config.SamlAutoConfiguration;
+import org.apereo.cas.config.CasSamlAutoConfiguration;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import lombok.val;
@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.2
  */
 @SpringBootTest(classes = {
-    SamlAutoConfiguration.class,
+    CasSamlAutoConfiguration.class,
     AbstractOpenSamlTests.SharedTestConfiguration.class
 }, properties = "spring.main.allow-bean-definition-overriding=true")
 @Tag("SAML")

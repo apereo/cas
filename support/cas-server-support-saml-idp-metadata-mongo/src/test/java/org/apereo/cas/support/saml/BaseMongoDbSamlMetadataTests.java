@@ -1,6 +1,6 @@
 package org.apereo.cas.support.saml;
 
-import org.apereo.cas.config.SamlIdPMongoDbAutoConfiguration;
+import org.apereo.cas.config.CasSamlIdPMongoDbAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
@@ -19,7 +19,7 @@ import org.springframework.data.mongodb.core.MongoOperations;
  * @since 6.0.0
  */
 @SpringBootTest(classes = {
-    SamlIdPMongoDbAutoConfiguration.class,
+    CasSamlIdPMongoDbAutoConfiguration.class,
     BaseSamlIdPMetadataTests.SharedTestConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)

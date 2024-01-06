@@ -1,1 +1,1 @@
-org.apereo.cas.config.SamlIdentityProviderDiscoveryAutoConfiguration
+org.apereo.cas.config.CasSamlIdentityProviderDiscoveryAutoConfiguration

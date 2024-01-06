@@ -1,7 +1,7 @@
 package org.apereo.cas.trusted.authentication.storage;
 
 import org.apereo.cas.config.CasHibernateJpaAutoConfiguration;
-import org.apereo.cas.config.JdbcMultifactorAuthnTrustAutoConfiguration;
+import org.apereo.cas.config.CasJdbcMultifactorAuthnTrustAutoConfiguration;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.util.DateTimeUtils;
@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Import({
-    JdbcMultifactorAuthnTrustAutoConfiguration.class,
+    CasJdbcMultifactorAuthnTrustAutoConfiguration.class,
     CasHibernateJpaAutoConfiguration.class
 })
 @EnableTransactionManagement(proxyTargetClass = false)

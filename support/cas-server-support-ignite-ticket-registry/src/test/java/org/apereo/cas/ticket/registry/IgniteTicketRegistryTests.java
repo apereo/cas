@@ -1,6 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
-import org.apereo.cas.config.IgniteTicketRegistryAutoConfiguration;
+import org.apereo.cas.config.CasIgniteTicketRegistryAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @Tag("Ignite")
-@Import(IgniteTicketRegistryAutoConfiguration.class)
+@Import(CasIgniteTicketRegistryAutoConfiguration.class)
 @TestPropertySource(
     properties = {
         "cas.ticket.registry.ignite.tickets-cache.write-synchronization-mode=FULL_ASYNC",

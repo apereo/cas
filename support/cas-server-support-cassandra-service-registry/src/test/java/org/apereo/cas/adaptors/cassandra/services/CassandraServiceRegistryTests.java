@@ -1,9 +1,5 @@
 package org.apereo.cas.adaptors.cassandra.services;
 
-import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
-import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
-import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CassandraServiceRegistryAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.AbstractServiceRegistryTests;
@@ -19,10 +15,8 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.context.TestContext;
 import org.springframework.test.context.TestExecutionListener;
@@ -38,12 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     CassandraServiceRegistryAutoConfiguration.class,
-    CasCoreServicesAutoConfiguration.class,
-    CasCoreNotificationsAutoConfiguration.class,
-    CasCoreWebAutoConfiguration.class,
-    CasCoreUtilAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
-    RefreshAutoConfiguration.class
+    AbstractServiceRegistryTests.SharedTestConfiguration.class
 },
     properties = {
         "cas.service-registry.cassandra.local-dc=datacenter1",

@@ -1,8 +1,8 @@
 package org.apereo.cas.okta.web.flow;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.config.CasOktaAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
-import org.apereo.cas.config.OktaAuthenticationAutoConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.MockWebServer;
@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Import({
-    OktaAuthenticationAutoConfiguration.class,
+    CasOktaAuthenticationAutoConfiguration.class,
     CasPersonDirectoryTestConfiguration.class
 })
 @TestPropertySource(properties = {

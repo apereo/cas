@@ -1,9 +1,9 @@
 package org.apereo.cas.ws.idp.web.flow;
 
 import org.apereo.cas.config.CasCoreAutoConfiguration;
+import org.apereo.cas.config.CasCoreSamlAutoConfiguration;
+import org.apereo.cas.config.CasWsSecurityIdentityProviderAutoConfiguration;
 import org.apereo.cas.config.CasWsSecuritySecurityTokenAutoConfiguration;
-import org.apereo.cas.config.CoreSamlAutoConfiguration;
-import org.apereo.cas.config.WsSecurityIdentityProviderAutoConfiguration;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -25,9 +25,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Import({
     CasCoreAutoConfiguration.class,
-    CoreSamlAutoConfiguration.class,
+    CasCoreSamlAutoConfiguration.class,
     CasWsSecuritySecurityTokenAutoConfiguration.class,
-    WsSecurityIdentityProviderAutoConfiguration.class
+    CasWsSecurityIdentityProviderAutoConfiguration.class
 })
 @TestPropertySource(properties = {
     "cas.authn.wsfed-idp.idp.realm=urn:org:apereo:cas:ws:idp:realm-CAS",

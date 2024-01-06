@@ -1,7 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.config.GoogleCloudPubSubTicketRegistryAutoConfiguration;
+import org.apereo.cas.config.CasGoogleCloudPubSubTicketRegistryAutoConfiguration;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.registry.pubsub.commands.AddTicketMessageQueueCommand;
@@ -52,7 +52,7 @@ import static org.mockito.Mockito.*;
     GoogleCloudPubSubTicketRegistryTests.GoogleCloudTestConfiguration.class,
     GcpContextAutoConfiguration.class,
     GcpPubSubAutoConfiguration.class,
-    GoogleCloudPubSubTicketRegistryAutoConfiguration.class
+    CasGoogleCloudPubSubTicketRegistryAutoConfiguration.class
 })
 @Getter
 @TestPropertySource(properties = {

@@ -1,6 +1,6 @@
 package org.apereo.cas.support.events.redis;
 
-import org.apereo.cas.config.RedisEventsAutoConfiguration;
+import org.apereo.cas.config.CasRedisEventsAutoConfiguration;
 import org.apereo.cas.support.events.AbstractCasEventRepositoryTests;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
@@ -19,7 +19,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
  */
 @Tag("Redis")
 @SpringBootTest(classes = {
-    RedisEventsAutoConfiguration.class,
+    CasRedisEventsAutoConfiguration.class,
     RefreshAutoConfiguration.class
 },
     properties = {

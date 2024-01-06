@@ -4,7 +4,7 @@ import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.config.CasCoreEventsAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
-import org.apereo.cas.config.ElectronicFenceAutoConfiguration;
+import org.apereo.cas.config.CasElectronicFenceAutoConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreEventsAutoConfiguration.class,
     CasCoreMultifactorAuthenticationAutoConfiguration.class,
     CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
-    ElectronicFenceAutoConfiguration.class
+    CasElectronicFenceAutoConfiguration.class
 })
 @Tag("WebflowEvents")
 @TestPropertySource(properties = {

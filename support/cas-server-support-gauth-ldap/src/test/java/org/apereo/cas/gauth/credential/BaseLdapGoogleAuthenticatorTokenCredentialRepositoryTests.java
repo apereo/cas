@@ -12,10 +12,10 @@ import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
+import org.apereo.cas.config.CasGoogleAuthenticatorAutoConfiguration;
+import org.apereo.cas.config.CasGoogleAuthenticatorLdapAutoConfiguration;
+import org.apereo.cas.config.CasOneTimeTokenAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
-import org.apereo.cas.config.GoogleAuthenticatorAutoConfiguration;
-import org.apereo.cas.config.GoogleAuthenticatorLdapAutoConfiguration;
-import org.apereo.cas.config.OneTimeTokenAuthenticationAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import lombok.Getter;
@@ -56,9 +56,9 @@ public abstract class BaseLdapGoogleAuthenticatorTokenCredentialRepositoryTests 
     })
     @SpringBootConfiguration
     @Import({
-        GoogleAuthenticatorLdapAutoConfiguration.class,
-        OneTimeTokenAuthenticationAutoConfiguration.class,
-        GoogleAuthenticatorAutoConfiguration.class,
+        CasGoogleAuthenticatorLdapAutoConfiguration.class,
+        CasOneTimeTokenAuthenticationAutoConfiguration.class,
+        CasGoogleAuthenticatorAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
         CasCoreCookieAutoConfiguration.class,

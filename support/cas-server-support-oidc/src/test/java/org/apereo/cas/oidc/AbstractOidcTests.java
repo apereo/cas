@@ -22,13 +22,13 @@ import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasOAuth20AutoConfiguration;
 import org.apereo.cas.config.CasOAuth20ProtocolTicketCatalogAutoConfiguration;
+import org.apereo.cas.config.CasOidcAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasThemesAutoConfiguration;
 import org.apereo.cas.config.CasThrottlingAutoConfiguration;
 import org.apereo.cas.config.CasThymeleafAutoConfiguration;
 import org.apereo.cas.config.CasWebAppAutoConfiguration;
-import org.apereo.cas.config.OidcAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
@@ -526,7 +526,7 @@ public abstract class AbstractOidcTests {
         CasThrottlingAutoConfiguration.class,
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
-        OidcAutoConfiguration.class,
+        CasOidcAutoConfiguration.class,
         CasOAuth20ProtocolTicketCatalogAutoConfiguration.class,
         CasOAuth20AutoConfiguration.class,
         CasWebAppAutoConfiguration.class

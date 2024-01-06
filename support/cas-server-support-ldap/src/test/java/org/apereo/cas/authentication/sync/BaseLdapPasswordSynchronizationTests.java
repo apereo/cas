@@ -2,7 +2,7 @@ package org.apereo.cas.authentication.sync;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.authentication.AuthenticationPostProcessor;
-import org.apereo.cas.config.LdapAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasLdapAuthenticationAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import com.unboundid.ldap.sdk.LDAPConnection;
@@ -24,7 +24,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    LdapAuthenticationAutoConfiguration.class
+    CasLdapAuthenticationAutoConfiguration.class
 },
     properties = {
         "cas.authn.password-sync.ldap[0].enabled=true",

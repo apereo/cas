@@ -1,1 +1,1 @@
-org.apereo.cas.config.IPGeoLocationAutoConfiguration
+org.apereo.cas.config.CasIPGeoLocationAutoConfiguration

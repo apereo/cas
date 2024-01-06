@@ -1,6 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
-import org.apereo.cas.config.AMQPTicketRegistryAutoConfiguration;
+import org.apereo.cas.config.CasAMQPTicketRegistryAutoConfiguration;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import io.micrometer.core.instrument.Clock;
@@ -26,7 +26,7 @@ import org.springframework.test.context.TestPropertySource;
     AMQPDefaultTicketRegistryTests.AMQPTicketRegistryTestConfiguration.class,
     CompositeMeterRegistryAutoConfiguration.class,
     RabbitAutoConfiguration.class,
-    AMQPTicketRegistryAutoConfiguration.class
+    CasAMQPTicketRegistryAutoConfiguration.class
 })
 @TestPropertySource(properties = {
     "cas.ticket.registry.amqp.in-memory.signing.key=HbuPoSycjr0Pyv2u8WSwKcM6Ow0lviUdT7b9VzwxkcANqbDyKOb6KHPus_fCDCXElPhzXpeP-T0bryadZNiwOQ",

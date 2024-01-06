@@ -13,9 +13,9 @@ import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
+import org.apereo.cas.config.CasQRAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
-import org.apereo.cas.config.QRAuthenticationAutoConfiguration;
-import org.apereo.cas.config.TokenCoreAutoConfiguration;
+import org.apereo.cas.config.CasTokenCoreAutoConfiguration;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -37,8 +37,8 @@ public abstract class BaseQRAuthenticationTokenValidatorServiceTests {
     })
     @SpringBootConfiguration
     @Import({
-        QRAuthenticationAutoConfiguration.class,
-        TokenCoreAutoConfiguration.class,
+        CasQRAuthenticationAutoConfiguration.class,
+        CasTokenCoreAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,

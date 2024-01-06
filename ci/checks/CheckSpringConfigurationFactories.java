@@ -11,12 +11,6 @@ import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * This is {@link CheckSpringConfigurationFactories}.
- *
- * @author Misagh Moayyed
- * @since 6.3.0
- */
 public class CheckSpringConfigurationFactories {
     private static final String ANSI_RESET = "\u001B[0m";
     private static final String ANSI_BLACK = "\u001B[30m";
@@ -96,8 +90,10 @@ public class CheckSpringConfigurationFactories {
         }
         return true;
     }
-
+    
     protected static void checkMissingSpringFactoryConfigurations(final String arg) throws IOException {
+        var count = new AtomicInteger(0);
+
         Files.walk(Paths.get(arg))
             .filter(f -> Files.isRegularFile(f)
                 && f.toFile().getName().endsWith("Configuration.java")
@@ -105,6 +101,12 @@ public class CheckSpringConfigurationFactories {
             .forEach(file -> {
                 var text = readFile(file);
                 if (text.contains("@AutoConfiguration")) {
+                    var name = file.toFile().getName().replace(".java", "");
+                    if (!name.startsWith("Cas")) {
+                        error("Configuration class %s must start with 'Cas'", file.toFile().getAbsolutePath());
+                        count.incrementAndGet();
+                    }
+
                     var parent = file.getParent();
                     while (parent != null && !parent.toFile().getName().equals("src")) {
                         parent = parent.getParent();
@@ -114,7 +116,7 @@ public class CheckSpringConfigurationFactories {
                     if (!springFactoriesFile.exists()) {
                         error("Configuration class %s is missing from %s",
                             file.toFile().getAbsolutePath(), springFactoriesFile.getAbsolutePath());
-                        System.exit(1);
+                        count.incrementAndGet();
                     }
 
                     var className = file.toFile().getName().replace(".java", "");
@@ -123,7 +125,7 @@ public class CheckSpringConfigurationFactories {
                         if (!imports.contains(className)) {
                             error("AutoConfiguration class %s is not registered with Spring Boot's %s",
                                 file.toFile().getAbsolutePath(), springFactoriesFile);
-                            System.exit(1);
+                            count.incrementAndGet();
                         }
                     }
                 }
@@ -136,15 +138,19 @@ public class CheckSpringConfigurationFactories {
                     });
                     if (noneMatch) {
                         error("Configuration class %s is not imported by auto configuration(s) %s", classname, autoconfig.toArray());
-                        System.exit(1);
+                        count.incrementAndGet();
                     }
 
                     if (text.contains("public static class " + classname)) {
                         error("Configuration class %s must be package-private; Remove public modifier from class definition", classname);
-                        System.exit(1);
+                        count.incrementAndGet();
                     }
                 }
             });
+
+        if (count.intValue() > 0) {
+            System.exit(1);
+        }
     }
 
     private static void checkMissingSpringAutoConfigurations(final String arg) throws IOException {
@@ -165,7 +171,7 @@ public class CheckSpringConfigurationFactories {
                     files.forEach(ff -> {
                         var foundFile = ff.toFile();
                         var classname = foundFile.getName().replace(".java", "");
-                        var name = foundFile.getName().replace("Configuration.java", "AutoConfiguration.java");
+                       
                         var newClassName = classname.replace("Configuration", "AutoConfiguration");
                         error("Configuration class %s must be renamed to %s", classname, newClassName);
                         count.incrementAndGet();

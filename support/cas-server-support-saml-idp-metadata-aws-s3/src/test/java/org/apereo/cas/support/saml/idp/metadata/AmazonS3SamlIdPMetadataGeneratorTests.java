@@ -1,6 +1,6 @@
 package org.apereo.cas.support.saml.idp.metadata;
 
-import org.apereo.cas.config.AmazonS3SamlMetadataAutoConfiguration;
+import org.apereo.cas.config.CasAmazonS3SamlMetadataAutoConfiguration;
 import org.apereo.cas.support.saml.BaseSamlIdPMetadataTests;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @SpringBootTest(classes = {
-    AmazonS3SamlMetadataAutoConfiguration.class,
+    CasAmazonS3SamlMetadataAutoConfiguration.class,
     BaseSamlIdPMetadataTests.SharedTestConfiguration.class
 }, properties = {
     "cas.authn.saml-idp.metadata.amazon-s3.idp-metadata-bucket-name=thebucket",

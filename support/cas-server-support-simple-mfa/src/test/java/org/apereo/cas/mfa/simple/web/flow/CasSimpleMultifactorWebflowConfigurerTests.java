@@ -1,7 +1,7 @@
 package org.apereo.cas.mfa.simple.web.flow;
 
-import org.apereo.cas.config.SurrogateAuthenticationAutoConfiguration;
-import org.apereo.cas.config.SurrogateAuthenticationWebflowAutoConfiguration;
+import org.apereo.cas.config.CasSurrogateAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasSurrogateAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mfa.simple.BaseCasSimpleMultifactorAuthenticationTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -50,8 +50,8 @@ class CasSimpleMultifactorWebflowConfigurerTests {
     }
 
     @SpringBootTest(classes = {
-        SurrogateAuthenticationAutoConfiguration.class,
-        SurrogateAuthenticationWebflowAutoConfiguration.class,
+        CasSurrogateAuthenticationAutoConfiguration.class,
+        CasSurrogateAuthenticationWebflowAutoConfiguration.class,
         BaseCasSimpleMultifactorAuthenticationTests.SharedTestConfiguration.class
     })
     @EnableConfigurationProperties(CasConfigurationProperties.class)
