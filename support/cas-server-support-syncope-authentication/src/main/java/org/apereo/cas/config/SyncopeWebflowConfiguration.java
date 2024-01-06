@@ -40,7 +40,7 @@ class SyncopeWebflowConfiguration {
     @Configuration(value = "SyncopeProvisioningWebflowConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class SyncopeProvisioningWebflowConfiguration {
-        private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.syncope.provisioning.enabled").isTrue().evenIfMissing();
+        private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.syncope.provisioning.enabled").isTrue();
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

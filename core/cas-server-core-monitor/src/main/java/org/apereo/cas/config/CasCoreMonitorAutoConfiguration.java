@@ -76,7 +76,8 @@ public class CasCoreMonitorAutoConfiguration {
     @ConditionalOnEnabledHealthIndicator("sessionHealthIndicator")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public HealthIndicator sessionHealthIndicator(
-        @Qualifier(TicketRegistry.BEAN_NAME) final ObjectProvider<TicketRegistry> ticketRegistry,
+        @Qualifier(TicketRegistry.BEAN_NAME)
+        final ObjectProvider<TicketRegistry> ticketRegistry,
         final CasConfigurationProperties casProperties) {
         val warnSt = casProperties.getMonitor().getSt().getWarn();
         val warnTgt = casProperties.getMonitor().getTgt().getWarn();

@@ -96,9 +96,8 @@ import java.util.stream.Collectors;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @EnableAsync(proxyTargetClass = false)
-@AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.ServiceRegistry)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CasCoreServicesConfiguration", proxyBeanMethods = false)
 class CasCoreServicesConfiguration {
     @Configuration(value = "CasCoreServicesResponseLocatorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)

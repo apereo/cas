@@ -82,7 +82,7 @@ class CasCoreMonitorAutoConfigurationTests {
     }
 
     @Test
-    void verifyObserabilityRunner() throws Throwable {
+    void verifyObservabilityRunner() throws Throwable {
         val result = new AtomicBoolean(false);
         defaultExecutableObserver.run(new MonitorableTask("verifyObservabilityRunner"), () -> result.set(true));
         assertTrue(result.get());
