@@ -666,9 +666,9 @@ public abstract class AbstractServiceRegistryTests {
     })
     @SpringBootConfiguration
     @Import({
+        CasCoreUtilAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
-        CasCoreUtilAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreAutoConfiguration.class,

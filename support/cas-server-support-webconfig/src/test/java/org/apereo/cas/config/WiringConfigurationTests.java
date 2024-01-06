@@ -11,6 +11,7 @@ import org.springframework.boot.actuate.autoconfigure.endpoint.EndpointAutoConfi
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -57,6 +58,7 @@ import static org.junit.jupiter.api.Assertions.*;
     AopAutoConfiguration.class,
     MailSenderAutoConfiguration.class,
     EndpointAutoConfiguration.class,
+    SecurityAutoConfiguration.class,
     WebEndpointAutoConfiguration.class,
     RefreshAutoConfiguration.class
 }, properties = {
