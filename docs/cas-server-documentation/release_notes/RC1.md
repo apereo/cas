@@ -57,9 +57,14 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 ### Testing Strategy
 
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `462` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `463` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`. Furthermore, a large number of test categories that group internal unit tests
 are now configured to run with parallelism enabled.
+
+### Attribute Release Activation Criteria
+
+Attribute release policies can now be [activated conditionally](../integration/Attribute-Release-Policy-Activation.md). 
+This feature allows one to define a set of criteria that must be met before the policy is chosen and activated to start processing attribute release rules.
 
 ### Deprecations & Removals
 
@@ -67,6 +72,9 @@ are now configured to run with parallelism enabled.
 - The `RegexRegisteredService` service type, deprecated since CAS `6.6.x`, is now removed from the CAS codebase.
 
 ## Other Stuff
+
+- Internal cleanup and refactoring efforts to remove duplicate code, particularly when it comes to grouping `@AutoConfiguration` components.
+- Changes to the CAS Gradle build to allow more efficient caching of configuration and build artifacts and reduce overall build times.
 
 ## Library Upgrades
 

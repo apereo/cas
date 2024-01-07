@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.test.context.TestPropertySource;
 import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,8 +24,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     BaseAcceptableUsagePolicyRepositoryTests.SharedTestConfiguration.class,
     CasAcceptableUsagePolicyRedisAutoConfiguration.class
+}, properties = {
+    "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/saml8984",
+    "CasFeatureModule.AcceptableUsagePolicy.redis.enabled=false"
 })
-@TestPropertySource(properties = "CasFeatureModule.AcceptableUsagePolicy.redis.enabled=false")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class ConditionalOnExpressionNegativeTests {
     @Autowired
