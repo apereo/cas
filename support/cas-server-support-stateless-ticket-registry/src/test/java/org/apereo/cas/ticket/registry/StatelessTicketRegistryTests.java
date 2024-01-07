@@ -24,6 +24,7 @@ import org.springframework.test.context.TestPropertySource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -103,4 +104,28 @@ public class StatelessTicketRegistryTests extends BaseTicketRegistryTests {
         val addedTicket = newTicketRegistry.addTicket(transientTicket);
         assertNotNull(newTicketRegistry.getTicket(addedTicket.getId()));
     }
+
+    @RepeatedTest(2)
+    void verifyLargeServiceUrl() throws Exception {
+        val attributes = new HashMap<String, List<Object>>();
+        val principal = RegisteredServiceTestUtils.getPrincipal(UUID.randomUUID().toString(), attributes);
+        val originalAuthn = RegisteredServiceTestUtils.getAuthentication(principal, attributes);
+        val tgt = new TicketGrantingTicketImpl(ticketGrantingTicketId, originalAuthn,
+            new TicketGrantingTicketExpirationPolicy(5000, 2000));
+        newTicketRegistry.addTicket(tgt);
+
+        val paths = IntStream.rangeClosed(1, 10).mapToObj(i -> RandomUtils.randomAlphabetic(10)).collect(Collectors.joining("/"));
+        val service = RegisteredServiceTestUtils.getService("https://apereo.github.io:8443/cas/" + paths + "/page.html");
+        servicesManager.save(RegisteredServiceTestUtils.getRegisteredService(service.getId()));
+
+        val serviceTicket = tgt.grantServiceTicket(UUID.randomUUID().toString(),
+            service, new MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy(1, 100),
+            true, TicketTrackingPolicy.noOp());
+        val addedServiceTicket = newTicketRegistry.addTicket(serviceTicket);
+        assertTrue(addedServiceTicket.isStateless());
+
+        val retrievedTicket = (RenewableServiceTicket) newTicketRegistry.getTicket(addedServiceTicket.getId());
+        assertNotNull(retrievedTicket);
+    }
+
 }
