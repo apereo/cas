@@ -27,9 +27,9 @@ public class TransientSessionTicketCompactor implements TicketCompactor<Transien
     private final ServiceFactory serviceFactory;
 
     @Override
-    public String compact(final StringBuilder builder, final Ticket ticket) {
+    public String compact(final StringBuilder builder, final Ticket ticket) throws Exception {
         if (ticket instanceof final ServiceAwareTicket sat && Objects.nonNull(sat.getService())) {
-            builder.append(String.format("%s%s", DELIMITER, StringUtils.defaultString(sat.getService().getId())));
+            builder.append(String.format("%s%s", DELIMITER, StringUtils.defaultString(sat.getService().getShortenedId())));
         } else {
             builder.append("%s*".formatted(DELIMITER));
         }
