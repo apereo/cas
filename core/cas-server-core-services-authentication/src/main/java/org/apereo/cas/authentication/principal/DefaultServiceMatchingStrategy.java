@@ -2,11 +2,10 @@ package org.apereo.cas.authentication.principal;
 
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.LoggingUtils;
-
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
@@ -18,8 +17,11 @@ import java.util.regex.Pattern;
  * @since 6.1.0
  */
 @Slf4j
-public record DefaultServiceMatchingStrategy(ServicesManager servicesManager) implements ServiceMatchingStrategy {
+@RequiredArgsConstructor
+public class DefaultServiceMatchingStrategy implements ServiceMatchingStrategy {
     private static final Pattern FRAGMENT_PATTERN = Pattern.compile("#.+");
+
+    protected final ServicesManager servicesManager;
 
     @Override
     public boolean matches(final Service service, final Service serviceToMatch) {

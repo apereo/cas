@@ -23,5 +23,6 @@
 
     "--cas.ticket.tgt.remember-me.enabled=true",
     "--cas.ticket.tgt.remember-me.time-to-kill-in-seconds=P1D"
-  ]
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }
