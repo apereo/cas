@@ -1,7 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.monitor.Monitorable;
-import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
@@ -17,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-import org.springframework.util.Assert;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -31,8 +29,6 @@ import java.util.function.Predicate;
 @Monitorable
 @Slf4j
 public class StatelessTicketRegistry extends AbstractTicketRegistry {
-    private static final int MAX_TICKET_LENGTH = 256;
-    
     private final List<TicketCompactor<Ticket>> ticketCompactors;
 
     public StatelessTicketRegistry(final CipherExecutor<byte[], byte[]> cipherExecutor,
@@ -51,7 +47,8 @@ public class StatelessTicketRegistry extends AbstractTicketRegistry {
             val decoded64 = EncodingUtils.decodeUrlSafeBase64(withoutPrefix);
             val decoded = (byte[]) cipherExecutor.decode(decoded64);
             val ticketContent = CompressionUtils.inflateToString(decoded);
-            val ticketObject = findTicketCompactor(metadata).expand(ticketContent);
+            val ticketCompactor = findTicketCompactor(metadata);
+            val ticketObject = ticketCompactor.expand(ticketContent);
             if (ticketObject != null && predicate.test(ticketObject)) {
                 ticketObject.markTicketStateless();
                 return ticketObject;
@@ -63,16 +60,14 @@ public class StatelessTicketRegistry extends AbstractTicketRegistry {
     @Override
     protected Ticket addSingleTicket(final Ticket ticket) throws Exception {
         val metadata = ticketCatalog.find(ticket.getPrefix());
-        val compactedTicket = findTicketCompactor(metadata).compact(ticket);
+        val ticketCompactor = findTicketCompactor(metadata);
+        val compactedTicket = ticketCompactor.compact(ticket);
         val compressed = CompressionUtils.deflateToByteArray(compactedTicket);
         val encoded = (byte[]) cipherExecutor.encode(compressed);
         val encoded64 = EncodingUtils.encodeUrlSafeBase64(encoded);
         val finalTicketId = ticket.getPrefix() + UniqueTicketIdGenerator.SEPARATOR + encoded64;
         LOGGER.debug("Compacted ticket in encoded form is [{}]", finalTicketId);
-        if (ticket instanceof ServiceTicket) {
-            Assert.isTrue(finalTicketId.length() <= MAX_TICKET_LENGTH,
-                "Final ticket id %s length %s exceeds %s characters".formatted(finalTicketId, finalTicketId.length(), MAX_TICKET_LENGTH));
-        }
+        ticketCompactor.validate(finalTicketId);
         return new DefaultEncodedTicket(finalTicketId, ticket.getPrefix()).markTicketStateless();
     }
 

@@ -74,6 +74,13 @@ public interface TicketCompactor<T extends Ticket> {
         return new SharedTicketStructure(ticketElements, creationTimeInSeconds, expirationTimeInSeconds);
     }
 
+    /**
+     * Validate.
+     *
+     * @param finalTicketId the final ticket id
+     */
+    default void validate(final String finalTicketId) {}
+
     record SharedTicketStructure(List<String> ticketElements, Instant creationTime, Instant expirationTime) {
     }
 }
