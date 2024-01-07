@@ -86,6 +86,7 @@ class ReturnAllowedAttributeReleasePolicyTests {
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class
     })
+    @EnableConfigurationProperties({CasConfigurationProperties.class, WebProperties.class})
     static class BaseAttributeTests {
     }
 
@@ -98,7 +99,7 @@ class ReturnAllowedAttributeReleasePolicyTests {
             "cas.authn.attribute-repository.stub.attributes.groupMembership=adopters",
             "cas.authn.attribute-repository.attribute-definition-store.json.location=classpath:/return-allowed-definitions.json"
         })
-    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @EnableConfigurationProperties({CasConfigurationProperties.class, WebProperties.class})
     @Nested
     class AttributeDefinitionsTests {
         @Autowired
@@ -345,7 +346,7 @@ class ReturnAllowedAttributeReleasePolicyTests {
     static class ReturnAllowedAttributeReleasePolicyTestConfiguration {
         @Bean
         public ServicesManager servicesManager() {
-            return mock(ServicesManager.class);
+            return mock(ChainingServicesManager.class);
         }
     }
 }
