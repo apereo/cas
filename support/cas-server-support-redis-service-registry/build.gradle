@@ -18,6 +18,7 @@ dependencies {
     implementation project(":core:cas-server-core-services-registry")
     implementation project(":core:cas-server-core-notifications")
     implementation project(":core:cas-server-core-authentication-api")
+
     implementation project(":support:cas-server-support-redis-core")
 
     testImplementation project(":core:cas-server-core-authentication-attributes")
@@ -28,6 +29,7 @@ dependencies {
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-authentication")
 
     testImplementation project(":support:cas-server-support-oauth-core")
