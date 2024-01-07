@@ -7,11 +7,24 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.config.CasStatelessTicketRegistryAutoConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.apereo.cas.ticket.TransientSessionTicketImpl;
+import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
+import org.apereo.cas.ticket.registry.TicketCompactor;
+import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import lombok.val;
+import org.junit.jupiter.api.Named;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.context.annotation.Import;
+import java.util.UUID;
+import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.params.provider.Arguments.*;
 
 /**
  * This is {@link StatelessTicketManagementTests}.
@@ -49,5 +62,34 @@ public class StatelessTicketManagementTests extends AbstractCentralAuthenticatio
         assertTrue(attributes.containsKey("uid"));
         assertTrue(attributes.containsKey("eduPersonAffiliation"));
         assertTrue(attributes.containsKey("binaryAttribute"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("ticketProvider")
+    void verifyTicketCompactors(final Ticket ticket) throws Throwable {
+        val compactors = applicationContext.getBeansOfType(TicketCompactor.class).values();
+        for (val compactor : compactors) {
+            if (compactor.getTicketType().isAssignableFrom(ticket.getClass())) {
+                val compacted = compactor.compact(ticket);
+                assertNotNull(compacted);
+                val expanded = compactor.expand(compacted);
+                assertNotNull(expanded);
+            }
+        }
+    }
+
+    static Stream<Arguments> ticketProvider() throws Exception {
+        val service = RegisteredServiceTestUtils.getService("eduPersonTest");
+        val authentication = RegisteredServiceTestUtils.getAuthentication(UUID.randomUUID().toString());
+        val ticketGrantingTicket = new TicketGrantingTicketImpl(UUID.randomUUID().toString(), authentication, NeverExpiresExpirationPolicy.INSTANCE);
+        val serviceTicket = ticketGrantingTicket.grantServiceTicket(UUID.randomUUID().toString(),
+            service, NeverExpiresExpirationPolicy.INSTANCE, true, TicketTrackingPolicy.noOp());
+        val transientTicket = new TransientSessionTicketImpl(UUID.randomUUID().toString(),
+            NeverExpiresExpirationPolicy.INSTANCE, service, CoreAuthenticationTestUtils.getAttributes());
+        return Stream.of(
+            arguments(Named.of(ticketGrantingTicket.getPrefix() + ' ' + ticketGrantingTicket.getId(), ticketGrantingTicket)),
+            arguments(Named.of(serviceTicket.getPrefix() + ' ' + serviceTicket.getId(), serviceTicket)),
+            arguments(Named.of(transientTicket.getPrefix() + ' ' + transientTicket.getId(), transientTicket))
+        );
     }
 }
