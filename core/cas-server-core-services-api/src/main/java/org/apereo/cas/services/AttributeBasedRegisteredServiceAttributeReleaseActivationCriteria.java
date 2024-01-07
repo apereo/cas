@@ -65,8 +65,6 @@ public class AttributeBasedRegisteredServiceAttributeReleaseActivationCriteria i
         val pattern = RegexUtils.concatenate(requiredValues, true);
         LOGGER.debug("Checking activation criteria [{}] against [{}] with pattern [{}] for attribute [{}]",
             requiredValues, currentValues, pattern, entry.getKey());
-        return pattern.equals(RegexUtils.MATCH_NOTHING_PATTERN)
-            ? currentValues.stream().anyMatch(requiredValues::contains)
-            : currentValues.stream().map(Object::toString).anyMatch(pattern.asPredicate());
+        return currentValues.stream().map(Object::toString).anyMatch(pattern.asPredicate());
     }
 }

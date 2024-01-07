@@ -17,7 +17,7 @@ You can implement the conditions using the following strategies.
 
 {% tab abacconditions Attributes %}
 
-The activation strategy can be conditionally activated based on available principal attributes.
+The policy can be conditionally activated based on available principal attributes.
 
 ```json
 {

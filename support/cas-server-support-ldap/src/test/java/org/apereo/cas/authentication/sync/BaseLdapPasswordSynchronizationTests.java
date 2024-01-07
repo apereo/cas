@@ -2,7 +2,11 @@ package org.apereo.cas.authentication.sync;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.authentication.AuthenticationPostProcessor;
+import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasCoreAutoConfiguration;
+import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
+import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasLdapAuthenticationAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.spring.beans.BeanContainer;
@@ -28,6 +32,10 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     WebMvcAutoConfiguration.class,
     SecurityAutoConfiguration.class,
     CasCoreServicesAutoConfiguration.class,
+    CasCoreAutoConfiguration.class,
+    CasCoreAuthenticationAutoConfiguration.class,
+    CasCoreTicketsAutoConfiguration.class,
+    CasCoreLogoutAutoConfiguration.class,
     CasLdapAuthenticationAutoConfiguration.class
 },
     properties = {
