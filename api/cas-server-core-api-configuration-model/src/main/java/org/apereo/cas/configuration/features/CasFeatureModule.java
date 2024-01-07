@@ -1,7 +1,6 @@
 package org.apereo.cas.configuration.features;
 
 import org.apereo.cas.configuration.support.RequiredProperty;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
@@ -10,7 +9,6 @@ import org.jooq.lambda.Unchecked;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
-
 import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.HashSet;
@@ -27,8 +25,8 @@ import java.util.TreeSet;
 public interface CasFeatureModule {
     private static String getMethodName(final Field field, final String prefix) {
         return prefix
-               + field.getName().substring(0, 1).toUpperCase(Locale.ENGLISH)
-               + field.getName().substring(1);
+            + field.getName().substring(0, 1).toUpperCase(Locale.ENGLISH)
+            + field.getName().substring(1);
     }
 
     /**
@@ -411,4 +409,30 @@ public interface CasFeatureModule {
         }
     }
 
+    /**
+     * Baseline set of features that must be enabled and present.
+     *
+     * @return the set
+     */
+    static Set<FeatureCatalog> baseline() {
+        return Set.of(
+            FeatureCatalog.ApacheTomcat,
+            FeatureCatalog.Audit,
+            FeatureCatalog.Authentication,
+            FeatureCatalog.CasConfiguration,
+            FeatureCatalog.Core,
+            FeatureCatalog.Logout,
+            FeatureCatalog.Monitoring,
+            FeatureCatalog.MultifactorAuthentication,
+            FeatureCatalog.Notifications,
+            FeatureCatalog.PasswordManagement,
+            FeatureCatalog.PersonDirectory,
+            FeatureCatalog.ServiceRegistry,
+            FeatureCatalog.Thymeleaf,
+            FeatureCatalog.TicketRegistry,
+            FeatureCatalog.Validation,
+            FeatureCatalog.WebApplication,
+            FeatureCatalog.Webflow
+        );
+    }
 }
