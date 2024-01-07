@@ -2,15 +2,18 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.ServiceMatchingStrategy;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.logout.LogoutManager;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.NoOpTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.ServiceTicketCompactor;
+import org.apereo.cas.ticket.registry.ShortenedServiceMatchingStrategy;
 import org.apereo.cas.ticket.registry.StatelessTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketCompactor;
 import org.apereo.cas.ticket.registry.TicketGrantingTicketCompactor;
@@ -136,5 +139,12 @@ public class CasStatelessTicketRegistryAutoConfiguration {
         @Qualifier(TicketFactory.BEAN_NAME)
         final ObjectProvider<TicketFactory> ticketFactory) {
         return new TransientSessionTicketCompactor(ticketFactory, serviceFactory);
+    }
+
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public ServiceMatchingStrategy serviceMatchingStrategy(
+        @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
+        return new ShortenedServiceMatchingStrategy(servicesManager);
     }
 }

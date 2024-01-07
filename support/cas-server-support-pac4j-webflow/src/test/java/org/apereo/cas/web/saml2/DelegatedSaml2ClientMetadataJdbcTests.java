@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
     BaseDelegatedAuthenticationTests.SharedTestConfiguration.class
 },
     properties = {
+        "spring.main.allow-bean-definition-overriding=true",
         "CasFeatureModule.DelegatedAuthentication.saml-jdbc.enabled=true",
 
         "cas.authn.pac4j.saml[0].metadata.service-provider.jdbc.auto-commit=true",

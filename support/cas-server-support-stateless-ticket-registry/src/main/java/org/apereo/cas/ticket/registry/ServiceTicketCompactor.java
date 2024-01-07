@@ -18,14 +18,13 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.expiration.FixedInstantExpirationPolicy;
 import org.apereo.cas.util.DateTimeUtils;
-import org.apereo.cas.util.function.FunctionUtils;
 import com.google.common.base.Splitter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.hc.core5.net.URIBuilder;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.util.Assert;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.Function;
@@ -39,15 +38,15 @@ import java.util.stream.Collectors;
  */
 @RequiredArgsConstructor
 public class ServiceTicketCompactor implements TicketCompactor<ServiceTicket> {
+    private static final int MAX_TICKET_LENGTH = 256;
     private final ObjectProvider<TicketFactory> ticketFactory;
     private final ServiceFactory serviceFactory;
     private final PrincipalFactory principalFactory;
 
     @Override
-    public String compact(final StringBuilder builder, final Ticket ticket) {
+    public String compact(final StringBuilder builder, final Ticket ticket) throws Exception {
         if (ticket instanceof final ServiceAwareTicket sat && Objects.nonNull(sat.getService())) {
-            val serviceId = extractServiceUrl(sat);
-            builder.append(String.format("%s%s", DELIMITER, StringUtils.defaultString(serviceId)));
+            builder.append(String.format("%s%s", DELIMITER, StringUtils.defaultString(sat.getService().getShortenedId())));
         } else {
             builder.append("%s*".formatted(DELIMITER));
         }
@@ -68,29 +67,6 @@ public class ServiceTicketCompactor implements TicketCompactor<ServiceTicket> {
             builder.append("%s*%s0".formatted(DELIMITER, DELIMITER));
         }
         return builder.toString();
-    }
-
-    protected String extractServiceUrl(final ServiceAwareTicket sat) {
-        return FunctionUtils.doUnchecked(() -> {
-            val urlBuilder = new URIBuilder(sat.getService().getId());
-            var serviceId = urlBuilder.getScheme() + "://" + urlBuilder.getHost();
-            if (urlBuilder.getPort() > 0) {
-                serviceId += ":" + urlBuilder.getPort();
-            }
-            if (!urlBuilder.getPathSegments().isEmpty()) {
-                serviceId += '/' + urlBuilder.getPathSegments().getFirst();
-            }
-            if (urlBuilder.getPathSegments().size() >= 2) {
-                serviceId += '/' + urlBuilder.getPathSegments().get(1);
-            }
-            if (!urlBuilder.getPathSegments().isEmpty()) {
-                val lastSegment = urlBuilder.getPathSegments().getLast();
-                if (!serviceId.contains(lastSegment)) {
-                    serviceId += '/' + lastSegment;
-                }
-            }
-            return serviceId;
-        });
     }
 
     @Override
@@ -126,5 +102,11 @@ public class ServiceTicketCompactor implements TicketCompactor<ServiceTicket> {
         serviceTicket.setExpirationPolicy(new FixedInstantExpirationPolicy(structure.expirationTime()));
         serviceTicket.setCreationTime(DateTimeUtils.zonedDateTimeOf(structure.creationTime()));
         return serviceTicket;
+    }
+
+    @Override
+    public void validate(final String finalTicketId) {
+        Assert.isTrue(finalTicketId.length() <= MAX_TICKET_LENGTH,
+            "Final ticket id %s length %s exceeds %s characters".formatted(finalTicketId, finalTicketId.length(), MAX_TICKET_LENGTH));
     }
 }

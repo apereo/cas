@@ -27,15 +27,19 @@ public class DefaultServiceMatchingStrategy implements ServiceMatchingStrategy {
     public boolean matches(final Service service, final Service serviceToMatch) {
         try {
             if (service != null && serviceToMatch != null) {
-                val thisUrl = removeFragmentFrom(URLDecoder.decode(service.getId(), StandardCharsets.UTF_8));
-                val serviceUrl = removeFragmentFrom(URLDecoder.decode(serviceToMatch.getId(), StandardCharsets.UTF_8));
-                LOGGER.debug("Decoded urls and comparing [{}] with [{}]", thisUrl, serviceUrl);
-                return thisUrl.equalsIgnoreCase(serviceUrl);
+                return compareServices(service, serviceToMatch);
             }
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
         return false;
+    }
+
+    protected boolean compareServices(final Service service, final Service serviceToMatch) throws Exception {
+        val thisUrl = removeFragmentFrom(URLDecoder.decode(service.getId(), StandardCharsets.UTF_8));
+        val serviceUrl = removeFragmentFrom(URLDecoder.decode(serviceToMatch.getId(), StandardCharsets.UTF_8));
+        LOGGER.debug("Decoded urls and comparing [{}] with [{}]", thisUrl, serviceUrl);
+        return thisUrl.equalsIgnoreCase(serviceUrl);
     }
 
     private static String removeFragmentFrom(final String id) {
