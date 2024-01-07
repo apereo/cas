@@ -30,8 +30,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class AttributeBasedRegisteredServiceAttributeReleaseActivationCriteriaTests {
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(),
         "AttributeBasedRegisteredServiceAttributeReleaseActivationCriteria.json");
@@ -39,6 +37,8 @@ public class AttributeBasedRegisteredServiceAttributeReleaseActivationCriteriaTe
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @Test
     void verifySerializeToJson() throws Throwable {

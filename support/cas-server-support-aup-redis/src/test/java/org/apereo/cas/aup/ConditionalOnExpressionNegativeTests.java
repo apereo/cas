@@ -22,7 +22,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("Redis")
-@SpringBootTest(classes = CasAcceptableUsagePolicyRedisAutoConfiguration.class)
+@SpringBootTest(classes = {
+    BaseAcceptableUsagePolicyRepositoryTests.SharedTestConfiguration.class,
+    CasAcceptableUsagePolicyRedisAutoConfiguration.class
+})
 @TestPropertySource(properties = "CasFeatureModule.AcceptableUsagePolicy.redis.enabled=false")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class ConditionalOnExpressionNegativeTests {

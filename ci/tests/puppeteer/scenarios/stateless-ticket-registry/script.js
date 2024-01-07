@@ -6,7 +6,7 @@ const cas = require("../../cas.js");
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
 
-    const service = "https://apereo.github.io";
+    const service = "https://localhost:9859/anything/lYzxki90TXtrk/7FPzc3OzJ4nNnVm/dPtVNRWdSqa8/TAIempOPCBbMPdje/gPpvsadQMANXyCCY/page.jsp?key=value&param=hello";
     await cas.gotoLogin(page, service);
     await cas.click(page, "#rememberMe");
     await cas.loginWith(page);

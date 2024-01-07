@@ -25,7 +25,7 @@ env:
   JDK_DISTRIBUTION: "corretto"
   RETRY_ATTEMPTS: 3
   RETRY_MINUTES: 180
-  CATEGORY_REGEX: "dynamodb|jdbc|ldap.*|mariadb|mongodb|mysql|postgres|redis"
+  CATEGORY_REGEX: "ldap.*|mongodb|postgres|redis"
 ##########################################################################
 
 on:
