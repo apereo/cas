@@ -45,6 +45,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasDelegatedAuthenticationAutoConfiguration.class,
     BaseDelegatedAuthenticationTests.SharedTestConfiguration.class
 }, properties = {
+    "spring.main.allow-bean-definition-overriding=true",
     "cas.authn.pac4j.profile-selection.ldap.ldap-url=ldap://localhost:10389",
     "cas.authn.pac4j.profile-selection.ldap.base-dn=ou=people,dc=example,dc=org",
     "cas.authn.pac4j.profile-selection.ldap.search-filter=uid={0}",

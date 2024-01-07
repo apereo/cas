@@ -25,7 +25,7 @@ env:
   JDK_DISTRIBUTION: "corretto"
   RETRY_ATTEMPTS: 3
   RETRY_MINUTES: 180
-  CATEGORY_REGEX: "ldap.*|mongodb|redis"
+  CATEGORY_REGEX: "ldap.*"
 ##########################################################################
 
 on:
