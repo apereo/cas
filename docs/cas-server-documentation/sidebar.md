@@ -274,6 +274,7 @@ layout: null
             *   [Groovy Script](/cas/{{ version }}/integration/Attribute-Release-Policy-GroovyScript.html)      
             *   [REST](/cas/{{ version }}/integration/Attribute-Release-Policy-REST.html)              
             *   [Chaining](/cas/{{ version }}/integration/Attribute-Release-Policies-Chain.html)
+            *   [Activation](/cas/{{ version }}/integration/Attribute-Release-Policy-Activation.html)
         *   [Value Filters](/cas/{{ version }}/integration/Attribute-Value-Release-Policies.html)
         *   [Consent](#attrreleaseconsent)
             * [Overview](/cas/{{ version }}/integration/Attribute-Release-Consent.html)
