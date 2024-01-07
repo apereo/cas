@@ -62,7 +62,7 @@ public class ServiceTicketImpl extends AbstractTicket
         super(id, policy);
         this.ticketGrantingTicket = ticket;
         this.service = service;
-        this.fromNewLogin = credentialProvided || ticket.getCountOfUses() == 0;
+        this.fromNewLogin = credentialProvided || (ticket != null && ticket.getCountOfUses() == 0);
     }
 
     @Override
