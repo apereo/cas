@@ -21,7 +21,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SurrogateAuthentication)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "SurrogateComponentSerializationConfiguration", proxyBeanMethods = false)
 class SurrogateComponentSerializationConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

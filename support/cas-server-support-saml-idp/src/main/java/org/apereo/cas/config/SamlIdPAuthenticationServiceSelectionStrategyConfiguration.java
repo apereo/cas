@@ -29,7 +29,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProvider)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "SamlIdPAuthenticationServiceSelectionStrategyConfiguration", proxyBeanMethods = false)
 class SamlIdPAuthenticationServiceSelectionStrategyConfiguration {
 
     @Configuration(value = "SamlIdPRegisteredServicesConfiguration", proxyBeanMethods = false)

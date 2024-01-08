@@ -57,7 +57,7 @@ import java.util.stream.Collectors;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.PersonDirectory)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CasPersonDirectoryConfiguration", proxyBeanMethods = false)
 class CasPersonDirectoryConfiguration {
 
     @Configuration(value = "CasPersonDirectoryPrincipalResolutionConfiguration", proxyBeanMethods = false)

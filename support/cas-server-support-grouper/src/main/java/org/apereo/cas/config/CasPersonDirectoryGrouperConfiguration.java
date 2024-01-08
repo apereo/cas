@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.PersonDirectory, module = "grouper")
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CasPersonDirectoryGrouperConfiguration", proxyBeanMethods = false)
 class CasPersonDirectoryGrouperConfiguration {
     @Configuration(value = "GrouperAttributeRepositoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)

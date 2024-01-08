@@ -55,7 +55,7 @@ import java.util.Objects;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProvider)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "SamlIdPWebflowConfiguration", proxyBeanMethods = false)
 class SamlIdPWebflowConfiguration {
 
     @Configuration(value = "SamlIdPWebflowCoreConfiguration", proxyBeanMethods = false)

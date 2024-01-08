@@ -29,7 +29,7 @@ import org.springframework.data.mongodb.core.MongoOperations;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "mongo")
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "MongoDbTicketRegistryConfiguration", proxyBeanMethods = false)
 class MongoDbTicketRegistryConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

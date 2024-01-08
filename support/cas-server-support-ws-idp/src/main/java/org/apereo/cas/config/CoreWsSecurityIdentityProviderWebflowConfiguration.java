@@ -31,7 +31,7 @@ import org.springframework.webflow.execution.Action;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.WsFederationIdentityProvider)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CoreWsSecurityIdentityProviderWebflowConfiguration", proxyBeanMethods = false)
 class CoreWsSecurityIdentityProviderWebflowConfiguration {
 
     @Bean

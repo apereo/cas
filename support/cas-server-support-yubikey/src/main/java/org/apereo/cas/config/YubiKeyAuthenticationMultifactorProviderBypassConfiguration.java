@@ -32,7 +32,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.YubiKey)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "YubiKeyAuthenticationMultifactorProviderBypassConfiguration", proxyBeanMethods = false)
 class YubiKeyAuthenticationMultifactorProviderBypassConfiguration {
 
     @ConditionalOnMissingBean(name = "yubikeyBypassEvaluator")

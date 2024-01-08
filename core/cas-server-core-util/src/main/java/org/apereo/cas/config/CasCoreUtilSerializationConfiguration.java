@@ -24,7 +24,7 @@ import java.util.List;
  */
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Core)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CasCoreUtilSerializationConfiguration", proxyBeanMethods = false)
 class CasCoreUtilSerializationConfiguration {
 
     @ConditionalOnMissingBean(name = "componentSerializationPlan")

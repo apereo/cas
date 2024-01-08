@@ -48,7 +48,7 @@ import java.util.List;
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Webflow),
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AccountManagement, enabledByDefault = false)
 })
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CasWebflowAccountProfileConfiguration", proxyBeanMethods = false)
 class CasWebflowAccountProfileConfiguration {
     private static final FlowExecutionListener[] FLOW_EXECUTION_LISTENERS = new FlowExecutionListener[0];
 

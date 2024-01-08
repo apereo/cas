@@ -35,7 +35,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProviderMetadata, module = "rest")
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "SamlIdPRestfulIdPMetadataConfiguration", proxyBeanMethods = false)
 class SamlIdPRestfulIdPMetadataConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.saml-idp.metadata.rest.idp-metadata-enabled").isTrue();
 

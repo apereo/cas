@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
 @ConditionalOnClass(LdapConnectionFactory.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.PersonDirectory)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CasPersonDirectoryLdapConfiguration", proxyBeanMethods = false)
 class CasPersonDirectoryLdapConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.attribute-repository.ldap[0].ldap-url");
 

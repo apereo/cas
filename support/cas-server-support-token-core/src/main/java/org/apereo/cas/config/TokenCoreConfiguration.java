@@ -44,7 +44,7 @@ import org.springframework.core.Ordered;
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Tokens)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "TokenCoreConfiguration", proxyBeanMethods = false)
 class TokenCoreConfiguration {
 
     @Configuration(value = "TokenCoreValidatorConfiguration", proxyBeanMethods = false)

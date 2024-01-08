@@ -49,7 +49,7 @@ import java.util.function.Supplier;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OpenIDConnect)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "OidcJwksConfiguration", proxyBeanMethods = false)
 class OidcJwksConfiguration {
 
     @Configuration(value = "OidcEndpointsJwksRotationConfiguration", proxyBeanMethods = false)

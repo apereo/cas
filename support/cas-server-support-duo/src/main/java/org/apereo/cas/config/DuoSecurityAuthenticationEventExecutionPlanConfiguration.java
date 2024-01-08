@@ -94,7 +94,7 @@ import java.util.stream.Collectors;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication,
                              module = "duo")
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "DuoSecurityAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
 
     private static final int WEBFLOW_CONFIGURER_ORDER = 0;

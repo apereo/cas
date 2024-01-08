@@ -39,7 +39,7 @@ import org.springframework.webflow.execution.Action;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.RadiusMFA)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "RadiusMultifactorConfiguration", proxyBeanMethods = false)
 class RadiusMultifactorConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.mfa.radius.client.inet-address");
 

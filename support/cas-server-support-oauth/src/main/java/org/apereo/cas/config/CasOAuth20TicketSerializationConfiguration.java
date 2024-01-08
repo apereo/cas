@@ -32,7 +32,7 @@ import java.io.Serial;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OAuth)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CasOAuth20TicketSerializationConfiguration", proxyBeanMethods = false)
 class CasOAuth20TicketSerializationConfiguration {
 
     @Bean

@@ -45,7 +45,7 @@ import org.springframework.webflow.execution.Action;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.YubiKey)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "YubiKeyAuthenticationWebflowConfiguration", proxyBeanMethods = false)
 class YubiKeyAuthenticationWebflowConfiguration {
     private static final int WEBFLOW_CONFIGURER_ORDER = 100;
 

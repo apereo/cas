@@ -43,7 +43,7 @@ import java.util.ArrayList;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Core)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CasCoreHttpConfiguration", proxyBeanMethods = false)
 class CasCoreHttpConfiguration {
 
     @Configuration(value = "CasCoreHttpSslFactoryConfiguration", proxyBeanMethods = false)

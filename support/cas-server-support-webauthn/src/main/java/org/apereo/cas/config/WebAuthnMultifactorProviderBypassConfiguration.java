@@ -32,7 +32,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.WebAuthn)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "WebAuthnMultifactorProviderBypassConfiguration", proxyBeanMethods = false)
 class WebAuthnMultifactorProviderBypassConfiguration {
 
     @ConditionalOnMissingBean(name = "webAuthnBypassEvaluator")

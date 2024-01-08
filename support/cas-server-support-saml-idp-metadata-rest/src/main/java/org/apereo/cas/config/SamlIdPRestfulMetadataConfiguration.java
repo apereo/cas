@@ -25,7 +25,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SAMLServiceProviderMetadata, module = "rest")
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "SamlIdPRestfulMetadataConfiguration", proxyBeanMethods = false)
 class SamlIdPRestfulMetadataConfiguration {
 
     @Bean

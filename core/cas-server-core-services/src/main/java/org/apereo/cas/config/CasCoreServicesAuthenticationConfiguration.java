@@ -28,7 +28,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAsync(proxyTargetClass = false)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.ServiceRegistry)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CasCoreServicesAuthenticationConfiguration", proxyBeanMethods = false)
 class CasCoreServicesAuthenticationConfiguration {
 
     @Bean

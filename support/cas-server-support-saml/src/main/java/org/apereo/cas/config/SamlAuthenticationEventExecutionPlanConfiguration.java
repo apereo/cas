@@ -24,7 +24,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SAML)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "SamlAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 class SamlAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "samlAuthenticationMetaDataPopulator")

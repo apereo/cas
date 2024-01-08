@@ -25,7 +25,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnClass(RestHttpRequestCredentialFactoryConfigurer.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.GoogleAuthenticator)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "GoogleAuthenticatorRestConfiguration", proxyBeanMethods = false)
 class GoogleAuthenticatorRestConfiguration {
 
     @Bean

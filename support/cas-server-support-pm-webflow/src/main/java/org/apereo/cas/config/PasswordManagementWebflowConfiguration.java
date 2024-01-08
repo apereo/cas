@@ -83,7 +83,7 @@ import java.util.List;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "PasswordManagementWebflowConfiguration", proxyBeanMethods = false)
 class PasswordManagementWebflowConfiguration {
 
     @Configuration(value = "PasswordManagementWebflowSingleSignOnConfiguration", proxyBeanMethods = false)

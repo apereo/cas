@@ -67,7 +67,7 @@ import java.util.stream.Collectors;
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 @EnableAsync(proxyTargetClass = false)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.ServiceRegistry)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CasServiceRegistryInitializationConfiguration", proxyBeanMethods = false)
 class CasServiceRegistryInitializationConfiguration {
 
     private static final BeanCondition CONDITION = BeanCondition.on("cas.service-registry.core.init-from-json").isTrue();

@@ -31,7 +31,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.DelegatedAuthentication)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "DelegatedAuthenticationProfileSelectionConfiguration", proxyBeanMethods = false)
 @Slf4j
 @ConditionalOnClass(ConnectionFactory.class)
 class DelegatedAuthenticationProfileSelectionConfiguration {

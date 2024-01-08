@@ -35,7 +35,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OAuth)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CasOAuth20ComponentSerializationConfiguration", proxyBeanMethods = false)
 class CasOAuth20ComponentSerializationConfiguration {
 
     @Bean

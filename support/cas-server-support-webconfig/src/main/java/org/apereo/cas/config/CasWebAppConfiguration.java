@@ -45,7 +45,7 @@ import java.util.Optional;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.WebApplication)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CasWebAppConfiguration", proxyBeanMethods = false)
 class CasWebAppConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean

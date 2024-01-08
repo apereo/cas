@@ -44,7 +44,7 @@ import org.springframework.webflow.execution.Action;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication, module = "duo")
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "DuoSecurityConfiguration", proxyBeanMethods = false)
 class DuoSecurityConfiguration {
     @Configuration(value = "DuoSecurityCoreWebflowConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)

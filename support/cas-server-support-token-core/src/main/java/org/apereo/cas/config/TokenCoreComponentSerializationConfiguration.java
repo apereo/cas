@@ -20,7 +20,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Tokens)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "TokenCoreComponentSerializationConfiguration", proxyBeanMethods = false)
 class TokenCoreComponentSerializationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "tokenComponentSerializationPlanConfigurer")

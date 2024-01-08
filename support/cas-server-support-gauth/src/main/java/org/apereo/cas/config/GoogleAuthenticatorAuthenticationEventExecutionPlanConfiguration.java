@@ -91,7 +91,7 @@ import java.util.concurrent.TimeUnit;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.GoogleAuthenticator)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
 
     @Configuration(value = "GoogleAuthenticatorAuthenticationEventExecutionPlaHandlerConfiguration", proxyBeanMethods = false)

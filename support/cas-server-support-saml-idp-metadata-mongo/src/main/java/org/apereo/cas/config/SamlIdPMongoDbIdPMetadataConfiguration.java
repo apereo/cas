@@ -39,7 +39,7 @@ import org.springframework.data.mongodb.core.MongoOperations;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProviderMetadata, module = "mongo")
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "SamlIdPMongoDbIdPMetadataConfiguration", proxyBeanMethods = false)
 class SamlIdPMongoDbIdPMetadataConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.saml-idp.metadata.mongo.idp-metadata-collection");
 

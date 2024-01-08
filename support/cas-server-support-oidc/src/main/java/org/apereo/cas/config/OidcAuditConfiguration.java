@@ -28,7 +28,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OpenIDConnect, module = "audit")
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "OidcAuditConfiguration", proxyBeanMethods = false)
 class OidcAuditConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "oidcIdTokenResourceResolver")

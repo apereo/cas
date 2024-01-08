@@ -35,7 +35,7 @@ import org.springframework.scheduling.annotation.Scheduled;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SAMLServiceProviderMetadata, module = "git")
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "SamlIdPGitRegisteredServiceMetadataConfiguration", proxyBeanMethods = false)
 class SamlIdPGitRegisteredServiceMetadataConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.saml-idp.metadata.git.repository-url");
 

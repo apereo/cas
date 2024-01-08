@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Metrics)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CasMetricsConfiguration", proxyBeanMethods = false)
 class CasMetricsConfiguration {
     @Bean
     public TimedAspect timedAspect(final MeterRegistry registry) {

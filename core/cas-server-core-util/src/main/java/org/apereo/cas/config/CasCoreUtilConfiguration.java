@@ -54,7 +54,7 @@ import java.util.stream.Collectors;
 @EnableScheduling
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Core)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CasCoreUtilConfiguration", proxyBeanMethods = false)
 class CasCoreUtilConfiguration {
 
     @Bean

@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.PersonDirectory)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CasPersonDirectoryRestConfiguration", proxyBeanMethods = false)
 class CasPersonDirectoryRestConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.attribute-repository.rest[0].url").isUrl();
 

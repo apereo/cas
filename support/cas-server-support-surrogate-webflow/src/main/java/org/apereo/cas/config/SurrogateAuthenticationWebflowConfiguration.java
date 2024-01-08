@@ -44,7 +44,7 @@ import org.springframework.webflow.execution.Action;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SurrogateAuthentication)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "SurrogateAuthenticationWebflowConfiguration", proxyBeanMethods = false)
 class SurrogateAuthenticationWebflowConfiguration {
 
     @Configuration(value = "SurrogateAuthenticationWebflowBaseConfiguration", proxyBeanMethods = false)

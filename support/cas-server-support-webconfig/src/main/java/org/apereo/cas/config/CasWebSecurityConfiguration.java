@@ -57,7 +57,7 @@ import java.util.List;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.WebApplication)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CasWebSecurityConfiguration", proxyBeanMethods = false)
 @EnableMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 @EnableWebSecurity
 class CasWebSecurityConfiguration {

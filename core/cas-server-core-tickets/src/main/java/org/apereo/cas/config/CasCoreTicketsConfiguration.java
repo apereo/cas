@@ -95,7 +95,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CasCoreTicketsConfiguration", proxyBeanMethods = false)
 class CasCoreTicketsConfiguration {
     @Configuration(value = "CasCoreTicketsBaseConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)

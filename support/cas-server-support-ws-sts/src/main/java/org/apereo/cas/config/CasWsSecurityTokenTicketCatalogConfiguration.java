@@ -24,7 +24,7 @@ import org.springframework.core.Ordered;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.WsFederationIdentityProvider)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CasWsSecurityTokenTicketCatalogConfiguration", proxyBeanMethods = false)
 class CasWsSecurityTokenTicketCatalogConfiguration extends BaseTicketCatalogConfigurer {
 
     @Override

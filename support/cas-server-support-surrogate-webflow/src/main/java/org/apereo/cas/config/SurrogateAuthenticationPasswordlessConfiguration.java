@@ -32,7 +32,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
     CasFeatureModule.FeatureCatalog.SurrogateAuthentication
 })
 @ConditionalOnClass(CasPasswordlessAuthenticationWebflowAutoConfiguration.class)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "SurrogateAuthenticationPasswordlessConfiguration", proxyBeanMethods = false)
 class SurrogateAuthenticationPasswordlessConfiguration {
 
     @Bean
