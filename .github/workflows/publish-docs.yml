@@ -94,7 +94,7 @@ jobs:
       - name: Publish Documentation
         uses: nick-fields/retry@v2
         with:
-          timeout_minutes: 80
-          max_attempts: 3
+          timeout_minutes: 55
+          max_attempts: 2
           shell: bash
           command: ./ci/docs/publish.sh --branch ${{ env.DOCS_BRANCH }}
