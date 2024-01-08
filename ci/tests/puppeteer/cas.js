@@ -219,14 +219,14 @@ exports.isVisible = async (page, selector) => {
 };
 
 exports.assertVisibility = async (page, selector) => {
-    assert(await this.isVisible(page, selector));
+    assert(await this.isVisible(page, selector), `The element ${selector} must be visible but it's not.`);
 };
 
 exports.assertInvisibility = async (page, selector) => {
     const element = await page.$(selector);
     const result = element === null || await element.boundingBox() === null;
     await this.log(`Checking element invisibility for ${selector} while on page ${page.url()}: ${result}`);
-    assert(result);
+    assert(result, `The element ${selector} must be invisible but it's not.`);
 };
 
 exports.assertCookie = async (page, cookieMustBePresent = true, cookieName = "TGC") => {
@@ -901,6 +901,19 @@ exports.dockerContainer = async(name) => {
     }
     await this.logr(`Unable to find Docker container with name ${name}`);
     return undefined;
+};
+
+exports.readLocalStorage = async(page) => {
+    const results = await page.evaluate(() => {
+        const json = {};
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            json[key] = localStorage.getItem(key);
+        }
+        return json;
+    });
+    this.log(results);
+    return results;
 };
 
 this.asciiart("Apereo CAS - Puppeteer");

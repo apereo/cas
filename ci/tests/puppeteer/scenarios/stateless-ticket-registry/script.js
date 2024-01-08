@@ -2,17 +2,14 @@ const puppeteer = require("puppeteer");
 const assert = require("assert");
 const cas = require("../../cas.js");
 
-(async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
-    const page = await cas.newPage(browser);
+async function verifyAuthenticationFlow(context, service) {
+    const page = await cas.newPage(context);
 
-    const service = "https://localhost:9859/anything/lYzxki90TXtrk/7FPzc3OzJ4nNnVm/dPtVNRWdSqa8/TAIempOPCBbMPdje/gPpvsadQMANXyCCY/page.jsp?key=value&param=hello";
     await cas.gotoLogin(page, service);
     await cas.click(page, "#rememberMe");
     await cas.loginWith(page);
     await page.waitForTimeout(1000);
     const ticket = await cas.assertTicketParameter(page);
-    await browser.close();
 
     await cas.logb("Checking ticket validation response multiple times...");
     let body = await cas.doRequest(`https://localhost:8443/cas/validate?service=${service}&ticket=${ticket}`);
@@ -46,5 +43,62 @@ const cas = require("../../cas.js");
     assert(authenticationSuccess.attributes.firstName[0] === "Bob");
     assert(authenticationSuccess.attributes.lastName[0] === "Johnson");
     assert(authenticationSuccess.attributes.employeeNumber[0] === "123456");
+}
+
+async function verifyExistingSsoSession(context, service) {
+    const page = await cas.newPage(context);
+    await cas.gotoLogin(page);
+    await cas.loginWith(page);
+    await page.waitForTimeout(1000);
+
+    const localStorageData = await cas.readLocalStorage(page);
+    const tgc = JSON.parse(localStorageData.casBrowserStorageContext)["TGC"];
+    assert(tgc !== undefined);
+    
+    await cas.log(`Logging into service ${service}`);
+    const page2 = await cas.newPage(context);
+    await cas.gotoLogin(page, service);
+    await page2.waitForTimeout(2000);
+    await cas.log("Checking for page URL...");
+    await cas.logPage(page);
+    await cas.assertInvisibility(page, "#username");
+    await cas.assertInvisibility(page, "#password");
+    const ticket = await cas.assertTicketParameter(page);
+    const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
+    await cas.log(body);
+    const json = JSON.parse(body);
+    const authenticationSuccess = json.serviceResponse.authenticationSuccess;
+    assert(authenticationSuccess.user === "casuser");
+    assert(authenticationSuccess.attributes.credentialType[0] === "RememberMeUsernamePasswordCredential");
+    assert(authenticationSuccess.attributes.isFromNewLogin[0] === true);
+    assert(authenticationSuccess.attributes.authenticationDate[0] !== null);
+    assert(authenticationSuccess.attributes.authenticationMethod[0] === "STATIC");
+    assert(authenticationSuccess.attributes.successfulAuthenticationHandlers[0] === "STATIC");
+    assert(authenticationSuccess.attributes.longTermAuthenticationRequestTokenUsed[0] === false);
+    assert(authenticationSuccess.attributes.firstName[0] === "Bob");
+    assert(authenticationSuccess.attributes.lastName[0] === "Johnson");
+    assert(authenticationSuccess.attributes.employeeNumber[0] === "123456");
+}
+
+(async () => {
+    const service = "https://localhost:9859/anything/lYzxki90TXtrk/7FPzc3OzJ4nNnVm/dPtVNRWdSqa8/TAIempOPCBbMPdje/gPpvsadQMANXyCCY/page.jsp?key=value&param=hello";
+    const browser = await puppeteer.launch(cas.browserOptions());
+
+    for (let i = 1; i <= 2; i++) {
+        const context = await browser.createIncognitoBrowserContext();
+        await cas.log(`Running test scenario ${i}`);
+        switch (i) {
+        case 1:
+            await verifyAuthenticationFlow(context, service);
+            break;
+        case 2:
+            await verifyExistingSsoSession(context, service);
+            break;
+        }
+        await context.close();
+        await cas.log("=======================================");
+    }
+
+    await browser.close();
 
 })();

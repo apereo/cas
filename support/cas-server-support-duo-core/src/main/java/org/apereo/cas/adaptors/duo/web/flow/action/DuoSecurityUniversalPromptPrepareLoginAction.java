@@ -88,7 +88,7 @@ public class DuoSecurityUniversalPromptPrepareLoginAction extends AbstractMultif
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         val context = new JEEContext(request, response);
         val sessionStorage = duoUniversalPromptSessionStore
-            .setSessionAttributes(properties)
+            .withSessionAttributes(context, properties)
             .getTrackableSession(context)
             .map(BrowserStorage.class::cast)
             .orElseThrow(() -> new IllegalStateException("Unable to determine trackable session for storage"));
