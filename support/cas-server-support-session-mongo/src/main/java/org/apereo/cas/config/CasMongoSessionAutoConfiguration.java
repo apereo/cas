@@ -13,7 +13,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.mongodb.MongoDatabaseFactory;
-import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.convert.MongoConverter;
 import org.springframework.session.data.mongo.JdkMongoSessionConverter;
@@ -43,8 +42,8 @@ public class CasMongoSessionAutoConfiguration {
     @Bean
     @Primary
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public MongoOperations mongoTemplate(final MongoDatabaseFactory factory,
-                                         final MongoConverter converter) {
+    public MongoTemplate mongoTemplate(final MongoDatabaseFactory factory,
+                                       final MongoConverter converter) {
         return new MongoTemplate(factory, converter);
     }
 }

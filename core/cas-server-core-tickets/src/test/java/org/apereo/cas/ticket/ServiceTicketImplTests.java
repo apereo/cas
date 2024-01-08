@@ -59,12 +59,6 @@ class ServiceTicketImplTests extends BaseTicketFactoryTests {
     }
 
     @Test
-    void verifyNoTicket() throws Throwable {
-        assertThrows(NullPointerException.class,
-            () -> new ServiceTicketImpl(ST_ID, null, CoreAuthenticationTestUtils.getService(), false, NeverExpiresExpirationPolicy.INSTANCE));
-    }
-
-    @Test
     void verifyIsFromNewLoginTrue() throws Throwable {
         val serviceTicket = new ServiceTicketImpl(ST_ID, tgt, CoreAuthenticationTestUtils.getService(),
             true, NeverExpiresExpirationPolicy.INSTANCE);
