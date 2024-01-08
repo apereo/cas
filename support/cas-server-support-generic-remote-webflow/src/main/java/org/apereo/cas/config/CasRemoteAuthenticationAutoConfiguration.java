@@ -53,7 +53,7 @@ import org.springframework.webflow.execution.Action;
 @AutoConfiguration
 public class CasRemoteAuthenticationAutoConfiguration {
 
-    @Configuration(value = "CasRemoteAuthenticationAutoConfiguration", proxyBeanMethods = false)
+    @Configuration(value = "RemoteAuthenticationWebflowConfiguration", proxyBeanMethods = false)
     static class RemoteAuthenticationWebflowConfiguration {
         @ConditionalOnMissingBean(name = "remoteAuthenticationWebflowConfigurer")
         @Bean
@@ -91,7 +91,7 @@ public class CasRemoteAuthenticationAutoConfiguration {
         }
     }
 
-    @Configuration(value = "CasRemoteAuthenticationAutoConfiguration", proxyBeanMethods = false)
+    @Configuration(value = "RemoteAddressAuthenticationConfiguration", proxyBeanMethods = false)
     static class RemoteAddressAuthenticationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -164,7 +164,7 @@ public class CasRemoteAuthenticationAutoConfiguration {
         }
     }
 
-    @Configuration(value = "CasRemoteAuthenticationAutoConfiguration", proxyBeanMethods = false)
+    @Configuration(value = "RemoteAuthenticationCoreConfiguration", proxyBeanMethods = false)
     static class RemoteAuthenticationCoreConfiguration {
         @ConditionalOnMissingBean(name = "remoteAuthenticationEventExecutionPlanConfigurer")
         @Bean
