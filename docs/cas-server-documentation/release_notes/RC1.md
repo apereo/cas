@@ -63,8 +63,8 @@ are now configured to run with parallelism enabled.
 
 ### Attribute Release Activation Criteria
 
-Attribute release policies can now be [activated conditionally](../integration/Attribute-Release-Policy-Activation.md). 
-This feature allows one to define a set of criteria that must be met before the policy is chosen and activated to start processing attribute release rules.
+Attribute release policies can now be [activated conditionally](../integration/Attribute-Release-Policy-Activation.html). 
+This feature allows one to define conditions that must be met before the policy is chosen and activated to start processing attribute release rules.
 
 ### Deprecations & Removals
 
