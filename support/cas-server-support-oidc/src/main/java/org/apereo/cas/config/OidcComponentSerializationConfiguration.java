@@ -35,7 +35,7 @@ import java.io.Serial;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OpenIDConnect)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "OidcComponentSerializationConfiguration", proxyBeanMethods = false)
 class OidcComponentSerializationConfiguration {
 
     @Bean

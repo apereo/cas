@@ -66,7 +66,7 @@ import java.util.stream.Collectors;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.YubiKey)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "YubiKeyAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

@@ -23,7 +23,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 5.1.0
  */
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SurrogateAuthentication)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "SurrogateAuthenticationMetadataConfiguration", proxyBeanMethods = false)
 class SurrogateAuthenticationMetadataConfiguration {
 
     @Configuration(value = "SurrogateAuthenticationMetadataBaseConfiguration", proxyBeanMethods = false)

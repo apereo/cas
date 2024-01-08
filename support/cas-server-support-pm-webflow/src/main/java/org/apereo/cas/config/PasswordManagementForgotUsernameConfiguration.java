@@ -50,7 +50,7 @@ import org.springframework.webflow.execution.Action;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.ForgotUsername)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "PasswordManagementForgotUsernameConfiguration", proxyBeanMethods = false)
 class PasswordManagementForgotUsernameConfiguration {
 
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.pm.forgot-username.enabled").isTrue().evenIfMissing();

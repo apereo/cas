@@ -102,7 +102,7 @@ import java.time.Duration;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProvider)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "SamlIdPConfiguration", proxyBeanMethods = false)
 class SamlIdPConfiguration {
 
     static {

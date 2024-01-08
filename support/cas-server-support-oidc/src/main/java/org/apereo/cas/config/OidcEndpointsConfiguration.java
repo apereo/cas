@@ -95,7 +95,7 @@ import java.util.Optional;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OpenIDConnect)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "OidcEndpointsConfiguration", proxyBeanMethods = false)
 class OidcEndpointsConfiguration {
 
     @Configuration(value = "OidcEndpointsMultifactorAuthenticationConfiguration", proxyBeanMethods = false)

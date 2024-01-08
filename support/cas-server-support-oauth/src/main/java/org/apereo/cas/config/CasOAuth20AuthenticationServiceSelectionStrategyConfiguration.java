@@ -28,7 +28,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OAuth)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CasOAuth20AuthenticationServiceSelectionStrategyConfiguration", proxyBeanMethods = false)
 class CasOAuth20AuthenticationServiceSelectionStrategyConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "oauth20AuthenticationRequestServiceSelectionStrategy")

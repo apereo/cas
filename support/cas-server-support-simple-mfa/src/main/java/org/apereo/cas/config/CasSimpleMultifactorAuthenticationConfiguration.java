@@ -62,7 +62,7 @@ import java.io.Serial;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SimpleMFA)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CasSimpleMultifactorAuthenticationConfiguration", proxyBeanMethods = false)
 class CasSimpleMultifactorAuthenticationConfiguration {
     private static final int WEBFLOW_CONFIGURER_ORDER = 100;
 

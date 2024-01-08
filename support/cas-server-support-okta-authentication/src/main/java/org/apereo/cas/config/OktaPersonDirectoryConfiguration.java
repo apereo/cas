@@ -33,7 +33,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.PersonDirectory, module = "okta")
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "OktaPersonDirectoryConfiguration", proxyBeanMethods = false)
 class OktaPersonDirectoryConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.attribute-repository.okta.organization-url");
 

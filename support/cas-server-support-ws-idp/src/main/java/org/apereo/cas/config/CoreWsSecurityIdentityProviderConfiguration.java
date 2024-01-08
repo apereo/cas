@@ -65,7 +65,7 @@ import java.util.List;
 @ImportResource(locations = "classpath:META-INF/cxf/cxf.xml")
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.WsFederationIdentityProvider)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CoreWsSecurityIdentityProviderConfiguration", proxyBeanMethods = false)
 class CoreWsSecurityIdentityProviderConfiguration {
 
     @Configuration(value = "CoreWsSecurityIdentityProviderWebConfiguration", proxyBeanMethods = false)

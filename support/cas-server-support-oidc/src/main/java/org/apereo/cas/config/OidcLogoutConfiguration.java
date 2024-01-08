@@ -35,7 +35,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OpenIDConnect)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "OidcLogoutConfiguration", proxyBeanMethods = false)
 class OidcLogoutConfiguration {
 
     @Configuration(value = "OidcLogoutBuilderConfiguration", proxyBeanMethods = false)

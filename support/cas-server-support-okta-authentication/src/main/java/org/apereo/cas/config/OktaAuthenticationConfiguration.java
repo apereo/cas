@@ -35,7 +35,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Authentication, module = "okta")
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "OktaAuthenticationConfiguration", proxyBeanMethods = false)
 class OktaAuthenticationConfiguration {
 
     @Configuration(value = "OktaAuthenticationCoreConfiguration", proxyBeanMethods = false)

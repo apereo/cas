@@ -62,7 +62,7 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SurrogateAuthentication)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "SurrogateAuthenticationConfiguration", proxyBeanMethods = false)
 class SurrogateAuthenticationConfiguration {
     @Configuration(value = "SurrogateAuthenticationProcessorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)

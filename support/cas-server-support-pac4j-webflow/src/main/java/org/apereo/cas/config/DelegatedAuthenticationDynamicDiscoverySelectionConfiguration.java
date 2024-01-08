@@ -30,7 +30,7 @@ import org.springframework.webflow.execution.Action;
  * @since 6.5.0
  */
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.DelegatedAuthentication, module = "dynamic-discovery")
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "DelegatedAuthenticationDynamicDiscoverySelectionConfiguration", proxyBeanMethods = false)
 class DelegatedAuthenticationDynamicDiscoverySelectionConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.pac4j.core.discovery-selection.selection-type")
         .havingValue("DYNAMIC");

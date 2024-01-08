@@ -26,7 +26,7 @@ import org.springframework.util.ReflectionUtils;
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.WsFederationIdentityProvider)
 @AutoConfigureAfter(CasCoreSamlAutoConfiguration.class)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CoreWsSecuritySecurityTokenServiceSamlConfiguration", proxyBeanMethods = false)
 class CoreWsSecuritySecurityTokenServiceSamlConfiguration {
     private static void findFieldAndSetValue(final String fieldName, final Object value) {
         LOGGER.trace("Locating field name [{}]", fieldName);

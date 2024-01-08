@@ -52,7 +52,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OpenIDConnect)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "OidcResponseConfiguration", proxyBeanMethods = false)
 class OidcResponseConfiguration {
 
     @Configuration(value = "OidcResponseAccessTokenConfiguration", proxyBeanMethods = false)

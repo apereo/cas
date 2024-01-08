@@ -36,7 +36,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Authentication, module = "generic")
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "RejectUsersAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 class RejectUsersAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "rejectPrincipalFactory")

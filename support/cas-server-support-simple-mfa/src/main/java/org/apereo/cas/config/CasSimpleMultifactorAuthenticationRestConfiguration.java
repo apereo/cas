@@ -24,7 +24,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnClass(RestHttpRequestCredentialFactoryConfigurer.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SimpleMFA)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CasSimpleMultifactorAuthenticationRestConfiguration", proxyBeanMethods = false)
 class CasSimpleMultifactorAuthenticationRestConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

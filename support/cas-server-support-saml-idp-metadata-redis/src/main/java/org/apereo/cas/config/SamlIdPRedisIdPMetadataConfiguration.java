@@ -41,7 +41,7 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProvider, module = "redis")
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "SamlIdPRedisIdPMetadataConfiguration", proxyBeanMethods = false)
 class SamlIdPRedisIdPMetadataConfiguration {
     private static final BeanCondition CONDITION = BeanCondition
         .on("cas.authn.saml-idp.metadata.redis.idp-metadata-enabled").isTrue()

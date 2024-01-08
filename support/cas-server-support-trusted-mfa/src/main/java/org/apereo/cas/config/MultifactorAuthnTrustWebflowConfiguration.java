@@ -40,7 +40,7 @@ import org.springframework.webflow.execution.Action;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthenticationTrustedDevices)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "MultifactorAuthnTrustWebflowConfiguration", proxyBeanMethods = false)
 class MultifactorAuthnTrustWebflowConfiguration {
 
     @Configuration(value = "MultifactorAuthnTrustCoreWebflowConfiguration", proxyBeanMethods = false)

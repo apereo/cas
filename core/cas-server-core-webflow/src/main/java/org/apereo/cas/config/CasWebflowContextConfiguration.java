@@ -81,7 +81,7 @@ import java.util.List;
  */
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Webflow)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CasWebflowContextConfiguration", proxyBeanMethods = false)
 class CasWebflowContextConfiguration {
 
     private static final int LOGOUT_FLOW_HANDLER_ORDER = 3;

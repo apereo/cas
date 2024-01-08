@@ -130,7 +130,7 @@ import java.util.stream.Collectors;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.DelegatedAuthentication)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "DelegatedAuthenticationWebflowConfiguration", proxyBeanMethods = false)
 class DelegatedAuthenticationWebflowConfiguration {
     @Configuration(value = "DelegatedAuthenticationWebflowErrorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties({CasConfigurationProperties.class, WebProperties.class, WebMvcProperties.class})

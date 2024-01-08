@@ -26,7 +26,7 @@ import java.util.Map;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CasCoreTicketIdGeneratorsConfiguration", proxyBeanMethods = false)
 class CasCoreTicketIdGeneratorsConfiguration {
 
     @Bean

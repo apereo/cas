@@ -31,7 +31,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CasCoreBaseStandaloneConfiguration", proxyBeanMethods = false)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.CasConfiguration)
 class CasCoreBaseStandaloneConfiguration {
 

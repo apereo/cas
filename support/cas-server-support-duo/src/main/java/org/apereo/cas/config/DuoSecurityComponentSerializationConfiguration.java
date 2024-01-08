@@ -25,7 +25,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication, module = "duo")
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "DuoSecurityComponentSerializationConfiguration", proxyBeanMethods = false)
 class DuoSecurityComponentSerializationConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

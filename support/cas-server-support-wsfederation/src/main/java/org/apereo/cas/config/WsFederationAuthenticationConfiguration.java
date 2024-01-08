@@ -38,7 +38,7 @@ import org.springframework.core.Ordered;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.WsFederation)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "WsFederationAuthenticationConfiguration", proxyBeanMethods = false)
 class WsFederationAuthenticationConfiguration {
 
     @Configuration(value = "WsFederationAuthenticationHelperConfiguration", proxyBeanMethods = false)

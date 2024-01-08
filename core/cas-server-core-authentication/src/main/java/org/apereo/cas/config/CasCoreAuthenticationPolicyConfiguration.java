@@ -30,7 +30,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @Slf4j
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Authentication)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CasCoreAuthenticationPolicyConfiguration", proxyBeanMethods = false)
 class CasCoreAuthenticationPolicyConfiguration {
 
     @ConditionalOnMissingBean(name = "ipAddressIntelligenceService")

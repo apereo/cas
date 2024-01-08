@@ -27,7 +27,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @ConditionalOnClass(AccountRegistrationProvisionerConfigurer.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AccountRegistration, module = "syncope")
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "SyncopeAccountManagementConfiguration", proxyBeanMethods = false)
 class SyncopeAccountManagementConfiguration {
     @ConditionalOnMissingBean(name = "syncopeAccountRegistrationProvisionerConfigurer")
     @Bean

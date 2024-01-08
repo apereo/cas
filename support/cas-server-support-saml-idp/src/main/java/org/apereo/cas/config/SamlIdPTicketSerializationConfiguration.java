@@ -26,7 +26,7 @@ import java.io.Serial;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProvider)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "SamlIdPTicketSerializationConfiguration", proxyBeanMethods = false)
 class SamlIdPTicketSerializationConfiguration {
 
     @Bean

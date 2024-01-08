@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.LDAP, module = "password-sync")
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "LdapPasswordSynchronizationConfiguration", proxyBeanMethods = false)
 class LdapPasswordSynchronizationConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.password-sync.enabled").isTrue().evenIfMissing();
     

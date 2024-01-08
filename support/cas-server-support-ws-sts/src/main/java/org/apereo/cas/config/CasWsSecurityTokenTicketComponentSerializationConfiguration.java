@@ -25,7 +25,7 @@ import java.io.Serial;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.WsFederationIdentityProvider)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CasWsSecurityTokenTicketComponentSerializationConfiguration", proxyBeanMethods = false)
 class CasWsSecurityTokenTicketComponentSerializationConfiguration {
 
     @Bean

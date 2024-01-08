@@ -43,7 +43,7 @@ import java.util.HashMap;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.WebApplication)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CasFiltersConfiguration", proxyBeanMethods = false)
 class CasFiltersConfiguration {
     @Configuration(value = "CasFiltersEncodingConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)

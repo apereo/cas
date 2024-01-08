@@ -36,7 +36,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CasCoreTicketComponentSerializationConfiguration", proxyBeanMethods = false)
 class CasCoreTicketComponentSerializationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "coreTicketsComponentSerializationPlanConfigurer")

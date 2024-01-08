@@ -33,7 +33,7 @@ import org.springframework.webflow.execution.Action;
  * @since 7.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "SyncopeWebflowConfiguration", proxyBeanMethods = false)
 class SyncopeWebflowConfiguration {
 
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Provisioning, module = "syncope")
