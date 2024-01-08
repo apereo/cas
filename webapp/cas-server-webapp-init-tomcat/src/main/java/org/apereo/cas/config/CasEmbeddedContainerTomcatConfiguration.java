@@ -28,7 +28,7 @@ import org.springframework.core.Ordered;
 @ConditionalOnClass({Tomcat.class, Http2Protocol.class})
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.ApacheTomcat)
-@Configuration
+@Configuration(value = "CasEmbeddedContainerTomcatConfiguration", proxyBeanMethods = false)
 class CasEmbeddedContainerTomcatConfiguration {
 
     @ConditionalOnMissingBean(name = "casServletWebServerFactory")

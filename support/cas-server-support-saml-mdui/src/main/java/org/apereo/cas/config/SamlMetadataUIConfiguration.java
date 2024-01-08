@@ -44,7 +44,7 @@ import java.util.Map;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SAML)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "SamlMetadataUIConfiguration", proxyBeanMethods = false)
 class SamlMetadataUIConfiguration {
 
     private static final String DEFAULT_SEPARATOR = "::";

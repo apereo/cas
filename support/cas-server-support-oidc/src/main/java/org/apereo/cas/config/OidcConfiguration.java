@@ -168,7 +168,7 @@ import java.util.Set;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OpenIDConnect)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "OidcConfiguration", proxyBeanMethods = false)
 class OidcConfiguration {
 
     @Configuration(value = "OidcServicesConfiguration", proxyBeanMethods = false)

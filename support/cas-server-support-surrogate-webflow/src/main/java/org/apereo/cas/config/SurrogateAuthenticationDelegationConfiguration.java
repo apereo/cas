@@ -32,7 +32,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
     CasFeatureModule.FeatureCatalog.SurrogateAuthentication
 })
 @ConditionalOnClass(DelegatedAuthenticationWebflowConfiguration.class)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "SurrogateAuthenticationDelegationConfiguration", proxyBeanMethods = false)
 class SurrogateAuthenticationDelegationConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

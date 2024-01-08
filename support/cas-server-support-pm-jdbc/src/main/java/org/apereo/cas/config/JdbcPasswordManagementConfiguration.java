@@ -36,7 +36,7 @@ import javax.sql.DataSource;
 @EnableTransactionManagement(proxyTargetClass = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.PasswordManagement, module = "jdbc")
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "JdbcPasswordManagementConfiguration", proxyBeanMethods = false)
 class JdbcPasswordManagementConfiguration {
 
     @Configuration(value = "JdbcPasswordManagementServiceConfiguration", proxyBeanMethods = false)

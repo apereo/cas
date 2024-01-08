@@ -51,7 +51,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthenticationTrustedDevices)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "MultifactorAuthnTrustConfiguration", proxyBeanMethods = false)
 class MultifactorAuthnTrustConfiguration {
 
     private static final int INITIAL_CACHE_SIZE = 50;

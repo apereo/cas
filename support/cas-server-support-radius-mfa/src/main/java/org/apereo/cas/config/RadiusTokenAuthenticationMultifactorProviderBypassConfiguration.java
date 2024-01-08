@@ -32,7 +32,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.RadiusMFA)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "RadiusTokenAuthenticationMultifactorProviderBypassConfiguration", proxyBeanMethods = false)
 class RadiusTokenAuthenticationMultifactorProviderBypassConfiguration {
     @ConditionalOnMissingBean(name = "radiusBypassEvaluator")
     @Bean

@@ -98,7 +98,7 @@ import java.util.stream.Collectors;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Webflow)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CasCoreWebflowConfiguration", proxyBeanMethods = false)
 class CasCoreWebflowConfiguration {
 
     @Configuration(value = "CasCoreWebflowEventResolutionConfiguration", proxyBeanMethods = false)

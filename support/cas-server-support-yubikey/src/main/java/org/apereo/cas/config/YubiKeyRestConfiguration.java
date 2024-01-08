@@ -23,7 +23,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.YubiKey)
 @ConditionalOnClass(RestHttpRequestCredentialFactoryConfigurer.class)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "YubiKeyRestConfiguration", proxyBeanMethods = false)
 class YubiKeyRestConfiguration {
 
     @Bean

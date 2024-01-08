@@ -23,7 +23,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.WsFederationIdentityProvider)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CoreWsSecurityIdentityProviderComponentSerializationConfiguration", proxyBeanMethods = false)
 class CoreWsSecurityIdentityProviderComponentSerializationConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

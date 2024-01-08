@@ -57,7 +57,7 @@ import java.util.stream.Collectors;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Core)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CasCoreWebConfiguration", proxyBeanMethods = false)
 class CasCoreWebConfiguration {
 
     @Configuration(value = "CasCoreWebMessageSourceConfiguration", proxyBeanMethods = false)

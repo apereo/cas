@@ -41,7 +41,7 @@ import java.util.stream.Stream;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SPNEGO)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "SpnegoWebflowActionsConfiguration", proxyBeanMethods = false)
 class SpnegoWebflowActionsConfiguration {
 
     @Bean

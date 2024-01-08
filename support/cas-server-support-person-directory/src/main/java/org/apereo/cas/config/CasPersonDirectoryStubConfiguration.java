@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CasPersonDirectoryStubConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.PersonDirectory)
 class CasPersonDirectoryStubConfiguration {

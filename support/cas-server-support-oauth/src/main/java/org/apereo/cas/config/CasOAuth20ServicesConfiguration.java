@@ -31,7 +31,7 @@ import org.springframework.core.Ordered;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OAuth)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CasOAuth20ServicesConfiguration", proxyBeanMethods = false)
 class CasOAuth20ServicesConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

@@ -33,7 +33,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.GoogleAuthenticator)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "GoogleAuthenticatorConfiguration", proxyBeanMethods = false)
 class GoogleAuthenticatorConfiguration {
     private static final int WEBFLOW_CONFIGURER_ORDER = 100;
 

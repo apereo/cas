@@ -30,7 +30,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.PersonDirectory, module = "syncope")
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "SyncopePersonDirectoryConfiguration", proxyBeanMethods = false)
 class SyncopePersonDirectoryConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.attribute-repository.syncope.url").isUrl();
 

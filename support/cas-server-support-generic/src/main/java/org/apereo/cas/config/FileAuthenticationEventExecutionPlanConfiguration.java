@@ -37,7 +37,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Authentication, module = "generic")
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "FileAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 class FileAuthenticationEventExecutionPlanConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.file.filename").exists();
 

@@ -58,7 +58,7 @@ import java.util.Set;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SAML)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "SamlConfiguration", proxyBeanMethods = false)
 class SamlConfiguration {
 
     @Configuration(value = "SamlViewFactoryConfiguration", proxyBeanMethods = false)

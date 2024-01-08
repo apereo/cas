@@ -51,7 +51,7 @@ import static org.apereo.cas.support.oauth.OAuth20Constants.*;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OAuth)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CasOAuth20ThrottleConfiguration", proxyBeanMethods = false)
 class CasOAuth20ThrottleConfiguration {
     @Configuration(value = "CasOAuth20ThrottlePlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)

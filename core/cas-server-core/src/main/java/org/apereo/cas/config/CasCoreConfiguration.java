@@ -49,7 +49,7 @@ import java.util.List;
 @EnableTransactionManagement(proxyTargetClass = false)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Core)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CasCoreConfiguration", proxyBeanMethods = false)
 class CasCoreConfiguration {
 
     @Configuration(value = "CasCorePolicyConfiguration", proxyBeanMethods = false)

@@ -35,7 +35,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Authentication, module = "generic")
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "JsonResourceAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 class JsonResourceAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "jsonPrincipalFactory")

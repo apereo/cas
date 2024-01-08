@@ -25,7 +25,7 @@ import java.util.Properties;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.CasConfiguration)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CasPropertiesConfiguration", proxyBeanMethods = false)
 @Lazy(false)
 class CasPropertiesConfiguration {
     @Bean

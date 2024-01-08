@@ -32,7 +32,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Authentication, module = "generic")
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "GroovyAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 @ConditionalOnMissingGraalVMNativeImage
 class GroovyAuthenticationEventExecutionPlanConfiguration {
 

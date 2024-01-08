@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.LDAP, module = "authentication")
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "LdapAuthenticationConfiguration", proxyBeanMethods = false)
 class LdapAuthenticationConfiguration {
 
     @Configuration(value = "LdapCoreAuthenticationConfiguration", proxyBeanMethods = false)

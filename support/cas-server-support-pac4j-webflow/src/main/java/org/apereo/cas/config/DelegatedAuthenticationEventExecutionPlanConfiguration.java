@@ -87,7 +87,7 @@ import java.util.stream.Collectors;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.DelegatedAuthentication)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "DelegatedAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 class DelegatedAuthenticationEventExecutionPlanConfiguration {
 
     private static final String AUTHENTICATION_DELEGATION_PREFIX = "AuthnDelegation";

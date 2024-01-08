@@ -34,7 +34,7 @@ import jakarta.annotation.Nonnull;
     CasFeatureModule.FeatureCatalog.Throttling,
     CasFeatureModule.FeatureCatalog.SAMLIdentityProvider
 })
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "SamlIdPThrottleConfiguration", proxyBeanMethods = false)
 class SamlIdPThrottleConfiguration {
 
     @Configuration(value = "SamlIdPThrottleWebMvcConfiguration", proxyBeanMethods = false)

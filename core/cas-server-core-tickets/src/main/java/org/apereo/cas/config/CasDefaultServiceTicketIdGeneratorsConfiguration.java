@@ -25,7 +25,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CasDefaultServiceTicketIdGeneratorsConfiguration", proxyBeanMethods = false)
 class CasDefaultServiceTicketIdGeneratorsConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

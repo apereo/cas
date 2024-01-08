@@ -29,7 +29,7 @@ import software.amazon.awssdk.services.s3.S3Client;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SAMLServiceProviderMetadata, module = "aws-s3")
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "SamlIdPAmazonS3RegisteredServiceMetadataConfiguration", proxyBeanMethods = false)
 class SamlIdPAmazonS3RegisteredServiceMetadataConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.saml-idp.metadata.amazon-s3.bucket-name");
 

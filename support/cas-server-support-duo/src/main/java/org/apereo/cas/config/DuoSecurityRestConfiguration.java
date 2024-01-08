@@ -28,7 +28,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication, module = "duo")
 @ConditionalOnClass(RestHttpRequestCredentialFactoryConfigurer.class)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "DuoSecurityRestConfiguration", proxyBeanMethods = false)
 class DuoSecurityRestConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

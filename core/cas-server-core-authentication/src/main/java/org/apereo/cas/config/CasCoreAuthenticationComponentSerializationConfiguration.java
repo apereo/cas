@@ -48,7 +48,7 @@ import javax.security.auth.login.AccountLockedException;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Authentication)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CasCoreAuthenticationComponentSerializationConfiguration", proxyBeanMethods = false)
 class CasCoreAuthenticationComponentSerializationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "casCoreAuthenticationComponentSerializationPlanConfigurer")

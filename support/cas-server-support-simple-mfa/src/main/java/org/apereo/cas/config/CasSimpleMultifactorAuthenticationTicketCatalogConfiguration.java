@@ -28,7 +28,7 @@ import org.springframework.core.Ordered;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SimpleMFA)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CasSimpleMultifactorAuthenticationTicketCatalogConfiguration", proxyBeanMethods = false)
 class CasSimpleMultifactorAuthenticationTicketCatalogConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

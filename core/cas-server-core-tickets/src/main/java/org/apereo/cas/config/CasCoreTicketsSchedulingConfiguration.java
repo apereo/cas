@@ -43,7 +43,7 @@ import org.springframework.transaction.annotation.Transactional;
 @EnableTransactionManagement(proxyTargetClass = false)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CasCoreTicketsSchedulingConfiguration", proxyBeanMethods = false)
 class CasCoreTicketsSchedulingConfiguration {
 
     @ConditionalOnMissingBean(name = "ticketRegistryCleaner")

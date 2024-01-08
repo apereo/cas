@@ -34,7 +34,7 @@ import java.util.List;
     CasFeatureModule.FeatureCatalog.OpenIDConnect,
     CasFeatureModule.FeatureCatalog.Throttling
 })
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "OidcThrottleConfiguration", proxyBeanMethods = false)
 class OidcThrottleConfiguration {
 
     @Configuration(value = "OidcThrottleWebMvcConfiguration", proxyBeanMethods = false)

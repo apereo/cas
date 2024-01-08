@@ -89,7 +89,7 @@ import java.util.Optional;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProvider)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "SamlIdPMetadataConfiguration", proxyBeanMethods = false)
 class SamlIdPMetadataConfiguration {
 
     @Configuration(value = "SamlIdPMetadataEndpointConfiguration", proxyBeanMethods = false)

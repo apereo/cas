@@ -53,7 +53,7 @@ import javax.sql.DataSource;
 @EnableTransactionManagement(proxyTargetClass = false)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProviderMetadata, module = "jpa")
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "SamlIdPJpaIdPMetadataConfiguration", proxyBeanMethods = false)
 class SamlIdPJpaIdPMetadataConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.saml-idp.metadata.jpa.idp-metadata-enabled").isTrue();
 

@@ -26,7 +26,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SAML)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "SamlUniqueTicketIdGeneratorConfiguration", proxyBeanMethods = false)
 class SamlUniqueTicketIdGeneratorConfiguration {
 
     @Bean

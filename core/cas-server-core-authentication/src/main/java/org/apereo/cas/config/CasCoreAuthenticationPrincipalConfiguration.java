@@ -53,7 +53,7 @@ import java.util.Optional;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Authentication)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CasCoreAuthenticationPrincipalConfiguration", proxyBeanMethods = false)
 class CasCoreAuthenticationPrincipalConfiguration {
     @Configuration(value = "CasCoreAuthenticationPrincipalResolutionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)

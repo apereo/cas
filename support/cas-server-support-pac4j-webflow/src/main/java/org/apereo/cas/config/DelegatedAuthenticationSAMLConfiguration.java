@@ -41,7 +41,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
  * @since 6.5.0
  */
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.DelegatedAuthentication, module = "saml")
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "DelegatedAuthenticationSAMLConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class DelegatedAuthenticationSAMLConfiguration {
 

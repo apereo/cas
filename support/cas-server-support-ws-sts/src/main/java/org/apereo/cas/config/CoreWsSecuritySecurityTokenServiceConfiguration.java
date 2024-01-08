@@ -96,7 +96,7 @@ import java.util.Map;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.WsFederationIdentityProvider)
 @ImportResource(locations = "classpath:jaxws-realms.xml")
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CoreWsSecuritySecurityTokenServiceConfiguration", proxyBeanMethods = false)
 @Slf4j
 class CoreWsSecuritySecurityTokenServiceConfiguration {
 

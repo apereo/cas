@@ -21,7 +21,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.DelegatedAuthentication)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "DelegatedAuthenticationSerializationConfiguration", proxyBeanMethods = false)
 class DelegatedAuthenticationSerializationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "pac4jComponentSerializationPlanConfigurer")

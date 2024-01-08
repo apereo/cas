@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.PersonDirectory)
 @ConditionalOnMissingGraalVMNativeImage
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CasPersonDirectoryGroovyConfiguration", proxyBeanMethods = false)
 class CasPersonDirectoryGroovyConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.attribute-repository.groovy[0].location").exists();
 

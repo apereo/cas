@@ -20,7 +20,7 @@ import java.util.function.Function;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "mongo")
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "MongoDbTicketRegistryTicketCatalogConfiguration", proxyBeanMethods = false)
 class MongoDbTicketRegistryTicketCatalogConfiguration {
 
     @Configuration(value = "MongoDbTicketRegistryTicketCatalogProviderConfiguration", proxyBeanMethods = false)

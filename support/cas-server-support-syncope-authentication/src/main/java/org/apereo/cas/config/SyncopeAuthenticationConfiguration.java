@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Authentication, module = "syncope")
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "SyncopeAuthenticationConfiguration", proxyBeanMethods = false)
 class SyncopeAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "syncopePrincipalFactory")
     @Bean

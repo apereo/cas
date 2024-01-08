@@ -36,7 +36,7 @@ import org.springframework.webflow.execution.Action;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SAML)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "SamlMetadataUIWebflowConfiguration", proxyBeanMethods = false)
 class SamlMetadataUIWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "samlMetadataUIWebConfigurer")

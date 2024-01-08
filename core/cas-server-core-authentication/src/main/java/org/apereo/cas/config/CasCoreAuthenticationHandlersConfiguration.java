@@ -56,7 +56,7 @@ import java.util.stream.Stream;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Authentication)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CasCoreAuthenticationHandlersConfiguration", proxyBeanMethods = false)
 class CasCoreAuthenticationHandlersConfiguration {
 
     @Configuration(value = "CasCoreAuthenticationHandlersProxyConfiguration", proxyBeanMethods = false)

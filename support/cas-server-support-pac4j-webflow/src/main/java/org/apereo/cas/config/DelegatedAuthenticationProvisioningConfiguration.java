@@ -35,7 +35,7 @@ import java.util.function.Supplier;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.DelegatedAuthentication)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "DelegatedAuthenticationProvisioningConfiguration", proxyBeanMethods = false)
 class DelegatedAuthenticationProvisioningConfiguration {
     @Configuration(value = "DelegatedAuthenticationScimProvisioningConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)

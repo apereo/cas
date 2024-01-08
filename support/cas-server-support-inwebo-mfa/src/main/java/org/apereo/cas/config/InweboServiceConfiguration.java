@@ -35,7 +35,7 @@ import java.security.KeyStore;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication, module = "inwebo")
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "InweboServiceConfiguration", proxyBeanMethods = false)
 class InweboServiceConfiguration {
 
     @Bean

@@ -31,7 +31,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SimpleMFA)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CasSimpleMultifactorAuthenticationMultifactorProviderBypassConfiguration", proxyBeanMethods = false)
 class CasSimpleMultifactorAuthenticationMultifactorProviderBypassConfiguration {
 
     @ConditionalOnMissingBean(name = "casSimpleMultifactorBypassEvaluator")

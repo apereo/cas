@@ -60,7 +60,7 @@ import org.springframework.webflow.execution.Action;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.WebAuthn)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "WebAuthnWebflowConfiguration", proxyBeanMethods = false)
 class WebAuthnWebflowConfiguration {
     private static final int WEBFLOW_CONFIGURER_ORDER = 100;
 

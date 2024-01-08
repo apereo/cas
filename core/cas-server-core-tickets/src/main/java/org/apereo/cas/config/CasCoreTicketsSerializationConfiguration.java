@@ -32,7 +32,7 @@ import java.util.Optional;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CasCoreTicketsSerializationConfiguration", proxyBeanMethods = false)
 class CasCoreTicketsSerializationConfiguration {
 
     @Configuration(value = "CasCoreTicketsSerializationPlanConfiguration", proxyBeanMethods = false)

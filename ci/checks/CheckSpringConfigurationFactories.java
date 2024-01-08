@@ -130,8 +130,14 @@ public class CheckSpringConfigurationFactories {
                     }
                 }
                 if (text.contains("@Configuration")) {
-                    var autoconfig = Arrays.asList(file.getParent().toFile().listFiles(ff -> ff.getName().endsWith("AutoConfiguration.java")));
                     var classname = file.toFile().getName().replace(".java", "");
+
+                    if (text.contains("@Configuration(proxyBeanMethods = false)")) {
+                        error("Configuration class %s must be uniquely identified with the name %s", file.toFile().getAbsolutePath(), classname);
+                        count.incrementAndGet();
+                    }
+
+                    var autoconfig = Arrays.asList(file.getParent().toFile().listFiles(ff -> ff.getName().endsWith("AutoConfiguration.java")));
                     var noneMatch = autoconfig.stream().noneMatch(f -> {
                         var autoText = readFile(f.toPath());
                         return autoText.contains(classname);

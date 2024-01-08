@@ -27,7 +27,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.YubiKey)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "YubiKeyConfiguration", proxyBeanMethods = false)
 class YubiKeyConfiguration {
 
     @Bean

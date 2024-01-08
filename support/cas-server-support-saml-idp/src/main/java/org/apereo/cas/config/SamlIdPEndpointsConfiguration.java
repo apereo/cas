@@ -108,7 +108,7 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProvider)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "SamlIdPEndpointsConfiguration", proxyBeanMethods = false)
 class SamlIdPEndpointsConfiguration {
 
     private static final String SAML_SERVER_SUPPORT_PREFIX = "SamlServerSupport";

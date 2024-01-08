@@ -30,7 +30,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Audit),
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication)
 })
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CasCoreMultifactorAuthenticationAuditConfiguration", proxyBeanMethods = false)
 class CasCoreMultifactorAuthenticationAuditConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "casCoreMfaAuditTrailRecordResolutionPlanConfigurer")

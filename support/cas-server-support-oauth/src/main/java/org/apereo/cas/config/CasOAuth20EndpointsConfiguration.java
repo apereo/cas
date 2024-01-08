@@ -38,7 +38,7 @@ import java.util.List;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OAuth)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CasOAuth20EndpointsConfiguration", proxyBeanMethods = false)
 class CasOAuth20EndpointsConfiguration {
 
     @Configuration(value = "CasOAuth20EndpointControllersConfiguration", proxyBeanMethods = false)

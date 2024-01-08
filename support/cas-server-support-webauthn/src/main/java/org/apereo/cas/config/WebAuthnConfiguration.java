@@ -93,7 +93,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.WebAuthn)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "WebAuthnConfiguration", proxyBeanMethods = false)
 class WebAuthnConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.mfa.web-authn.core.enabled").isTrue().evenIfMissing();
 

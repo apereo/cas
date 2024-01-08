@@ -57,7 +57,7 @@ import java.util.stream.Collectors;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.WsFederation)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "WsFedAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 class WsFedAuthenticationEventExecutionPlanConfiguration {
 
     @Configuration(value = "WsFedAuthenticationProvidersConfiguration", proxyBeanMethods = false)

@@ -24,7 +24,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.RadiusMFA)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "RadiusTokenAuthenticationComponentSerializationConfiguration", proxyBeanMethods = false)
 class RadiusTokenAuthenticationComponentSerializationConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.mfa.radius.client.inet-address");
 

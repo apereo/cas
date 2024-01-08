@@ -30,7 +30,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CasCoreMultifactorAuthenticationConfiguration", proxyBeanMethods = false)
 class CasCoreMultifactorAuthenticationConfiguration {
 
     @Configuration(value = "CasCoreMultifactorAuthenticationContextConfiguration", proxyBeanMethods = false)

@@ -36,7 +36,7 @@ import org.springframework.webflow.execution.Action;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Provisioning, module = "okta")
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "OktaProvisioningConfiguration", proxyBeanMethods = false)
 class OktaProvisioningConfiguration {
 
     private static final BeanCondition CONDITION = BeanCondition

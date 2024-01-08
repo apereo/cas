@@ -56,7 +56,7 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Electrofence)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "ElectronicFenceConfiguration", proxyBeanMethods = false)
 class ElectronicFenceConfiguration {
 
     @Configuration(value = "ElectronicFenceMitigatorConfiguration", proxyBeanMethods = false)

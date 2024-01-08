@@ -28,7 +28,7 @@ import org.springframework.data.mongodb.core.MongoOperations;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SAMLServiceProviderMetadata, module = "mongo")
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "SamlIdPMongoDbRegisteredServiceMetadataConfiguration", proxyBeanMethods = false)
 class SamlIdPMongoDbRegisteredServiceMetadataConfiguration {
 
     @Bean

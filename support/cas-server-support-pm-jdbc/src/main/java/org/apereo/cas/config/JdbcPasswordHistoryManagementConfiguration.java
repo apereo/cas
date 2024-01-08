@@ -41,7 +41,7 @@ import javax.sql.DataSource;
 @EnableTransactionManagement(proxyTargetClass = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.PasswordManagementHistory, module = "jdbc")
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "JdbcPasswordHistoryManagementConfiguration", proxyBeanMethods = false)
 class JdbcPasswordHistoryManagementConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.pm.history.core.enabled").isTrue();
 

@@ -29,7 +29,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SPNEGO)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "SpnegoWebflowConfiguration", proxyBeanMethods = false)
 class SpnegoWebflowConfiguration {
     @ConditionalOnMissingBean(name = "spnegoWebflowConfigurer")
     @Bean

@@ -39,7 +39,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Authentication)
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CasCoreAuthenticationMetadataConfiguration", proxyBeanMethods = false)
 class CasCoreAuthenticationMetadataConfiguration {
     private static final BeanCondition CONDITION_CLEARPASS = BeanCondition.on("cas.clearpass.cache-credential").isTrue();
 

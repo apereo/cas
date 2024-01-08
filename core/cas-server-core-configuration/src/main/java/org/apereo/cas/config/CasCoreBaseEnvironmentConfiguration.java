@@ -28,7 +28,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CasCoreBaseEnvironmentConfiguration", proxyBeanMethods = false)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.CasConfiguration)
 class CasCoreBaseEnvironmentConfiguration {
 
