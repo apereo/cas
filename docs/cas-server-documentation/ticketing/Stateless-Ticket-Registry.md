@@ -29,7 +29,9 @@ Rest assured, it will get better over time. Pardon our digital dust, and enjoy t
 The stateless ticket registry may not a suitable solution for all deployment scenarios and its use and adoption does require a number of
 compromises and accepting of trade-offs. The following is a list of limitations and caveats that one should be aware of:
 
-- With more incoming, the only supported protocol at the moment is [CAS](../protocol/CAS-Protocol.html). CAS proxy authentication is not (and is unlikely to be ever) supported.
+- [CAS Protocol](../protocol/CAS-Protocol.html), with the exception of CAS proxy authentication, is supported.
+- [SAML Protocol](../protocol/SAML-Protocol.html) is supported.
+- [SAM2 Protocol](../authentication/Configuring-SAML2-Authentication.html) is supported.
 - Service ticket expiration policies are set to ignore re-usability or idle/inactivity limits, and are set to *only* enforce an expiration instant.
 - Generated service tickets are generally controlled to be no larger than a non-configurable `256` characters.
 - Super long application URLs that might negatively influence the size of the generated service ticket are compressed using a pre-defined modest shortening technique, which in turn is taken into account by a specialized service ticket validation strategy. For best results, it is recommended that applications use shorter `service` URLs.

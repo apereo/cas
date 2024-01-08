@@ -36,7 +36,7 @@ The release policy can be conditionally activated based on available principal a
           "firstName": [ "java.util.ArrayList", [ "John", "Jon" ] ],
           "lastName": [ "java.util.ArrayList", [ "Holdoor", "Hodor" ] ]
         }
-      }
+    }
   }
 }
 ```
