@@ -17,13 +17,13 @@ import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link CasFeatureEnabledPropertyPropertyConditionTests}.
+ * This is {@link CasFeatureEnabledConditionTests}.
  *
  * @author Misagh Moayyed
  * @since 6.6.0
  */
 @Tag("Simple")
-class CasFeatureEnabledPropertyPropertyConditionTests {
+class CasFeatureEnabledConditionTests {
     @ConditionalOnFeaturesEnabled({
         @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AcceptableUsagePolicy, module = "feature3"),
         @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AcceptableUsagePolicy, module = "feature4")
@@ -55,6 +55,20 @@ class CasFeatureEnabledPropertyPropertyConditionTests {
         @Bean
         public String bean1() {
             return "Bean1";
+        }
+    }
+
+    @ConditionalOnFeaturesEnabled({
+        @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AcceptableUsagePolicy, module = "feature1"),
+        @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProvider),
+        @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.ApacheTomcat)
+    })
+    @TestConfiguration(value = "CasFeatureModuleFeatureSelectedTestConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    static class CasFeatureModuleFeatureSelectedTestConfiguration {
+        @Bean
+        public String selectedBean() {
+            return "BeanSelected";
         }
     }
 
@@ -141,6 +155,25 @@ class CasFeatureEnabledPropertyPropertyConditionTests {
         @Test
         void verifyOperation() throws Throwable {
             assertTrue(applicationContext.containsBean("beanMultiple"));
+        }
+    }
+
+    @Nested
+    @SpringBootTest(classes = {
+        RefreshAutoConfiguration.class,
+        WebMvcAutoConfiguration.class,
+        CasFeatureModuleFeatureSelectedTestConfiguration.class
+    }, properties = CasFeatureEnabledCondition.PROPERTY_SELECTED_FEATURE_MODULES
+        + "=CasFeatureModule.AcceptableUsagePolicy.feature1.enabled=true,"
+        + "CasFeatureModule.SAMLIdentityProvider.enabled=true")
+    class SelectedFeatureConditionsTests {
+        @Autowired
+        private ConfigurableApplicationContext applicationContext;
+
+        @Test
+        void verifyOperation() throws Throwable {
+            assertTrue(applicationContext.containsBean("selectedBean"));
+            assertEquals(3, CasFeatureModule.FeatureCatalog.getRegisteredFeatures().size());
         }
     }
 
