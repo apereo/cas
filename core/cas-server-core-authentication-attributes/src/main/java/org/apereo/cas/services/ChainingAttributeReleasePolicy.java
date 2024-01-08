@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -51,6 +52,7 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceChaining
         val chainingConsentPolicy = new ChainingRegisteredServiceConsentPolicy();
         val newConsentPolicies = policies
             .stream()
+            .filter(Objects::nonNull)
             .map(policy -> policy.getConsentPolicy().getPolicies())
             .flatMap(List::stream)
             .sorted(AnnotationAwareOrderComparator.INSTANCE)
@@ -63,6 +65,7 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceChaining
     public RegisteredServicePrincipalAttributesRepository getPrincipalAttributesRepository() {
         val repositories = policies
             .stream()
+            .filter(Objects::nonNull)
             .sorted(AnnotationAwareOrderComparator.INSTANCE)
             .map(RegisteredServiceAttributeReleasePolicy::getPrincipalAttributesRepository)
             .sorted(AnnotationAwareOrderComparator.INSTANCE)
@@ -77,6 +80,8 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceChaining
             val attributes = new HashMap<String, List<Object>>();
             policies
                 .stream()
+                .filter(Objects::nonNull)
+                .filter(policy -> policy.getActivationCriteria() == null || policy.getActivationCriteria().shouldActivate(context))
                 .sorted(AnnotationAwareOrderComparator.INSTANCE)
                 .filter(context.getAttributeReleasePolicyPredicate())
                 .forEach(Unchecked.consumer(policy -> {
@@ -102,6 +107,8 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceChaining
         val attributes = new HashMap<String, List<Object>>();
         policies
             .stream()
+            .filter(Objects::nonNull)
+            .filter(policy -> policy.getActivationCriteria() == null || policy.getActivationCriteria().shouldActivate(context))
             .sorted(AnnotationAwareOrderComparator.INSTANCE)
             .forEach(Unchecked.consumer(policy -> {
                 LOGGER.trace("Fetching consentable attributes from policy [{}] for principal [{}]",
@@ -124,4 +131,6 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceChaining
     public int size() {
         return policies.size();
     }
+
+    
 }
