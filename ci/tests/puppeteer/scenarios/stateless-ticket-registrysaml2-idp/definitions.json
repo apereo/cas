@@ -1,0 +1,26 @@
+{
+  "@class": "java.util.TreeMap",
+  "eduPersonTargetedID": {
+    "@class": "org.apereo.cas.support.saml.web.idp.profile.builders.attr.SamlIdPAttributeDefinition",
+    "key": "eduPersonTargetedID",
+    "name": "eduPersonTargetedID",
+    "urn": "urn:oid:1.3.6.1.4.1.5923.1.1.1.10",
+    "persistent": true,
+    "salt": "OqmG80fEKBQt",
+    "friendlyName": "eduPersonTargetedID"
+  },
+  "givenName": {
+    "@class": "org.apereo.cas.support.saml.web.idp.profile.builders.attr.SamlIdPAttributeDefinition",
+    "key": "givenName",
+    "name": "given-name",
+    "urn": "urn:oid:1.1.1.1.4.1.6666.1.1.1.10",
+    "friendlyName": "TheGivenName",
+    "script": "groovy { logger.info(\" name: ${attributeName}, values: ${attributeValues} \"); return ['Hi', attributes['uid'].first()] }"
+  },
+  "uid": {
+    "@class": "org.apereo.cas.support.saml.web.idp.profile.builders.attr.SamlIdPAttributeDefinition",
+    "key": "uid",
+    "name": "user-id",
+    "friendlyName": "uid-transformed"
+  }
+}
