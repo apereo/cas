@@ -4,6 +4,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.serialization.SerializationUtils;
 import org.apereo.cas.web.BrowserStorage;
 import org.apereo.cas.web.DefaultBrowserStorage;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -32,8 +33,6 @@ public class BrowserWebStorageSessionStore extends JEESessionStore {
     private final CipherExecutor webflowCipherExecutor;
     private final String browserStorageContextKey;
 
-    private Map<String, Object> sessionAttributes = new LinkedHashMap<>();
-
     @Override
     public Optional<Object> getTrackableSession(final WebContext context) {
         val currentSession = super.getTrackableSession(context);
@@ -50,13 +49,12 @@ public class BrowserWebStorageSessionStore extends JEESessionStore {
                     }
                 }
             });
-        attributes.putAll(sessionAttributes);
-
         val encoded = SerializationUtils.serializeAndEncodeObject(this.webflowCipherExecutor, attributes);
         val trackableSession = new String(encoded, StandardCharsets.UTF_8);
         return Optional.of(DefaultBrowserStorage
             .builder()
             .context(browserStorageContextKey)
+            .storageType(BrowserStorage.BrowserStorageTypes.LOCAL)
             .build()
             .setPayloadJson(Map.of("context", trackableSession)));
     }
@@ -75,7 +73,19 @@ public class BrowserWebStorageSessionStore extends JEESessionStore {
             .getBytes(StandardCharsets.UTF_8);
         val attributes = (Map<String, Object>) SerializationUtils.decodeAndDeserializeObject(encoded, webflowCipherExecutor, LinkedHashMap.class);
         attributes.forEach((key, value) -> set(context, key, value));
-        this.sessionAttributes.putAll(attributes);
         return Optional.of(this);
+    }
+
+    /**
+     * Set session attributes for session store.
+     *
+     * @param context    the context
+     * @param properties the properties
+     * @return the session store
+     */
+    @CanIgnoreReturnValue
+    public SessionStore withSessionAttributes(final WebContext context, final Map<String, Object> properties) {
+        properties.forEach((key, value) -> set(context, key, value));
+        return this;
     }
 }

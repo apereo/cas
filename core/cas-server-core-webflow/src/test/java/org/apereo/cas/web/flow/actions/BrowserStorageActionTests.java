@@ -9,6 +9,7 @@ import org.apereo.cas.web.BrowserStorage;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.actions.storage.ReadBrowserStorageAction;
 import org.apereo.cas.web.support.WebUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
@@ -115,7 +116,8 @@ public class BrowserStorageActionTests extends BaseWebflowConfigurerTests {
         val storage = WebUtils.getBrowserStorage(context);
         assertNotNull(storage);
         assertEquals(BrowserStorage.BrowserStorageTypes.SESSION, storage.getStorageType());
-        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, readResult.getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_READ_BROWSER_STORAGE, readResult.getId());
+        assertTrue(context.getFlowScope().contains(ReadBrowserStorageAction.BROWSER_STORAGE_REQUEST_IN_PROGRESS));
 
         val writeResult = writeSessionStorageAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, writeResult.getId());
@@ -125,6 +127,7 @@ public class BrowserStorageActionTests extends BaseWebflowConfigurerTests {
         val sessionStorage = writeResult.getAttributes().getRequired("result", BrowserStorage.class);
         context.setParameter(BrowserStorage.PARAMETER_BROWSER_STORAGE, sessionStorage.getPayload());
         readResult = readSessionStorageAction.execute(context);
+        assertFalse(context.getFlowScope().contains(ReadBrowserStorageAction.BROWSER_STORAGE_REQUEST_IN_PROGRESS));
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, readResult.getId());
         assertNotNull(WebUtils.getTicketGrantingTicketId(context));
 
@@ -132,8 +135,13 @@ public class BrowserStorageActionTests extends BaseWebflowConfigurerTests {
         context.getRequestScope().clear();
         context.setParameter(BrowserStorage.PARAMETER_BROWSER_STORAGE, StringUtils.EMPTY);
         readResult = readSessionStorageAction.execute(context);
-        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, readResult.getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_READ_BROWSER_STORAGE, readResult.getId());
         assertNull(WebUtils.getTicketGrantingTicketId(context));
+        
+        context.getFlowScope().put(ReadBrowserStorageAction.BROWSER_STORAGE_REQUEST_IN_PROGRESS, Boolean.TRUE);
+        readResult = readSessionStorageAction.execute(context);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SKIP, readResult.getId());
+        assertFalse(context.getFlowScope().contains(ReadBrowserStorageAction.BROWSER_STORAGE_REQUEST_IN_PROGRESS));
     }
 
 }
