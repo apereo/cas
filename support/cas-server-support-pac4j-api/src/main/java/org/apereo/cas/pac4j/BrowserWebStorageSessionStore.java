@@ -73,7 +73,18 @@ public class BrowserWebStorageSessionStore extends JEESessionStore {
             .getBytes(StandardCharsets.UTF_8);
         val attributes = (Map<String, Object>) SerializationUtils.decodeAndDeserializeObject(encoded, webflowCipherExecutor, LinkedHashMap.class);
         attributes.forEach((key, value) -> set(context, key, value));
+        context.setRequestAttribute("sessionStorageAttributes", attributes);
         return Optional.of(this);
+    }
+
+    /**
+     * Gets session attributes.
+     *
+     * @param context the context
+     * @return the session attributes
+     */
+    public Map<String, Object> getSessionAttributes(final WebContext context) {
+        return context.getRequestAttribute("sessionStorageAttributes", Map.class).orElseGet(LinkedHashMap::new);
     }
 
     /**
