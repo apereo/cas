@@ -27,7 +27,7 @@ class DefaultServicesManagerRegisteredServiceLocatorTests {
     private ServicesManagerRegisteredServiceLocator defaultServicesManagerRegisteredServiceLocator;
 
     @Autowired
-    @Qualifier("webApplicationServiceFactory")
+    @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
     private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
     @Test

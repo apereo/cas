@@ -312,7 +312,7 @@ class CasWebflowContextConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ConversionService flowBuilderConversionService(
-            @Qualifier("webApplicationServiceFactory") final ServiceFactory<WebApplicationService> webApplicationServiceFactory) {
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY) final ServiceFactory<WebApplicationService> webApplicationServiceFactory) {
             return new FlowBuilderConversionService(webApplicationServiceFactory);
         }
 

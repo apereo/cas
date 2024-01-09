@@ -120,7 +120,7 @@ public abstract class BaseSamlIdPConfigurationTests {
     protected RegisteredServicesTemplatesManager registeredServicesTemplatesManager;
 
     @Autowired
-    @Qualifier("webApplicationServiceFactory")
+    @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
     protected ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
     @Autowired

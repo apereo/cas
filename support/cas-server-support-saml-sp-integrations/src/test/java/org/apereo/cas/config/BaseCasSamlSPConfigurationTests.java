@@ -48,7 +48,7 @@ public abstract class BaseCasSamlSPConfigurationTests {
     protected ServicesManager servicesManager;
 
     @Autowired
-    @Qualifier("webApplicationServiceFactory")
+    @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
     protected ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
     @AfterEach

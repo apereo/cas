@@ -62,7 +62,7 @@ public abstract class AbstractCentralAuthenticationServiceTests extends BaseCasC
     private TicketRegistrySupport ticketRegistrySupport;
 
     @Autowired
-    @Qualifier("webApplicationServiceFactory")
+    @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
     private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
     @Autowired

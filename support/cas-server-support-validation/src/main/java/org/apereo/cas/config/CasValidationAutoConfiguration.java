@@ -104,7 +104,7 @@ public class CasValidationAutoConfiguration {
             final ServiceValidationViewFactory serviceValidationViewFactory,
             @Qualifier(PrincipalFactory.BEAN_NAME) final PrincipalFactory principalFactory,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("webApplicationServiceFactory")
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
             final PrincipalResolver defaultPrincipalResolver) {

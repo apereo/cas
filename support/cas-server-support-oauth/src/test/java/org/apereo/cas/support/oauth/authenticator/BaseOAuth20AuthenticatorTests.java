@@ -87,7 +87,7 @@ public abstract class BaseOAuth20AuthenticatorTests {
     protected OAuth20RequestParameterResolver oauthRequestParameterResolver;
 
     @Autowired
-    @Qualifier("webApplicationServiceFactory")
+    @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
     protected ServiceFactory<WebApplicationService> serviceFactory;
 
     @Autowired
