@@ -77,7 +77,7 @@ class TokenWebApplicationServiceResponseBuilderTests {
     private ResponseBuilder<WebApplicationService> responseBuilder;
 
     @Autowired
-    @Qualifier("webApplicationServiceFactory")
+    @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
     private ServiceFactory<WebApplicationService> serviceFactory;
 
     @Autowired
