@@ -35,8 +35,8 @@ public class DefaultOAuth20ClientSecretValidator implements OAuth20ClientSecretV
         if (!StringUtils.equals(definedSecret, clientSecretDecoded)) {
             LOGGER.error("Wrong client secret for service: [{}]. Using PKCE does not require a client secret and "
                        + "requests generally must not specify a client secret to CAS.\nFurthermore, you must make sure "
-                       + "no client secret is assigned to the registered service [{}] in the CAS service registry.",
-                        registeredService.getServiceId(), registeredService);
+                       + "no client secret is assigned to this registered service in the CAS service registry.",
+                        registeredService.getServiceId());
             return false;
         }
         return true;
