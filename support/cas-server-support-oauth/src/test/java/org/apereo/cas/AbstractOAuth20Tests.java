@@ -226,7 +226,7 @@ public abstract class AbstractOAuth20Tests {
     protected OAuth20CasClientRedirectActionBuilder oauthCasClientRedirectActionBuilder;
 
     @Autowired
-    @Qualifier("webApplicationServiceFactory")
+    @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
     protected ServiceFactory<WebApplicationService> serviceFactory;
 
     @Autowired

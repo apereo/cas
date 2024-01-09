@@ -103,7 +103,7 @@ public abstract class BasePasswordManagementActionTests {
     protected TicketFactory ticketFactory;
 
     @Autowired
-    @Qualifier("webApplicationServiceFactory")
+    @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
     protected ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
     @Autowired

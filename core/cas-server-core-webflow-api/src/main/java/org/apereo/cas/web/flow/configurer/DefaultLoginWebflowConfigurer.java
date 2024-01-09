@@ -208,6 +208,7 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
         val verifyStorage = createActionState(flow, CasWebflowConstants.STATE_ID_VERIFY_BROWSER_STORAGE_READ, CasWebflowConstants.ACTION_ID_READ_BROWSER_STORAGE);
         createTransitionForState(verifyStorage, CasWebflowConstants.TRANSITION_ID_SUCCESS, new DynamicTargetStateResolver(flow));
         createTransitionForState(verifyStorage, CasWebflowConstants.TRANSITION_ID_SKIP, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
+        createTransitionForState(verifyStorage, CasWebflowConstants.TRANSITION_ID_READ_BROWSER_STORAGE, CasWebflowConstants.STATE_ID_BROWSER_STORAGE_READ);
     }
 
     protected void createCreateTicketGrantingTicketAction(final Flow flow) {
