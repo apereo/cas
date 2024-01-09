@@ -64,6 +64,7 @@ public class BrowserWebStorageSessionStore extends JEESessionStore {
                                                             final Object trackableSession) {
         val encoded = DefaultBrowserStorage
             .builder()
+            .storageType(BrowserStorage.BrowserStorageTypes.LOCAL)
             .context(browserStorageContextKey)
             .payload(trackableSession instanceof final BrowserStorage bs ? bs.getPayload() : trackableSession.toString())
             .build()
