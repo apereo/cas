@@ -239,6 +239,7 @@ public record SamlRegisteredServiceMetadataAdaptor(SPSSODescriptor ssoDescriptor
         return getSingleLogoutServices()
             .stream()
             .filter(acs -> binding.equalsIgnoreCase(acs.getBinding()))
+            .filter(acs -> StringUtils.isNotBlank(acs.getLocation()) || StringUtils.isNotBlank(acs.getResponseLocation()))
             .findFirst()
             .orElse(null);
     }
@@ -254,6 +255,7 @@ public record SamlRegisteredServiceMetadataAdaptor(SPSSODescriptor ssoDescriptor
             .stream()
             .filter(acs -> Objects.nonNull(acs) && Objects.nonNull(acs.getBinding()))
             .filter(acs -> acs.getBinding().equalsIgnoreCase(binding))
+            .filter(acs -> StringUtils.isNotBlank(acs.getLocation()) || StringUtils.isNotBlank(acs.getResponseLocation()))
             .collect(Collectors.toList());
         return SAML2MetadataSupport.getDefaultIndexedEndpoint(acsList);
     }
@@ -267,6 +269,7 @@ public record SamlRegisteredServiceMetadataAdaptor(SPSSODescriptor ssoDescriptor
         return getAssertionConsumerServices()
             .stream()
             .map(acs -> StringUtils.defaultIfBlank(acs.getResponseLocation(), acs.getLocation()))
+            .filter(StringUtils::isNotBlank)
             .collect(Collectors.toList());
     }
 
@@ -282,6 +285,7 @@ public record SamlRegisteredServiceMetadataAdaptor(SPSSODescriptor ssoDescriptor
             .filter(acs -> Objects.nonNull(acs) && Objects.nonNull(acs.getBinding()))
             .filter(acs -> acs.getBinding().equalsIgnoreCase(binding))
             .map(acs -> StringUtils.defaultIfBlank(acs.getResponseLocation(), acs.getLocation()))
+            .filter(StringUtils::isNotBlank)
             .collect(Collectors.toList());
     }
 
@@ -298,6 +302,7 @@ public record SamlRegisteredServiceMetadataAdaptor(SPSSODescriptor ssoDescriptor
             .filter(acs -> Objects.nonNull(acs) && Objects.nonNull(acs.getBinding()))
             .filter(acs -> acs.getBinding().equalsIgnoreCase(binding) && index != null && index.equals(acs.getIndex()))
             .map(acs -> StringUtils.defaultIfBlank(acs.getResponseLocation(), acs.getLocation()))
+            .filter(StringUtils::isNotBlank)
             .findFirst();
     }
 

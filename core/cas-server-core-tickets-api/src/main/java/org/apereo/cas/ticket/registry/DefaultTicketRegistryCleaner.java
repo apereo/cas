@@ -6,13 +6,10 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.lock.LockRepository;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.jooq.lambda.Unchecked;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Objects;
 
 /**
@@ -39,7 +36,7 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
                 return 0;
             }
             return cleanInternal();
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
         }
         return 0;
@@ -47,16 +44,27 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
 
     @Override
     public int cleanTicket(final Ticket ticket) {
-        return lockRepository.execute(ticket.getId(), Unchecked.supplier(() -> {
-            if (ticket instanceof final TicketGrantingTicket tgt) {
-                LOGGER.debug("Cleaning up expired ticket-granting ticket [{}]", ticket.getId());
-                logoutManager.performLogout(SingleLogoutExecutionRequest.builder()
-                    .ticketGrantingTicket(tgt)
-                    .build());
+        return lockRepository.execute(ticket.getId(), () -> {
+            try {
+                if (ticket instanceof final TicketGrantingTicket tgt) {
+                    LOGGER.debug("Cleaning up expired ticket-granting ticket [{}]", ticket.getId());
+                    val request = SingleLogoutExecutionRequest.builder()
+                        .ticketGrantingTicket(tgt)
+                        .build();
+                    logoutManager.performLogout(request);
+                }
+            } catch (final Throwable e) {
+                LoggingUtils.error(LOGGER, e);
             }
-            LOGGER.debug("Cleaning up expired ticket [{}]", ticket.getId());
-            return ticketRegistry.deleteTicket(ticket);
-        })).orElseThrow();
+
+            try {
+                LOGGER.debug("Cleaning up expired ticket [{}]", ticket.getId());
+                return ticketRegistry.deleteTicket(ticket);
+            } catch (final Throwable e) {
+                LoggingUtils.error(LOGGER, e);
+                return 0;
+            }
+        }).orElse(0);
     }
 
     protected int cleanInternal() {

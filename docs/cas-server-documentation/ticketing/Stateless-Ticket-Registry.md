@@ -10,9 +10,9 @@ category: Ticketing
 
 The stateless ticket registry is a ticket registry that does not track or store tickets in a persistent manner
 via a backend storage technology. All generated tickets are self-contained and are able to carry their own state
-which in turns makes them portable across CAS nodes and deployments specially for clustered CAS deployments. Each ticket
+which in turn makes them portable across CAS nodes and clustered deployments. Each ticket
 is digitally encrypted to ensure its integrity and confidentiality. Furthermore, generated tickets are compressed as much
-as possible and are constrained to pre-defined size to ensure backward compatibility with various CAS clients where possible.
+as possible and are constrained to a pre-defined size to ensure backward compatibility with various CAS clients where possible.
 
 Support is enabled by including the following dependency in the WAR overlay:
 
@@ -24,18 +24,29 @@ it's still basking in the glow of the experimental stage. Everyone is counting o
 Rest assured, it will get better over time. Pardon our digital dust, and enjoy the ride!
 </p></div>
 
-## Limitations & Caveats
+## Features
 
-The stateless ticket registry may not a suitable solution for all deployment scenarios and its use and adoption does require a number of
-compromises and accepting of trade-offs. The following is a list of limitations and caveats that one should be aware of:
+- No centralized backend storage or caching technology is required to be present, configured, installed, managed, maintained, etc.
+- ...as a result, you do not need to worry about storage schema upgrades, migrations, etc.
+- ...as a result, you do not need to worry about cleaning up expired tickets.
+- ...as a result, you do not need to worry about sharing tickets across CAS nodes in a clustered deployment and synchronizing state.
+
+## Caveats
+
+The stateless ticket registry may not be a suitable solution for all deployment scenarios and its use and adoption does require a number of
+compromises and security trade-offs. The following is a list of limitations and caveats that one should be aware of:
 
 - [CAS Protocol](../protocol/CAS-Protocol.html), with the exception of CAS proxy authentication, is supported.
 - [SAML Protocol](../protocol/SAML-Protocol.html) is supported.
-- [SAM2 Protocol](../authentication/Configuring-SAML2-Authentication.html) is supported.
-- Service ticket expiration policies are set to ignore re-usability or idle/inactivity limits, and are set to *only* enforce an expiration instant.
-- Generated service tickets are generally controlled to be no larger than a non-configurable `256` characters.
-- Super long application URLs that might negatively influence the size of the generated service ticket are compressed using a pre-defined modest shortening technique, which in turn is taken into account by a specialized service ticket validation strategy. For best results, it is recommended that applications use shorter `service` URLs.
-- To minimize the length of the generated tickets, service tickets are not signed; only encrypted.
+- [SAM2 Protocol](../authentication/Configuring-SAML2-Authentication.html), with the exception of [SAML2 attribute queries](../installation/Configuring-SAML2-AttributeQuery.html), is supported.
+- The expiration policies for all generated tickets are set to ignore re-usability or idle/inactivity limits, and are set to *only* enforce an expiration instant.
+- Generated tickets are generally controlled to be no larger than `256` characters. You *might* need to adjust your servlet container of choice to allow for larger form/response header sizes. Likewise, you must ensure your applications, particularly those that deal with CAS or OpenID Connect protocols are OK with somewhat larger and longer ticket and token sizes.
+- Super long application URLs that might negatively influence the size of the generated service ticket are compressed using a pre-defined modest shortening technique, which in turn is taken into account by a specialized ticket validation strategy. For best results, and this is true for all CAS-supported protocols, it is recommended that applications use shorter URLs.
+- To minimize the length of the generated tickets, tickets are only encrypted.
 - The end user's browser session management features are heavily employed in all stateless ticket exchanges. The browser must be able to support i.e. local/session storage.
-- All attributed produced and collected during the first leg of the authentication transaction will be lost and ignored during back-channel ticket validation attempts. Such attempts instruct CAS to fetch all attributes from configured attribute repositories once more. In other words, if your attributes are only produced once during the authentication transaction by an authentication handler and family, you must also configure an attribute repository to re-fetch the attributes during ticket validation.
-- In the absence of a central backend storage service, back-channel single logout operations are not supported. Likewise, all operations that ask for active single sign-on sessions or anything that in general deals with tracking single sign-on sessions is out of scope and unlikely to be supported.
+- **Important:** All attributes produced and collected during the first leg of the authentication transaction will be lost and ignored during back-channel ticket validation attempts. Such attempts instruct CAS to fetch all attributes from configured attribute repositories once more. In other words, if your attributes are only produced once during the authentication transaction by an authentication handler and family, you must also configure [an attribute repository](../integration/Attribute-Resolution.html) to fetch the attributes yet again during ticket validation operations.
+- In the absence of a central backend storage service, back-channel single logout operations are not supported. Likewise, all operations that ask for active single sign-on sessions or anything that in general deals with tracking single sign-on sessions is out of scope and unlikely to be supported. You will lose the ability to determine whether a user is logged in and as a result will be unable to administratively terminate a user's session.
+
+<div class="alert alert-info"><strong>Life Advice</strong><p>
+Depending on your point of view, any one of the caveats noted above could be argued as a minor lapse in security. Lessened security constraints around generated tickets or the inability to manage one's single sign-on session remotely, etc might be a deal breaker for you. Needless to say, you should examine and understand the security trade-offs carefully before you decide to use this option, or any option for that matter.
+</p></div>
