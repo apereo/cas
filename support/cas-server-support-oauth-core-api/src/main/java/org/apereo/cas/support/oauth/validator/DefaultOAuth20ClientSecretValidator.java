@@ -33,7 +33,8 @@ public class DefaultOAuth20ClientSecretValidator implements OAuth20ClientSecretV
         val clientSecretDecoded = EncodingUtils.urlDecode(clientSecret);
         val definedSecret = cipherExecutor.decode(registeredService.getClientSecret(), new Object[]{registeredService});
         if (!StringUtils.equals(definedSecret, clientSecretDecoded)) {
-            LOGGER.error("Wrong client secret for service: [{}]", registeredService.getServiceId());
+            LOGGER.error("Wrong client secret for service: [{}]. If you use PKCE and no client secret on client side, "
+                       + "you need to set \"clientSecret\": null on the CAS server side", registeredService.getServiceId());
             return false;
         }
         return true;
