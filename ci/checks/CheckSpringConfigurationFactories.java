@@ -6,10 +6,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class CheckSpringConfigurationFactories {
     private static final String ANSI_RESET = "\u001B[0m";
@@ -93,6 +96,7 @@ public class CheckSpringConfigurationFactories {
     
     protected static void checkMissingSpringFactoryConfigurations(final String arg) throws IOException {
         var count = new AtomicInteger(0);
+        var configurationNames = new HashSet<String>();
 
         Files.walk(Paths.get(arg))
             .filter(f -> Files.isRegularFile(f)
@@ -135,6 +139,15 @@ public class CheckSpringConfigurationFactories {
                     if (text.contains("@Configuration(proxyBeanMethods = false)")) {
                         error("Configuration class %s must be uniquely identified with the name %s", file.toFile().getAbsolutePath(), classname);
                         count.incrementAndGet();
+                    }
+
+                    var matcher = Pattern.compile("@Configuration\\(value = \"(\\w+)\".+").matcher(text);
+                    while (matcher.find()) {
+                        var name = matcher.group(1);
+                        if (!configurationNames.add(name)) {
+                            error("Configuration class %s contains a duplicate name %s", file.toFile().getAbsolutePath(), name);
+                            count.incrementAndGet();
+                        }
                     }
 
                     var autoconfig = Arrays.asList(file.getParent().toFile().listFiles(ff -> ff.getName().endsWith("AutoConfiguration.java")));
