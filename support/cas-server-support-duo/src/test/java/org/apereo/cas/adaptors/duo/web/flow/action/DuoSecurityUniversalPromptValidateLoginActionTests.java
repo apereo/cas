@@ -135,7 +135,7 @@ class DuoSecurityUniversalPromptValidateLoginActionTests extends BaseCasWebflowM
         val attributes = duoUniversalPromptSessionStore.buildFromTrackableSession(webContext, storage)
             .map(BrowserWebStorageSessionStore.class::cast)
             .orElseThrow()
-            .getSessionAttributes();
+            .getSessionAttributes(webContext);
 
         val code = UUID.randomUUID().toString();
         context.setParameter(DuoSecurityUniversalPromptValidateLoginAction.REQUEST_PARAMETER_CODE, code);

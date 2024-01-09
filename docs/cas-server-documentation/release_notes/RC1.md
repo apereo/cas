@@ -83,4 +83,6 @@ This feature allows one to define conditions that must be met before the policy 
 - ErrorProne
 - Spring Security
 - Spring Boot
+- Twilio
+- Pac4j
 
