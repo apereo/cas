@@ -246,7 +246,7 @@ public abstract class AbstractOidcTests {
     protected OAuth20CodeFactory defaultOAuthCodeFactory;
 
     @Autowired
-    @Qualifier("webApplicationServiceFactory")
+    @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
     protected ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
     @Autowired
