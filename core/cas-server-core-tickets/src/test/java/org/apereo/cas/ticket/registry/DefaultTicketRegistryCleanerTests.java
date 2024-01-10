@@ -61,4 +61,26 @@ class DefaultTicketRegistryCleanerTests {
         };
         assertEquals(0, cleaner.clean());
     }
+
+    @Test
+    void verifyPerformLogoutFail() throws Throwable {
+        val logoutManager = mock(LogoutManager.class);
+
+        val ticketRegistry = new DefaultTicketRegistry(mock(TicketSerializationManager.class), new DefaultTicketCatalog());
+        val tgt1 = new MockTicketGrantingTicket("casuser1");
+        tgt1.setExpirationPolicy(new HardTimeoutExpirationPolicy(1));
+        ticketRegistry.addTicket(tgt1);
+        tgt1.markTicketExpired();
+
+        val tgt2 = new MockTicketGrantingTicket("casuser2");
+        tgt2.setExpirationPolicy(new HardTimeoutExpirationPolicy(1));
+        ticketRegistry.addTicket(tgt2);
+        tgt2.markTicketExpired();
+        assertEquals(2, ticketRegistry.getTickets().size());
+
+        val cleaner = new DefaultTicketRegistryCleaner(LockRepository.noOp(), logoutManager, ticketRegistry);
+        when(logoutManager.performLogout(argThat(request -> request.getTicketGrantingTicket().equals(tgt2)))).thenThrow(RuntimeException.class);
+        cleaner.clean();
+        assertEquals(0, ticketRegistry.sessionCount());
+    }
 }

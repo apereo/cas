@@ -48,15 +48,23 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
     @Override
     public int cleanTicket(final Ticket ticket) {
         return lockRepository.execute(ticket.getId(), Unchecked.supplier(() -> {
-            if (ticket instanceof final TicketGrantingTicket tgt) {
-                LOGGER.debug("Cleaning up expired ticket-granting ticket [{}]", ticket.getId());
-                logoutManager.performLogout(SingleLogoutExecutionRequest.builder()
-                    .ticketGrantingTicket(tgt)
-                    .build());
-            }
+            performLogout(ticket);
             LOGGER.debug("Cleaning up expired ticket [{}]", ticket.getId());
             return ticketRegistry.deleteTicket(ticket);
         })).orElseThrow();
+    }
+
+    private void performLogout(Ticket ticket) {
+        try {
+            if (ticket instanceof final TicketGrantingTicket tgt) {
+                LOGGER.debug("Cleaning up expired ticket-granting ticket [{}]", ticket.getId());
+                logoutManager.performLogout(SingleLogoutExecutionRequest.builder()
+                        .ticketGrantingTicket(tgt)
+                        .build());
+            }
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        }
     }
 
     protected int cleanInternal() {
