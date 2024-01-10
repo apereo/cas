@@ -29,10 +29,10 @@ public class WriteBrowserStorageAction extends BaseBrowserStorageAction {
         val payload = CollectionUtils.wrap(ticketGrantingCookieBuilder.getCookieName(),
             ticketGrantingCookieBuilder.getCasCookieValueManager().buildCookieValue(ticketGrantingTicket, request));
         val sessionStorage = DefaultBrowserStorage.builder()
-            .payload(MAPPER.writeValueAsString(payload))
             .context(browserStorageContextKey)
             .storageType(determineStorageType(requestContext))
-            .build();
+            .build()
+            .setPayloadJson(payload);
         WebUtils.putBrowserStorage(requestContext, sessionStorage);
         return success(sessionStorage);
     }

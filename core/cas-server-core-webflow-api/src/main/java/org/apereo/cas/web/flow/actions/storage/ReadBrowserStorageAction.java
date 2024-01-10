@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -37,16 +38,18 @@ public class ReadBrowserStorageAction extends BaseBrowserStorageAction {
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         val browserStorage = new DefaultBrowserStorage()
-            .setStorageType(determineStorageType(requestContext))
             .setContext(WebUtils.getBrowserStorageContextKey(requestContext, this.browserStorageContextKey))
-            .setRemoveOnRead(false);
-        
+            .setStorageType(determineStorageType(requestContext));
         val storageResult = WebUtils.getBrowserStoragePayload(requestContext);
         if (storageResult.isPresent()) {
             val storageData = storageResult.get();
             browserStorage.setPayload(Objects.requireNonNull(storageData));
             hydrateWebflowFromStorage(browserStorage, requestContext);
-            WebUtils.putTargetState(requestContext, CasWebflowConstants.STATE_ID_TICKET_GRANTING_TICKET_CHECK);
+
+            val targetState = WebUtils.getTargetState(requestContext);
+            if (StringUtils.isBlank(targetState)) {
+                WebUtils.putTargetState(requestContext, CasWebflowConstants.STATE_ID_TICKET_GRANTING_TICKET_CHECK);
+            }
             requestContext.getFlowScope().remove(BROWSER_STORAGE_REQUEST_IN_PROGRESS);
             return result(CasWebflowConstants.TRANSITION_ID_SUCCESS, BrowserStorage.PARAMETER_BROWSER_STORAGE, browserStorage);
         }
@@ -62,13 +65,12 @@ public class ReadBrowserStorageAction extends BaseBrowserStorageAction {
 
     protected void hydrateWebflowFromStorage(final BrowserStorage browserStorage, final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        val storageMap = (Map<String, String>) browserStorage.getPayloadJson(Map.class);
-        if (storageMap.containsKey(ticketGrantingCookieBuilder.getCookieName())) {
-            val cookieValue = storageMap.get(ticketGrantingCookieBuilder.getCookieName());
+        val storageMap = (Map) browserStorage.getPayloadJson();
+        if (storageMap != null && storageMap.containsKey(ticketGrantingCookieBuilder.getCookieName())) {
+            val cookieValue = storageMap.get(ticketGrantingCookieBuilder.getCookieName()).toString();
             val ticketGrantingTicketId = ticketGrantingCookieBuilder.getCasCookieValueManager().obtainCookieValue(cookieValue, request);
             WebUtils.putTicketGrantingTicketInScopes(requestContext, ticketGrantingTicketId);
         }
         WebUtils.putBrowserStorage(requestContext, browserStorage);
     }
-
 }

@@ -76,10 +76,12 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
         val properties = configurationContext.getCasProperties();
         val type = properties.getAuthn().getSamlIdp().getCore().getSessionStorageType();
         if (type == SessionStorageTypes.BROWSER_STORAGE) {
-            val storage = request.getParameter(BrowserStorage.PARAMETER_BROWSER_STORAGE);
-            val context = new JEEContext(request, response);
-            configurationContext.getSessionStore().buildFromTrackableSession(context, storage);
-            return handleProfileRequest(response, request);
+            val storage = WebUtils.getBrowserStoragePayload(request);
+            if (storage.isPresent()) {
+                val context = new JEEContext(request, response);
+                configurationContext.getSessionStore().buildFromTrackableSession(context, storage.get());
+                return handleProfileRequest(response, request);
+            }
         }
         return WebUtils.produceErrorView(new IllegalArgumentException("Unable to build SAML response"));
     }

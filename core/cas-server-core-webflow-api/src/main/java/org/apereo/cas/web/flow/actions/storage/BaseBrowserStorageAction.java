@@ -27,7 +27,7 @@ public abstract class BaseBrowserStorageAction extends BaseCasWebflowAction {
 
     protected final CasCookieBuilder ticketGrantingCookieBuilder;
 
-    protected String browserStorageContextKey = "casBrowserStorageContext";
+    protected String browserStorageContextKey = "CasBrowserStorageContext";
 
     protected BrowserStorage.BrowserStorageTypes determineStorageType(final RequestContext requestContext) {
         val requestScope = requestContext.getRequestScope();
@@ -35,6 +35,6 @@ public abstract class BaseBrowserStorageAction extends BaseCasWebflowAction {
             val requiredType = requestScope.getRequiredString(BrowserStorage.BrowserStorageTypes.class.getSimpleName());
             return BrowserStorage.BrowserStorageTypes.valueOf(requiredType.toUpperCase(Locale.ENGLISH));
         }
-        return BrowserStorage.BrowserStorageTypes.SESSION;
+        return BrowserStorage.BrowserStorageTypes.LOCAL;
     }
 }

@@ -68,7 +68,7 @@ public class BrowserWebStorageSessionStore extends JEESessionStore {
             .context(browserStorageContextKey)
             .payload(trackableSession instanceof final BrowserStorage bs ? bs.getPayload() : trackableSession.toString())
             .build()
-            .getPayloadJson(Map.class)
+            .getPayloadJson()
             .get("context")
             .toString()
             .getBytes(StandardCharsets.UTF_8);

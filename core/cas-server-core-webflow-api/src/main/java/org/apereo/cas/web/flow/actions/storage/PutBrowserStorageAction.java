@@ -28,8 +28,7 @@ public class PutBrowserStorageAction extends BaseBrowserStorageAction {
     protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         val browserStorage = new DefaultBrowserStorage()
             .setStorageType(determineStorageType(requestContext))
-            .setContext(WebUtils.getBrowserStorageContextKey(requestContext, this.browserStorageContextKey))
-            .setRemoveOnRead(false);
+            .setContext(WebUtils.getBrowserStorageContextKey(requestContext, this.browserStorageContextKey));
         WebUtils.putBrowserStorage(requestContext, browserStorage);
         return null;
     }

@@ -3,6 +3,7 @@ package org.apereo.cas.web;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * This is {@link BrowserStorage}.
@@ -23,6 +24,13 @@ public interface BrowserStorage extends Serializable {
      * @return the payload
      */
     String getPayload();
+
+    /**
+     * Gets context.
+     *
+     * @return the context
+     */
+    String getContext();
 
     /**
      * Gets destination url.
@@ -61,31 +69,21 @@ public interface BrowserStorage extends Serializable {
      * @return the storage type
      */
     BrowserStorageTypes getStorageType();
-    
-    /**
-     * Sets remove on read.
-     *
-     * @param removeOnRead the remove on read
-     * @return the remove on read
-     */
-    BrowserStorage setRemoveOnRead(boolean removeOnRead);
-
-    /**
-     * Json browser storage.
-     *
-     * @param data the data
-     * @return the browser storage
-     */
-    BrowserStorage setPayloadJson(Object data);
 
     /**
      * Gets payload json.
      *
-     * @param <T>   the type parameter
-     * @param clazz the clazz
      * @return the payload json
      */
-    <T> T getPayloadJson(Class<T> clazz);
+    Map<String, Object> getPayloadJson();
+
+    /**
+     * Sets payload json.
+     *
+     * @param payload the payload
+     * @return the payload json
+     */
+    BrowserStorage setPayloadJson(Object payload);
 
     enum BrowserStorageTypes {
         /**

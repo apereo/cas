@@ -92,7 +92,8 @@ class DuoSecurityUniversalPromptValidateLoginActionTests extends BaseCasWebflowM
 
         assertEquals(CasWebflowConstants.STATE_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN, WebUtils.getTargetState(context));
         assertEquals(CasWebflowConstants.TRANSITION_ID_SWITCH, WebUtils.getTargetTransition(context));
-        assertEquals(duoUniversalPromptSessionStore.getBrowserStorageContextKey(), WebUtils.getBrowserStorageContextKey(context));
+        assertEquals(duoUniversalPromptSessionStore.getBrowserStorageContextKey(),
+            WebUtils.getBrowserStorageContextKey(context, duoUniversalPromptSessionStore.getBrowserStorageContextKey()));
     }
 
     @Test

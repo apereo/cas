@@ -40,7 +40,9 @@
             } else {
                 payload = readFromLocalStorage(browserStorage);
             }
-            document.getElementById("browserStorage").value = payload;
+            if (Object.keys(payload).length > 0) {
+                document.getElementById("browserStorage").value = JSON.stringify(payload);
+            }
             document.getElementById("fm1").submit();
             /*]]>*/
         </script>
