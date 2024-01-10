@@ -85,4 +85,7 @@ This feature allows one to define conditions that must be met before the policy 
 - Spring Boot
 - Twilio
 - Pac4j
+- Grouper
+- Micrometer
+- Apache Tomcat
 
