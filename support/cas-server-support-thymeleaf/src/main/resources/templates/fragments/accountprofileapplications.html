@@ -46,7 +46,7 @@
 
                 <tr th:each="service : ${authorizedServices}" class="mdc-data-table__row">
                     <td class="mdc-data-table__cell">
-                        <a th:id="${'service' + service.id}" th:title="${service.name}" th:alt="${service.description}" th:utext="${service.name}"/>
+                        <a th:id="${'service' + service.id}" th:title="${service.name}" th:utext="${service.name}"/>
 
                         <script th:inline="javascript">
                             /*<![CDATA[*/

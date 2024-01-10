@@ -63,7 +63,7 @@
 
                     <p>
                         <i class="mdi mdi-help-circle fas fa-question-circle"
-                           th:id="${'service'+iterStat.index}" title="Logout request pending..."> </i>
+                           th:id="${'service'+iterStat.index}" th:title="${screen.logout.pending}"> </i>
                         <kbd th:text="${entry.key.service.id}">Service id</kbd>
                     </p>
 
