@@ -100,8 +100,10 @@ function writeToLocalStorage(browserStorage) {
     if (typeof (Storage) === "undefined") {
         console.log("Browser does not support local storage for write-ops");
     } else {
-        window.localStorage.removeItem(browserStorage.context);
-        window.localStorage.setItem(browserStorage.context, browserStorage.payload);
+        let payload = readFromLocalStorage(browserStorage);
+        window.localStorage.removeItem("CAS");
+        payload[browserStorage.context] = browserStorage.payload;
+        window.localStorage.setItem("CAS", JSON.stringify(payload));
         console.log(`Stored ${browserStorage.payload} in local storage under key ${browserStorage.context}`);
     }
 }
@@ -111,13 +113,9 @@ function readFromLocalStorage(browserStorage) {
         console.log("Browser does not support local storage for read-ops");
         return null;
     }
-    let payload = window.localStorage.getItem(browserStorage.context);
-    console.log(`Read ${payload} in local storage under key ${browserStorage.context}`);
-
-    if (browserStorage.removeOnRead) {
-        window.localStorage.removeItem(browserStorage.context);
-    }
-    return payload;
+    let payload = window.localStorage.getItem("CAS");
+    console.log(`Read ${payload} in local storage`);
+    return payload === null ? {} : JSON.parse(payload);
 }
 
 function clearLocalStorage() {
@@ -132,8 +130,10 @@ function writeToSessionStorage(browserStorage) {
     if (typeof (Storage) === "undefined") {
         console.log("Browser does not support session storage for write-ops");
     } else {
-        window.sessionStorage.removeItem(browserStorage.context);
-        window.sessionStorage.setItem(browserStorage.context, browserStorage.payload);
+        let payload = readFromSessionStorage(browserStorage);
+        window.sessionStorage.removeItem("CAS");
+        payload[browserStorage.context] = browserStorage.payload;
+        window.sessionStorage.setItem("CAS", JSON.stringify(payload));
         console.log(`Stored ${browserStorage.payload} in session storage under key ${browserStorage.context}`);
     }
 }
@@ -152,12 +152,9 @@ function readFromSessionStorage(browserStorage) {
         console.log("Browser does not support session storage for read-ops");
         return null;
     }
-    let payload = window.sessionStorage.getItem(browserStorage.context);
-    console.log(`Read ${payload} in session storage under key ${browserStorage.context}`);
-    if (browserStorage.removeOnRead) {
-        window.sessionStorage.removeItem(browserStorage.context);
-    }
-    return payload;
+    let payload = window.sessionStorage.getItem("CAS");
+    console.log(`Read ${payload} in session storage`);
+    return payload === null ? {} : JSON.parse(payload);
 }
 
 function resourceLoadedSuccessfully() {

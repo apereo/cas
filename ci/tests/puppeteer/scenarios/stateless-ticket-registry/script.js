@@ -52,8 +52,8 @@ async function verifyExistingSsoSession(context, service) {
     await page.waitForTimeout(1000);
 
     const localStorageData = await cas.readLocalStorage(page);
-    const tgc = JSON.parse(localStorageData.casBrowserStorageContext)["TGC"];
-    assert(tgc !== undefined);
+    const storageContext = JSON.parse(localStorageData["CAS"]).CasBrowserStorageContext;
+    assert(storageContext !== undefined);
     
     await cas.log(`Logging into service ${service}`);
     const page2 = await cas.newPage(context);
