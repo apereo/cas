@@ -58,6 +58,7 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -1989,6 +1990,8 @@ public class WebUtils {
      */
     public static Optional<String> getBrowserStoragePayload(final HttpServletRequest httpServletRequest) throws Exception {
         val parameters = getHttpRequestParametersFromRequestBody(httpServletRequest);
+        FunctionUtils.doIfNotBlank(httpServletRequest.getParameter(BrowserStorage.PARAMETER_BROWSER_STORAGE),
+            value -> parameters.put(BrowserStorage.PARAMETER_BROWSER_STORAGE, value));
         return parameters
             .entrySet()
             .stream()
@@ -2061,7 +2064,7 @@ public class WebUtils {
                 LoggingUtils.error(LOGGER, e);
             }
         }
-        return Map.of();
+        return new HashMap<>();
     }
 
     /**
