@@ -10,6 +10,7 @@ import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactor
 import org.apereo.cas.pac4j.BrowserWebStorageSessionStore;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockRequestContext;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.BrowserStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
@@ -22,6 +23,7 @@ import com.duosecurity.model.AuthResult;
 import com.duosecurity.model.Location;
 import com.duosecurity.model.Token;
 import com.duosecurity.model.User;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -34,6 +36,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.webflow.engine.State;
 import org.springframework.webflow.execution.Action;
+import java.util.Map;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -57,6 +60,9 @@ import static org.mockito.Mockito.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("DuoSecurity")
 class DuoSecurityUniversalPromptValidateLoginActionTests extends BaseCasWebflowMultifactorAuthenticationTests {
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).minimal(false).build().toObjectMapper();
+    
     @Autowired
     @Qualifier("duoUniversalPromptSessionStore")
     private BrowserWebStorageSessionStore duoUniversalPromptSessionStore;
@@ -132,7 +138,8 @@ class DuoSecurityUniversalPromptValidateLoginActionTests extends BaseCasWebflowM
         val prepResult = duoUniversalPromptPrepareLoginAction.execute(context);
 
         val storage = (BrowserStorage) prepResult.getAttributes().get("result");
-        val attributes = duoUniversalPromptSessionStore.buildFromTrackableSession(webContext, storage)
+        val payload = MAPPER.writeValueAsString(Map.of(storage.getContext(), storage.getPayload()));
+        val attributes = duoUniversalPromptSessionStore.buildFromTrackableSession(webContext, payload)
             .map(BrowserWebStorageSessionStore.class::cast)
             .orElseThrow()
             .getSessionAttributes(webContext);
@@ -141,7 +148,7 @@ class DuoSecurityUniversalPromptValidateLoginActionTests extends BaseCasWebflowM
         context.setParameter(DuoSecurityUniversalPromptValidateLoginAction.REQUEST_PARAMETER_CODE, code);
         context.setParameter(DuoSecurityUniversalPromptValidateLoginAction.REQUEST_PARAMETER_STATE,
             attributes.get(DuoSecurityAuthenticationService.class.getSimpleName()).toString());
-        context.setParameter(BrowserStorage.PARAMETER_BROWSER_STORAGE, storage.getPayload());
+        context.setParameter(BrowserStorage.PARAMETER_BROWSER_STORAGE, payload);
 
         val result = duoUniversalPromptValidateLoginAction.execute(context);
         assertNotNull(result);
