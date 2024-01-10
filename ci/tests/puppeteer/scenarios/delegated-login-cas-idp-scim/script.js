@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const assert = require("assert");
+const cas = require("../../cas.js");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -15,7 +15,7 @@ const cas = require('../../cas.js');
         "nonce=vn4qulthnx";
     await cas.goto(page, url);
 
-    await cas.assertVisibility(page, 'li #CasClient');
+    await cas.assertVisibility(page, "li #CasClient");
     await cas.click(page, "li #CasClient");
     await page.waitForNavigation();
 
@@ -24,7 +24,7 @@ const cas = require('../../cas.js');
     await cas.loginWith(page);
     await page.waitForTimeout(1000);
 
-    let result = new URL(page.url());
+    const result = new URL(page.url());
     await cas.log(result.searchParams.toString());
 
     assert(result.searchParams.has("ticket") === false);
@@ -43,16 +43,16 @@ const cas = require('../../cas.js');
     assert(await page.url().startsWith("https://oidcdebugger.com/debug"));
 
     await cas.doGet("http://localhost:9666/scim/v2/Users?attributes=userName",
-        res => {
+        (res) => {
             assert(res.status === 200);
-            let length = res.data.Resources.length;
+            const length = res.data.Resources.length;
             cas.log(`Found ${length} record`);
             assert(length === 1);
-            assert(res.data.Resources[0].userName === "casuser")
+            assert(res.data.Resources[0].userName === "casuser");
         },
-        error => {
+        (error) => {
             throw error;
-        }, { 'Authorization': "Basic c2NpbS11c2VyOmNoYW5nZWl0" });
+        }, { "Authorization": "Basic c2NpbS11c2VyOmNoYW5nZWl0" });
 
     await browser.close();
 })();

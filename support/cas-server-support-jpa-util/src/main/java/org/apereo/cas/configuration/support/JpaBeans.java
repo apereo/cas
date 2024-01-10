@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -16,10 +15,10 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.jdbc.datasource.lookup.DataSourceLookupFailureException;
 import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-
 import javax.sql.DataSource;
 import java.sql.Driver;
 import java.util.Properties;
+import java.util.UUID;
 
 /**
  * This is {@link JpaBeans}.
@@ -106,7 +105,7 @@ public class JpaBeans {
         bean.setAutoCommit(jpaProperties.isAutocommit());
         bean.setValidationTimeout(jpaProperties.getPool().getTimeoutMillis());
         bean.setReadOnly(jpaProperties.isReadOnly());
-        bean.setPoolName(jpaProperties.getPool().getName());
+        bean.setPoolName(StringUtils.defaultIfBlank(jpaProperties.getPool().getName(), UUID.randomUUID().toString()));
         bean.setKeepaliveTime(Beans.newDuration(jpaProperties.getPool().getKeepAliveTime()).toMillis());
         bean.setMaxLifetime(Beans.newDuration(jpaProperties.getPool().getMaximumLifetime()).toMillis());
         bean.setSchema(jpaProperties.getDefaultSchema());

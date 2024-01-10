@@ -184,7 +184,7 @@ allprojects {
             excludeDirs += file(".gradle")
             [".settings", "classes", "bin", "out", "docs", "dependency-cache", "libs",
              "reports", "resources", "test-results", "tmp"].each {
-                excludeDirs += file("$buildDir/$it")
+                excludeDirs += project.layout.buildDirectory.files(it)
             }
         }
     }
@@ -339,7 +339,7 @@ subprojects {
         }
     }
 
-    ext.buildJarFile = new File(project.buildDir, "libs/${project.name}-${project.version}.jar")
+    ext.buildJarFile = new File(project.layout.buildDirectory.getAsFile().get(), "libs/${project.name}-${project.version}.jar")
 
     [compileTestJava, compileJava].each {
         it.inputs.property("github.repository") {
@@ -452,7 +452,7 @@ subprojects {
 if (!gradle.startParameter.excludedTaskNames.contains("javadoc") || rootProject.publishFlag) {
     tasks.withType(Javadoc).configureEach {
         source subprojects.collect { project -> project.sourceSets.main.allJava }
-        destinationDir = new File(buildDir, "javadoc")
+        destinationDir = new File(project.layout.buildDirectory.getAsFile().get(), "javadoc")
         classpath = files(subprojects.collect { project -> project.sourceSets.main.compileClasspath })
         options.addBooleanOption('html5', true)
         failOnError = providers.systemProperty("ignoreJavadocFailures").present
@@ -490,24 +490,32 @@ if (rootProject.publishFlag && !rootProject.publishMinimalArtifacts) {
 
 if (gradle.startParameter.taskNames.any { task -> task.startsWith("jacoco") }) {
     tasks.register('jacocoRootReport', JacocoReport) {
-        def executions = subprojects.findAll { subproject ->
+        outputs.cacheIf { true }
+
+        subprojects.each {subproject -> {
             if (!subproject.path.contains(":docs")) {
                 subproject.tasks.withType(Test).each{ task ->
                     dependsOn(task)
                     mustRunAfter(task)
                 }
             }
+        }}
+
+        def executions = subprojects.collect {subproject ->
             def execFile = subproject.layout.buildDirectory.file('jacoco/jacocoTest.exec').get().asFile
-            logger.info "${subproject.name} with execution file ${execFile}"
-            true
-        }.collect {subproject ->
-            subproject.layout.buildDirectory.file('jacoco/jacocoTest.exec').get().asFile
+            if (execFile.exists()) {
+                logger.info "${subproject.name} with execution file ${execFile}"
+                inputs.file(execFile).withPropertyName("${subproject.name}-jacoco").withPathSensitivity(PathSensitivity.RELATIVE)
+            }
+            execFile
         }
+        
         logger.info "Coverage execution data files: ${executions}"
         executionData.from(executions)
-
+        outputs.files(rootProject.layout.buildDirectory.file('reports/jacoco/jacocoRootReport/jacocoRootReport.xml').get().asFile)
+        
         reports {
-            html.required.set(true)
+//            html.required.set(true)
             xml.required.set(true)
             csv.required.set(true)
         }
@@ -553,7 +561,7 @@ tasks.register('verifyRequiredJavaVersion') {
 }
 
 tasks.register('publishProjectModules') {
-    def outputFile = new File("${buildDir}", "modules.json")
+    def outputFile = new File(project.layout.buildDirectory.getAsFile().get(), "modules.json")
     def results = []
     subprojects.each {
         def publishMetadata = it.hasProperty("publishMetadata") ? it.property("publishMetadata") : false

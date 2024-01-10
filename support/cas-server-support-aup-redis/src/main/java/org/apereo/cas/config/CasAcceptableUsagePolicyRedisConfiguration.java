@@ -13,6 +13,7 @@ import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -65,10 +66,10 @@ public class CasAcceptableUsagePolicyRedisConfiguration {
         return BeanSupplier.of(RedisConnectionFactory.class)
             .when(AcceptableUsagePolicyRepository.CONDITION_AUP_ENABLED.given(applicationContext.getEnvironment()))
             .and(CONDITION_AUP_REDIS_ENABLED.given(applicationContext.getEnvironment()))
-            .supply(() -> {
+            .supply(Unchecked.supplier(() -> {
                 val redis = casProperties.getAcceptableUsagePolicy().getRedis();
                 return RedisObjectFactory.newRedisConnectionFactory(redis, casSslContext);
-            })
+            }))
             .otherwiseProxy()
             .get();
     }

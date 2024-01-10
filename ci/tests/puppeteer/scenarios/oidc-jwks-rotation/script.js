@@ -1,8 +1,8 @@
-const cas = require('../../cas.js');
-const assert = require('assert');
+const cas = require("../../cas.js");
+const assert = require("assert");
 
 (async () => {
-    let body = await cas.doRequest("https://localhost:8443/cas/oidc/jwks", "GET", {}, 200);
+    const body = await cas.doRequest("https://localhost:8443/cas/oidc/jwks", "GET", {}, 200);
     assert(JSON.parse(body).keys.length === 4);
     await cas.logg("Rotating keys...");
     await cas.doRequest("https://localhost:8443/cas/actuator/oidcJwks/rotate", "GET", {}, 200);

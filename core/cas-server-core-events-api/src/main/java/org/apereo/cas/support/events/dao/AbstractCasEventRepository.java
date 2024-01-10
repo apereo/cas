@@ -13,7 +13,7 @@ import org.springframework.boot.actuate.audit.listener.AuditApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import java.time.ZonedDateTime;
 import java.util.Map;

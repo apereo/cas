@@ -1,14 +1,14 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
-const cas = require('../../cas.js');
-const fs = require('fs');
-const request = require('request');
+const puppeteer = require("puppeteer");
+const assert = require("assert");
+const cas = require("../../cas.js");
+const fs = require("fs");
+const request = require("request");
 
 (async () => {
 
-    let args = process.argv.slice(2);
-    let config = JSON.parse(fs.readFileSync(args[0]));
-    assert(config != null);
+    const args = process.argv.slice(2);
+    const config = JSON.parse(fs.readFileSync(args[0]));
+    assert(config !== null);
 
     await cas.log(`Certificate file: ${config.trustStoreCertificateFile}`);
     await cas.log(`Private key file: ${config.trustStorePrivateKeyFile}`);
@@ -19,12 +19,12 @@ const request = require('request');
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     await page.setRequestInterception(true);
-    page.on('request', interceptedRequest => {
+    page.on("request", (interceptedRequest) => {
         if (interceptedRequest.isInterceptResolutionHandled()) {
             return;
         }
 
-        let url = interceptedRequest.url();
+        const url = interceptedRequest.url();
         if (!url.startsWith("https://localhost:8443/cas/login")) {
             // cas.logb(`Will NOT intercept the request for ${url}`);
             interceptedRequest.continue();
@@ -44,13 +44,13 @@ const request = require('request');
         request(options, (err, resp, body) => {
             if (err) {
                 cas.logr(`Unable to call ${options.uri}`, err);
-                return interceptedRequest.abort('connectionrefused');
+                return interceptedRequest.abort("connectionrefused");
             }
 
             cas.logb(`Responding with X.509 client certificate ${url}`);
             interceptedRequest.respond({
                 status: resp.statusCode,
-                contentType: resp.headers['content-type'],
+                contentType: resp.headers["content-type"],
                 headers: resp.headers,
                 body: body
             });
@@ -70,19 +70,17 @@ const request = require('request');
     await page.waitForTimeout(1000);
     await cas.logPage(page);
     await cas.assertPageUrlStartsWith(page, "https://localhost:9859/anything/oidc");
-    let code = await cas.assertParameter(page, "code");
+    const code = await cas.assertParameter(page, "code");
     await cas.log(`Current code is ${code}`);
-    const accessTokenUrl = `https://localhost:8443/cas/oidc/token?grant_type=authorization_code`
+    const accessTokenUrl = "https://localhost:8443/cas/oidc/token?grant_type=authorization_code"
         + `&client_id=client&client_secret=secret&redirect_uri=${redirectUri}&code=${code}`;
-    let payload = await cas.doPost(accessTokenUrl, "", {
-        'Content-Type': "application/json"
-    }, res => {
-        return res.data;
-    }, error => {
+    const payload = await cas.doPost(accessTokenUrl, "", {
+        "Content-Type": "application/json"
+    }, (res) => res.data, (error) => {
         throw `Operation failed to obtain access token: ${error}`;
     });
-    assert(payload.access_token != null);
-    let decoded = await cas.decodeJwt(payload.id_token);
+    assert(payload.access_token !== null);
+    const decoded = await cas.decodeJwt(payload.id_token);
     assert(/CN=(.+), OU=dev, O=bft, L=mt, C=world/.test(decoded["sub"]));
     assert(decoded["sub"] === decoded["preferred_username"]);
     assert(decoded["txn"] !== undefined);

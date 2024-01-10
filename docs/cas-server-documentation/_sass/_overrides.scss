@@ -1,6 +1,12 @@
 :root {
   --nav-pills-background-color: #062335;
+
   --bs-primary-bg-subtle: var(--bs-body-bg);
+}
+
+.nav-tabs-properties {
+  --bs-border-color: cornflowerblue;
+  filter: drop-shadow(2px -1px 1px cornflowerblue);
 }
 
 .emoji.img-fluid {
@@ -148,6 +154,10 @@ blockquote em {
   min-height: 48px;
   padding-left: 10px;
   border-radius: 8px;
+}
+
+.alert {
+  padding-bottom: 1px;
 }
 
 @media only screen and (max-width: 1800px) {

@@ -202,6 +202,6 @@ public class HttpRequestUtils {
      * @return the full request url
      */
     public static String getFullRequestUrl(final HttpServletRequest request) {
-        return request.getRequestURI() + (request.getQueryString() != null ? '?' + request.getQueryString() : StringUtils.EMPTY);
+        return request.getRequestURL() + (request.getQueryString() != null ? '?' + request.getQueryString() : StringUtils.EMPTY);
     }
 }

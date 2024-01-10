@@ -29,7 +29,7 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
         buildInfo {
             properties {
                 if (!rootProject.generateTimestamps) {
-                    time = null
+                    excludes = ['time']
                 }
             }
         }
@@ -59,7 +59,7 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
                         "Specification-Version": "${-> gitCommitId}",
                         "Implementation-Version": project.version)
             }
-            from "${buildDir}/resources/main", { into "WEB-INF/classes" }
+            from "${project.layout.buildDirectory.getAsFile().get().path}/resources/main", { into "WEB-INF/classes" }
             launchScript()
             duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         }
@@ -70,7 +70,7 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
             if (project.ext.has("archiveFileName")) {
                 archiveFileName = project.ext.archiveFileName
             }
-            from "${buildDir}/resources/main", { into "WEB-INF/classes" }
+            from "${project.layout.buildDirectory.getAsFile().get().path}/resources/main", { into "WEB-INF/classes" }
             launchScript()
             duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         }
@@ -101,7 +101,7 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
         if (Os.isFamily(Os.FAMILY_WINDOWS)) {
             dependsOn pathingJar
             doFirst {
-                classpath = files("$buildDir/classes/main", "$buildDir/resources/main", "${project(":webapp").getProjectDir()}/cas-server-webapp-resources/src/main/resources/", pathingJar.archivePath)
+                classpath = files("$project.layout.buildDirectory.getAsFile().get().path/classes/main", "$project.layout.buildDirectory.getAsFile().get().path/resources/main", "${project(":webapp").getProjectDir()}/cas-server-webapp-resources/src/main/resources/", pathingJar.archivePath)
             }
         }
 

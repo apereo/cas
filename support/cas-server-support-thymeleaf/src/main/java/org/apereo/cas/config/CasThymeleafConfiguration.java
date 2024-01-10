@@ -10,6 +10,7 @@ import org.apereo.cas.services.web.ThemeViewResolver;
 import org.apereo.cas.services.web.ThemeViewResolverFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.validation.CasProtocolViewFactory;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
@@ -60,6 +61,7 @@ import org.thymeleaf.templateresolver.FileTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -80,6 +82,22 @@ import java.util.Set;
 public class CasThymeleafConfiguration {
 
     private static final int THYMELEAF_VIEW_RESOLVER_ORDER = Ordered.LOWEST_PRECEDENCE - 5;
+
+    private record CasPropertiesThymeleafViewResolverConfigurer(CasConfigurationProperties casProperties)
+        implements CasThymeleafViewResolverConfigurer {
+
+        @Override
+        public void configureThymeleafViewResolver(final ThymeleafViewResolver thymeleafViewResolver) {
+            thymeleafViewResolver.addStaticVariable("cas", casProperties);
+            thymeleafViewResolver.addStaticVariable("casProperties", casProperties);
+        }
+
+        @Override
+        public void configureThymeleafView(final AbstractThymeleafView thymeleafView) {
+            thymeleafView.addStaticVariable("cas", casProperties);
+            thymeleafView.addStaticVariable("casProperties", casProperties);
+        }
+    }
 
     private static String appendCharset(final MimeType type, final String charset) {
         if (type.getCharset() != null) {
@@ -112,16 +130,34 @@ public class CasThymeleafConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "chainingTemplateViewResolver")
     public AbstractTemplateResolver chainingTemplateViewResolver(
+        @Qualifier("themeClassLoaderTemplateResolver")
+        final ITemplateResolver themeClassLoaderTemplateResolver,
+        @Qualifier("classLoaderTemplateResolver")
+        final ITemplateResolver classLoaderTemplateResolver,
         final ThymeleafProperties thymeleafProperties,
-        @Qualifier("themeResolver") final ThemeResolver themeResolver,
+        @Qualifier("themeResolver")
+        final ThemeResolver themeResolver,
+        final List<CasThymeleafViewResolverConfigurer> thymeleafViewResolverConfigurers,
         final CasConfigurationProperties casProperties) {
+
         val chain = new ChainingTemplateViewResolver();
+
+        thymeleafViewResolverConfigurers
+            .stream()
+            .filter(BeanSupplier::isNotProxy)
+            .sorted(OrderComparator.INSTANCE)
+            .map(CasThymeleafViewResolverConfigurer::registerTemplateResolver)
+            .filter(Objects::nonNull)
+            .filter(BeanSupplier::isNotProxy)
+            .forEach(chain::addResolver);
+
         val rest = casProperties.getView().getRest();
         if (StringUtils.isNotBlank(rest.getUrl())) {
             val url = new RestfulUrlTemplateResolver(casProperties, themeResolver);
             configureTemplateViewResolver(url, thymeleafProperties);
             chain.addResolver(url);
         }
+
         val templatePrefixes = casProperties.getView().getTemplatePrefixes();
         templatePrefixes.forEach(prefix -> {
             try {
@@ -135,6 +171,7 @@ public class CasThymeleafConfiguration {
                 configureTemplateViewResolver(theme, thymeleafProperties);
                 theme.setPrefix(StringUtils.removeStart(viewPath, ResourceUtils.CLASSPATH_URL_PREFIX) + "themes/%s/");
                 chain.addResolver(theme);
+
                 val template = prefix.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX) ? new ClassLoaderTemplateResolver() : new FileTemplateResolver();
                 configureTemplateViewResolver(template, thymeleafProperties);
                 template.setPrefix(StringUtils.removeStart(viewPath, ResourceUtils.CLASSPATH_URL_PREFIX));
@@ -144,41 +181,41 @@ public class CasThymeleafConfiguration {
                     String.format("Could not add template prefix '%s' to resolver: [%s]", prefix, e.getMessage()), e);
             }
         });
+
+        chain.addResolver(themeClassLoaderTemplateResolver);
+        chain.addResolver(classLoaderTemplateResolver);
+        chain.initialize();
+        return chain;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "themeClassLoaderTemplateResolver")
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public ITemplateResolver themeClassLoaderTemplateResolver(final ThymeleafProperties thymeleafProperties,
+                                                              @Qualifier("themeResolver")
+                                                              final ThemeResolver themeResolver) {
         val themeCp = new ThemeClassLoaderTemplateResolver(themeResolver);
         configureTemplateViewResolver(themeCp, thymeleafProperties);
         themeCp.setPrefix("templates/%s/");
-        chain.addResolver(themeCp);
+        return themeCp;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "classLoaderTemplateResolver")
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public ITemplateResolver classLoaderTemplateResolver(final ThymeleafProperties thymeleafProperties) {
         val cpResolver = new ClassLoaderTemplateResolver();
         configureTemplateViewResolver(cpResolver, thymeleafProperties);
         cpResolver.setPrefix("thymeleaf/templates/");
-        chain.addResolver(cpResolver);
-        chain.initialize();
-        return chain;
+        return cpResolver;
     }
 
     @ConditionalOnMissingBean(name = "casPropertiesThymeleafViewResolverConfigurer")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public CasThymeleafViewResolverConfigurer casPropertiesThymeleafViewResolverConfigurer(final CasConfigurationProperties casProperties) {
-        return new CasThymeleafViewResolverConfigurer() {
-
-            @Override
-            public int getOrder() {
-                return 0;
-            }
-
-            @Override
-            public void configureThymeleafViewResolver(final ThymeleafViewResolver thymeleafViewResolver) {
-                thymeleafViewResolver.addStaticVariable("cas", casProperties);
-                thymeleafViewResolver.addStaticVariable("casProperties", casProperties);
-            }
-
-            @Override
-            public void configureThymeleafView(final AbstractThymeleafView thymeleafView) {
-                thymeleafView.addStaticVariable("cas", casProperties);
-                thymeleafView.addStaticVariable("casProperties", casProperties);
-            }
-        };
+    public CasThymeleafViewResolverConfigurer casPropertiesThymeleafViewResolverConfigurer(
+        final CasConfigurationProperties casProperties) {
+        return new CasPropertiesThymeleafViewResolverConfigurer(casProperties);
     }
 
     @Configuration(value = "ThymeleafWebflowConfiguration", proxyBeanMethods = false)
@@ -214,8 +251,7 @@ public class CasThymeleafConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasProtocolViewFactory casProtocolThymeleafViewFactory(
-            @Qualifier("templateEngine")
-            final SpringTemplateEngine springTemplateEngine,
+            @Qualifier("templateEngine") final SpringTemplateEngine springTemplateEngine,
             final ThymeleafProperties thymeleafProperties) {
             return new CasProtocolThymeleafViewFactory(springTemplateEngine, thymeleafProperties);
         }
@@ -295,7 +331,11 @@ public class CasThymeleafConfiguration {
                 });
             }
             resolver.setTemplateEngine(springTemplateEngine);
-            thymeleafViewResolverConfigurers.stream().sorted(OrderComparator.INSTANCE).forEach(configurer -> configurer.configureThymeleafViewResolver(resolver));
+            thymeleafViewResolverConfigurers
+                .stream()
+                .filter(BeanSupplier::isNotProxy)
+                .sorted(OrderComparator.INSTANCE)
+                .forEach(configurer -> configurer.configureThymeleafViewResolver(resolver));
             return resolver;
         }
     }

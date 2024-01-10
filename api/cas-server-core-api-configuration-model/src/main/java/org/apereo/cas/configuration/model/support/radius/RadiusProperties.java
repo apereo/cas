@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.radius;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationHandlerStates;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
@@ -25,7 +26,7 @@ import java.io.Serializable;
 @Setter
 @Accessors(chain = true)
 @JsonFilter("RadiusProperties")
-public class RadiusProperties implements Serializable {
+public class RadiusProperties implements CasFeatureModule, Serializable {
 
     @Serial
     private static final long serialVersionUID = 5244307919878753714L;

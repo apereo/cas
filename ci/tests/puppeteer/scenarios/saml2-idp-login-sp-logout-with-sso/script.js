@@ -1,7 +1,7 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
-const path = require('path');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const assert = require("assert");
+const path = require("path");
+const cas = require("../../cas.js");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -11,22 +11,22 @@ const cas = require('../../cas.js');
     await cas.loginWith(page);
     await page.waitForTimeout(3000);
     await cas.screenshot(page);
-    let ticket = await cas.assertTicketParameter(page);
+    const ticket = await cas.assertTicketParameter(page);
     const body = await cas.doRequest(`https://localhost:8443/cas/validate?service=${service}&ticket=${ticket}`);
     assert(body === "yes\ncasuser\n");
 
     await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
     await page.waitForTimeout(3000);
-    await page.waitForSelector('#table_with_attributes', {visible: true});
+    await page.waitForSelector("#table_with_attributes", {visible: true});
     await cas.assertInnerTextContains(page, "#content p", "status page of SimpleSAMLphp");
     await cas.assertVisibility(page, "#table_with_attributes");
-    let authData = JSON.parse(await cas.innerHTML(page, "details pre"));
+    const authData = JSON.parse(await cas.innerHTML(page, "details pre"));
     await cas.log(authData);
 
-    await cas.goto(page, `https://localhost:8443/cas/logout`);
+    await cas.goto(page, "https://localhost:8443/cas/logout");
     await page.waitForTimeout(2000);
     const content = await page.content();
-    assert(content.includes('id="service1"'));
-    await cas.removeDirectoryOrFile(path.join(__dirname, '/saml-md'));
+    assert(content.includes("id=\"service1\""));
+    await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
     await browser.close();
 })();

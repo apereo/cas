@@ -8,12 +8,14 @@ import org.apereo.cas.web.flow.authentication.CasWebflowExceptionHandler;
 import org.apereo.cas.web.flow.configurer.CasWebflowCustomizer;
 import org.apereo.cas.web.flow.decorator.WebflowDecorator;
 import org.apereo.cas.web.flow.executor.ClientFlowExecutionRepository;
+import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import lombok.val;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.TypeReference;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.binding.validation.ValidationContext;
+import org.springframework.webflow.conversation.impl.ConversationContainer;
 import org.springframework.webflow.core.AnnotatedObject;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.definition.StateDefinition;
@@ -34,26 +36,28 @@ import java.util.List;
 public class CasCoreWebflowRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
-        hints.proxies()
-            .registerJdkProxy(Action.class)
-            .registerJdkProxy(TransitionDefinition.class)
-            .registerJdkProxy(StateDefinition.class)
-            .registerJdkProxy(CasWebflowConfigurer.class)
-            .registerJdkProxy(CasWebflowCustomizer.class)
-            .registerJdkProxy(WebflowDecorator.class)
-            .registerJdkProxy(CasWebflowExecutionPlanConfigurer.class)
-            .registerJdkProxy(CasWebflowExceptionHandler.class);
+        registerProxyHints(hints, List.of(
+            Action.class,
+            TransitionDefinition.class,
+            StateDefinition.class,
+            CasWebflowConfigurer.class,
+            CasWebflowCustomizer.class,
+            CasWebflowEventResolver.class,
+            WebflowDecorator.class,
+            CasWebflowExecutionPlanConfigurer.class,
+            CasWebflowExceptionHandler.class
+        ));
 
         hints.serialization()
             .registerType(ClientFlowExecutionRepository.SerializedFlowExecutionState.class)
+            .registerType(ConversationContainer.class)
             .registerType(LocalAttributeMap.class);
 
-        registerReflectionHints(hints,
-            findSubclassesInPackage(MessageContext.class, "org.springframework.binding"));
-        registerReflectionHints(hints,
-            findSubclassesInPackage(ValidationContext.class, "org.springframework.binding"));
+        registerReflectionHints(hints, findSubclassesInPackage(MessageContext.class, "org.springframework.binding"));
+        registerReflectionHints(hints, findSubclassesInPackage(ValidationContext.class, "org.springframework.binding"));
 
         registerReflectionHints(hints, List.of(
+            CasWebflowEventResolver.class,
             TypeReference.of("org.springframework.webflow.engine.impl.RequestControlContextImpl"),
             TypeReference.of("org.springframework.webflow.engine.impl.FlowSessionImpl"),
             TransitionSet.class,

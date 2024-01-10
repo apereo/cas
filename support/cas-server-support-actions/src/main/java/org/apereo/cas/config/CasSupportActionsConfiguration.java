@@ -44,7 +44,6 @@ import org.apereo.cas.web.flow.login.InitialAuthenticationRequestValidationActio
 import org.apereo.cas.web.flow.login.InitialFlowSetupAction;
 import org.apereo.cas.web.flow.login.InitializeLoginAction;
 import org.apereo.cas.web.flow.login.RedirectUnauthorizedServiceUrlAction;
-import org.apereo.cas.web.flow.login.RenderLoginAction;
 import org.apereo.cas.web.flow.login.SendTicketGrantingTicketAction;
 import org.apereo.cas.web.flow.login.ServiceWarningAction;
 import org.apereo.cas.web.flow.login.SetServiceUnauthorizedRedirectUrlAction;
@@ -301,23 +300,6 @@ public class CasSupportActionsConfiguration {
                 .withProperties(casProperties)
                 .withAction(() -> new SetServiceUnauthorizedRedirectUrlAction(servicesManager))
                 .withId(CasWebflowConstants.ACTION_ID_SET_SERVICE_UNAUTHORIZED_REDIRECT_URL)
-                .build()
-                .get();
-        }
-
-        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_RENDER_LOGIN_FORM)
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public Action renderLoginFormAction(
-            final CasConfigurationProperties casProperties,
-            final ConfigurableApplicationContext applicationContext,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) {
-            return WebflowActionBeanSupplier.builder()
-                .withApplicationContext(applicationContext)
-                .withProperties(casProperties)
-                .withAction(() -> new RenderLoginAction(servicesManager, casProperties, applicationContext))
-                .withId(CasWebflowConstants.ACTION_ID_RENDER_LOGIN_FORM)
                 .build()
                 .get();
         }

@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
+import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.config.CasCookieConfiguration;
@@ -56,6 +57,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import java.util.Map;
+import java.util.Set;
 import static org.mockito.Mockito.*;
 
 /**
@@ -151,6 +153,12 @@ public abstract class BaseCasWebflowMultifactorAuthenticationTests {
                 "eduPersonAffiliation", CollectionUtils.wrap("developer"),
                 "groupMembership", CollectionUtils.wrap("adopters"));
             return new StubPersonAttributeDao((Map) attrs);
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = AttributeRepositoryResolver.BEAN_NAME)
+        public AttributeRepositoryResolver attributeRepositoryResolver() {
+            return query -> Set.of(IPersonAttributeDao.WILDCARD);
         }
     }
 }

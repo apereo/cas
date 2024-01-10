@@ -14,6 +14,6 @@ import org.springframework.aot.hint.RuntimeHints;
 public class CasGeoLocationRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
-        hints.proxies().registerJdkProxy(GeoLocationService.class);
+        registerProxyHints(hints, GeoLocationService.class);
     }
 }

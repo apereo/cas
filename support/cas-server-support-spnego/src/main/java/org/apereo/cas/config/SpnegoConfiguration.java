@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
+import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -19,7 +20,6 @@ import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
 import jcifs.spnego.Authentication;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
@@ -31,7 +31,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
-
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -127,7 +126,9 @@ public class SpnegoConfiguration {
         final PrincipalFactory spnegoPrincipalFactory,
         @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
         final IPersonAttributeDao attributeRepository,
-        final CasConfigurationProperties casProperties) {
+        final CasConfigurationProperties casProperties,
+        @Qualifier(AttributeRepositoryResolver.BEAN_NAME)
+        final AttributeRepositoryResolver attributeRepositoryResolver) {
         val personDirectory = casProperties.getPersonDirectory();
         val spnegoPrincipal = casProperties.getAuthn().getSpnego().getPrincipal();
         val attributeMerger = CoreAuthenticationUtils.getAttributeMerger(
@@ -135,7 +136,7 @@ public class SpnegoConfiguration {
         return PersonDirectoryPrincipalResolver.newPersonDirectoryPrincipalResolver(
             applicationContext, spnegoPrincipalFactory,
             attributeRepository, attributeMerger, SpnegoPrincipalResolver.class,
-            servicesManager, attributeDefinitionStore,
+            servicesManager, attributeDefinitionStore, attributeRepositoryResolver,
             spnegoPrincipal, personDirectory);
     }
 

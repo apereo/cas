@@ -7,7 +7,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.util.http.HttpRequestUtils;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
@@ -44,15 +44,8 @@ import org.pac4j.saml.state.SAML2StateGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
-import org.springframework.webflow.context.ExternalContextHolder;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.execution.RequestContextHolder;
-import org.springframework.webflow.test.MockRequestContext;
 import java.io.File;
 import java.util.Locale;
 import java.util.Map;
@@ -93,22 +86,14 @@ class DefaultDelegatedClientAuthenticationWebflowManagerTests {
     private JEEContext context;
 
     private MockRequestContext requestContext;
-
-    private MockHttpServletRequest httpServletRequest;
-
+    
     @BeforeEach
-    public void setup() {
+    public void setup() throws Exception {
         val service = RegisteredServiceTestUtils.getService();
-        httpServletRequest = new MockHttpServletRequest();
-        httpServletRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome");
-        httpServletRequest.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
-        context = new JEEContext(httpServletRequest, new MockHttpServletResponse());
-
-        requestContext = new MockRequestContext();
-        requestContext.setExternalContext(new ServletExternalContext(new MockServletContext(),
-            context.getNativeRequest(), context.getNativeResponse()));
-        RequestContextHolder.setRequestContext(requestContext);
-        ExternalContextHolder.setExternalContext(requestContext.getExternalContext());
+        requestContext = MockRequestContext.create()
+            .withUserAgent("Chrome")
+            .setParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
+        context = new JEEContext(requestContext.getHttpServletRequest(), requestContext.getHttpServletResponse());
     }
 
     @Test
@@ -156,18 +141,18 @@ class DefaultDelegatedClientAuthenticationWebflowManagerTests {
     @Test
     void verifyCasStoreOperation() throws Throwable {
         val localeResolver = new SessionLocaleResolver();
-        httpServletRequest.setAttribute(DispatcherServlet.LOCALE_RESOLVER_ATTRIBUTE, localeResolver);
+        requestContext.setRequestAttribute(DispatcherServlet.LOCALE_RESOLVER_ATTRIBUTE, localeResolver);
         val config = new CasConfiguration();
         config.setLoginUrl("https://example.org/login");
         val client = new CasClient();
         client.setConfiguration(config);
-        httpServletRequest.addParameter("locale", "de");
+        requestContext.setParameter("locale", "de");
         val ticket = delegatedClientAuthenticationWebflowManager.store(requestContext, context, client);
         assertNotNull(ticketRegistry.getTicket(ticket.getId()));
         val service = delegatedClientAuthenticationWebflowManager.retrieve(requestContext, context, client);
         assertNotNull(service);
         assertNull(ticketRegistry.getTicket(ticket.getId()));
-        assertEquals(Locale.GERMAN, localeResolver.resolveLocale(httpServletRequest));
+        assertEquals(Locale.GERMAN, localeResolver.resolveLocale(requestContext.getHttpServletRequest()));
     }
 
     @Test
@@ -177,8 +162,7 @@ class DefaultDelegatedClientAuthenticationWebflowManagerTests {
         val ticket = delegatedClientAuthenticationWebflowManager.store(requestContext, context, client);
         assertNotNull(ticketRegistry.getTicket(ticket.getId()));
         assertEquals(ticket.getId(), delegatedClientDistributedSessionStore.get(context, SAML2StateGenerator.SAML_RELAY_STATE_ATTRIBUTE).get());
-
-        httpServletRequest.addParameter("RelayState", ticket.getId());
+        requestContext.setParameter("RelayState", ticket.getId());
         val service = delegatedClientAuthenticationWebflowManager.retrieve(requestContext, context, client);
         assertNotNull(service);
         assertNull(ticketRegistry.getTicket(ticket.getId()));
@@ -192,7 +176,7 @@ class DefaultDelegatedClientAuthenticationWebflowManagerTests {
             new DefaultRegisteredServiceProperty("true")));
         servicesManager.save(registeredService);
 
-        httpServletRequest.setParameter(CasProtocolConstants.PARAMETER_SERVICE, registeredService.getServiceId());
+        requestContext.setParameter(CasProtocolConstants.PARAMETER_SERVICE, registeredService.getServiceId());
         val pair = setupTestContextFor(File.createTempFile("sp-metadata", ".xml").getAbsolutePath(), "cas.example.sp");
         val ticket = delegatedClientAuthenticationWebflowManager.store(requestContext, context, pair.getLeft());
         assertNotNull(ticketRegistry.getTicket(ticket.getId()));
@@ -202,7 +186,7 @@ class DefaultDelegatedClientAuthenticationWebflowManagerTests {
         val result = builder.build(pair.getRight());
         assertEquals(Boolean.TRUE, result.isForceAuthn());
 
-        httpServletRequest.addParameter("RelayState", ticket.getId());
+        requestContext.setParameter("RelayState", ticket.getId());
         val service = delegatedClientAuthenticationWebflowManager.retrieve(requestContext, context, pair.getLeft());
         assertNotNull(service);
         assertNull(ticketRegistry.getTicket(ticket.getId()));
@@ -216,7 +200,7 @@ class DefaultDelegatedClientAuthenticationWebflowManagerTests {
             new DefaultRegisteredServiceProperty("true")));
         servicesManager.save(registeredService);
 
-        httpServletRequest.setParameter(CasProtocolConstants.PARAMETER_SERVICE, registeredService.getServiceId());
+        requestContext.setParameter(CasProtocolConstants.PARAMETER_SERVICE, registeredService.getServiceId());
         val pair = setupTestContextFor(File.createTempFile("sp-metadata", ".xml").getAbsolutePath(), "cas.example.sp");
         val ticket = delegatedClientAuthenticationWebflowManager.store(requestContext, context, pair.getLeft());
         assertNotNull(ticketRegistry.getTicket(ticket.getId()));
@@ -226,7 +210,7 @@ class DefaultDelegatedClientAuthenticationWebflowManagerTests {
         val result = builder.build(pair.getRight());
         assertEquals(Boolean.TRUE, result.isPassive());
 
-        httpServletRequest.addParameter("RelayState", ticket.getId());
+        requestContext.setParameter("RelayState", ticket.getId());
         val service = delegatedClientAuthenticationWebflowManager.retrieve(requestContext, context, pair.getLeft());
         assertNotNull(service);
         assertNull(ticketRegistry.getTicket(ticket.getId()));
@@ -238,7 +222,7 @@ class DefaultDelegatedClientAuthenticationWebflowManagerTests {
         val client = new SAML2Client(config);
         delegatedClientAuthenticationWebflowManager.store(requestContext, context, client);
 
-        httpServletRequest.addParameter(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.CONST_TEST_URL);
+        requestContext.setParameter(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.CONST_TEST_URL);
         val service = delegatedClientAuthenticationWebflowManager.retrieve(requestContext, context, client);
         assertEquals(RegisteredServiceTestUtils.CONST_TEST_URL, service.getId());
     }
@@ -251,7 +235,7 @@ class DefaultDelegatedClientAuthenticationWebflowManagerTests {
         assertNotNull(ticketRegistry.getTicket(ticket.getId()));
         assertEquals(ticket.getId(), delegatedClientDistributedSessionStore.get(context,
             SAML2StateGenerator.SAML_RELAY_STATE_ATTRIBUTE).get());
-        httpServletRequest.addParameter("RelayState", ticket.getId());
+        requestContext.setParameter("RelayState", ticket.getId());
         ticket.markTicketExpired();
         assertThrows(UnauthorizedServiceException.class,
             () -> delegatedClientAuthenticationWebflowManager.retrieve(requestContext, context, client));
@@ -271,8 +255,7 @@ class DefaultDelegatedClientAuthenticationWebflowManagerTests {
         saml2Client.setCallbackUrl("http://callback.example.org");
         saml2Client.init();
 
-        val webContext = new JEEContext(this.httpServletRequest, new MockHttpServletResponse());
-        val callContext = new CallContext(webContext, new JEESessionStore());
+        val callContext = new CallContext(this.context, new JEESessionStore());
         val saml2MessageContext = new SAML2MessageContext(callContext);
         saml2MessageContext.setSaml2Configuration(saml2ClientConfiguration);
         val peer = saml2MessageContext.getMessageContext().ensureSubcontext(SAMLPeerEntityContext.class);

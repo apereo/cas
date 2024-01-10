@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.x509;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.support.DurationCapable;
@@ -27,7 +28,7 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class X509Properties implements Serializable {
+public class X509Properties implements CasFeatureModule, Serializable {
 
     @Serial
     private static final long serialVersionUID = -9032744084671270366L;

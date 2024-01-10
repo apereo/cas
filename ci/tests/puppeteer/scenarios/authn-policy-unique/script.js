@@ -1,5 +1,5 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 
 async function verifyWithoutService() {
     const browser1 = await puppeteer.launch(cas.browserOptions());
