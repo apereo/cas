@@ -83,16 +83,14 @@
                         <i class="mdi mdi-alert mdc-text-field__icon text-danger caps-warn" aria-hidden="true"></i>
                     </div>
                 </div>
-                &nbsp;
                 <button class="reveal-password align-self-end mdc-button mdc-button--raised mdc-input-group-append mdc-icon-button btn btn-primary"
-                    tabindex="-1" type="button">
+                    tabindex="-1" type="button" th:title="#{screen.pm.password.toggle}">
                     <i class="mdi mdi-eye reveal-password-icon fas fa-eye" aria-hidden="true"></i>
-                    <span class="visually-hidden" th:utext="#{screen.pm.password.toggle}"/>
                 </button>
-                <button class="align-self-end mdc-button mdc-button--raised mdc-input-group-append mdc-icon-button btn btn-primary"
-                        tabindex="-1" type="button" onclick="generatePassword();">
+
+                <button class="generate-password align-self-end mdc-button mdc-button--raised mdc-input-group-append mdc-icon-button btn btn-primary ms-1"
+                        tabindex="-1" type="button" onclick="generatePassword();" th:title="#{screen.pm.password.generate}">
                     <i class="mdi mdi-reload fas fa-eye" aria-hidden="true"></i>
-                    <span class="visually-hidden" th:utext="#{screen.pm.password.toggle}"/>
                 </button>
             </div>
 

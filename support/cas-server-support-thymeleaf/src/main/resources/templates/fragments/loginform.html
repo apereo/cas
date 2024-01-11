@@ -37,7 +37,7 @@
                     <div id="loginErrorsPanel" class="alert alert-danger banner banner-danger banner-dismissible"
                          th:if="${#fields.hasErrors('*')}">
                         <p th:each="err : ${#fields.errors('*')}" th:utext="${err + ' '}">Example error</p>
-                        <!--<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>-->
+                        <!--<a href="#" class="close" data-dismiss="alert" th:aria-label="#{screen.pm.button.close}">&times;</a>-->
                     </div>
                 </div>
 
@@ -57,7 +57,7 @@
                     <div id="loginErrorsPanel" class="banner banner-danger alert alert-danger banner-dismissible"
                          th:if="${#fields.hasErrors('*')}" role="alert">
                         <p th:each="err : ${#fields.errors('*')}" th:utext="${err + ' '}">Example error</p>
-                        <!--<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>-->
+                        <!--<a href="#" class="close" data-dismiss="alert" th:aria-label="#{screen.pm.button.close}">&times;</a>-->
                     </div>
                     <section class="cas-field form-group my-3" id="usernameSection">
                         <label for="username"
@@ -123,9 +123,8 @@
                                        autocomplete="off"/>
                                 <button
                                         class="reveal-password mdc-button mdc-button--unelevated mdc-input-group-append mdc-icon-button btn btn-primary"
-                                        tabindex="-1" type="button">
+                                        tabindex="-1" type="button" th:title="#{screen.pm.password.toggle}">
                                     <i class="mdi mdi-eye reveal-password-icon fas fa-eye" aria-hidden="true"></i>
-                                    <span class="visually-hidden" th:utext="#{screen.pm.password.toggle}"/>
                                 </button>
                             </label>
                             <div class="mdc-text-field-helper-line invalid-feedback">

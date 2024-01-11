@@ -24,7 +24,7 @@
             </p>
 
             <div id="infoMessages" class="banner banner-success banner-dismissible my-2" th:if="${flowRequestContext.messageContext.allMessages.length > 0}">
-                <a href="#" class="close" onclick="$(this).parent().hide();" aria-label="close"><span class="mdi mdi-close-box"></span></a>
+                <a href="#" class="close" onclick="$(this).parent().hide();" th:aria-label="#{screen.pm.button.close}"><span class="mdi mdi-close-box" aria-hidden="true"></span></a>
                 <span th:each="message : ${flowRequestContext.messageContext.allMessages}" th:utext="${message.text}">Message Text</span>
                 <script>autoHideElement("infoMessages");</script>
             </div>
