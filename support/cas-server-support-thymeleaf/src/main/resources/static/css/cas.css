@@ -424,6 +424,7 @@ button.close {
 .text-danger, .mdc-text-field:not(.mdc-text-field--disabled)+.mdc-text-field-helper-line .mdc-text-field-helper-text.text-danger {
     color: var(--cas-theme-danger, #58151c);
 }
+
 .mdc-text-field__icon.text-danger {
     color: var(--mdc-theme-error, #b00020);
 }
