@@ -37,6 +37,7 @@ if (!skipConfigurationMetadata) {
 
     tasks.register('generateConfigurationMetadata', JavaExec) {
         inputs.files(tasks.named('processResources'), tasks.named('compileJava'))
+                .withPropertyName('configurationMetadata').withPathSensitivity(PathSensitivity.RELATIVE)
 
         outputs.cacheIf { true }
         outputs.file(outputFile)

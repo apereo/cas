@@ -13,6 +13,7 @@ dependencies {
     implementation libraries.jose4j
     implementation libraries.oktasdk
     implementation libraries.snakeyaml
+    implementation libraries.persondirectory
 
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-webflow-api")

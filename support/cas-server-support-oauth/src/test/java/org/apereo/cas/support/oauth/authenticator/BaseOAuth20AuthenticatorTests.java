@@ -36,7 +36,6 @@ import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import lombok.val;
-import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 import org.junit.jupiter.api.BeforeEach;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -165,7 +164,7 @@ public abstract class BaseOAuth20AuthenticatorTests {
         serviceWithAttributesMapping.setClientId("serviceWithAttributesMapping");
 
         val provider = new DefaultRegisteredServiceUsernameProvider();
-        provider.setCanonicalizationMode(CaseCanonicalizationMode.LOWER.name());
+        provider.setCanonicalizationMode("LOWER");
         serviceWithAttributesMapping.setUsernameAttributeProvider(provider);
         serviceWithAttributesMapping.setAttributeReleasePolicy(
             new ReturnAllowedAttributeReleasePolicy(List.of("eduPersonAffiliation")));

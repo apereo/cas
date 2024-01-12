@@ -1,7 +1,8 @@
 description = "Apereo CAS Core Authentication Attributes & Repositories"
 dependencies {
     implementation libraries.bouncycastle
-
+    implementation libraries.persondirectory
+    
     api project(":api:cas-server-core-api-services")
     api project(":api:cas-server-core-api-authentication")
     api project(":api:cas-server-core-api-ticket")

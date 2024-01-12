@@ -74,22 +74,6 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         super(context);
     }
 
-    private static Authentication evaluatePossibilityOfMixedPrincipals(final AuthenticationResult context,
-                                                                       final TicketGrantingTicket ticketGrantingTicket) {
-        if (context == null) {
-            LOGGER.warn("Provided authentication result is undefined to evaluate for mixed principals");
-            return null;
-        }
-        val currentAuthentication = context.getAuthentication();
-        if (currentAuthentication != null) {
-            val original = ticketGrantingTicket.getAuthentication();
-            if (!currentAuthentication.getPrincipal().equals(original.getPrincipal())) {
-                throw new MixedPrincipalException(currentAuthentication,
-                    currentAuthentication.getPrincipal(), original.getPrincipal());
-            }
-        }
-        return currentAuthentication;
-    }
 
     @Audit(
         action = AuditableActions.TICKET_GRANTING_TICKET,
@@ -344,13 +328,6 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         }
     }
 
-    protected Principal rebuildStatelessTicketPrincipal(final ServiceTicket serviceTicket) throws Throwable {
-        val authentication = serviceTicket.getAuthentication();
-        return configurationContext.getPrincipalResolver()
-            .resolve(new BasicIdentifiableCredential(authentication.getPrincipal().getId()),
-                Optional.of(authentication.getPrincipal()), Optional.empty(),
-                Optional.of(serviceTicket.getService()));
-    }
 
     @Audit(
         action = AuditableActions.PROXY_GRANTING_TICKET,
@@ -375,8 +352,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             .registeredService(registeredService)
             .build();
 
-        val result = configurationContext.getRegisteredServiceAccessStrategyEnforcer().execute(ctx);
-        result.throwExceptionIfNeeded();
+        enforceRegisteredServiceAccess(ctx);
 
         if (!registeredService.getProxyPolicy().isAllowedToProxy()) {
             LOGGER.warn("Service [{}] attempted to proxy, but is not allowed.", serviceTicket.getService().getId());
@@ -419,6 +395,10 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             .principal(accessStrategyPrincipal)
             .registeredService(registeredService)
             .build();
+        enforceRegisteredServiceAccess(audit);
+    }
+
+    protected void enforceRegisteredServiceAccess(final AuditableContext audit) throws Throwable {
         val accessResult = configurationContext.getRegisteredServiceAccessStrategyEnforcer().execute(audit);
         accessResult.throwExceptionIfNeeded();
     }
@@ -430,8 +410,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             .principal(principal)
             .registeredService(registeredService)
             .build();
-        val accessResult = configurationContext.getRegisteredServiceAccessStrategyEnforcer().execute(audit);
-        accessResult.throwExceptionIfNeeded();
+        enforceRegisteredServiceAccess(audit);
     }
 
     private void enforceRegisteredServiceAccess(final Service service, final TicketGrantingTicket ticket,
@@ -441,7 +420,31 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             .ticketGrantingTicket(ticket)
             .registeredService(registeredService)
             .build();
-        val accessResult = configurationContext.getRegisteredServiceAccessStrategyEnforcer().execute(audit);
-        accessResult.throwExceptionIfNeeded();
+        enforceRegisteredServiceAccess(audit);
+    }
+
+    protected Principal rebuildStatelessTicketPrincipal(final ServiceTicket serviceTicket) throws Throwable {
+        val authentication = serviceTicket.getAuthentication();
+        return configurationContext.getPrincipalResolver()
+            .resolve(new BasicIdentifiableCredential(authentication.getPrincipal().getId()),
+                Optional.of(authentication.getPrincipal()), Optional.empty(),
+                Optional.of(serviceTicket.getService()));
+    }
+
+    private static Authentication evaluatePossibilityOfMixedPrincipals(final AuthenticationResult context,
+                                                                       final TicketGrantingTicket ticketGrantingTicket) {
+        if (context == null) {
+            LOGGER.warn("Provided authentication result is undefined to evaluate for mixed principals");
+            return null;
+        }
+        val currentAuthentication = context.getAuthentication();
+        if (currentAuthentication != null) {
+            val original = ticketGrantingTicket.getAuthentication();
+            if (!currentAuthentication.getPrincipal().equals(original.getPrincipal())) {
+                throw new MixedPrincipalException(currentAuthentication,
+                    currentAuthentication.getPrincipal(), original.getPrincipal());
+            }
+        }
+        return currentAuthentication;
     }
 }

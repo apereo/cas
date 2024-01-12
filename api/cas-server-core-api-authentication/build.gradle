@@ -1,5 +1,7 @@
 description = "Apereo CAS Core Authentication APIs"
 dependencies {
+    implementation libraries.persondirectory
+    
     api project(":api:cas-server-core-api-protocol")
     api project(":api:cas-server-core-api-monitor")
     api project(":api:cas-server-core-api-configuration-model")

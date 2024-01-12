@@ -1,6 +1,8 @@
-package org.apereo.cas.web.report;
+package org.apereo.cas;
 
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
+import org.apereo.cas.web.report.AbstractCasEndpointTests;
+import org.apereo.cas.web.report.CasPersonDirectoryEndpoint;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.services.persondir.IPersonAttributeDao;

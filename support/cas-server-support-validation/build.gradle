@@ -22,6 +22,8 @@ dependencies {
     api project(":api:cas-server-core-api")
     api project(":api:cas-server-core-api-authentication")
 
+    testImplementation libraries.persondirectory
+    
     testImplementation project(":core:cas-server-core-webflow")
     testImplementation project(":core:cas-server-core-webflow-mfa")
     testImplementation project(":core:cas-server-core")

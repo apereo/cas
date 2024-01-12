@@ -28,7 +28,6 @@ import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.report.AuditLogEndpoint;
 import org.apereo.cas.web.report.CasFeaturesEndpoint;
 import org.apereo.cas.web.report.CasInfoEndpointContributor;
-import org.apereo.cas.web.report.CasPersonDirectoryEndpoint;
 import org.apereo.cas.web.report.CasProtocolValidationEndpoint;
 import org.apereo.cas.web.report.CasReleaseAttributesReportEndpoint;
 import org.apereo.cas.web.report.CasResolveAttributesReportEndpoint;
@@ -44,9 +43,7 @@ import org.apereo.cas.web.report.StatisticsEndpoint;
 import org.apereo.cas.web.report.TicketExpirationPoliciesEndpoint;
 import org.apereo.cas.web.report.TicketRegistryEndpoint;
 import lombok.val;
-import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.actuate.info.InfoContributor;
@@ -199,17 +196,6 @@ public class CasReportsAutoConfiguration {
             return new CasFeaturesEndpoint(casProperties);
         }
 
-        @Bean
-        @ConditionalOnAvailableEndpoint
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public CasPersonDirectoryEndpoint casPersonDirectoryEndpoint(
-            @Autowired
-            @Qualifier("cachingAttributeRepository")
-            final ObjectProvider<IPersonAttributeDao> cachingAttributeRepository,
-            final CasConfigurationProperties casProperties) {
-            return new CasPersonDirectoryEndpoint(casProperties, cachingAttributeRepository);
-        }
-        
         @Bean
         @ConditionalOnAvailableEndpoint
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

@@ -68,7 +68,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
 
     private int order;
 
-    private String canonicalizationMode = CaseCanonicalizationMode.NONE.name();
+    private String canonicalizationMode = "NONE";
 
     private RegisteredServiceAttributeReleaseActivationCriteria activationCriteria;
 
@@ -83,7 +83,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
         if (consentPolicy == null) {
             this.consentPolicy = new DefaultRegisteredServiceConsentPolicy();
         }
-        canonicalizationMode = StringUtils.defaultIfBlank(canonicalizationMode, CaseCanonicalizationMode.NONE.name());
+        canonicalizationMode = StringUtils.defaultIfBlank(canonicalizationMode, "NONE");
     }
 
     @Override
