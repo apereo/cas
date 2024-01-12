@@ -64,6 +64,8 @@ if (!skipConfigurationMetadata) {
 
     tasks.named('compileJava') {
         inputs.files(tasks.named('processResources'))
+                .withPropertyName('configurationMetadataResources')
+                .withPathSensitivity(PathSensitivity.RELATIVE)
         finalizedBy("generateConfigurationMetadata")
     }
 
