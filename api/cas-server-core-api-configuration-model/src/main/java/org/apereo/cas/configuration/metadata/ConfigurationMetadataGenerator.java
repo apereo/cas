@@ -93,11 +93,11 @@ public class ConfigurationMetadataGenerator {
      * @throws Exception the exception
      */
     public static void main(final String[] args) throws Exception {
-        if (args.length != 2) {
-            throw new IllegalArgumentException("Usage: ConfigurationMetadataGenerator <build-dir> <project-dir>");
+        if (args.length != 1) {
+            throw new IllegalArgumentException("Usage: ConfigurationMetadataGenerator <build-dir>");
         }
         val buildDir = args[0];
-        val projectDir = args[1];
+        val projectDir = new File(buildDir).getParentFile().getCanonicalPath();
         LOGGER.info("Build directory: [{}], project directory [{}]", buildDir, projectDir);
         val generator = new ConfigurationMetadataGenerator(buildDir, projectDir);
         generator.adjustConfigurationMetadata();

@@ -36,16 +36,9 @@ abstract class ConfigurationMetadataLocationProvider implements CommandLineArgum
     @PathSensitive(PathSensitivity.RELATIVE)
     abstract DirectoryProperty getBuildDirectory()
 
-    @InputDirectory
-    @PathSensitive(PathSensitivity.RELATIVE)
-    abstract DirectoryProperty getProjectDirectory()
-
     @Override
     Iterable<String> asArguments() {
-        [
-            "-DbuildDirectory.location=${buildDirectory.get().asFile.canonicalPath}",
-            "-DprojectDirectory.location=${projectDirectory.get().asFile.canonicalPath}",
-        ]
+        [ buildDirectory.get().asFile.absolutePath ]
     }
 }
 
@@ -54,14 +47,15 @@ if (!skipConfigurationMetadata) {
     def inputFile = project.layout.buildDirectory.file("classes/java/main/META-INF/spring-configuration-metadata.json")
     
     tasks.register('generateConfigurationMetadata', JavaExec) {
-
-        jvmArgumentProviders.add(
+        def sortedClasspath = sourceSets.main.compileClasspath + sourceSets.main.runtimeClasspath + sourceSets.configurationMetadata.runtimeClasspath
+        classpath = files(sortedClasspath.sort())
+        mainClass = "org.apereo.cas.configuration.metadata.ConfigurationMetadataGenerator"
+        argumentProviders.add(
             objects.newInstance(ConfigurationMetadataLocationProvider).tap {
                 buildDirectory = project.layout.buildDirectory
-                projectDirectory = project.projectDir
             }
         )
-        
+
         inputs.files(tasks.named('processResources'), tasks.named('compileJava'))
                 .withPropertyName('configurationMetadata')
                 .withPathSensitivity(PathSensitivity.RELATIVE)
@@ -69,10 +63,6 @@ if (!skipConfigurationMetadata) {
         outputs.cacheIf { true }
         outputs.file(outputFile)
 
-        mainClass.set("org.apereo.cas.configuration.metadata.ConfigurationMetadataGenerator")
-
-        def sortedClasspath = sourceSets.main.compileClasspath + sourceSets.main.runtimeClasspath + sourceSets.configurationMetadata.runtimeClasspath
-        classpath = files(sortedClasspath.sort())
         finalizedBy("copyConfigurationMetadata")
     }
 
