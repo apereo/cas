@@ -1,6 +1,7 @@
 package org.apereo.cas.nativex;
 
 import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
+import org.apereo.cas.authentication.principal.PrincipalProvisioner;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.apereo.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
@@ -90,6 +91,7 @@ public class CasCoreServicesRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
         registerProxyHints(hints, List.of(
+            PrincipalProvisioner.class,
             ServiceRegistryInitializer.class,
             RegisteredServiceAccessStrategyEnforcer.class,
             ServiceRegistry.class,
