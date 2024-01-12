@@ -40,6 +40,7 @@ import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.FullRegexRegisteredServiceMatchingStrategy;
 import org.apereo.cas.services.GroovyRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.GroovyRegisteredServiceAccessStrategyActivationCriteria;
+import org.apereo.cas.services.GroovyRegisteredServiceAttributeReleaseActivationCriteria;
 import org.apereo.cas.services.GroovyRegisteredServiceAuthenticationPolicyCriteria;
 import org.apereo.cas.services.GroovyRegisteredServiceSingleSignOnParticipationPolicy;
 import org.apereo.cas.services.GroovyRegisteredServiceUsernameProvider;
@@ -146,6 +147,7 @@ public class CasCoreServicesRuntimeHints implements CasRuntimeHintsRegistrar {
             AttributeBasedRegisteredServiceAccessStrategyActivationCriteria.class,
             AttributeBasedRegisteredServiceAttributeReleaseActivationCriteria.class,
             AttributeBasedRegisteredServiceSingleSignOnParticipationPolicy.class,
+            GroovyRegisteredServiceAttributeReleaseActivationCriteria.class,
             GroovyRegisteredServiceAccessStrategyActivationCriteria.class,
             GroovyRegisteredServiceSingleSignOnParticipationPolicy.class,
 
