@@ -31,13 +31,40 @@ dependencies {
     }
 }
 
+abstract class ConfigurationMetadataLocationProvider implements CommandLineArgumentProvider {
+    @InputDirectory
+    @PathSensitive(PathSensitivity.RELATIVE)
+    abstract DirectoryProperty getBuildDirectory()
+
+    @InputDirectory
+    @PathSensitive(PathSensitivity.RELATIVE)
+    abstract DirectoryProperty getProjectDirectory()
+
+    @Override
+    Iterable<String> asArguments() {
+        [
+            "-DbuildDirectory.location=${buildDirectory.get().asFile.canonicalPath}",
+            "-DprojectDirectory.location=${projectDirectory.get().asFile.canonicalPath}",
+        ]
+    }
+}
+
 if (!skipConfigurationMetadata) {
     def outputFile = project.layout.buildDirectory.file("generated/spring-configuration-metadata/META-INF/spring-configuration-metadata.json")
     def inputFile = project.layout.buildDirectory.file("classes/java/main/META-INF/spring-configuration-metadata.json")
-
+    
     tasks.register('generateConfigurationMetadata', JavaExec) {
+
+        jvmArgumentProviders.add(
+            objects.newInstance(ConfigurationMetadataLocationProvider).tap {
+                buildDirectory = project.layout.buildDirectory
+                projectDirectory = project.projectDir
+            }
+        )
+        
         inputs.files(tasks.named('processResources'), tasks.named('compileJava'))
-                .withPropertyName('configurationMetadata').withPathSensitivity(PathSensitivity.RELATIVE)
+                .withPropertyName('configurationMetadata')
+                .withPathSensitivity(PathSensitivity.RELATIVE)
 
         outputs.cacheIf { true }
         outputs.file(outputFile)
@@ -46,7 +73,6 @@ if (!skipConfigurationMetadata) {
 
         def sortedClasspath = sourceSets.main.compileClasspath + sourceSets.main.runtimeClasspath + sourceSets.configurationMetadata.runtimeClasspath
         classpath = files(sortedClasspath.sort())
-        args project.layout.buildDirectory.getAsFile().get().path, projectDir.canonicalPath
         finalizedBy("copyConfigurationMetadata")
     }
 
