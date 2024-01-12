@@ -21,7 +21,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -353,7 +352,7 @@ public abstract class AbstractServiceRegistryTests {
             val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), type);
 
             val provider = new PrincipalAttributeRegisteredServiceUsernameProvider();
-            provider.setCanonicalizationMode(CaseCanonicalizationMode.UPPER.name());
+            provider.setCanonicalizationMode("UPPER");
             provider.setUsernameAttribute("cn");
             r.setUsernameAttributeProvider(provider);
             val r2 = serviceRegistry.save(r);

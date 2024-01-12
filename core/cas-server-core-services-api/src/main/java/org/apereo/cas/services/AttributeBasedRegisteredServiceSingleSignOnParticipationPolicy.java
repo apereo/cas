@@ -57,14 +57,15 @@ public class AttributeBasedRegisteredServiceSingleSignOnParticipationPolicy impl
     protected boolean doPrincipalAttributesAllowParticipationInSso(
         final Map<String, List<Object>> givenAttributes) {
         LOGGER.debug("Attributes examined for SSO participation are [{}]", givenAttributes);
+        val stream = attributes.entrySet().stream();
         if (requireAllAttributes) {
-            return attributes.entrySet().stream().allMatch(entry -> examineAttributeValues(givenAttributes, entry));
+            return stream.allMatch(entry -> examineAttributeValues(givenAttributes, entry));
         }
-        return attributes.entrySet().stream().anyMatch(entry -> examineAttributeValues(givenAttributes, entry));
+        return stream.anyMatch(entry -> examineAttributeValues(givenAttributes, entry));
     }
 
-    private static boolean examineAttributeValues(final Map<String, List<Object>> givenAttributes,
-                                                  final Map.Entry<String, List<String>> entry) {
+    protected boolean examineAttributeValues(final Map<String, List<Object>> givenAttributes,
+                                             final Map.Entry<String, List<String>> entry) {
         val key = SpringExpressionLanguageValueResolver.getInstance().resolve(entry.getKey());
         val attributeValues = givenAttributes.getOrDefault(key, List.of());
         return entry

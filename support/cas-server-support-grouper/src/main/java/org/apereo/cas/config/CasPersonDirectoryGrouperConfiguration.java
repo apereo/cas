@@ -39,7 +39,8 @@ class CasPersonDirectoryGrouperConfiguration {
         @ConditionalOnMissingBean(name = "grouperAttributeRepositories")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public BeanContainer<IPersonAttributeDao> grouperAttributeRepositories(final CasConfigurationProperties casProperties) {
+        public BeanContainer<IPersonAttributeDao> grouperAttributeRepositories(
+            final CasConfigurationProperties casProperties) {
             val list = new ArrayList<IPersonAttributeDao>();
             val gp = casProperties.getAuthn().getAttributeRepository().getGrouper();
             val dao = new GrouperPersonAttributeDao();

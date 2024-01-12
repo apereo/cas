@@ -13,6 +13,8 @@ dependencies {
     
     implementation libraries.bouncycastle
     implementation libraries.ldaptive
+
+    testImplementation libraries.persondirectory
     
     testImplementation project(":support:cas-server-support-generic")
     testImplementation project(":support:cas-server-support-person-directory")

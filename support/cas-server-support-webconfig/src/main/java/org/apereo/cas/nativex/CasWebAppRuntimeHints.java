@@ -2,6 +2,7 @@ package org.apereo.cas.nativex;
 
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.springframework.aot.hint.RuntimeHints;
+import org.springframework.security.web.csrf.CsrfToken;
 
 /**
  * This is {@link CasWebAppRuntimeHints}.
@@ -12,5 +13,6 @@ import org.springframework.aot.hint.RuntimeHints;
 public class CasWebAppRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
+        registerReflectionHints(hints, findSubclassesInPackage(CsrfToken.class, CsrfToken.class.getPackageName()));
     }
 }

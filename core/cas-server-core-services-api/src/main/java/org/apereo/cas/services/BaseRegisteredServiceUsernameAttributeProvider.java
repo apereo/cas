@@ -38,7 +38,7 @@ public abstract class BaseRegisteredServiceUsernameAttributeProvider implements 
     @Serial
     private static final long serialVersionUID = -8381275200333399951L;
 
-    private String canonicalizationMode = CaseCanonicalizationMode.NONE.name();
+    private String canonicalizationMode = "NONE";
 
     private boolean encryptUsername;
 
@@ -52,7 +52,7 @@ public abstract class BaseRegisteredServiceUsernameAttributeProvider implements 
             
         val resolvedUsername = resolveUsernameInternal(context);
         if (canonicalizationMode == null) {
-            canonicalizationMode = CaseCanonicalizationMode.NONE.name();
+            canonicalizationMode = "NONE";
         }
         val removedUsername = removePatternFromUsernameIfNecessary(resolvedUsername);
         val finalUsername = scopeUsernameIfNecessary(removedUsername);
@@ -74,7 +74,7 @@ public abstract class BaseRegisteredServiceUsernameAttributeProvider implements 
      */
     @PostLoad
     public void initialize() {
-        setCanonicalizationMode(CaseCanonicalizationMode.NONE.name());
+        setCanonicalizationMode("NONE");
     }
 
     protected String removePatternFromUsernameIfNecessary(final String username) {
