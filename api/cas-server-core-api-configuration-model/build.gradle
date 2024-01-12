@@ -56,7 +56,12 @@ if (!skipConfigurationMetadata) {
             }
         )
 
-        inputs.files(tasks.named('processResources'), tasks.named('compileJava'))
+        inputs.files(tasks.named('processResources'),
+                     tasks.named('compileJava'),
+                     tasks.named('testJar'),
+                     tasks.named('compileTestJava'),
+                     tasks.named('compileTestJava'),
+                     tasks.named("processTestResources"))
                 .withPropertyName('configurationMetadata')
                 .withPathSensitivity(PathSensitivity.RELATIVE)
 
