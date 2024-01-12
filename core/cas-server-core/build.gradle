@@ -18,6 +18,8 @@ dependencies {
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-services-authentication")
 
+    implementation libraries.persondirectory
+
     testImplementation project(":core:cas-server-core-authentication-mfa")
     testImplementation project(":core:cas-server-core-authentication-attributes")
     testImplementation project(":core:cas-server-core-web")

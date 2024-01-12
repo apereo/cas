@@ -1,9 +1,13 @@
 description = "Apereo CAS Person Directory & Attribute Resolution Support"
 dependencies {
+
+    implementation libraries.persondirectory
+
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-services-api")
+    implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-services-authentication")
 
     implementation project(":support:cas-server-support-person-directory-core")
@@ -40,6 +44,7 @@ dependencies {
     testImplementation project(path: ":support:cas-server-support-ldap-core", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-person-directory-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-reports", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
