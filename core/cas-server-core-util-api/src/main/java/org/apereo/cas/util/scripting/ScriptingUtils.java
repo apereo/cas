@@ -59,6 +59,7 @@ public class ScriptingUtils {
         imports.addStarImports(
             "java.time",
             "java.util",
+            "java.util.function",
             "java.io",
             "java.math",
             "java.beans",
@@ -85,6 +86,7 @@ public class ScriptingUtils {
             "org.apache.commons.text",
             "org.apache.commons.io",
             "org.apache.commons.io.output",
+            "org.apache.commons.codec.binary",
             "org.apache.commons.codec.digest",
 
             "org.apereo.inspektr.common.web",
