@@ -22,6 +22,7 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' || github.repository != 'apereo/cas' }}
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: '0 23 * * *'
 #  push:

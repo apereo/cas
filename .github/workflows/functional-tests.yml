@@ -36,6 +36,7 @@ env:
   SCENARIO_REGEX: ".*"
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - master

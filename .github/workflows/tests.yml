@@ -29,6 +29,7 @@ env:
 ##########################################################################
 
 on:
+  workflow_dispatch:
   push:
     branches: [ master, pr-* ]
   pull_request:
