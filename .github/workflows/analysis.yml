@@ -20,6 +20,7 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' || github.repository != 'apereo/cas' }}
 
 on:
+  workflow_dispatch:
   push:
     branches: [ master ]
   pull_request:
