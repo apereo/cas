@@ -21,7 +21,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.io.IOUtils;
 import org.apache.hc.core5.net.URIBuilder;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpInputMessage;
@@ -50,6 +52,7 @@ import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collections;
@@ -257,13 +260,20 @@ public class GitHubTemplate implements GitHubOperations {
 
     @Override
     public boolean approve(final String organization, final String repository, final PullRequest pr) {
-        val url = "https://api.github.com/repos/" + organization + '/' + repository + "/pulls/" + pr.getNumber() + "/reviews";
-        val params = new HashMap<String, String>();
-        params.put("commit_id", pr.getHead().getSha());
-        params.put("body", "This pull request is reviewed and approved. Thank you!");
-        params.put("event", "APPROVE");
-        val responseEntity = this.rest.exchange(new RequestEntity(params, HttpMethod.POST, URI.create(url)), Map.class);
-        return responseEntity.getStatusCode().is2xxSuccessful();
+        try {
+            val url = "https://api.github.com/repos/" + organization + '/' + repository + "/pulls/" + pr.getNumber() + "/reviews";
+            val params = new HashMap<String, String>();
+            params.put("commit_id", pr.getHead().getSha());
+            var template = IOUtils.toString(new ClassPathResource("template-pr-approved.md").getInputStream(), StandardCharsets.UTF_8);
+            params.put("body", template);
+
+            params.put("event", "APPROVE");
+            val responseEntity = rest.exchange(new RequestEntity(params, HttpMethod.POST, URI.create(url)), Map.class);
+            return responseEntity.getStatusCode().is2xxSuccessful();
+        } catch (Exception e){
+            log.error("Error approving PR", e);
+        }
+        return false;
     }
 
     @Override
@@ -401,14 +411,14 @@ public class GitHubTemplate implements GitHubOperations {
 
     @Override
     public Comment addComment(final Issue issue, final String comment) {
-        final Map<String, String> body = new HashMap<>();
+        var body = new HashMap<>();
         body.put("body", comment);
-        return this.rest.postForEntity(issue.getCommentsUrl(), body, Comment.class).getBody();
+        return rest.postForEntity(issue.getCommentsUrl(), body, Comment.class).getBody();
     }
 
     @Override
     public Comment addComment(final PullRequest pullRequest, final String comment) {
-        final Map<String, String> body = new HashMap<>();
+        var body = new HashMap<>();
         body.put("body", comment);
         return this.rest.postForEntity(pullRequest.getCommentsUrl(), body, Comment.class).getBody();
     }
@@ -439,7 +449,7 @@ public class GitHubTemplate implements GitHubOperations {
 
     @Override
     public Issue close(final Issue issue) {
-        final Map<String, String> body = new HashMap<>();
+        var body = new HashMap<>();
         body.put("state", "closed");
         var response = this.rest.exchange(
             new RequestEntity<>(body, HttpMethod.PATCH, URI.create(issue.getUrl())),
@@ -476,7 +486,7 @@ public class GitHubTemplate implements GitHubOperations {
     @Override
     public CheckRun getCheckRunsFor(final String organization, final String repository, final String ref,
                                     final String checkName, final String status, final String filter) {
-        final Map<String, String> params = new HashMap<>();
+        var params = new HashMap<>();
         if (StringUtils.hasText(checkName)) {
             params.put("check_name", checkName);
         }

@@ -173,7 +173,8 @@ public class MonitoredRepository {
     }
 
     public boolean mergePullRequestIntoBase(final PullRequest pr) {
-        return this.gitHub.mergeIntoBase(getOrganization(), getName(), pr, pr.getTitle(), pr.getBody(),
+        return gitHub.mergeIntoBase(getOrganization(), getName(),
+            pr, pr.getTitle(), pr.getBody(),
             pr.getHead().getSha(), "squash");
     }
 
