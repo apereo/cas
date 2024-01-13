@@ -34,6 +34,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-webflow-api")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-logging")
 
     testImplementation libraries.ldaptive
 
