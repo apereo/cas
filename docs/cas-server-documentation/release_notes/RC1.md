@@ -83,9 +83,12 @@ This feature allows one to define conditions that must be met before the policy 
 - ErrorProne
 - Spring Security
 - Spring Boot
+- Spring Data
 - Twilio
 - Pac4j
 - Grouper
 - Micrometer
 - Apache Tomcat
+- Sentry
+- Slack
 
