@@ -63,18 +63,14 @@ Below shows the option where you define an external Groovy script:
   "serviceId" : "...",
   "name" : "...",
   "id" : 1,
-  "singleSignOnParticipationPolicy":
-    {
-      "@class": "org.apereo.cas.services.ChainingRegisteredServiceSingleSignOnParticipationPolicy",
-      "policies": [ "java.util.ArrayList",
-        [
-          {
-            "@class":"org.apereo.cas.services.GroovyRegisteredServiceAttributeReleaseActivationCriteria",
-            "groovyScript" : "file:///path/to/script.groovy"
-          }
-        ]
-      ]
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "allowedAttributes" : [ "java.util.ArrayList", [ "cn", "mail", "sn" ] ],
+    "activationCriteria": {
+        "@class":"org.apereo.cas.services.GroovyRegisteredServiceAttributeReleaseActivationCriteria",
+        "groovyScript" : "file:///path/to/script.groovy"
     }
+  }
 }
 ```
 
@@ -91,7 +87,6 @@ def run(Object[] args) {
     }
     return false
 }
-
 ```
 
 The following parameters are passed to the script:
