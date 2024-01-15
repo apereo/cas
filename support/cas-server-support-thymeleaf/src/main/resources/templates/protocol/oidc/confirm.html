@@ -15,7 +15,7 @@
     </div>
 
     <div id="dynamic" th:if="${dynamic}" class="my-2 banner banner-warning alert alert-warning d-flex align-items-center">
-        <i class="mdi mdi-alert fas fa-exclamation-triangle me-2"></i>
+        <i class="mdi mdi-alert fas fa-exclamation-triangle me-2" aria-hidden="true"></i>
         <strong th:utext="#{screen.oidc.confirm.dynamic(${dynamicTime})}"/>
     </div>
     <div id="scopes" th:unless="${#sets.isEmpty(scopes)}">

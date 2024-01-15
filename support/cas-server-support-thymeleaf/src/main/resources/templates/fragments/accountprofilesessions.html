@@ -61,7 +61,7 @@
              id="divSessions">
 
             <h2>
-                <i class="mdi mdi-door-open fas fa-door-open"></i>
+                <i class="mdi mdi-door-open fas fa-door-open" aria-hidden="true"></i>
                 <span>Hello, <span th:utext="${authentication.principal.id}"></span>!</span>
             </h2>
             <div class="text-justify">
@@ -92,11 +92,11 @@
                         <form id="fm1" method="post" th:action="@{/account}">
                             <div class="d-flex">
                                 <button name="viewSessionDetails" th:if="${entry.payload}" class="btn btn-link" type="button">
-                                    <i class="mdi mdi-account-details fas fa-eye"></i>
+                                    <i class="mdi mdi-account-details fas fa-eye" aria-hidden="true"></i>
                                     <span style="display: none" th:utext="${entry.payload}"/>
                                 </button>
                                 <button class="btn btn-link text-danger">
-                                    <i class="mdi mdi-delete fas fa-trash"></i>
+                                    <i class="mdi mdi-delete fas fa-trash" aria-hidden="true"></i>
                                 </button>
                             </div>
                             <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
