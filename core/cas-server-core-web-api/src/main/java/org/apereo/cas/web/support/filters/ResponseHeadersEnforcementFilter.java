@@ -187,7 +187,7 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
                 decideInsertContentSecurityPolicyHeader(response, request, result);
                 filterChain.doFilter(servletRequest, servletResponse);
             } catch (final Throwable e) {
-                throwException(e, response);
+                throwException(e, response, request);
             }
         }
     }
