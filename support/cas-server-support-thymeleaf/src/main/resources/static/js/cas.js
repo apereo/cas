@@ -113,9 +113,15 @@ function readFromLocalStorage(browserStorage) {
         console.log("Browser does not support local storage for read-ops");
         return null;
     }
-    let payload = window.localStorage.getItem("CAS");
-    console.log(`Read ${payload} in local storage`);
-    return payload === null ? {} : JSON.parse(payload);
+    try {
+        let payload = window.localStorage.getItem("CAS");
+        console.log(`Read ${payload} in local storage`);
+        return payload === null ? {} : JSON.parse(payload);
+    } catch (e) {
+        console.log(`Failed to read from local storage: ${e}`);
+        window.localStorage.removeItem("CAS");
+        return {};
+    }
 }
 
 function clearLocalStorage() {
@@ -152,9 +158,15 @@ function readFromSessionStorage(browserStorage) {
         console.log("Browser does not support session storage for read-ops");
         return null;
     }
-    let payload = window.sessionStorage.getItem("CAS");
-    console.log(`Read ${payload} in session storage`);
-    return payload === null ? {} : JSON.parse(payload);
+    try {
+        let payload = window.sessionStorage.getItem("CAS");
+        console.log(`Read ${payload} in session storage`);
+        return payload === null ? {} : JSON.parse(payload);
+    } catch (e) {
+        console.log(`Failed to read from session storage: ${e}`);
+        window.sessionStorage.removeItem("CAS");
+        return {};
+    }
 }
 
 function resourceLoadedSuccessfully() {

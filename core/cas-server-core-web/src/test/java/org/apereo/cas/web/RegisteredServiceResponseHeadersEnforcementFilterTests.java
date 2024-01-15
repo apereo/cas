@@ -78,7 +78,8 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
         service.setProperties(props1);
         servicesManager.save(service);
 
-        return new RegisteredServiceResponseHeadersEnforcementFilter(new DirectObjectProvider<>(servicesManager),
+        return new RegisteredServiceResponseHeadersEnforcementFilter(
+            new DirectObjectProvider<>(servicesManager),
             new DirectObjectProvider<>(argumentExtractor),
             new DirectObjectProvider<>(new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy())),
             new DirectObjectProvider<>(new RegisteredServiceAccessStrategyAuditableEnforcer(appCtx)));

@@ -41,6 +41,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
+import org.springframework.webflow.conversation.NoSuchConversationException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -147,12 +148,19 @@ class CasCoreWebConfiguration {
         public ErrorViewResolver defaultMappedExceptionErrorViewResolver(
             final WebProperties webProperties,
             final ConfigurableApplicationContext applicationContext) {
-            val mv = new ModelAndView();
-            mv.setStatus(HttpStatusCode.valueOf(HttpStatus.FORBIDDEN.value()));
-            mv.setViewName(CasWebflowConstants.VIEW_ID_SERVICE_ERROR);
-            val mappings = Map.<Class<? extends Throwable>, ModelAndView>of(UnauthorizedServiceException.class, mv);
+            val mappings = Map.<Class<? extends Throwable>, ModelAndView>of(
+                UnauthorizedServiceException.class, getModelAndView(HttpStatus.FORBIDDEN, CasWebflowConstants.VIEW_ID_SERVICE_ERROR),
+                NoSuchConversationException.class, getModelAndView(HttpStatus.UNPROCESSABLE_ENTITY, "error/%s".formatted(HttpStatus.UNPROCESSABLE_ENTITY.value()))
+            );
             return new MappedExceptionErrorViewResolver(applicationContext,
                 webProperties.getResources(), mappings, errorContext -> Optional.empty());
+        }
+
+        private static ModelAndView getModelAndView(final HttpStatus status, final String viewName) {
+            val mv = new ModelAndView();
+            mv.setStatus(HttpStatusCode.valueOf(status.value()));
+            mv.setViewName(viewName);
+            return mv;
         }
     }
 
