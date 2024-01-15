@@ -56,11 +56,11 @@
              class="profile-content w-100"
              style="display: none;">
             <h2>
-                <i class="mdi mdi-account-reactivate fas fa-door-open"></i>
+                <i class="mdi mdi-account-reactivate fas fa-door-open" aria-hidden="true"></i>
                 <span th:utext="#{screen.account.trusteddevices.title}">Multifactor Authentication Trusted Devices</span>
             </h2>
             <p th:utext="#{screen.account.trusteddevices.subtitle}">Trusted Devices are listed here</p>
-            
+
             <table id="trustedDevicesTable" class="mdc-data-table__table table table-striped noborder">
                 <thead>
                     <tr class="mdc-data-table__header-row">
@@ -78,8 +78,8 @@
                     <tr th:each="entry : ${multifactorTrustedDevices}" class="mdc-data-table__row">
                        <td class="mdc-data-table__cell">
                             <span th:switch="${entry.source}">
-                                <span th:case="'Google Authenticator'"><i class="mdi mdi-google"></i></span>
-                                <span th:case="'Web Authn'"><i class="mdi mdi-fingerprint"></i></span>
+                                <span th:case="'Google Authenticator'"><i class="mdi mdi-google" aria-hidden="true"></i></span>
+                                <span th:case="'Web Authn'"><i class="mdi mdi-fingerprint" aria-hidden="true"></i></span>
                                 <span th:case="*"></span>
                             </span>
                             <span th:utext="${entry.source}"/>
@@ -92,7 +92,7 @@
                         <td class="mdc-data-table__cell" th:title="${entry.expirationDateTime}" th:utext="*{entry.expirationDateTime}?: 'N/A'">Value</td>
                         <td class="mdc-data-table__cell">
                             <button type="button" name="viewTrustedDeviceDetails" href="#" th:if="${entry.payload}" class="btn btn-link">
-                            <i class="mdi mdi-account-details fas fa-eye"></i>
+                            <i class="mdi mdi-account-details fas fa-eye" aria-hidden="true"></i>
                             <span style="display: none" th:utext="${entry.payload}"/>
                             </button>
                         </td>
