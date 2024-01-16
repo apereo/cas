@@ -6,6 +6,7 @@ import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustR
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecordKeyGenerator;
 import org.apereo.cas.trusted.authentication.storage.generic.JpaMultifactorAuthenticationTrustRecord;
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +18,7 @@ import org.springframework.transaction.support.TransactionOperations;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
+import javax.sql.DataSource;
 import java.io.Serializable;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -37,6 +39,7 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
     private static final String QUERY_SELECT = "SELECT r FROM " + ENTITY_NAME + " r ";
 
     private final TransactionOperations transactionTemplate;
+    private final DataSource entityDataSource;
 
     @PersistenceContext(unitName = "jpaMfaTrustedAuthnContext")
     private EntityManager entityManager;
@@ -44,9 +47,11 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
     public JpaMultifactorAuthenticationTrustStorage(final TrustedDevicesMultifactorProperties properties,
                                                     final CipherExecutor<Serializable, String> cipherExecutor,
                                                     final MultifactorAuthenticationTrustRecordKeyGenerator keyGenerationStrategy,
-                                                    final TransactionOperations transactionTemplate) {
+                                                    final TransactionOperations transactionTemplate,
+                                                    final DataSource entityDataSource) {
         super(properties, cipherExecutor, keyGenerationStrategy);
         this.transactionTemplate = transactionTemplate;
+        this.entityDataSource = entityDataSource;
     }
 
     @Override
@@ -78,12 +83,12 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
 
     @Override
     public Set<? extends MultifactorAuthenticationTrustRecord> getAll() {
-        return transactionTemplate.execute(__ -> {
+        return FunctionUtils.doAndHandle(() -> transactionTemplate.execute(__ -> {
             remove();
             val query = entityManager.createQuery(QUERY_SELECT, getEntityFactory().getType());
             val results = query.getResultList();
             return new HashSet<>(results);
-        });
+        }), e -> new HashSet<MultifactorAuthenticationTrustRecord>()).get();
     }
 
     @Override
@@ -100,14 +105,14 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
 
     @Override
     public Set<? extends MultifactorAuthenticationTrustRecord> get(final String principal) {
-        return transactionTemplate.execute(__ -> {
+        return FunctionUtils.doAndHandle(() -> transactionTemplate.execute(__ -> {
             remove();
             val query = entityManager
                 .createQuery(QUERY_SELECT + " WHERE r.principal = :principal", getEntityFactory().getType())
                 .setParameter("principal", principal);
             val results = query.getResultList();
             return new HashSet<>(results);
-        });
+        }), e -> new HashSet<MultifactorAuthenticationTrustRecord>()).get();
     }
 
     @Override
@@ -129,12 +134,23 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
 
     @Override
     public MultifactorAuthenticationTrustRecord saveInternal(final MultifactorAuthenticationTrustRecord record) {
-        return FunctionUtils.doUnchecked(() -> {
+        return FunctionUtils.doAndHandle(() -> {
             val destination = getEntityFactory().newInstance();
             BeanUtils.copyProperties(destination, record);
             LOGGER.trace("Saving multifactor authentication trust record [{}]", destination);
             return transactionTemplate.execute(__ -> entityManager.merge(destination));
-        });
+        }, e -> record).get();
+    }
+
+
+    @Override
+    public boolean isAvailable() {
+        try (val connection = entityDataSource.getConnection()) {
+            return connection != null;
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+            return false;
+        }
     }
 
     private AbstractJpaEntityFactory<MultifactorAuthenticationTrustRecord> getEntityFactory() {

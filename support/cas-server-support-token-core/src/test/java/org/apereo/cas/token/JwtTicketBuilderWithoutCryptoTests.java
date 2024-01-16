@@ -17,8 +17,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.2.0
  */
 @TestPropertySource(properties = {
-    "cas.authn.token.crypto.encryptionEnabled=false",
-    "cas.authn.token.crypto.signingEnabled=false"
+    "cas.authn.token.crypto.encryption-enabled=false",
+    "cas.authn.token.crypto.signing-enabled=false"
 })
 @Tag("Tickets")
 class JwtTicketBuilderWithoutCryptoTests extends BaseJwtTokenTicketBuilderTests {
