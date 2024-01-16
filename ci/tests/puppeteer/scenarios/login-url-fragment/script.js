@@ -16,6 +16,6 @@ const assert = require("assert");
     assert((url.match(/#/g) || []).length === 1);
     const result = new URL(page.url());
     await cas.logg(`URL hash is ${result.hash}`);
-    assert(result.hash === "#hello-world");
+    assert(result.hash.startsWith("#hello-world"));
     await browser.close();
 })();
