@@ -27,7 +27,7 @@ class DefaultCloseableDataSourceTests {
             .setUrl("jdbc:hsqldb:mem:cas");
 
         val ds = JpaBeans.newDataSource(props);
-        assertInstanceOf(Closeable.class, ds.targetDataSource());
+        assertInstanceOf(Closeable.class, ds.getTargetDataSource());
         assertDoesNotThrow(() -> {
             ds.close();
             ds.destroy();
