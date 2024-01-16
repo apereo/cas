@@ -22,6 +22,7 @@ import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
 import org.apereo.cas.services.ChainingRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.ChainingRegisteredServiceAccessStrategyActivationCriteria;
+import org.apereo.cas.services.ChainingRegisteredServiceAttributeReleaseActivationCriteria;
 import org.apereo.cas.services.ChainingRegisteredServiceDelegatedAuthenticationPolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceAcceptableUsagePolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
@@ -112,6 +113,7 @@ public class CasCoreServicesRuntimeHints implements CasRuntimeHintsRegistrar {
             DefaultRegisteredServiceProperty.class,
             DefaultRegisteredServiceDelegatedAuthenticationPolicy.class,
             ChainingRegisteredServiceDelegatedAuthenticationPolicy.class,
+            ChainingRegisteredServiceAttributeReleaseActivationCriteria.class,
             DefaultRegisteredServiceExpirationPolicy.class,
             DefaultRegisteredServiceServiceTicketExpirationPolicy.class,
             DefaultRegisteredServiceProxyTicketExpirationPolicy.class,

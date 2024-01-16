@@ -18,6 +18,7 @@ import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
 import org.apereo.cas.services.ChainingRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.ChainingRegisteredServiceAccessStrategyActivationCriteria;
+import org.apereo.cas.services.ChainingRegisteredServiceAttributeReleaseActivationCriteria;
 import org.apereo.cas.services.ChainingRegisteredServiceDelegatedAuthenticationPolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceAcceptableUsagePolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
@@ -97,6 +98,7 @@ class CasCoreServicesComponentSerializationConfiguration {
             plan.registerSerializableClass(DefaultRegisteredServiceProperty.class);
             plan.registerSerializableClass(DefaultRegisteredServiceDelegatedAuthenticationPolicy.class);
             plan.registerSerializableClass(ChainingRegisteredServiceDelegatedAuthenticationPolicy.class);
+            plan.registerSerializableClass(ChainingRegisteredServiceAttributeReleaseActivationCriteria.class);
             plan.registerSerializableClass(DefaultRegisteredServiceExpirationPolicy.class);
             plan.registerSerializableClass(DefaultRegisteredServiceServiceTicketExpirationPolicy.class);
             plan.registerSerializableClass(DefaultRegisteredServiceProxyTicketExpirationPolicy.class);
