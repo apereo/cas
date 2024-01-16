@@ -81,6 +81,7 @@ public class CasJdbcMultifactorAuthnTrustAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "jpaMfaTrustEngine")
         public MultifactorAuthenticationTrustStorage mfaTrustEngine(
+            @Qualifier("dataSourceMfaTrustedAuthn") final DataSource dataSourceMfaTrustedAuthn,
             @Qualifier("jpaMfaTrustTransactionTemplate")
             final TransactionOperations jpaMfaTrustTransactionTemplate,
             final CasConfigurationProperties casProperties,
@@ -91,7 +92,7 @@ public class CasJdbcMultifactorAuthnTrustAutoConfiguration {
             return new JpaMultifactorAuthenticationTrustStorage(
                 casProperties.getAuthn().getMfa().getTrusted(),
                 mfaTrustCipherExecutor, keyGenerationStrategy,
-                jpaMfaTrustTransactionTemplate);
+                jpaMfaTrustTransactionTemplate, dataSourceMfaTrustedAuthn);
         }
     }
 

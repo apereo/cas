@@ -116,6 +116,13 @@ public abstract class AbstractJpaProperties implements CasFeatureModule, Seriali
     private String idleTimeout = "PT10M";
 
     /**
+     * Indicates the maximum number of milliseconds that the service
+     * can wait to obtain a connection.
+     */
+    @DurationCapable
+    private String connectionTimeout = "PT30S";
+
+    /**
      * Attempts to do a JNDI data source look up for the data source name specified.
      * Will attempt to locate the data source object as is.
      */

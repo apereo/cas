@@ -73,6 +73,7 @@ class JpaMultifactorAuthenticationTrustStorageTests extends AbstractMultifactorA
 
         getMfaTrustEngine().remove(records.stream().findFirst().orElseThrow().getRecordKey());
         assertEquals(1, getMfaTrustEngine().get(PRINCIPAL).size());
+        assertTrue(getMfaTrustEngine().isAvailable());
     }
 
     @Test

@@ -93,22 +93,26 @@ public class JpaBeans {
         bean.setJdbcUrl(url);
         bean.setUsername(jpaProperties.getUser());
         bean.setPassword(jpaProperties.getPassword());
-        FunctionUtils.doUnchecked(__ -> bean.setLoginTimeout((int) Beans.newDuration(jpaProperties.getPool().getMaxWait()).getSeconds()));
-        bean.setMaximumPoolSize(jpaProperties.getPool().getMaxSize());
-        bean.setMinimumIdle(jpaProperties.getPool().getMinSize());
+
+        val poolSettings = jpaProperties.getPool();
+        FunctionUtils.doUnchecked(__ -> bean.setLoginTimeout((int) Beans.newDuration(poolSettings.getMaxWait()).getSeconds()));
+        bean.setMaximumPoolSize(poolSettings.getMaxSize());
+        bean.setMinimumIdle(poolSettings.getMinSize());
         bean.setIdleTimeout(Beans.newDuration(jpaProperties.getIdleTimeout()).toMillis());
         bean.setLeakDetectionThreshold(Beans.newDuration(jpaProperties.getLeakThreshold()).toMillis());
         bean.setInitializationFailTimeout(jpaProperties.getFailFastTimeout());
         bean.setIsolateInternalQueries(jpaProperties.isIsolateInternalQueries());
         bean.setConnectionTestQuery(jpaProperties.getHealthQuery());
-        bean.setAllowPoolSuspension(jpaProperties.getPool().isSuspension());
+        bean.setAllowPoolSuspension(poolSettings.isSuspension());
         bean.setAutoCommit(jpaProperties.isAutocommit());
-        bean.setValidationTimeout(jpaProperties.getPool().getTimeoutMillis());
+        bean.setValidationTimeout(poolSettings.getTimeoutMillis());
         bean.setReadOnly(jpaProperties.isReadOnly());
-        bean.setPoolName(StringUtils.defaultIfBlank(jpaProperties.getPool().getName(), UUID.randomUUID().toString()));
-        bean.setKeepaliveTime(Beans.newDuration(jpaProperties.getPool().getKeepAliveTime()).toMillis());
-        bean.setMaxLifetime(Beans.newDuration(jpaProperties.getPool().getMaximumLifetime()).toMillis());
+        bean.setPoolName(StringUtils.defaultIfBlank(poolSettings.getName(), UUID.randomUUID().toString()));
+        bean.setKeepaliveTime(Beans.newDuration(poolSettings.getKeepAliveTime()).toMillis());
+        bean.setMaxLifetime(Beans.newDuration(poolSettings.getMaximumLifetime()).toMillis());
         bean.setSchema(jpaProperties.getDefaultSchema());
+        bean.setConnectionTimeout(Beans.newDuration(jpaProperties.getConnectionTimeout()).toMillis());
+
         val dataSourceProperties = new Properties();
         dataSourceProperties.putAll(jpaProperties.getProperties());
         bean.setDataSourceProperties(dataSourceProperties);

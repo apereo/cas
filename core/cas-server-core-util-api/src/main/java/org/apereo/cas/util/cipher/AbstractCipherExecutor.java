@@ -166,11 +166,6 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
         }
     }
 
-    /**
-     * Configure signing key from private key resource.
-     *
-     * @param signingSecretKey the signing secret key
-     */
     protected void configureSigningKeyFromPrivateKeyResource(final String signingSecretKey) {
         val object = extractPrivateKeyFromResource(signingSecretKey);
         LOGGER.trace("Located signing key resource [{}]", signingSecretKey);

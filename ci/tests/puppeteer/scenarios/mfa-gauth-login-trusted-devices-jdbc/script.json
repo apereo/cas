@@ -1,0 +1,31 @@
+{
+  "dependencies": "gauth,trusted-mfa-jdbc",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.enabled-by-default=true",
+
+    "--logging.level.org.apereo.cas=info",
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    "--cas.audit.slf4j.use-single-line=true",
+
+    "--cas.authn.mfa.gauth.core.trusted-device-enabled=true",
+    "--cas.authn.mfa.gauth.crypto.enabled=false",
+    "--cas.authn.mfa.gauth.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
+
+    "--cas.jdbc.show-sql=true",
+    "--cas.authn.mfa.trusted.jpa.connection-timeout=PT2S",
+    "--cas.authn.mfa.trusted.jpa.ddl-auto=create-drop",
+    "--cas.authn.mfa.trusted.jpa.user=postgres",
+    "--cas.authn.mfa.trusted.jpa.password=password",
+    "--cas.authn.mfa.trusted.jpa.driver-class=org.postgresql.Driver",
+    "--cas.authn.mfa.trusted.jpa.url=jdbc:postgresql://localhost:5432/mfa",
+    "--cas.authn.mfa.trusted.jpa.dialect=org.hibernate.dialect.PostgreSQLDialect"
+  ],
+  "initScript": "${PWD}/ci/tests/postgres/run-postgres-server.sh"
+}

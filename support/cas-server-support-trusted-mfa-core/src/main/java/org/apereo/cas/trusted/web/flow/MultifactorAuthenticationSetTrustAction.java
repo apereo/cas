@@ -81,24 +81,25 @@ public class MultifactorAuthenticationSetTrustAction extends BaseCasWebflowActio
     protected void storeTrustedAuthenticationRecord(final RequestContext requestContext,
                                                     final Authentication authentication,
                                                     final MultifactorAuthenticationTrustBean deviceRecord) {
-        val principal = authentication.getPrincipal().getId();
-        LOGGER.debug("Attempting to store trusted authentication record for [{}] as device [{}]", principal, deviceRecord.getDeviceName());
+        if (storageService.isAvailable()) {
+            val principal = authentication.getPrincipal().getId();
+            LOGGER.debug("Attempting to store trusted authentication record for [{}] as device [{}]", principal, deviceRecord.getDeviceName());
+            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+            val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
+            val fingerprint = deviceFingerprintStrategy.determineFingerprintComponent(principal, request, response);
+            val record = MultifactorAuthenticationTrustRecord.newInstance(principal,
+                MultifactorAuthenticationTrustUtils.generateGeography(), fingerprint);
+            record.setName(deviceRecord.getDeviceName());
+            record.setMultifactorAuthenticationProvider(requestContext.getFlowScope().get(CasWebflowConstants.VAR_ID_MFA_PROVIDER_ID, String.class));
+            if (deviceRecord.getTimeUnit() != ChronoUnit.FOREVER && deviceRecord.getExpiration() > 0) {
+                record.expireIn(deviceRecord.getExpiration(), deviceRecord.getTimeUnit());
+            } else {
+                record.neverExpire();
+            }
 
-        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-        val fingerprint = deviceFingerprintStrategy.determineFingerprintComponent(principal, request, response);
-        val record = MultifactorAuthenticationTrustRecord.newInstance(principal,
-            MultifactorAuthenticationTrustUtils.generateGeography(), fingerprint);
-        record.setName(deviceRecord.getDeviceName());
-        record.setMultifactorAuthenticationProvider(requestContext.getFlowScope().get(CasWebflowConstants.VAR_ID_MFA_PROVIDER_ID, String.class));
-        if (deviceRecord.getTimeUnit() != ChronoUnit.FOREVER && deviceRecord.getExpiration() > 0) {
-            record.expireIn(deviceRecord.getExpiration(), deviceRecord.getTimeUnit());
-        } else {
-            record.neverExpire();
+            LOGGER.debug("Trusted authentication record will expire at [{}]", record.getExpirationDate());
+            storageService.save(record);
+            LOGGER.debug("Saved trusted authentication record for [{}] under [{}]", principal, record.getName());
         }
-
-        LOGGER.debug("Trusted authentication record will expire at [{}]", record.getExpirationDate());
-        storageService.save(record);
-        LOGGER.debug("Saved trusted authentication record for [{}] under [{}]", principal, record.getName());
     }
 }
