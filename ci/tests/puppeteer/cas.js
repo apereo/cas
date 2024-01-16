@@ -895,7 +895,8 @@ exports.loginDuoSecurityBypassCode = async (page, username = "casuser") => {
 exports.dockerContainer = async(name) => {
     const containers = await docker.container.list();
     const results = containers.filter((c) => c.data.Names[0].slice(1) === name);
-    await this.log(`Docker containers found for ${name} are\n: ${results}`);
+    await this.log(`Docker containers found for ${name} are\n:`);
+    await this.log(results);
     if (results.length > 0) {
         return results[0];
     }
