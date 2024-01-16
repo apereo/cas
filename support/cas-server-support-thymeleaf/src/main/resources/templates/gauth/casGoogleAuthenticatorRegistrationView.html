@@ -28,7 +28,7 @@
                             <div class="mdc-typography--body1">
                                 <div class="banner banner-danger alert alert-danger banner-dismissible"
                                      role="alert" style="display: none" id="errorPanel">
-                                    <a href="#" class="close" onclick="$(this).parent().hide();" aria-label="close"><span class="mdi mdi-close-box"></span></a>
+                                    <a href="#" class="close" onclick="$(this).parent().hide();" th:aria-label="#{screen.pm.button.close}"><span class="mdi mdi-close-box" aria-hidden="true"></span></a>
                                     <h3>Failure</h3>
                                     <p th:utext="#{screen.authentication.gauth.invalidtoken}">
                                 </div>
@@ -65,7 +65,7 @@
                                             <button class="reveal-password align-self-end mdc-button mdc-button--raised btn btn-primary mdc-input-group-append mdc-icon-button"
                                                     tabindex="-1"
                                                     type="button">
-                                                <i class="mdi mdi-eye fas fa-eye reveal-password-icon"></i>
+                                                <i class="mdi mdi-eye fas fa-eye reveal-password-icon" aria-hidden="true"></i>
                                                 <span class="visually-hidden">Toggle Token</span>
                                             </button>
                                         </div>

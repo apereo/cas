@@ -34,7 +34,7 @@
              style="display: none;">
 
             <h2>
-                <i class="mdi mdi-door-open fas fa-door-open"></i>
+                <i class="mdi mdi-door-open fas fa-door-open" aria-hidden="true"></i>
                 <span th:utext="#{screen.account.securityquestions.title}">Security Questions</span>
             </h2>
             <p th:utext="#{screen.account.securityquestions.subtitle}">
@@ -62,11 +62,11 @@
                         <tr th:each="entry,iterStat : ${questions}" class="mdc-data-table__header-row py-1">
                             <td class="mdc-data-table__cell pad-0">
                                 <a href="#divSecurityQuestions" onclick="addSecurityQuestionRow(this)"/>
-                                <i class="mdi mdi-account-multiple-plus-outline fas fa-add"></i>
+                                <i class="mdi mdi-account-multiple-plus-outline fas fa-add" aria-hidden="true"></i>
                             </td>
                             <td class="mdc-data-table__cell pad-0">
                                 <a href="#divSecurityQuestions" onclick="removeSecurityQuestionRow(this)"/>
-                                <i class="mdi mdi-delete fas fa-delete"></i>
+                                <i class="mdi mdi-delete fas fa-delete" aria-hidden="true"></i>
                             </td>
 
                             <td class="mdc-data-table__cell w-50 pad-0">
