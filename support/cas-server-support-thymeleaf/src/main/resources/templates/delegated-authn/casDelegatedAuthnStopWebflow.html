@@ -20,7 +20,7 @@
                     cause of the issue.</p>
 
                 <p>
-                    <i class="mdi mdi-alert fas fa-exclamation-triangle me-2"></i>
+                    <i class="mdi mdi-alert fas fa-exclamation-triangle me-2" aria-hidden="true"></i>
                     <span th:if="${rootCauseException}"
                           th:with="simpleName=${@casThymeleafTemplatesDirector.getExceptionClassSimpleName(rootCauseException)}"
                           th:text="#{${'screen.pac4j.authn.' + simpleName}}">

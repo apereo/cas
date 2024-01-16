@@ -30,7 +30,7 @@
                             event.preventDefault();
                         }, false);
                     });
-                    
+
                 });
             })(window.mdc ? mdc : null, window.bootstrap ? bootstrap : null);
         </script>
@@ -63,7 +63,7 @@
              class="profile-content w-100"
              style="display: none;">
             <h2>
-                <i class="mdi mdi-head-check-outline fas fa-door-open"></i>
+                <i class="mdi mdi-head-check-outline fas fa-door-open" aria-hidden="true"></i>
                 <span th:utext="#{screen.account.consent.title}">Attribute Consent Decisions</span>
             </h2>
             <p th:utext="#{screen.account.consent.subtitle}">Examine the CAS Attribute Consent Decisions here.</p>
@@ -93,7 +93,7 @@
                     <td class="mdc-data-table__cell" th:utext="${entry.reminder}">Value</td>
                     <td class="mdc-data-table__cell">
                         <button type="button" class="btn btn-link" name="viewConsentEntryDetails">
-                            <i class="mdi mdi-account-details fas fa-eye"></i>
+                            <i class="mdi mdi-account-details fas fa-eye" aria-hidden="true"></i>
                             <span style="display: none" th:utext="${entry.json}"/>
                         </button>
                     </td>
