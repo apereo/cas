@@ -1,7 +1,7 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
+const puppeteer = require("puppeteer");
 
-const cas = require('../../cas.js');
+
+const cas = require("../../cas.js");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -12,29 +12,29 @@ const cas = require('../../cas.js');
     await cas.log("Checking empty list of authorized accounts for user...");
     
     await cas.gotoLogin(page, "https://apereo.github.io");
-    await cas.loginWith(page, `+casuser3`, "Mellon");
+    await cas.loginWith(page, "+casuser3", "Mellon");
     await page.waitForTimeout(1000);
     await cas.assertTicketParameter(page);
-    await cas.goto(page, `https://localhost:8443/cas/logout`);
+    await cas.goto(page, "https://localhost:8443/cas/logout");
 
     await cas.log("Checking auto selection for unauthorized user...");
     await cas.gotoLogin(page, "https://apereo.github.io");
-    await cas.loginWith(page, `anotheruser+casuser3`, "Mellon");
+    await cas.loginWith(page, "anotheruser+casuser3", "Mellon");
     await page.waitForTimeout(1000);
     await cas.assertInnerTextStartsWith(page, "#loginErrorsPanel p", "You are not authorized to impersonate");
 
     await cas.log("Checking wildcard access for authorized user...");
     await cas.gotoLogin(page, "https://apereo.github.io");
-    await cas.loginWith(page, `+casuser4`, "Mellon");
+    await cas.loginWith(page, "+casuser4", "Mellon");
     await page.waitForTimeout(1000);
-    await cas.assertInnerTextContains(page, '#content p', "you may directly proceed to login");
-    await cas.assertInnerTextContains(page, '#content p', "impersonation account selection is not allowed");
+    await cas.assertInnerTextContains(page, "#content p", "you may directly proceed to login");
+    await cas.assertInnerTextContains(page, "#content p", "impersonation account selection is not allowed");
 
     await cas.gotoLogin(page, "https://apereo.github.io");
-    await cas.loginWith(page, `anybody+casuser4`, "Mellon");
+    await cas.loginWith(page, "anybody+casuser4", "Mellon");
     await page.waitForTimeout(1000);
     await cas.assertTicketParameter(page);
-    await cas.goto(page, `https://localhost:8443/cas/logout`);
+    await cas.goto(page, "https://localhost:8443/cas/logout");
     
     await browser.close();
 })();
@@ -45,6 +45,6 @@ async function impersonate(page, username) {
     await page.waitForTimeout(1000);
     await cas.assertTextContent(page, "#titlePanel h2", "Choose Account");
     await cas.assertTextContentStartsWith(page, "#surrogateInfo", "You are provided with a list of accounts");
-    await cas.assertVisibility(page, '#surrogateTarget');
-    await cas.goto(page, `https://localhost:8443/cas/logout`);
+    await cas.assertVisibility(page, "#surrogateTarget");
+    await cas.goto(page, "https://localhost:8443/cas/logout");
 }

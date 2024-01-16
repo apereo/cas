@@ -16,13 +16,10 @@ import org.springframework.aot.hint.RuntimeHints;
 public class MultifactorAuthenticationTrustedHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
-        hints.serialization()
-            .registerType(MultifactorAuthenticationTrustRecord.class);
-        
-        hints.proxies()
-            .registerJdkProxy(DeviceFingerprintComponentManager.class)
-            .registerJdkProxy(MultifactorAuthenticationTrustStorage.class)
-            .registerJdkProxy(MultifactorAuthenticationTrustRecordKeyGenerator.class);
+        hints.serialization().registerType(MultifactorAuthenticationTrustRecord.class);
+        registerProxyHints(hints, DeviceFingerprintComponentManager.class,
+            MultifactorAuthenticationTrustStorage.class,
+            MultifactorAuthenticationTrustRecordKeyGenerator.class);
     }
 }
 

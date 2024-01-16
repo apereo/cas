@@ -14,7 +14,7 @@
 <span th:fragment="overview">
         <div id="divOverview" class="profile-content p-1" style="display: none;">
             <h2>
-                <i class="mdi mdi-door-open fas fa-door-open"></i>
+                <i class="mdi mdi-door-open fas fa-door-open" aria-hidden="true"></i>
                 <span>Hello, <span th:text="${authentication.principal.id}"></span>!</span>
             </h2>
             <p th:utext="#{screen.account.success(${authentication.principal.id})}">You,
@@ -24,7 +24,7 @@
             </p>
 
             <div id="infoMessages" class="banner banner-success banner-dismissible my-2" th:if="${flowRequestContext.messageContext.allMessages.length > 0}">
-                <a href="#" class="close" onclick="$(this).parent().hide();" aria-label="close"><span class="mdi mdi-close-box"></span></a>
+                <a href="#" class="close" onclick="$(this).parent().hide();" th:aria-label="#{screen.pm.button.close}"><span class="mdi mdi-close-box" aria-hidden="true"></span></a>
                 <span th:each="message : ${flowRequestContext.messageContext.allMessages}" th:utext="${message.text}">Message Text</span>
                 <script>autoHideElement("infoMessages");</script>
             </div>

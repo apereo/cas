@@ -1,5 +1,5 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 
 (async () => {
     for (let i = 0; i < 2; i++) {
@@ -8,8 +8,8 @@ const cas = require('../../cas.js');
         await cas.gotoLogin(page, "https://apereo.github.io");
         await cas.loginWith(page);
         await page.waitForTimeout(2000);
-        await cas.assertVisibility(page, '#mfa-gauth');
-        await cas.assertVisibility(page, '#mfa-webauthn');
+        await cas.assertVisibility(page, "#mfa-gauth");
+        await cas.assertVisibility(page, "#mfa-webauthn");
 
         await cas.log("Selecting mfa-gauth");
         await cas.submitForm(page, "#mfa-gauth > form[name=fm-mfa-gauth]");

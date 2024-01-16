@@ -187,9 +187,13 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.dataformat", module: "jackson-dataformat-yaml")
+                    exclude(group: "com.fasterxml.jackson.dataformat", module: "jackson-dataformat-cbor")
                     exclude(group: "javax.ws.rs", module: "javax.ws.rs-api")
                     exclude(group: "org.eclipse.jetty", module: "jetty-eclipse")
                     exclude(group: "org.glassfish.jersey.containers", module: "jersey-container-servlet-core")
+                },
+                dependencies.create("com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:$jacksonVersion") {
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                 }
         ],
         semver                     : [
@@ -456,6 +460,7 @@ ext.libraries = [
                 },
                 dependencies.create("commons-beanutils:commons-beanutils:$commonsBeansVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "commons-collections", module: "commons-collections")
                 },
                 dependencies.create("commons-validator:commons-validator:$commonsValidatorVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
@@ -2028,22 +2033,6 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                     exclude(group: "org.projectlombok", module: "lombok")
-                },
-                dependencies.create("org.pac4j:spring-webmvc-pac4j:$pac4jSpringWebmvcVersion") {
-                    exclude(group: "org.springframework", module: "spring-webmvc")
-                    exclude(group: "org.springframework", module: "spring-core")
-                    exclude(group: "org.springframework", module: "spring-web")
-                    exclude(group: "org.springframework", module: "spring-aop")
-                    exclude(group: "org.springframework", module: "spring-context")
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "org.aspectj", module: "aspectjweaver")
-                    exclude(group: "org.pac4j", module: "pac4j-core")
-                    exclude(group: "joda-time", module: "joda-time")
-                    exclude(group: "org.slf4j", module: "jcl-over-slf4j")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-                    exclude(group: "commons-collections", module: "commons-collections")
-                    exclude(group: "org.projectlombok", module: "lombok")
                 }
         ],
         pac4jjwt                   : [
@@ -2576,9 +2565,6 @@ ext.libraries = [
                 },
                 dependencies.create("org.apache.tomcat.embed:tomcat-embed-el:$tomcatVersion") {
                     exclude(group: "org.apache.tomcat", module: "tomcat-annotations-api")
-                },
-                dependencies.create("org.apache.tomcat:jakartaee-migration:1.0.7") {
-                    exclude(group: "commons-io", module: "commons-io")
                 }
         ],
         springbootjetty            : [

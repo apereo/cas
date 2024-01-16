@@ -1,11 +1,11 @@
-const assert = require('assert');
-const cas = require('../../cas.js');
+const assert = require("assert");
+const cas = require("../../cas.js");
 
 (async () => {
     const issuer = "https://localhost:8443/cas/oidc/custom/issuer/fawnoos";
     await cas.doGet(`${issuer}/.well-known/openid-configuration`,
-        res => {
-            let result = res.data;
+        (res) => {
+            const result = res.data;
             assert(result.jwks_uri.startsWith(issuer));
             assert(result.authorization_endpoint.startsWith(issuer));
             assert(result.token_endpoint.startsWith(issuer));
@@ -16,7 +16,7 @@ const cas = require('../../cas.js');
             assert(result.introspection_endpoint.startsWith(issuer));
             assert(result.revocation_endpoint.startsWith(issuer));
         },
-        error => {
+        (error) => {
             throw error;
         });
 })();

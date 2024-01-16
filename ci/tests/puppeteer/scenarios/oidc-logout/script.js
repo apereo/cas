@@ -1,5 +1,5 @@
-const assert = require('assert');
-const cas = require('../../cas.js');
+const assert = require("assert");
+const cas = require("../../cas.js");
 const puppeteer = require("puppeteer");
 
 (async () => {
@@ -15,7 +15,7 @@ const puppeteer = require("puppeteer");
     let url = await page.url();
     assert(url === casService);
 
-    let logoutUrl = "https://localhost:8443/cas/oidc/oidcLogout"
+    let logoutUrl = "https://localhost:8443/cas/oidc/oidcLogout";
     logoutUrl += `?post_logout_redirect_uri=${casService}`;
     logoutUrl += "&state=1234567890";
 
@@ -29,16 +29,16 @@ const puppeteer = require("puppeteer");
     
     let params = "grant_type=client_credentials&";
     params += `scope=${encodeURIComponent("openid")}`;
-    let tokenUrl = `https://localhost:8443/cas/oidc/token?${params}`;
+    const tokenUrl = `https://localhost:8443/cas/oidc/token?${params}`;
     await cas.log(`Calling ${tokenUrl}`);
 
-    let idToken = await cas.doPost(tokenUrl, "", {
-        'Content-Type': "application/json",
-        'Authorization': 'Basic ' + btoa('client:secret')
-    }, async res => {
+    const idToken = await cas.doPost(tokenUrl, "", {
+        "Content-Type": "application/json",
+        "Authorization": `Basic ${btoa("client:secret")}`
+    }, async (res) => {
         await cas.log(res.data.id_token);
         return res.data.id_token;
-    }, error => {
+    }, (error) => {
         throw `Operation failed: ${error}`;
     });
 

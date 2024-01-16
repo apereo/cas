@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const assert = require("assert");
+const cas = require("../../cas.js");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -31,7 +31,7 @@ async function executeRequest(page, service, attribute, attributeValue) {
     assert(authenticationSuccess.attributes.isFromNewLogin === undefined);
     assert(authenticationSuccess.attributes.longTermAuthenticationRequestTokenUsed === undefined);
     assert(authenticationSuccess.attributes[attribute][0] === attributeValue);
-    await cas.goto(page, `https://localhost:8443/cas/logout`);
+    await cas.goto(page, "https://localhost:8443/cas/logout");
     await page.waitForTimeout(1000);
     await cas.log("============================");
     

@@ -1,10 +1,10 @@
-const puppeteer = require('puppeteer');
-const path = require('path');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const path = require("path");
+const cas = require("../../cas.js");
 const assert = require("assert");
 
 async function cleanUp() {
-    await cas.removeDirectoryOrFile(path.join(__dirname, '/saml-md'));
+    await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
 }
 
 (async () => {
@@ -14,11 +14,11 @@ async function cleanUp() {
     await cas.log(`${response.status()} ${response.statusText()}`);
     assert(response.ok());
     
-    await cas.waitFor('https://localhost:9876/sp/saml/status', async () => {
+    await cas.waitFor("https://localhost:9876/sp/saml/status", async () => {
         await cas.log("Trying without an exising SSO session...");
         await cas.goto(page, "https://localhost:9876/sp");
         await page.waitForTimeout(3000);
-        await page.waitForSelector('#idpForm', {visible: true});
+        await page.waitForSelector("#idpForm", {visible: true});
         await cas.submitForm(page, "#idpForm");
         await page.waitForTimeout(9000);
         await cas.assertInnerText(page, "#content h2", "Application Not Authorized to Use CAS");
@@ -30,17 +30,17 @@ async function cleanUp() {
         await cas.assertCookie(page);
         await cas.goto(page, "https://localhost:9876/sp");
         await page.waitForTimeout(3000);
-        await page.waitForSelector('#idpForm', {visible: true});
+        await page.waitForSelector("#idpForm", {visible: true});
         await cas.submitForm(page, "#idpForm");
         await page.waitForTimeout(9000);
         await cas.assertInnerText(page, "#content h2", "Application Not Authorized to Use CAS");
 
         await browser.close();
         await cleanUp();
-    }, async error => {
+    }, async (error) => {
         await cleanUp();
         await cas.log(error);
         throw error;
-    })
+    });
 })();
 

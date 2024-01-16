@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.pm;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -25,7 +26,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Accessors(chain = true)
 @JsonFilter("PasswordManagementCoreProperties")
-public class PasswordManagementCoreProperties implements Serializable {
+public class PasswordManagementCoreProperties implements CasFeatureModule, Serializable {
 
     @Serial
     private static final long serialVersionUID = -261644582798411176L;

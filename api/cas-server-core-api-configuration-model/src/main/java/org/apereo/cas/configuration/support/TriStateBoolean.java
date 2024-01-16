@@ -1,4 +1,4 @@
-package org.apereo.cas.util.model;
+package org.apereo.cas.configuration.support;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-
 import java.io.IOException;
 
 /**

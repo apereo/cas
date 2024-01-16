@@ -21,6 +21,7 @@ import com.redis.lettucemod.api.sync.RedisModulesCommands;
 import com.redis.lettucemod.search.CreateOptions;
 import com.redis.lettucemod.search.Document;
 import com.redis.lettucemod.search.Field;
+import com.redis.lettucemod.search.SearchResults;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
@@ -275,18 +276,20 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
                 val query = String.format("(%s) @%s:%s", String.join("|", criteria),
                     RedisTicketDocument.FIELD_NAME_PREFIX, TicketGrantingTicket.PREFIX);
                 LOGGER.debug("Executing search query [{}]", query);
-                val results = command.ftSearch(SEARCH_INDEX_NAME, query);
+                val results = (SearchResults<String, Document>) command.ftSearch(SEARCH_INDEX_NAME, query);
                 return results
                     .stream()
-                    .map(document -> {
-                        val searchDoc = (Document) document;
-                        val redisDoc = RedisTicketDocument.from(searchDoc);
+                    .map(Document.class::cast)
+                    .filter(document -> !document.isEmpty())
+                    .map(RedisTicketDocument::from)
+                    .filter(document -> StringUtils.isNotBlank(document.getJson()))
+                    .map(redisDoc -> {
                         val ticket = deserializeAsTicket(redisDoc);
                         return decodeTicket(ticket);
                     })
-                    .filter(ticket -> !((Ticket) ticket).isExpired());
+                    .filter(ticket -> !ticket.isExpired());
             })
-            .orElseGet(() -> super.getSessionsWithAttributes(queryAttributes));
+            .orElseGet(() -> (Stream<Ticket>) super.getSessionsWithAttributes(queryAttributes));
     }
 
 

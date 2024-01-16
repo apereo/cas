@@ -1,7 +1,6 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.util.model.TriStateBoolean;
-
+import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.springframework.core.Ordered;
 
 /**

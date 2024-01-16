@@ -1,5 +1,5 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
 const assert = require("assert");
 
 (async () => {
@@ -11,7 +11,7 @@ const assert = require("assert");
     await cas.screenshot(page);
     await cas.goto(page, "https://localhost:8443/cas/sba/applications/CAS");
     await page.waitForTimeout(2000);
-    const count = (await page.$$('div#CAS li')).length;
+    const count = (await page.$$("div#CAS li")).length;
     await cas.log(`Number of instances: ${count}`);
     assert(count === 2);
 

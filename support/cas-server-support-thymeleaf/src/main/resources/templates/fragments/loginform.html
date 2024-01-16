@@ -37,13 +37,13 @@
                     <div id="loginErrorsPanel" class="alert alert-danger banner banner-danger banner-dismissible"
                          th:if="${#fields.hasErrors('*')}">
                         <p th:each="err : ${#fields.errors('*')}" th:utext="${err + ' '}">Example error</p>
-                        <!--<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>-->
+                        <!--<a href="#" class="close" data-dismiss="alert" th:aria-label="#{screen.pm.button.close}">&times;</a>-->
                     </div>
                 </div>
 
                 <div id="login-form-controls" th:if="${loginFormViewable and loginFormEnabled}">
                     <div th:if="${existingSingleSignOnSessionAvailable}">
-                        <i class="mdi mdi-alert-decagram fas fa-exclamation-triangle"></i>&nbsp;
+                        <i class="mdi mdi-alert-decagram fas fa-exclamation-triangle" aria-hidden="true"></i>&nbsp;
                         <span id="existingSsoMsg" th:if="${registeredService}" class="mdc-button__label"
                               th:utext="#{screen.welcome.forcedsso(${existingSingleSignOnSessionPrincipal?.id},${registeredService.name})}"/>
                         <span id="existingSsoMsg" th:unless="${registeredService}" class="mdc-button__label"
@@ -54,10 +54,15 @@
                         <span th:utext="#{screen.welcome.instructions}">Enter your Username and Password:</span>
                     </h2>
 
+<<<<<<< HEAD
                     <div id="loginErrorsPanel" role="alert" class="banner banner-danger alert alert-danger banner-dismissible"
                          th:if="${#fields.hasErrors('*')}">
+=======
+                    <div id="loginErrorsPanel" class="banner banner-danger alert alert-danger banner-dismissible"
+                         th:if="${#fields.hasErrors('*')}" role="alert">
+>>>>>>> master
                         <p th:each="err : ${#fields.errors('*')}" th:utext="${err + ' '}">Example error</p>
-                        <!--<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>-->
+                        <!--<a href="#" class="close" data-dismiss="alert" th:aria-label="#{screen.pm.button.close}">&times;</a>-->
                     </div>
                     <section class="cas-field form-group my-3" id="usernameSection">
                         <label for="username"
@@ -78,14 +83,23 @@
                                    th:accesskey="#{screen.welcome.label.netid.accesskey}"
                                    autocapitalize="none"
                                    spellcheck="false"
+<<<<<<< HEAD
                                    autocomplete="username" required/>
                             <span class="mdc-text-field-helper-line invalid-feedback">
                                 <span class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg" aria-hidden="true">
                                     <span id="usernameValidationMessage" th:utext="#{username.required}"></span>
                                 </span>
                             </span>
+=======
+                                   autocomplete="username" required />
+>>>>>>> master
                         </label>
 
+                        <div class="mdc-text-field-helper-line invalid-feedback">
+                            <div class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg" aria-hidden="true">
+                                <span id="usernameValidationMessage" th:utext="#{username.required}"></span>
+                            </div>
+                        </div>
 
                         <script type="text/javascript" th:inline="javascript">
                             /*<![CDATA[*/
@@ -101,11 +115,11 @@
                             /*]]>*/
                         </script>
                     </section>
+
                     <section class="cas-field form-group my-3 mdc-input-group form-group" id="passwordSection">
                         <div class="mdc-input-group-field mdc-input-group-field-append">
-                            <div class="d-flex caps-check">
-                                <label for="password"
-                                       class="mdc-text-field caps-check mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon control-label w-100">
+                            <label for="password"
+                                   class="mdc-text-field caps-check mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon control-label w-100">
                                     <span class="mdc-notched-outline">
                                         <span class="mdc-notched-outline__leading"></span>
                                         <span class="mdc-notched-outline__notch">
@@ -113,6 +127,7 @@
                                         </span>
                                         <span class="mdc-notched-outline__trailing"></span>
                                     </span>
+<<<<<<< HEAD
                                     <input class="mdc-text-field__input form-control pwd"
                                            type="password"
                                            id="password"
@@ -127,19 +142,33 @@
                                         </span>
                                     </span>
                                 </label>
+=======
+                                <input class="mdc-text-field__input form-control pwd"
+                                       type="password"
+                                       id="password"
+                                       size="25"
+                                       required
+                                       th:accesskey="#{screen.welcome.label.password.accesskey}"
+                                       th:field="*{password}"
+                                       autocomplete="off"/>
+>>>>>>> master
                                 <button
-                                    class="reveal-password mdc-button mdc-button--unelevated mdc-input-group-append mdc-icon-button btn btn-primary"
-                                    tabindex="-1" type="button">
-                                    <i class="mdi mdi-eye reveal-password-icon fas fa-eye"></i>
-                                    <span class="visually-hidden">Toggle Password</span>
+                                        class="reveal-password mdc-button mdc-button--unelevated mdc-input-group-append mdc-icon-button btn btn-primary"
+                                        tabindex="-1" type="button" th:title="#{screen.pm.password.toggle}">
+                                    <i class="mdi mdi-eye reveal-password-icon fas fa-eye" aria-hidden="true"></i>
                                 </button>
+                            </label>
+                            <div class="mdc-text-field-helper-line invalid-feedback">
+                                <div class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg" aria-hidden="true">
+                                    <span id="passwordValidationMessage" th:utext="#{password.required}"></span>
+                                </div>
                             </div>
 
-                            <div class="mdc-text-field-helper-line caps-warn">
-                                <div
-                                    class="mdc-text-field-helper-text mdc-text-field-helper-text--persistent mdc-text-field-helper-text--validation-msg text-danger">
-                                    <span th:utext="#{screen.capslock.on}" />
-                                </div>
+                        </div>
+
+                        <div class="mdc-text-field-helper-line invalid-feedback caps-warn">
+                            <div class="mdc-text-field-helper-text mdc-text-field-helper-text--persistent mdc-text-field-helper-text--validation-msg text-danger">
+                                <span th:utext="#{screen.capslock.on}" />
                             </div>
                         </div>
                     </section>

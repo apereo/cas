@@ -13,7 +13,7 @@
 <body>
     <span th:fragment="auditlog">
         <script type="text/javascript">
-            
+
             ((material, bootstrap) => {
                 document.addEventListener('DOMContentLoaded', () => {
                     $('#auditLogTable').DataTable();
@@ -61,7 +61,7 @@
              class="profile-content w-100"
              style="display: none;">
             <h2>
-                <i class="mdi mdi-account-reactivate fas fa-door-open"></i>
+                <i class="mdi mdi-account-reactivate fas fa-door-open" aria-hidden="true"></i>
                 <span th:utext="#{screen.account.auditlog.title}">Audit Log</span>
             </h2>
             <p th:utext="#{screen.account.auditlog.subtitle}">Examine the CAS audit log here.</p>
@@ -93,7 +93,7 @@
                     </td>
                     <td class="mdc-data-table__cell">
                         <button type="button" class="btn btn-link" name="viewAuditEntryDetails">
-                            <i class="mdi mdi-account-details fas fa-eye"></i>
+                            <i class="mdi mdi-account-details fas fa-eye" aria-hidden="true"></i>
                             <span style="display: none" th:utext="${entry.json}" />
                         </a>
                     </td>

@@ -46,6 +46,4 @@ dependencies {
     
     testImplementation libraries.springboottomcat
     testImplementation libraries.springcloudbootstrap
-    testImplementation libraries.pac4joidcoauth
-    testImplementation libraries.pac4jsaml
 }

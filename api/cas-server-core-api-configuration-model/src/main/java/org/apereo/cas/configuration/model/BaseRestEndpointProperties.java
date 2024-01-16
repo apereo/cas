@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -22,7 +23,7 @@ import java.util.Map;
 @Setter
 @RequiresModule(name = "cas-server-core-util", automated = true)
 @Accessors(chain = true)
-public class BaseRestEndpointProperties implements Serializable {
+public class BaseRestEndpointProperties implements CasFeatureModule, Serializable {
     @Serial
     private static final long serialVersionUID = 2687020856160473089L;
 

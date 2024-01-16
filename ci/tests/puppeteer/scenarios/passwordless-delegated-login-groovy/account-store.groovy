@@ -1,6 +1,5 @@
 import org.apereo.cas.api.*
 import org.apereo.cas.util.model.*
-import org.apereo.cas.api.*
 import java.nio.charset.*
 import groovy.json.*
 

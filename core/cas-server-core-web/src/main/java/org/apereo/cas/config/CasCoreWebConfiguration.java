@@ -116,10 +116,10 @@ public class CasCoreWebConfiguration {
         @ConditionalOnMissingBean(name = ArgumentExtractor.BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ArgumentExtractor argumentExtractor(final List<ServiceFactoryConfigurer> configurers) {
+            AnnotationAwareOrderComparator.sortIfNecessary(configurers);
             val serviceFactoryList = configurers.stream()
                 .flatMap(c -> c.buildServiceFactories().stream())
                 .collect(Collectors.toCollection(ArrayList::new));
-            AnnotationAwareOrderComparator.sortIfNecessary(configurers);
             return new DefaultArgumentExtractor(serviceFactoryList);
         }
 

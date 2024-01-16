@@ -1,12 +1,10 @@
 package org.apereo.cas.adaptors.jdbc;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.jdbc.authn.QueryJdbcAuthenticationProperties;
 import org.apereo.cas.jpa.JpaPersistenceProviderContext;
-import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.util.serialization.SerializationUtils;
 
@@ -87,13 +85,13 @@ class QueryDatabaseAuthenticationHandlerPostgresTests extends BaseDatabaseAuthen
 
     @Test
     void verifySuccess() throws Throwable {
-        val map = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(List.of("locations"));
         val properties = new QueryJdbcAuthenticationProperties().setSql(SQL).setFieldPassword(PASSWORD_FIELD);
         properties.setName("DbHandler");
+        properties.setPrincipalAttributeList(List.of("locations"));
         val q = new QueryDatabaseAuthenticationHandler(properties, null,
-            PrincipalFactoryUtils.newPrincipalFactory(), this.dataSource, CollectionUtils.wrap(map));
-        val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
-        val result = q.authenticate(c, mock(Service.class));
+            PrincipalFactoryUtils.newPrincipalFactory(), this.dataSource);
+        val credential = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
+        val result = q.authenticate(credential, mock(Service.class));
         assertNotNull(result);
         assertNotNull(result.getPrincipal());
         assertTrue(result.getPrincipal().getAttributes().containsKey("locations"));

@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.handler.support;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
+import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -41,6 +42,7 @@ import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -122,6 +124,12 @@ class JaasAuthenticationHandlersConfigurationTests {
         @ConditionalOnMissingBean(name = ServicesManager.BEAN_NAME)
         public ServicesManager servicesManager() {
             return mock(ServicesManager.class);
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = AttributeRepositoryResolver.BEAN_NAME)
+        public AttributeRepositoryResolver attributeRepositoryResolver() {
+            return query -> Set.of(IPersonAttributeDao.WILDCARD);
         }
     }
 }

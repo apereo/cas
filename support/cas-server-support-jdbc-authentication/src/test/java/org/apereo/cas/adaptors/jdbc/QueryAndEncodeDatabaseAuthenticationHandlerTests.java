@@ -31,6 +31,7 @@ import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import javax.sql.DataSource;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -65,10 +66,9 @@ class QueryAndEncodeDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthe
 
     private static String getSqlInsertStatementToCreateUserAccount(final int i, final String expired, final String disabled) {
         val psw = genPassword("user" + i, "salt" + i, NUM_ITERATIONS);
-
         return String.format(
-            "insert into users (username, password, salt, numIterations, expired, disabled) values('%s', '%s', '%s', %s, '%s', '%s');",
-            "user" + i, psw, "salt" + i, NUM_ITERATIONS, expired, disabled);
+            "insert into users (username, password, salt, numIterations, expired, disabled, location, color) values('%s', '%s', '%s', %s, '%s', '%s', '%s', '%s');",
+            "user" + i, psw, "salt" + i, NUM_ITERATIONS, expired, disabled, "London", "blue");
     }
 
     private static String buildSql(final String where) {
@@ -180,11 +180,13 @@ class QueryAndEncodeDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthe
 
     @Test
     void verifyAuthenticationSuccessfulWithAPasswordEncoder() throws Throwable {
-        val properties = new QueryEncodeJdbcAuthenticationProperties().setAlgorithmName(ALG_NAME)
+        val properties = new QueryEncodeJdbcAuthenticationProperties()
+            .setAlgorithmName(ALG_NAME)
             .setSql(buildSql()).setPasswordFieldName(PASSWORD_FIELD_NAME)
             .setNumberOfIterationsFieldName(NUM_ITERATIONS_FIELD_NAME)
             .setStaticSalt(STATIC_SALT)
             .setSaltFieldName("salt");
+        properties.setPrincipalAttributeList(List.of("location", "color"));
         val handler = getAuthenticationHandler(properties);
         handler.setPasswordEncoder(new PasswordEncoder() {
             @Override
@@ -201,13 +203,15 @@ class QueryAndEncodeDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthe
         val result = handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("1", "user"), mock(Service.class));
         assertNotNull(result);
         assertEquals("user1", result.getPrincipal().getId());
+        assertEquals("blue", result.getPrincipal().getAttributes().get("color").getFirst());
+        assertEquals("London", result.getPrincipal().getAttributes().get("location").getFirst());
     }
 
     private QueryAndEncodeDatabaseAuthenticationHandler getAuthenticationHandler(final QueryEncodeJdbcAuthenticationProperties properties) {
         return (QueryAndEncodeDatabaseAuthenticationHandler) JdbcAuthenticationUtils.newAuthenticationHandler(properties, applicationContext,
             PrincipalFactoryUtils.newPrincipalFactory(), mock(ServicesManager.class), new PasswordPolicyContext(), dataSource);
     }
-    
+
     @TestConfiguration(value = "TestConfiguration", proxyBeanMethods = false)
     static class DatabaseTestConfiguration {
         @Bean
@@ -228,6 +232,10 @@ class QueryAndEncodeDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthe
         private String username;
 
         private String password;
+
+        private String location;
+
+        private String color;
 
         private String salt;
 

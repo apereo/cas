@@ -15,7 +15,7 @@
     <div layout:fragment="content" id="login" class="mdc-card mdc-card-content card w-lg-50 p-4 m-auto">
         <form method="post" id="fm1" th:action="@{/login}">
             <div>
-                <h2><i class="mdi mdi-email fas fa-door-open"></i>
+                <h2><i class="mdi mdi-email fas fa-door-open" aria-hidden="true"></i>
                     <span th:utext="#{cas.mfa.simple.email-selection.title}">Select Email Address</span>
                 </h2>
                 <span th:utext="#{cas.mfa.simple.email-selection.description}">We have found multiple email accounts for your account.</span>

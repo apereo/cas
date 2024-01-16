@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
-const cas = require('../../cas.js');
+const puppeteer = require("puppeteer");
+const assert = require("assert");
+const cas = require("../../cas.js");
 
 (async () => {
     const baseUrl = "https://localhost:8443/cas/actuator/ssoSessions";
@@ -11,36 +11,36 @@ const cas = require('../../cas.js');
     await login();
     
     await cas.logg("Checking for SSO sessions for all users");
-    await cas.doGet(`${baseUrl}?type=ALL`, res => {
+    await cas.doGet(`${baseUrl}?type=ALL`, (res) => {
         assert(res.status === 200);
-        assert(Object.keys(res.data.activeSsoSessions).length === 4)
-    }, err => {
+        assert(Object.keys(res.data.activeSsoSessions).length === 4);
+    }, (err) => {
         throw err;
     });
 
     await cas.logg("Checking for SSO sessions for a single user");
-    await cas.doGet(`${baseUrl}?type=ALL&username=casuser3`, res => {
+    await cas.doGet(`${baseUrl}?type=ALL&username=casuser3`, (res) => {
         assert(res.status === 200);
-        assert(Object.keys(res.data.activeSsoSessions).length === 1)
-    }, err => {
+        assert(Object.keys(res.data.activeSsoSessions).length === 1);
+    }, (err) => {
         throw err;
     });
 
     await cas.logg("Checking for SSO sessions via paging filters");
-    await cas.doGet(`${baseUrl}?type=ALL&from=1&count=2`, res => {
+    await cas.doGet(`${baseUrl}?type=ALL&from=1&count=2`, (res) => {
         assert(res.status === 200);
         assert(res.data.totalTicketGrantingTickets === 2);
         assert(res.data.totalPrincipals === 2);
-        assert(res.data.totalTickets === 2)
-    }, err => {
+        assert(res.data.totalTickets === 2);
+    }, (err) => {
         throw err;
     });
 
     await cas.logg("Checking for SSO sessions for single user");
-    await cas.doGet(`${baseUrl}/users/casuser3`, res => {
+    await cas.doGet(`${baseUrl}/users/casuser3`, (res) => {
         assert(res.status === 200);
-        assert(Object.keys(res.data.activeSsoSessions).length === 1)
-    }, err => {
+        assert(Object.keys(res.data.activeSsoSessions).length === 1);
+    }, (err) => {
         throw err;
     });
 
@@ -54,7 +54,7 @@ const cas = require('../../cas.js');
 
 async function login() {
     for (let i = 1; i <= 4; i++) {
-        const browser = await puppeteer.launch(cas.browserOptions({args: ['--incognito']}));
+        const browser = await puppeteer.launch(cas.browserOptions({args: ["--incognito"]}));
         const page = await cas.newPage(browser);
         await cas.gotoLogin(page);
         await cas.loginWith(page, `casuser${i}`, "Mellon");

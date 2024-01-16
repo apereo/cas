@@ -1,13 +1,13 @@
 package org.apereo.cas.configuration.metadata;
 
-import org.apereo.cas.util.ReflectionUtils;
-
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
+import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ClassInfo;
 import lombok.val;
-
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 /**
@@ -66,8 +66,22 @@ public class ConfigurationMetadataClassSourceLocator {
         }
 
         val error = new IllegalArgumentException("Cant locate class for " + typeName);
-        val clz = ReflectionUtils.findClassBySimpleNameInPackage(typeName, "org.apereo.cas").orElseThrow(() -> error);
+        val clz = findClassBySimpleNameInPackage(typeName, "org.apereo.cas").orElseThrow(() -> error);
         cachedPropertiesClasses.put(typeName, clz);
         return clz;
+    }
+
+    static Optional<Class<?>> findClassBySimpleNameInPackage(final String simpleName, final String... packageName) {
+        try (val scanResult = new ClassGraph()
+            .acceptPackages(packageName)
+            .enableClassInfo()
+            .scan()) {
+
+            return scanResult.getAllClasses()
+                .stream()
+                .filter(classInfo -> classInfo.getSimpleName().equalsIgnoreCase(simpleName))
+                .findFirst()
+                .map(ClassInfo::loadClass);
+        }
     }
 }

@@ -12,6 +12,7 @@ import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -58,10 +59,10 @@ public class CasConsentRedisConfiguration {
         final CasConfigurationProperties casProperties) {
         return BeanSupplier.of(RedisConnectionFactory.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
-            .supply(() -> {
+            .supply(Unchecked.supplier(() -> {
                 val redis = casProperties.getConsent().getRedis();
                 return RedisObjectFactory.newRedisConnectionFactory(redis, casSslContext);
-            })
+            }))
             .otherwiseProxy()
             .get();
     }

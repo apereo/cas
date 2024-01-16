@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const cas = require('../../cas.js');
-const assert = require('assert');
+const puppeteer = require("puppeteer");
+const cas = require("../../cas.js");
+const assert = require("assert");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -9,11 +9,11 @@ const assert = require('assert');
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
     await cas.loginWith(page);
     await page.waitForTimeout(2000);
-    let ticket = await cas.assertTicketParameter(page);
+    const ticket = await cas.assertTicketParameter(page);
 
     await cas.doGet(`https://localhost:8443/cas/actuator/jwtTicketSigningPublicKey?service=${service}`,
-        res => {
-            let publickey = res.data;
+        (res) => {
+            const publickey = res.data;
 
             // const keyPath = path.join(__dirname, 'public.key');
             // let publickey = fs.readFileSync(keyPath);
@@ -21,8 +21,8 @@ const assert = require('assert');
             cas.verifyJwt(ticket, publickey, {
                 algorithms: ["RS512"],
                 complete: true
-            }).then(decoded => {
-                let payload = decoded.payload;
+            }).then((decoded) => {
+                const payload = decoded.payload;
                 
                 assert(payload.successfulAuthenticationHandlers === "Static Credentials");
                 assert(payload.authenticationMethod === "Static Credentials");
@@ -35,10 +35,10 @@ const assert = require('assert');
                 assert(payload.gender === "female");
                 assert(payload.jti.startsWith("ST-"));
             });
-        }, error => {
+        }, (error) => {
             throw `Introspection operation failed: ${error}`;
         }, {
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json"
         });
     
     await browser.close();

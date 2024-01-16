@@ -67,8 +67,7 @@ public class JpaServiceRegistryConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ServiceRegistryExecutionPlanConfigurer jpaServiceRegistryExecutionPlanConfigurer(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("jpaServiceRegistry")
-            final ServiceRegistry jpaServiceRegistry) {
+            @Qualifier("jpaServiceRegistry") final ServiceRegistry jpaServiceRegistry) {
             return BeanSupplier.of(ServiceRegistryExecutionPlanConfigurer.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> plan -> plan.registerServiceRegistry(jpaServiceRegistry))
@@ -100,8 +99,7 @@ public class JpaServiceRegistryConfiguration {
         public JpaVendorAdapter jpaServiceVendorAdapter(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
-            final JpaBeanFactory jpaBeanFactory) {
+            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME) final JpaBeanFactory jpaBeanFactory) {
             return BeanSupplier.of(JpaVendorAdapter.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> jpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc()))
@@ -114,8 +112,7 @@ public class JpaServiceRegistryConfiguration {
         public PersistenceProvider jpaServicePersistenceProvider(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
-            final JpaBeanFactory jpaBeanFactory) {
+            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME) final JpaBeanFactory jpaBeanFactory) {
             return BeanSupplier.of(PersistenceProvider.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> jpaBeanFactory.newPersistenceProvider(casProperties.getServiceRegistry().getJpa()))
@@ -136,22 +133,17 @@ public class JpaServiceRegistryConfiguration {
         public FactoryBean<EntityManagerFactory> serviceEntityManagerFactory(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier("dataSourceService")
-            final DataSource dataSourceService,
-            @Qualifier("jpaServiceVendorAdapter")
-            final JpaVendorAdapter jpaServiceVendorAdapter,
-            @Qualifier("jpaServicePersistenceProvider")
-            final PersistenceProvider jpaServicePersistenceProvider,
-            @Qualifier("jpaServicePackagesToScan")
-            final BeanContainer<String> jpaServicePackagesToScan,
-            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
-            final JpaBeanFactory jpaBeanFactory) throws Exception {
+            @Qualifier("dataSourceService") final DataSource dataSourceService,
+            @Qualifier("jpaServiceVendorAdapter") final JpaVendorAdapter jpaServiceVendorAdapter,
+            @Qualifier("jpaServicePersistenceProvider") final PersistenceProvider jpaServicePersistenceProvider,
+            @Qualifier("jpaServicePackagesToScan") final BeanContainer<String> jpaServicePackagesToScan,
+            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME) final JpaBeanFactory jpaBeanFactory) throws Exception {
             return BeanSupplier.of(FactoryBean.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(Unchecked.supplier(() -> {
                     val ctx = JpaConfigurationContext.builder()
                         .dataSource(dataSourceService)
-                        .persistenceUnitName("jpaServiceRegistryContext")
+                        .persistenceUnitName(JpaServiceRegistry.PERSISTENCE_UNIT_NAME)
                         .jpaVendorAdapter(jpaServiceVendorAdapter)
                         .persistenceProvider(jpaServicePersistenceProvider)
                         .packagesToScan(jpaServicePackagesToScan.toSet())
@@ -171,8 +163,7 @@ public class JpaServiceRegistryConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PlatformTransactionManager transactionManagerServiceReg(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("serviceEntityManagerFactory")
-            final EntityManagerFactory emf) {
+            @Qualifier("serviceEntityManagerFactory") final EntityManagerFactory emf) {
             return BeanSupplier.of(PlatformTransactionManager.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
@@ -189,8 +180,7 @@ public class JpaServiceRegistryConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TransactionOperations jdbcServiceRegistryTransactionTemplate(
             final CasConfigurationProperties casProperties,
-            @Qualifier("transactionManagerServiceReg")
-            final PlatformTransactionManager transactionManagerServiceReg,
+            @Qualifier("transactionManagerServiceReg") final PlatformTransactionManager transactionManagerServiceReg,
             final ConfigurableApplicationContext applicationContext) {
             return BeanSupplier.of(TransactionOperations.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
@@ -242,6 +232,5 @@ public class JpaServiceRegistryConfiguration {
                 .otherwiseProxy()
                 .get();
         }
-
     }
 }

@@ -443,3 +443,18 @@ ul.tab-content li:not(.property-name):not(.property-tab):not(.cas-module) {
 ul.tab-content li.active:not(.property-name):not(.property-tab)  {
   display: initial;
 }
+
+#sidebarNavButton {
+  //font-size: 32px;
+  cursor: pointer;
+  background-color: inherit;
+  border: none;
+  padding-left: 1.25rem;
+}
+
+@media (max-width: 850px) {
+  #sidebarNavButton, #navigationNavButton {
+    display: none;
+  }
+}
+

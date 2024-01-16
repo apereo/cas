@@ -13,7 +13,8 @@
     --cas-theme-success: #74C163;
     --cas-theme-danger: #58151c;
     --cas-theme-danger-bg: #f8d7da;
-    --cas-theme-warning: #e6a210;
+    --cas-theme-warning: #664d03;
+    --cas-theme-warning-bg: #fff3cd;
     --cas-theme-border-light: 1px solid rgba(0, 0, 0, .2);
     --mdc-theme-primary: var(--cas-theme-primary, #153e50);
 }
@@ -100,8 +101,19 @@ header>nav .cas-brand .cas-logo {
     display: none;
 }
 
-.caps-on {
+.caps-on{
+    order: 3
+}
+
+.caps-on DIV SPAN {
     display: block;
+}
+
+.caps-on span:before {
+    vertical-align: sub;
+    content: "\F0027";
+    font-size: 24px;
+    font: normal normal normal 24px/1 "Material Design Icons";
 }
 
 .login-section {
@@ -212,13 +224,14 @@ button.close {
 .banner-warning {
     border-color: #e6a210;
     border-color: var(--cas-theme-warning, #e6a210);
-    color: #e6a210;
-    color: var(--cas-theme-warning, #e6a210);
+    color: #664d03;
+    color: var(--cas-theme-warning, #664d03);
+    background-color: var(--cas-theme-warning-bg, #fff3cd);
 }
 
 .banner-warning .mdi {
-    color: #e6a210;
-    color: var(--cas-theme-warning, #e6a210);
+    color: #664d03;
+    color: var(--cas-theme-warning, #664d03);
 }
 
 .banner-success h1:before,
@@ -333,8 +346,8 @@ button.close {
 }
 
 .text-warning {
-    color: #e6a210;
-    color: var(--cas-theme-warning, #e6a210);
+    color: #664d03;
+    color: var(--cas-theme-warning, #664d03);
 }
 
 .text-danger {
@@ -355,8 +368,8 @@ button.close {
 }
 
 .progress-bar-warning .mdc-linear-progress__bar-inner {
-    border-color: #e6a210;
-    border-color: var(--cas-theme-warning, #e6a210);
+    border-color: #664d03;
+    border-color: var(--cas-theme-warning, #664d03);
 }
 
 .progress-bar-success .mdc-linear-progress__bar-inner {
@@ -408,9 +421,12 @@ button.close {
     border-bottom-right-radius: 0;
 }
 
-.text-danger, .mdc-text-field:not(.mdc-text-field--disabled) .mdc-text-field__icon.text-danger, .mdc-text-field:not(.mdc-text-field--disabled)+.mdc-text-field-helper-line .mdc-text-field-helper-text.text-danger {
-    color: #b00020;
-    color: var(--cas-theme-danger);
+.text-danger, .mdc-text-field:not(.mdc-text-field--disabled)+.mdc-text-field-helper-line .mdc-text-field-helper-text.text-danger {
+    color: var(--cas-theme-danger, #58151c);
+}
+
+.mdc-text-field__icon.text-danger {
+    color: var(--mdc-theme-error, #b00020);
 }
 
 .mdc-text-field--focused:not(.mdc-text-field--disabled) .mdc-floating-label {

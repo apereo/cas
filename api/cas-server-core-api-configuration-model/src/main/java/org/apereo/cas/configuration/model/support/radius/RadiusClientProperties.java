@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.radius;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -22,7 +23,7 @@ import java.io.Serializable;
 @Setter
 @Accessors(chain = true)
 @JsonFilter("RadiusClientProperties")
-public class RadiusClientProperties implements Serializable {
+public class RadiusClientProperties implements CasFeatureModule, Serializable {
 
     @Serial
     private static final long serialVersionUID = -7961769318651312854L;

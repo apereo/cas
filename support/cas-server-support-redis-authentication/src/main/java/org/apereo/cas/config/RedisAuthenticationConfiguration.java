@@ -25,6 +25,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -70,10 +71,10 @@ public class RedisAuthenticationConfiguration {
         final CasConfigurationProperties casProperties) {
         return BeanSupplier.of(RedisConnectionFactory.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
-            .supply(() -> {
+            .supply(Unchecked.supplier(() -> {
                 val redis = casProperties.getAuthn().getRedis();
                 return RedisObjectFactory.newRedisConnectionFactory(redis, casSslContext);
-            })
+            }))
             .otherwiseProxy()
             .get();
     }
@@ -148,7 +149,7 @@ public class RedisAuthenticationConfiguration {
                 val redis = casProperties.getAuthn().getAttributeRepository().getRedis();
                 return BeanContainer.of(redis
                     .stream()
-                    .filter(r -> StringUtils.isNotBlank(r.getHost())).map(r -> {
+                    .filter(r -> StringUtils.isNotBlank(r.getHost())).map(Unchecked.function(r -> {
                         val conn = RedisObjectFactory.newRedisConnectionFactory(r, true, casSslContext);
                         val template = RedisObjectFactory.newRedisTemplate(conn);
                         template.initialize();
@@ -156,7 +157,7 @@ public class RedisAuthenticationConfiguration {
                         cb.setOrder(r.getOrder());
                         FunctionUtils.doIfNotNull(r.getId(), id -> cb.setId(id));
                         return cb;
-                    })
+                    }))
                     .collect(Collectors.toList()));
             })
             .otherwise(BeanContainer::empty)

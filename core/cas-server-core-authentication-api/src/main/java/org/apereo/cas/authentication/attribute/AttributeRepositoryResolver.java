@@ -1,4 +1,4 @@
-package org.apereo.cas.persondir;
+package org.apereo.cas.authentication.attribute;
 
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;

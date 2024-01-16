@@ -212,10 +212,10 @@ tasks.withType(Test).configureEach {
     if (maxParallelForks != 2) {
         logger.info "Maximum number of parallel forks is set to ${maxParallelForks}"
     }
-    def ci = System.getenv().containsKey("CI")
-    if (ci) {
-        outputs.upToDateWhen { false }
-    }
+//    def ci = System.getenv().containsKey("CI")
+//    if (ci) {
+//        outputs.upToDateWhen { false }
+//    }
     systemProperty("spring.main.banner-mode", "off")
     systemProperty("CI", ci)
     
