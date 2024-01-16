@@ -118,6 +118,43 @@ You may also do the same sort of thing with an inline Groovy script:
 
 {% endtab %}
 
+{% tab attrreleaseconditions Chaining %}
+
+You can also combine multiple activation criteria using a chaining setup:
+
+```json
+{
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
+  "serviceId" : "...",
+  "name" : "...",
+  "id" : 1,
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "allowedAttributes" : [ "java.util.ArrayList", [ "cn", "mail", "sn" ] ],
+    "activationCriteria": {
+        "@class":"org.apereo.cas.services.ChainingRegisteredServiceAttributeReleaseActivationCriteria",
+        "conditions": [ "java.util.ArrayList", [
+            {
+                "@class": "org.apereo.cas.services.AttributeBasedRegisteredServiceAttributeReleaseActivationCriteria",
+                "operator": "AND",
+                "requiredAttributes": {
+                  "@class": "java.util.HashMap",
+                  "cn": [ "java.util.ArrayList", [ "confidential" ] ]
+                }
+            },
+            {
+                "@class": "org.apereo.cas.services.GroovyRegisteredServiceAttributeReleaseActivationCriteria",
+                "groovyScript": "groovy { return ... }"
+            }
+        ]],
+        "operator": "AND"
+    }
+  }
+}
+```
+
+{% endtab %}
+
 {% endtabs %}
 
 
