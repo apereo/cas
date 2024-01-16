@@ -3,6 +3,7 @@ package org.apereo.cas.web.view;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.view.AbstractCasView;
 import org.apereo.cas.util.LoggingUtils;
@@ -35,9 +36,11 @@ public class Cas10ResponseView extends AbstractCasView {
                              final ServicesManager servicesManager,
                              final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
                              final AuthenticationServiceSelectionPlan serviceSelectionStrategy,
-                             final CasProtocolAttributesRenderer attributesRenderer) {
+                             final CasProtocolAttributesRenderer attributesRenderer,
+                             final AttributeDefinitionStore attributeDefinitionStore) {
         super(successResponse, protocolAttributeEncoder, servicesManager,
-            authenticationAttributeReleasePolicy, serviceSelectionStrategy, attributesRenderer);
+            authenticationAttributeReleasePolicy, serviceSelectionStrategy,
+            attributesRenderer, attributeDefinitionStore);
     }
 
     @Override

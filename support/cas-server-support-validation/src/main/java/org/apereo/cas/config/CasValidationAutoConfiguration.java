@@ -4,6 +4,7 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -308,6 +309,8 @@ public class CasValidationAutoConfiguration {
         @ConditionalOnMissingBean(name = "cas3ServiceSuccessView")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public View cas3ServiceSuccessView(
+            @Qualifier(AttributeDefinitionStore.BEAN_NAME)
+            final AttributeDefinitionStore attributeDefinitionStore,
             @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME)
             final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
             @Qualifier("casAttributeEncoder")
@@ -322,7 +325,7 @@ public class CasValidationAutoConfiguration {
             final View cas3SuccessView) {
             return new Cas30ResponseView(true, protocolAttributeEncoder, servicesManager,
                 cas3SuccessView, authenticationAttributeReleasePolicy, authenticationServiceSelectionPlan,
-                cas3ProtocolAttributesRenderer);
+                cas3ProtocolAttributesRenderer, attributeDefinitionStore);
         }
 
         @Bean
@@ -422,9 +425,12 @@ public class CasValidationAutoConfiguration {
             @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
             final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
             @Qualifier("cas1ProtocolAttributesRenderer")
-            final CasProtocolAttributesRenderer cas1ProtocolAttributesRenderer) {
+            final CasProtocolAttributesRenderer cas1ProtocolAttributesRenderer,
+            @Qualifier(AttributeDefinitionStore.BEAN_NAME)
+            final AttributeDefinitionStore attributeDefinitionStore) {
             return new Cas10ResponseView(true, protocolAttributeEncoder, servicesManager,
-                authenticationAttributeReleasePolicy, authenticationServiceSelectionPlan, cas1ProtocolAttributesRenderer);
+                authenticationAttributeReleasePolicy, authenticationServiceSelectionPlan,
+                cas1ProtocolAttributesRenderer, attributeDefinitionStore);
         }
 
         @Bean
@@ -440,9 +446,12 @@ public class CasValidationAutoConfiguration {
             @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
             final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
             @Qualifier("cas1ProtocolAttributesRenderer")
-            final CasProtocolAttributesRenderer cas1ProtocolAttributesRenderer) {
+            final CasProtocolAttributesRenderer cas1ProtocolAttributesRenderer,
+            @Qualifier(AttributeDefinitionStore.BEAN_NAME)
+            final AttributeDefinitionStore attributeDefinitionStore) {
             return new Cas10ResponseView(false, protocolAttributeEncoder, servicesManager,
-                authenticationAttributeReleasePolicy, authenticationServiceSelectionPlan, cas1ProtocolAttributesRenderer);
+                authenticationAttributeReleasePolicy, authenticationServiceSelectionPlan,
+                cas1ProtocolAttributesRenderer, attributeDefinitionStore);
         }
 
         @Bean
@@ -458,10 +467,12 @@ public class CasValidationAutoConfiguration {
             @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
             final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
             @Qualifier("cas2SuccessView")
-            final View cas2SuccessView) {
+            final View cas2SuccessView,
+            @Qualifier(AttributeDefinitionStore.BEAN_NAME)
+            final AttributeDefinitionStore attributeDefinitionStore) {
             return new Cas20ResponseView(true, protocolAttributeEncoder, servicesManager,
                 cas2SuccessView, authenticationAttributeReleasePolicy, authenticationServiceSelectionPlan,
-                NoOpProtocolAttributesRenderer.INSTANCE);
+                NoOpProtocolAttributesRenderer.INSTANCE, attributeDefinitionStore);
         }
 
         @Bean
@@ -477,9 +488,12 @@ public class CasValidationAutoConfiguration {
             @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
             final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
             @Qualifier("cas3ProtocolAttributesRenderer")
-            final CasProtocolAttributesRenderer cas3ProtocolAttributesRenderer) {
+            final CasProtocolAttributesRenderer cas3ProtocolAttributesRenderer,
+            @Qualifier(AttributeDefinitionStore.BEAN_NAME)
+            final AttributeDefinitionStore attributeDefinitionStore) {
             return new Cas30JsonResponseView(true, protocolAttributeEncoder, servicesManager,
-                authenticationAttributeReleasePolicy, authenticationServiceSelectionPlan, cas3ProtocolAttributesRenderer);
+                authenticationAttributeReleasePolicy, authenticationServiceSelectionPlan,
+                cas3ProtocolAttributesRenderer, attributeDefinitionStore);
         }
 
     }
