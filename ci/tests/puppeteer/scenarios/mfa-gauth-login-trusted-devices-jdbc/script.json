@@ -18,8 +18,9 @@
     "--cas.authn.mfa.gauth.crypto.enabled=false",
     "--cas.authn.mfa.gauth.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
 
-    "--cas.jdbc.show-sql=true",
+    "--cas.jdbc.show-sql=false",
     "--cas.authn.mfa.trusted.jpa.connection-timeout=PT2S",
+    "--cas.authn.mfa.trusted.jpa.leak-threshold=PT30S",
     "--cas.authn.mfa.trusted.jpa.ddl-auto=create-drop",
     "--cas.authn.mfa.trusted.jpa.user=postgres",
     "--cas.authn.mfa.trusted.jpa.password=password",

@@ -35,6 +35,7 @@ const assert = require("assert");
     assert(record.name !== null);
 
     const postgres = await cas.dockerContainer("postgres-server");
+    await cas.log("Pausing postgres server...");
     await postgres.pause();
 
     await cas.goto(page, "https://localhost:8443/cas/login?authn_method=mfa-gauth");
@@ -47,7 +48,7 @@ const assert = require("assert");
     await page.waitForTimeout(3000);
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
     await cas.assertCookie(page);
-    
+    await cas.log("Resuming postgres server...");
     await postgres.unpause();
     await browser.close();
 })();
