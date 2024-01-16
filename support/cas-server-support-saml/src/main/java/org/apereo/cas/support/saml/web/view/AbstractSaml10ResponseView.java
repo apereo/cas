@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.web.view;
 
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.view.AbstractCasView;
@@ -46,8 +47,10 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
                                          final AuthenticationAttributeReleasePolicy authAttrReleasePolicy,
                                          final AuthenticationServiceSelectionPlan serviceSelectionStrategy,
                                          final CasProtocolAttributesRenderer attributesRenderer,
-                                         final SamlResponseBuilder samlResponseBuilder) {
-        super(successResponse, protocolAttributeEncoder, servicesManager, authAttrReleasePolicy, serviceSelectionStrategy, attributesRenderer);
+                                         final SamlResponseBuilder samlResponseBuilder,
+                                         final AttributeDefinitionStore attributeDefinitionStore) {
+        super(successResponse, protocolAttributeEncoder, servicesManager, authAttrReleasePolicy,
+            serviceSelectionStrategy, attributesRenderer, attributeDefinitionStore);
         this.samlArgumentExtractor = samlArgumentExtractor;
         this.samlResponseBuilder = samlResponseBuilder;
     }

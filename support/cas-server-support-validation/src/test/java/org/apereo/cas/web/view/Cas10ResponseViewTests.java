@@ -3,6 +3,7 @@ package org.apereo.cas.web.view;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.support.NoOpProtocolAttributeEncoder;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
@@ -57,7 +58,7 @@ class Cas10ResponseViewTests {
         val response = new MockHttpServletResponse();
         val view = new Cas10ResponseView(true, new NoOpProtocolAttributeEncoder(),
             mock(ServicesManager.class), mock(AuthenticationAttributeReleasePolicy.class), new DefaultAuthenticationServiceSelectionPlan(),
-            new AttributeValuesPerLineProtocolAttributesRenderer());
+            new AttributeValuesPerLineProtocolAttributesRenderer(), mock(AttributeDefinitionStore.class));
         view.render(model, new MockHttpServletRequest(), response);
         assertTrue(response.getContentAsString().startsWith("yes\ntest\n"));
     }
@@ -68,7 +69,7 @@ class Cas10ResponseViewTests {
         val view = new Cas10ResponseView(false, new NoOpProtocolAttributeEncoder(),
             mock(ServicesManager.class), mock(AuthenticationAttributeReleasePolicy.class),
             new DefaultAuthenticationServiceSelectionPlan(),
-            NoOpProtocolAttributesRenderer.INSTANCE);
+            NoOpProtocolAttributesRenderer.INSTANCE, mock(AttributeDefinitionStore.class));
         view.render(model, new MockHttpServletRequest(), response);
         assertEquals("no\n\n", response.getContentAsString());
     }

@@ -31,14 +31,23 @@ Rest assured, it will get better over time. Pardon our digital dust, and enjoy t
 - ...as a result, you do not need to worry about cleaning up expired tickets.
 - ...as a result, you do not need to worry about sharing tickets across CAS nodes in a clustered deployment and synchronizing state.
 
+## Supported Protocols
+
+- [CAS Protocol](../protocol/CAS-Protocol.html), with the exception of CAS proxy authentication, is supported.
+    - We recommend that you increase the expiration policy of service tickets to be around or no less than `30` seconds to allow for decryption operations to decode tickets in time.
+- [SAML Protocol](../protocol/SAML-Protocol.html) is supported.
+- [SAM2 Protocol](../authentication/Configuring-SAML2-Authentication.html), with the exception of [SAML2 attribute queries](../installation/Configuring-SAML2-AttributeQuery.html), is supported.
+
+<div class="alert alert-info"><strong>YMMV</strong><p>
+Remember that not all CAS modules and features that interact with the ticket registry to create, update, fetch or remove tickets are supported.
+The objective is to start with a small batch of most common features and capabilities and iteratively grow and improve it. If you do find something that 
+might be missing, please investigate, isolate, verify and consider contributing a fix.
+</p></div>
+
 ## Caveats
 
 The stateless ticket registry may not be a suitable solution for all deployment scenarios and its use and adoption does require a number of
 compromises and security trade-offs. The following is a list of limitations and caveats that one should be aware of:
-
-- [CAS Protocol](../protocol/CAS-Protocol.html), with the exception of CAS proxy authentication, is supported.
-- [SAML Protocol](../protocol/SAML-Protocol.html) is supported.
-- [SAM2 Protocol](../authentication/Configuring-SAML2-Authentication.html), with the exception of [SAML2 attribute queries](../installation/Configuring-SAML2-AttributeQuery.html), is supported.
 - The expiration policies for all generated tickets are set to ignore re-usability or idle/inactivity limits, and are set to *only* enforce an expiration instant.
 - Generated tickets are generally controlled to be no larger than `256` characters. You *might* need to adjust your servlet container of choice to allow for larger form/response header sizes. Likewise, you must ensure your applications, particularly those that deal with CAS or OpenID Connect protocols are OK with somewhat larger and longer ticket and token sizes.
 - Super long application URLs that might negatively influence the size of the generated service ticket are compressed using a pre-defined modest shortening technique, which in turn is taken into account by a specialized ticket validation strategy. For best results, and this is true for all CAS-supported protocols, it is recommended that applications use shorter URLs.
@@ -48,5 +57,7 @@ compromises and security trade-offs. The following is a list of limitations and 
 - In the absence of a central backend storage service, back-channel single logout operations are not supported. Likewise, all operations that ask for active single sign-on sessions or anything that in general deals with tracking single sign-on sessions is out of scope and unlikely to be supported. You will lose the ability to determine whether a user is logged in and as a result will be unable to administratively terminate a user's session.
 
 <div class="alert alert-info"><strong>Life Advice</strong><p>
-Depending on your point of view, any one of the caveats noted above could be argued as a minor lapse in security. Lessened security constraints around generated tickets or the inability to manage one's single sign-on session remotely, etc might be a deal breaker for you. Needless to say, you should examine and understand the security trade-offs carefully before you decide to use this option, or any option for that matter.
+Depending on your point of view, any one of the caveats noted above could be argued as a minor lapse in security. Lessened security constraints 
+around generated tickets or the inability to manage one's single sign-on session remotely, etc might be a deal breaker for you. Needless to say, 
+you should examine and understand the security trade-offs carefully before you decide to use this option, or any option for that matter.
 </p></div>

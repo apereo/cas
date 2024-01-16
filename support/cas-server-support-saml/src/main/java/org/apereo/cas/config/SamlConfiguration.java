@@ -4,6 +4,7 @@ import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
@@ -138,10 +139,13 @@ class SamlConfiguration {
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME)
-            final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy) {
+            final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
+            @Qualifier(AttributeDefinitionStore.BEAN_NAME)
+            final AttributeDefinitionStore attributeDefinitionStore) {
             return new Saml10SuccessResponseView(protocolAttributeEncoder, servicesManager,
                 argumentExtractor, authenticationAttributeReleasePolicy,
-                authenticationServiceSelectionPlan, NoOpProtocolAttributesRenderer.INSTANCE, samlResponseBuilder);
+                authenticationServiceSelectionPlan, NoOpProtocolAttributesRenderer.INSTANCE,
+                samlResponseBuilder, attributeDefinitionStore);
         }
 
         @ConditionalOnMissingBean(name = "casSamlServiceFailureView")
@@ -159,10 +163,13 @@ class SamlConfiguration {
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME)
-            final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy) {
+            final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
+            @Qualifier(AttributeDefinitionStore.BEAN_NAME)
+            final AttributeDefinitionStore attributeDefinitionStore) {
             return new Saml10FailureResponseView(protocolAttributeEncoder, servicesManager,
                 argumentExtractor, authenticationAttributeReleasePolicy,
-                authenticationServiceSelectionPlan, NoOpProtocolAttributesRenderer.INSTANCE, samlResponseBuilder);
+                authenticationServiceSelectionPlan, NoOpProtocolAttributesRenderer.INSTANCE,
+                samlResponseBuilder, attributeDefinitionStore);
         }
     }
 

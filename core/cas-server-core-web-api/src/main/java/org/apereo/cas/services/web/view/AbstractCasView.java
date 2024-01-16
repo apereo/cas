@@ -5,6 +5,7 @@ import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
@@ -68,6 +69,8 @@ public abstract class AbstractCasView extends AbstractView {
      * CAS attribute renderer.
      */
     protected final CasProtocolAttributesRenderer attributesRenderer;
+
+    protected final AttributeDefinitionStore attributeDefinitionStore;
 
     /**
      * Gets the assertion from the model.

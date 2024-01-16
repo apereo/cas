@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml;
 
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreCookieAutoConfiguration;
@@ -83,6 +84,10 @@ public abstract class AbstractOpenSamlTests {
     @Autowired
     @Qualifier("shibboleth.UnmarshallerFactory")
     protected UnmarshallerFactory unmarshallerFactory;
+
+    @Autowired
+    @Qualifier(AttributeDefinitionStore.BEAN_NAME)
+    protected AttributeDefinitionStore attributeDefinitionStore;
 
     @Test
     void autowireApplicationContext() {

@@ -2,6 +2,7 @@ package org.apereo.cas.services.web.view;
 
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
@@ -42,9 +43,11 @@ public abstract class AbstractDelegatingCasView extends AbstractCasView {
                                         final View view,
                                         final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
                                         final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
-                                        final CasProtocolAttributesRenderer attributesRenderer) {
+                                        final CasProtocolAttributesRenderer attributesRenderer,
+                                        final AttributeDefinitionStore attributeDefinitionStore) {
         super(successResponse, protocolAttributeEncoder, servicesManager,
-            authenticationAttributeReleasePolicy, authenticationRequestServiceSelectionStrategies, attributesRenderer);
+            authenticationAttributeReleasePolicy, authenticationRequestServiceSelectionStrategies,
+            attributesRenderer, attributeDefinitionStore);
         this.view = view;
     }
 
