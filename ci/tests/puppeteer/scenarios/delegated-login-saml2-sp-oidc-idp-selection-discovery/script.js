@@ -15,7 +15,7 @@ async function startWithCasSp(page) {
     const service = "https://apereo.github.io";
     await cas.gotoLogout(page);
     await page.waitForTimeout(1000);
-    await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
+    await cas.gotoLogin(page, service);
     await cas.assertVisibility(page, "#selectProviderButton");
     await cas.submitForm(page, "#providerDiscoveryForm");
     await page.waitForTimeout(1000);

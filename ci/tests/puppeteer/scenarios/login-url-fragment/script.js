@@ -7,7 +7,7 @@ const assert = require("assert");
     const page = await cas.newPage(browser);
 
     const service = "https://apereo.github.io#hello-world";
-    await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
+    await cas.gotoLogin(page, service);
     await cas.loginWith(page);
     await page.waitForTimeout(2000);
     await cas.assertTicketParameter(page);

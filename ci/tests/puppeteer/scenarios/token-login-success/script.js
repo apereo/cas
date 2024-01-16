@@ -4,6 +4,7 @@ const assert = require("assert");
 
 async function loginWithToken(page, service, token) {
     await cas.gotoLogout(page);
+    await cas.gotoLogin(page, service);
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}&token=${token}`);
     await page.waitForTimeout(1000);
     await cas.assertTicketParameter(page);
@@ -21,7 +22,7 @@ async function loginWithToken(page, service, token) {
     await loginWithToken(page, service, token);
 
     await cas.gotoLogout(page);
-    await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
+    await cas.gotoLogin(page, service);
     await cas.loginWith(page);
     const ticket = await cas.assertTicketParameter(page);
     let body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}`);
