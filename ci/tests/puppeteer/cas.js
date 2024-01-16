@@ -292,7 +292,7 @@ exports.attributeValue = async (page, selector, attribute, expectedValue = undef
     const value = await page.evaluate((elem, attrib) => elem.getAttribute(attrib), element, attribute);
     await this.logb(`Node [${selector}] attribute [${attribute}] has value: [${value}]`);
     if (expectedValue !== undefined) {
-        assert(value, expectedValue);
+        assert.equal(value, expectedValue);
     }
     return value;
 };
@@ -354,7 +354,7 @@ exports.assertParameter = async (page, param) => {
 
 exports.assertPageUrl = async(page, url) => {
     const result = await page.url();
-    assert(result === url);
+    assert.equal(result, url);
 };
 
 exports.assertPageUrlStartsWith = async(page, url) => {
@@ -364,22 +364,22 @@ exports.assertPageUrlStartsWith = async(page, url) => {
 
 exports.assertPageUrlProtocol = async(page, protocol) => {
     const result = new URL(await page.url());
-    assert(result.protocol === protocol);
+    assert.equal(result.protocol, protocol);
 };
 
 exports.assertPageUrlHost = async(page, host) => {
     const result = new URL(await page.url());
-    assert(result.host === host);
+    assert.equal(result.host, host);
 };
 
 exports.assertPageUrlPort = async(page, port) => {
     const result = new URL(await page.url());
-    assert(result.port === port);
+    assert.equal(result.port, port);
 };
 
 exports.assertMissingParameter = async (page, param) => {
     const result = new URL(await page.url());
-    assert(result.searchParams.has(param) === false);
+    assert.equal(result.searchParams.has(param), false);
 };
 
 exports.sleep = async (ms) =>
@@ -419,7 +419,7 @@ exports.doRequest = async (url, method = "GET",
         const handler = async (res) => {
             await this.logg(`Response status code: ${res.statusCode}`);
             if (statusCode > 0) {
-                assert(res.statusCode === statusCode);
+                assert.equal(res.statusCode, statusCode);
             }
             res.setEncoding("utf8");
             const body = [];
@@ -570,13 +570,13 @@ exports.assertInnerTextDoesNotContain = async (page, selector, value) => {
 
 exports.assertInnerText = async (page, selector, value) => {
     const header = await this.innerText(page, selector);
-    assert(header === value);
+    assert.equal(header, value);
 };
 
 exports.assertPageTitle = async (page, value) => {
     const title = await page.title();
     await this.log(`Page Title: ${title}`);
-    assert(title === value);
+    assert.equal(title, value);
 };
 
 exports.assertPageTitleContains = async (page, value) => {
@@ -730,7 +730,7 @@ exports.isNotCiEnvironment = async () => !this.isCiEnvironment();
 exports.assertTextContent = async (page, selector, value) => {
     await page.waitForSelector(selector, {visible: true});
     const header = await this.textContent(page, selector);
-    assert(header === value);
+    assert.equal(header, value);
 };
 
 exports.assertTextContentStartsWith = async (page, selector, value) => {

@@ -28,21 +28,21 @@
                        onclick="showPanel('#divOverview');"
                        id="linkOverview"
                        href="#divOverview">
-                        <i class="mdi mdi-form-textbox-password fa fa-key"></i>&nbsp;
+                        <i class="mdi mdi-form-textbox-password fa fa-key" aria-hidden="true"></i>&nbsp;
                         <span class="mdc-list-item__text">Overview</span>
                     </a>
                     <a class="mdc-list-item list-group-item list-group-item-action"
                        onclick="showPanel('#divAttributes');"
                        id="linkAttributes"
                        href="#divAttributes">
-                        <i class="mdi mdi-account-details fa fa-key"></i>&nbsp;
+                        <i class="mdi mdi-account-details fa fa-key" aria-hidden="true"></i>&nbsp;
                         <span class="mdc-list-item__text">Attributes</span>
                     </a>
                     <a class="mdc-list-item list-group-item list-group-item-action"
                        id="linkSessions"
                        onclick="showPanel('#divSessions');"
                        href="#divSessions">
-                        <i class="mdi mdi-account-clock fa fa-key"></i>&nbsp;
+                        <i class="mdi mdi-account-clock fa fa-key" aria-hidden="true"></i>&nbsp;
                         <span class="mdc-list-item__text">Sessions</span>
                     </a>
 
@@ -51,7 +51,7 @@
                        id="linkServices"
                        onclick="showPanel('#divApplications');"
                        href="#divApplications">
-                        <i class="mdi mdi-apps fa fa-key"></i>&nbsp;
+                        <i class="mdi mdi-apps fa fa-key" aria-hidden="true"></i>&nbsp;
                         <span class="mdc-list-item__text">Applications</span>
                     </a>
 
@@ -60,7 +60,7 @@
                        id="linkAuditLog"
                        th:if="${auditLog}"
                        href="#divAuditLog">
-                        <i class="mdi mdi-account-reactivate fa fa-key"></i>&nbsp;
+                        <i class="mdi mdi-account-reactivate fa fa-key" aria-hidden="true"></i>&nbsp;
                         <span class="mdc-list-item__text">Audit Log</span>
                     </a>
 
@@ -69,7 +69,7 @@
                        id="linkMfaRegisteredAccounts"
                        th:if="${multifactorRegisteredAccounts}"
                        href="#divMfaRegisteredAccounts">
-                        <i class="mdi mdi-account-reactivate fa fa-key"></i>&nbsp;
+                        <i class="mdi mdi-account-reactivate fa fa-key" aria-hidden="true"></i>&nbsp;
                         <span class="mdc-list-item__text">Multifactor Devices</span>
                     </a>
 
@@ -78,7 +78,7 @@
                        id="linkMfaTrustedDevices"
                        th:if="${multifactorTrustedDevices}"
                        href="#divMultifactorTrustedDevices">
-                        <i class="mdi mdi-account-reactivate fa fa-key"></i>&nbsp;
+                        <i class="mdi mdi-account-reactivate fa fa-key" aria-hidden="true"></i>&nbsp;
                         <span class="mdc-list-item__text">Multifactor Trusted Devices</span>
                     </a>
 
@@ -87,7 +87,7 @@
                        id="linkConsentDecisions"
                        th:if="${consentDecisions}"
                        href="#divConsentDecisions">
-                        <i class="mdi mdi-head-check-outline fa fa-key"></i>&nbsp;
+                        <i class="mdi mdi-head-check-outline fa fa-key" aria-hidden="true"></i>&nbsp;
                         <span class="mdc-list-item__text">Attribute Consent</span>
                     </a>
 
@@ -99,7 +99,7 @@
                            onclick="document.forms.fmChangePsw.submit()"
                            id="linkPasswordManagement"
                            href="javascript:void(0);">
-                            <i class="mdi mdi-form-textbox-password fa fa-key"></i>&nbsp;
+                            <i class="mdi mdi-form-textbox-password fa fa-key" aria-hidden="true"></i>&nbsp;
                             <span class="mdc-list-item__text">Change Password</span>
                         </a>
                         <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
@@ -111,11 +111,11 @@
                        onclick="showPanel('#divSecurityQuestions');"
                        id="linkSecurityQuestions"
                        href="#divSecurityQuestions">
-                        <i class="mdi mdi-security fa fa-key"></i>&nbsp;
+                        <i class="mdi mdi-security fa fa-key" aria-hidden="true"></i>&nbsp;
                         <span class="mdc-list-item__text">Security Questions</span>
                     </a>
                     <a class="mdc-list-item list-group-item list-group-item-action" th:href="@{/logout}">
-                        <i class="mdi mdi-logout-variant fa fa-key"></i>&nbsp;
+                        <i class="mdi mdi-logout-variant fa fa-key" aria-hidden="true"></i>&nbsp;
                         <span class="mdc-list-item__text">Logout</span>
                     </a>
                 </nav>
