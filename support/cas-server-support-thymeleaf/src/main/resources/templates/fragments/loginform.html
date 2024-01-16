@@ -54,13 +54,8 @@
                         <span th:utext="#{screen.welcome.instructions}">Enter your Username and Password:</span>
                     </h2>
 
-<<<<<<< HEAD
-                    <div id="loginErrorsPanel" role="alert" class="banner banner-danger alert alert-danger banner-dismissible"
-                         th:if="${#fields.hasErrors('*')}">
-=======
                     <div id="loginErrorsPanel" class="banner banner-danger alert alert-danger banner-dismissible"
                          th:if="${#fields.hasErrors('*')}" role="alert">
->>>>>>> master
                         <p th:each="err : ${#fields.errors('*')}" th:utext="${err + ' '}">Example error</p>
                         <!--<a href="#" class="close" data-dismiss="alert" th:aria-label="#{screen.pm.button.close}">&times;</a>-->
                     </div>
@@ -83,16 +78,7 @@
                                    th:accesskey="#{screen.welcome.label.netid.accesskey}"
                                    autocapitalize="none"
                                    spellcheck="false"
-<<<<<<< HEAD
-                                   autocomplete="username" required/>
-                            <span class="mdc-text-field-helper-line invalid-feedback">
-                                <span class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg" aria-hidden="true">
-                                    <span id="usernameValidationMessage" th:utext="#{username.required}"></span>
-                                </span>
-                            </span>
-=======
                                    autocomplete="username" required />
->>>>>>> master
                         </label>
 
                         <div class="mdc-text-field-helper-line invalid-feedback">
@@ -127,22 +113,6 @@
                                         </span>
                                         <span class="mdc-notched-outline__trailing"></span>
                                     </span>
-<<<<<<< HEAD
-                                    <input class="mdc-text-field__input form-control pwd"
-                                           type="password"
-                                           id="password"
-                                           size="25"
-                                           required
-                                           th:accesskey="#{screen.welcome.label.password.accesskey}"
-                                           th:field="*{password}"
-                                           autocomplete="off"/>
-                                    <span class="mdc-text-field-helper-line invalid-feedback">
-                                        <span class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg" aria-hidden="true">
-                                            <span id="passwordValidationMessage" th:utext="#{password.required}"></span>
-                                        </span>
-                                    </span>
-                                </label>
-=======
                                 <input class="mdc-text-field__input form-control pwd"
                                        type="password"
                                        id="password"
@@ -151,7 +121,6 @@
                                        th:accesskey="#{screen.welcome.label.password.accesskey}"
                                        th:field="*{password}"
                                        autocomplete="off"/>
->>>>>>> master
                                 <button
                                         class="reveal-password mdc-button mdc-button--unelevated mdc-input-group-append mdc-icon-button btn btn-primary"
                                         tabindex="-1" type="button" th:title="#{screen.pm.password.toggle}">
