@@ -92,7 +92,7 @@ class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
             new DefaultAuthenticationAttributeReleasePolicy("attribute"),
             new DefaultAuthenticationServiceSelectionPlan(),
             NoOpProtocolAttributesRenderer.INSTANCE,
-            samlResponseBuilder);
+            samlResponseBuilder, attributeDefinitionStore);
     }
 
     @Test
