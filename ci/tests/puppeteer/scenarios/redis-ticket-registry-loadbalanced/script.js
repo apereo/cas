@@ -17,7 +17,7 @@ async function testBasicLoginLogout(browser) {
     const page = await cas.newPage(browser);
     await logoutEverywhere(page);
     const service = "https://apereo.github.io";
-    await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
+    await cas.gotoLogin(page, service);
     await page.waitForTimeout(1000);
     await cas.loginWith(page);
     const ticket = await cas.assertTicketParameter(page);
@@ -41,7 +41,7 @@ async function checkTicketValidationAcrossNodes(browser) {
     await logoutEverywhere(page);
 
     const service = "https://localhost:9859/anything/100";
-    await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
+    await cas.gotoLogin(page, service);
     await page.waitForTimeout(1000);
     await cas.loginWith(page);
     const ticket = await cas.assertTicketParameter(page);
@@ -91,18 +91,18 @@ async function checkSessionsAreSynced(browser) {
     const s3 = "https://example.org";
 
     await cas.log("Getting first ticket");
-    await cas.goto(page, `https://localhost:8443/cas/login?service=${s1}`);
+    await cas.gotoLogin(page, s1);
     await page.waitForTimeout(1000);
     await cas.loginWith(page);
     const ticket1 = await cas.assertTicketParameter(page);
 
     await cas.log("Getting second ticket");
-    await cas.goto(page, `https://localhost:8444/cas/login?service=${s2}`);
+    await cas.gotoLogin(page, s2);
     await page.waitForTimeout(1000);
     const ticket2 = await cas.assertTicketParameter(page);
 
     await cas.log("Getting third ticket");
-    await cas.goto(page, `https://localhost:8443/cas/login?service=${s3}`);
+    await cas.gotoLogin(page, s3);
     await page.waitForTimeout(1000);
     const ticket3 = await cas.assertTicketParameter(page);
 
