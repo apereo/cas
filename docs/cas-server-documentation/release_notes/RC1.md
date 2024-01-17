@@ -57,7 +57,7 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 ### Testing Strategy
 
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `463` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `468` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`. Furthermore, a large number of test categories that group internal unit tests
 are now configured to run with parallelism enabled.
 
@@ -70,6 +70,15 @@ This feature allows one to define conditions that must be met before the policy 
 
 - Dedicated GoogleApps support, deprecated since CAS `6.2.x`, is now removed from the CAS codebase.
 - The `RegexRegisteredService` service type, deprecated since CAS `6.6.x`, is now removed from the CAS codebase.
+
+### Cerbos Access Strategy
+
+Application access requests and decisions can now be submitted to [Cerbos](../services/Service-Access-Strategy-Cerbos.html) for evaluation.
+         
+### Stateless Ticket Registry
+
+A new stateless ticket registry option is now available that does not track or store tickets in a persistent manner
+via a backend storage technology. [See this](../ticketing/Stateless-Ticket-Registry.html) for details.
 
 ## Other Stuff
 
