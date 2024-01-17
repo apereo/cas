@@ -91,4 +91,5 @@ This feature allows one to define conditions that must be met before the policy 
 - Apache Tomcat
 - Sentry
 - Slack
+- Ldaptive
 
