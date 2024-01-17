@@ -42,7 +42,7 @@ const assert = require("assert");
     assert(url.includes(service));
     await cas.assertTicketParameter(page);
 
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     await cas.assertCookie(page);
     await cas.click(page, "#auth-tab");
     await page.waitForTimeout(1000);
