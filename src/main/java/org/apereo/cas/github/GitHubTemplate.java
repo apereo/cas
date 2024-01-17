@@ -16,6 +16,7 @@
 
 package org.apereo.cas.github;
 
+import org.apereo.cas.Memes;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -265,6 +266,7 @@ public class GitHubTemplate implements GitHubOperations {
             val params = new HashMap<String, String>();
             params.put("commit_id", pr.getHead().getSha());
             var template = IOUtils.toString(new ClassPathResource("template-pr-approved.md").getInputStream(), StandardCharsets.UTF_8);
+            template = template.replace("${link}", Memes.PULL_REQUEST_APPROVED.select());
             params.put("body", template);
 
             params.put("event", "APPROVE");
