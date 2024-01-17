@@ -2368,6 +2368,7 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-context")
                     exclude(group: "org.springframework", module: "spring-context-support")
                     exclude(group: "org.springframework", module: "spring-beans")
+                    exclude(group: "org.eclipse.angus", module: "jakarta.mail")
                 },
                 dependencies.create("com.sun.mail:jakarta.mail:$jakartaMailVersion")
         ],
