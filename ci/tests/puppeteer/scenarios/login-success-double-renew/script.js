@@ -22,7 +22,7 @@ const cas = require("../../cas.js");
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
 
     for (let i = 0; i < 2; i++) {
-        await cas.goto(page, "https://localhost:8443/cas/login?renew=true");
+        await cas.gotoLogin(page, undefined, 8443, true);
         await page.waitForTimeout(1000);
 
         await cas.assertVisibility(page, "#existingSsoMsg");

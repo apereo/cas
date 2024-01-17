@@ -830,6 +830,16 @@ exports.goto = async (page, url, retryCount = 5) => {
     return response;
 };
 
+exports.gotoLoginWithLocale = async(page, service, locale) => this.gotoLoginWithAuthnMethod(page, service, undefined, locale);
+
+exports.gotoLoginWithAuthnMethod = async(page, service, authnMethod = undefined, locale = undefined) => {
+    let queryString = (service === undefined ? "" : `service=${service}&`);
+    queryString += (authnMethod === undefined ? "" : `authn_method=${authnMethod}&`);
+    queryString += (locale === undefined ? "" : `locale=${locale}&`);
+    const url = `https://localhost:8443/cas/login?${queryString}`;
+    return this.goto(page, url);
+};
+
 exports.gotoLogin = async(page, service = undefined, port = 8443, renew = undefined) => {
     let queryString = (service === undefined ? "" : `service=${service}&`);
     queryString += (renew === undefined ? "" : "renew=true&");

@@ -6,7 +6,7 @@ const assert = require("assert");
     const secret = process.env.DUO_REGISTRATION_SIGNING_KEY;
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
-    await cas.goto(page, "https://localhost:8443/cas/login?authn_method=mfa-duo");
+    await cas.gotoLoginWithAuthnMethod(page, undefined, "mfa-duo");
     await cas.loginWith(page, "unknown", "Mellon");
     await page.waitForTimeout(3000);
     await cas.screenshot(page);

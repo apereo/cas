@@ -5,7 +5,7 @@ const cas = require("../../cas.js");
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
-    await cas.goto(page, "https://localhost:8443/cas/login?authn_method=mfa-gauth&locale=en");
+    await cas.gotoLoginWithAuthnMethod(page, undefined, "mfa-gauth", "en");
     await cas.loginWith(page);
 
     await cas.assertInnerTextStartsWith(page, "#login h2", "Your account is not registered");
