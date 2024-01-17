@@ -12,8 +12,7 @@ import org.apereo.cas.throttle.ThrottledRequestExecutor;
 import org.apereo.cas.throttle.ThrottledRequestFilter;
 import org.apereo.cas.throttle.ThrottledRequestResponseHandler;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-import org.apereo.cas.web.support.InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter;
-import org.apereo.cas.web.support.InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter;
+import org.apereo.cas.web.support.DefaultThrottledSubmissionHandlerInterceptorAdapter;
 import org.apereo.cas.web.support.InMemoryThrottledSubmissionCleaner;
 import org.apereo.cas.web.support.ThrottledSubmissionHandlerConfigurationContext;
 import org.apereo.cas.web.support.ThrottledSubmissionHandlerEndpoint;
@@ -21,7 +20,6 @@ import org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor;
 import org.apereo.cas.web.support.ThrottledSubmissionsStore;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
@@ -63,14 +61,8 @@ public class CasThrottlingAutoConfiguration {
                 LOGGER.trace("Authentication throttling is disabled since no range-seconds or failure-threshold is defined");
                 return ThrottledSubmissionHandlerInterceptor.noOp();
             }
-            if (StringUtils.isNotBlank(throttle.getCore().getUsernameParameter())) {
-                LOGGER.trace("Activating authentication throttling based on IP address and username...");
-                return new InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter(
-                    authenticationThrottlingConfigurationContext);
-            }
-            LOGGER.trace("Activating authentication throttling based on IP address...");
-            return new InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter(
-                authenticationThrottlingConfigurationContext);
+            LOGGER.trace("Activating authentication throttling...");
+            return new DefaultThrottledSubmissionHandlerInterceptorAdapter(authenticationThrottlingConfigurationContext);
         }
     }
 
