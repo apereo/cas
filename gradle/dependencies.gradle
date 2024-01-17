@@ -2368,7 +2368,6 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-context")
                     exclude(group: "org.springframework", module: "spring-context-support")
                     exclude(group: "org.springframework", module: "spring-beans")
-                    exclude(group: "org.eclipse.angus", module: "jakarta.mail")
                 },
                 dependencies.create("com.sun.mail:jakarta.mail:$jakartaMailVersion")
         ],
@@ -2499,7 +2498,6 @@ ext.libraries = [
                     exclude(group: "ch.qos.logback", module: "logback-core")
                     exclude(group: "ch.qos.logback", module: "logback-classic")
                     exclude(group: "com.fasterxml.jackson.module", module: "jackson-module-jaxb-annotations")
-                    exclude(group: "io.micrometer", module: "micrometer-jakarta9")
                 },
                 dependencies.create("org.springframework.boot:spring-boot-starter-validation:$springBootVersion") {
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter")
@@ -2539,8 +2537,6 @@ ext.libraries = [
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
                     exclude(group: "com.fasterxml.jackson.module", module: "jackson-module-jaxb-annotations")
-                },
-                dependencies.create("io.micrometer:micrometer-jakarta9:$micrometerVersion") {
                 }
         ],
         springboottomcat           : [
