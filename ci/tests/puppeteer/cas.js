@@ -840,9 +840,10 @@ exports.gotoLoginWithAuthnMethod = async(page, service, authnMethod = undefined,
     return this.goto(page, url);
 };
 
-exports.gotoLogin = async(page, service = undefined, port = 8443, renew = undefined) => {
+exports.gotoLogin = async(page, service = undefined, port = 8443, renew = undefined, method = undefined) => {
     let queryString = (service === undefined ? "" : `service=${service}&`);
     queryString += (renew === undefined ? "" : "renew=true&");
+    queryString += (method === undefined ? "" : `method=${method}&`);
     const url = `https://localhost:${port}/cas/login?${queryString}`;
     return this.goto(page, url);
 };

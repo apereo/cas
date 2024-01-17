@@ -16,7 +16,7 @@ const assert = require("assert");
     await cas.assertCookie(page);
     await cas.gotoLogout(page);
 
-    await cas.gotoLogin(page, "https://localhost:9859/post");
+    await cas.gotoLogin(page, "https://localhost:9859/anything/postservice");
     await cas.loginWith(page, "duocode", "Mellon");
     await page.waitForTimeout(4000);
     await cas.loginDuoSecurityBypassCode(page, "duocode", bypassCodes.slice(1));
@@ -26,6 +26,20 @@ const assert = require("assert");
     let content = await cas.textContent(page, "body");
     let payload = JSON.parse(content);
     assert(payload.form.ticket !== undefined);
+    assert(payload.method === "POST");
+    await cas.gotoLogout(page);
+    
+    await cas.gotoLogin(page, "https://localhost:9859/anything/postmethod", 8443, false, "POST");
+    await cas.loginWith(page, "duocode", "Mellon");
+    await page.waitForTimeout(4000);
+    await cas.loginDuoSecurityBypassCode(page, "duocode", bypassCodes.slice(2));
+    await page.waitForTimeout(4000);
+    await cas.screenshot(page);
+    await cas.logPage(page);
+    content = await cas.textContent(page, "body");
+    payload = JSON.parse(content);
+    assert(payload.form.ticket !== undefined);
+    assert(payload.method === "POST");
     await cas.gotoLogout(page);
     
     await browser.close();
