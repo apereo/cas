@@ -44,7 +44,7 @@ class Saml10FailureResponseViewTests extends AbstractOpenSamlTests {
             null,
             new DefaultAuthenticationServiceSelectionPlan(),
             NoOpProtocolAttributesRenderer.INSTANCE,
-            samlResponseBuilder);
+            samlResponseBuilder, attributeDefinitionStore);
     }
 
     @Test

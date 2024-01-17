@@ -1,7 +1,5 @@
 package org.apereo.cas.ticket;
 
-import org.apereo.cas.authentication.principal.Service;
-
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 /**
@@ -13,18 +11,11 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
  * @since 3.0.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-public interface ServiceTicket extends TicketGrantingTicketAwareTicket {
+public interface ServiceTicket extends TicketGrantingTicketAwareTicket, ServiceAwareTicket {
 
     /**
      * Prefix generally applied to unique ids generated
      * by UniqueTicketIdGenerator.
      */
     String PREFIX = "ST";
-
-    /**
-     * Retrieve the service this ticket was given for.
-     *
-     * @return the server.
-     */
-    Service getService();
 }

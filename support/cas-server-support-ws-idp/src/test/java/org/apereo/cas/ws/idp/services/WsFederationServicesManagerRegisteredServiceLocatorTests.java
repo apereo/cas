@@ -44,7 +44,7 @@ class WsFederationServicesManagerRegisteredServiceLocatorTests extends BaseCoreW
     private ServicesManagerRegisteredServiceLocator wsFederationServicesManagerRegisteredServiceLocator;
 
     @Autowired
-    @Qualifier("webApplicationServiceFactory")
+    @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
     private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
     @Autowired

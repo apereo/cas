@@ -159,6 +159,77 @@ and value patterns defined in the policy are able to support the [Spring Express
 
 {% endtab %}
 
+{% tab ssoservicepolicy Groovy %}
+
+SSO participation decisions can be determined using a Groovy script, that may be defined either inline
+or outsourced to an external Groovy script.
+
+Below shows the option where you define an external Groovy script:
+
+```json
+{
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
+  "serviceId" : "...",
+  "name" : "...",
+  "id" : 1,
+  "singleSignOnParticipationPolicy":
+    {
+      "@class": "org.apereo.cas.services.ChainingRegisteredServiceSingleSignOnParticipationPolicy",
+      "policies": [ "java.util.ArrayList",
+        [
+          {
+            "@class":"org.apereo.cas.services.GroovyRegisteredServiceSingleSignOnParticipationPolicy",
+            "groovyScript" : "file:///path/to/script.groovy"
+          }
+        ]
+      ]
+    }
+}
+```
+
+The script itself may be designed as:
+
+```groovy
+def run(Object[] args) {
+    def (registeredService,authentication,logger) = args
+    logger.info("Checking SSO participation for ${registeredService.name}")
+    
+    def principal = authentication.principal
+    logger.info("Principal id is ${principal.id}")
+    if (principal.id == 'Gandalf') {
+        logger.info("User is too powerful; SSO participation is allowed")
+        return true
+    }
+    return false
+}
+```
+
+The following parameters are passed to the script:
+
+| Parameter           | Description                                                                 |
+|---------------------|-----------------------------------------------------------------------------|
+| `registeredService` | `RegisteredService` definition that is operating and owning the policy.     |
+| `authentication`    | `Authentication` object that carries the authenticated user and attributes. |
+| `logger`            | The object responsible for issuing log messages such as `logger.info(...)`. |
+
+  
+You may also do the same sort of thing with an inline Groovy script:
+
+```json
+{
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
+  "serviceId" : "...",
+  "name" : "...",
+  "id" : 1,
+  "singleSignOnParticipationPolicy": {
+    "@class":"org.apereo.cas.services.GroovyRegisteredServiceSingleSignOnParticipationPolicy",
+    "groovyScript" : "groovy { authentication.principal.id == 'Gandalf' }"
+  }
+}
+```
+
+{% endtab %}
+
 {% tab ssoservicepolicy Custom %}
 
 Participation in a single sign-on session can be customized and controlled using custom strategies registered with CAS per the below syntax:

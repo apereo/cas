@@ -5,6 +5,7 @@
   "serviceId": "https://.*",
   "name": "Sample",
   "id": 1,
+  "bypassApprovalPrompt": true,
   "description": "Sample Service",
   "evaluationOrder": 1,
   "scopes" : [ "java.util.HashSet", [ "openid" ] ],

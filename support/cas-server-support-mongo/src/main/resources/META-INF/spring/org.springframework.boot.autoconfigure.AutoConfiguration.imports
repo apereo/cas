@@ -1,1 +1,1 @@
-org.apereo.cas.config.CasMongoAuthenticationConfiguration
+org.apereo.cas.config.CasMongoAuthenticationAutoConfiguration

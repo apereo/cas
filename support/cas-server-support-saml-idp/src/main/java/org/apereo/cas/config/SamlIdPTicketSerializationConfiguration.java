@@ -10,10 +10,10 @@ import org.apereo.cas.ticket.serialization.TicketSerializationExecutionPlanConfi
 import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.io.Serial;
@@ -26,8 +26,8 @@ import java.io.Serial;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProvider)
-@AutoConfiguration
-public class SamlIdPTicketSerializationConfiguration {
+@Configuration(value = "SamlIdPTicketSerializationConfiguration", proxyBeanMethods = false)
+class SamlIdPTicketSerializationConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -45,6 +45,10 @@ public class SamlIdPTicketSerializationConfiguration {
         @Serial
         private static final long serialVersionUID = -2198623586274810263L;
 
+        SamlArtifactTicketStringSerializer() {
+            super(MINIMAL_PRETTY_PRINTER);
+        }
+
         @Override
         public Class<SamlArtifactTicketImpl> getTypeToSerialize() {
             return SamlArtifactTicketImpl.class;
@@ -54,6 +58,10 @@ public class SamlIdPTicketSerializationConfiguration {
     private static final class SamlAttributeQueryTicketStringSerializer extends AbstractJacksonBackedStringSerializer<SamlAttributeQueryTicketImpl> {
         @Serial
         private static final long serialVersionUID = -2198623586274810263L;
+
+        SamlAttributeQueryTicketStringSerializer() {
+            super(MINIMAL_PRETTY_PRINTER);
+        }
 
         @Override
         public Class<SamlAttributeQueryTicketImpl> getTypeToSerialize() {

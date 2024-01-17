@@ -7,53 +7,28 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
-import org.apereo.cas.config.CasCookieConfiguration;
-import org.apereo.cas.config.CasCoreAuditConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
-import org.apereo.cas.config.CasCoreConfiguration;
-import org.apereo.cas.config.CasCoreHttpConfiguration;
-import org.apereo.cas.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
-import org.apereo.cas.config.CasCoreNotificationsConfiguration;
-import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
-import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
-import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
-import org.apereo.cas.config.CasCoreTicketsConfiguration;
-import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasCoreUtilSerializationConfiguration;
-import org.apereo.cas.config.CasCoreWebConfiguration;
-import org.apereo.cas.config.CasCoreWebflowConfiguration;
-import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
-import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
-import org.apereo.cas.config.CasOAuth20AuthenticationServiceSelectionStrategyConfiguration;
-import org.apereo.cas.config.CasOAuth20Configuration;
-import org.apereo.cas.config.CasOAuth20EndpointsConfiguration;
-import org.apereo.cas.config.CasOAuth20ProtocolTicketCatalogConfiguration;
-import org.apereo.cas.config.CasOAuth20ThrottleConfiguration;
+import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasCoreAutoConfiguration;
+import org.apereo.cas.config.CasCoreCookieAutoConfiguration;
+import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
+import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
+import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
+import org.apereo.cas.config.CasOAuth20AutoConfiguration;
+import org.apereo.cas.config.CasOAuth20ProtocolTicketCatalogAutoConfiguration;
+import org.apereo.cas.config.CasOidcAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
-import org.apereo.cas.config.CasThemesConfiguration;
-import org.apereo.cas.config.CasThrottlingConfiguration;
-import org.apereo.cas.config.CasThymeleafConfiguration;
-import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.config.CasWebSecurityConfiguration;
-import org.apereo.cas.config.CasWebflowContextConfiguration;
-import org.apereo.cas.config.OidcAuditConfiguration;
-import org.apereo.cas.config.OidcComponentSerializationConfiguration;
-import org.apereo.cas.config.OidcConfiguration;
-import org.apereo.cas.config.OidcEndpointsConfiguration;
-import org.apereo.cas.config.OidcJwksConfiguration;
-import org.apereo.cas.config.OidcLogoutConfiguration;
-import org.apereo.cas.config.OidcResponseConfiguration;
-import org.apereo.cas.config.OidcThrottleConfiguration;
+import org.apereo.cas.config.CasThemesAutoConfiguration;
+import org.apereo.cas.config.CasThrottlingAutoConfiguration;
+import org.apereo.cas.config.CasThymeleafAutoConfiguration;
+import org.apereo.cas.config.CasWebAppAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
@@ -156,10 +131,10 @@ import static org.mockito.Mockito.*;
         "spring.mvc.pathmatch.matching-strategy=ant-path-matcher",
 
         "cas.audit.slf4j.use-single-line=true",
-        
+
         "cas.server.name=https://sso.example.org/",
         "cas.server.prefix=https://sso.example.org/cas",
-        
+
         "cas.authn.oidc.core.issuer=https://sso.example.org/cas/oidc",
         "cas.authn.oidc.jwks.file-system.jwks-file=classpath:keystore.jwks"
     })
@@ -201,7 +176,7 @@ public abstract class AbstractOidcTests {
     @Autowired
     @Qualifier("oauthDistributedSessionStore")
     protected SessionStore oauthDistributedSessionStore;
-    
+
     @Autowired
     @Qualifier("oauthInterceptor")
     protected HandlerInterceptor oauthInterceptor;
@@ -271,7 +246,7 @@ public abstract class AbstractOidcTests {
     protected OAuth20CodeFactory defaultOAuthCodeFactory;
 
     @Autowired
-    @Qualifier("webApplicationServiceFactory")
+    @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
     protected ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
     @Autowired
@@ -533,54 +508,28 @@ public abstract class AbstractOidcTests {
     })
     @SpringBootConfiguration
     @Import({
-        CasCoreNotificationsConfiguration.class,
-        CasCoreServicesConfiguration.class,
-        CasCoreUtilConfiguration.class,
-        CasCoreUtilSerializationConfiguration.class,
-        CasCoreWebflowConfiguration.class,
-        CasCoreWebConfiguration.class,
-        CasCoreConfiguration.class,
-        CasCoreTicketsConfiguration.class,
-        CasCoreTicketCatalogConfiguration.class,
-        CasCoreTicketIdGeneratorsConfiguration.class,
-        CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-        CasCoreTicketsSerializationConfiguration.class,
-        CasCoreHttpConfiguration.class,
-        CasCoreAuditConfiguration.class,
-        CasCoreLogoutConfiguration.class,
-        CasWebflowContextConfiguration.class,
-        CasCoreAuthenticationPrincipalConfiguration.class,
+        CasCoreNotificationsAutoConfiguration.class,
+        CasCoreServicesAutoConfiguration.class,
+        CasCoreUtilAutoConfiguration.class,
+        CasCoreWebflowAutoConfiguration.class,
+        CasCoreWebAutoConfiguration.class,
+        CasCoreAutoConfiguration.class,
+        CasCoreTicketsAutoConfiguration.class,
+        CasCoreAuditAutoConfiguration.class,
+        CasCoreLogoutAutoConfiguration.class,
         CasPersonDirectoryTestConfiguration.class,
         CasRegisteredServicesTestConfiguration.class,
-        CasCoreAuthenticationConfiguration.class,
-        CasCookieConfiguration.class,
-        CasThemesConfiguration.class,
-        CasThymeleafConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
-        CasCoreAuthenticationHandlersConfiguration.class,
-        CasCoreAuthenticationMetadataConfiguration.class,
-        CasCoreAuthenticationPolicyConfiguration.class,
-        CasCoreAuthenticationSupportConfiguration.class,
-        CasCoreServicesAuthenticationConfiguration.class,
-        CasThrottlingConfiguration.class,
-        CasMultifactorAuthenticationWebflowConfiguration.class,
-        CasCoreMultifactorAuthenticationConfiguration.class,
-        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-        OidcConfiguration.class,
-        OidcJwksConfiguration.class,
-        OidcEndpointsConfiguration.class,
-        OidcResponseConfiguration.class,
-        OidcLogoutConfiguration.class,
-        OidcThrottleConfiguration.class,
-        OidcComponentSerializationConfiguration.class,
-        OidcAuditConfiguration.class,
-        CasOAuth20Configuration.class,
-        CasOAuth20ProtocolTicketCatalogConfiguration.class,
-        CasOAuth20EndpointsConfiguration.class,
-        CasOAuth20ThrottleConfiguration.class,
-        CasOAuth20AuthenticationServiceSelectionStrategyConfiguration.class,
-
-        CasWebSecurityConfiguration.class
+        CasCoreCookieAutoConfiguration.class,
+        CasThemesAutoConfiguration.class,
+        CasThymeleafAutoConfiguration.class,
+        CasCoreAuthenticationAutoConfiguration.class,
+        CasThrottlingAutoConfiguration.class,
+        CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
+        CasCoreMultifactorAuthenticationAutoConfiguration.class,
+        CasOidcAutoConfiguration.class,
+        CasOAuth20ProtocolTicketCatalogAutoConfiguration.class,
+        CasOAuth20AutoConfiguration.class,
+        CasWebAppAutoConfiguration.class
     })
     public static class SharedTestConfiguration {
     }

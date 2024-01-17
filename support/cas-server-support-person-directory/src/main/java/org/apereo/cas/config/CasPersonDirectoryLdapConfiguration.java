@@ -11,7 +11,6 @@ import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
@@ -21,7 +20,6 @@ import org.apereo.services.persondir.support.ldap.LdaptivePersonAttributeDao;
 import org.ldaptive.handler.LdapEntryHandler;
 import org.ldaptive.handler.SearchResultHandler;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -30,7 +28,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
-
 import javax.naming.directory.SearchControls;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
@@ -45,13 +42,13 @@ import java.util.stream.Collectors;
 @ConditionalOnClass(LdapConnectionFactory.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.PersonDirectory)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@AutoConfiguration
-public class CasPersonDirectoryLdapConfiguration {
+@Configuration(value = "CasPersonDirectoryLdapConfiguration", proxyBeanMethods = false)
+class CasPersonDirectoryLdapConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.attribute-repository.ldap[0].ldap-url");
 
     @Configuration(value = "LdapAttributeRepositoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class LdapAttributeRepositoryConfiguration {
+    static class LdapAttributeRepositoryConfiguration {
 
         private static final LdapEntryHandler[] LDAP_ENTRY_HANDLERS = new LdapEntryHandler[0];
 
@@ -138,7 +135,7 @@ public class CasPersonDirectoryLdapConfiguration {
 
     @Configuration(value = "LdapAttributeRepositoryPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class LdapAttributeRepositoryPlanConfiguration {
+    static class LdapAttributeRepositoryPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "ldapPersonDirectoryAttributeRepositoryPlanConfigurer")

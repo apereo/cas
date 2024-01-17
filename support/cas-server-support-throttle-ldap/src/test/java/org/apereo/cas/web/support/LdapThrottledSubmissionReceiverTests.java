@@ -1,9 +1,8 @@
 package org.apereo.cas.web.support;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
-import org.apereo.cas.config.CasLdapThrottlingConfiguration;
+import org.apereo.cas.config.CasLdapThrottlingAutoConfiguration;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
@@ -18,7 +17,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -28,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.6.0
  */
 @SpringBootTest(classes = {
-    CasLdapThrottlingConfiguration.class,
+    CasLdapThrottlingAutoConfiguration.class,
     BaseThrottledSubmissionHandlerInterceptorAdapterTests.SharedTestConfiguration.class
 },
     properties = {

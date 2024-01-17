@@ -9,7 +9,7 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.support.oauth.web.response.OAuth20AuthorizationRequest;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
-import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.code.OAuth20CodeFactory;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -55,7 +55,7 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder extends BaseOA
         val ticketGrantingTicket = holder.getTicketGrantingTicket();
         Optional.ofNullable(ticketGrantingTicket).ifPresent(tgt -> FunctionUtils.doAndHandle(ticket -> {
             configurationContext.getTicketRegistry().updateTicket(ticket);
-        }, (CheckedFunction<Throwable, TicketGrantingTicket>) throwable -> {
+        }, (CheckedFunction<Throwable, Ticket>) throwable -> {
             LOGGER.error("Unable to update ticket-granting-ticket [{}]", ticketGrantingTicket, throwable);
             return null;
         }).accept(tgt));

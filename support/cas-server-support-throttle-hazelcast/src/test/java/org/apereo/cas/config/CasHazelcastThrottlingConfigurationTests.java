@@ -22,19 +22,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    HazelcastTicketRegistryConfiguration.class,
-    HazelcastTicketRegistryTicketCatalogConfiguration.class,
-    CasCoreHttpConfiguration.class,
-    CasCoreWebConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
-    CasCoreUtilConfiguration.class,
-    CasCoreNotificationsConfiguration.class,
-    CasCoreServicesConfiguration.class,
-    CasCoreTicketsConfiguration.class,
-    CasCoreTicketCatalogConfiguration.class,
-    CasCoreTicketsSerializationConfiguration.class,
-    CasCoreTicketIdGeneratorsConfiguration.class,
-    CasHazelcastThrottlingConfiguration.class
+    CasHazelcastTicketRegistryAutoConfiguration.class,
+    CasCoreWebAutoConfiguration.class,
+    CasCoreAutoConfiguration.class,
+    CasCoreLogoutAutoConfiguration.class,
+    CasCoreAuthenticationAutoConfiguration.class,
+    CasCoreServicesAutoConfiguration.class,
+    CasCoreUtilAutoConfiguration.class,
+    CasCoreNotificationsAutoConfiguration.class,
+    CasCoreTicketsAutoConfiguration.class,
+    CasHazelcastThrottlingAutoConfiguration.class
 })
 @Tag("Hazelcast")
 class CasHazelcastThrottlingConfigurationTests {

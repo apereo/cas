@@ -414,14 +414,12 @@ subprojects {
     }
 
     dependencies {
-
         implementation libraries.aspectj
 
         api libraries.swaggerannotations
         api libraries.slf4j
         api libraries.guava
         api libraries.commons
-        api libraries.persondirectory
         api libraries.spring
         api libraries.jackson
         api libraries.httpclient
@@ -500,22 +498,25 @@ if (gradle.startParameter.taskNames.any { task -> task.startsWith("jacoco") }) {
                 }
             }
         }}
-
-        def executions = subprojects.collect {subproject ->
-            def execFile = subproject.layout.buildDirectory.file('jacoco/jacocoTest.exec').get().asFile
-            if (execFile.exists()) {
-                logger.info "${subproject.name} with execution file ${execFile}"
-                inputs.file(execFile).withPropertyName("${subproject.name}-jacoco").withPathSensitivity(PathSensitivity.RELATIVE)
-            }
-            execFile
-        }
         
-        logger.info "Coverage execution data files: ${executions}"
+        def executions = subprojects.collect {subproject ->
+            def execFiles = subproject.layout.buildDirectory.asFileTree.matching { include "**/jacoco/jacoco-*.exec" }
+            execFiles.each {
+                logger.info "${subproject.name} with execution file ${it}"
+                inputs.file(it).withPropertyName("${subproject.name}-jacoco").withPathSensitivity(PathSensitivity.RELATIVE)
+
+            }
+            execFiles.files
+        }.flatten()
+
+        ansi.green("Coverage execution data files: ${executions}")
         executionData.from(executions)
+        inputs.files(executions)
         outputs.files(rootProject.layout.buildDirectory.file('reports/jacoco/jacocoRootReport/jacocoRootReport.xml').get().asFile)
         
+
         reports {
-//            html.required.set(true)
+            html.required.set(true)
             xml.required.set(true)
             csv.required.set(true)
         }

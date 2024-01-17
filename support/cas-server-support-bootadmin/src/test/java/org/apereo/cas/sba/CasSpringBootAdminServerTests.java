@@ -1,7 +1,7 @@
 package org.apereo.cas.sba;
 
-import org.apereo.cas.config.CasCoreHttpConfiguration;
-import org.apereo.cas.config.CasSpringBootAdminConfiguration;
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
+import org.apereo.cas.config.CasSpringBootAdminAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
 import de.codecentric.boot.admin.client.config.SpringBootAdminClientAutoConfiguration;
@@ -53,8 +53,8 @@ import static org.mockito.Mockito.*;
     AdminServerInstanceWebClientConfiguration.class,
 
     SpringBootAdminClientAutoConfiguration.class,
-    CasCoreHttpConfiguration.class,
-    CasSpringBootAdminConfiguration.class
+    CasCoreWebAutoConfiguration.class,
+    CasSpringBootAdminAutoConfiguration.class
 }, properties = {
     "cas.host.name=CASInstance",
     "spring.main.allow-bean-definition-overriding=true",

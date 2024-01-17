@@ -28,8 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasEmbeddedContainerTomcatConfiguration.class,
-    CasEmbeddedContainerTomcatFiltersConfiguration.class
+    CasEmbeddedContainerTomcatAutoConfiguration.class
 },
     properties = {
         "server.port=8583",

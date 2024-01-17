@@ -177,7 +177,7 @@ class DelegatedAuthenticationSingleSignOnParticipationStrategyTests {
         val authentication = CoreAuthenticationTestUtils.getAuthentication(Map.of());
         val tgt = new MockTicketGrantingTicket(authentication);
         tgt.markTicketExpired();
-        ticketRegistry.addTicketInternal(tgt);
+        ticketRegistry.addSingleTicket(tgt);
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
 
         val ssoRequest = SingleSignOnParticipationRequest.builder()

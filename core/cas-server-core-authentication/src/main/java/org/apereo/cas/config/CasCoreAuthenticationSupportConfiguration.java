@@ -30,7 +30,6 @@ import org.apereo.cas.util.spring.boot.ConditionalOnMissingGraalVMNativeImage;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -47,12 +46,12 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Authentication)
-@AutoConfiguration(after = CasCoreServicesConfiguration.class)
-public class CasCoreAuthenticationSupportConfiguration {
+@Configuration(value = "CasCoreAuthenticationSupportConfiguration", proxyBeanMethods = false)
+class CasCoreAuthenticationSupportConfiguration {
 
     @Configuration(value = "CasCoreAuthenticationPrincipalCacheConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreAuthenticationPrincipalCacheConfiguration {
+    static class CasCoreAuthenticationPrincipalCacheConfiguration {
 
         @ConditionalOnMissingBean(name = PrincipalAttributesRepositoryCache.DEFAULT_BEAN_NAME)
         @Bean
@@ -61,18 +60,19 @@ public class CasCoreAuthenticationSupportConfiguration {
             return new DefaultPrincipalAttributesRepositoryCache();
         }
     }
+
     @Configuration(value = "CasCoreAuthenticationHandlerResolverConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreAuthenticationHandlerResolverConfiguration {
+    static class CasCoreAuthenticationHandlerResolverConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "registeredServiceAuthenticationHandlerResolver")
         public AuthenticationHandlerResolver registeredServiceAuthenticationHandlerResolver(
             final CasConfigurationProperties casProperties,
             @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
-            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME) final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan) {
-            val resolver = new RegisteredServiceAuthenticationHandlerResolver(servicesManager,
-                authenticationServiceSelectionPlan);
+            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
+            final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan) {
+            val resolver = new RegisteredServiceAuthenticationHandlerResolver(servicesManager, authenticationServiceSelectionPlan);
             resolver.setOrder(casProperties.getAuthn().getCore().getServiceAuthenticationResolution().getOrder());
             return resolver;
         }
@@ -112,7 +112,7 @@ public class CasCoreAuthenticationSupportConfiguration {
 
     @Configuration(value = "CasCoreAuthenticationSupportBaseConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreAuthenticationSupportBaseConfiguration {
+    static class CasCoreAuthenticationSupportBaseConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = AuthenticationSystemSupport.BEAN_NAME)
@@ -130,7 +130,7 @@ public class CasCoreAuthenticationSupportConfiguration {
 
     @Configuration(value = "CasCoreAuthenticationPolicyResolverConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreAuthenticationPolicyResolverConfiguration {
+    static class CasCoreAuthenticationPolicyResolverConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "registeredServiceAuthenticationPolicyResolver")
@@ -146,7 +146,7 @@ public class CasCoreAuthenticationSupportConfiguration {
 
     @Configuration(value = "CasCoreAuthenticationExecutionPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreAuthenticationExecutionPlanConfiguration {
+    static class CasCoreAuthenticationExecutionPlanConfiguration {
         @ConditionalOnMissingBean(name = "authenticationHandlerResolversExecutionPlanConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

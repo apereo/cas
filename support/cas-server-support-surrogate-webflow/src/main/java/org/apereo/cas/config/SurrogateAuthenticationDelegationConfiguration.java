@@ -12,12 +12,12 @@ import org.apereo.cas.web.flow.pac4j.SurrogateDelegatedAuthenticationPreProcesso
 
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
@@ -32,8 +32,8 @@ import org.springframework.context.annotation.ScopedProxyMode;
     CasFeatureModule.FeatureCatalog.SurrogateAuthentication
 })
 @ConditionalOnClass(DelegatedAuthenticationWebflowConfiguration.class)
-@AutoConfiguration
-public class SurrogateAuthenticationDelegationConfiguration {
+@Configuration(value = "SurrogateAuthenticationDelegationConfiguration", proxyBeanMethods = false)
+class SurrogateAuthenticationDelegationConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "surrogateDelegatedAuthenticationPreProcessor")

@@ -26,14 +26,25 @@ public interface Ticket extends Serializable, Comparable<Ticket> {
      *
      * @return the time the ticket was created.
      */
-    ZonedDateTime getCreationTime();
+    default ZonedDateTime getCreationTime() {
+        return null;
+    }
+
+    /**
+     * Sets creation time.
+     *
+     * @param creationTime the creation time
+     */
+    default void setCreationTime(final ZonedDateTime creationTime) {}
 
     /**
      * Gets count of uses.
      *
      * @return the number of times this ticket was used.
      */
-    int getCountOfUses();
+    default int getCountOfUses() {
+        return 0;
+    }
 
     /**
      * Gets prefix.
@@ -49,33 +60,57 @@ public interface Ticket extends Serializable, Comparable<Ticket> {
      * @return true, if the ticket is expired
      * @see ExpirationPolicy
      */
-    boolean isExpired();
+    default boolean isExpired() {
+        return false;
+    }
+
+    /**
+     * Indicate whether ticket is a compact (usually a JWT) ticket.
+     *
+     * @return true/false
+     */
+    default boolean isStateless() {
+        return false;
+    }
 
     /**
      * Get expiration policy associated with ticket.
      *
      * @return the expiration policy
      */
-    ExpirationPolicy getExpirationPolicy();
+    default ExpirationPolicy getExpirationPolicy() {
+        return null;
+    }
+
+    /**
+     * Sets expiration policy.
+     *
+     * @param expirationPolicy the expiration policy
+     */
+    default void setExpirationPolicy(final ExpirationPolicy expirationPolicy) {}
 
     /**
      * Mark a ticket as expired.
      */
-    void markTicketExpired();
+    default void markTicketExpired() {}
 
     /**
      * Returns the last time the ticket was used.
      *
      * @return the last time the ticket was used.
      */
-    ZonedDateTime getLastTimeUsed();
+    default ZonedDateTime getLastTimeUsed() {
+        return null;
+    }
 
     /**
      * Get the second to last time used.
      *
      * @return the previous time used.
      */
-    ZonedDateTime getPreviousTimeUsed();
+    default ZonedDateTime getPreviousTimeUsed() {
+        return null;
+    }
 
     /**
      * Records the <i>previous</i> last time this ticket was used as well as
@@ -87,5 +122,12 @@ public interface Ticket extends Serializable, Comparable<Ticket> {
      * @see ExpirationPolicy
      * @since 5.0.0
      */
-    void update();
+    default void update() {}
+
+    /**
+     * Mark this ticket as compact and stateless. A stateless ticket usually is self contained, such as a JWT.
+     */
+    default Ticket markTicketStateless() {
+        return this;
+    }
 }

@@ -17,7 +17,7 @@ const cas = require("../../cas.js");
 async function runTestsFor(page, entityId, hasInfoUrl = true) {
     const service = encodeURIComponent(`https://apereo.github.io?entityId=${entityId}`);
     await cas.log(`Using service ${service}`);
-    await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
+    await cas.gotoLogin(page, service);
     await page.waitForTimeout(1000);
     await verify(page, hasInfoUrl);
 

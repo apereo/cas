@@ -1,3 +1,1 @@
-org.apereo.cas.config.SamlIdPAmazonS3RegisteredServiceMetadataConfiguration
-org.apereo.cas.config.AmazonS3SamlIdPMetadataConfiguration
-org.apereo.cas.config.AmazonS3SamlMetadataConfiguration
+org.apereo.cas.config.CasAmazonS3SamlMetadataAutoConfiguration

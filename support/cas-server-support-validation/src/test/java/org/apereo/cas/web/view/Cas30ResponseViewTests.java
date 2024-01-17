@@ -8,8 +8,8 @@ import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.support.DefaultCasProtocolAttributeEncoder;
-import org.apereo.cas.config.CasThymeleafConfiguration;
-import org.apereo.cas.config.CasValidationConfiguration;
+import org.apereo.cas.config.CasThymeleafAutoConfiguration;
+import org.apereo.cas.config.CasValidationAutoConfiguration;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.view.AbstractCasView;
 import org.apereo.cas.util.CollectionUtils;
@@ -59,8 +59,8 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.clearpass.crypto.enabled=false"
 })
 @Import({
-    CasThymeleafConfiguration.class,
-    CasValidationConfiguration.class
+    CasThymeleafAutoConfiguration.class,
+    CasValidationAutoConfiguration.class
 })
 @Tag("CAS")
 class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
@@ -190,6 +190,6 @@ class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
         return new Cas30ResponseView(true, encoder, servicesManager,
             viewDelegated, new DefaultAuthenticationAttributeReleasePolicy("attribute"),
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()),
-            new DefaultCas30ProtocolAttributesRenderer());
+            new DefaultCas30ProtocolAttributesRenderer(), getAttributeDefinitionStore());
     }
 }

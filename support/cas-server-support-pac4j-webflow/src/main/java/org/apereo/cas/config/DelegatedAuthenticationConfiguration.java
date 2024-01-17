@@ -15,7 +15,6 @@ import org.apereo.cas.web.flow.DelegatedAuthenticationSingleSignOnParticipationS
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategyConfigurer;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -31,11 +30,11 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.DelegatedAuthentication)
-@AutoConfiguration
-public class DelegatedAuthenticationConfiguration {
+@Configuration(value = "DelegatedAuthenticationConfiguration", proxyBeanMethods = false)
+class DelegatedAuthenticationConfiguration {
     @Configuration(value = "DelegatedAuthenticationBaseConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class DelegatedAuthenticationBaseConfiguration {
+    static class DelegatedAuthenticationBaseConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = AuditableExecution.AUDITABLE_EXECUTION_DELEGATED_AUTHENTICATION_ACCESS)
@@ -46,7 +45,7 @@ public class DelegatedAuthenticationConfiguration {
 
     @Configuration(value = "DelegatedAuthenticationAuthorizerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class DelegatedAuthenticationAuthorizerConfiguration {
+    static class DelegatedAuthenticationAuthorizerConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ServiceTicketValidationAuthorizer pac4jServiceTicketValidationAuthorizer(
@@ -69,7 +68,7 @@ public class DelegatedAuthenticationConfiguration {
 
     @Configuration(value = "DelegatedAuthenticationSingleSignOnConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class DelegatedAuthenticationSingleSignOnConfiguration {
+    static class DelegatedAuthenticationSingleSignOnConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "pac4jDelegatedAuthenticationSingleSignOnParticipationStrategy")

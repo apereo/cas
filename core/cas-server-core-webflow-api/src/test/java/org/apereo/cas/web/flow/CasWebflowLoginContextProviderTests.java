@@ -15,7 +15,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@Tag("Web")
+@Tag("Webflow")
 class CasWebflowLoginContextProviderTests {
     @Test
     void verifyOperation() throws Throwable {

@@ -7,7 +7,7 @@ const cas = require("../../cas.js");
     const page = await cas.newPage(browser);
 
     const service1 = "https://apereo.github.io";
-    await cas.goto(page, `https://localhost:8443/cas/login?service=${service1}`);
+    await cas.gotoLogin(page, service1);
     await cas.loginWith(page);
     let ticket = await cas.assertTicketParameter(page);
     let body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service1}&ticket=${ticket}`);
@@ -22,7 +22,7 @@ const cas = require("../../cas.js");
     assert(body.includes("<cas:memberOf>Colleague Admins</cas:memberOf>"));
 
     const service2 = "http://localhost:9889/anything/cas";
-    await cas.goto(page, `https://localhost:8443/cas/login?service=${service2}`);
+    await cas.gotoLogin(page, service2);
     ticket = await cas.assertTicketParameter(page);
     body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service2}&ticket=${ticket}&format=JSON`);
     await cas.log(body);

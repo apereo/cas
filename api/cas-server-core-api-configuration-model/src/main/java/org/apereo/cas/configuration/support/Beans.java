@@ -1,7 +1,5 @@
 package org.apereo.cas.configuration.support;
 
-import org.apereo.cas.configuration.model.core.authentication.AttributeRepositoryStates;
-import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesProperties;
 import org.apereo.cas.configuration.model.core.cache.ExpiringSimpleCacheProperties;
 import org.apereo.cas.configuration.model.core.cache.SimpleCacheProperties;
 import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
@@ -11,22 +9,15 @@ import com.github.benmanes.caffeine.cache.Expiry;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apereo.services.persondir.IPersonAttributeDao;
-import org.apereo.services.persondir.support.NamedStubPersonAttributeDao;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean;
 import org.springframework.util.StringUtils;
 import java.io.File;
 import java.time.Duration;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
-import java.util.stream.Collectors;
 
 
 /**
@@ -54,37 +45,6 @@ public class Beans {
         return bean;
     }
 
-    /**
-     * New attribute repository person attribute dao.
-     *
-     * @param p the properties
-     * @return the person attribute dao
-     */
-    public static IPersonAttributeDao newStubAttributeRepository(final PrincipalAttributesProperties p) {
-        val dao = new NamedStubPersonAttributeDao();
-        val backingMap = new LinkedHashMap<String, List<Object>>();
-        val stub = p.getStub();
-        stub.getAttributes().forEach((key, value) -> {
-            val vals = StringUtils.commaDelimitedListToStringArray(value);
-            backingMap.put(key, Arrays.stream(vals)
-                .map(v -> {
-                    val result = BooleanUtils.toBooleanObject(v);
-                    if (result != null) {
-                        return result;
-                    }
-                    return v;
-                })
-                .collect(Collectors.toList()));
-        });
-        dao.setBackingMap(backingMap);
-        dao.setOrder(stub.getOrder());
-        dao.setEnabled(stub.getState() != AttributeRepositoryStates.DISABLED);
-        dao.putTag("state", stub.getState() == AttributeRepositoryStates.ACTIVE);
-        if (StringUtils.hasText(stub.getId())) {
-            dao.setId(stub.getId());
-        }
-        return dao;
-    }
 
     /**
      * New duration. If the provided length is duration,

@@ -1,1 +1,1 @@
-org.apereo.cas.config.RedisSessionConfiguration
+org.apereo.cas.config.CasRedisSessionAutoConfiguration

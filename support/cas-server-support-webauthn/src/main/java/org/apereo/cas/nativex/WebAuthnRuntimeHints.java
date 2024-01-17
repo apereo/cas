@@ -49,11 +49,8 @@ import com.yubico.webauthn.data.UserVerificationRequirement;
 import com.yubico.webauthn.extension.uvm.KeyProtectionType;
 import com.yubico.webauthn.extension.uvm.MatcherProtectionType;
 import com.yubico.webauthn.extension.uvm.UserVerificationMethod;
-import lombok.val;
-import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.TypeReference;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -136,24 +133,5 @@ public class WebAuthnRuntimeHints implements CasRuntimeHintsRegistrar {
             ExtensionDescriptor.class,
             ExtensionDescriptor.ExtensionDescriptorBuilder.class
         ));
-    }
-
-    private static void registerReflectionHints(final RuntimeHints hints, final Collection entries) {
-        val memberCategories = new MemberCategory[]{
-            MemberCategory.INTROSPECT_DECLARED_CONSTRUCTORS,
-            MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
-            MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
-            MemberCategory.INVOKE_DECLARED_METHODS,
-            MemberCategory.INVOKE_PUBLIC_METHODS,
-            MemberCategory.DECLARED_FIELDS,
-            MemberCategory.PUBLIC_FIELDS};
-        entries.forEach(el -> {
-            if (el instanceof final Class clazz) {
-                hints.reflection().registerType(clazz, memberCategories);
-            }
-            if (el instanceof final TypeReference reference) {
-                hints.reflection().registerType(reference, memberCategories);
-            }
-        });
     }
 }

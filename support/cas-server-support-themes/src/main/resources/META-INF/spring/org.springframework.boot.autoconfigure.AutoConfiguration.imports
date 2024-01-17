@@ -1,1 +1,1 @@
-org.apereo.cas.config.CasThemesConfiguration
+org.apereo.cas.config.CasThemesAutoConfiguration

@@ -1,2 +1,1 @@
-org.apereo.cas.config.CasRemoteAuthenticationConfiguration
-org.apereo.cas.config.CasRemoteAuthenticationComponentSerializationConfiguration
+org.apereo.cas.config.CasRemoteAuthenticationAutoConfiguration

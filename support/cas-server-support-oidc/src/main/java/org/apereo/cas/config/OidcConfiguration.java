@@ -143,7 +143,6 @@ import org.pac4j.http.client.direct.HeaderClient;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -169,12 +168,12 @@ import java.util.Set;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OpenIDConnect)
-@AutoConfiguration
-public class OidcConfiguration {
+@Configuration(value = "OidcConfiguration", proxyBeanMethods = false)
+class OidcConfiguration {
 
     @Configuration(value = "OidcServicesConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OidcServicesConfiguration {
+    static class OidcServicesConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -198,7 +197,7 @@ public class OidcConfiguration {
 
     @Configuration(value = "OidcWebConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OidcWebConfiguration {
+    static class OidcWebConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20ClientSecretValidator oauth20ClientSecretValidator(
@@ -235,7 +234,7 @@ public class OidcConfiguration {
 
     @Configuration(value = "OidcWebFingerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OidcWebFingerConfiguration {
+    static class OidcWebFingerConfiguration {
         private static final BeanCondition CONDITION_WEBFINGER = BeanCondition.on("cas.authn.oidc.web-finger.enabled").isTrue().evenIfMissing();
 
         @Bean
@@ -285,7 +284,7 @@ public class OidcConfiguration {
 
     @Configuration(value = "OidcUserProfileConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OidcUserProfileConfiguration {
+    static class OidcUserProfileConfiguration {
 
         @ConditionalOnMissingBean(name = "oidcUserProfileViewRenderer")
         @Bean
@@ -314,7 +313,7 @@ public class OidcConfiguration {
 
     @Configuration(value = "OidcClaimsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OidcClaimsConfiguration {
+    static class OidcClaimsConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter(
@@ -332,7 +331,7 @@ public class OidcConfiguration {
 
     @Configuration(value = "OidcCacheConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OidcCacheConfiguration {
+    static class OidcCacheConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "oidcServiceJsonWebKeystoreCache")
@@ -359,7 +358,7 @@ public class OidcConfiguration {
 
     @Configuration(value = "OidcRedirectConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OidcRedirectConfiguration {
+    static class OidcRedirectConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "oidcRequestSupport")
@@ -410,7 +409,7 @@ public class OidcConfiguration {
 
     @Configuration(value = "OidcConsentConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OidcConsentConfiguration {
+    static class OidcConsentConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ConsentApprovalViewResolver consentApprovalViewResolver(
@@ -432,7 +431,7 @@ public class OidcConfiguration {
 
     @Configuration(value = "OidcTokenServiceConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OidcTokenServiceConfiguration {
+    static class OidcTokenServiceConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcTokenSigningAndEncryptionService")
@@ -496,7 +495,7 @@ public class OidcConfiguration {
 
     @Configuration(value = "OidcCryptoConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OidcCryptoConfiguration {
+    static class OidcCryptoConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -538,7 +537,7 @@ public class OidcConfiguration {
 
     @Configuration(value = "OidcClientConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OidcClientConfiguration {
+    static class OidcClientConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20AuthenticationClientProvider oidcClientConfigurationAuthenticationClientProvider(
@@ -662,7 +661,7 @@ public class OidcConfiguration {
 
     @Configuration(value = "OidcJwtConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OidcJwtConfiguration {
+    static class OidcJwtConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -682,7 +681,7 @@ public class OidcConfiguration {
 
     @Configuration(value = "OidcContextConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OidcContextConfiguration {
+    static class OidcContextConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = OidcConfigurationContext.BEAN_NAME)
@@ -832,7 +831,7 @@ public class OidcConfiguration {
     @Configuration(value = "OidcCoreConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
-    public static class OidcCoreConfiguration {
+    static class OidcCoreConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcCasCallbackUrlResolver")
@@ -996,7 +995,7 @@ public class OidcConfiguration {
 
     @Configuration(value = "OidcTicketFactoryPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OidcTicketFactoryPlanConfiguration {
+    static class OidcTicketFactoryPlanConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "pushedAuthorizationUriExpirationPolicy")
@@ -1036,7 +1035,7 @@ public class OidcConfiguration {
 
     @Configuration(value = "OidcResponseModesConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OidcResponseModesConfiguration {
+    static class OidcResponseModesConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oauthQueryJwtResponseModeBuilder")
@@ -1123,7 +1122,7 @@ public class OidcConfiguration {
 
     @Configuration(value = "OidcAssuranceConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OidcAssuranceConfiguration {
+    static class OidcAssuranceConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = AssuranceVerificationSource.BEAN_NAME)

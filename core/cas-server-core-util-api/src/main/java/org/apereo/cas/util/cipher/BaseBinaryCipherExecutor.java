@@ -7,6 +7,7 @@ import org.apereo.cas.util.gen.Base64RandomStringGenerator;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
@@ -36,6 +37,7 @@ import java.security.spec.AlgorithmParameterSpec;
 @Slf4j
 @Getter
 @Setter
+@Accessors(chain = true)
 public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<byte[], byte[]> {
     private static final int GCM_TAG_LENGTH = 128;
 
@@ -59,6 +61,8 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
 
     private byte[] encryptionSecretKey;
 
+    private boolean signingEnabled = true;
+
     protected BaseBinaryCipherExecutor(final String encryptionSecretKey, final String signingSecretKey,
                                        final int signingKeySize, final int encryptionKeySize,
                                        final String cipherName) {
@@ -81,14 +85,14 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
             val aesCipher = Cipher.getInstance(CIPHER_ALGORITHM);
             aesCipher.init(Cipher.ENCRYPT_MODE, this.encryptionKey, this.parameterSpec);
             val result = aesCipher.doFinal(value);
-            return sign(result, getSigningKey());
+            return signingEnabled ? sign(result, getSigningKey()) : result;
         });
     }
 
     @Override
     public byte[] decode(final byte[] value, final Object[] parameters) {
         try {
-            val verifiedValue = verifySignature(value, getSigningKey());
+            val verifiedValue = signingEnabled ? verifySignature(value, getSigningKey()) : value;
             val aesCipher = Cipher.getInstance(CIPHER_ALGORITHM);
             aesCipher.init(Cipher.DECRYPT_MODE, this.encryptionKey, this.parameterSpec);
             return aesCipher.doFinal(verifiedValue);

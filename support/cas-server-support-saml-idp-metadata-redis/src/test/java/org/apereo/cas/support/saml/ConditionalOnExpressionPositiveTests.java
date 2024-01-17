@@ -1,22 +1,19 @@
 package org.apereo.cas.support.saml;
 
-import org.apereo.cas.config.SamlIdPRedisIdPMetadataConfiguration;
+import org.apereo.cas.config.CasSamlIdPRedisIdPMetadataAutoConfiguration;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.TestPropertySource;
-
 import java.util.Arrays;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This class is testing that the conditional expression on
- * the {@link SamlIdPRedisIdPMetadataConfiguration} class works.
+ * the {@link CasSamlIdPRedisIdPMetadataAutoConfiguration} class works.
  *
  * @since 6.4.0
  */

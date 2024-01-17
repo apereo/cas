@@ -36,6 +36,7 @@ env:
   SCENARIO_REGEX: ".*"
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - master
@@ -47,20 +48,14 @@ on:
       - master
       - '!**.**.**'
 
+concurrency:
+  group: "workflow = ${{ github.workflow }}, ref = ${{ github.event.ref }}, pr = ${{ github.event.pull_request.id }}"
+  cancel-in-progress: ${{ github.event_name == 'pull_request' || github.repository != 'apereo/cas' }}
+
 ##########################################################################
 
 jobs:
-  cancel-previous-runs:
-    if: ${{ (github.event_name == 'push' || contains(github.event.pull_request.labels.*.name, 'CI')) && !contains(github.event.pull_request.labels.*.name, 'Renovate') && !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 1
-    steps:
-      - uses: styfle/cancel-workflow-action@0.12.0
-        with:
-          access_token: ${{ github.token }}
-  ##########################################################################
   initialize:
-    needs: [cancel-previous-runs]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

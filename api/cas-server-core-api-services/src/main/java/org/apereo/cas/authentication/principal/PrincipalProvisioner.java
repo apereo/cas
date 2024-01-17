@@ -10,6 +10,7 @@ import org.apereo.cas.services.RegisteredService;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@FunctionalInterface
 public interface PrincipalProvisioner {
     /**
      * Default implementation bean name.
@@ -24,10 +25,13 @@ public interface PrincipalProvisioner {
      * @param registeredService the registered service
      * @return true /false
      */
-    boolean provision(Authentication authentication, Credential credential, RegisteredService registeredService);
+    default boolean provision(final Authentication authentication, final Credential credential,
+                              final RegisteredService registeredService) {
+        return provision(authentication.getPrincipal(), credential);
+    }
 
     /**
-     * Create boolean.
+     * Create and provision.
      *
      * @param principal  the principal
      * @param credential the credential

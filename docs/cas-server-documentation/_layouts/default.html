@@ -17,7 +17,7 @@
 
     {% include variables.html %}
 
-    {% assign versionArray = "development,6.6.x,6.5.x" | split:"," %}
+    {% assign versionArray = "development,7.0.x,6.6.x" | split:"," %}
 
     <script>
         ((i, s, o, g, r, a, m) => {
@@ -94,9 +94,6 @@
                     <li class="nav-item"><a href="https://github.com/apereo/cas/releases" class="zoom nav-link">Releases</a></li>
                     <li class="nav-item"><a href="{{ relative }}Support.html" class="zoom nav-link">Support</a></li>
                     <li class="nav-item"><a href="{{ relative }}Mailing-Lists.html" class="zoom nav-link">Mailing Lists</a></li>
-                    <li class="nav-item">
-                        <a class="zoom nav-link" href="{{ relative }}Demos.html">Demos</a>
-                    </li>
                     <li class="nav-item dropdown">
                         <a class="zoom nav-link dropdown-toggle mr-md-2" href="#" id="cas-versions" data-bs-toggle="dropdown"
                            aria-haspopup="true" aria-expanded="false">Versions</a>

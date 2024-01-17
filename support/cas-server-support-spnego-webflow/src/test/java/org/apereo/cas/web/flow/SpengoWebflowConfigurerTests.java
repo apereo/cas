@@ -1,11 +1,9 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
-import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
-import org.apereo.cas.config.SpnegoConfiguration;
-import org.apereo.cas.config.SpnegoWebflowActionsConfiguration;
-import org.apereo.cas.config.SpnegoWebflowConfiguration;
-
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
+import org.apereo.cas.config.CasSpnegoAutoConfiguration;
+import org.apereo.cas.config.CasSpnegoWebflowAutoConfiguration;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -13,7 +11,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.TransitionableState;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -23,11 +20,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Import({
-    CasCoreMultifactorAuthenticationConfiguration.class,
-    CasMultifactorAuthenticationWebflowConfiguration.class,
-    SpnegoConfiguration.class,
-    SpnegoWebflowConfiguration.class,
-    SpnegoWebflowActionsConfiguration.class
+    CasCoreMultifactorAuthenticationAutoConfiguration.class,
+    CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
+    CasSpnegoAutoConfiguration.class,
+    CasSpnegoWebflowAutoConfiguration.class
 })
 @Tag("Spnego")
 @TestPropertySource(properties = {

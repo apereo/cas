@@ -1,7 +1,7 @@
 package org.apereo.cas.notifications.push;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.config.CasCoreNotificationsConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.notifications.sms.SmsSender;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
     DefaultNotificationSenderTests.DefaultNotificationSenderTestConfiguration.class,
-    CasCoreNotificationsConfiguration.class
+    CasCoreNotificationsAutoConfiguration.class
 })
 @Tag("Simple")
 class DefaultNotificationSenderTests {

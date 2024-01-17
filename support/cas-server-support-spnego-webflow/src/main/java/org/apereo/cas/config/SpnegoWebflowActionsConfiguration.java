@@ -21,7 +21,6 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import lombok.val;
 import org.ldaptive.SearchOperation;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -42,8 +41,8 @@ import java.util.stream.Stream;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SPNEGO)
-@AutoConfiguration
-public class SpnegoWebflowActionsConfiguration {
+@Configuration(value = "SpnegoWebflowActionsConfiguration", proxyBeanMethods = false)
+class SpnegoWebflowActionsConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -96,7 +95,7 @@ public class SpnegoWebflowActionsConfiguration {
     @Configuration(value = "SpnegoLdapWebflowActionsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SPNEGO, module = "ldap")
-    public static class SpnegoLdapWebflowActionsConfiguration {
+    static class SpnegoLdapWebflowActionsConfiguration {
         private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.spnego.ldap.ldap-url");
 
         @Bean

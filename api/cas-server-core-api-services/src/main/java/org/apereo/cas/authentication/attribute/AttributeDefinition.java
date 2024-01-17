@@ -1,9 +1,10 @@
 package org.apereo.cas.authentication.attribute;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -51,6 +52,13 @@ public interface AttributeDefinition extends Serializable, Comparable<AttributeD
     boolean isEncrypted();
 
     /**
+     * Indicate if the attribute value should be rendered a single element
+     * if the container that carries the attribute values has a size of 1.
+     * @return true/false
+     */
+    boolean isSingleValue();
+
+    /**
      * Gets underlying source attribute that should drive
      * the value of the attribute definition.
      *
@@ -93,6 +101,7 @@ public interface AttributeDefinition extends Serializable, Comparable<AttributeD
      * each value is examined against patterns defined here. For each match, the linked entry
      * is used to determine the attribute definition value, either statically or dynamically
      * which is typically an inlined Groovy script.
+     *
      * @return patterned values map
      */
     Map<String, String> getPatterns();
@@ -114,4 +123,17 @@ public interface AttributeDefinition extends Serializable, Comparable<AttributeD
      * @throws Throwable the throwable
      */
     List<Object> resolveAttributeValues(AttributeDefinitionResolutionContext context) throws Throwable;
+
+    /**
+     * To attribute value.
+     *
+     * @param givenValues the given values
+     * @return the object
+     */
+    @JsonIgnore
+    default Object toAttributeValue(final Object givenValues) {
+        return isSingleValue() && givenValues instanceof final Collection values && values.size() == 1
+            ? values.iterator().next()
+            : givenValues;
+    }
 }

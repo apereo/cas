@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasJavaMelodyConfiguration.class
+    CasJavaMelodyAutoConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class CasJavaMelodyConfigurationTests {

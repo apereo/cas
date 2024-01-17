@@ -14,7 +14,6 @@ import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -31,12 +30,12 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication)
-@AutoConfiguration(after = CasCoreServicesConfiguration.class)
-public class CasCoreMultifactorAuthenticationConfiguration {
+@Configuration(value = "CasCoreMultifactorAuthenticationConfiguration", proxyBeanMethods = false)
+class CasCoreMultifactorAuthenticationConfiguration {
 
     @Configuration(value = "CasCoreMultifactorAuthenticationContextConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreMultifactorAuthenticationContextConfiguration {
+    static class CasCoreMultifactorAuthenticationContextConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "requestedContextValidator")
@@ -52,7 +51,7 @@ public class CasCoreMultifactorAuthenticationConfiguration {
 
     @Configuration(value = "CasCoreMultifactorAuthenticationFailureConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreMultifactorAuthenticationFailureConfiguration {
+    static class CasCoreMultifactorAuthenticationFailureConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = MultifactorAuthenticationContextValidator.BEAN_NAME)

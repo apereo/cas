@@ -1,1 +1,1 @@
-org.apereo.cas.config.CasConsentWebflowConfiguration
+org.apereo.cas.config.CasConsentWebflowAutoConfiguration

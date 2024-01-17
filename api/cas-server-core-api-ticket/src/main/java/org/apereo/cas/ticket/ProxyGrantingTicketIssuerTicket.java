@@ -25,8 +25,7 @@ public interface ProxyGrantingTicketIssuerTicket extends Ticket {
      * @throws AbstractTicketException ticket exception thrown when generating the ticket
      * @since 4.2
      */
-    ProxyGrantingTicket grantProxyGrantingTicket(String id,
-                                                 Authentication authentication,
-                                                 ExpirationPolicy expirationPolicy)
-        throws AbstractTicketException;
+    ProxyGrantingTicket grantProxyGrantingTicket(
+        String id, Authentication authentication,
+        ExpirationPolicy expirationPolicy) throws AbstractTicketException;
 }

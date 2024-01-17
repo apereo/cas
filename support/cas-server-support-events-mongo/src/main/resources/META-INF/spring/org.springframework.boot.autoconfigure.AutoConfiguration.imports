@@ -1,1 +1,1 @@
-org.apereo.cas.config.MongoDbEventsConfiguration
+org.apereo.cas.config.CasMongoDbEventsAutoConfiguration

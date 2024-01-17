@@ -1,4 +1,1 @@
-org.apereo.cas.config.InweboServiceConfiguration
-org.apereo.cas.config.InweboAuthenticationConfiguration
-org.apereo.cas.config.InweboWebflowConfiguration
-org.apereo.cas.config.InweboAuthenticationMultifactorProviderBypassConfiguration
+org.apereo.cas.config.CasInweboMultifactorAuthenticationAutoConfiguration

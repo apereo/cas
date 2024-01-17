@@ -1,7 +1,7 @@
 package org.apereo.cas.eclipselink;
 
-import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasEclipseLinkJpaConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
+import org.apereo.cas.config.CasEclipseLinkJpaAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
 import org.apereo.cas.configuration.support.JpaBeans;
@@ -33,8 +33,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasEclipseLinkJpaConfiguration.class,
-    CasCoreUtilConfiguration.class
+    CasEclipseLinkJpaAutoConfiguration.class,
+    CasCoreUtilAutoConfiguration.class
 }, properties = "cas.jdbc.show-sql=false")
 @Tag("Hibernate")
 @EnableTransactionManagement(proxyTargetClass = false)

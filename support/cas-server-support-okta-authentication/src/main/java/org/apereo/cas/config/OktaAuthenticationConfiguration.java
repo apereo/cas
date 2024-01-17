@@ -19,7 +19,6 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import com.okta.authn.sdk.client.AuthenticationClient;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -36,12 +35,12 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Authentication, module = "okta")
-@AutoConfiguration
-public class OktaAuthenticationConfiguration {
+@Configuration(value = "OktaAuthenticationConfiguration", proxyBeanMethods = false)
+class OktaAuthenticationConfiguration {
 
     @Configuration(value = "OktaAuthenticationCoreConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OktaAuthenticationCoreConfiguration {
+    static class OktaAuthenticationCoreConfiguration {
         private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.okta.organization-url");
 
         @ConditionalOnMissingBean(name = "oktaAuthenticationEventExecutionPlanConfigurer")

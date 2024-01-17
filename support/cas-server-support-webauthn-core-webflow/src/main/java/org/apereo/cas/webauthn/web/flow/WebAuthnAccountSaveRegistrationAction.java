@@ -3,7 +3,6 @@ package org.apereo.cas.webauthn.web.flow;
 import org.apereo.cas.web.flow.actions.AbstractMultifactorAuthenticationAction;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.cas.webauthn.WebAuthnMultifactorAuthenticationProvider;
-
 import com.yubico.core.RegistrationStorage;
 import com.yubico.core.SessionManager;
 import com.yubico.webauthn.data.ByteArray;
@@ -33,7 +32,7 @@ public class WebAuthnAccountSaveRegistrationAction extends AbstractMultifactorAu
     protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
         val authentication = WebUtils.getAuthentication(requestContext);
         val principal = resolvePrincipal(authentication.getPrincipal(), requestContext);
-        val sessionToken = requestContext.getRequestParameters().getRequired("sessionToken");
+        val sessionToken = WebUtils.getRequestParameterOrAttribute(requestContext, "sessionToken").orElseThrow();
         LOGGER.trace("Checking registration record for [{}] by session id [{}]", principal.getId(), sessionToken);
         val token = ByteArray.fromBase64Url(sessionToken);
         val credentials = webAuthnCredentialRepository.getCredentialIdsForUsername(principal.getId());

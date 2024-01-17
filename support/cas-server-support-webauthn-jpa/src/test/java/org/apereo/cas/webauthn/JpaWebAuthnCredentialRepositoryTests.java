@@ -1,9 +1,8 @@
 package org.apereo.cas.webauthn;
 
-import org.apereo.cas.config.CasHibernateJpaConfiguration;
-import org.apereo.cas.config.JpaWebAuthnConfiguration;
+import org.apereo.cas.config.CasHibernateJpaAutoConfiguration;
+import org.apereo.cas.config.CasJpaWebAuthnAutoConfiguration;
 import org.apereo.cas.webauthn.storage.BaseWebAuthnCredentialRepositoryTests;
-
 import org.junit.jupiter.api.Tag;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
@@ -20,6 +19,6 @@ import org.springframework.test.context.TestPropertySource;
     "cas.jdbc.show-sql=false"
 })
 @Tag("JDBCMFA")
-@Import({JpaWebAuthnConfiguration.class, CasHibernateJpaConfiguration.class})
+@Import({CasJpaWebAuthnAutoConfiguration.class, CasHibernateJpaAutoConfiguration.class})
 class JpaWebAuthnCredentialRepositoryTests extends BaseWebAuthnCredentialRepositoryTests {
 }

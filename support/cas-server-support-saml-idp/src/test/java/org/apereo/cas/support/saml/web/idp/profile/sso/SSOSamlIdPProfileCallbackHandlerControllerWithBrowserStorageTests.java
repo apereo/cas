@@ -11,8 +11,10 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.util.Saml20HexRandomIdGenerator;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
-import org.apereo.cas.web.BrowserSessionStorage;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import org.apereo.cas.web.BrowserStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.hc.core5.http.HttpStatus;
@@ -33,6 +35,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -46,10 +49,13 @@ import static org.mockito.Mockito.*;
 @Tag("SAML2Web")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestPropertySource(properties = {
-    "cas.authn.saml-idp.core.session-storage-type=BROWSER_SESSION_STORAGE",
+    "cas.authn.saml-idp.core.session-storage-type=BROWSER_STORAGE",
     "cas.authn.saml-idp.metadata.file-system.location=file:src/test/resources/metadata"
 })
 class SSOSamlIdPProfileCallbackHandlerControllerWithBrowserStorageTests extends BaseSamlIdPConfigurationTests {
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).minimal(false).build().toObjectMapper();
+    
     @Autowired
     @Qualifier("ssoPostProfileCallbackHandlerController")
     private SSOSamlIdPProfileCallbackHandlerController controller;
@@ -75,7 +81,8 @@ class SSOSamlIdPProfileCallbackHandlerControllerWithBrowserStorageTests extends 
         val st = getServiceTicket();
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, st.getId());
         val mv = controller.handleCallbackProfileRequestGet(response, request);
-        assertEquals(CasWebflowConstants.VIEW_ID_SESSION_STORAGE_READ, mv.getViewName());
+        assertEquals(CasWebflowConstants.VIEW_ID_BROWSER_STORAGE_READ, mv.getViewName());
+        assertTrue(mv.getModel().containsKey(BrowserStorage.PARAMETER_BROWSER_STORAGE));
     }
 
     @Test
@@ -89,11 +96,11 @@ class SSOSamlIdPProfileCallbackHandlerControllerWithBrowserStorageTests extends 
 
         val st = getServiceTicket();
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, st.getId());
-        val payload = samlIdPDistributedSessionStore.getTrackableSession(new JEEContext(request, response))
-            .map(BrowserSessionStorage.class::cast)
-            .map(BrowserSessionStorage::getPayload)
+        val storage = samlIdPDistributedSessionStore.getTrackableSession(new JEEContext(request, response))
+            .map(BrowserStorage.class::cast)
             .orElseThrow();
-        request.addParameter(BrowserSessionStorage.KEY_SESSION_STORAGE, payload);
+        request.addParameter(BrowserStorage.PARAMETER_BROWSER_STORAGE,
+            MAPPER.writeValueAsString(Map.of(storage.getContext(), storage.getPayload())));
         val mv = controller.handleCallbackProfileRequestPost(response, request);
         assertNull(mv);
         assertEquals(HttpStatus.SC_OK, response.getStatus());

@@ -15,7 +15,6 @@ import org.apereo.cas.web.flow.PrincipalProvisionerAction;
 import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
 
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -34,15 +33,14 @@ import org.springframework.webflow.execution.Action;
  * @since 7.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@AutoConfiguration
-public class SyncopeWebflowConfiguration {
-
+@Configuration(value = "SyncopeWebflowConfiguration", proxyBeanMethods = false)
+class SyncopeWebflowConfiguration {
 
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Provisioning, module = "syncope")
     @Configuration(value = "SyncopeProvisioningWebflowConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SyncopeProvisioningWebflowConfiguration {
-        private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.syncope.provisioning.enabled").isTrue().evenIfMissing();
+    static class SyncopeProvisioningWebflowConfiguration {
+        private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.syncope.provisioning.enabled").isTrue();
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

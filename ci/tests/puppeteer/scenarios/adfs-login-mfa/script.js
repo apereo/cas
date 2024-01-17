@@ -7,7 +7,7 @@ const cas = require("../../cas.js");
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.log(`Navigating to ${service}`);
-    await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
+    await cas.gotoLogin(page, service);
     await page.waitForTimeout(2000);
     await cas.click(page, "div .idp span");
     await page.waitForTimeout(4000);

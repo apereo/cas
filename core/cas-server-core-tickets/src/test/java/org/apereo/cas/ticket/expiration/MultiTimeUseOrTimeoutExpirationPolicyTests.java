@@ -56,6 +56,7 @@ class MultiTimeUseOrTimeoutExpirationPolicyTests extends BaseTicketFactoryTests 
     @Test
     void verifyTicketIsNull() throws Throwable {
         assertTrue(expirationPolicy.isExpired(null));
+        assertNotNull(expirationPolicy.toMaximumExpirationTime(ticket));
     }
 
     @Test

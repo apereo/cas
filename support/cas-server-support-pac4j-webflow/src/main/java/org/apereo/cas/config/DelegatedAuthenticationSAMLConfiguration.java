@@ -24,7 +24,6 @@ import org.pac4j.saml.store.HazelcastSAMLMessageStoreFactory;
 import org.pac4j.saml.store.SAMLMessageStoreFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -42,13 +41,13 @@ import org.springframework.jdbc.core.JdbcTemplate;
  * @since 6.5.0
  */
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.DelegatedAuthentication, module = "saml")
-@AutoConfiguration
+@Configuration(value = "DelegatedAuthenticationSAMLConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class DelegatedAuthenticationSAMLConfiguration {
+class DelegatedAuthenticationSAMLConfiguration {
 
     @ConditionalOnClass(SamlIdPResponseCustomizer.class)
     @Configuration(value = "DelegatedAuthenticationSAML2IdPConfiguration", proxyBeanMethods = false)
-    public static class DelegatedAuthenticationSAML2IdPConfiguration {
+    static class DelegatedAuthenticationSAML2IdPConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "delegatedSaml2IdPResponseCustomizer")
@@ -61,7 +60,7 @@ public class DelegatedAuthenticationSAMLConfiguration {
 
     @ConditionalOnClass(HazelcastInstance.class)
     @Configuration(value = "DelegatedAuthenticationSAMLHazelcastConfiguration", proxyBeanMethods = false)
-    public static class DelegatedAuthenticationSAMLHazelcastConfiguration {
+    static class DelegatedAuthenticationSAMLHazelcastConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnBean(name = "casTicketRegistryHazelcastInstance")
@@ -76,7 +75,7 @@ public class DelegatedAuthenticationSAMLConfiguration {
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.DelegatedAuthentication, module = "saml-jdbc", enabledByDefault = false)
     @Configuration(value = "DelegatedAuthenticationSAMLJdbcConfiguration", proxyBeanMethods = false)
     @ConditionalOnClass(JpaBeanFactory.class)
-    public static class DelegatedAuthenticationSAMLJdbcConfiguration {
+    static class DelegatedAuthenticationSAMLJdbcConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -105,7 +104,7 @@ public class DelegatedAuthenticationSAMLConfiguration {
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.DelegatedAuthentication, module = "saml-mongodb", enabledByDefault = false)
     @Configuration(value = "DelegatedAuthenticationSAMLMongoDbConfiguration", proxyBeanMethods = false)
     @ConditionalOnClass(CasMongoOperations.class)
-    public static class DelegatedAuthenticationSAMLMongoDbConfiguration {
+    static class DelegatedAuthenticationSAMLMongoDbConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

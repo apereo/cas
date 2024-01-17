@@ -29,7 +29,7 @@ import java.util.Optional;
 @Setter
 @ToString(callSuper = true)
 public class WsFederationCredentialsToPrincipalResolver extends PersonDirectoryPrincipalResolver {
-    private WsFederationConfiguration configuration;
+    protected WsFederationConfiguration configuration;
 
     public WsFederationCredentialsToPrincipalResolver(final PrincipalResolutionContext context) {
         super(context);

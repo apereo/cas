@@ -1,5 +1,6 @@
 package org.apereo.cas.trusted.web.flow;
 
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.BaseRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
@@ -75,7 +76,7 @@ class MultifactorAuthenticationSetTrustActionTests extends AbstractMultifactorAu
     @Test
     void verifyNoAuthN() throws Throwable {
         val context = getMockRequestContext();
-        WebUtils.putAuthentication(null, context);
+        WebUtils.putAuthentication((Authentication) null, context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, mfaSetTrustAction.execute(context).getId());
     }
 

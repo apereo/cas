@@ -1,17 +1,20 @@
 description = "Apereo CAS Person Directory & Attribute Resolution Support"
 dependencies {
+
+    implementation libraries.persondirectory
+
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-services-api")
+    implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-services-authentication")
 
     implementation project(":support:cas-server-support-person-directory-core")
 
     compileOnly project(":support:cas-server-support-ldap-core")
     compileOnly project(":support:cas-server-support-jpa-util")
-
-
+    
     testImplementation project(":support:cas-server-support-jdbc-drivers")
 
     testImplementation project(":core:cas-server-core-authentication")
@@ -31,20 +34,24 @@ dependencies {
     testImplementation project(":core:cas-server-core-webflow-api")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-logging")
 
     testImplementation libraries.ldaptive
 
     testImplementation project(":support:cas-server-support-jpa-util")
     testImplementation project(":support:cas-server-support-ldap-core")
-
+    testImplementation project(":support:cas-server-support-reports")
+    
     testImplementation project(path: ":support:cas-server-support-ldap-core", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-person-directory-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-reports", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-notifications", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-audit-api", configuration: "tests")
 
 }

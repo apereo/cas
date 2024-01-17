@@ -37,7 +37,7 @@ function snapshot() {
   fi
   printgreen "Publishing CAS SNAPSHOT artifacts. This might take a while..."
   ./gradlew build publish -x test -x javadoc -x check --no-daemon --parallel \
-    -DskipAot=true -DpublishSnapshots=true --build-cache --no-configuration-cache --configure-on-demand \
+    -DskipAot=true -DpublishSnapshots=true --no-build-cache --no-configuration-cache --configure-on-demand \
     -Dorg.gradle.internal.http.socketTimeout=640000 \
     -Dorg.gradle.internal.http.connectionTimeout=640000 \
     -Dorg.gradle.internal.publish.checksums.insecure=true \
@@ -66,7 +66,7 @@ function publish {
 
     printgreen "Publishing CAS releases. This might take a while..."
     ./gradlew publishToSonatype closeAndReleaseStagingRepository \
-      --no-parallel --no-watch-fs --no-configuration-cache -DskipAot=true -DpublishReleases=true \
+      --no-build-cache --no-parallel --no-watch-fs --no-configuration-cache -DskipAot=true -DpublishReleases=true \
       -DrepositoryUsername="$1" -DrepositoryPassword="$2" -DpublishReleases=true \
       -Dorg.gradle.internal.http.socketTimeout=640000 \
       -Dorg.gradle.internal.http.connectionTimeout=640000 \
@@ -92,7 +92,7 @@ function createTag {
   if [[ $(git tag -l "${releaseTag}") ]]; then
     git tag -d "${releaseTag}" && git push --delete origin "${releaseTag}"
   fi
-  git tag "${releaseTag}" && git push origin "${releaseTag}"
+  git tag "${releaseTag}" -m "Tagging CAS {releaseTag} release" && git push origin "${releaseTag}"
 }
 
 function finished {

@@ -3,8 +3,8 @@ package org.apereo.cas.web.report;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
-import org.apereo.cas.config.CasThymeleafConfiguration;
-import org.apereo.cas.config.CasValidationConfiguration;
+import org.apereo.cas.config.CasThymeleafAutoConfiguration;
+import org.apereo.cas.config.CasValidationAutoConfiguration;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
@@ -35,9 +35,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = "management.endpoint.casValidate.enabled=true")
 @Tag("ActuatorEndpoint")
 @Import({
-    CasProtocolValidationEndpointTests.TestAuthenticationConfiguration.class,
-    CasThymeleafConfiguration.class,
-    CasValidationConfiguration.class
+    CasProtocolValidationEndpointTests.AuthenticationTestConfiguration.class,
+    CasThymeleafAutoConfiguration.class,
+    CasValidationAutoConfiguration.class
 })
 class CasProtocolValidationEndpointTests extends AbstractCasEndpointTests {
     @Autowired
@@ -77,8 +77,8 @@ class CasProtocolValidationEndpointTests extends AbstractCasEndpointTests {
         return request;
     }
 
-    @TestConfiguration(value = "TestAuthenticationConfiguration", proxyBeanMethods = false)
-    static class TestAuthenticationConfiguration {
+    @TestConfiguration(value = "AuthenticationTestConfiguration", proxyBeanMethods = false)
+    static class AuthenticationTestConfiguration {
         @Bean
         public AuthenticationEventExecutionPlanConfigurer surrogateAuthenticationEventExecutionPlanConfigurer() {
             return plan -> plan.registerAuthenticationHandler(new AcceptUsersAuthenticationHandler(CollectionUtils.wrap("casuser", "Mellon")));

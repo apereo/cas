@@ -22,8 +22,10 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20AccessTokenAtHashGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
+import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.BaseIdTokenGeneratorService;
 import org.apereo.cas.ticket.OidcIdToken;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.CollectionUtils;
@@ -135,7 +137,9 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
 
         val attributes = authentication.getAttributes();
         claims.setStringClaim(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
-        claims.setClaim(OidcConstants.CLAIM_AUTH_TIME, tgt.getAuthentication().getAuthenticationDate().toEpochSecond());
+        if (tgt instanceof final AuthenticationAwareTicket aat) {
+            claims.setClaim(OidcConstants.CLAIM_AUTH_TIME, aat.getAuthentication().getAuthenticationDate().toEpochSecond());
+        }
 
         if (attributes.containsKey(OAuth20Constants.STATE)) {
             setClaim(claims, OAuth20Constants.STATE, attributes.get(OAuth20Constants.STATE).getFirst());
@@ -290,28 +294,28 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         collectors.forEach(collector -> collector.collect(claims, claimName, collectionValues));
     }
 
-    protected String getJwtId(final TicketGrantingTicket tgt) {
+    protected String getJwtId(final Ticket ticket) {
         val oAuthCallbackUrl = getConfigurationContext().getCasProperties().getServer().getPrefix()
                                + OAuth20Constants.BASE_OAUTH20_URL + '/'
                                + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
-
-        val streamServices = new LinkedHashMap<String, Service>();
-        val services = tgt.getServices();
-        streamServices.putAll(services);
-        streamServices.putAll(tgt.getProxyGrantingTickets());
-
-        val oAuthServiceTicket = streamServices.entrySet()
-            .stream()
-            .filter(e -> {
-                val service = getConfigurationContext().getServicesManager().findServiceBy(e.getValue());
-                return service != null && service.getServiceId().equals(oAuthCallbackUrl);
-            })
-            .findFirst();
-        if (oAuthServiceTicket.isEmpty()) {
-            LOGGER.trace("Cannot find ticket issued to [{}] as part of the authentication context", oAuthCallbackUrl);
-            return tgt.getId();
+        var jwtId = ticket.getId();
+        if (ticket instanceof final TicketGrantingTicket tgt) {
+            val streamServices = new LinkedHashMap<String, Service>();
+            val services = tgt.getServices();
+            streamServices.putAll(services);
+            streamServices.putAll(tgt.getProxyGrantingTickets());
+            jwtId = streamServices
+                .entrySet()
+                .stream()
+                .filter(e -> {
+                    val service = getConfigurationContext().getServicesManager().findServiceBy(e.getValue());
+                    return service != null && service.getServiceId().equals(oAuthCallbackUrl);
+                })
+                .findFirst()
+                .map(Map.Entry::getKey)
+                .orElseGet(ticket::getId);
         }
-        return oAuthServiceTicket.get().getKey();
+        return jwtId;
     }
 
     protected void generateAccessTokenHash(final OAuth20AccessToken accessToken,

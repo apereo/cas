@@ -11,7 +11,6 @@ import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -27,12 +26,12 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.WsFederationIdentityProvider)
-@AutoConfiguration
-public class CoreWsSecuritySecurityTokenTicketConfiguration {
+@Configuration(value = "CoreWsSecuritySecurityTokenTicketConfiguration", proxyBeanMethods = false)
+class CoreWsSecuritySecurityTokenTicketConfiguration {
 
     @Configuration(value = "CoreWsSecuritySecurityTokenTicketFactoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CoreWsSecuritySecurityTokenTicketFactoryConfiguration {
+    static class CoreWsSecuritySecurityTokenTicketFactoryConfiguration {
         @ConditionalOnMissingBean(name = "securityTokenTicketFactory")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -55,7 +54,7 @@ public class CoreWsSecuritySecurityTokenTicketConfiguration {
 
     @Configuration(value = "CoreWsSecuritySecurityTokenTicketPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CoreWsSecuritySecurityTokenTicketPlanConfiguration {
+    static class CoreWsSecuritySecurityTokenTicketPlanConfiguration {
         @ConditionalOnMissingBean(name = "securityTokenTicketFactoryConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

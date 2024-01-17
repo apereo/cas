@@ -7,12 +7,11 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
-import org.apereo.cas.config.CasThemesConfiguration;
-import org.apereo.cas.config.CasThymeleafConfiguration;
-import org.apereo.cas.config.CasValidationConfiguration;
+import org.apereo.cas.config.CasThemesAutoConfiguration;
+import org.apereo.cas.config.CasThymeleafAutoConfiguration;
+import org.apereo.cas.config.CasValidationAutoConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.web.v2.ProxyValidateController;
-
 import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -22,9 +21,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
 import java.util.Objects;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -36,9 +33,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     BaseCasCoreTests.SharedTestConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
-    CasThemesConfiguration.class,
-    CasThymeleafConfiguration.class,
-    CasValidationConfiguration.class
+    CasThemesAutoConfiguration.class,
+    CasThymeleafAutoConfiguration.class,
+    CasValidationAutoConfiguration.class
 })
 @Tag("CAS")
 @Getter

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -15,7 +16,10 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.io.Serial;
+import java.io.Serializable;
 import java.time.ZonedDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -40,7 +44,7 @@ import java.util.Optional;
 @EqualsAndHashCode(of = "id")
 @Setter
 @Slf4j
-public abstract class AbstractTicket implements TicketGrantingTicketAwareTicket {
+public abstract class AbstractTicket implements TicketGrantingTicketAwareTicket, PropertiesAwareTicket {
 
     @Serial
     private static final long serialVersionUID = -8506442397878267555L;
@@ -85,7 +89,12 @@ public abstract class AbstractTicket implements TicketGrantingTicketAwareTicket 
      * Flag to enforce manual expiration.
      */
     private Boolean expired = Boolean.FALSE;
+    
+    private Boolean stateless = Boolean.FALSE;
 
+    @Getter
+    private Map<String, Object> properties = new HashMap<>(0);
+    
     protected AbstractTicket(final String id, final ExpirationPolicy expirationPolicy) {
         this.id = id;
         this.creationTime = ZonedDateTime.now(expirationPolicy.getClock());
@@ -99,8 +108,20 @@ public abstract class AbstractTicket implements TicketGrantingTicketAwareTicket 
     }
 
     @Override
+    public boolean isStateless() {
+        return this.stateless;
+    }
+
+    @Override
     public void markTicketExpired() {
         this.expired = Boolean.TRUE;
+    }
+
+    @Override
+    @CanIgnoreReturnValue
+    public Ticket markTicketStateless() {
+        this.stateless = Boolean.TRUE;
+        return this;
     }
 
     @Override
@@ -123,12 +144,13 @@ public abstract class AbstractTicket implements TicketGrantingTicketAwareTicket 
     public Authentication getAuthentication() {
         val ticketGrantingTicket = getTicketGrantingTicket();
         return Optional.ofNullable(ticketGrantingTicket)
-            .map(TicketGrantingTicket::getAuthentication)
+            .map(AuthenticationAwareTicket.class::cast)
+            .map(AuthenticationAwareTicket::getAuthentication)
             .orElse(null);
     }
 
     @Override
-    public TicketGrantingTicket getTicketGrantingTicket() {
+    public Ticket getTicketGrantingTicket() {
         return null;
     }
 
@@ -138,8 +160,7 @@ public abstract class AbstractTicket implements TicketGrantingTicketAwareTicket 
     protected void updateTicketGrantingTicketState() {
         val ticketGrantingTicket = getTicketGrantingTicket();
         if (ticketGrantingTicket != null && !ticketGrantingTicket.isExpired()) {
-            val state = (Ticket) ticketGrantingTicket;
-            state.update();
+            ticketGrantingTicket.update();
         }
     }
 
@@ -162,5 +183,36 @@ public abstract class AbstractTicket implements TicketGrantingTicketAwareTicket 
     @JsonIgnore
     protected boolean isExpiredInternal() {
         return this.expired;
+    }
+
+    @Override
+    public void putProperty(final String name, final Serializable value) {
+        this.properties.put(name, value);
+    }
+
+    @Override
+    public void putAllProperties(final Map<String, Serializable> props) {
+        this.properties.putAll(props);
+    }
+
+    @Override
+    public boolean containsProperty(final String name) {
+        return this.properties.containsKey(name);
+    }
+
+    @Override
+    public <T> T getProperty(final String name, final Class<T> clazz) {
+        if (containsProperty(name)) {
+            return clazz.cast(this.properties.get(name));
+        }
+        return null;
+    }
+
+    @Override
+    public <T extends Serializable> T getProperty(final String name, final Class<T> clazz, final T defaultValue) {
+        if (containsProperty(name)) {
+            return clazz.cast(this.properties.getOrDefault(name, defaultValue));
+        }
+        return defaultValue;
     }
 }

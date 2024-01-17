@@ -94,4 +94,14 @@ public interface MultifactorAuthenticationTrustStorage {
      * @return the cipher executor
      */
     CipherExecutor<Serializable, String> getCipherExecutor();
+
+    /**
+     * Determine if the storage service is available
+     * and is able to establish a connection.
+     *
+     * @return the boolean
+     */
+    default boolean isAvailable() {
+        return true;
+    }
 }

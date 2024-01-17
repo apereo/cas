@@ -4,12 +4,12 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationComponentSerializationConfiguration;
-import org.apereo.cas.config.CasCoreServicesComponentSerializationConfiguration;
-import org.apereo.cas.config.CasCoreTicketComponentSerializationConfiguration;
-import org.apereo.cas.config.CasCoreUtilSerializationConfiguration;
-import org.apereo.cas.config.CasOAuth20ComponentSerializationConfiguration;
-import org.apereo.cas.config.MemcachedTicketRegistryConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
+import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
+import org.apereo.cas.config.CasMemcachedTicketRegistryAutoConfiguration;
+import org.apereo.cas.config.CasOAuth20AutoConfiguration;
 import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -26,7 +26,6 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.util.serialization.ComponentSerializationPlan;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
-
 import lombok.Getter;
 import lombok.val;
 import net.spy.memcached.MemcachedClientIF;
@@ -38,9 +37,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
-
 import java.util.HashMap;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -52,12 +49,12 @@ import static org.mockito.Mockito.*;
  * @deprecated Since 7.0.0
  */
 @Import({
-    MemcachedTicketRegistryConfiguration.class,
-    CasCoreUtilSerializationConfiguration.class,
-    CasCoreTicketComponentSerializationConfiguration.class,
-    CasCoreAuthenticationComponentSerializationConfiguration.class,
-    CasCoreServicesComponentSerializationConfiguration.class,
-    CasOAuth20ComponentSerializationConfiguration.class,
+    CasMemcachedTicketRegistryAutoConfiguration.class,
+    CasCoreUtilAutoConfiguration.class,
+    CasCoreTicketsAutoConfiguration.class,
+    CasCoreAuthenticationAutoConfiguration.class,
+    CasCoreServicesAutoConfiguration.class,
+    CasOAuth20AutoConfiguration.class,
     CasAuthenticationEventExecutionPlanTestConfiguration.class,
     MemcachedTicketRegistryTests.MemcachedTicketRegistryTestConfiguration.class
 })
@@ -92,7 +89,7 @@ class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
     private AuthenticationSystemSupport authenticationSystemSupport;
 
     @Override
-    protected boolean isIterableRegistry() {
+    protected boolean canTicketRegistryIterate() {
         return false;
     }
 

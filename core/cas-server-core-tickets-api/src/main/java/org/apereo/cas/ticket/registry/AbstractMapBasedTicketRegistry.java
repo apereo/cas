@@ -100,7 +100,7 @@ public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegis
     }
 
     @Override
-    public void addTicketInternal(final Ticket ticket) throws Exception {
+    public Ticket addSingleTicket(final Ticket ticket) throws Exception {
         addTicketToQueue(ticket);
 
         if (ticketPublisher.isEnabled()) {
@@ -108,6 +108,7 @@ public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegis
             val command = new AddTicketMessageQueueCommand(publisherIdentifier, ticket);
             ticketPublisher.publishMessageToQueue(command);
         }
+        return ticket;
     }
 
     @Override

@@ -1,7 +1,7 @@
 package org.apereo.cas.validation;
 
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 
 import lombok.Builder;
@@ -28,9 +28,11 @@ public class DefaultAssertionBuilder {
     @Builder.Default
     private final List<Authentication> authentications = new ArrayList<>(0);
 
-    private final WebApplicationService service;
+    private final Service service;
 
     private final boolean newLogin;
+    
+    private final boolean stateless;
 
     private final RegisteredService registeredService;
 
@@ -43,6 +45,6 @@ public class DefaultAssertionBuilder {
      */
     public Assertion assemble() {
         return new ImmutableAssertion(this.primaryAuthentication, this.originalAuthentication,
-            this.authentications, this.newLogin, this.service, this.registeredService, this.context);
+            this.authentications, this.newLogin, this.stateless, this.service, this.registeredService, this.context);
     }
 }

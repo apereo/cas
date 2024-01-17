@@ -1,6 +1,6 @@
 package org.apereo.cas.gauth.credential;
 
-import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenAccountCipherExecutor;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
@@ -28,7 +28,7 @@ class InMemoryGoogleAuthenticatorTokenCredentialRepositoryTests {
     @SpringBootTest(classes = {
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
-        CasCoreUtilConfiguration.class
+        CasCoreUtilAutoConfiguration.class
     })
     @Nested
     class ScratchCodesEncryptionTests extends BaseOneTimeTokenCredentialRepositoryTests {
@@ -49,7 +49,7 @@ class InMemoryGoogleAuthenticatorTokenCredentialRepositoryTests {
     @SpringBootTest(classes = {
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
-        CasCoreUtilConfiguration.class
+        CasCoreUtilAutoConfiguration.class
     })
     @Nested
     class DefaultTests extends BaseOneTimeTokenCredentialRepositoryTests {

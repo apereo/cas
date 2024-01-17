@@ -71,12 +71,7 @@ public class PublicKeyFactoryBean extends AbstractFactoryBean<PublicKey> {
         return key;
     }
 
-    /**
-     * Read pem public key.
-     *
-     * @return the public key
-     * @throws Exception the exception
-     */
+
     protected PublicKey readPemPublicKey() throws Exception {
         try (val reader = new PemReader(new InputStreamReader(this.resource.getInputStream(), StandardCharsets.UTF_8))) {
             val pemObject = reader.readPemObject();

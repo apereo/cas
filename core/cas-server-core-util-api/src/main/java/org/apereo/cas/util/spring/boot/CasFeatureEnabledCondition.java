@@ -1,7 +1,6 @@
 package org.apereo.cas.util.spring.boot;
 
 import org.apereo.cas.configuration.features.CasFeatureModule;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -10,7 +9,6 @@ import org.springframework.boot.autoconfigure.condition.SpringBootCondition;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotatedTypeMetadata;
-
 import java.util.Arrays;
 import java.util.Map;
 
@@ -22,6 +20,7 @@ import java.util.Map;
  */
 @Slf4j
 public class CasFeatureEnabledCondition extends SpringBootCondition {
+    static final String PROPERTY_SELECTED_FEATURE_MODULES = "CasFeatureModules.selected";
 
     private static ConditionOutcome evaluateFeatureCondition(final ConditionContext context,
                                                              final Map<String, Object> attributes) {
@@ -37,11 +36,17 @@ public class CasFeatureEnabledCondition extends SpringBootCondition {
         final String module,
         final boolean enabledByDefault) {
 
+        val selectedModules = context.getEnvironment().getProperty(PROPERTY_SELECTED_FEATURE_MODULES, StringUtils.EMPTY);
+        if (StringUtils.isNotBlank(selectedModules)) {
+            return verifySelectedFeatureModules(features, module, selectedModules);
+        }
+        
         for (val feature : features) {
             val property = feature.toProperty(module);
             LOGGER.trace("Checking for feature module capability via [{}]", property);
 
-            if (!context.getEnvironment().containsProperty(property) && !enabledByDefault) {
+            val isFeatureDisabled = !context.getEnvironment().containsProperty(property) && !enabledByDefault;
+            if (isFeatureDisabled) {
                 val message = "CAS feature " + property + " is disabled by default and must be explicitly enabled.";
                 LOGGER.trace(message);
                 return ConditionOutcome.noMatch(message);
@@ -58,6 +63,29 @@ public class CasFeatureEnabledCondition extends SpringBootCondition {
             feature.register(module);
         }
         
+        return ConditionOutcome.match("Requested features " + Arrays.toString(features) + " are enabled");
+    }
+
+    private static ConditionOutcome verifySelectedFeatureModules(final CasFeatureModule.FeatureCatalog[] features,
+                                                                 final String module, final String selectedModules) {
+
+        val selectedFeatures = Arrays.asList(selectedModules.split(","));
+        var featureIsSelected = false;
+        for (val feature : features) {
+            val property = feature.toProperty(module);
+            featureIsSelected = selectedFeatures.stream().anyMatch(feat -> feat.startsWith(property) && feat.endsWith(".enabled=true"));
+            if (!featureIsSelected) {
+                featureIsSelected = CasFeatureModule.baseline().contains(feature);
+            }
+            if (!featureIsSelected) {
+                val message = "CAS feature " + property + " is not selected and will be enabled.";
+                LOGGER.debug(message);
+                return ConditionOutcome.noMatch(message);
+            }
+            val message = "CAS feature " + property + " is selected and will be enabled.";
+            LOGGER.info(message);
+            feature.register(module);
+        }
         return ConditionOutcome.match("Requested features " + Arrays.toString(features) + " are enabled");
     }
 

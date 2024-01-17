@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -31,8 +30,8 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @Slf4j
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Authentication)
-@AutoConfiguration
-public class CasCoreAuthenticationPolicyConfiguration {
+@Configuration(value = "CasCoreAuthenticationPolicyConfiguration", proxyBeanMethods = false)
+class CasCoreAuthenticationPolicyConfiguration {
 
     @ConditionalOnMissingBean(name = "ipAddressIntelligenceService")
     @Bean
@@ -44,7 +43,7 @@ public class CasCoreAuthenticationPolicyConfiguration {
 
     @Configuration(value = "CasCoreAuthenticationPolicyPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreAuthenticationPolicyPlanConfiguration {
+    static class CasCoreAuthenticationPolicyPlanConfiguration {
         @ConditionalOnMissingBean(name = "authenticationPolicyExecutionPlanConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

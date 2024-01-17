@@ -1,11 +1,10 @@
 package org.apereo.cas.aup;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
-import org.apereo.cas.config.CasAcceptableUsagePolicyLdapConfiguration;
+import org.apereo.cas.config.CasAcceptableUsagePolicyLdapAutoConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.Cleanup;
 import lombok.Getter;
@@ -22,13 +21,11 @@ import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
-
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -39,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("LdapRepository")
 @EnabledIfListeningOnPort(port = 10389)
-@Import(CasAcceptableUsagePolicyLdapConfiguration.class)
+@Import(CasAcceptableUsagePolicyLdapAutoConfiguration.class)
 @TestPropertySource(properties = {
     "cas.acceptable-usage-policy.ldap[0].ldap-url=ldap://localhost:10389",
     "cas.acceptable-usage-policy.ldap[0].base-dn=ou=people,dc=example,dc=org",

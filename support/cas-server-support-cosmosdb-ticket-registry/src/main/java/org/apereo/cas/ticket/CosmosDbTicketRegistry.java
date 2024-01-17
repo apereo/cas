@@ -116,8 +116,7 @@ public class CosmosDbTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Ticket updateTicket(final Ticket ticket) throws Exception {
-        addTicket(ticket);
-        return ticket;
+        return addTicket(ticket);
     }
 
     @Override
@@ -130,23 +129,24 @@ public class CosmosDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    protected void addTicketInternal(final Ticket ticket) throws Exception {
+    protected Ticket addSingleTicket(final Ticket ticket) throws Exception {
         val metadata = ticketCatalog.find(ticket);
         val container = getTicketContainer(metadata);
         val holder = getCosmosDbTicketDocument(ticket, metadata);
         container.upsertItem(holder);
+        return ticket;
     }
 
     @Override
-    public void addTicket(final Stream<? extends Ticket> toSave) {
+    public List<? extends Ticket> addTicket(final Stream<? extends Ticket> toSave) {
         val operations = new HashMap<String, List<CosmosItemOperation>>();
-        toSave.forEach(ticket -> {
+        val results = toSave.peek(ticket -> {
             val ticketDefinition = ticketCatalog.find(ticket);
             val holder = getCosmosDbTicketDocument(ticket, ticketDefinition);
             val commands = (List<CosmosItemOperation>) operations.getOrDefault(ticketDefinition.getProperties().getStorageName(), new ArrayList<>());
             commands.add(CosmosBulkOperations.getCreateItemOperation(holder, new PartitionKey(ticketDefinition.getPrefix())));
             operations.put(ticketDefinition.getProperties().getStorageName(), commands);
-        });
+        }).toList();
         operations.forEach((key, value) -> {
             val container = getTicketContainer(key);
             val result = container.executeBulkOperations(value);
@@ -156,6 +156,7 @@ public class CosmosDbTicketRegistry extends AbstractTicketRegistry {
                 }
             });
         });
+        return results;
     }
 
     private CosmosDbTicketDocument getCosmosDbTicketDocument(final Ticket ticket, final TicketDefinition metadata) {

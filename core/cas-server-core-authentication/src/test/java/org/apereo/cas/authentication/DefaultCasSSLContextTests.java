@@ -1,6 +1,6 @@
 package org.apereo.cas.authentication;
 
-import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -28,13 +29,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("Authentication")
-@EnableConfigurationProperties(CasConfigurationProperties.class)
+@EnableConfigurationProperties({CasConfigurationProperties.class, WebProperties.class})
 class DefaultCasSSLContextTests {
 
     @ImportAutoConfiguration(RefreshAutoConfiguration.class)
     @SpringBootConfiguration
-    @Import(CasCoreHttpConfiguration.class)
-    static class SharedTestConfiguration {
+    @Import(CasCoreWebAutoConfiguration.class)
+    @EnableConfigurationProperties({CasConfigurationProperties.class, WebProperties.class})
+    public static class SharedTestConfiguration {
         static String contactUrl(final String addr, final CasSSLContext context) throws Exception {
             val url = new URI(addr).toURL();
             val connection = (HttpsURLConnection) url.openConnection();
@@ -49,6 +51,7 @@ class DefaultCasSSLContextTests {
 
     @Nested
     @SpringBootTest(classes = SharedTestConfiguration.class)
+    @EnableConfigurationProperties({CasConfigurationProperties.class, WebProperties.class})
     public class SystemSslContext {
         @Autowired
         @Qualifier(CasSSLContext.BEAN_NAME)

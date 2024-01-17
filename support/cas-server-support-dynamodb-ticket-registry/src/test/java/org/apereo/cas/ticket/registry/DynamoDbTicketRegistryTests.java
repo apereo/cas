@@ -1,9 +1,8 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.config.CasOAuth20ProtocolTicketCatalogConfiguration;
-import org.apereo.cas.config.DynamoDbTicketRegistryConfiguration;
-import org.apereo.cas.config.DynamoDbTicketRegistryTicketCatalogConfiguration;
+import org.apereo.cas.config.CasDynamoDbTicketRegistryAutoConfiguration;
+import org.apereo.cas.config.CasOAuth20ProtocolTicketCatalogAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
@@ -25,7 +24,6 @@ import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.TicketGrantingTicketIdGenerator;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import lombok.Getter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -37,11 +35,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 import software.amazon.awssdk.core.SdkSystemSetting;
-
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -52,9 +48,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("DynamoDb")
 @Import({
-    DynamoDbTicketRegistryConfiguration.class,
-    DynamoDbTicketRegistryTicketCatalogConfiguration.class,
-    CasOAuth20ProtocolTicketCatalogConfiguration.class
+    CasDynamoDbTicketRegistryAutoConfiguration.class,
+    CasOAuth20ProtocolTicketCatalogAutoConfiguration.class
 })
 @TestPropertySource(
     properties = {
