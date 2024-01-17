@@ -106,8 +106,7 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
             }
         }));
     }
-    protected MockHttpServletResponse login(final String username,
-                                            final String password,
+    protected MockHttpServletResponse login(final String username, final String password,
                                             final String fromAddress) throws Exception {
         val context = MockRequestContext.create();
         val request = context.getHttpServletRequest();
@@ -117,6 +116,7 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
         context.setParameter(CasProtocolConstants.PARAMETER_USERNAME, username);
         context.setParameter(CasProtocolConstants.PARAMETER_PASSWORD, password);
         request.setRemoteAddr(fromAddress);
+        request.addHeader("User-Agent", "Firefox");
         request.setAttribute("flowRequestContext", context);
         request.setRequestURI("/cas/login");
         context.setCurrentEvent(new Event(StringUtils.EMPTY, "error"));
