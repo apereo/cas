@@ -35,11 +35,11 @@ class PrepareForPasswordlessAuthenticationActionTests extends BasePasswordlessAu
         assertEquals(CasWebflowConstants.TRANSITION_ID_PASSWORDLESS_GET_USERID, prepareLoginAction.execute(context).getId());
 
         val account = PasswordlessUserAccount.builder()
-                .email("email")
-                .phone("phone")
-                .username("casuser")
-                .name("casuser")
-                .build();
+            .email("email")
+            .phone("phone")
+            .username("casuser")
+            .name("casuser")
+            .build();
         PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(context, account);
         assertNull(prepareLoginAction.execute(context));
     }
