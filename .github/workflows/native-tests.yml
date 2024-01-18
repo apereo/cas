@@ -59,7 +59,7 @@ jobs:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: ${{ env.JDK_DISTRIBUTION }}
       - name: Setup Gradle Wrapper Cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
@@ -84,7 +84,7 @@ jobs:
           distribution: ${{ env.JDK_DISTRIBUTION }}
           cache: 'gradle'
       - name: Setup Gradle Wrapper Cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
@@ -112,7 +112,7 @@ jobs:
       - name: Configure CI
         run: source ./ci/tests/puppeteer/configure-ci.sh ${{matrix.scenario}}
       - name: Setup Gradle Wrapper Cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         if: ${{ env.NATIVE_BUILD_ENABLED == 'true' }}
         with:
           path: ~/.gradle/wrapper
@@ -171,7 +171,7 @@ jobs:
       - name: Configure CI
         run: ./ci/tests/puppeteer/configure-ci.sh ${{matrix.scenario}}
       - name: Setup Gradle Wrapper Cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         if: ${{ env.NATIVE_BUILD_ENABLED == 'true' }}
         with:
           path: ~/.gradle/wrapper
