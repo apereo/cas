@@ -32,7 +32,6 @@ dependencies {
     implementation project(":support:cas-server-support-passwordless-authentication")
     implementation project(":support:cas-server-support-pac4j-core")
     implementation project(":support:cas-server-support-pac4j-api")
-    implementation project(":support:cas-server-support-pm-core")
 
     compileOnly project(":support:cas-server-support-pac4j-webflow")
 

@@ -27,12 +27,7 @@
     "--spring.mail.port=25000",
 
     "--cas.authn.attribute-repository.stub.attributes.phone=13477464523",
-    "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
-
-    "--logging.level.org.springframework.webflow.engine.ActionState=debug",
-    "--logging.level.org.springframework.webflow.engine.DecisionState=debug",
-    "--logging.level.org.springframework.webflow.engine.Transition=debug",
-    "--logging.level.org.springframework.webflow.engine.ViewState=debug"
+    "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org"
   ],
   "jvmArgs": "-Djava.net.preferIPv4Stack=true -Djava.net.preferIPv4Addresses=true",
   "initScript": "${PWD}/ci/tests/mail/run-mail-server.sh"
