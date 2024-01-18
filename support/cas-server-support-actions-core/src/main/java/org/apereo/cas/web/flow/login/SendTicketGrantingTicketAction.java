@@ -86,7 +86,7 @@ public class SendTicketGrantingTicketAction extends BaseCasWebflowAction {
     protected Event createSingleSignOnCookie(final RequestContext requestContext, final String ticketGrantingTicketId) throws Exception {
         val ticketGrantingTicket = ticketRegistry.getTicket(ticketGrantingTicketId);
         if (ticketGrantingTicket.isCompact()) {
-            return result(CasWebflowConstants.TRANSITION_ID_WRITE_SESSION_STORAGE,
+            return result(CasWebflowConstants.TRANSITION_ID_WRITE_BROWSER_STORAGE,
                 new LocalAttributeMap<>(TicketGrantingTicket.class.getName(), ticketGrantingTicketId));
         }
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);

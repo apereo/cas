@@ -208,7 +208,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
                 .getTrackableSession(context).map(BrowserSessionStorage.class::cast)
                 .orElseThrow(() -> new IllegalStateException("Unable to determine trackable session for storage"));
             sessionStorage.setDestinationUrl(urlToRedirectTo);
-            return new ModelAndView(CasWebflowConstants.VIEW_ID_SESSION_STORAGE_WRITE,
+            return new ModelAndView(CasWebflowConstants.VIEW_ID_BROWSER_STORAGE_WRITE,
                 BrowserSessionStorage.KEY_SESSION_STORAGE, sessionStorage);
         }
         LOGGER.debug("Redirecting SAML authN request to [{}]", urlToRedirectTo);

@@ -31,6 +31,13 @@ public interface Ticket extends Serializable, Comparable<Ticket> {
     }
 
     /**
+     * Sets creation time.
+     *
+     * @param creationTime the creation time
+     */
+    default void setCreationTime(final ZonedDateTime creationTime) {}
+
+    /**
      * Gets count of uses.
      *
      * @return the number of times this ticket was used.
@@ -74,6 +81,13 @@ public interface Ticket extends Serializable, Comparable<Ticket> {
     default ExpirationPolicy getExpirationPolicy() {
         return null;
     }
+
+    /**
+     * Sets expiration policy.
+     *
+     * @param expirationPolicy the expiration policy
+     */
+    default void setExpirationPolicy(final ExpirationPolicy expirationPolicy) {}
 
     /**
      * Mark a ticket as expired.

@@ -1,14 +1,20 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.logout.LogoutManager;
+import org.apereo.cas.services.CasRegisteredService;
+import org.apereo.cas.services.ImmutableInMemoryServiceRegistry;
+import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.ticket.TicketCatalog;
+import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.StatelessTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
-import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CoreTicketUtils;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -24,6 +30,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.core.Ordered;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
@@ -39,20 +46,36 @@ public class StatelessTicketRegistryConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "statelessTicketRegistryCipherExecutor")
-    public CipherExecutor statelessTicketRegistryCipherExecutor(final CasConfigurationProperties casProperties) {
-        val mem = casProperties.getTicket().getRegistry().getStateless();
-        return CoreTicketUtils.newTicketRegistryCipherExecutor(mem.getCrypto(), "stateless");
+    @ConditionalOnMissingBean(name = "statelessTicketRegistryServiceExecutionPlanConfigurer")
+    public ServiceRegistryExecutionPlanConfigurer statelessTicketRegistryServiceExecutionPlanConfigurer(
+        final CasConfigurationProperties casProperties,
+        final ConfigurableApplicationContext applicationContext) {
+        return plan -> {
+            val service = new CasRegisteredService();
+            service.setId(RandomUtils.nextLong());
+            service.setEvaluationOrder(Ordered.HIGHEST_PRECEDENCE);
+            service.setName(service.getClass().getSimpleName());
+            service.setDescription("CAS Server");
+            service.setServiceId("^%s.*".formatted(casProperties.getServer().getPrefix()));
+            plan.registerServiceRegistry(new ImmutableInMemoryServiceRegistry(service, applicationContext));
+        };
     }
 
-    @ConditionalOnMissingBean(name = TicketRegistry.BEAN_NAME)
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "statelessTicketRegistryCipherExecutor")
+    public CipherExecutor statelessTicketRegistryCipherExecutor(final CasConfigurationProperties casProperties) {
+        val stateless = casProperties.getTicket().getRegistry().getStateless();
+        return CoreTicketUtils.newTicketRegistryCipherExecutor(stateless.getCrypto(), "stateless");
+    }
+
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public TicketRegistry ticketRegistry(
-        @Qualifier(JwtBuilder.TICKET_JWT_BUILDER_BEAN_NAME)
-        final JwtBuilder tokenTicketJwtBuilder,
-        @Qualifier("statelessTicketRegistryCipherExecutor")
-        final CipherExecutor defaultTicketRegistryCipherExecutor,
+        @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
+        final ServiceFactory serviceFactory,
+        @Qualifier(TicketFactory.BEAN_NAME)
+        final ObjectProvider<TicketFactory> ticketFactory,
         @Qualifier(TicketCatalog.BEAN_NAME)
         final TicketCatalog ticketCatalog,
         @Qualifier(TicketSerializationManager.BEAN_NAME)
@@ -60,8 +83,10 @@ public class StatelessTicketRegistryConfiguration {
         @Qualifier(LogoutManager.DEFAULT_BEAN_NAME)
         final ObjectProvider<LogoutManager> logoutManager,
         final CasConfigurationProperties casProperties) {
-        return new StatelessTicketRegistry(defaultTicketRegistryCipherExecutor,
-            ticketSerializationManager, ticketCatalog, tokenTicketJwtBuilder, casProperties);
+        val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(
+            casProperties.getTicket().getRegistry().getStateless().getCrypto(), "stateless");
+        return new StatelessTicketRegistry(cipher, ticketSerializationManager, ticketCatalog,
+            ticketFactory, serviceFactory, casProperties);
     }
 
     @Bean

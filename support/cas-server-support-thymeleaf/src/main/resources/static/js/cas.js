@@ -106,14 +106,17 @@ function writeToLocalStorage(value, key= "localStorageKey") {
     }
 }
 
-function readFromLocalStorage(key = "localStorageKey") {
+function readFromLocalStorage(key = "localStorageKey", removeAfterRead = true) {
     if (typeof (Storage) === "undefined") {
         console.log("Browser does not support local storage for read-ops");
         return null;
     }
     let payload = window.localStorage.getItem(key);
     console.log(`Read ${payload} in local storage under key ${key}`);
-    window.localStorage.removeItem(key);
+
+    if (removeAfterRead) {
+        window.localStorage.removeItem(key);
+    }
     return payload;
 }
 
@@ -135,15 +138,26 @@ function clearSessionStorage() {
     }
 }
 
+function clearLocalStorage() {
+    if (typeof (Storage) === "undefined") {
+        console.log("Browser does not support local storage for write-ops");
+    } else {
+        window.localStorage.clear();
+    }
+}
 
-function readFromSessionStorage(key= "sessionStorageKey") {
+
+function readFromSessionStorage(key= "sessionStorageKey", removeAfterRead = true) {
     if (typeof (Storage) === "undefined") {
         console.log("Browser does not support session storage for read-ops");
         return null;
     }
     let payload = window.sessionStorage.getItem(key);
     console.log(`Read ${payload} in session storage under key ${key}`);
-    window.sessionStorage.removeItem(key);
+    alert(removeAfterRead);
+    if (removeAfterRead) {
+        window.sessionStorage.removeItem(key);
+    }
     return payload;
 }
 

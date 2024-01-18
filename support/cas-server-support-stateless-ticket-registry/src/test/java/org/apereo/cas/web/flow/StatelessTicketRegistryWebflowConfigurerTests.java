@@ -2,7 +2,6 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.config.CasWebflowAccountProfileConfiguration;
 import org.apereo.cas.config.StatelessTicketRegistryConfiguration;
-import org.apereo.cas.config.TokenCoreConfiguration;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -26,7 +25,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Import({
-    TokenCoreConfiguration.class,
     StatelessTicketRegistryConfiguration.class,
     CasWebflowAccountProfileConfiguration.class
 })
@@ -47,7 +45,7 @@ public class StatelessTicketRegistryWebflowConfigurerTests extends BaseWebflowCo
         var field = ReflectionUtils.findField(EvaluateAction.class, "expression");
         Objects.requireNonNull(field).trySetAccessible();
         var fieldValue = ((Expression) ReflectionUtils.getField(Objects.requireNonNull(field), action)).getExpressionString();
-        assertEquals(CasWebflowConstants.ACTION_ID_READ_SESSION_STORAGE, fieldValue);
+        assertEquals(CasWebflowConstants.ACTION_ID_READ_BROWSER_STORAGE, fieldValue);
 
         val accountFlow = accountProfileFlowRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_ACCOUNT);
         assertNotNull(flow);
@@ -57,7 +55,7 @@ public class StatelessTicketRegistryWebflowConfigurerTests extends BaseWebflowCo
         field = ReflectionUtils.findField(EvaluateAction.class, "expression");
         Objects.requireNonNull(field).trySetAccessible();
         fieldValue = ((Expression) ReflectionUtils.getField(Objects.requireNonNull(field), firstAction)).getExpressionString();
-        assertEquals(CasWebflowConstants.ACTION_ID_READ_SESSION_STORAGE, fieldValue);
+        assertEquals(CasWebflowConstants.ACTION_ID_READ_BROWSER_STORAGE, fieldValue);
 
     }
 }

@@ -29,11 +29,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebflowAuthenticationActions")
 public class SessionStorageActionTests extends BaseWebflowConfigurerTests {
     @Autowired
-    @Qualifier(CasWebflowConstants.ACTION_ID_WRITE_SESSION_STORAGE)
+    @Qualifier(CasWebflowConstants.ACTION_ID_WRITE_BROWSER_STORAGE)
     private Action writeSessionStorageAction;
 
     @Autowired
-    @Qualifier(CasWebflowConstants.ACTION_ID_READ_SESSION_STORAGE)
+    @Qualifier(CasWebflowConstants.ACTION_ID_READ_BROWSER_STORAGE)
     private Action readSessionStorageAction;
 
     @Test
@@ -50,7 +50,7 @@ public class SessionStorageActionTests extends BaseWebflowConfigurerTests {
 
         var readResult = readSessionStorageAction.execute(context);
         assertTrue(context.getFlowScope().contains(BrowserSessionStorage.KEY_SESSION_STORAGE_CONTEXT));
-        assertEquals(CasWebflowConstants.TRANSITION_ID_READ_SESSION_STORAGE, readResult.getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_READ_BROWSER_STORAGE, readResult.getId());
 
         val writeResult = writeSessionStorageAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, writeResult.getId());

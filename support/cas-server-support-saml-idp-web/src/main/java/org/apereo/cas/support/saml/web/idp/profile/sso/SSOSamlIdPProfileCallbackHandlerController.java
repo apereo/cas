@@ -62,7 +62,7 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
         val type = properties.getAuthn().getSamlIdp().getCore().getSessionStorageType();
         if (type == SessionStorageTypes.BROWSER_SESSION_STORAGE
             && !request.getParameterMap().containsKey(BrowserSessionStorage.KEY_SESSION_STORAGE)) {
-            return new ModelAndView(CasWebflowConstants.VIEW_ID_SESSION_STORAGE_READ);
+            return new ModelAndView(CasWebflowConstants.VIEW_ID_BROWSER_STORAGE_READ);
         }
         return handleProfileRequest(response, request);
     }

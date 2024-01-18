@@ -493,7 +493,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         if (!StringUtils.isEmpty(inflated)) {
             return inflated;
         }
-        return CompressionUtils.decodeByteArrayToString(decodedBytes);
+        return CompressionUtils.inflateToString(decodedBytes);
     }
 
     protected String getInResponseTo(final RequestAbstractType request, final String entityId, final boolean skipInResponseTo) {
