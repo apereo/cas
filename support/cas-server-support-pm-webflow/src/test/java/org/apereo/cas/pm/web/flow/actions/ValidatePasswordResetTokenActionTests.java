@@ -1,15 +1,23 @@
 package org.apereo.cas.pm.web.flow.actions;
 
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.ticket.TransientSessionTicket;
+import org.apereo.cas.ticket.TransientSessionTicketImpl;
+import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfo;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Map;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,6 +37,24 @@ class ValidatePasswordResetTokenActionTests extends BasePasswordManagementAction
         val context = MockRequestContext.create();
         context.setParameter(PasswordManagementService.PARAMETER_PASSWORD_RESET_TOKEN, UUID.randomUUID().toString());
         assertEquals(CasWebflowConstants.TRANSITION_ID_INVALID_PASSWORD_RESET_TOKEN, validatePasswordResetTokenAction.execute(context).getId());
+    }
+
+    @Test
+    void verifyGoodTicket() throws Throwable {
+        ClientInfoHolder.setClientInfo(new ClientInfo());
+        val id = UUID.randomUUID().toString();
+        val ticket = new TransientSessionTicketImpl();
+        ticket.setId(id);
+        ticket.setCreationTime(ZonedDateTime.now(ZoneId.systemDefault()));
+        ticket.setExpirationPolicy(NeverExpiresExpirationPolicy.INSTANCE);
+        val query = PasswordManagementQuery.builder()
+                .username("casuser").email("casuser@email.com").build();
+        val token = passwordManagementService.createToken(query);
+        ticket.getProperties().put("token", token);
+        ticketRegistry.addTicket(ticket);
+        val context = MockRequestContext.create();
+        context.setParameter(PasswordManagementService.PARAMETER_PASSWORD_RESET_TOKEN, id);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_RESET_PASSWORD, validatePasswordResetTokenAction.execute(context).getId());
     }
 
     @Test
