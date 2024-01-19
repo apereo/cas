@@ -2,7 +2,15 @@ package org.apereo.cas.authentication.sync;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.authentication.AuthenticationPostProcessor;
-import org.apereo.cas.config.LdapPasswordSynchronizationConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasCoreAutoConfiguration;
+import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
+import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
+import org.apereo.cas.config.CasLdapAuthenticationAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import com.unboundid.ldap.sdk.LDAPConnection;
@@ -10,6 +18,7 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,7 +33,16 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    LdapPasswordSynchronizationConfiguration.class
+    SecurityAutoConfiguration.class,
+    CasCoreServicesAutoConfiguration.class,
+    CasCoreAutoConfiguration.class,
+    CasCoreAuthenticationAutoConfiguration.class,
+    CasCoreTicketsAutoConfiguration.class,
+    CasCoreLogoutAutoConfiguration.class,
+    CasCoreWebAutoConfiguration.class,
+    CasCoreUtilAutoConfiguration.class,
+    CasCoreNotificationsAutoConfiguration.class,
+    CasLdapAuthenticationAutoConfiguration.class
 },
     properties = {
         "cas.authn.password-sync.ldap[0].enabled=true",

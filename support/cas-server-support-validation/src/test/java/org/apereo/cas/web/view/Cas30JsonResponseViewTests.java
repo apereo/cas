@@ -43,7 +43,8 @@ class Cas30JsonResponseViewTests extends Cas30ResponseViewTests {
             viewDelegated,
             new DefaultAuthenticationAttributeReleasePolicy("attribute"),
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()),
-            new DefaultCas30ProtocolAttributesRenderer());
+            new DefaultCas30ProtocolAttributesRenderer(),
+            getAttributeDefinitionStore());
     }
 
     @Override

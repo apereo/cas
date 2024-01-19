@@ -1,13 +1,11 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
-import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
-import org.apereo.cas.config.CoreSamlConfiguration;
-import org.apereo.cas.config.DelegatedAuthenticationConfiguration;
-import org.apereo.cas.config.DelegatedAuthenticationEventExecutionPlanConfiguration;
-import org.apereo.cas.config.DelegatedAuthenticationWebflowConfiguration;
-import org.apereo.cas.config.PasswordlessAuthenticationConfiguration;
-import org.apereo.cas.config.PasswordlessAuthenticationWebflowConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
+import org.apereo.cas.config.CasCoreSamlAutoConfiguration;
+import org.apereo.cas.config.CasDelegatedAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasPasswordlessAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasPasswordlessAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowConfigurer;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -36,14 +34,12 @@ import static org.mockito.Mockito.*;
     WebMvcAutoConfiguration.class,
     MockMvcAutoConfiguration.class,
     ErrorMvcAutoConfiguration.class,
-    CoreSamlConfiguration.class,
-    CasCoreMultifactorAuthenticationConfiguration.class,
-    CasMultifactorAuthenticationWebflowConfiguration.class,
-    DelegatedAuthenticationConfiguration.class,
-    DelegatedAuthenticationEventExecutionPlanConfiguration.class,
-    DelegatedAuthenticationWebflowConfiguration.class,
-    PasswordlessAuthenticationConfiguration.class,
-    PasswordlessAuthenticationWebflowConfiguration.class
+    CasCoreSamlAutoConfiguration.class,
+    CasCoreMultifactorAuthenticationAutoConfiguration.class,
+    CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
+    CasDelegatedAuthenticationAutoConfiguration.class,
+    CasPasswordlessAuthenticationAutoConfiguration.class,
+    CasPasswordlessAuthenticationWebflowAutoConfiguration.class
 })
 @Tag("WebflowConfig")
 class PasswordlessAuthenticationWebflowConfigurerTests extends BaseWebflowConfigurerTests {

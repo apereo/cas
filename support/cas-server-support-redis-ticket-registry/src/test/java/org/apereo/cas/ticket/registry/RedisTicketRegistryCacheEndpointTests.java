@@ -1,15 +1,14 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.config.RedisCoreConfiguration;
-import org.apereo.cas.config.RedisTicketRegistryConfiguration;
+import org.apereo.cas.config.CasRedisCoreAutoConfiguration;
+import org.apereo.cas.config.CasRedisTicketRegistryAutoConfiguration;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.util.TicketGrantingTicketIdGenerator;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.web.report.AbstractCasEndpointTests;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -18,7 +17,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.TestPropertySource;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -32,8 +30,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = "management.endpoint.redisTicketsCache.enabled=true")
 @Tag("ActuatorEndpoint")
 @Import({
-    RedisCoreConfiguration.class,
-    RedisTicketRegistryConfiguration.class
+    CasRedisCoreAutoConfiguration.class,
+    CasRedisTicketRegistryAutoConfiguration.class
 })
 class RedisTicketRegistryCacheEndpointTests extends AbstractCasEndpointTests {
     @Autowired

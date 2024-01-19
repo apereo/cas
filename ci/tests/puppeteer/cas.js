@@ -25,6 +25,9 @@ const docker = new Docker({ socketPath: "/var/run/docker.sock" });
 
 const LOGGER = pino({
     level: "debug",
+    options: {
+        colorize: true
+    },
     transport: {
         target: "pino-pretty"
     }
@@ -56,32 +59,32 @@ function inspect(text) {
     } catch {
         result = text;
     }
-    return util.inspect(result, {colors: true, depth: null});
+    return util.inspect(result, {colors: false, depth: null});
 }
 
 exports.log = async(text, ...args) => {
     const toLog = inspect(text);
-    await LOGGER.debug(`💬 ${toLog}`, args);
+    await LOGGER.debug(`💬 ${colors.blue(toLog)}`, args);
 };
 
 exports.logy = async (text) => {
     const toLog = inspect(text);
-    await LOGGER.warn(`🔥 ${toLog}`);
+    await LOGGER.warn(`🔥 ${colors.yellow(toLog)}`);
 };
 
 exports.logb = async (text) => {
     const toLog = inspect(text);
-    await LOGGER.debug(`💬 ${toLog}`);
+    await LOGGER.debug(`💬 ${colors.blue(toLog)}`);
 };
 
 exports.logg = async (text) => {
     const toLog = inspect(text);
-    await LOGGER.info(`✅ ${toLog}`);
+    await LOGGER.info(`✅ ${colors.green(toLog)}`);
 };
 
 exports.logr = async (text) => {
     const toLog = inspect(text);
-    await LOGGER.error(`📛 ${toLog}`);
+    await LOGGER.error(`📛 ${colors.red(toLog)}`);
 };
 
 exports.logPage = async(page) => {
@@ -216,14 +219,14 @@ exports.isVisible = async (page, selector) => {
 };
 
 exports.assertVisibility = async (page, selector) => {
-    assert(await this.isVisible(page, selector));
+    assert(await this.isVisible(page, selector), `The element ${selector} must be visible but it's not.`);
 };
 
 exports.assertInvisibility = async (page, selector) => {
     const element = await page.$(selector);
     const result = element === null || await element.boundingBox() === null;
     await this.log(`Checking element invisibility for ${selector} while on page ${page.url()}: ${result}`);
-    assert(result);
+    assert(result, `The element ${selector} must be invisible but it's not.`);
 };
 
 exports.assertCookie = async (page, cookieMustBePresent = true, cookieName = "TGC") => {
@@ -289,7 +292,7 @@ exports.attributeValue = async (page, selector, attribute, expectedValue = undef
     const value = await page.evaluate((elem, attrib) => elem.getAttribute(attrib), element, attribute);
     await this.logb(`Node [${selector}] attribute [${attribute}] has value: [${value}]`);
     if (expectedValue !== undefined) {
-        assert(value, expectedValue);
+        assert.equal(value, expectedValue);
     }
     return value;
 };
@@ -351,7 +354,7 @@ exports.assertParameter = async (page, param) => {
 
 exports.assertPageUrl = async(page, url) => {
     const result = await page.url();
-    assert(result === url);
+    assert.equal(result, url);
 };
 
 exports.assertPageUrlStartsWith = async(page, url) => {
@@ -361,22 +364,22 @@ exports.assertPageUrlStartsWith = async(page, url) => {
 
 exports.assertPageUrlProtocol = async(page, protocol) => {
     const result = new URL(await page.url());
-    assert(result.protocol === protocol);
+    assert.equal(result.protocol, protocol);
 };
 
 exports.assertPageUrlHost = async(page, host) => {
     const result = new URL(await page.url());
-    assert(result.host === host);
+    assert.equal(result.host, host);
 };
 
 exports.assertPageUrlPort = async(page, port) => {
     const result = new URL(await page.url());
-    assert(result.port === port);
+    assert.equal(result.port, port);
 };
 
 exports.assertMissingParameter = async (page, param) => {
     const result = new URL(await page.url());
-    assert(result.searchParams.has(param) === false);
+    assert.equal(result.searchParams.has(param), false);
 };
 
 exports.sleep = async (ms) =>
@@ -416,7 +419,7 @@ exports.doRequest = async (url, method = "GET",
         const handler = async (res) => {
             await this.logg(`Response status code: ${res.statusCode}`);
             if (statusCode > 0) {
-                assert(res.statusCode === statusCode);
+                assert.equal(res.statusCode, statusCode);
             }
             res.setEncoding("utf8");
             const body = [];
@@ -567,13 +570,13 @@ exports.assertInnerTextDoesNotContain = async (page, selector, value) => {
 
 exports.assertInnerText = async (page, selector, value) => {
     const header = await this.innerText(page, selector);
-    assert(header === value);
+    assert.equal(header, value);
 };
 
 exports.assertPageTitle = async (page, value) => {
     const title = await page.title();
     await this.log(`Page Title: ${title}`);
-    assert(title === value);
+    assert.equal(title, value);
 };
 
 exports.assertPageTitleContains = async (page, value) => {
@@ -727,7 +730,7 @@ exports.isNotCiEnvironment = async () => !this.isCiEnvironment();
 exports.assertTextContent = async (page, selector, value) => {
     await page.waitForSelector(selector, {visible: true});
     const header = await this.textContent(page, selector);
-    assert(header === value);
+    assert.equal(header, value);
 };
 
 exports.assertTextContentStartsWith = async (page, selector, value) => {
@@ -892,12 +895,26 @@ exports.loginDuoSecurityBypassCode = async (page, username = "casuser") => {
 exports.dockerContainer = async(name) => {
     const containers = await docker.container.list();
     const results = containers.filter((c) => c.data.Names[0].slice(1) === name);
-    await this.log(`Docker containers found for ${name} are\n: ${results}`);
+    await this.log(`Docker containers found for ${name} are\n:`);
+    await this.log(results);
     if (results.length > 0) {
         return results[0];
     }
     await this.logr(`Unable to find Docker container with name ${name}`);
     return undefined;
+};
+
+exports.readLocalStorage = async(page) => {
+    const results = await page.evaluate(() => {
+        const json = {};
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            json[key] = localStorage.getItem(key);
+        }
+        return json;
+    });
+    this.log(results);
+    return results;
 };
 
 this.asciiart("Apereo CAS - Puppeteer");

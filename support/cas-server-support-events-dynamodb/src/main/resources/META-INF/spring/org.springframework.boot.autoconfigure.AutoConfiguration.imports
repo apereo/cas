@@ -1,1 +1,1 @@
-org.apereo.cas.config.CasEventsDynamoDbRepositoryConfiguration
+org.apereo.cas.config.CasEventsDynamoDbRepositoryAutoConfiguration

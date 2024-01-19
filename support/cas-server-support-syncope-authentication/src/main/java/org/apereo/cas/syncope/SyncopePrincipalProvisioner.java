@@ -1,11 +1,9 @@
 package org.apereo.cas.syncope;
 
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalProvisioner;
 import org.apereo.cas.configuration.model.support.syncope.SyncopePrincipalProvisioningProperties;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpExecutionRequest;
@@ -41,18 +39,7 @@ public class SyncopePrincipalProvisioner implements PrincipalProvisioner {
     private final SyncopePrincipalProvisioningProperties properties;
 
     @Override
-    public boolean provision(final Authentication authentication, final Credential credential,
-                             final RegisteredService registeredService) {
-        return provision(authentication.getPrincipal(), credential);
-    }
-
-    @Override
     public boolean provision(final Principal principal, final Credential credential) {
-        return provision(credential, principal);
-    }
-
-    protected boolean provision(final Credential credential,
-                                final Principal principal) {
         return FunctionUtils.doUnchecked(() -> {
             LOGGER.info("Searching Syncope to find [{}]", principal.getId());
             val userList = SyncopeUtils.syncopeUserSearch(properties, principal.getId());

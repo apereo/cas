@@ -4,6 +4,7 @@ import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationPolicy;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceMatchingStrategy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
@@ -44,4 +45,6 @@ public class CentralAuthenticationServiceContext {
     private final ServiceMatchingStrategy serviceMatchingStrategy;
 
     private final ConfigurableApplicationContext applicationContext;
+
+    private final PrincipalResolver principalResolver;
 }

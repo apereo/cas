@@ -1,7 +1,7 @@
 package org.apereo.cas.adaptors.radius;
 
 import org.apereo.cas.authentication.CasSSLContext;
-import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.configuration.model.support.radius.RadiusClientProperties;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link BlockingRadiusServerRadSecTransportTests}.
- * Runs test cases against a radius server running on "https://console.ironwifi.com/".
+ * Runs test cases against a radius server running on "<a href="https://console.ironwifi.com/">here</a>".
  *
  * @author Misagh Moayyed
  * @since 5.2.0
@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasCoreHttpConfiguration.class
+    CasCoreWebAutoConfiguration.class
 }, properties = "cas.http-client.trust-store.file=classpath:truststore.jks")
 class BlockingRadiusServerRadSecTransportTests {
     @Autowired

@@ -33,7 +33,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -63,11 +62,11 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Electrofence)
-@AutoConfiguration
-public class ElectronicFenceWebflowConfiguration {
+@Configuration(value = "ElectronicFenceWebflowConfiguration", proxyBeanMethods = false)
+class ElectronicFenceWebflowConfiguration {
 
     @Configuration(value = "RiskAuthenticationCoreConfiguration", proxyBeanMethods = false)
-    public static class RiskAuthenticationCoreConfiguration {
+    static class RiskAuthenticationCoreConfiguration {
         @ConditionalOnMissingBean(name = "riskAwareCasWebflowExceptionConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -112,7 +111,7 @@ public class ElectronicFenceWebflowConfiguration {
     }
 
     @Configuration(value = "RiskAuthenticationVerificationConfiguration", proxyBeanMethods = false)
-    public static class RiskAuthenticationVerificationConfiguration {
+    static class RiskAuthenticationVerificationConfiguration {
         private static final FlowExecutionListener[] FLOW_EXECUTION_LISTENERS = new FlowExecutionListener[0];
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

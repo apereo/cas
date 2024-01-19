@@ -40,6 +40,7 @@ import org.springframework.webflow.action.ViewFactoryActionAdapter;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.StateDefinition;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
+import org.springframework.webflow.engine.ActionList;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.DecisionState;
 import org.springframework.webflow.engine.EndState;
@@ -48,6 +49,7 @@ import org.springframework.webflow.engine.FlowExecutionExceptionHandler;
 import org.springframework.webflow.engine.FlowVariable;
 import org.springframework.webflow.engine.SubflowAttributeMapper;
 import org.springframework.webflow.engine.SubflowState;
+import org.springframework.webflow.engine.TargetStateResolver;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.TransitionCriteria;
 import org.springframework.webflow.engine.TransitionableState;
@@ -179,10 +181,30 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
 
     @Override
     public Transition createTransition(final Expression criteriaOutcomeExpression,
-                                       final String targetState,
+                                       final String targetState, final Action... actions) {
+        return createTransition(criteriaOutcomeExpression,
+            StringUtils.isNotBlank(targetState) ? new DefaultTargetStateResolver(targetState) : null,
+            actions);
+    }
+
+    @Override
+    public Transition createTransition(final String criteriaOutcomeExpression,
+                                       final TargetStateResolver targetStateResolver) {
+        return createTransition(new LiteralExpression(criteriaOutcomeExpression), targetStateResolver, EMPTY_ACTIONS_ARRAY);
+    }
+
+    @Override
+    public Transition createTransition(final Expression criteriaOutcomeExpression,
+                                       final TargetStateResolver targetStateResolver) {
+        return createTransition(criteriaOutcomeExpression, targetStateResolver, EMPTY_ACTIONS_ARRAY);
+    }
+
+    @Override
+    public Transition createTransition(final Expression criteriaOutcomeExpression,
+                                       final TargetStateResolver targetStateResolver,
                                        final Action... actions) {
         val criteria = getTransitionCriteriaForExpression(criteriaOutcomeExpression);
-        val transition = new Transition(criteria, StringUtils.isNotBlank(targetState) ? new DefaultTargetStateResolver(targetState) : null);
+        val transition = new Transition(criteria, targetStateResolver);
         if (actions != null && actions.length > 0) {
             val transitionActionCriteria = Arrays.stream(actions)
                 .map(ActionTransitionCriteria::new)
@@ -223,7 +245,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
             return null;
         }
         val ctx = new FluentParserContext();
-        val action = this.flowBuilderServices.getExpressionParser().parseExpression(expression, ctx);
+        val action = flowBuilderServices.getExpressionParser().parseExpression(expression, ctx);
         val newAction = new EvaluateAction(action, null);
         LOGGER.trace("Created evaluate action for expression [{}]", action.getExpressionString());
         return newAction;
@@ -237,7 +259,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     @Override
     public ActionState createActionState(final Flow flow, final String name, final String... action) {
         val actionList = Arrays.stream(action).map(this::createEvaluateAction).toList();
-        return createActionState(flow, name, actionList.toArray(EMPTY_ACTIONS_ARRAY));
+        return createActionState(flow, name, actionList.toArray(Action[]::new));
     }
 
     @Override
@@ -338,10 +360,10 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
             LOGGER.trace("Flow [{}] already contains a definition for state id [{}]", flow.getId(), id);
             return getTransitionableState(flow, id, ViewState.class);
         }
-        val viewFactory = this.flowBuilderServices.getViewFactoryCreator()
-            .createViewFactory(expression, this.flowBuilderServices.getExpressionParser(),
-                this.flowBuilderServices.getConversionService(), binder, this.flowBuilderServices.getValidator(),
-                this.flowBuilderServices.getValidationHintResolver());
+        val viewFactory = flowBuilderServices.getViewFactoryCreator()
+            .createViewFactory(expression, flowBuilderServices.getExpressionParser(),
+                flowBuilderServices.getConversionService(), binder, this.flowBuilderServices.getValidator(),
+                flowBuilderServices.getValidationHintResolver());
         return createViewState(flow, id, viewFactory);
     }
 
@@ -491,20 +513,29 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
                                                final String targetState, final boolean removeExisting,
                                                final Map<String, Object> attributes) {
         return createTransitionForState(state, criteriaOutcome, targetState,
-            removeExisting, attributes, new Action[0]);
+            removeExisting, attributes, EMPTY_ACTIONS_ARRAY);
     }
 
     @Override
     public Transition createTransitionForState(final TransitionableState state, final String criteriaOutcome,
                                                final String targetState, final boolean removeExisting) {
         return createTransitionForState(state, criteriaOutcome, targetState,
-            removeExisting, Map.of(), new Action[0]);
+            removeExisting, Map.of(), EMPTY_ACTIONS_ARRAY);
+    }
+
+    @Override
+    public Transition createTransitionForState(final TransitionableState state,
+                                               final String criteriaOutcome,
+                                               final TargetStateResolver targetStateResolver) {
+        val transition = createTransition(criteriaOutcome, targetStateResolver);
+        state.getTransitionSet().add(transition);
+        return transition;
     }
 
     @Override
     public Transition insertTransitionForState(final TransitionableState state, final String criteriaOutcome,
                                                final String targetState) {
-        val transition = createTransition(criteriaOutcome, targetState, new Action[0]);
+        val transition = createTransition(criteriaOutcome, targetState, EMPTY_ACTIONS_ARRAY);
         val field = ReflectionUtils.findField(state.getTransitionSet().getClass(), "transitions");
         ReflectionUtils.makeAccessible(field);
         val transitions = (List<Transition>) ReflectionUtils.getField(field, state.getTransitionSet());
@@ -835,14 +866,19 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * Prepend actions to action state execution list.
      *
      * @param flow          the flow
-     * @param actionStateId the action state id
+     * @param stateId the action state id
      * @param actions       the actions
      */
-    public void prependActionsToActionStateExecutionList(final Flow flow, final String actionStateId, final String... actions) {
+    public void prependActionsToActionStateExecutionList(final Flow flow, final String stateId, final Object... actions) {
         val evalActions = Arrays.stream(actions)
-            .map(this::createEvaluateAction)
-            .toArray(EvaluateAction[]::new);
-        addActionsToActionStateExecutionListAt(flow, actionStateId, 0, evalActions);
+            .map(givenAction -> {
+                if (givenAction instanceof final Action action) {
+                    return action;
+                }
+                return createEvaluateAction(givenAction.toString());
+            })
+            .toArray(Action[]::new);
+        addActionsToActionStateExecutionListAt(flow, stateId, 0, evalActions);
     }
 
     /**
@@ -852,7 +888,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @param actionStateId the action state id
      * @param actions       the actions
      */
-    public void prependActionsToActionStateExecutionList(final Flow flow, final ActionState actionStateId, final EvaluateAction... actions) {
+    public void prependActionsToActionStateExecutionList(final Flow flow, final TransitionableState actionStateId, final Action... actions) {
         addActionsToActionStateExecutionListAt(flow, actionStateId.getId(), 0, actions);
     }
 
@@ -860,20 +896,27 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * Add actions to action state execution list at.
      *
      * @param flow          the flow
-     * @param actionStateId the action state id
+     * @param stateId the action state id
      * @param position      the position
      * @param actions       the actions
      */
-    public void addActionsToActionStateExecutionListAt(final Flow flow, final String actionStateId, final int position,
-                                                       final EvaluateAction... actions) {
-        val actionState = getState(flow, actionStateId, ActionState.class);
-        val actionList = actionState.getActionList();
+    public void addActionsToActionStateExecutionListAt(final Flow flow, final String stateId, final int position,
+                                                       final Action... actions) {
+        val givenState = getState(flow, stateId, TransitionableState.class);
+        var actionList = new ActionList();
+        if (givenState instanceof final ActionState as) {
+            actionList = as.getActionList();
+        }
+        if (givenState instanceof final ViewState vs) {
+            actionList = vs.getEntryActionList();
+        }
         val currentActions = new ArrayList<Action>(actionList.size() + actions.length);
         actionList.forEach(currentActions::add);
         val index = position < 0 || position == Integer.MAX_VALUE ? currentActions.size() : position;
         currentActions.forEach(actionList::remove);
-        Arrays.stream(actions).forEach(a -> currentActions.add(index, a));
+        currentActions.addAll(index, Arrays.stream(actions).toList());
         actionList.addAll(currentActions.toArray(Action[]::new));
+        LOGGER.trace("Final (entry) action list for state [{}] is [{}]", stateId, actionList);
     }
 
     /**

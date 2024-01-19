@@ -63,7 +63,7 @@ public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationP
             "maxTimeToLiveInSeconds must be greater than or equal to timeToKillInSeconds.");
         val currentSystemTime = ZonedDateTime.now(getClock());
 
-        val expirationTime = getMaximumExpirationTime(ticketState);
+        val expirationTime = toMaximumExpirationTime(ticketState);
         if (currentSystemTime.isAfter(expirationTime)) {
             LOGGER.debug("Ticket is expired because the time since creation [{}] is greater than current system time [{}]", expirationTime, currentSystemTime);
             return true;
@@ -88,7 +88,7 @@ public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationP
 
     @JsonIgnore
     @Override
-    public ZonedDateTime getMaximumExpirationTime(final Ticket ticketState) {
+    public ZonedDateTime toMaximumExpirationTime(final Ticket ticketState) {
         val creationTime = ticketState.getCreationTime();
         return creationTime.plus(this.maxTimeToLiveInSeconds, ChronoUnit.SECONDS);
     }

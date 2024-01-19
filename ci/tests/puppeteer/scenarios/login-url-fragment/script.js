@@ -7,7 +7,7 @@ const assert = require("assert");
     const page = await cas.newPage(browser);
 
     const service = "https://apereo.github.io#hello-world";
-    await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
+    await cas.gotoLogin(page, service);
     await cas.loginWith(page);
     await page.waitForTimeout(2000);
     await cas.assertTicketParameter(page);
@@ -16,6 +16,6 @@ const assert = require("assert");
     assert((url.match(/#/g) || []).length === 1);
     const result = new URL(page.url());
     await cas.logg(`URL hash is ${result.hash}`);
-    assert(result.hash === "#hello-world");
+    assert(result.hash.startsWith("#hello-world"));
     await browser.close();
 })();

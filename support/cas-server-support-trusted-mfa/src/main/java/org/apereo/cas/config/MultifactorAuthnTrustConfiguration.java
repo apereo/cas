@@ -31,7 +31,6 @@ import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -52,8 +51,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthenticationTrustedDevices)
-@AutoConfiguration
-public class MultifactorAuthnTrustConfiguration {
+@Configuration(value = "MultifactorAuthnTrustConfiguration", proxyBeanMethods = false)
+class MultifactorAuthnTrustConfiguration {
 
     private static final int INITIAL_CACHE_SIZE = 50;
 
@@ -61,7 +60,7 @@ public class MultifactorAuthnTrustConfiguration {
 
     @Configuration(value = "MultifactorAuthnTrustGeneratorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class MultifactorAuthnTrustGeneratorConfiguration {
+    static class MultifactorAuthnTrustGeneratorConfiguration {
 
         @ConditionalOnMissingBean(name = "mfaTrustRecordKeyGenerator")
         @Bean
@@ -73,7 +72,7 @@ public class MultifactorAuthnTrustConfiguration {
 
     @Configuration(value = "MultifactorAuthnTrustCoreConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class MultifactorAuthnTrustCoreConfiguration {
+    static class MultifactorAuthnTrustCoreConfiguration {
         @ConditionalOnMissingBean(name = "mfaTrustDeviceNamingStrategy")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -119,7 +118,7 @@ public class MultifactorAuthnTrustConfiguration {
 
     @Configuration(value = "MultifactorAuthnTrustCryptoConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class MultifactorAuthnTrustCryptoConfiguration {
+    static class MultifactorAuthnTrustCryptoConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "mfaTrustCipherExecutor")
@@ -138,7 +137,7 @@ public class MultifactorAuthnTrustConfiguration {
 
     @Configuration(value = "MultifactorAuthnTrustSchedulerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class MultifactorAuthnTrustSchedulerConfiguration {
+    static class MultifactorAuthnTrustSchedulerConfiguration {
         @ConditionalOnMatchingHostname(name = "cas.authn.mfa.trusted.cleaner.schedule.enabled-on-host")
         @ConditionalOnMissingBean(name = "mfaTrustStorageCleaner")
         @Bean
@@ -158,7 +157,7 @@ public class MultifactorAuthnTrustConfiguration {
 
     @Configuration(value = "MultifactorAuthnTrustAuditConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class MultifactorAuthnTrustAuditConfiguration {
+    static class MultifactorAuthnTrustAuditConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuditTrailRecordResolutionPlanConfigurer casMfaTrustAuditTrailRecordResolutionPlanConfigurer(
@@ -174,7 +173,7 @@ public class MultifactorAuthnTrustConfiguration {
 
     @Configuration(value = "MultifactorAuthnTrustWebConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class MultifactorAuthnTrustWebConfiguration {
+    static class MultifactorAuthnTrustWebConfiguration {
         @Bean
         @ConditionalOnAvailableEndpoint
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

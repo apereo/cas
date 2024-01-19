@@ -143,6 +143,12 @@ while (( "$#" )); do
     BUILDFLAGS="${BUILDFLAGS} --offline"
     shift 1;
     ;;
+  --hol|-hol)
+    export HEADLESS="true"
+    BUILDFLAGS="${BUILDFLAGS} --offline"
+    DISABLE_LINTER="true"
+    shift 1;
+    ;;
   --ho|-ho)
     export HEADLESS="true"
     BUILDFLAGS="${BUILDFLAGS} --offline"
@@ -151,6 +157,7 @@ while (( "$#" )); do
   --hr|-hr)
     export HEADLESS="true"
     RERUN="true"
+    DISABLE_LINTER="true"
     shift 1;
     ;;
   --hd|--hdo)
@@ -196,6 +203,7 @@ while (( "$#" )); do
     ;;
   --rerun|--resume|--r)
     RERUN="true"
+    DISABLE_LINTER="true"
     shift 1;
     ;;
   --bogy|--boyd|--body)
@@ -219,7 +227,7 @@ while (( "$#" )); do
     export HEADLESS="true"
     shift 1;
     ;;
-  --nolint|--no-lint)
+  --nolint|--no-lint|--nol)
     DISABLE_LINTER="true"
     shift 1;
     ;;

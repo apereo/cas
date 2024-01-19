@@ -1,5 +1,1 @@
-org.apereo.cas.config.DuoSecurityAuthenticationEventExecutionPlanConfiguration
-org.apereo.cas.config.DuoSecurityConfiguration
-org.apereo.cas.config.DuoSecurityComponentSerializationConfiguration
-org.apereo.cas.config.DuoSecurityMultifactorProviderBypassConfiguration
-org.apereo.cas.config.DuoSecurityRestConfiguration
+org.apereo.cas.config.CasDuoSecurityAutoConfiguration

@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.duo.authn;
 
-import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.util.MockWebServer;
@@ -30,8 +30,11 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@SpringBootTest(classes = {RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class, CasCoreHttpConfiguration.class},
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
+    CasCoreWebAutoConfiguration.class
+},
     properties = "cas.http-client.host-name-verifier=none")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("DuoSecurity")

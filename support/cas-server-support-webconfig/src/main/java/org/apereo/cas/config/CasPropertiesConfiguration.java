@@ -8,9 +8,9 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.val;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.PropertiesPropertySource;
@@ -25,9 +25,9 @@ import java.util.Properties;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.CasConfiguration)
-@AutoConfiguration
+@Configuration(value = "CasPropertiesConfiguration", proxyBeanMethods = false)
 @Lazy(false)
-public class CasPropertiesConfiguration {
+class CasPropertiesConfiguration {
     @Bean
     public InitializingBean casPropertiesInitializingBean(final ConfigurableEnvironment environment) {
         return () -> {

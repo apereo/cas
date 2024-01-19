@@ -12,10 +12,12 @@
 <body>
 <main class="container mt-3 mb-3">
     <div layout:fragment="content">
+
+
         <div class="w-100 m-auto mdc-card card p-4">
             <div id="logoutBody" class="card-body">
                 <h2 class="banner-heading">
-                    <i class="mdi mdi-logout fas fa-sign-out-alt"></i>
+                    <i class="mdi mdi-logout fas fa-sign-out-alt" aria-hidden="true"></i>
                     <span th:utext="#{screen.logout.header}">Logout successful</span>
                 </h2>
 
@@ -31,6 +33,12 @@
                     </form>
                     <script type="text/javascript">
                         setTimeout((() => $("#logoutform").submit()), 2000);
+                    </script>
+                </div>
+                <div th:remove="tag" th:unless="${enableProceed}">
+                    <script type="text/javascript">
+                        clearLocalStorage();
+                        clearSessionStorage();
                     </script>
                 </div>
             </div>

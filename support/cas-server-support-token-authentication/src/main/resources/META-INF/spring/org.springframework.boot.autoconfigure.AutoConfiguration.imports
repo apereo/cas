@@ -1,1 +1,1 @@
-org.apereo.cas.config.TokenAuthenticationConfiguration
+org.apereo.cas.config.CasTokenAuthenticationAutoConfiguration

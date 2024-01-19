@@ -1,1 +1,1 @@
-org.apereo.cas.config.GoogleCloudLoggingConfiguration
+org.apereo.cas.config.CasGoogleCloudLoggingAutoConfiguration

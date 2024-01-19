@@ -1,6 +1,12 @@
 package org.apereo.cas.monitor;
 
-import java.util.function.Supplier;
+import lombok.val;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.jooq.lambda.fi.util.function.CheckedSupplier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.ObjectProvider;
+import java.util.function.Function;
 
 /**
  * This is {@link ExecutableObserver}.
@@ -10,9 +16,15 @@ import java.util.function.Supplier;
  */
 public interface ExecutableObserver {
     /**
+     * Logger instance.
+     */
+    Logger LOGGER = LoggerFactory.getLogger(ExecutableObserver.class);
+
+    /**
      * Bean name.
      */
     String BEAN_NAME = "defaultExecutableObserver";
+    
     /**
      * Observe a task as a runnable.
      *
@@ -20,7 +32,7 @@ public interface ExecutableObserver {
      * @param runnable the runnable
      * @throws Throwable the throwable
      */
-    void run(MonitorableTask task, Runnable runnable) throws Throwable;
+    default void run(final MonitorableTask task, final Runnable runnable) throws Throwable {}
 
     /**
      * Observe a task as a supplier.
@@ -31,5 +43,44 @@ public interface ExecutableObserver {
      * @return the t
      * @throws Throwable the throwable
      */
-    <T> T supply(MonitorableTask task, Supplier<T> supplier) throws Throwable;
+    <T> T supply(MonitorableTask task, CheckedSupplier<T> supplier) throws Throwable;
+
+    /**
+     * Observe invocation.
+     *
+     * @param observerProvider the observer provider
+     * @param joinPoint        the join point
+     * @return the object
+     * @throws Throwable the throwable
+     */
+    static Object observe(final ObjectProvider<ExecutableObserver> observerProvider,
+                          final ProceedingJoinPoint joinPoint,
+                          final Function<MonitorableTask, MonitorableTask> taskCustomizer) throws Throwable {
+        val observer = observerProvider.getIfAvailable();
+        if (observer != null) {
+            val taskName = joinPoint.getSignature().getDeclaringTypeName() + '.' + joinPoint.getSignature().getName();
+            val task = taskCustomizer.apply(new MonitorableTask(taskName));
+            return observer.supply(task, () -> executeJoinPoint(joinPoint));
+        }
+        return executeJoinPoint(joinPoint);
+    }
+
+    /**
+     * Observe object.
+     *
+     * @param observerProvider the observer provider
+     * @param joinPoint        the join point
+     * @return the object
+     * @throws Throwable the throwable
+     */
+    static Object observe(final ObjectProvider<ExecutableObserver> observerProvider,
+                          final ProceedingJoinPoint joinPoint) throws Throwable {
+        return observe(observerProvider, joinPoint, Function.identity());
+    }
+
+    private static Object executeJoinPoint(final ProceedingJoinPoint joinPoint) throws Throwable {
+        var args = joinPoint.getArgs();
+        LOGGER.trace("Executing [{}]", joinPoint.getStaticPart().toLongString());
+        return joinPoint.proceed(args);
+    }
 }

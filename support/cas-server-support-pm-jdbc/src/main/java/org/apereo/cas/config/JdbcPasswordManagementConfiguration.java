@@ -12,7 +12,6 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -37,12 +36,12 @@ import javax.sql.DataSource;
 @EnableTransactionManagement(proxyTargetClass = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.PasswordManagement, module = "jdbc")
-@AutoConfiguration
-public class JdbcPasswordManagementConfiguration {
+@Configuration(value = "JdbcPasswordManagementConfiguration", proxyBeanMethods = false)
+class JdbcPasswordManagementConfiguration {
 
     @Configuration(value = "JdbcPasswordManagementServiceConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class JdbcPasswordManagementServiceConfiguration {
+    static class JdbcPasswordManagementServiceConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "jdbcPasswordChangeService")
@@ -67,7 +66,7 @@ public class JdbcPasswordManagementConfiguration {
 
     @Configuration(value = "JdbcPasswordManagementDataConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class JdbcPasswordManagementDataConfiguration {
+    static class JdbcPasswordManagementDataConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "jdbcPasswordManagementDataSource")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -78,7 +77,7 @@ public class JdbcPasswordManagementConfiguration {
 
     @Configuration(value = "JdbcPasswordManagementTransactionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class JdbcPasswordManagementTransactionConfiguration {
+    static class JdbcPasswordManagementTransactionConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PlatformTransactionManager jdbcPasswordManagementTransactionManager(

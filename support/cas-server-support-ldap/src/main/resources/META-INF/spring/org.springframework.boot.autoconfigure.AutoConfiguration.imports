@@ -1,2 +1,1 @@
-org.apereo.cas.config.LdapAuthenticationConfiguration
-org.apereo.cas.config.LdapPasswordSynchronizationConfiguration
+org.apereo.cas.config.CasLdapAuthenticationAutoConfiguration

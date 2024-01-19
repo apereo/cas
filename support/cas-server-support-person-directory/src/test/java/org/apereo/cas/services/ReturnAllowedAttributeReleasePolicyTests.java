@@ -1,9 +1,16 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasCoreAutoConfiguration;
+import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
+import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
@@ -24,12 +31,18 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serial;
@@ -54,13 +67,31 @@ class ReturnAllowedAttributeReleasePolicyTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
-    @SpringBootTest(classes = {
-        CasPersonDirectoryConfiguration.class,
-        CasCoreAuthenticationPrincipalConfiguration.class,
-        ReturnAllowedAttributeReleasePolicyTestConfiguration.class,
-        CasCoreUtilConfiguration.class,
+    @ImportAutoConfiguration({
+        MailSenderAutoConfiguration.class,
+        AopAutoConfiguration.class,
         RefreshAutoConfiguration.class
-    },
+    })
+    @SpringBootConfiguration
+    @Import({
+        ReturnAllowedAttributeReleasePolicyTestConfiguration.class,
+        CasPersonDirectoryAutoConfiguration.class,
+        CasCoreAuthenticationAutoConfiguration.class,
+        CasCoreAutoConfiguration.class,
+        CasCoreAuditAutoConfiguration.class,
+        CasCoreServicesAutoConfiguration.class,
+        CasCoreLogoutAutoConfiguration.class,
+        CasCoreTicketsAutoConfiguration.class,
+        CasCoreUtilAutoConfiguration.class,
+        CasCoreNotificationsAutoConfiguration.class,
+        CasCoreWebAutoConfiguration.class
+    })
+    @EnableConfigurationProperties({CasConfigurationProperties.class, WebProperties.class})
+    static class BaseAttributeTests {
+    }
+
+    @SpringBootTest(
+        classes = BaseAttributeTests.class,
         properties = {
             "cas.authn.attribute-repository.stub.attributes.uid=uid",
             "cas.authn.attribute-repository.stub.attributes.mail=cas@apereo.org",
@@ -68,7 +99,7 @@ class ReturnAllowedAttributeReleasePolicyTests {
             "cas.authn.attribute-repository.stub.attributes.groupMembership=adopters",
             "cas.authn.attribute-repository.attribute-definition-store.json.location=classpath:/return-allowed-definitions.json"
         })
-    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @EnableConfigurationProperties({CasConfigurationProperties.class, WebProperties.class})
     @Nested
     class AttributeDefinitionsTests {
         @Autowired
@@ -117,13 +148,8 @@ class ReturnAllowedAttributeReleasePolicyTests {
         }
     }
 
-    @SpringBootTest(classes = {
-        CasPersonDirectoryConfiguration.class,
-        CasCoreAuthenticationPrincipalConfiguration.class,
-        ReturnAllowedAttributeReleasePolicyTestConfiguration.class,
-        CasCoreUtilConfiguration.class,
-        RefreshAutoConfiguration.class
-    },
+    @SpringBootTest(
+        classes = BaseAttributeTests.class,
         properties = {
             "cas.authn.attribute-repository.stub.attributes.uid=uid",
             "cas.authn.attribute-repository.stub.attributes.mail=cas@apereo.org",
@@ -132,7 +158,7 @@ class ReturnAllowedAttributeReleasePolicyTests {
             "cas.authn.attribute-repository.attribute-definition-store.json.location=classpath:/return-allowed-definitions.json",
             "cas.authn.attribute-repository.core.default-attributes-to-release=cn,mail"
         })
-    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @EnableConfigurationProperties({CasConfigurationProperties.class, WebProperties.class})
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @Nested
     class DefaultTests {
@@ -320,7 +346,7 @@ class ReturnAllowedAttributeReleasePolicyTests {
     static class ReturnAllowedAttributeReleasePolicyTestConfiguration {
         @Bean
         public ServicesManager servicesManager() {
-            return mock(ServicesManager.class);
+            return mock(ChainingServicesManager.class);
         }
     }
 }

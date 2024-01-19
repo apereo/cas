@@ -1,6 +1,6 @@
 package org.apereo.cas.support.events.dao;
 
-import org.apereo.cas.config.CasEventsInfluxDbRepositoryConfiguration;
+import org.apereo.cas.config.CasEventsInfluxDbRepositoryAutoConfiguration;
 import org.apereo.cas.influxdb.InfluxDbConnectionFactory;
 import org.apereo.cas.support.events.AbstractCasEventRepositoryTests;
 import org.apereo.cas.support.events.CasEventRepository;
@@ -25,7 +25,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasEventsInfluxDbRepositoryConfiguration.class
+    CasEventsInfluxDbRepositoryAutoConfiguration.class
 })
 @Tag("InfluxDb")
 @EnabledIfListeningOnPort(port = 8086)

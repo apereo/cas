@@ -23,17 +23,18 @@ public class AllServicesSessionTrackingPolicy implements TicketTrackingPolicy {
 
 
     @Override
-    public void trackTicket(final TicketGrantingTicket ownerTicket, final Ticket ticket) {
+    public void trackTicket(final Ticket ownerTicket, final Ticket ticket) {
         val serviceTicket = (ServiceTicket) ticket;
+        val ticketGrantingTicket = (TicketGrantingTicket) ownerTicket;
         lock.tryLock(__ -> {
             ownerTicket.update();
-            serviceTicket.getService().setPrincipal(ownerTicket.getRoot().getAuthentication().getPrincipal().getId());
+            serviceTicket.getService().setPrincipal(ticketGrantingTicket.getRoot().getAuthentication().getPrincipal().getId());
             beforeTrackingServiceTicket(ownerTicket, serviceTicket);
-            ownerTicket.getServices().put(serviceTicket.getId(), serviceTicket.getService());
+            ticketGrantingTicket.getServices().put(serviceTicket.getId(), serviceTicket.getService());
         });
     }
 
-    protected void beforeTrackingServiceTicket(final TicketGrantingTicket ownerTicket,
+    protected void beforeTrackingServiceTicket(final Ticket ownerTicket,
                                                final ServiceTicket serviceTicket) {
     }
 }

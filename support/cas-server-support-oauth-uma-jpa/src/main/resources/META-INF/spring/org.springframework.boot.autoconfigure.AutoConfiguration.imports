@@ -1,1 +1,1 @@
-org.apereo.cas.config.CasOAuthUmaJpaConfiguration
+org.apereo.cas.config.CasOAuthUmaJpaAutoConfiguration

@@ -11,7 +11,6 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.token.JwtBuilder;
@@ -67,7 +66,7 @@ public class OAuth20DefaultAccessTokenFactory implements OAuth20AccessTokenFacto
     @Override
     public OAuth20AccessToken create(final Service service,
                                      final Authentication authentication,
-                                     final TicketGrantingTicket ticketGrantingTicket,
+                                     final Ticket ticketGrantingTicket,
                                      final Collection<String> scopes,
                                      final String token,
                                      final String clientId,

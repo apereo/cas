@@ -13,11 +13,11 @@ import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
@@ -28,8 +28,8 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OAuth)
-@AutoConfiguration
-public class CasOAuth20AuthenticationServiceSelectionStrategyConfiguration {
+@Configuration(value = "CasOAuth20AuthenticationServiceSelectionStrategyConfiguration", proxyBeanMethods = false)
+class CasOAuth20AuthenticationServiceSelectionStrategyConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "oauth20AuthenticationRequestServiceSelectionStrategy")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

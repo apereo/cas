@@ -1,1 +1,1 @@
-org.apereo.cas.config.TwilioConfiguration
+org.apereo.cas.config.CasTwilioAutoConfiguration

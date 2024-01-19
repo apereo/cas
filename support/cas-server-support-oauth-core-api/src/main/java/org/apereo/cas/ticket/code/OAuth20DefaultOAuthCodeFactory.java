@@ -10,7 +10,6 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -58,7 +57,7 @@ public class OAuth20DefaultOAuthCodeFactory implements OAuth20CodeFactory {
     @Override
     public OAuth20Code create(final Service service,
                               final Authentication authentication,
-                              final TicketGrantingTicket ticketGrantingTicket,
+                              final Ticket ticketGrantingTicket,
                               final Collection<String> scopes,
                               final String codeChallenge,
                               final String codeChallengeMethod,

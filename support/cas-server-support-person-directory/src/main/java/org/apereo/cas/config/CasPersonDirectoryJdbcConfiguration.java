@@ -24,7 +24,6 @@ import org.apereo.services.persondir.support.jdbc.MultiRowJdbcPersonAttributeDao
 import org.apereo.services.persondir.support.jdbc.SingleRowJdbcPersonAttributeDao;
 import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -47,13 +46,13 @@ import java.util.stream.Collectors;
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.PersonDirectory)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@AutoConfiguration
-public class CasPersonDirectoryJdbcConfiguration {
+@Configuration(value = "CasPersonDirectoryJdbcConfiguration", proxyBeanMethods = false)
+class CasPersonDirectoryJdbcConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.attribute-repository.jdbc[0].sql");
 
     @Configuration(value = "JdbcAttributeRepositoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class JdbcAttributeRepositoryConfiguration {
+    static class JdbcAttributeRepositoryConfiguration {
         @ConditionalOnMissingBean(name = "jdbcAttributeRepositories")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -134,7 +133,7 @@ public class CasPersonDirectoryJdbcConfiguration {
 
     @Configuration(value = "JdbcAttributeRepositoryPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class JdbcAttributeRepositoryPlanConfiguration {
+    static class JdbcAttributeRepositoryPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "jdbcPersonDirectoryAttributeRepositoryPlanConfigurer")

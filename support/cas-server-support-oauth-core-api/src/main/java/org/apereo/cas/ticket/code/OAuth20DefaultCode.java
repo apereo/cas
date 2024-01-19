@@ -6,7 +6,7 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.ticket.BaseOAuth20Token;
 import org.apereo.cas.ticket.ExpirationPolicy;
-import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.Ticket;
 
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -30,7 +30,7 @@ public class OAuth20DefaultCode extends BaseOAuth20Token implements OAuth20Code 
                               final @NonNull Service service,
                               final @NonNull Authentication authentication,
                               final @NonNull ExpirationPolicy expirationPolicy,
-                              final TicketGrantingTicket ticketGrantingTicket,
+                              final Ticket ticketGrantingTicket,
                               final @NonNull Collection<String> scopes,
                               final String codeChallenge,
                               final String codeChallengeMethod,

@@ -3,6 +3,7 @@ package org.apereo.cas.trusted.web.flow;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.configuration.model.support.mfa.trusteddevice.TrustedDevicesMultifactorProperties;
 import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustedDeviceBypassEvaluator;
+import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
 import org.apereo.cas.trusted.web.flow.fingerprint.DeviceFingerprintStrategy;
@@ -15,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+import java.util.Set;
 
 /**
  * This is {@link MultifactorAuthenticationVerifyTrustAction}.
@@ -52,7 +54,7 @@ public class MultifactorAuthenticationVerifyTrustAction extends BaseCasWebflowAc
         }
         val principal = authn.getPrincipal().getId();
         LOGGER.trace("Retrieving trusted authentication records for [{}]", principal);
-        val results = storage.get(principal);
+        val results = storage.isAvailable() ? storage.get(principal) : Set.<MultifactorAuthenticationTrustRecord>of();
         if (results.isEmpty()) {
             LOGGER.debug("No valid trusted authentication records could be found for [{}]", principal);
             return no();

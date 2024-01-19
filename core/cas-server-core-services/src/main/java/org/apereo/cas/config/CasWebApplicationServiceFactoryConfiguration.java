@@ -10,7 +10,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -29,12 +28,12 @@ import org.springframework.core.Ordered;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Authentication)
-@AutoConfiguration
-public class CasWebApplicationServiceFactoryConfiguration {
+@Configuration(value = "CasWebApplicationServiceFactoryConfiguration", proxyBeanMethods = false)
+class CasWebApplicationServiceFactoryConfiguration {
 
     @Configuration(value = "CasWebApplicationServiceFactoryBaseConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasWebApplicationServiceFactoryBaseConfiguration {
+    static class CasWebApplicationServiceFactoryBaseConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = WebApplicationService.BEAN_NAME_FACTORY)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -45,7 +44,7 @@ public class CasWebApplicationServiceFactoryConfiguration {
 
     @Configuration(value = "CasWebApplicationServiceFactoryPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasWebApplicationServiceFactoryPlanConfiguration {
+    static class CasWebApplicationServiceFactoryPlanConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "casWebApplicationServiceFactoryConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

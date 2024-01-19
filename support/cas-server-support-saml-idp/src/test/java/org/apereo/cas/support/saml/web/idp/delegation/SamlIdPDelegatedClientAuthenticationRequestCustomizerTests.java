@@ -1,7 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.delegation;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.config.SamlIdPDelegatedAuthenticationConfiguration;
 import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationRequestCustomizer;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DefaultRegisteredServiceDelegatedAuthenticationPolicy;
@@ -29,7 +28,6 @@ import org.pac4j.jee.context.JEEContext;
 import org.pac4j.saml.client.SAML2Client;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import java.util.Arrays;
@@ -45,7 +43,6 @@ import static org.mockito.Mockito.*;
  * @since 6.4.0
  */
 @Tag("SAML2")
-@Import(SamlIdPDelegatedAuthenticationConfiguration.class)
 class SamlIdPDelegatedClientAuthenticationRequestCustomizerTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("saml2DelegatedClientAuthenticationRequestCustomizer")

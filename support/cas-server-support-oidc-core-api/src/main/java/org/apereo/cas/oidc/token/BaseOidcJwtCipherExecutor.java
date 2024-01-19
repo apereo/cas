@@ -9,6 +9,7 @@ import org.apereo.cas.util.cipher.BasicIdentifiableKey;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
@@ -30,6 +31,7 @@ import java.util.stream.Stream;
 @Getter
 @RequiredArgsConstructor
 @Slf4j
+@Accessors(chain = true)
 public abstract class BaseOidcJwtCipherExecutor extends BaseStringCipherExecutor {
     /**
      * The default keystore for OIDC tokens.

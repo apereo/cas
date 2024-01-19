@@ -67,7 +67,7 @@ A *revolutionary* change accommodating sweeping architecture, approach, and
 implementation changes. (i.e. Transitioning from `3.5.x` to `4.0.x`, etc.)
 Significant changes in APIs, default behavior, and configuration can be expected.
 Overlays may require significant changes and possibly a complete reworking.
-Overall the CAS server code line may looked markedly different and integration
+Overall the CAS server code line may look markedly different and integration
 points may require reworking. 
 
 Third-party library updates are acceptable for feature releases, including changes that might lead to an upgrade

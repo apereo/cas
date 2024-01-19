@@ -29,7 +29,7 @@ import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.concurrent.CasReentrantLock;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.validation.TicketValidator;
-import org.apereo.cas.web.BrowserSessionStorage;
+import org.apereo.cas.web.BrowserStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.SingleSignOnParticipationRequest;
 import org.apereo.cas.web.support.WebUtils;
@@ -202,14 +202,14 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         LOGGER.debug("Redirecting SAML authN request to [{}]", urlToRedirectTo);
 
         val type = properties.getAuthn().getSamlIdp().getCore().getSessionStorageType();
-        if (type == SessionStorageTypes.BROWSER_SESSION_STORAGE) {
+        if (type == SessionStorageTypes.BROWSER_STORAGE) {
             val context = new JEEContext(request, response);
             val sessionStorage = configurationContext.getSessionStore()
-                .getTrackableSession(context).map(BrowserSessionStorage.class::cast)
+                .getTrackableSession(context).map(BrowserStorage.class::cast)
                 .orElseThrow(() -> new IllegalStateException("Unable to determine trackable session for storage"));
             sessionStorage.setDestinationUrl(urlToRedirectTo);
-            return new ModelAndView(CasWebflowConstants.VIEW_ID_SESSION_STORAGE_WRITE,
-                BrowserSessionStorage.KEY_SESSION_STORAGE, sessionStorage);
+            return new ModelAndView(CasWebflowConstants.VIEW_ID_BROWSER_STORAGE_WRITE,
+                BrowserStorage.PARAMETER_BROWSER_STORAGE, sessionStorage);
         }
         LOGGER.debug("Redirecting SAML authN request to [{}]", urlToRedirectTo);
         val mv = new ModelAndView(new RedirectView(urlToRedirectTo));
@@ -499,11 +499,11 @@ public abstract class AbstractSamlIdPProfileHandlerController {
             val webContext = new JEEContext(request, response);
             return SamlIdPSessionManager.of(configurationContext.getOpenSamlConfigBean(), configurationContext.getSessionStore())
                 .fetch(webContext, AuthnRequest.class)
-                .orElseThrow(() -> new IllegalArgumentException("""
-                    SAML2 authentication request cannot be determined from the CAS session store. This typically means that the original SAML2 authentication
-                    request that was submitted to CAS via a SAML2 service provider cannot be retrieved and restored after an authentication attempt. If you are
-                    running a multi-node CAS deployment, you may need to opt for a different session storage mechanism that what is configured now: %s
-                    """.stripIndent().formatted(configurationContext.getSessionStore().getClass().getName())));
+                .orElseThrow(() -> new IllegalArgumentException("SAML2 authentication request cannot be determined from the CAS session store. "
+                    + "This typically means that the original SAML2 authentication request that was submitted to CAS via a SAML2 service provider "
+                    + "cannot be retrieved and restored after an authentication attempt. If you are running a multi-node CAS deployment, you may "
+                    + "need to opt for a different session storage mechanism that what is configured now: %s"
+                    .formatted(configurationContext.getSessionStore().getClass().getName())));
         });
     }
 

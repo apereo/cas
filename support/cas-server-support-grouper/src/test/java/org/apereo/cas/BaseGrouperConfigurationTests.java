@@ -1,33 +1,21 @@
 package org.apereo.cas;
 
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
-import org.apereo.cas.config.CasCookieConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
-import org.apereo.cas.config.CasCoreConfiguration;
-import org.apereo.cas.config.CasCoreHttpConfiguration;
-import org.apereo.cas.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
-import org.apereo.cas.config.CasCoreNotificationsConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
-import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
-import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
-import org.apereo.cas.config.CasCoreTicketsConfiguration;
-import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasCoreWebConfiguration;
-import org.apereo.cas.config.CasCoreWebflowConfiguration;
-import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
-import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryGrouperConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasCoreAutoConfiguration;
+import org.apereo.cas.config.CasCoreCookieAutoConfiguration;
+import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
+import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
+import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
+import org.apereo.cas.config.CasGrouperAutoConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
-import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.config.CasWebflowContextConfiguration;
-import org.apereo.cas.config.GrouperMultifactorAuthenticationConfiguration;
 import org.apereo.cas.grouper.GrouperFacade;
 import org.apereo.cas.util.CollectionUtils;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGetGroupsResult;
@@ -57,40 +45,27 @@ public abstract class BaseGrouperConfigurationTests {
     })
     @SpringBootConfiguration
     @Import({
-        CasCoreMultifactorAuthenticationConfiguration.class,
-        CasMultifactorAuthenticationWebflowConfiguration.class,
-        CasCoreWebflowConfiguration.class,
-        CasWebflowContextConfiguration.class,
-        CasCoreNotificationsConfiguration.class,
-        CasCoreServicesConfiguration.class,
-        CasCoreLogoutConfiguration.class,
-        CasCoreWebConfiguration.class,
-        CasCoreHttpConfiguration.class,
-        CasCoreConfiguration.class,
-        CasCoreAuthenticationConfiguration.class,
-        CasCoreTicketsConfiguration.class,
+        CasCoreMultifactorAuthenticationAutoConfiguration.class,
+        CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
+        CasCoreWebflowAutoConfiguration.class,
+        CasCoreNotificationsAutoConfiguration.class,
+        CasCoreServicesAutoConfiguration.class,
+        CasCoreLogoutAutoConfiguration.class,
+        CasCoreWebAutoConfiguration.class,
+        CasCoreAutoConfiguration.class,
         CasRegisteredServicesTestConfiguration.class,
-        CasCoreTicketIdGeneratorsConfiguration.class,
-        CasCoreTicketCatalogConfiguration.class,
-        CasCoreTicketsSerializationConfiguration.class,
-        CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-        CasCookieConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
-        CasCoreAuthenticationSupportConfiguration.class,
-        CasCoreAuthenticationPrincipalConfiguration.class,
-        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-        CasCoreUtilConfiguration.class,
-        CasPersonDirectoryConfiguration.class,
-        CasPersonDirectoryStubConfiguration.class,
-        CasPersonDirectoryGrouperConfiguration.class,
+        CasCoreTicketsAutoConfiguration.class,
+        CasCoreCookieAutoConfiguration.class,
+        CasCoreAuthenticationAutoConfiguration.class,
+        CasCoreUtilAutoConfiguration.class,
+        CasPersonDirectoryAutoConfiguration.class,
         GrouperTestConfiguration.class,
-        GrouperMultifactorAuthenticationConfiguration.class
+        CasGrouperAutoConfiguration.class
     })
     public static class SharedTestConfiguration {
     }
 
-    @TestConfiguration(value = "GrouperTestConfiguration",
-                       proxyBeanMethods = false)
+    @TestConfiguration(value = "GrouperTestConfiguration", proxyBeanMethods = false)
     public static class GrouperTestConfiguration {
         @Bean
         public GrouperFacade grouperFacade() {

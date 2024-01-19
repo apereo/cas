@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.With;
 import lombok.experimental.SuperBuilder;
+import org.apereo.services.persondir.IPersonAttributeDao;
 import java.util.Set;
 
 /**
@@ -39,5 +40,14 @@ public interface AttributeRepositoryResolver {
         private final Principal principal;
         private final Service service;
         private final Set<String> activeRepositoryIds;
+    }
+
+    /**
+     * All repositories attribute repository resolver.
+     *
+     * @return the attribute repository resolver
+     */
+    static AttributeRepositoryResolver allAttributeRepositories() {
+        return query -> Set.of(IPersonAttributeDao.WILDCARD);
     }
 }

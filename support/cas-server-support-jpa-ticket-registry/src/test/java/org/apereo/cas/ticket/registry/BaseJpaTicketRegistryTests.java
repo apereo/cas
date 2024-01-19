@@ -1,15 +1,12 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.config.CasHibernateJpaConfiguration;
-import org.apereo.cas.config.CasOAuth20Configuration;
-import org.apereo.cas.config.CasOAuth20EndpointsConfiguration;
-import org.apereo.cas.config.CasOAuth20ProtocolTicketCatalogConfiguration;
-import org.apereo.cas.config.CasOAuth20TicketSerializationConfiguration;
-import org.apereo.cas.config.CasWsSecurityTokenTicketCatalogConfiguration;
-import org.apereo.cas.config.CasWsSecurityTokenTicketComponentSerializationConfiguration;
-import org.apereo.cas.config.JpaTicketRegistryConfiguration;
-import org.apereo.cas.config.JpaTicketRegistryTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreSamlAutoConfiguration;
+import org.apereo.cas.config.CasHibernateJpaAutoConfiguration;
+import org.apereo.cas.config.CasJpaTicketRegistryAutoConfiguration;
+import org.apereo.cas.config.CasOAuth20AutoConfiguration;
+import org.apereo.cas.config.CasOAuth20ProtocolTicketCatalogAutoConfiguration;
+import org.apereo.cas.config.CasWsSecuritySecurityTokenAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.CloseableDataSource;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -24,7 +21,6 @@ import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.TicketGrantingTicketIdGenerator;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
-
 import lombok.Getter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -39,12 +35,10 @@ import org.springframework.boot.autoconfigure.integration.IntegrationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
-
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -148,16 +142,13 @@ public abstract class BaseJpaTicketRegistryTests extends BaseTicketRegistryTests
     }
     
     @Import({
-        JpaTicketRegistryTicketCatalogConfiguration.class,
-        JpaTicketRegistryConfiguration.class,
-        CasHibernateJpaConfiguration.class,
+        CasJpaTicketRegistryAutoConfiguration.class,
+        CasHibernateJpaAutoConfiguration.class,
         BaseTicketRegistryTests.SharedTestConfiguration.class,
-        CasWsSecurityTokenTicketComponentSerializationConfiguration.class,
-        CasWsSecurityTokenTicketCatalogConfiguration.class,
-        CasOAuth20Configuration.class,
-        CasOAuth20TicketSerializationConfiguration.class,
-        CasOAuth20EndpointsConfiguration.class,
-        CasOAuth20ProtocolTicketCatalogConfiguration.class
+        CasWsSecuritySecurityTokenAutoConfiguration.class,
+        CasCoreSamlAutoConfiguration.class,
+        CasOAuth20AutoConfiguration.class,
+        CasOAuth20ProtocolTicketCatalogAutoConfiguration.class
     })
     public static class SharedTestConfiguration {
     }

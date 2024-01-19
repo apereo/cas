@@ -44,6 +44,7 @@ class DefaultCasProtocolAttributeEncoderTests {
         this.webApplicationService = mock(WebApplicationService.class);
         when(webApplicationService.getId()).thenReturn("https://www.google.com/");
         when(webApplicationService.getOriginalUrl()).thenReturn("https://www.google.com/");
+        when(webApplicationService.getFormat()).thenReturn(ValidationResponseType.XML);
     }
 
     @Test

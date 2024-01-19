@@ -2,6 +2,7 @@ package org.apereo.cas.web.view;
 
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.validation.CasProtocolAttributesRenderer;
@@ -27,9 +28,10 @@ public class Cas30ResponseView extends Cas20ResponseView {
                              final View view,
                              final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
                              final AuthenticationServiceSelectionPlan serviceSelectionStrategy,
-                             final CasProtocolAttributesRenderer attributesRenderer) {
+                             final CasProtocolAttributesRenderer attributesRenderer,
+                             final AttributeDefinitionStore attributeDefinitionStore) {
         super(successResponse, protocolAttributeEncoder, servicesManager, view,
-            authenticationAttributeReleasePolicy, serviceSelectionStrategy, attributesRenderer);
+            authenticationAttributeReleasePolicy, serviceSelectionStrategy, attributesRenderer, attributeDefinitionStore);
     }
 
     @Override

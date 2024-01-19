@@ -93,8 +93,12 @@ public class ConfigurationMetadataGenerator {
      * @throws Exception the exception
      */
     public static void main(final String[] args) throws Exception {
-        val buildDir = args[0];
-        val projectDir = args[1];
+        if (args.length != 1) {
+            throw new IllegalArgumentException("Usage: ConfigurationMetadataGenerator <project-dir>");
+        }
+        val projectDir = args[0];
+        val buildDir = new File(projectDir, "build").getCanonicalPath();
+        LOGGER.info("Build directory: [{}], project directory [{}]", buildDir, projectDir);
         val generator = new ConfigurationMetadataGenerator(buildDir, projectDir);
         generator.adjustConfigurationMetadata();
     }
@@ -105,7 +109,7 @@ public class ConfigurationMetadataGenerator {
         var hints = new LinkedHashSet<ConfigurationMetadataHint>(0);
         val allValidProps = props.stream()
             .filter(p -> p.getDeprecation() == null
-                         || !Deprecation.Level.ERROR.equals(p.getDeprecation().getLevel())).toList();
+                || !Deprecation.Level.ERROR.equals(p.getDeprecation().getLevel())).toList();
 
         for (val entry : allValidProps) {
             val propName = StringUtils.substringAfterLast(entry.getName(), ".");
@@ -196,7 +200,7 @@ public class ConfigurationMetadataGenerator {
     }
 
     protected static void removeNestedConfigurationPropertyGroups(final Set<ConfigurationMetadataProperty> properties,
-                                                                final Set<ConfigurationMetadataProperty> groups) {
+                                                                  final Set<ConfigurationMetadataProperty> groups) {
         var it = properties.iterator();
         while (it.hasNext()) {
             var entry = it.next();
@@ -388,7 +392,7 @@ public class ConfigurationMetadataGenerator {
         jsonMap.put("properties", properties.parallelStream().sorted(Comparator.comparing(ConfigurationMetadataProperty::getName)).collect(Collectors.toCollection(LinkedHashSet::new)));
         jsonMap.put("groups", groups.parallelStream().sorted(Comparator.comparing(ConfigurationMetadataProperty::getName)).collect(Collectors.toCollection(LinkedHashSet::new)));
         jsonMap.put("hints", hints.parallelStream().sorted(Comparator.comparing(ConfigurationMetadataHint::getName)).collect(Collectors.toCollection(LinkedHashSet::new)));
-        
+
         val destinationFile = new File(buildDir, "generated/spring-configuration-metadata/META-INF/spring-configuration-metadata.json");
         destinationFile.getParentFile().mkdirs();
         MAPPER.writerWithDefaultPrettyPrinter().writeValue(destinationFile, jsonMap);

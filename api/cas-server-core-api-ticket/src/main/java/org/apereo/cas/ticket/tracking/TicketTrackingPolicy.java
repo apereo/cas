@@ -1,7 +1,6 @@
 package org.apereo.cas.ticket.tracking;
 
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 
 /**
  * This is {@link TicketTrackingPolicy}.
@@ -28,7 +27,7 @@ public interface TicketTrackingPolicy {
      * @param ownerTicket the owner ticket
      * @param ticket      the tracked ticket
      */
-    default void trackTicket(final TicketGrantingTicket ownerTicket, final Ticket ticket) {}
+    default void trackTicket(final Ticket ownerTicket, final Ticket ticket) {}
 
     /**
      * No op ticket tracking policy.

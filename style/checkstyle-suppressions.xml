@@ -38,4 +38,5 @@
     <suppress checks="." files="com[\\/]yubico[\\/]"/>
     <suppress checks="." files="org[\\/]apereo[\\/]cas[\\/]authentication[\\/]soap[\\/]"/>
     <suppress checks="." files="org[\\/]apereo[\\/]cas[\\/]documentation"/>
+    <suppress checks="." files="ci/checks/.+\.java"/>
 </suppressions>

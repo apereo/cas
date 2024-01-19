@@ -2,29 +2,18 @@ package org.apereo.cas.adaptors.jdbc.config;
 
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
-import org.apereo.cas.config.CasCoreConfiguration;
-import org.apereo.cas.config.CasCoreHttpConfiguration;
-import org.apereo.cas.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.config.CasCoreNotificationsConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
-import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
-import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
-import org.apereo.cas.config.CasCoreTicketsConfiguration;
-import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasCoreWebConfiguration;
-import org.apereo.cas.config.CasHibernateJpaConfiguration;
-import org.apereo.cas.config.CasJdbcAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasCoreAutoConfiguration;
+import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
+import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
+import org.apereo.cas.config.CasHibernateJpaAutoConfiguration;
+import org.apereo.cas.config.CasJdbcAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
-import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.util.DigestUtils;
@@ -48,29 +37,18 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasHibernateJpaConfiguration.class,
-    CasCoreAuthenticationConfiguration.class,
-    CasCoreAuthenticationHandlersConfiguration.class,
-    CasCoreAuthenticationMetadataConfiguration.class,
-    CasCoreAuthenticationPolicyConfiguration.class,
-    CasCoreAuthenticationPrincipalConfiguration.class,
-    CasCoreAuthenticationSupportConfiguration.class,
-    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-    CasCoreConfiguration.class,
-    CasCoreTicketsConfiguration.class,
-    CasCoreTicketIdGeneratorsConfiguration.class,
-    CasCoreTicketCatalogConfiguration.class,
-    CasCoreTicketsSerializationConfiguration.class,
-    CasCoreLogoutConfiguration.class,
-    CasCoreWebConfiguration.class,
-    CasCoreServicesConfiguration.class,
-    CasCoreUtilConfiguration.class,
-    CasCoreNotificationsConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
-    CasCoreHttpConfiguration.class,
+    CasHibernateJpaAutoConfiguration.class,
+    CasCoreAuthenticationAutoConfiguration.class,
+    CasCoreAutoConfiguration.class,
+    CasCoreTicketsAutoConfiguration.class,
+    CasCoreLogoutAutoConfiguration.class,
+    CasCoreWebAutoConfiguration.class,
+    CasCoreUtilAutoConfiguration.class,
+    CasCoreNotificationsAutoConfiguration.class,
+    CasCoreServicesAutoConfiguration.class,
     CasRegisteredServicesTestConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
-    CasJdbcAuthenticationConfiguration.class
+    CasJdbcAuthenticationAutoConfiguration.class
 }, properties = {
     "cas.authn.jdbc.encode[0].sql=SELECT * FROM users WHERE uid=?",
 

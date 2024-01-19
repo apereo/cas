@@ -5,14 +5,14 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -32,6 +32,7 @@ import java.util.stream.IntStream;
  */
 @Slf4j
 @RequiredArgsConstructor
+@Accessors(chain = true)
 public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEventExecutionPlan {
     private final List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulatorList = new ArrayList<>(0);
 
@@ -46,6 +47,9 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
     private final List<AuthenticationPolicyResolver> authenticationPolicyResolvers = new ArrayList<>(0);
 
     private final Map<AuthenticationHandler, PrincipalResolver> authenticationHandlerPrincipalResolverMap = new LinkedHashMap<>();
+
+    @Setter
+    private AuthenticationHandlerResolver defaultAuthenticationHandlerResolver = new DefaultAuthenticationHandlerResolver();
 
     @Override
     public boolean registerAuthenticationHandler(final AuthenticationHandler handler) {
@@ -121,8 +125,8 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
 
             if (authenticationHandlerPrincipalResolverMap.containsKey(handler)) {
                 LOGGER.error("Authentication execution plan has found an existing handler [{}]. "
-                             + "Attempts to register a new authentication handler with the same name may lead to unpredictable results. "
-                             + "Please make sure all authentication handlers are uniquely defined/named in the CAS configuration.",
+                        + "Attempts to register a new authentication handler with the same name may lead to unpredictable results. "
+                        + "Please make sure all authentication handlers are uniquely defined/named in the CAS configuration.",
                     handler.getName());
                 return false;
             }
@@ -165,9 +169,8 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
 
         if (resolvedHandlers.isEmpty()) {
             LOGGER.debug("Authentication handler resolvers produced no candidate authentication handler. Using the default handler resolver instead...");
-            val defaultHandlerResolver = new DefaultAuthenticationHandlerResolver();
-            if (defaultHandlerResolver.supports(handlers, transaction)) {
-                resolvedHandlers.addAll(defaultHandlerResolver.resolve(handlers, transaction));
+            if (defaultAuthenticationHandlerResolver.supports(handlers, transaction)) {
+                resolvedHandlers.addAll(defaultAuthenticationHandlerResolver.resolve(handlers, transaction));
             }
         }
 

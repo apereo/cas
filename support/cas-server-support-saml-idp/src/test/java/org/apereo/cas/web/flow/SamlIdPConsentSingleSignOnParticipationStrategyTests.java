@@ -2,7 +2,7 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.config.CasConsentCoreConfiguration;
+import org.apereo.cas.config.CasConsentCoreAutoConfiguration;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.5.0
  */
 @Tag("SAML2")
-@Import(CasConsentCoreConfiguration.class)
+@Import(CasConsentCoreAutoConfiguration.class)
 class SamlIdPConsentSingleSignOnParticipationStrategyTests extends BaseSamlIdPWebflowTests {
 
     @Autowired

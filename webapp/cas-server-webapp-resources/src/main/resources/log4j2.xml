@@ -10,7 +10,7 @@ or override log42.component.properties to turn off async
         <Property name="baseDir">/tmp/logs</Property>
         
         <Property name="cas.log.level">${main:\--logging.level.org.apereo.cas:-info}</Property>
-        <Property name="spring.webflow.log.level">${main:\--logging.level.org.springframework.webflow:-warn}</Property>
+        <Property name="spring.webflow.log.level">${main:\--logging.level.org.springframework.webflow:-info}</Property>
         <Property name="spring.security.log.level">${main:\--logging.level.org.springframework.security:-warn}</Property>
         <Property name="thymeleaf.log.level">${main:\--logging.level.org.thymeleaf-warn}</Property>
         <Property name="spring.cloud.log.level">${main:\--logging.level.org.springframework.cloud:-warn}</Property>
@@ -135,7 +135,13 @@ or override log42.component.properties to turn off async
         <Logger name="org.springframework.ui" level="warn" />
         <Logger name="org.springframework.context" level="warn" />
         <Logger name="org.springframework.context.support" level="warn" />
+        
         <Logger name="org.springframework.webflow" level="${sys:spring.webflow.log.level}"/>
+        <Logger name="org.springframework.webflow.mvc.servlet.FlowHandlerMapping" level="warn"/>
+        <Logger name="org.springframework.webflow.engine.impl.FlowExecutionImpl" level="warn"/>
+        <Logger name="org.springframework.webflow.executor.FlowExecutorImpl" level="warn"/>
+        <Logger name="org.springframework.webflow.mvc.view.AbstractMvcView" level="warn"/>
+
         <Logger name="org.springframework.aop" level="warn" />
         <Logger name="org.springframework.session" level="warn"/>
         <Logger name="org.springframework.scheduling" level="info"/>

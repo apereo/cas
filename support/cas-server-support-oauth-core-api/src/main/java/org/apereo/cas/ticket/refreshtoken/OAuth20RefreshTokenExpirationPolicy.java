@@ -81,7 +81,7 @@ public class OAuth20RefreshTokenExpirationPolicy extends AbstractCasExpirationPo
         if (ticketState == null) {
             return true;
         }
-        val expiringTime = getMaximumExpirationTime(ticketState);
+        val expiringTime = toMaximumExpirationTime(ticketState);
         val now = ZonedDateTime.now(ZoneOffset.UTC);
         val result = expiringTime.isBefore(now);
         if (result) {
@@ -93,7 +93,7 @@ public class OAuth20RefreshTokenExpirationPolicy extends AbstractCasExpirationPo
 
     @JsonIgnore
     @Override
-    public ZonedDateTime getMaximumExpirationTime(final Ticket ticketState) {
+    public ZonedDateTime toMaximumExpirationTime(final Ticket ticketState) {
         val creationTime = ticketState.getCreationTime();
         return creationTime.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
     }

@@ -11,7 +11,6 @@ import org.apereo.cas.pac4j.BrowserWebStorageSessionStore;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.web.BrowserSessionStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
@@ -24,7 +23,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
-import org.springframework.webflow.core.collection.ParameterMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.scope.ConversationScope;
@@ -65,36 +63,35 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
     }
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
         val requestParameters = requestContext.getRequestParameters();
         if (requestParameters.contains(REQUEST_PARAMETER_CODE) && requestParameters.contains(REQUEST_PARAMETER_STATE)) {
-            return handleDuoSecurityUniversalPromptResponse(requestContext, requestParameters);
+            return handleDuoSecurityUniversalPromptResponse(requestContext);
         }
         return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_SKIP);
     }
 
-    private Event handleDuoSecurityUniversalPromptResponse(final RequestContext requestContext,
-                                                           final ParameterMap requestParameters) {
-        if (!requestParameters.contains(BrowserSessionStorage.KEY_SESSION_STORAGE)) {
+    private Event handleDuoSecurityUniversalPromptResponse(final RequestContext requestContext) throws Exception {
+        val browserStorage = WebUtils.getBrowserStoragePayload(requestContext);
+        if (browserStorage.isEmpty()) {
+            WebUtils.putTargetTransition(requestContext, CasWebflowConstants.TRANSITION_ID_SWITCH);
+            WebUtils.putTargetState(requestContext, requestContext.getCurrentState().getId());
+            WebUtils.putBrowserStorageContextKey(requestContext, sessionStore.getBrowserStorageContextKey());
             return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_RESTORE);
         }
 
-        val duoState = requestParameters.get(REQUEST_PARAMETER_STATE, String.class);
+        val duoState = WebUtils.getRequestParameterOrAttribute(requestContext, REQUEST_PARAMETER_STATE).orElseThrow();
         LOGGER.trace("Received Duo Security state [{}]", duoState);
         BrowserWebStorageSessionStore browserSessionStore = null;
 
+        val webContext = toWebContext(requestContext);
         try {
-            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-            val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-
-            val storage = requestParameters.get(BrowserSessionStorage.KEY_SESSION_STORAGE);
-            val context = new JEEContext(request, response);
-            browserSessionStore = this.sessionStore
-                .buildFromTrackableSession(context, storage)
+            browserSessionStore = sessionStore
+                .buildFromTrackableSession(webContext, browserStorage.get())
                 .map(BrowserWebStorageSessionStore.class::cast)
                 .orElseThrow(() -> new IllegalArgumentException("Unable to determine Duo authentication context from session store"));
 
-            browserSessionStore.getSessionAttributes().forEach((key, value) -> {
+            browserSessionStore.getSessionAttributes(webContext).forEach((key, value) -> {
                 if (key.equalsIgnoreCase(FlowScope.class.getSimpleName())) {
                     populateRequestContextScope(value, requestContext.getFlowScope());
                 } else if (key.equalsIgnoreCase(FlashScope.class.getSimpleName())) {
@@ -107,8 +104,7 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
                     requestContext.getFlowScope().put(key, value);
                 }
             });
-            val authentication = (Authentication) browserSessionStore.getSessionAttributes().get(Authentication.class.getSimpleName());
-            populateContextWithCredential(requestContext, browserSessionStore, authentication);
+            populateContextWithCredential(requestContext, browserSessionStore);
             populateContextWithAuthentication(requestContext, browserSessionStore);
             populateContextWithService(requestContext, browserSessionStore);
             return super.doExecuteInternal(requestContext);
@@ -116,11 +112,17 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
             LoggingUtils.warn(LOGGER, e);
         } finally {
             if (browserSessionStore != null) {
-                val credential = (Credential) browserSessionStore.getSessionAttributes().get(Credential.class.getSimpleName());
+                val credential = (Credential) browserSessionStore.getSessionAttributes(webContext).get(Credential.class.getSimpleName());
                 WebUtils.putCredential(requestContext, credential);
             }
         }
         return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_ERROR);
+    }
+
+    private static JEEContext toWebContext(final RequestContext requestContext) {
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
+        return new JEEContext(request, response);
     }
 
     private static void populateRequestContextScope(final Object flowAttributes, final MutableAttributeMap<Object> requestContext) {
@@ -131,21 +133,20 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
 
     protected void populateContextWithService(final RequestContext requestContext,
                                               final BrowserWebStorageSessionStore sessionStorage) {
-        val registeredService = (RegisteredService) sessionStorage.getSessionAttributes().get(RegisteredService.class.getSimpleName());
+        val webContext = toWebContext(requestContext);
+        val registeredService = (RegisteredService) sessionStorage.getSessionAttributes(webContext).get(RegisteredService.class.getSimpleName());
         WebUtils.putRegisteredService(requestContext, registeredService);
-        val service = (Service) sessionStorage.getSessionAttributes().get(Service.class.getSimpleName());
+        val service = (Service) sessionStorage.getSessionAttributes(webContext).get(Service.class.getSimpleName());
         WebUtils.putServiceIntoFlowScope(requestContext, service);
     }
 
-
     protected void populateContextWithCredential(final RequestContext requestContext,
-                                                 final BrowserWebStorageSessionStore sessionStorage,
-                                                 final Authentication authentication) {
-        val requestParameters = requestContext.getRequestParameters();
-        val duoCode = requestParameters.get(REQUEST_PARAMETER_CODE, String.class);
+                                                 final BrowserWebStorageSessionStore sessionStorage) {
+        val webContext = toWebContext(requestContext);
+        val authentication = (Authentication) sessionStorage.getSessionAttributes(webContext).get(Authentication.class.getSimpleName());
+        val duoCode = WebUtils.getRequestParameterOrAttribute(requestContext, REQUEST_PARAMETER_CODE).orElseThrow();
         LOGGER.trace("Received Duo Security code [{}]", duoCode);
-
-        val duoSecurityIdentifier = (String) sessionStorage.getSessionAttributes().get("duoProviderId");
+        val duoSecurityIdentifier = (String) sessionStorage.getSessionAttributes(webContext).get("duoProviderId");
         val credential = new DuoSecurityUniversalPromptCredential(duoCode, authentication);
         val provider = MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(duoSecurityIdentifier, applicationContext)
             .orElseThrow(() -> new IllegalArgumentException("Unable to locate multifactor authentication provider by id " + duoSecurityIdentifier));
@@ -153,8 +154,11 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
         WebUtils.putCredential(requestContext, credential);
     }
 
-    protected void populateContextWithAuthentication(final RequestContext requestContext, final BrowserWebStorageSessionStore sessionStorage) throws Throwable {
-        val authenticationResultBuilder = (AuthenticationResultBuilder) sessionStorage.getSessionAttributes().get(AuthenticationResultBuilder.class.getSimpleName());
+    protected void populateContextWithAuthentication(final RequestContext requestContext,
+                                                     final BrowserWebStorageSessionStore sessionStorage) throws Throwable {
+        val webContext = toWebContext(requestContext);
+        val authenticationResultBuilder = (AuthenticationResultBuilder) sessionStorage.getSessionAttributes(webContext)
+            .get(AuthenticationResultBuilder.class.getSimpleName());
         FunctionUtils.doIfNotNull(authenticationResultBuilder, value -> WebUtils.putAuthenticationResultBuilder(value, requestContext));
         val authenticationResult = authenticationResultBuilder.build(authenticationSystemSupport.getPrincipalElectionStrategy());
         WebUtils.putAuthenticationResult(authenticationResult, requestContext);

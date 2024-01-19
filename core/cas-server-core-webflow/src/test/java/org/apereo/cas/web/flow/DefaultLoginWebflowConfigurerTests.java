@@ -2,7 +2,6 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.support.CasLocaleChangeInterceptor;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -20,9 +19,7 @@ import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.ViewFactory;
 import org.springframework.webflow.test.MockRequestControlContext;
-
 import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -91,5 +88,19 @@ class DefaultLoginWebflowConfigurerTests extends BaseWebflowConfigurerTests {
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         context.getFlashScope().put(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION, new RuntimeException());
         assertDoesNotThrow(() -> stopState.enter(context));
+    }
+
+    @Test
+    void verifyStorageStates() throws Exception {
+        val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
+        val writeState = (ViewState) flow.getState(CasWebflowConstants.STATE_ID_BROWSER_STORAGE_WRITE);
+        assertNotNull(writeState);
+        assertEquals(1, writeState.getEntryActionList().size());
+        assertEquals(CasWebflowConstants.STATE_ID_SERVICE_CHECK, writeState.getTransition(CasWebflowConstants.TRANSITION_ID_CONTINUE).getTargetStateId());
+        val readState = (ViewState) flow.getState(CasWebflowConstants.STATE_ID_BROWSER_STORAGE_READ);
+        assertNotNull(readState);
+        assertEquals(1, readState.getRenderActionList().size());
+        assertEquals(0, readState.getEntryActionList().size());
+        assertEquals(CasWebflowConstants.STATE_ID_VERIFY_BROWSER_STORAGE_READ, readState.getTransition(CasWebflowConstants.TRANSITION_ID_CONTINUE).getTargetStateId());
     }
 }

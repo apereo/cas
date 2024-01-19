@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.support.TriStateBoolean;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import java.io.Serial;
 import java.io.Serializable;
@@ -69,7 +68,7 @@ public class PersonDirectoryPrincipalResolverProperties implements Serializable 
      * if attribute resolution is enabled.
      * The list here may include identifiers separated by comma.
      */
-    private String activeAttributeRepositoryIds = IPersonAttributeDao.WILDCARD;
+    private String activeAttributeRepositoryIds = "*";
 
     /**
      * In the event that the principal resolution engine resolves

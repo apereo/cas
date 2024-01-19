@@ -1,8 +1,1 @@
-org.apereo.cas.config.DelegatedAuthenticationEventExecutionPlanConfiguration
-org.apereo.cas.config.DelegatedAuthenticationConfiguration
-org.apereo.cas.config.DelegatedAuthenticationSerializationConfiguration
-org.apereo.cas.config.DelegatedAuthenticationProvisioningConfiguration
-org.apereo.cas.config.DelegatedAuthenticationWebflowConfiguration
-org.apereo.cas.config.DelegatedAuthenticationDynamicDiscoverySelectionConfiguration
-org.apereo.cas.config.DelegatedAuthenticationSAMLConfiguration
-org.apereo.cas.config.DelegatedAuthenticationProfileSelectionConfiguration
+org.apereo.cas.config.CasDelegatedAuthenticationAutoConfiguration

@@ -1,9 +1,8 @@
 package org.apereo.cas.aup;
 
-import org.apereo.cas.config.CasAcceptableUsagePolicyRedisConfiguration;
+import org.apereo.cas.config.CasAcceptableUsagePolicyRedisAutoConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import lombok.Getter;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -11,9 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
-
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -23,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("Redis")
-@Import(CasAcceptableUsagePolicyRedisConfiguration.class)
+@Import(CasAcceptableUsagePolicyRedisAutoConfiguration.class)
 @EnabledIfListeningOnPort(port = 6379)
 @TestPropertySource(properties = {
     "cas.acceptable-usage-policy.redis.host=localhost",

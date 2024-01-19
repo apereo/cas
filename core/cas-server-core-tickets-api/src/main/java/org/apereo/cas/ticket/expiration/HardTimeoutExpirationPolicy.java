@@ -37,16 +37,8 @@ public class HardTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
     @Serial
     private static final long serialVersionUID = 6728077010285422290L;
 
-    /**
-     * The time to kill in seconds.
-     */
     private long timeToKillInSeconds;
 
-    /**
-     * Instantiates a new hard timeout expiration policy.
-     *
-     * @param timeToKillInSeconds the time to kill in seconds
-     */
     @JsonCreator
     public HardTimeoutExpirationPolicy(@JsonProperty("timeToLive") final long timeToKillInSeconds) {
         this.timeToKillInSeconds = timeToKillInSeconds;
@@ -57,7 +49,7 @@ public class HardTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
         if (ticketState == null) {
             return true;
         }
-        val expiringTime = getMaximumExpirationTime(ticketState);
+        val expiringTime = toMaximumExpirationTime(ticketState);
         val now = ZonedDateTime.now(getClock());
         val expired = expiringTime.isBefore(now);
         val result = expired || super.isExpired(ticketState);
@@ -81,7 +73,7 @@ public class HardTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
     @JsonIgnore
     @Override
-    public ZonedDateTime getMaximumExpirationTime(final Ticket ticketState) {
+    public ZonedDateTime toMaximumExpirationTime(final Ticket ticketState) {
         val creationTime = ticketState.getCreationTime();
         return creationTime.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
     }

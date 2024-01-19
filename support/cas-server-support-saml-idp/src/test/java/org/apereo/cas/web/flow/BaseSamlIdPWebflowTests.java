@@ -1,13 +1,7 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.config.CoreSamlConfiguration;
-import org.apereo.cas.config.SamlIdPAuthenticationServiceSelectionStrategyConfiguration;
-import org.apereo.cas.config.SamlIdPConfiguration;
-import org.apereo.cas.config.SamlIdPEndpointsConfiguration;
-import org.apereo.cas.config.SamlIdPMetadataConfiguration;
-import org.apereo.cas.config.SamlIdPThrottleConfiguration;
-import org.apereo.cas.config.SamlIdPTicketSerializationConfiguration;
-import org.apereo.cas.config.SamlIdPWebflowConfiguration;
+import org.apereo.cas.config.CasCoreSamlAutoConfiguration;
+import org.apereo.cas.config.CasSamlIdPAutoConfiguration;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.idp.metadata.locator.FileSystemSamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
@@ -16,7 +10,6 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
-
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -31,11 +24,9 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.io.FileSystemResource;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.UUID;
-
 import static org.mockito.Mockito.*;
 
 /**
@@ -46,14 +37,8 @@ import static org.mockito.Mockito.*;
  */
 @Import({
     BaseSamlIdPWebflowTests.SamlIdPMetadataTestConfiguration.class,
-    CoreSamlConfiguration.class,
-    SamlIdPConfiguration.class,
-    SamlIdPThrottleConfiguration.class,
-    SamlIdPTicketSerializationConfiguration.class,
-    SamlIdPAuthenticationServiceSelectionStrategyConfiguration.class,
-    SamlIdPMetadataConfiguration.class,
-    SamlIdPEndpointsConfiguration.class,
-    SamlIdPWebflowConfiguration.class
+    CasCoreSamlAutoConfiguration.class,
+    CasSamlIdPAutoConfiguration.class
 })
 public abstract class BaseSamlIdPWebflowTests extends BaseWebflowConfigurerTests {
 
@@ -82,7 +67,7 @@ public abstract class BaseSamlIdPWebflowTests extends BaseWebflowConfigurerTests
             adaptor, response, request, SAMLConstants.SAML2_POST_BINDING_URI,
             authnRequest, messageContext);
     }
-    
+
     protected static AuthnRequest getAuthnRequestFor(final String service) {
         val authnRequest = mock(AuthnRequest.class);
         when(authnRequest.getID()).thenReturn(UUID.randomUUID().toString());

@@ -62,7 +62,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
 import org.springframework.boot.actuate.health.HealthIndicator;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -95,15 +94,15 @@ import java.util.stream.Collectors;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication,
                              module = "duo")
-@AutoConfiguration
-public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
+@Configuration(value = "DuoSecurityAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
+class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
 
     private static final int WEBFLOW_CONFIGURER_ORDER = 0;
 
     @Configuration(value = "DuoSecurityAuthenticationEventExecutionConfiguration",
                    proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class DuoSecurityAuthenticationEventExecutionConfiguration {
+    static class DuoSecurityAuthenticationEventExecutionConfiguration {
         private static BeanContainer<AuthenticationMetaDataPopulator> duoAuthenticationMetaDataPopulator(
             final ConfigurableApplicationContext applicationContext,
             final MultifactorAuthenticationHandler authenticationHandler,
@@ -184,7 +183,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     @Configuration(value = "DuoSecurityAuthenticationMonitorConfiguration",
                    proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class DuoSecurityAuthenticationMonitorConfiguration {
+    static class DuoSecurityAuthenticationMonitorConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnEnabledHealthIndicator("duoSecurityHealthIndicator")
@@ -201,7 +200,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
                    proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @Slf4j
-    public static class DuoSecurityAuthenticationEventExecutionPlanCoreConfiguration {
+    static class DuoSecurityAuthenticationEventExecutionPlanCoreConfiguration {
         private static final int USER_ACCOUNT_CACHE_INITIAL_SIZE = 50;
 
         private static final long USER_ACCOUNT_CACHE_MAX_SIZE = 1_000;
@@ -300,7 +299,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     @Configuration(value = "DuoSecurityAuthenticationWebflowActionsConfiguration",
                    proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class DuoSecurityAuthenticationWebflowActionsConfiguration {
+    static class DuoSecurityAuthenticationWebflowActionsConfiguration {
         @ConditionalOnMissingBean(name = "duoMultifactorWebflowConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -380,7 +379,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     @Configuration(value = "DuoSecurityAuthenticationEventExecutionPlanWebConfiguration",
                    proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class DuoSecurityAuthenticationEventExecutionPlanWebConfiguration {
+    static class DuoSecurityAuthenticationEventExecutionPlanWebConfiguration {
         @Bean
         @ConditionalOnAvailableEndpoint
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -413,7 +412,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
                    proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @ConditionalOnClass(SurrogateAuthenticationService.class)
-    public static class SurrogateAuthenticationDuoSecurityWebflowPlanConfiguration {
+    static class SurrogateAuthenticationDuoSecurityWebflowPlanConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnClass(DuoSecurityAuthenticationService.class)

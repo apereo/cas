@@ -20,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.SequencedCollection;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -53,7 +54,7 @@ class CompositeAttestationTrustSourceTests {
     void verifyOperation() throws Throwable {
         val map = MAPPER.readValue(casProperties.getAuthn().getMfa().getWebAuthn().getCore()
             .getTrustSource().getTrustedDeviceMetadata().getLocation().getInputStream(), Map.class);
-        val cert = CertUtils.readCertificate(new ByteArrayInputStream(((List) map.get("trustedCertificates")).getFirst()
+        val cert = CertUtils.readCertificate(new ByteArrayInputStream(((SequencedCollection) map.get("trustedCertificates")).getFirst()
             .toString().getBytes(StandardCharsets.UTF_8)));
 
         val result = webAuthnMetadataService.findTrustRoots(List.of(cert), Optional.empty());

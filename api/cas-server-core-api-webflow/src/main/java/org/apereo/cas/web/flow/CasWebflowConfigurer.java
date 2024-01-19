@@ -14,6 +14,7 @@ import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.FlowVariable;
 import org.springframework.webflow.engine.SubflowState;
+import org.springframework.webflow.engine.TargetStateResolver;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.TransitionCriteria;
 import org.springframework.webflow.engine.TransitionableState;
@@ -134,6 +135,38 @@ public interface CasWebflowConfigurer extends Ordered {
      * @return the transition
      */
     Transition createTransition(Expression criteriaOutcomeExpression, String targetState, Action... actions);
+
+    /**
+     * Create transition.
+     *
+     * @param criteriaOutcomeExpression the criteria outcome expression
+     * @param targetStateResolver       the target state resolver
+     * @return the transition
+     */
+    Transition createTransition(String criteriaOutcomeExpression,
+                                TargetStateResolver targetStateResolver);
+
+    /**
+     * Create transition.
+     *
+     * @param criteriaOutcomeExpression the criteria outcome expression
+     * @param targetStateResolver       the target state resolver
+     * @return the transition
+     */
+    Transition createTransition(Expression criteriaOutcomeExpression,
+                                TargetStateResolver targetStateResolver);
+
+    /**
+     * Create transition.
+     *
+     * @param criteriaOutcomeExpression the criteria outcome expression
+     * @param targetStateResolver       the target state resolver
+     * @param actions                   the actions
+     * @return the transition
+     */
+    Transition createTransition(Expression criteriaOutcomeExpression,
+                                TargetStateResolver targetStateResolver,
+                                Action... actions);
 
     /**
      * Create transition transition.
@@ -410,6 +443,18 @@ public interface CasWebflowConfigurer extends Ordered {
      */
     Transition createTransitionForState(TransitionableState state,
                                         String criteriaOutcome);
+
+    /**
+     * Create transition for state transition.
+     *
+     * @param state               the state
+     * @param criteriaOutcome     the criteria outcome
+     * @param targetStateResolver the target state resolver
+     * @return the transition
+     */
+    Transition createTransitionForState(TransitionableState state,
+                                        String criteriaOutcome,
+                                        TargetStateResolver targetStateResolver);
 
     /**
      * Create transition for state transition.

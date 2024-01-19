@@ -5,13 +5,11 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
 import java.util.Optional;
 
 /**
@@ -28,20 +26,21 @@ public class FetchTicketGrantingTicketAction extends BaseCasWebflowAction {
     private final CasCookieBuilder ticketGrantingTicketCookieGenerator;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val cookieResult = ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
-        Optional.ofNullable(cookieResult).ifPresent(cookie -> {
-            LOGGER.debug("Attempting to locate ticket-granting ticket from cookie value [{}]", cookie);
-            val ticket = FunctionUtils.doAndHandle(
-                () -> ticketRegistry.getTicket(cookie, TicketGrantingTicket.class), throwable -> null).get();
-            if (ticket != null) {
-                LOGGER.debug("Found ticket-granting ticket [{}]", ticket.getId());
-                WebUtils.putTicketGrantingTicket(requestContext, ticket);
-                WebUtils.putTicketGrantingTicketInScopes(requestContext, ticket);
-                WebUtils.putAuthentication(ticket.getAuthentication(), requestContext);
-            }
-        });
+        Optional.ofNullable(cookieResult).ifPresent(cookie -> populateWebflowWithTicketFromCookie(requestContext, cookie));
         return null;
+    }
+
+    private void populateWebflowWithTicketFromCookie(final RequestContext requestContext, final String ticketId) {
+        LOGGER.debug("Attempting to locate ticket-granting ticket from cookie value [{}]", ticketId);
+        val ticket = FunctionUtils.doAndHandle(() -> ticketRegistry.getTicket(ticketId, TicketGrantingTicket.class), throwable -> null).get();
+        if (ticket != null) {
+            LOGGER.debug("Found ticket-granting ticket [{}]", ticket.getId());
+            WebUtils.putTicketGrantingTicket(requestContext, ticket);
+            WebUtils.putTicketGrantingTicketInScopes(requestContext, ticket);
+            WebUtils.putAuthentication(ticket.getAuthentication(), requestContext);
+        }
     }
 }

@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.trusted.web.flow.AbstractMultifactorTrustedDeviceWebflowConfigurer;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
-import org.apereo.cas.web.BrowserSessionStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
 import org.apereo.cas.web.flow.configurer.DynamicFlowModelBuilder;
@@ -15,6 +14,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.Flow;
+import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.builder.model.FlowModelFlowBuilder;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.engine.model.AbstractActionModel;
@@ -22,7 +22,6 @@ import org.springframework.webflow.engine.model.AbstractStateModel;
 import org.springframework.webflow.engine.model.ActionStateModel;
 import org.springframework.webflow.engine.model.EndStateModel;
 import org.springframework.webflow.engine.model.EvaluateModel;
-import org.springframework.webflow.engine.model.SetModel;
 import org.springframework.webflow.engine.model.TransitionModel;
 import org.springframework.webflow.engine.model.ViewStateModel;
 import org.springframework.webflow.engine.model.builder.DefaultFlowModelHolder;
@@ -42,8 +41,6 @@ import java.util.Optional;
 public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactorTrustedDeviceWebflowConfigurer {
 
     private static final String VIEW_ID_REDIRECT_TO_DUO_REGISTRATION = "redirectToDuoRegistration";
-
-    private static final String SESSION_STORAGE_CONTEXT = "DuoSecurityUniversalPromptSessionStorage";
 
     public DuoSecurityMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                    final FlowDefinitionRegistry loginFlowDefinitionRegistry,
@@ -90,7 +87,8 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
     }
 
     private void createDuoFlowUniversalPromptActions(final Flow flow) {
-        val actionState = createActionState(flow, CasWebflowConstants.STATE_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN,
+        val actionState = createActionState(flow,
+            CasWebflowConstants.STATE_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN,
             CasWebflowConstants.ACTION_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN);
 
         val realSubmit = getState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT);
@@ -98,12 +96,10 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
         createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_SUCCESS, targetSuccess);
         createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_SKIP, getStartState(flow).getId());
         createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_MFA_UNAVAILABLE);
-        createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_RESTORE, CasWebflowConstants.STATE_ID_SESSION_STORAGE_READ);
+        createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_RESTORE, CasWebflowConstants.STATE_ID_BROWSER_STORAGE_READ);
         
-        val viewState = createViewState(flow, CasWebflowConstants.STATE_ID_SESSION_STORAGE_READ, CasWebflowConstants.VIEW_ID_SESSION_STORAGE_READ);
-        val setKeyAction = createSetAction("flowScope." + BrowserSessionStorage.KEY_SESSION_STORAGE_CONTEXT, String.format("'%s'", SESSION_STORAGE_CONTEXT));
-        viewState.getEntryActionList().add(setKeyAction);
-        createStateDefaultTransition(viewState, CasWebflowConstants.STATE_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN);
+        val viewState = getState(flow, CasWebflowConstants.STATE_ID_BROWSER_STORAGE_READ, ViewState.class);
+        insertTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SWITCH, CasWebflowConstants.STATE_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN);
 
         setStartState(flow, actionState);
     }
@@ -143,27 +139,16 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
         val trans = new LinkedList<TransitionModel>();
         val transModel = new TransitionModel();
         transModel.setOn(CasWebflowConstants.TRANSITION_ID_SUCCESS);
-        transModel.setTo(CasWebflowConstants.STATE_ID_SESSION_STORAGE_WRITE);
+        transModel.setTo(CasWebflowConstants.STATE_ID_BROWSER_STORAGE_WRITE);
         trans.add(transModel);
         actionState.setTransitions(trans);
         states.add(actionState);
     }
 
     private static void createSessionStorageStates(final List<AbstractStateModel> states) {
-        val actions = new LinkedList<AbstractActionModel>();
-        val action = new SetModel("flowScope." + BrowserSessionStorage.KEY_SESSION_STORAGE_CONTEXT, String.format("'%s'", SESSION_STORAGE_CONTEXT));
-        actions.add(action);
-
-        val writeState = new ViewStateModel(CasWebflowConstants.STATE_ID_SESSION_STORAGE_WRITE);
-        writeState.setOnEntryActions(actions);
-        writeState.setView(CasWebflowConstants.STATE_ID_SESSION_STORAGE_WRITE);
+        val writeState = new ViewStateModel(CasWebflowConstants.STATE_ID_BROWSER_STORAGE_WRITE);
+        writeState.setView(CasWebflowConstants.VIEW_ID_BROWSER_STORAGE_WRITE);
         states.add(writeState);
-
-        val readState = new ViewStateModel(CasWebflowConstants.STATE_ID_SESSION_STORAGE_READ);
-        readState.setOnEntryActions(actions);
-        readState.setView(CasWebflowConstants.STATE_ID_SESSION_STORAGE_READ);
-        
-        states.add(readState);
     }
 
     private static void createDuoSuccessEndState(final List<AbstractStateModel> states) {

@@ -4,29 +4,16 @@ import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationPostProcessor;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
-import org.apereo.cas.config.CasCoreConfiguration;
-import org.apereo.cas.config.CasCoreHttpConfiguration;
-import org.apereo.cas.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.config.CasCoreNotificationsConfiguration;
-import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
-import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
-import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
-import org.apereo.cas.config.CasCoreTicketsConfiguration;
-import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasCoreWebConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
-import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.config.TokenAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasCoreAutoConfiguration;
+import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
+import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
+import org.apereo.cas.config.CasTokenAuthenticationAutoConfiguration;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredService;
@@ -66,30 +53,17 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
     MailSenderAutoConfiguration.class,
-    CasCoreAuthenticationPrincipalConfiguration.class,
-    CasCoreAuthenticationPolicyConfiguration.class,
-    CasCoreAuthenticationMetadataConfiguration.class,
-    CasCoreAuthenticationSupportConfiguration.class,
-    CasCoreAuthenticationHandlersConfiguration.class,
-    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
-    CasCoreHttpConfiguration.class,
-    CasCoreUtilConfiguration.class,
-    CasCoreTicketCatalogConfiguration.class,
-    CasCoreTicketsSerializationConfiguration.class,
-    CasCoreTicketsConfiguration.class,
-    CasCoreWebConfiguration.class,
-    CasPersonDirectoryConfiguration.class,
-    CasPersonDirectoryStubConfiguration.class,
-    CasCoreAuthenticationConfiguration.class,
-    CasCoreTicketIdGeneratorsConfiguration.class,
-    CasCoreServicesAuthenticationConfiguration.class,
-    CasCoreNotificationsConfiguration.class,
-    CasCoreServicesConfiguration.class,
-    CasCoreLogoutConfiguration.class,
-    TokenAuthenticationHandlerTests.TestTokenAuthenticationConfiguration.class,
-    CasCoreConfiguration.class,
-    TokenAuthenticationConfiguration.class
+    CasCoreAuthenticationAutoConfiguration.class,
+    CasCoreServicesAutoConfiguration.class,
+    CasCoreUtilAutoConfiguration.class,
+    CasCoreTicketsAutoConfiguration.class,
+    CasCoreWebAutoConfiguration.class,
+    CasPersonDirectoryAutoConfiguration.class,
+    CasCoreNotificationsAutoConfiguration.class,
+    CasCoreLogoutAutoConfiguration.class,
+    TokenAuthenticationHandlerTests.TokenAuthenticationTestConfiguration.class,
+    CasCoreAutoConfiguration.class,
+    CasTokenAuthenticationAutoConfiguration.class
 }, properties = "cas.authn.token.sso-token-enabled=true")
 @Tag("AuthenticationHandler")
 class TokenAuthenticationHandlerTests {
@@ -176,8 +150,8 @@ class TokenAuthenticationHandlerTests {
         assertNotNull(tokenAuthenticationHandler.authenticate(credential, credential.getService()));
     }
 
-    @TestConfiguration(value = "TokenAuthenticationTests", proxyBeanMethods = false)
-    static class TestTokenAuthenticationConfiguration {
+    @TestConfiguration(value = "TokenAuthenticationTestConfiguration", proxyBeanMethods = false)
+    static class TokenAuthenticationTestConfiguration {
         @Bean
         public List inMemoryRegisteredServices() {
             val services = new ArrayList<RegisteredService>();

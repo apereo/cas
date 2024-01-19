@@ -17,7 +17,12 @@ env:
 
 ##########################################################################
 
+concurrency:
+  group: "workflow = ${{ github.workflow }}, ref = ${{ github.event.ref }}, pr = ${{ github.event.pull_request.id }}"
+  cancel-in-progress: ${{ github.event_name == 'pull_request' || github.repository != 'apereo/cas' }}
+
 on:
+  workflow_dispatch:
   schedule:
     - cron: '0 23 * * *'
 #  push:
@@ -29,17 +34,6 @@ on:
 ##########################################################################
 
 jobs:
-  cancel-previous-runs:
-    if: ${{ (github.event_name == 'schedule' || contains(github.event.pull_request.labels.*.name, 'Bot')) }}
-    runs-on: macos-latest
-    timeout-minutes: 1
-    steps:
-      - uses: styfle/cancel-workflow-action@0.12.0
-        with:
-          access_token: ${{ github.token }}
-
-  ##########################################################################
-
   initialize:
     if: ${{ (github.event_name == 'schedule' || contains(github.event.pull_request.labels.*.name, 'Bot')) }}
     runs-on: macos-latest
@@ -51,7 +45,7 @@ jobs:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: ${{ env.JDK_DISTRIBUTION }}
       - name: Setup Gradle Wrapper Cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
@@ -77,14 +71,14 @@ jobs:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: ${{ env.JDK_DISTRIBUTION }}
       - name: Setup Gradle Wrapper Cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
         shell: bash
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
@@ -112,13 +106,13 @@ jobs:
           java-version: ${{ env.JDK_LATEST }}
           distribution: ${{ env.JDK_DISTRIBUTION }}
       - name: Setup Gradle Wrapper Cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
@@ -150,13 +144,13 @@ jobs:
           java --version
           native-image --version
       - name: Setup Gradle Wrapper Cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}

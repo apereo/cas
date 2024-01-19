@@ -1,2 +1,1 @@
-org.apereo.cas.config.CasEmbeddedContainerTomcatConfiguration
-org.apereo.cas.config.CasEmbeddedContainerTomcatFiltersConfiguration
+org.apereo.cas.config.CasEmbeddedContainerTomcatAutoConfiguration

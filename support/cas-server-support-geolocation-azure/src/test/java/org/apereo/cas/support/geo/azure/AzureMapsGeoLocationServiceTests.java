@@ -1,8 +1,8 @@
 package org.apereo.cas.support.geo.azure;
 
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
-import org.apereo.cas.config.CasGeoLocationAzureMapsConfiguration;
-import org.apereo.cas.config.CasGeoLocationConfiguration;
+import org.apereo.cas.config.CasGeoLocationAutoConfiguration;
+import org.apereo.cas.config.CasGeoLocationAzureMapsAutoConfiguration;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -25,8 +25,8 @@ import static org.junit.jupiter.api.Assertions.*;
     classes = {
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
-        CasGeoLocationConfiguration.class,
-        CasGeoLocationAzureMapsConfiguration.class
+        CasGeoLocationAutoConfiguration.class,
+        CasGeoLocationAzureMapsAutoConfiguration.class
     },
     properties = {
         "cas.geo-location.azure.client-id=${#environmentVars['AZURE_MAPS_CLIENT_ID']}",

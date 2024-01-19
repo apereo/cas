@@ -38,22 +38,18 @@ env:
 on:
 #  push:
 #    branches: [ master ]
+  workflow_dispatch:
   schedule:
     - cron: '0 10 */2 * *'
 
+concurrency:
+  group: "workflow = ${{ github.workflow }}, ref = ${{ github.event.ref }}, pr = ${{ github.event.pull_request.id }}"
+  cancel-in-progress: ${{ github.event_name == 'pull_request' || github.repository != 'apereo/cas' }}
+  
 ##########################################################################
 
 jobs:
-  cancel-previous-runs:
-    runs-on: ubuntu-latest
-    timeout-minutes: 1
-    steps:
-      - uses: styfle/cancel-workflow-action@0.12.0
-        with:
-          access_token: ${{ github.token }}
-  ##########################################################################
   initialize:
-    needs: [cancel-previous-runs]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -63,7 +59,7 @@ jobs:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: ${{ env.JDK_DISTRIBUTION }}
       - name: Setup Gradle Wrapper Cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
@@ -88,7 +84,7 @@ jobs:
           distribution: ${{ env.JDK_DISTRIBUTION }}
           cache: 'gradle'
       - name: Setup Gradle Wrapper Cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
@@ -116,7 +112,7 @@ jobs:
       - name: Configure CI
         run: source ./ci/tests/puppeteer/configure-ci.sh ${{matrix.scenario}}
       - name: Setup Gradle Wrapper Cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         if: ${{ env.NATIVE_BUILD_ENABLED == 'true' }}
         with:
           path: ~/.gradle/wrapper
@@ -175,7 +171,7 @@ jobs:
       - name: Configure CI
         run: ./ci/tests/puppeteer/configure-ci.sh ${{matrix.scenario}}
       - name: Setup Gradle Wrapper Cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         if: ${{ env.NATIVE_BUILD_ENABLED == 'true' }}
         with:
           path: ~/.gradle/wrapper

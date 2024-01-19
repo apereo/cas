@@ -2,12 +2,15 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.configuration.model.core.authentication.AttributeRepositoryStates;
+import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesProperties;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.val;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.support.NamedStubPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -15,7 +18,11 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.util.StringUtils;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -27,11 +34,11 @@ import java.util.stream.Collectors;
 @Configuration(value = "CasPersonDirectoryStubConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.PersonDirectory)
-public class CasPersonDirectoryStubConfiguration {
+class CasPersonDirectoryStubConfiguration {
 
     @Configuration(value = "StubAttributeRepositoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class StubAttributeRepositoryConfiguration {
+    static class StubAttributeRepositoryConfiguration {
         @ConditionalOnMissingBean(name = "stubAttributeRepositories")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -40,16 +47,42 @@ public class CasPersonDirectoryStubConfiguration {
             val stub = casProperties.getAuthn().getAttributeRepository().getStub();
             val attrs = stub.getAttributes();
             if (!attrs.isEmpty()) {
-                val dao = Beans.newStubAttributeRepository(casProperties.getAuthn().getAttributeRepository());
+                val dao = newStubAttributeRepository(casProperties.getAuthn().getAttributeRepository());
                 list.add(dao);
             }
             return BeanContainer.of(list);
+        }
+
+        private static IPersonAttributeDao newStubAttributeRepository(final PrincipalAttributesProperties p) {
+            val dao = new NamedStubPersonAttributeDao();
+            val backingMap = new LinkedHashMap<String, List<Object>>();
+            val stub = p.getStub();
+            stub.getAttributes().forEach((key, value) -> {
+                val vals = StringUtils.commaDelimitedListToStringArray(value);
+                backingMap.put(key, Arrays.stream(vals)
+                    .map(v -> {
+                        val result = BooleanUtils.toBooleanObject(v);
+                        if (result != null) {
+                            return result;
+                        }
+                        return v;
+                    })
+                    .collect(Collectors.toList()));
+            });
+            dao.setBackingMap(backingMap);
+            dao.setOrder(stub.getOrder());
+            dao.setEnabled(stub.getState() != AttributeRepositoryStates.DISABLED);
+            dao.putTag("state", stub.getState() == AttributeRepositoryStates.ACTIVE);
+            if (StringUtils.hasText(stub.getId())) {
+                dao.setId(stub.getId());
+            }
+            return dao;
         }
     }
 
     @Configuration(value = "StubAttributeRepositoryPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class StubAttributeRepositoryPlanConfiguration {
+    static class StubAttributeRepositoryPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "stubPersonDirectoryAttributeRepositoryPlanConfigurer")

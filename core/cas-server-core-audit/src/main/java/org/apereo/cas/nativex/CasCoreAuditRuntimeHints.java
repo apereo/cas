@@ -9,10 +9,8 @@ import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
-import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.boot.actuate.audit.AuditEventRepository;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -41,15 +39,5 @@ public class CasCoreAuditRuntimeHints implements CasRuntimeHintsRegistrar {
             AuditTrailExecutionPlanConfigurer.class,
             AuditTrailRecordResolutionPlanConfigurer.class,
             AuditEventRepository.class));
-    }
-
-    private static void registerReflectionHints(final RuntimeHints hints, final Collection entries) {
-        entries.forEach(el -> hints.reflection().registerType((Class) el,
-            MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
-            MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
-            MemberCategory.INVOKE_DECLARED_METHODS,
-            MemberCategory.INVOKE_PUBLIC_METHODS,
-            MemberCategory.DECLARED_FIELDS,
-            MemberCategory.PUBLIC_FIELDS));
     }
 }

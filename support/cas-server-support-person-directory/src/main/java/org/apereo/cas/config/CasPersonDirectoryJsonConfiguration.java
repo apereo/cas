@@ -11,14 +11,12 @@ import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.JsonBackedComplexStubPersonAttributeDao;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -26,7 +24,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
-
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
@@ -38,13 +35,13 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.PersonDirectory)
-@AutoConfiguration
-public class CasPersonDirectoryJsonConfiguration {
+@Configuration(value = "CasPersonDirectoryJsonConfiguration", proxyBeanMethods = false)
+class CasPersonDirectoryJsonConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.attribute-repository.json[0].location").exists();
 
     @Configuration(value = "JsonAttributeRepositoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class JsonAttributeRepositoryConfiguration {
+    static class JsonAttributeRepositoryConfiguration {
         @ConditionalOnMissingBean(name = "jsonAttributeRepositories")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -87,7 +84,7 @@ public class CasPersonDirectoryJsonConfiguration {
 
     @Configuration(value = "JsonAttributeRepositoryPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class JsonAttributeRepositoryPlanConfiguration {
+    static class JsonAttributeRepositoryPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "jsonPersonDirectoryAttributeRepositoryPlanConfigurer")

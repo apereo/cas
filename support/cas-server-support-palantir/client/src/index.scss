@@ -8,8 +8,9 @@
     --cas-theme-secondary: #74C163;
     --cas-theme-success: var(--cas-theme-secondary);
     --cas-theme-danger: var(--mdc-theme-error);
-    --cas-theme-warning: #e6a210;
-    --cas-theme-border-light: 1px solid rgba(0, 0, 0, .2);
+    --cas-theme-warning: #664d03;
+    --cas-theme-warning-bg: #fff3cd;
+    --cas-theme-border-light: 1px solid rgb(0 0 0 / .2);
     --mdc-theme-primary: var(--cas-theme-primary, #153e50);
 }
 
