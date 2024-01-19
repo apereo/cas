@@ -1,6 +1,7 @@
 package org.apereo.cas.prs;
 
 import org.apereo.cas.CasLabels;
+import org.apereo.cas.Memes;
 import org.apereo.cas.MonitoredRepository;
 import org.apereo.cas.PullRequestListener;
 import org.apereo.cas.github.PullRequest;
@@ -214,6 +215,8 @@ public class CasPullRequestListener implements PullRequestListener {
                     repository.labelPullRequestAs(pr, CasLabels.LABEL_PROPOSAL_DECLINED);
                     repository.labelPullRequestAs(pr, CasLabels.LABEL_SEE_CONTRIBUTOR_GUIDELINES);
                     var template = IOUtils.toString(new ClassPathResource("template-no-tests.md").getInputStream(), StandardCharsets.UTF_8);
+                    template = template.replace("${link}", Memes.NO_TESTS.select());
+                    
                     repository.addComment(pr, template);
                     repository.close(pr);
                 }
