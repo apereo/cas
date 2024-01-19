@@ -7,6 +7,8 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.config.CasStatelessTicketRegistryAutoConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.ticket.ProxyGrantingTicketImpl;
+import org.apereo.cas.ticket.ProxyTicketImpl;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.TransientSessionTicketImpl;
@@ -86,10 +88,17 @@ public class StatelessTicketManagementTests extends AbstractCentralAuthenticatio
             service, NeverExpiresExpirationPolicy.INSTANCE, true, TicketTrackingPolicy.noOp());
         val transientTicket = new TransientSessionTicketImpl(UUID.randomUUID().toString(),
             NeverExpiresExpirationPolicy.INSTANCE, service, CoreAuthenticationTestUtils.getAttributes());
+        val proxyGrantingTicket = new ProxyGrantingTicketImpl(UUID.randomUUID().toString(),
+            service, ticketGrantingTicket, authentication, NeverExpiresExpirationPolicy.INSTANCE);
+        val proxyTicket = new ProxyTicketImpl(UUID.randomUUID().toString(),
+            ticketGrantingTicket, service, false, NeverExpiresExpirationPolicy.INSTANCE);
+
         return Stream.of(
             arguments(Named.of(ticketGrantingTicket.getPrefix() + ' ' + ticketGrantingTicket.getId(), ticketGrantingTicket)),
             arguments(Named.of(serviceTicket.getPrefix() + ' ' + serviceTicket.getId(), serviceTicket)),
-            arguments(Named.of(transientTicket.getPrefix() + ' ' + transientTicket.getId(), transientTicket))
+            arguments(Named.of(transientTicket.getPrefix() + ' ' + transientTicket.getId(), transientTicket)),
+            arguments(Named.of(proxyGrantingTicket.getPrefix() + ' ' + proxyGrantingTicket.getId(), proxyGrantingTicket)),
+            arguments(Named.of(proxyTicket.getPrefix() + ' ' + proxyTicket.getId(), proxyTicket))
         );
     }
 }

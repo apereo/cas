@@ -40,6 +40,7 @@ import org.apereo.cas.ticket.proxy.ProxyTicketFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.DefaultAssertionBuilder;
 import lombok.extern.slf4j.Slf4j;
@@ -157,44 +158,36 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         actionResolverName = AuditActionResolvers.GRANT_PROXY_TICKET_RESOLVER,
         resourceResolverName = AuditResourceResolvers.GRANT_PROXY_TICKET_RESOURCE_RESOLVER)
     @Override
-    public ProxyTicket grantProxyTicket(final String proxyGrantingTicket, final Service service)
-        throws AbstractTicketException {
+    public Ticket grantProxyTicket(final String proxyGrantingTicketId, final Service service) throws AbstractTicketException {
 
-        val proxyGrantingTicketObject = configurationContext.getTicketRegistry().getTicket(proxyGrantingTicket, ProxyGrantingTicket.class);
+        val proxyGrantingTicket = configurationContext.getTicketRegistry().getTicket(proxyGrantingTicketId, ProxyGrantingTicket.class);
         val registeredService = configurationContext.getServicesManager().findServiceBy(service);
-
         try {
-            enforceRegisteredServiceAccess(service, proxyGrantingTicketObject, registeredService);
-            RegisteredServiceAccessStrategyUtils.ensureServiceSsoAccessIsAllowed(registeredService, service, proxyGrantingTicketObject);
+            enforceRegisteredServiceAccess(service, proxyGrantingTicket, registeredService);
+            RegisteredServiceAccessStrategyUtils.ensureServiceSsoAccessIsAllowed(registeredService, service, proxyGrantingTicket);
         } catch (final Throwable e) {
             LoggingUtils.warn(LOGGER, e);
             throw new UnauthorizedSsoServiceException();
         }
 
-        evaluateProxiedServiceIfNeeded(service, proxyGrantingTicketObject, registeredService);
+        evaluateProxiedServiceIfNeeded(service, proxyGrantingTicket, registeredService);
+        getAuthenticationSatisfiedByPolicy(proxyGrantingTicket.getRoot().getAuthentication(), service, registeredService);
 
-        getAuthenticationSatisfiedByPolicy(proxyGrantingTicketObject.getRoot().getAuthentication(),
-            service, registeredService);
-
-        val authentication = proxyGrantingTicketObject.getRoot().getAuthentication();
-        return configurationContext.getLockRepository().execute(proxyGrantingTicketObject.getId(),
-                Unchecked.supplier(new CheckedSupplier<ProxyTicket>() {
-                    @Override
-                    public ProxyTicket get() throws Throwable {
-                        val principal = authentication.getPrincipal();
-                        val factory = (ProxyTicketFactory) configurationContext.getTicketFactory().get(ProxyTicket.class);
-                        val proxyTicket = factory.create(proxyGrantingTicketObject, service, ProxyTicket.class);
-                        val clientInfo = ClientInfoHolder.getClientInfo();
-
-                        configurationContext.getTicketRegistry().updateTicket(proxyGrantingTicketObject);
-                        configurationContext.getTicketRegistry().addTicket(proxyTicket);
-
-                        LOGGER.info("Granted proxy ticket [{}] for service [{}] for user [{}]",
-                            proxyTicket.getId(), service.getId(), principal.getId());
-
-                        doPublishEvent(new CasProxyTicketGrantedEvent(this, proxyGrantingTicketObject, proxyTicket, clientInfo));
-                        return proxyTicket;
+        val authentication = proxyGrantingTicket.getRoot().getAuthentication();
+        return configurationContext.getLockRepository().execute(proxyGrantingTicket.getId(),
+                () -> FunctionUtils.doUnchecked(() -> {
+                    val principal = authentication.getPrincipal();
+                    val factory = (ProxyTicketFactory) configurationContext.getTicketFactory().get(ProxyTicket.class);
+                    val proxyTicket = factory.create(proxyGrantingTicket, service, ProxyTicket.class);
+                    val clientInfo = ClientInfoHolder.getClientInfo();
+                    if (!proxyGrantingTicket.isStateless()) {
+                        configurationContext.getTicketRegistry().updateTicket(proxyGrantingTicket);
                     }
+                    val addedProxyTicket = configurationContext.getTicketRegistry().addTicket(proxyTicket);
+                    LOGGER.info("Granted proxy ticket [{}] for service [{}] for user [{}]",
+                        addedProxyTicket.getId(), service.getId(), principal.getId());
+                    doPublishEvent(new CasProxyTicketGrantedEvent(this, proxyGrantingTicket, addedProxyTicket, clientInfo));
+                    return addedProxyTicket;
                 }))
             .orElseThrow(UnauthorizedProxyingException::new);
     }
@@ -334,11 +327,10 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         actionResolverName = AuditActionResolvers.CREATE_PROXY_GRANTING_TICKET_RESOLVER,
         resourceResolverName = AuditResourceResolvers.CREATE_PROXY_GRANTING_TICKET_RESOURCE_RESOLVER)
     @Override
-    public ProxyGrantingTicket createProxyGrantingTicket(final String serviceTicketId,
-                                                         final AuthenticationResult authenticationResult) throws Throwable {
+    public Ticket createProxyGrantingTicket(final String serviceTicketId,
+                                            final AuthenticationResult authenticationResult) throws Throwable {
 
         val serviceTicket = configurationContext.getTicketRegistry().getTicket(serviceTicketId, ServiceTicket.class);
-
         if (serviceTicket == null || serviceTicket.isExpired()) {
             LOGGER.debug("ServiceTicket [{}] has expired or cannot be found in the ticket registry", serviceTicketId);
             throw new InvalidTicketException(serviceTicketId);
@@ -364,12 +356,14 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
                     val authentication = authenticationResult.getAuthentication();
                     val factory = (ProxyGrantingTicketFactory) configurationContext.getTicketFactory().get(ProxyGrantingTicket.class);
                     val proxyGrantingTicket = factory.create(serviceTicket, authentication, ProxyGrantingTicket.class);
-                    val clientInfo = ClientInfoHolder.getClientInfo();
+                    val addedTicket = configurationContext.getTicketRegistry().addTicket(proxyGrantingTicket);
                     LOGGER.debug("Generated proxy granting ticket [{}] based off of [{}]", proxyGrantingTicket, serviceTicketId);
-                    configurationContext.getTicketRegistry().addTicket(proxyGrantingTicket);
-                    configurationContext.getTicketRegistry().updateTicket(serviceTicket.getTicketGrantingTicket());
-                    doPublishEvent(new CasProxyGrantingTicketCreatedEvent(this, proxyGrantingTicket, clientInfo));
-                    return proxyGrantingTicket;
+                    if (!serviceTicket.isStateless()) {
+                        configurationContext.getTicketRegistry().updateTicket(serviceTicket.getTicketGrantingTicket());
+                    }
+                    val clientInfo = ClientInfoHolder.getClientInfo();
+                    doPublishEvent(new CasProxyGrantingTicketCreatedEvent(this, addedTicket, clientInfo));
+                    return addedTicket;
                 }))
             .orElseThrow(UnauthorizedProxyingException::new);
     }

@@ -36,8 +36,7 @@ The above features do come with a number of caveats and limitations. See below.
 
 ## Supported Protocols
 
-- [CAS Protocol](../protocol/CAS-Protocol.html), with the exception of CAS proxy authentication, is supported.
-    - We recommend that you increase the expiration policy of service tickets to be around or no less than `30` seconds to allow for decryption operations to decode tickets in time.
+- [CAS Protocol](../protocol/CAS-Protocol.html) is supported.
 - [SAML Protocol](../protocol/SAML-Protocol.html) is supported.
 - [SAM2 Protocol](../authentication/Configuring-SAML2-Authentication.html), with the exception of [SAML2 attribute queries](../installation/Configuring-SAML2-AttributeQuery.html), is supported.
 
@@ -46,6 +45,12 @@ Remember that not all CAS modules and features that interact with the ticket reg
 The objective is to start with a small batch of most common features and capabilities and iteratively grow and improve. If you do find something that 
 might be missing or acts dysfunctional, please investigate, isolate, verify and consider contributing a fix.
 </p></div>
+
+## Suggestions
+
+- Increase the expiration policy of service tickets to be around `30` seconds to allow for decryption operations to decode tickets in time.
+- Assign names to all authentication handlers, and preferably short, concise names.
+- Use shorter URLs for applications, specially those that use the CAS protocol. This will help minimize the size of the generated service tickets.
 
 ## Caveats
 

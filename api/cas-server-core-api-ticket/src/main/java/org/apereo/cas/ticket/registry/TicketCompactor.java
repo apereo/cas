@@ -1,6 +1,8 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.ticket.Ticket;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.util.StringUtils;
 import java.time.Instant;
@@ -67,11 +69,11 @@ public interface TicketCompactor<T extends Ticket> {
      * @param ticketId the ticket id
      * @return the common ticket structure
      */
-    default SharedTicketStructure parse(final String ticketId) {
+    default CompactTicket parse(final String ticketId) {
         val ticketElements = List.of(StringUtils.commaDelimitedListToStringArray(ticketId));
-        val creationTimeInSeconds = Instant.ofEpochSecond(Long.parseLong(ticketElements.get(0)));
-        val expirationTimeInSeconds = Instant.ofEpochSecond(Long.parseLong(ticketElements.get(1)));
-        return new SharedTicketStructure(ticketElements, creationTimeInSeconds, expirationTimeInSeconds);
+        val creationTimeInSeconds = Instant.ofEpochSecond(Long.parseLong(ticketElements.get(CompactTicketIndexes.CREATION_TIME.getIndex())));
+        val expirationTimeInSeconds = Instant.ofEpochSecond(Long.parseLong(ticketElements.get(CompactTicketIndexes.EXPIRATION_TIME.getIndex())));
+        return new CompactTicket(ticketElements, creationTimeInSeconds, expirationTimeInSeconds);
     }
 
     /**
@@ -79,8 +81,31 @@ public interface TicketCompactor<T extends Ticket> {
      *
      * @param finalTicketId the final ticket id
      */
-    default void validate(final String finalTicketId) {}
+    default void validate(final String finalTicketId) {
+    }
 
-    record SharedTicketStructure(List<String> ticketElements, Instant creationTime, Instant expirationTime) {
+    @RequiredArgsConstructor
+    @Getter
+    enum CompactTicketIndexes {
+        /**
+         * Represents the creation time of a compact ticket.
+         * The value of this variable is an integer that represents a specific time
+         * using a timestamp format.
+         */
+        CREATION_TIME(0),
+        /**
+         * Represents the expiration time of a compact ticket.
+         * The value of this variable is an integer that represents a specific time
+         * using a timestamp format.
+         */
+        EXPIRATION_TIME(1),
+        /**
+         * This constant represents the service value of a compact ticket.
+         */
+        SERVICE(2);
+        private final int index;
+    }
+
+    record CompactTicket(List<String> ticketElements, Instant creationTime, Instant expirationTime) {
     }
 }

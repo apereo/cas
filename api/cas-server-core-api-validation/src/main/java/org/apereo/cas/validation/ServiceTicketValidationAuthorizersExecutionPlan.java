@@ -13,9 +13,9 @@ public interface ServiceTicketValidationAuthorizersExecutionPlan {
     /**
      * Register authorizer.
      *
-     * @param authz the authz
+     * @param authorizer the authz
      */
-    void registerAuthorizer(ServiceTicketValidationAuthorizer authz);
+    void registerAuthorizer(ServiceTicketValidationAuthorizer authorizer);
 
     /**
      * Gets authorizers.

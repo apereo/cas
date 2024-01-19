@@ -2,6 +2,7 @@ package org.apereo.cas;
 
 import org.apereo.cas.authentication.support.DefaultCasProtocolAttributeEncoder;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
+import org.apereo.cas.services.RegisteredServicePublicKeyCipherExecutor;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -52,24 +53,27 @@ class DefaultCasAttributeEncoderTests extends BaseCasCoreTests {
     @Test
     void checkNoPublicKeyDefined() {
         val service = RegisteredServiceTestUtils.getService("testDefault");
-        val encoder = new DefaultCasProtocolAttributeEncoder(this.servicesManager, CipherExecutor.noOpOfStringToString());
-        val encoded = encoder.encodeAttributes(this.attributes, servicesManager.findServiceBy(service), service);
+        val encoder = new DefaultCasProtocolAttributeEncoder(this.servicesManager,
+            RegisteredServicePublicKeyCipherExecutor.INSTANCE,
+            CipherExecutor.noOpOfStringToString());
+        val encoded = encoder.encodeAttributes(Map.of(), this.attributes, servicesManager.findServiceBy(service), service);
         assertEquals(this.attributes.size() - 2, encoded.size());
     }
 
     @Test
     void checkAttributesEncodedCorrectly() {
         val service = RegisteredServiceTestUtils.getService("testencryption");
-        val encoder = new DefaultCasProtocolAttributeEncoder(this.servicesManager, CipherExecutor.noOpOfStringToString());
-        val encoded = encoder.encodeAttributes(this.attributes, servicesManager.findServiceBy(service), service);
+        val encoder = new DefaultCasProtocolAttributeEncoder(this.servicesManager,
+            RegisteredServicePublicKeyCipherExecutor.INSTANCE,
+            CipherExecutor.noOpOfStringToString());
+        val encoded = encoder.encodeAttributes(Map.of(), this.attributes, servicesManager.findServiceBy(service), service);
         assertEquals(encoded.size(), this.attributes.size());
         checkEncryptedValues(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL, encoded);
         checkEncryptedValues(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET, encoded);
     }
 
     private void checkEncryptedValues(final String name, final Map<String, Object> encoded) {
-        val v1 = ((Collection<?>) this.attributes.get(
-            name)).iterator().next().toString();
+        val v1 = ((Collection<?>) this.attributes.get(name)).iterator().next().toString();
         val v2 = (String) encoded.get(name);
         assertNotEquals(v1, v2);
     }

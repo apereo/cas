@@ -34,7 +34,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * This is {@link CerbosRegisteredServiceAccessStrategy} that reaches out
@@ -174,7 +173,7 @@ public class CerbosRegisteredServiceAccessStrategy extends BaseRegisteredService
     @AllArgsConstructor
     @NoArgsConstructor
     @ToString
-    private static class CerbosPrincipal {
+    private static final class CerbosPrincipal {
         private String id;
         private String policyVersion;
         private String scope;
@@ -188,7 +187,7 @@ public class CerbosRegisteredServiceAccessStrategy extends BaseRegisteredService
     @AllArgsConstructor
     @NoArgsConstructor
     @ToString
-    private static class CerbosResources {
+    private static final class CerbosResources {
         private CerbosResource resource;
         private String[] actions;
     }
@@ -199,7 +198,7 @@ public class CerbosRegisteredServiceAccessStrategy extends BaseRegisteredService
     @AllArgsConstructor
     @NoArgsConstructor
     @ToString
-    private static class CerbosResource {
+    private static final class CerbosResource {
         private String kind;
         private String id;
         private String policyVersion;
@@ -213,7 +212,7 @@ public class CerbosRegisteredServiceAccessStrategy extends BaseRegisteredService
     @AllArgsConstructor
     @NoArgsConstructor
     @ToString
-    private static class CerboseResponse {
+    private static final class CerboseResponse {
         private String requestId;
         private List<CerbosResult> results;
         private String cerbosCallId;
@@ -225,7 +224,7 @@ public class CerbosRegisteredServiceAccessStrategy extends BaseRegisteredService
     @AllArgsConstructor
     @NoArgsConstructor
     @ToString
-    private static class CerbosResult {
+    private static final class CerbosResult {
         private CerbosResource resource;
         private Map<String, Actions> actions;
         private Map<String, Actions> validationErrors;

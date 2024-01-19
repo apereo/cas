@@ -9,6 +9,7 @@ import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.validation.CasProtocolAttributesRenderer;
 import org.apereo.cas.web.view.Cas30ResponseView;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -47,7 +48,10 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
     static {
         JSON_VIEW = new MappingJackson2JsonView();
         JSON_VIEW.setPrettyPrint(true);
-        JSON_VIEW.getObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL).findAndRegisterModules();
+        JSON_VIEW.getObjectMapper()
+            .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+            .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+            .findAndRegisterModules();
     }
 
     public Cas30JsonResponseView(final boolean successResponse,

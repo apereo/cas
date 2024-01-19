@@ -1,4 +1,4 @@
-package org.apereo.cas.ticket.registry;
+package org.apereo.cas.ticket.registry.compact;
 
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -6,13 +6,13 @@ import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import lombok.RequiredArgsConstructor;
 
 /**
- * This is {@link org.apereo.cas.ticket.registry.TicketGrantingTicketCompactor}.
+ * This is {@link TicketGrantingTicketCompactor}.
  *
  * @author Misagh Moayyed
  * @since 7.0.0
  */
 @RequiredArgsConstructor
-public class TicketGrantingTicketCompactor implements TicketCompactor<TicketGrantingTicket> {
+public class TicketGrantingTicketCompactor extends BaseTicketCompactor<TicketGrantingTicket> {
     private final TicketSerializationManager ticketSerializationManager;
 
     @Override

@@ -50,7 +50,7 @@ public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
         val registeredService = servicesManager.findServiceBy(service);
         val authnAttributes = getCasProtocolAuthenticationAttributes(model, registeredService);
         val principalAttributes = getPrincipalAttributesAsMultiValuedAttributes(model);
-        samlResponseBuilder.prepareSuccessfulResponse(response, service, authentication,
+        samlResponseBuilder.prepareSuccessfulResponse(model, response, service, authentication,
             principal, authnAttributes, principalAttributes);
     }
 }

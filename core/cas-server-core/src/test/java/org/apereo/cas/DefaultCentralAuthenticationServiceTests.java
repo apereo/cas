@@ -20,6 +20,7 @@ import org.apereo.cas.ticket.ServiceAwareTicket;
 import org.apereo.cas.ticket.ServiceTicketImpl;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UnrecognizableServiceForServiceTicketValidationException;
+import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.validation.DefaultCasProtocolValidationSpecification;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -137,8 +138,9 @@ class DefaultCentralAuthenticationServiceTests extends AbstractCentralAuthentica
             RegisteredServiceTestUtils.getHttpBasedServiceCredentials());
         val pgt = getCentralAuthenticationService().createProxyGrantingTicket(serviceTicketId.getId(), ctx2);
 
-        val pt = getCentralAuthenticationService().grantProxyTicket(pgt.getId(), getService());
+        val pt = (ProxyTicket) getCentralAuthenticationService().grantProxyTicket(pgt.getId(), getService());
         assertNotNull(pt);
+        assertNotNull(pt.getAuthentication());
     }
 
     @Test

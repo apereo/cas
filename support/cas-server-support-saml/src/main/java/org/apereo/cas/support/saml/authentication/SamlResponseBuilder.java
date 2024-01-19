@@ -83,7 +83,8 @@ public class SamlResponseBuilder {
      * @param authnAttributes     the authn attributes
      * @param principalAttributes the principal attributes
      */
-    public void prepareSuccessfulResponse(final Response response,
+    public void prepareSuccessfulResponse(final Map<String, Object> model,
+                                          final Response response,
                                           final Service service,
                                           final Authentication authentication,
                                           final Principal principal,
@@ -113,7 +114,7 @@ public class SamlResponseBuilder {
         val subject = samlObjectBuilder.newSubject(principal.getId());
         LOGGER.debug("Built subject for principal [{}]", subject);
 
-        val attributesToSend = prepareSamlAttributes(service, authnAttributes, principalAttributes);
+        val attributesToSend = prepareSamlAttributes(model, service, authnAttributes, principalAttributes);
         LOGGER.debug("Authentication statement shall include these attributes [{}]", attributesToSend);
 
         if (!attributesToSend.isEmpty()) {
@@ -140,7 +141,7 @@ public class SamlResponseBuilder {
         samlObjectBuilder.encodeSamlResponse(response, request, samlResponse);
     }
 
-    private Map<String, Object> prepareSamlAttributes(final Service service,
+    private Map<String, Object> prepareSamlAttributes(final Map<String, Object> model, final Service service,
                                                       final Map<String, List<Object>> authnAttributes,
                                                       final Map<String, List<Object>> principalAttributes) {
         val registeredService = servicesManager.findServiceBy(service);
@@ -151,7 +152,7 @@ public class SamlResponseBuilder {
         attributesToReturn.putAll(authnAttributes);
 
         LOGGER.debug("Beginning to encode attributes [{}] for service [{}]", attributesToReturn, registeredService.getServiceId());
-        val finalAttributes = protocolAttributeEncoder.encodeAttributes(attributesToReturn, registeredService, service);
+        val finalAttributes = protocolAttributeEncoder.encodeAttributes(model, attributesToReturn, registeredService, service);
         LOGGER.debug("Final collection of attributes are [{}]", finalAttributes);
 
         return finalAttributes;
