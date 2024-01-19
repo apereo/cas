@@ -16,7 +16,6 @@
     "--cas.authn.attribute-repository.stub.attributes.sysid=cas_user_apereo",
 
     "--logging.level.PROTOCOL_MESSAGE=info",
-    "--cas.audit.slf4j.use-single-line=true",
     "--cas.authn.accept.name=STATIC"
   ],
   "SPRING_APPLICATION_JSON": {
