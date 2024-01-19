@@ -84,6 +84,7 @@ via a backend storage technology. [See this](../ticketing/Stateless-Ticket-Regis
 
 - Internal cleanup and refactoring efforts to remove duplicate code, particularly when it comes to grouping `@AutoConfiguration` components.
 - Changes to the CAS Gradle build to allow more efficient caching of configuration and build artifacts and reduce overall build times.
+- Proxy ticket validation should now correctly resolve and determine the authenticated principal id.
 
 ## Library Upgrades
 
@@ -93,6 +94,7 @@ via a backend storage technology. [See this](../ticketing/Stateless-Ticket-Regis
 - Spring Security
 - Spring Boot
 - Spring Data
+- Spring Session
 - Twilio
 - Pac4j
 - Grouper
