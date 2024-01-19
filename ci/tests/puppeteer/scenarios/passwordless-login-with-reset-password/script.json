@@ -1,6 +1,8 @@
 {
   "dependencies": "passwordless-webflow",
-
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
     "--cas.audit.engine.enabled=true",
     "--cas.audit.slf4j.use-single-line=true",

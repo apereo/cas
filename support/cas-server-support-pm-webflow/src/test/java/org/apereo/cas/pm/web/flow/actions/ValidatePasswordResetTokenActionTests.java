@@ -70,7 +70,7 @@ class ValidatePasswordResetTokenActionTests extends BasePasswordManagementAction
         ticketRegistry.addTicket(ticket);
 
         val context = MockRequestContext.create(applicationContext);
-        context.setParameter(PasswordManagementService.PARAMETER_PASSWORD_RESET_TOKEN, id);
+        context.setParameter(PasswordManagementService.PARAMETER_PASSWORD_RESET_TOKEN, ticket.getId());
         assertEquals(CasWebflowConstants.TRANSITION_ID_RESET_PASSWORD, validatePasswordResetTokenAction.execute(context).getId());
     }
 
