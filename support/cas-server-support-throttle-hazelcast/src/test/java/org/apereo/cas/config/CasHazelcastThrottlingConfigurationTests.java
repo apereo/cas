@@ -38,17 +38,17 @@ class CasHazelcastThrottlingConfigurationTests {
 
     @Autowired
     @Qualifier(ThrottledSubmissionsStore.BEAN_NAME)
-    private ThrottledSubmissionsStore<ThrottledSubmission> throttleSubmissionMap;
+    private ThrottledSubmissionsStore<ThrottledSubmission> throttleSubmissionStore;
 
     @Test
     void verifyOperation() throws Throwable {
-        assertNotNull(throttleSubmissionMap);
+        assertNotNull(throttleSubmissionStore);
         val submission = ThrottledSubmission.builder().key(UUID.randomUUID().toString()).build();
-        throttleSubmissionMap.put(submission);
-        assertNotNull(throttleSubmissionMap.get(submission.getKey()));
-        assertNotEquals(0, throttleSubmissionMap.entries().count());
-        throttleSubmissionMap.removeIf(entry -> entry.getKey().equals(submission.getKey()));
-        throttleSubmissionMap.remove(submission.getKey());
-        assertEquals(0, throttleSubmissionMap.entries().count());
+        throttleSubmissionStore.put(submission);
+        assertNotNull(throttleSubmissionStore.get(submission.getKey()));
+        assertNotEquals(0, throttleSubmissionStore.entries().count());
+        throttleSubmissionStore.removeIf(entry -> entry.getKey().equals(submission.getKey()));
+        throttleSubmissionStore.remove(submission.getKey());
+        assertEquals(0, throttleSubmissionStore.entries().count());
     }
 }

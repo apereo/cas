@@ -3,11 +3,9 @@ package org.apereo.cas.throttle;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.support.ThrottledSubmission;
 import org.apereo.cas.web.support.ThrottledSubmissionsStore;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Map;
@@ -90,6 +88,12 @@ public abstract class BaseMappableThrottledSubmissionsStore<T extends ThrottledS
     @Override
     public void release(final double thresholdRate) {
         val now = ZonedDateTime.now(ZoneOffset.UTC);
-        removeIf(entry -> submissionRate(now, entry.getValue()) < thresholdRate);
+        removeIf(entry -> {
+            if (entry.hasExpiredAlready()) {
+                LOGGER.debug("Throttled submission [{}] has expired and will be removed", entry.getKey());
+                return true;
+            }
+            return submissionRate(now, entry.getValue()) < thresholdRate;
+        });
     }
 }

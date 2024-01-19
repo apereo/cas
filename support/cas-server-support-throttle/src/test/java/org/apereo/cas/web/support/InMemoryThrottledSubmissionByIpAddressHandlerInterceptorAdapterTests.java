@@ -8,7 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
- * Unit test for {@link InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter}.
+ * Unit test for {@link ThrottledSubmissionHandlerInterceptor}.
  *
  * @author Scott Battaglia
  * @author Marvin S. Addison
