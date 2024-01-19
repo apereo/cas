@@ -1,5 +1,5 @@
 {
-  "dependencies": "passwordless-webflow,pm-webflow",
+  "dependencies": "passwordless-webflow",
 
   "properties": [
     "--cas.audit.engine.enabled=true",
