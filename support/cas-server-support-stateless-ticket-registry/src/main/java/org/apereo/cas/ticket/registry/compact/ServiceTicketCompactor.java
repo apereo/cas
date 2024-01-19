@@ -59,7 +59,7 @@ public class ServiceTicketCompactor extends BaseTicketCompactor<ServiceTicket> {
         }
 
         if (ticket instanceof final AuthenticationAwareTicket aat) {
-            builder.append(builder.append(compactAuthenticationAttempt(aat).toString()));
+            builder.append(compactAuthenticationAttempt(aat).toString());
         } else {
             builder.append("%s*%s0".formatted(DELIMITER, DELIMITER));
         }
@@ -94,7 +94,9 @@ public class ServiceTicketCompactor extends BaseTicketCompactor<ServiceTicket> {
             val credentialTypes = authentication.getCredentials().stream()
                 .map(credential -> credential.getClass().getSimpleName()).collect(Collectors.joining("#"));
             builder.append(String.format("%s%s:%s:%s", DELIMITER, principalId, handlers, credentialTypes));
-            builder.append(String.format("%s%s", DELIMITER, BooleanUtils.toString(CoreAuthenticationUtils.isRememberMeAuthentication(authentication), "1", "0")));
+
+            val rememberMe = BooleanUtils.toString(CoreAuthenticationUtils.isRememberMeAuthentication(authentication), "1", "0");
+            builder.append(String.format("%s%s", DELIMITER, rememberMe));
         }
         return builder;
     }
