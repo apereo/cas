@@ -34,6 +34,7 @@ import static org.mockito.Mockito.*;
 @TestPropertySource(properties = {
     "cas.authn.pm.groovy.location=classpath:PasswordManagementService.groovy",
     "cas.authn.pm.core.enabled=true",
+    "cas.authn.pm.forgot-username.enabled=false",
     "cas.authn.pm.reset.security-questions-enabled=true",
     "CasFeatureModule.AccountManagement.enabled=true"
 })
@@ -58,6 +59,7 @@ class AccountProfilePreparePasswordManagementActionTests extends BasePasswordMan
         val result = prepareAccountProfilePasswordMgmtAction.execute(context);
         assertNull(result);
         assertTrue(WebUtils.isPasswordManagementEnabled(context));
+        assertFalse(WebUtils.isForgotUsernameEnabled(context));
         assertNotNull(PasswordManagementWebflowUtils.getPasswordResetQuestions(context, Map.class));
 
         assertEquals(0, accountProfileServiceTicketGeneratorAuthority.getOrder());

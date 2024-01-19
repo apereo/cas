@@ -28,12 +28,12 @@
                 onclick="document.getElementById('passwordManagementForm').submit();" />
             <br><br>
         </form>
-        <form th:if="${passwordManagementEnabled}" method="post" id="passwordManagementUserForm">
+        <form th:if="${passwordManagementEnabled && forgotUsernameEnabled}" method="post" id="forgotUsernameForm">
             <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
             <input type="hidden" name="_eventId" value="forgotUsername" />
             <span class="mdi mdi-account-question" aria-hidden="true"></span>
             <a id="forgotUsernameLink" th:utext="#{screen.pm.button.forgotUsername}" href="javascript:void(0)"
-                onclick="document.getElementById('passwordManagementUserForm').submit();" />
+                onclick="document.getElementById('forgotUsernameForm').submit();" />
             <br><br>
         </form>
         <div th:unless="${passwordManagementEnabled}" class="mt-2">

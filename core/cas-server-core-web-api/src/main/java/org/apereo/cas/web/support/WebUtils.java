@@ -798,6 +798,16 @@ public class WebUtils {
     }
 
     /**
+     * Put forgot username enabled into flow scope.
+     *
+     * @param context the context
+     * @param value   the value
+     */
+    public static void putForgotUsernameEnabled(final RequestContext context, final Boolean value) {
+        context.getFlowScope().put("forgotUsernameEnabled", value);
+    }
+
+    /**
      * Put account profile management enabled.
      *
      * @param context the context
@@ -825,6 +835,16 @@ public class WebUtils {
      */
     public static boolean isPasswordManagementEnabled(final RequestContext context) {
         return context.getFlowScope().get("passwordManagementEnabled", Boolean.class);
+    }
+
+    /**
+     * Is forgot username enabled.
+     *
+     * @param context the context
+     * @return true/false
+     */
+    public static boolean isForgotUsernameEnabled(final RequestContext context) {
+        return context.getFlowScope().get("forgotUsernameEnabled", Boolean.class);
     }
 
     /**
