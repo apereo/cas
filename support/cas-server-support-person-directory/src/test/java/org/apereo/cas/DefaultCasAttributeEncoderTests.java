@@ -5,6 +5,7 @@ import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.services.RegisteredServicePublicKeyCipherExecutor;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.val;
@@ -19,9 +20,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is test cases for {@link DefaultCasProtocolAttributeEncoder}.
@@ -66,7 +69,12 @@ class DefaultCasAttributeEncoderTests extends BaseCasCoreTests {
         val encoder = new DefaultCasProtocolAttributeEncoder(this.servicesManager,
             RegisteredServicePublicKeyCipherExecutor.INSTANCE,
             CipherExecutor.noOpOfStringToString());
-        val encoded = encoder.encodeAttributes(Map.of(), this.attributes, servicesManager.findServiceBy(service), service);
+        val pgt = mock(Ticket.class);
+        val pgtId = UUID.randomUUID().toString();
+        when(pgt.getId()).thenReturn(pgtId);
+
+        val encoded = encoder.encodeAttributes(Map.of(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET, pgt),
+            this.attributes, servicesManager.findServiceBy(service), service);
         assertEquals(encoded.size(), this.attributes.size());
         checkEncryptedValues(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL, encoded);
         checkEncryptedValues(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET, encoded);
