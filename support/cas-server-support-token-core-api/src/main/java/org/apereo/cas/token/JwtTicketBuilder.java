@@ -5,11 +5,16 @@ import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
+import org.apereo.cas.ticket.ServiceTicket;
+import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.validation.TicketValidator;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import java.time.ZoneOffset;
@@ -29,9 +34,17 @@ import java.util.Set;
  * @since 5.2.0
  */
 @Slf4j
-public record JwtTicketBuilder(TicketValidator ticketValidator, ExpirationPolicyBuilder expirationPolicy,
-    JwtBuilder jwtBuilder, ServicesManager servicesManager,
-    CasConfigurationProperties casProperties) implements TokenTicketBuilder {
+@RequiredArgsConstructor
+public class JwtTicketBuilder implements TokenTicketBuilder {
+    private final TicketValidator ticketValidator;
+
+    private final TicketFactory ticketFactory;
+
+    private final JwtBuilder jwtBuilder;
+
+    private final ServicesManager servicesManager;
+
+    private final CasConfigurationProperties casProperties;
     
     @Override
     @SuppressWarnings("JavaUtilDate")
@@ -42,14 +55,17 @@ public record JwtTicketBuilder(TicketValidator ticketValidator, ExpirationPolicy
 
         LOGGER.trace("Assertion attributes received are [{}]", attributes);
         val registeredService = servicesManager.findServiceBy(webApplicationService);
+        RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
+
         val finalAttributes = ProtocolAttributeEncoder.decodeAttributes(attributes, registeredService, webApplicationService);
         LOGGER.debug("Final attributes decoded are [{}]", finalAttributes);
 
-        val dt = ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(getTimeToLive());
-        val validUntilDate = DateTimeUtils.dateOf(dt);
+        val expirationPolicy = ticketFactory.get(ServiceTicket.class).getExpirationPolicyBuilder();
+        val dateTime = ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(getTimeToLive(expirationPolicy, registeredService));
+        val validUntilDate = DateTimeUtils.dateOf(dateTime);
         val builder = JwtBuilder.JwtRequest.builder();
         val request = builder
-            .registeredService(Optional.ofNullable(registeredService))
+            .registeredService(Optional.of(registeredService))
             .serviceAudience(Set.of(webApplicationService.getId()))
             .issueDate(new Date())
             .jwtId(serviceTicketId)
@@ -71,7 +87,8 @@ public record JwtTicketBuilder(TicketValidator ticketValidator, ExpirationPolicy
         attributes.putAll(authentication.getPrincipal().getAttributes());
         attributes.putAll(claims);
 
-        val dt = ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(getTimeToLive());
+        val expirationPolicy = ticketFactory.get(TicketGrantingTicket.class).getExpirationPolicyBuilder();
+        val dt = ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(getTimeToLive(expirationPolicy, registeredService));
         val validUntilDate = DateTimeUtils.dateOf(dt);
 
         val builder = JwtBuilder.JwtRequest.builder();
@@ -88,8 +105,10 @@ public record JwtTicketBuilder(TicketValidator ticketValidator, ExpirationPolicy
         return jwtBuilder.build(request);
     }
 
-    private Long getTimeToLive() {
-        val timeToLive = expirationPolicy.buildTicketExpirationPolicy().getTimeToLive();
+    protected Long getTimeToLive(final ExpirationPolicyBuilder expirationPolicy,
+                                 final RegisteredService registeredService) {
+        val timeToLive = expirationPolicy.buildTicketExpirationPolicyFor(registeredService).getTimeToLive();
         return Long.MAX_VALUE == timeToLive ? Long.valueOf(Integer.MAX_VALUE) : timeToLive;
     }
+
 }
