@@ -32,12 +32,16 @@ dependencies {
 }
 
 abstract class ConfigurationMetadataLocationProvider implements CommandLineArgumentProvider {
-    @Input
-    abstract Property<String> getProjectDirectory()
+    @InputFile
+    @PathSensitive(PathSensitivity.RELATIVE)
+    abstract RegularFileProperty getInputSpringConfigurationMetadata()
 
+    @OutputFile
+    abstract RegularFileProperty getOutputSpringConfigurationMetadata()
+    
     @Override
     Iterable<String> asArguments() {
-        [ projectDirectory.get() ]
+        [ inputSpringConfigurationMetadata.get().asFile.canonicalPath, outputSpringConfigurationMetadata.get().asFile.canonicalPath ]
     }
 }
 
@@ -46,16 +50,19 @@ if (!skipConfigurationMetadata) {
     def inputFile= project.layout.buildDirectory.file("classes/java/main/META-INF/spring-configuration-metadata.json")
 
     tasks.register('generateConfigurationMetadata', JavaExec) {
+        dependsOn("processResources")
+
         def sortedClasspath = sourceSets.main.compileClasspath + sourceSets.main.runtimeClasspath + sourceSets.configurationMetadata.runtimeClasspath
         classpath = files(sortedClasspath.sort())
         mainClass = "org.apereo.cas.configuration.metadata.ConfigurationMetadataGenerator"
         argumentProviders.add(
             objects.newInstance(ConfigurationMetadataLocationProvider).tap {
-                projectDirectory = projectDir.canonicalPath
+                inputSpringConfigurationMetadata = inputFile
+                outputSpringConfigurationMetadata = outputFile
             }
         )
 
-        inputs.files(tasks.named('processResources'), tasks.named('compileJava'))
+        inputs.files(inputFile)
                 .withPropertyName('configurationMetadataGeneration')
                 .withPathSensitivity(PathSensitivity.RELATIVE)
 
