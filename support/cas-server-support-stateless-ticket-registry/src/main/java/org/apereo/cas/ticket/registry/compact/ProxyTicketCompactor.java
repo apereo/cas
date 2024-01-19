@@ -30,6 +30,8 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.util.Assert;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -85,7 +87,7 @@ public class ProxyTicketCompactor extends BaseTicketCompactor<ProxyTicket> {
             Assert.isTrue(!authentication.getSuccesses().isEmpty(), "Authentication successes cannot be empty");
             val handlers = String.join("#", authentication.getSuccesses().keySet());
             val principalId = EncodingUtils.encodeUrlSafeBase64(authentication.getPrincipal().getId());
-            val credentialTypes = authentication.getAttributes().get(Credential.CREDENTIAL_TYPE_ATTRIBUTE)
+            val credentialTypes = Optional.ofNullable(authentication.getAttributes().get(Credential.CREDENTIAL_TYPE_ATTRIBUTE))
                 .stream()
                 .map(Object::toString)
                 .collect(Collectors.joining("#"));
