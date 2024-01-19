@@ -67,20 +67,18 @@ public class ServiceTicketImpl extends AbstractTicket
 
     @Override
     public ProxyGrantingTicket grantProxyGrantingTicket(
-        final @NonNull String id,
-        final @NonNull Authentication authentication,
+        final @NonNull String id, final @NonNull Authentication authentication,
         final ExpirationPolicy expirationPolicy) throws AbstractTicketException {
-        if (ticketGrantingTicket != null) {
-            if (this.grantedTicketAlready) {
-                LOGGER.warn("Service ticket [{}] issued for service [{}] has already allotted a proxy-granting ticket", getId(), this.service.getId());
-                throw new InvalidProxyGrantingTicketForServiceTicketException(this.service);
-            }
-            this.grantedTicketAlready = Boolean.TRUE;
-            val pgt = new ProxyGrantingTicketImpl(id, this.service, ticketGrantingTicket, authentication, expirationPolicy);
-            ticketGrantingTicket.getProxyGrantingTickets().put(pgt.getId(), this.service);
-            return pgt;
+        if (this.grantedTicketAlready) {
+            LOGGER.warn("Service ticket [{}] issued for service [{}] has already allotted a proxy-granting ticket", getId(), service.getId());
+            throw new InvalidProxyGrantingTicketForServiceTicketException(service);
         }
-        return null;
+        this.grantedTicketAlready = Boolean.TRUE;
+        val proxyGrantingTicket = new ProxyGrantingTicketImpl(id, service, ticketGrantingTicket, authentication, expirationPolicy);
+        if (ticketGrantingTicket != null) {
+            ticketGrantingTicket.getProxyGrantingTickets().put(proxyGrantingTicket.getId(), service);
+        }
+        return proxyGrantingTicket;
     }
 
     @Override

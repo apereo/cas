@@ -50,8 +50,7 @@ public class StatelessTicketRegistry extends AbstractTicketRegistry {
             val ticketCompactor = findTicketCompactor(metadata);
             val ticketObject = ticketCompactor.expand(ticketContent);
             if (ticketObject != null && predicate.test(ticketObject)) {
-                ticketObject.markTicketStateless();
-                return ticketObject;
+                return ticketObject.markTicketStateless();
             }
             return null;
         });
@@ -82,7 +81,7 @@ public class StatelessTicketRegistry extends AbstractTicketRegistry {
             .filter(BeanSupplier::isNotProxy)
             .filter(compactor -> compactor.getTicketType().equals(metadata.getApiClass()))
             .min(AnnotationAwareOrderComparator.INSTANCE)
-            .orElseThrow();
+            .orElseThrow(() -> new IllegalStateException("No ticket compactor is registered to support " + metadata.getApiClass().getName()));
     }
 
 }

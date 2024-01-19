@@ -1,5 +1,6 @@
-package org.apereo.cas.ticket.registry;
+package org.apereo.cas.ticket.registry.compact;
 
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
@@ -31,14 +32,15 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * This is {@link org.apereo.cas.ticket.registry.ServiceTicketCompactor}.
+ * This is {@link ServiceTicketCompactor}.
  *
  * @author Misagh Moayyed
  * @since 7.0.0
  */
 @RequiredArgsConstructor
-public class ServiceTicketCompactor implements TicketCompactor<ServiceTicket> {
+public class ServiceTicketCompactor extends BaseTicketCompactor<ServiceTicket> {
     private static final int MAX_TICKET_LENGTH = 256;
+
     private final ObjectProvider<TicketFactory> ticketFactory;
     private final ServiceFactory serviceFactory;
     private final PrincipalFactory principalFactory;
@@ -55,14 +57,9 @@ public class ServiceTicketCompactor implements TicketCompactor<ServiceTicket> {
         } else {
             builder.append("%s0".formatted(DELIMITER));
         }
-        if (ticket instanceof final AuthenticationAwareTicket aat && aat.getAuthentication() != null) {
-            val authentication = aat.getAuthentication();
-            val handlers = String.join("#", authentication.getSuccesses().keySet());
-            val principalId = authentication.getPrincipal().getId();
-            val credentialTypes = authentication.getCredentials().stream()
-                .map(credential -> credential.getClass().getSimpleName()).collect(Collectors.joining("#"));
-            builder.append(String.format("%s%s:%s:%s", DELIMITER, principalId, handlers, credentialTypes));
-            builder.append(String.format("%s%s", DELIMITER, BooleanUtils.toString(CoreAuthenticationUtils.isRememberMeAuthentication(authentication), "1", "0")));
+
+        if (ticket instanceof final AuthenticationAwareTicket aat) {
+            builder.append(builder.append(compactAuthenticationAttempt(aat).toString()));
         } else {
             builder.append("%s*%s0".formatted(DELIMITER, DELIMITER));
         }
@@ -77,18 +74,39 @@ public class ServiceTicketCompactor implements TicketCompactor<ServiceTicket> {
     @Override
     public Ticket expand(final String ticketId) throws Throwable {
         val structure = parse(ticketId);
-        val serviceTicketFactory = (ServiceTicketFactory) ticketFactory.getObject().get(getTicketType());
 
-        val service = serviceFactory.createService(structure.ticketElements().get(2));
+        val service = serviceFactory.createService(structure.ticketElements().get(CompactTicketIndexes.SERVICE.getIndex()));
         val credentialsProvided = BooleanUtils.toBoolean(structure.ticketElements().get(3));
+        val authentication = expandAuthentication(principalFactory, structure);
+        val serviceTicketFactory = (ServiceTicketFactory) ticketFactory.getObject().get(getTicketType());
+        val serviceTicket = serviceTicketFactory.create(service, authentication, credentialsProvided, getTicketType());
+        serviceTicket.setExpirationPolicy(new FixedInstantExpirationPolicy(structure.expirationTime()));
+        serviceTicket.setCreationTime(DateTimeUtils.zonedDateTimeOf(structure.creationTime()));
+        return serviceTicket;
+    }
 
+    protected StringBuilder compactAuthenticationAttempt(final AuthenticationAwareTicket authenticationAwareTicket) {
+        val authentication = authenticationAwareTicket.getAuthentication();
+        val builder = new StringBuilder();
+        if (authentication != null) {
+            val handlers = String.join("#", authentication.getSuccesses().keySet());
+            val principalId = authentication.getPrincipal().getId();
+            val credentialTypes = authentication.getCredentials().stream()
+                .map(credential -> credential.getClass().getSimpleName()).collect(Collectors.joining("#"));
+            builder.append(String.format("%s%s:%s:%s", DELIMITER, principalId, handlers, credentialTypes));
+            builder.append(String.format("%s%s", DELIMITER, BooleanUtils.toString(CoreAuthenticationUtils.isRememberMeAuthentication(authentication), "1", "0")));
+        }
+        return builder;
+    }
+
+    protected Authentication expandAuthentication(final PrincipalFactory principalFactory, final CompactTicket structure) throws Throwable {
         val authenticationData = Splitter.on(":").splitToList(structure.ticketElements().get(4));
         val principal = principalFactory.createPrincipal(authenticationData.getFirst());
         val handlers = Arrays.stream(authenticationData.get(1).split("#")).collect(Collectors.toSet());
         val credentialTypes = Arrays.stream(authenticationData.get(2).split("#")).collect(Collectors.toSet());
         val rememberMe = BooleanUtils.toBoolean(structure.ticketElements().get(5));
 
-        val authentication = DefaultAuthenticationBuilder
+        return DefaultAuthenticationBuilder
             .newInstance()
             .setPrincipal(principal)
             .addAttribute(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, rememberMe)
@@ -98,10 +116,6 @@ public class ServiceTicketCompactor implements TicketCompactor<ServiceTicket> {
                 name -> new DefaultAuthenticationHandlerExecutionResult(name, principal))))
             .addAttribute(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE, handlers)
             .build();
-        val serviceTicket = serviceTicketFactory.create(service, authentication, credentialsProvided, getTicketType());
-        serviceTicket.setExpirationPolicy(new FixedInstantExpirationPolicy(structure.expirationTime()));
-        serviceTicket.setCreationTime(DateTimeUtils.zonedDateTimeOf(structure.creationTime()));
-        return serviceTicket;
     }
 
     @Override

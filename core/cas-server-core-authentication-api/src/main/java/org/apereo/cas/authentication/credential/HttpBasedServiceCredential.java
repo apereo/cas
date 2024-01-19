@@ -35,14 +35,8 @@ public class HttpBasedServiceCredential extends AbstractCredential {
     @Serial
     private static final long serialVersionUID = 1492607216336354503L;
 
-    /**
-     * The callbackURL to check that identifies the application.
-     */
     private URL callbackUrl;
 
-    /**
-     * The registered service associated with this callback.
-     **/
     private CasModelRegisteredService service;
 
     @JsonCreator

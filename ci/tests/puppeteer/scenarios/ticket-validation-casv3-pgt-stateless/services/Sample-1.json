@@ -9,7 +9,8 @@
   },
   "attributeReleasePolicy" : {
     "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
-    "authorizedToReleaseProxyGrantingTicket" : true
+    "authorizedToReleaseProxyGrantingTicket" : true,
+    "allowedAttributes" : [ "java.util.ArrayList", [ "mail" ] ]
   },
   "publicKey" : {
     "@class" : "org.apereo.cas.services.RegisteredServicePublicKeyImpl",

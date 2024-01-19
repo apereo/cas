@@ -40,20 +40,23 @@ public class ProxyGrantingTicketImpl extends TicketGrantingTicketImpl implements
     }
 
     @JsonCreator
-    public ProxyGrantingTicketImpl(@JsonProperty("id") final String id, @JsonProperty("proxiedBy") final Service proxiedBy,
-                                   @JsonProperty("ticketGrantingTicket") final TicketGrantingTicket parentTicketGrantingTicket,
+    public ProxyGrantingTicketImpl(@JsonProperty("id") final String id,
+                                   @JsonProperty("proxiedBy") final Service proxiedBy,
+                                   @JsonProperty("ticketGrantingTicket") final TicketGrantingTicket ticketGrantingTicket,
                                    @JsonProperty("authentication") final Authentication authentication,
                                    @JsonProperty("expirationPolicy") final ExpirationPolicy expirationPolicy) {
-        super(id, proxiedBy, parentTicketGrantingTicket, authentication, expirationPolicy);
+        super(id, proxiedBy, ticketGrantingTicket, authentication, expirationPolicy);
     }
 
     @Override
-    public ProxyTicket grantProxyTicket(final String id, final Service service,
+    public ProxyTicket grantProxyTicket(final String id,
+                                        final Service service,
                                         final ExpirationPolicy expirationPolicy,
                                         final TicketTrackingPolicy trackingPolicy) {
-        val serviceTicket = new ProxyTicketImpl(id, this, service, false, expirationPolicy);
-        trackingPolicy.trackTicket(this, serviceTicket);
-        return serviceTicket;
+        val proxyTicket = new ProxyTicketImpl(id, this, service, false, expirationPolicy);
+        proxyTicket.setAuthentication(getAuthentication());
+        trackingPolicy.trackTicket(this, proxyTicket);
+        return proxyTicket;
     }
 
     @Override

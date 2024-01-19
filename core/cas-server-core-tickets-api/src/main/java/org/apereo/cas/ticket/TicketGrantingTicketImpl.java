@@ -72,28 +72,18 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
      */
     private Set<String> descendantTickets = new HashSet<>(0);
 
-    /**
-     * Constructs a new TicketGrantingTicket.
-     * May throw an {@link IllegalArgumentException} if the Authentication object is null.
-     *
-     * @param id                         the id of the Ticket
-     * @param proxiedBy                  Service that produced this proxy ticket.
-     * @param parentTicketGrantingTicket the parent ticket
-     * @param authentication             the Authentication request for this ticket
-     * @param policy                     the expiration policy for this ticket.
-     */
     @JsonCreator
     public TicketGrantingTicketImpl(
         @JsonProperty("id") final String id,
         @JsonProperty("proxiedBy") final Service proxiedBy,
-        @JsonProperty("ticketGrantingTicket") final TicketGrantingTicket parentTicketGrantingTicket,
+        @JsonProperty("ticketGrantingTicket") final TicketGrantingTicket ticketGrantingTicket,
         @JsonProperty("authentication") final @NonNull Authentication authentication,
         @JsonProperty("expirationPolicy") final ExpirationPolicy policy) {
         super(id, policy);
-        if (parentTicketGrantingTicket != null && proxiedBy == null) {
+        if (ticketGrantingTicket != null && proxiedBy == null) {
             throw new IllegalArgumentException("Must specify proxiedBy when providing parent ticket-granting ticket");
         }
-        this.ticketGrantingTicket = parentTicketGrantingTicket;
+        this.ticketGrantingTicket = ticketGrantingTicket;
         this.authentication = authentication;
         this.proxiedBy = proxiedBy;
     }

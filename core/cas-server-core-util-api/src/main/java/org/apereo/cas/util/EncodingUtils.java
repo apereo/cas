@@ -140,6 +140,17 @@ public class EncodingUtils {
         return Base64.encodeBase64URLSafeString(data);
     }
 
+
+    /**
+     * Encode url safe base64 string.
+     *
+     * @param data the data
+     * @return the string
+     */
+    public static String encodeUrlSafeBase64(final String data) {
+        return Base64.encodeBase64URLSafeString(data.getBytes(StandardCharsets.UTF_8));
+    }
+
     /**
      * Base64-decode the given string as byte[].
      *
