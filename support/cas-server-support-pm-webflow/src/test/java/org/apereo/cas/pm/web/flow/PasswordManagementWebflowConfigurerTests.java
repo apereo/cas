@@ -169,6 +169,7 @@ class PasswordManagementWebflowConfigurerTests {
                 .execute(context);
             assertNull(event);
             assertTrue(WebUtils.isPasswordManagementEnabled(context));
+            assertTrue(WebUtils.isForgotUsernameEnabled(context));
         }
     }
 }
