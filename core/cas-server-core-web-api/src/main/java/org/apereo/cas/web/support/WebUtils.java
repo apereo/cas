@@ -838,6 +838,16 @@ public class WebUtils {
     }
 
     /**
+     * Is forgot username enabled.
+     *
+     * @param context the context
+     * @return true/false
+     */
+    public static boolean isForgotUsernameEnabled(final RequestContext context) {
+        return context.getFlowScope().get("forgotUsernameEnabled", Boolean.class);
+    }
+
+    /**
      * Put principal.
      *
      * @param requestContext          the request context
