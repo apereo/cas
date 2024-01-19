@@ -30,6 +30,7 @@ public class AccountProfilePreparePasswordManagementAction extends BaseCasWebflo
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
         WebUtils.putPasswordManagementEnabled(requestContext, casProperties.getAuthn().getPm().getCore().isEnabled());
+        WebUtils.putForgotUsernameEnabled(requestContext, casProperties.getAuthn().getPm().getForgotUsername().isEnabled());
         WebUtils.putAccountProfileManagementEnabled(requestContext, true);
         val secQuestionsEnabled = casProperties.getAuthn().getPm().getReset().isSecurityQuestionsEnabled()
                                   && casProperties.getAuthn().getPm().getCore().isEnabled();
