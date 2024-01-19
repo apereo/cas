@@ -48,6 +48,7 @@ public class StatelessTicketRegistry extends AbstractTicketRegistry {
             val decoded = (byte[]) cipherExecutor.decode(decoded64);
             val ticketContent = CompressionUtils.inflateToString(decoded);
             val ticketCompactor = findTicketCompactor(metadata);
+            LOGGER.trace("Raw compacted ticket to expand is [{}]", ticketContent);
             val ticketObject = ticketCompactor.expand(ticketContent);
             if (ticketObject != null && predicate.test(ticketObject)) {
                 return ticketObject.markTicketStateless();
@@ -61,6 +62,7 @@ public class StatelessTicketRegistry extends AbstractTicketRegistry {
         val metadata = ticketCatalog.find(ticket.getPrefix());
         val ticketCompactor = findTicketCompactor(metadata);
         val compactedTicket = ticketCompactor.compact(ticket);
+        LOGGER.trace("Raw compacted ticket to add is [{}]", compactedTicket);
         val compressed = CompressionUtils.deflateToByteArray(compactedTicket);
         val encoded = (byte[]) cipherExecutor.encode(compressed);
         val encoded64 = EncodingUtils.encodeUrlSafeBase64(encoded);
