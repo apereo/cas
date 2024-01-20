@@ -41,8 +41,7 @@ class RepositoryMonitor {
     private final MonitoredRepository repository;
 
     private final List<PullRequestListener> pullRequestListeners;
-
-
+    
     @Scheduled(fixedRate = ONE_MINUTE)
     void monitorPullRequests() {
         log.info("Monitoring {}", this.repository.getFullName());

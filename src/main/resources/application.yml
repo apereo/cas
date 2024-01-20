@@ -2,6 +2,8 @@ logging:
   level:
     root: warn
     org:
+      springframework:
+        security: debug
       apereo:
         cas: info
 casbot:
@@ -11,10 +13,13 @@ casbot:
       name: cas
       url: https://github.com/apereo/cas
       committers: mmoayyed,leleuj,hdeadman
-      admins: mmoayyed
+      admins: mmoayyed,apereocasbot
 
+security:
+  en
 spring:
   security:
     user:
       name: apereocasbot
       password: ${CASBOT_GITHUB_CREDENTIALS_TOKEN}
+      roles: ADMIN

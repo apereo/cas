@@ -189,7 +189,7 @@ public class MonitoredRepository {
     }
 
     public List<TimelineEntry> getPullRequestTimeline(final PullRequest pr) {
-        List<TimelineEntry> files = new ArrayList<>();
+        var files = new ArrayList<TimelineEntry>();
         var pages = this.gitHub.getPullRequestTimeline(getOrganization(), getName(), pr);
         while (pages != null) {
             files.addAll(pages.getContent());

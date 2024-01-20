@@ -186,7 +186,7 @@ public class CasPullRequestListener implements PullRequestListener {
         }
 
         if (pr.isUnderReview()) {
-            log.info("Pull request {} is is being reviewed", pr);
+            log.info("Pull request {} is being reviewed", pr);
             return;
         }
 
