@@ -5,12 +5,11 @@ import org.apereo.cas.authentication.DefaultMultifactorAuthenticationProviderRes
 import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.MultifactorAuthenticationRequiredException;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.configuration.CasConfigurationProperties;
-
 import lombok.val;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
+import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -21,32 +20,54 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @Tag("MFATrigger")
-class PrincipalAttributeMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
-    @Test
-    void verifyOperationByProvider() throws Throwable {
-        val props = new CasConfigurationProperties();
-        val principal = props.getAuthn().getMfa().getTriggers().getPrincipal();
-        principal.setGlobalPrincipalAttributeNameTriggers("email");
-        principal.setGlobalPrincipalAttributeValueRegex(".+@example.*");
-        val resolver = new DefaultMultifactorAuthenticationProviderResolver(MultifactorAuthenticationPrincipalResolver.identical());
-        val trigger = new PrincipalAttributeMultifactorAuthenticationTrigger(props, resolver, applicationContext);
-        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
-        assertTrue(result.isPresent());
+class PrincipalAttributeMultifactorAuthenticationTriggerTests {
+
+    @Nested
+    @TestPropertySource(properties = {
+        "cas.authn.mfa.triggers.principal.global-principal-attribute-name-triggers=email",
+        "cas.authn.mfa.triggers.principal.global-principal-attribute-value-regex=.+@example.*"
+    })
+    class DefaultTests extends BaseMultifactorAuthenticationTriggerTests {
+        @Test
+        void verifyOperationByProvider() throws Throwable {
+            val resolver = new DefaultMultifactorAuthenticationProviderResolver(MultifactorAuthenticationPrincipalResolver.identical());
+            val trigger = new PrincipalAttributeMultifactorAuthenticationTrigger(casProperties, resolver, applicationContext);
+            val result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
+            assertTrue(result.isPresent());
+        }
     }
 
-    @Test
-    void verifyDenyWhenUnmatched() throws Throwable {
-        val props = new CasConfigurationProperties();
-        val principal = props.getAuthn().getMfa().getTriggers().getPrincipal();
-        principal.setGlobalPrincipalAttributeNameTriggers("email");
-        principal.setGlobalPrincipalAttributeValueRegex("-nothing-");
-        principal.setDenyIfUnmatched(true);
+    @Nested
+    @TestPropertySource(properties = {
+        "cas.authn.mfa.triggers.principal.global-principal-attribute-name-triggers=email",
+        "cas.authn.mfa.triggers.principal.global-principal-attribute-value-regex=.+@example.*",
+        "cas.authn.mfa.triggers.principal.reverse-match=true"
+    })
+    class ReversedMatchTests extends BaseMultifactorAuthenticationTriggerTests {
+        @Test
+        void verifyOperationByProvider() throws Throwable {
+            val resolver = new DefaultMultifactorAuthenticationProviderResolver(MultifactorAuthenticationPrincipalResolver.identical());
+            val trigger = new PrincipalAttributeMultifactorAuthenticationTrigger(casProperties, resolver, applicationContext);
+            val result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
+            assertTrue(result.isEmpty());
+        }
+    }
 
-        val resolver = new DefaultMultifactorAuthenticationProviderResolver(MultifactorAuthenticationPrincipalResolver.identical());
-        val trigger = new PrincipalAttributeMultifactorAuthenticationTrigger(props, resolver, applicationContext);
-        val e = assertThrows(AuthenticationException.class,
-            () -> trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class)));
-        assertNotNull(e.getCode());
-        assertTrue(e.getHandlerErrors().containsKey(MultifactorAuthenticationRequiredException.class.getSimpleName()));
+    @Nested
+    @TestPropertySource(properties = {
+        "cas.authn.mfa.triggers.principal.global-principal-attribute-name-triggers=email",
+        "cas.authn.mfa.triggers.principal.global-principal-attribute-value-regex=-nothing-",
+        "cas.authn.mfa.triggers.principal.deny-if-unmatched=true"
+    })
+    class DenyTests extends BaseMultifactorAuthenticationTriggerTests {
+        @Test
+        void verifyDenyWhenUnmatched() throws Throwable {
+            val resolver = new DefaultMultifactorAuthenticationProviderResolver(MultifactorAuthenticationPrincipalResolver.identical());
+            val trigger = new PrincipalAttributeMultifactorAuthenticationTrigger(casProperties, resolver, applicationContext);
+            val exception = assertThrows(AuthenticationException.class,
+                () -> trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class)));
+            assertNotNull(exception.getCode());
+            assertTrue(exception.getHandlerErrors().containsKey(MultifactorAuthenticationRequiredException.class.getSimpleName()));
+        }
     }
 }
