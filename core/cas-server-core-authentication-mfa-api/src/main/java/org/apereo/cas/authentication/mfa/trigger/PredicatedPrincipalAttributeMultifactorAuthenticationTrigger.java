@@ -9,7 +9,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.scripting.ScriptingUtils;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -17,10 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.util.Comparator;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -50,8 +47,8 @@ public class PredicatedPrincipalAttributeMultifactorAuthenticationTrigger implem
                                                                    final HttpServletRequest httpServletRequest,
                                                                    final HttpServletResponse response,
                                                                    final Service service) {
-        val predicateResource = casProperties.getAuthn().getMfa().getTriggers()
-            .getPrincipal().getGlobalPrincipalAttributePredicate().getLocation();
+        val properties = casProperties.getAuthn().getMfa().getTriggers().getPrincipal();
+        val predicateResource = properties.getGlobalPrincipalAttributePredicate().getLocation();
 
         if (!ResourceUtils.doesResourceExist(predicateResource)) {
             LOGGER.trace("No predicate is defined to decide which multifactor authentication provider should be chosen");
