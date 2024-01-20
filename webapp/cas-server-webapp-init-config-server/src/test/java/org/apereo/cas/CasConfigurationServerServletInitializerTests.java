@@ -23,6 +23,7 @@ class CasConfigurationServerServletInitializerTests {
         System.setProperty("spring.profiles.active", "native");
         System.setProperty("spring.cloud.config.server.native.searchLocations", "file://" + FileUtils.getTempDirectoryPath());
         System.setProperty("spring.cloud.config.server.git.uri", "file://" + FileUtils.getTempDirectoryPath());
+        System.setProperty("spring.cloud.compatibility-verifier.enabled", "false");
     }
 
     @Test
