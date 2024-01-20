@@ -11,6 +11,8 @@ import org.apereo.cas.throttle.DefaultThrottledRequestResponseHandler;
 import org.apereo.cas.throttle.ThrottledRequestExecutor;
 import org.apereo.cas.throttle.ThrottledRequestFilter;
 import org.apereo.cas.throttle.ThrottledRequestResponseHandler;
+import org.apereo.cas.util.spring.beans.BeanCondition;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.support.InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter;
 import org.apereo.cas.web.support.InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter;
@@ -189,14 +191,20 @@ public class CasThrottlingConfiguration {
 
     @Configuration(value = "CasThrottlingSchedulerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasThrottlingSchedulerConfiguration {
+    static class CasThrottlingSchedulerConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Lazy(false)
         public Runnable throttleSubmissionCleaner(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier(AuthenticationThrottlingExecutionPlan.BEAN_NAME)
             final AuthenticationThrottlingExecutionPlan plan) {
-            return new InMemoryThrottledSubmissionCleaner(plan);
+            return BeanSupplier.of(Runnable.class)
+                .when(BeanCondition.on("cas.authn.throttle.schedule.enabled").isTrue()
+                    .evenIfMissing().given(applicationContext.getEnvironment()))
+                .supply(() -> new InMemoryThrottledSubmissionCleaner(plan))
+                .otherwiseProxy()
+                .get();
         }
     }
 }
