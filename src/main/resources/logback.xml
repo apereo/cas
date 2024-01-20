@@ -10,9 +10,8 @@
     </appender>
 
     <logger name="ch.qos.logback" level="off" />
-    <logger name="org.springframework.boot.autoconfigure.security" level="debug" />
-
-    <root level="debug">
+    <logger name="org.springframework.boot.autoconfigure.security" level="info" />
+    <root level="info">
         <appender-ref ref="STDOUT" />
     </root>
 

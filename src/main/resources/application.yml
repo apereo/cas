@@ -3,7 +3,7 @@ logging:
     root: warn
     org:
       springframework:
-        security: debug
+        security: warn
       apereo:
         cas: info
 casbot:
