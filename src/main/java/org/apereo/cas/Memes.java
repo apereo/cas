@@ -11,7 +11,19 @@ import java.security.SecureRandom;
 public class Memes {
     private final String[] urls;
 
+    public static final Memes MAINTENANCE_POLICY = new Memes(
+        "https://github.com/apereo/cas/assets/1205228/49a290aa-b358-4ed0-ab51-195f7706128e",
+        "https://github.com/apereo/cas/assets/1205228/65f9f9dd-6948-41d6-a668-db8d359dd0cd",
+        "https://github.com/apereo/cas/assets/1205228/96024002-514f-448d-a4b4-846d97121b30",
+        "https://github.com/apereo/cas/assets/1205228/7ce68cf6-aff0-4125-9787-35e41db61535",
+        "https://github.com/apereo/cas/assets/1205228/17a3dd7e-e656-4627-b607-4293e8aaa12f",
+        "https://github.com/apereo/cas/assets/1205228/3d00382d-6e32-4578-b8ad-5e33ba813e64",
+        "https://github.com/apereo/cas/assets/1205228/65d485fb-f3ec-4f46-8270-1dca2a95816e"
+    );
+    
     public static final Memes NO_TESTS = new Memes(
+        "https://github.com/apereo/cas/assets/1205228/c8897bdf-536e-41c4-a8da-e62156956735",
+        "https://github.com/apereo/cas/assets/1205228/7ce68cf6-aff0-4125-9787-35e41db61535",
         "https://github.com/apereo/cas/assets/1205228/9b641bc1-4baa-4d7a-9336-3fad57826f2c",
         "https://github.com/apereo/cas/assets/1205228/324584ba-5209-4759-aee0-2fa1643e44eb",
         "https://github.com/apereo/cas/assets/1205228/c4bf44c3-5942-4fff-972c-8091028329fa",

@@ -353,6 +353,8 @@ public class CasPullRequestListener implements PullRequestListener {
                 repository.labelPullRequestAs(pr, CasLabels.LABEL_PROPOSAL_DECLINED);
 
                 var template = IOUtils.toString(new ClassPathResource("template-maintenance-policy.md").getInputStream(), StandardCharsets.UTF_8);
+                template = template.replace("${link}", Memes.MAINTENANCE_POLICY.select());
+
                 repository.addComment(pr, template);
                 repository.close(pr);
                 return true;
