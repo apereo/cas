@@ -41,6 +41,12 @@ such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicit
 
 The following items are new improvements and enhancements presented in this release. 
 
+## Spring Boot 3.3
+
+The migration of the entire codebase to Spring Boot `3.3` is ongoing, and at the 
+moment is waiting for the wider ecosystem of supporting frameworks and libraries to catch up to 
+these changes. As a quick status update, we anticipate the work to finalize in the next few release candidates.
+
 ### OpenRewrite Upgrade Recipes
 
 A carry-over item from the previous release and while not exactly new, CAS has started to produce 
@@ -73,18 +79,20 @@ This feature allows one to define conditions that must be met before the policy 
 
 ### Cerbos Access Strategy
 
-Application access requests and decisions can now be submitted to [Cerbos](../services/Service-Access-Strategy-Cerbos.html) for evaluation.
+Application access requests and authorization decisions can now be submitted to [Cerbos](../services/Service-Access-Strategy-Cerbos.html) for evaluation.
          
 ### Stateless Ticket Registry
 
-A new stateless ticket registry option is now available that does not track or store tickets in a persistent manner
-via a backend storage technology. [See this](../ticketing/Stateless-Ticket-Registry.html) for details.
+A new [stateless ticket registry](../ticketing/Stateless-Ticket-Registry.html) option is now available that 
+does not track or store tickets in a persistent manner via a backend storage technology. 
 
 ## Other Stuff
 
 - Internal cleanup and refactoring efforts to remove duplicate code, particularly when it comes to grouping `@AutoConfiguration` components.
 - Changes to the CAS Gradle build to allow more efficient caching of configuration and build artifacts and reduce overall build times.
 - Proxy ticket validation should now correctly resolve and determine the authenticated principal id.
+- Cleaning on throttled authentication attempts should now take submission expirations dates into account.
+- CAS user interface is now instructed to remove the *"Forgot Your Username?"* feature when the feature is disabled.
 
 ## Library Upgrades
 
@@ -103,4 +111,7 @@ via a backend storage technology. [See this](../ticketing/Stateless-Ticket-Regis
 - Sentry
 - Slack
 - Ldaptive
+- Node
+- Amazon SDK
+- Apache Groovy
 

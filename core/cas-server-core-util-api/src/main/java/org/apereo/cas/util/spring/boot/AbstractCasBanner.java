@@ -75,7 +75,8 @@ public abstract class AbstractCasBanner implements CasBanner {
             });
             formatter.format("%s%n", LINE_SEPARATOR);
             injectEnvironmentInfo(formatter, environment, sourceClass);
-            ServiceLoader.load(BannerContributor.class).stream()
+            ServiceLoader.load(BannerContributor.class)
+                .stream()
                 .forEach(clz -> clz.get().contribute(formatter, environment));
             formatter.format("%s%n", LINE_SEPARATOR);
             return formatter.toString();
