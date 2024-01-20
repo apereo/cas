@@ -64,7 +64,7 @@ while (("$#")); do
   --local)
     propFilter=$2
     shift 2
-    printgreen "Generating documentation for property filter ${propFilter}\n"
+    printgreen "Generating documentation for property filter: ${propFilter}\n"
     serve=true
     
     audit=false
@@ -155,7 +155,7 @@ fi
 
 if [ -z "$GH_PAGES_TOKEN" ] && [ "${GITHUB_REPOSITORY}" != "${REPOSITORY_NAME}" ]; then
   publishDocs=false
-  printyellow "\nNo GitHub token is defined to publish documentation."
+  printyellow "No GitHub token is defined to publish documentation."
 fi
 
 if [[ "${CI}" == "true" ]]; then
@@ -167,21 +167,21 @@ fi
 
 echo "-------------------------------------------------------"
 printgreen "Branch: \t\t${branchVersion}"
-printgreen "Build: \t\t\t${buildDocs}"
-printgreen "Serve: \t\t\t${serve}"
-printgreen "Generate Data: \t\t${generateData}"
+printgreen "Build: \t\t${buildDocs}"
+printgreen "Serve: \t\t${serve}"
+printgreen "Generate Data: \t${generateData}"
 printgreen "Validate: \t\t${proofRead}"
 printgreen "Publish: \t\t${publishDocs}"
 printgreen "Filter: \t\t${propFilter}"
 printgreen "Actuators: \t\t${actuators}"
-printgreen "Third Party: \t\t${thirdParty}"
-printgreen "Dependency Versions: \t${dependencyVersions}"
+printgreen "Third Party: \t${thirdParty}"
+printgreen "Dependency Versions: ${dependencyVersions}"
 printgreen "Service Properties: \t${serviceProps}"
 printgreen "Features: \t\t${buildFeatures}"
-printgreen "Shell: \t\t\t${shellCommands}"
-printgreen "Audit: \t\t\t${audit}"
+printgreen "Shell: \t\t${shellCommands}"
+printgreen "Audit: \t\t${audit}"
 printgreen "UI: \t\t\t${userinterface}"
-printgreen "Ruby Version: \t\t$(ruby -v)"
+printgreen "Ruby Version: \t$(ruby -v)"
 echo "-------------------------------------------------------"
 
 cloneRepository=false
@@ -232,6 +232,7 @@ if [[ $cloneRepository == "true" ]]; then
   mv "$PWD/docs-latest/Gemfile" "$PWD/gh-pages"
   mv "$PWD/docs-latest/Demos.md" "$PWD/gh-pages"
   mv "$PWD/docs-latest/Support.md" "$PWD/gh-pages"
+  mv "$PWD/docs-latest/404.md" "$PWD/gh-pages"
   mv "$PWD/docs-latest/_config.yml" "$PWD/gh-pages"
   rm -f "$PWD/gh-pages/Gemfile.lock"
 
@@ -418,7 +419,7 @@ if [[ $clone == "true" ]]; then
 fi
 
 if [ -z "$GH_PAGES_TOKEN" ] && [ "${GITHUB_REPOSITORY}" != "${REPOSITORY_NAME}" ]; then
-  printyellow "\nNo GitHub token is defined to publish documentation. Skipping..."
+  printyellow "No GitHub token is defined to publish documentation. Skipping..."
   if [[ $clone == "true" ]]; then
     rm -Rf "$PWD/gh-pages"
     exit 0

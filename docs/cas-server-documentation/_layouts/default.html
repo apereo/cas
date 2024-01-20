@@ -78,9 +78,12 @@
     <!-- NAVBAR -->
 
     <nav class="navbar navbar-expand-md navbar-dark bg-primary bg-dark">
+        {% if page.navigationBar == true or page.navigationBar == "true" or page.navigationBar == "" or page.navigationBar == null %}
         <button onclick="navigateSidebar()" id="sidebarNavButton">
             <span class="navbar-toggler-icon"></span>
         </button>
+        {% endif %}
+        
         <div class="container">
 <!--            <button id="navigationNavButton" class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse"-->
 <!--                    data-bs-target="#navbarsExample04" aria-controls="navbarsExample04" aria-expanded="false"-->
@@ -124,8 +127,7 @@
             {% include_cached page_toc.html %}
 
             <main class="col-12 col-md-9 col-xl-8 py-md-3 pl-md-5 cas-docs-content" role="main">
-
-
+                
                 {% if version == "development" %}
                 <div id="dev-doc-info" class="alert alert-danger" role="alert">
                     <h3>WORKERS AHEAD!</h3>
@@ -138,9 +140,11 @@
                 {% endif %}
 
                 <section>
+                    {% if page.navigationBar == true or page.navigationBar == "true" or page.navigationBar == "" or page.navigationBar == null %}
                     <nav id="docsNavBar">
                         <span id="toolbarIcons"></span>
                     </nav>
+                    {% endif %}
 
                     <div id="cas-docs-container">
                         {{ content }}
@@ -156,11 +160,7 @@
             CAS is supported by the <a href="https://www.apereo.org/">Apereo Foundation</a>.
         </div>
     </footer>
-
-    <script>
-        let pageSection = '{{ page.category }}';
-    </script>
-
+    
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
@@ -177,6 +177,13 @@
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/js/lightbox.min.js"></script>
 
+
+    <script>
+        let pageSection = '{{ page.category }}';
+        {% if page.navigationBar == false %}
+        $(".docs-toc").remove();
+        {% endif %}
+    </script>
 </body>
 
 </html>
