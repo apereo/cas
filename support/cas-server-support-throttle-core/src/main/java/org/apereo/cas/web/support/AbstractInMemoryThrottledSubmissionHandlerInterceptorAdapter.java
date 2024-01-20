@@ -63,8 +63,7 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
 
         if (store.contains(key)) {
             val submission = store.get(key);
-            val now = ZonedDateTime.now(Clock.systemUTC());
-            if (now.isBefore(submission.getExpiration())) {
+            if (!submission.hasExpiredAlready()) {
                 LOGGER.warn("Throttled submission [{}] remains throttled; submission expires at [{}]", key, submission.getExpiration());
                 return true;
             }

@@ -90,6 +90,12 @@ public abstract class BaseMappableThrottledSubmissionsStore<T extends ThrottledS
     @Override
     public void release(final double thresholdRate) {
         val now = ZonedDateTime.now(ZoneOffset.UTC);
-        removeIf(entry -> submissionRate(now, entry.getValue()) < thresholdRate);
+        removeIf(entry -> {
+            if (entry.hasExpiredAlready()) {
+                LOGGER.debug("Throttled submission [{}] has expired and will be removed", entry.getKey());
+                return true;
+            }
+            return submissionRate(now, entry.getValue()) < thresholdRate;
+        });
     }
 }

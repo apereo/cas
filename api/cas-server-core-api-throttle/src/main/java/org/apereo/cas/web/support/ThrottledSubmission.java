@@ -3,6 +3,7 @@ package org.apereo.cas.web.support;
 import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.SuperBuilder;
+import lombok.val;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -31,4 +32,15 @@ public class ThrottledSubmission implements Serializable {
     private final String clientIpAddress;
 
     private final ZonedDateTime expiration;
+
+    /**
+     * Compares the current time with the expiration time to determine
+     * whether the submission has expired.
+     *
+     * @return the boolean
+     */
+    public boolean hasExpiredAlready() {
+        val now = ZonedDateTime.now(Clock.systemUTC());
+        return expiration != null && (now.isAfter(expiration) || now.isEqual(expiration));
+    }
 }
