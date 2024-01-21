@@ -55,4 +55,19 @@ public class RepositoryController {
         }
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping(value = "/repo/pulls/{prNumber}/labels/runci", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Secured({"ROLE_ADMIN"})
+    public ResponseEntity runci(@PathVariable final String prNumber) {
+        val pullRequest = repository.getPullRequest(prNumber);
+        if (pullRequest == null) {
+            return ResponseEntity.notFound().build();
+        }
+        if (pullRequest.isLocked() || pullRequest.isDraft() || pullRequest.isWorkInProgress()) {
+            return ResponseEntity.status(HttpStatus.LOCKED).build();
+        }
+        repository.removeLabelFrom(pullRequest, CasLabels.LABEL_CI);
+        repository.labelPullRequestAs(pullRequest, CasLabels.LABEL_CI);
+        return ResponseEntity.ok().build();
+    }
 }
