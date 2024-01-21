@@ -1,5 +1,6 @@
 package org.apereo.cas.shell.commands.properties;
 
+import com.google.common.base.Splitter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FilenameUtils;
@@ -57,12 +58,12 @@ public class ConvertPropertiesToYAMLCommand {
 
     private static void addToGroupedProperties(final Map<String, Object> groupedProperties,
                                                final String key, final String value) {
-        val parts = key.split("\\.");
+        val parts = Splitter.on('.').splitToList(key);
         var currentMap = groupedProperties;
-        for (var i = 0; i < parts.length - 1; i++) {
-            currentMap = getOrCreateSubMap(currentMap, parts[i]);
+        for (var i = 0; i < parts.size() - 1; i++) {
+            currentMap = getOrCreateSubMap(currentMap, parts.get(i));
         }
-        currentMap.put(parts[parts.length - 1], value);
+        currentMap.put(parts.get(parts.size() - 1), value);
     }
 
     private static Map<String, Object> getOrCreateSubMap(final Map<String, Object> map, final String key) {
@@ -77,7 +78,6 @@ public class ConvertPropertiesToYAMLCommand {
         options.setPrettyFlow(true);
         options.setAllowUnicode(true);
         options.setIndent(2);
-
         val yaml = new Yaml(options);
         try (val writer = new FileWriter(outputPath, StandardCharsets.UTF_8)) {
             yaml.dump(properties, writer);
