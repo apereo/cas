@@ -16,6 +16,7 @@ import org.apereo.cas.shell.commands.jwt.GenerateFullJwtCommand;
 import org.apereo.cas.shell.commands.jwt.GenerateJwtCommand;
 import org.apereo.cas.shell.commands.oidc.GenerateOidcJsonWebKeystoreCommand;
 import org.apereo.cas.shell.commands.properties.AddPropertiesToConfigurationCommand;
+import org.apereo.cas.shell.commands.properties.ConvertPropertiesToYAMLCommand;
 import org.apereo.cas.shell.commands.properties.ExportPropertiesCommand;
 import org.apereo.cas.shell.commands.properties.FindPropertiesCommand;
 import org.apereo.cas.shell.commands.saml.GenerateSamlIdPMetadataCommand;
@@ -105,6 +106,11 @@ public class CasCommandLineShellAutoConfiguration {
     @Bean
     public GenerateOidcJsonWebKeystoreCommand generateOidcJsonWebKeystoreCommand() {
         return new GenerateOidcJsonWebKeystoreCommand();
+    }
+
+    @Bean
+    public ConvertPropertiesToYAMLCommand convertPropertiesToYAMLCommand() {
+        return new ConvertPropertiesToYAMLCommand();
     }
 
     @Bean
