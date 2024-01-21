@@ -35,7 +35,6 @@ on:
 
 jobs:
   initialize:
-    if: ${{ (github.event_name == 'schedule' || contains(github.event.pull_request.labels.*.name, 'Bot')) }}
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
@@ -55,7 +54,6 @@ jobs:
   ##########################################################################
 
   build:
-    if: ${{ (github.event_name == 'schedule' || contains(github.event.pull_request.labels.*.name, 'Bot')) }}
     needs: [initialize]
     continue-on-error: false
     strategy:
