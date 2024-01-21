@@ -57,7 +57,7 @@ public interface GitHubOperations {
 
     PullRequest mergeWithBase(String organization, String repository, PullRequest pr);
 
-    boolean approve(String organization, String repository, PullRequest pr);
+    boolean approve(String organization, String repository, PullRequest pr, boolean includeComment);
 
     boolean mergeIntoBase(String organization, String repository, PullRequest pr,
                           String commitTitle, String commitMessage,

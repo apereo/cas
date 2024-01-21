@@ -46,8 +46,8 @@ public class MonitoredRepository {
 
     private Version currentVersionInMaster;
 
-    public boolean approvePullRequest(final PullRequest pr) {
-        return gitHub.approve(getOrganization(), getName(), pr);
+    public boolean approvePullRequest(final PullRequest pr, final boolean includeComment) {
+        return gitHub.approve(getOrganization(), getName(), pr, includeComment);
     }
 
     private static Predicate<Label> getLabelPredicateByName(final CasLabels name) {
@@ -223,7 +223,7 @@ public class MonitoredRepository {
     }
 
     public boolean approveAndMergePullRequest(final PullRequest pr) {
-        if (approvePullRequest(pr)) {
+        if (approvePullRequest(pr, true)) {
             return mergePullRequestIntoBase(pr);
         }
         return false;

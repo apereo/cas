@@ -78,10 +78,6 @@ public class CasPullRequestListener implements PullRequestListener {
         }
 
         if (pr.isLabeledAs(CasLabels.LABEL_AUTO_MERGE)) {
-            if (pr.isRenovateBot() || pr.isDependaBot()) {
-                log.info("Merging Bot pull request {}", pr);
-                return repository.approveAndMergePullRequest(pr);
-            }
             var timeline = repository.getPullRequestTimeline(pr);
             var admins = repository.getGitHubProperties().getRepository().getAdmins();
             var approvedByAdmin = timeline
@@ -162,7 +158,7 @@ public class CasPullRequestListener implements PullRequestListener {
             if (pr.isLabeledAs(CasLabels.LABEL_CI)) {
                 repository.removeLabelFrom(pr, CasLabels.LABEL_CI);
             }
-            if (repository.approvePullRequest(pr)) {
+            if (repository.approvePullRequest(pr, false)) {
                 repository.labelPullRequestAs(pr, CasLabels.LABEL_CI);
             }
         }

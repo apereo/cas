@@ -260,15 +260,16 @@ public class GitHubTemplate implements GitHubOperations {
     }
 
     @Override
-    public boolean approve(final String organization, final String repository, final PullRequest pr) {
+    public boolean approve(final String organization, final String repository, final PullRequest pr, final boolean includeComment) {
         try {
             val url = "https://api.github.com/repos/" + organization + '/' + repository + "/pulls/" + pr.getNumber() + "/reviews";
             val params = new HashMap<String, String>();
             params.put("commit_id", pr.getHead().getSha());
-            var template = IOUtils.toString(new ClassPathResource("template-pr-approved.md").getInputStream(), StandardCharsets.UTF_8);
-            template = template.replace("${link}", Memes.PULL_REQUEST_APPROVED.select());
-            params.put("body", template);
-
+            if (includeComment) {
+                var template = IOUtils.toString(new ClassPathResource("template-pr-approved.md").getInputStream(), StandardCharsets.UTF_8);
+                template = template.replace("${link}", Memes.PULL_REQUEST_APPROVED.select());
+                params.put("body", template);
+            }
             params.put("event", "APPROVE");
             val responseEntity = rest.exchange(new RequestEntity(params, HttpMethod.POST, URI.create(url)), Map.class);
             return responseEntity.getStatusCode().is2xxSuccessful();
