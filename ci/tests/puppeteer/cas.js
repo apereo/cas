@@ -833,7 +833,7 @@ exports.goto = async (page, url, retryCount = 5) => {
 exports.gotoLogin = async(page, service = undefined, port = 8443, renew = undefined) => {
     let queryString = (service === undefined ? "" : `service=${service}&`);
     queryString += (renew === undefined ? "" : "renew=true&");
-    const url = `https://localhost:${port}/cas/login?${queryString}`;
+    const url = `https://localhost:${port}/cas/login?${queryString}&locale=en`;
     return this.goto(page, url);
 };
 
