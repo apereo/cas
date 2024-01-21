@@ -13,7 +13,7 @@ ext.githubPackageRegistryPassword = System.getenv("GH_PACKAGE_REGISTRY_TOKEN")
 buildCache {
     local { enabled = false }
     remote(HttpBuildCache) {
-        url = 'https://develocity.apereo.org/cache/exp4/take1'
+        url = 'https://develocity.apereo.org/cache'
         allowUntrustedServer = true
         credentials { creds ->
             creds.username = System.getenv('GRADLE_ENTERPRISE_CACHE_USERNAME')
