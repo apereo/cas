@@ -11,20 +11,16 @@ ext.githubPackageRegistryUser = System.getenv("GH_PACKAGE_REGISTRY_USER")
 ext.githubPackageRegistryPassword = System.getenv("GH_PACKAGE_REGISTRY_TOKEN")
 
 buildCache {
-    local {
-        enabled = !(buildCachePsw?.trim() && buildCacheUser?.trim())
-    }
+    local { enabled = false }
     remote(HttpBuildCache) {
-        enabled = (buildCachePsw?.trim() && buildCacheUser?.trim())
-        url = 'https://cas-gradle-buildcache.herokuapp.com/cache/'
-        push = isCiServer
-
-        credentials {
-            username = buildCacheUser
-            password = buildCachePsw
+        url = 'https://develocity.apereo.org/cache/exp4/take1'
+        allowUntrustedServer = true
+        credentials { creds ->
+            creds.username = System.getenv('GRADLE_ENTERPRISE_CACHE_USERNAME')
+            creds.password = System.getenv('GRADLE_ENTERPRISE_CACHE_PASSWORD')
         }
-    }
-}
+        push = System.getenv('CI') != null   
+    }}
 
 gradleEnterprise {
     server = 'https://develocity.apereo.org/'
