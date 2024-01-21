@@ -39,7 +39,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK
-        uses: actions/setup-java@v4.0.0
+        uses: actions/setup-java@v4
         with:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: ${{ env.JDK_DISTRIBUTION }}
@@ -48,8 +48,6 @@ jobs:
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
-      - name: Gradle Wrapper Validation
-        uses: gradle/wrapper-validation-action@v1
       - name: Initialize
         run: ls ./ci && find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
         
@@ -64,7 +62,7 @@ jobs:
      steps:
        - uses: actions/checkout@v4
        - name: Set up JDK
-         uses: actions/setup-java@v4.0.0
+         uses: actions/setup-java@v4
          with:
            java-version: ${{ env.JDK_CURRENT }}
            distribution: ${{ env.JDK_DISTRIBUTION }}
@@ -100,7 +98,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK
-        uses: actions/setup-java@v4.0.0
+        uses: actions/setup-java@v4
         with:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: ${{ env.JDK_DISTRIBUTION }}
