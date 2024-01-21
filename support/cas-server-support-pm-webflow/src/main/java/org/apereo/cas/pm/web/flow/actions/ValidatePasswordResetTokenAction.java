@@ -41,6 +41,7 @@ public class ValidatePasswordResetTokenAction extends BaseCasWebflowAction {
                 if (StringUtils.isBlank(username)) {
                     throw new IllegalArgumentException("Password reset token could not be verified to determine username");
                 }
+                return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_RESET_PASSWORD);
             }
             val doChange = requestContext.getRequestParameters()
                 .get(PasswordManagementService.PARAMETER_DO_CHANGE_PASSWORD);
