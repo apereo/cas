@@ -1,0 +1,36 @@
+{
+  "dependencies": "passwordless-webflow",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.audit.engine.enabled=true",
+    "--cas.audit.slf4j.use-single-line=true",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.authn.passwordless.accounts.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
+
+    "--cas.authn.pm.core.enabled=true",
+    "--cas.authn.pm.core.password-policy-pattern=.+",
+    "--cas.authn.pm.reset.multifactor-authentication-enabled=true",
+    "--cas.authn.pm.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/passwords.json",
+
+    "--cas.authn.pm.reset.mail.from=cas@apereo.org",
+    "--cas.authn.pm.reset.mail.text=${url}",
+    "--cas.authn.pm.reset.mail.subject=Reset your password",
+    "--cas.authn.pm.reset.mail.attribute-name=mail",
+    "--cas.authn.pm.reset.security-questions-enabled=false",
+
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=https://localhost:8443/cas",
+    "--cas.server.scope=example.net",
+
+    "--spring.mail.host=localhost",
+    "--spring.mail.port=25000",
+
+    "--cas.authn.attribute-repository.stub.attributes.phone=13477464523",
+    "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org"
+  ],
+  "jvmArgs": "-Djava.net.preferIPv4Stack=true -Djava.net.preferIPv4Addresses=true",
+  "initScript": "${PWD}/ci/tests/mail/run-mail-server.sh"
+}
