@@ -22,6 +22,9 @@ public class Memes {
     );
     
     public static final Memes NO_TESTS = new Memes(
+        "https://github.com/apereo/cas/assets/1205228/6fb85fdf-2081-4040-ae01-b7074b6505c6",
+        "https://github.com/apereo/cas/assets/1205228/b2f788da-9fd9-4520-be44-22e4c37e39c2",
+        "https://github.com/apereo/cas/assets/1205228/54e6511a-6a50-404d-9872-d131f9b9f841",
         "https://github.com/apereo/cas/assets/1205228/c8897bdf-536e-41c4-a8da-e62156956735",
         "https://github.com/apereo/cas/assets/1205228/7ce68cf6-aff0-4125-9787-35e41db61535",
         "https://github.com/apereo/cas/assets/1205228/9b641bc1-4baa-4d7a-9336-3fad57826f2c",
@@ -38,6 +41,8 @@ public class Memes {
     );
 
     public static final Memes PULL_REQUEST_APPROVED = new Memes(
+        "https://github.com/apereo/cas/assets/1205228/c490c182-a798-4a69-8a9b-61b5c51dbc06",
+        "https://github.com/apereo/cas/assets/1205228/218e2cb4-1169-4bfe-8b5c-98211f59aa95",
         "https://github.com/apereo/cas/assets/1205228/e7fa72f8-8647-417e-ac8e-91631803d9da",
         "https://github.com/apereo/cas/assets/1205228/c54f0c47-b92c-4fa0-813e-4b7a1f2714ef",
         "https://github.com/apereo/cas/assets/1205228/647aa7fe-dd73-4355-8b34-03d957d13b3a",
