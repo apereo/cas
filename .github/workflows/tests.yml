@@ -31,7 +31,7 @@ env:
 on:
   workflow_dispatch:
   push:
-    branches: [ master, pr-*, gradle-* ]
+    branches: [ master, pr-* ]
   pull_request:
     types: [ labeled ]
     branches: [ master ]
