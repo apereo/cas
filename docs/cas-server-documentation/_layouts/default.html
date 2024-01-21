@@ -122,9 +122,11 @@
 
     <div class="container-fluid">
         <div class="row flex-xl-nowrap">
-            {% include_cached sidebar.html %}
 
-            {% include_cached page_toc.html %}
+            {% if page.navigationBar == true or page.navigationBar == "true" or page.navigationBar == "" or page.navigationBar == null %}
+                {% include_cached sidebar.html %}
+                {% include_cached page_toc.html %}
+            {% endif %}
 
             <main class="col-12 col-md-9 col-xl-8 py-md-3 pl-md-5 cas-docs-content" role="main">
                 
@@ -132,10 +134,10 @@
                 <div id="dev-doc-info" class="alert alert-danger" role="alert">
                     <h3>WORKERS AHEAD!</h3>
                     <p>You are viewing the <strong>development</strong> documentation for the Apereo CAS server. <strong>The
-                        functionality presented here <a href="https://github.com/apereo/cas/milestones">is not officially released
-                            yet</a></strong>.
-                        This is a work in progress and will be continually updated as development moves forward. <strong>You are
-                            most encouraged to test the changes presented.</strong>
+                        functionality presented here <a href="https://github.com/apereo/cas/milestones">is not officially released yet</a></strong>.
+                        This is a work in progress and will be continually updated as development moves forward.
+                        <strong>You are most encouraged to test the changes presented.</strong>
+                    </p>
                 </div>
                 {% endif %}
 
