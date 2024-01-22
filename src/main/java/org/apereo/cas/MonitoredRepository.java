@@ -24,6 +24,7 @@ import java.io.StringReader;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -48,6 +49,20 @@ public class MonitoredRepository {
 
     public boolean approvePullRequest(final PullRequest pr, final boolean includeComment) {
         return gitHub.approve(getOrganization(), getName(), pr, includeComment);
+    }
+
+    public List<PullRequest> getPullRequests() {
+        final List<PullRequest> pullRequests = new ArrayList<>();
+        try {
+            var page = gitHub.getPullRequests(getOrganization(), getName());
+            while (page != null) {
+                pullRequests.addAll(page.getContent());
+                page = page.next();
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return pullRequests;
     }
 
     private static Predicate<Label> getLabelPredicateByName(final CasLabels name) {

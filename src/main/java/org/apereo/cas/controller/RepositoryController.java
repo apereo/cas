@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -37,7 +39,22 @@ public class RepositoryController {
         }
         return map;
     }
-    
+
+    @GetMapping(value = "/repo/pulls", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Secured({"ROLE_ADMIN"})
+    public List listPulls() {
+        return repository.getPullRequests()
+            .stream()
+            .map(pr -> {
+                val map = new LinkedHashMap<String, String>();
+                map.put("number", pr.getNumber());
+                map.put("title", pr.getTitle());
+                map.put("author", pr.getUser().getLogin());
+                return map;
+            })
+            .collect(Collectors.toList());
+    }
+
     @PostMapping(value = "/repo/pulls/{prNumber}/labels/automerge", produces = MediaType.APPLICATION_JSON_VALUE)
     @Secured({"ROLE_ADMIN"})
     public ResponseEntity automerge(@PathVariable final String prNumber) {
