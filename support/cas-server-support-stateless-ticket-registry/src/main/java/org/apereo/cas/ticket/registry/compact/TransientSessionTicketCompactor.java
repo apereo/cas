@@ -1,4 +1,4 @@
-package org.apereo.cas.ticket.registry;
+package org.apereo.cas.ticket.registry.compact;
 
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.ticket.ServiceAwareTicket;
@@ -16,13 +16,13 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * This is {@link org.apereo.cas.ticket.registry.TransientSessionTicketCompactor}.
+ * This is {@link TransientSessionTicketCompactor}.
  *
  * @author Misagh Moayyed
  * @since 7.0.0
  */
 @RequiredArgsConstructor
-public class TransientSessionTicketCompactor implements TicketCompactor<TransientSessionTicket> {
+public class TransientSessionTicketCompactor extends BaseTicketCompactor<TransientSessionTicket> {
     private final ObjectProvider<TicketFactory> ticketFactory;
     private final ServiceFactory serviceFactory;
 
@@ -45,7 +45,7 @@ public class TransientSessionTicketCompactor implements TicketCompactor<Transien
     public Ticket expand(final String ticketId) throws Throwable {
         val structure = parse(ticketId);
         val transientSessionTicketFactory = (TransientSessionTicketFactory) ticketFactory.getObject().get(getTicketType());
-        val service = serviceFactory.createService(structure.ticketElements().get(2));
+        val service = serviceFactory.createService(structure.ticketElements().get(CompactTicketIndexes.SERVICE.getIndex()));
         val transientTicket = transientSessionTicketFactory.create(service, Map.of());
         transientTicket.setExpirationPolicy(new FixedInstantExpirationPolicy(structure.expirationTime()));
         transientTicket.setCreationTime(DateTimeUtils.zonedDateTimeOf(structure.creationTime()));

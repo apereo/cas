@@ -26,6 +26,7 @@ would be enacted and validated when an authentication request from the applicati
 | Grouper                  | See [this guide](Service-Access-Strategy-Grouper.html).                 |
 | AWS Verified Permissions | See [this guide](Service-Access-Strategy-AWS-VerifiedPermissions.html). |
 | OpenFGA                  | See [this guide](Service-Access-Strategy-OpenFGA.html).                 |
+| Cerbos                   | See [this guide](Service-Access-Strategy-Cerbos.html).                  |
 | Open Policy Agent        | See [this guide](Service-Access-Strategy-OpenPolicyAgent.html).         |
 | Chaining                 | See [this guide](Service-Access-Strategy-Chain.html).                   |
 | Custom                   | See [this guide](Service-Access-Strategy-Custom.html).                  |

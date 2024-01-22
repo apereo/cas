@@ -37,8 +37,8 @@ public class CasHazelcastThrottlingAutoConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "hazelcastThrottleSubmissionMap")
-    public ThrottledSubmissionsStore<ThrottledSubmission> throttleSubmissionMap(
+    @ConditionalOnMissingBean(name = "hazelcastThrottleSubmissionStore")
+    public ThrottledSubmissionsStore<ThrottledSubmission> throttleSubmissionStore(
         @Qualifier("casTicketRegistryHazelcastInstance")
         final HazelcastInstance casTicketRegistryHazelcastInstance,
         final CasConfigurationProperties casProperties) {

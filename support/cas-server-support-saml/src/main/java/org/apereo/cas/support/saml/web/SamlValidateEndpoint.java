@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -148,7 +149,7 @@ public class SamlValidateEndpoint extends BaseCasActuatorEndpoint {
         val finalAuthentication = builder.build();
 
         val samlResponse = samlResponseBuilder.createResponse(selectedService.getId(), selectedService);
-        samlResponseBuilder.prepareSuccessfulResponse(samlResponse, selectedService, finalAuthentication, principal,
+        samlResponseBuilder.prepareSuccessfulResponse(Map.of(), samlResponse, selectedService, finalAuthentication, principal,
             finalAuthentication.getAttributes(), principal.getAttributes());
 
         val encoded = SamlUtils.transformSamlObject(openSamlConfigBean, samlResponse).toString();

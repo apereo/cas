@@ -830,9 +830,20 @@ exports.goto = async (page, url, retryCount = 5) => {
     return response;
 };
 
-exports.gotoLogin = async(page, service = undefined, port = 8443, renew = undefined) => {
+exports.gotoLoginWithLocale = async(page, service, locale) => this.gotoLoginWithAuthnMethod(page, service, undefined, locale);
+
+exports.gotoLoginWithAuthnMethod = async(page, service, authnMethod = undefined, locale = undefined) => {
+    let queryString = (service === undefined ? "" : `service=${service}&`);
+    queryString += (authnMethod === undefined ? "" : `authn_method=${authnMethod}&`);
+    queryString += (locale === undefined ? "" : `locale=${locale}&`);
+    const url = `https://localhost:8443/cas/login?${queryString}`;
+    return this.goto(page, url);
+};
+
+exports.gotoLogin = async(page, service = undefined, port = 8443, renew = undefined, method = undefined) => {
     let queryString = (service === undefined ? "" : `service=${service}&`);
     queryString += (renew === undefined ? "" : "renew=true&");
+    queryString += (method === undefined ? "" : `method=${method}&`);
     const url = `https://localhost:${port}/cas/login?${queryString}`;
     return this.goto(page, url);
 };
@@ -863,14 +874,15 @@ exports.refreshBusContext = async (url = "https://localhost:8443/cas") => {
     await this.log(response);
 };
 
-exports.loginDuoSecurityBypassCode = async (page, username = "casuser") => {
+exports.loginDuoSecurityBypassCode = async (page, username = "casuser", currentCodes = undefined) => {
     await page.waitForTimeout(12000);
     await this.click(page, "button#passcode");
-    const bypassCodes = await this.fetchDuoSecurityBypassCodes(username);
+    const bypassCodes = currentCodes ?? await this.fetchDuoSecurityBypassCodes(username);
     await this.log(`Duo Security: Retrieved bypass codes ${bypassCodes}`);
     let i = 0;
     const error = false;
-    while (!error && i < bypassCodes.length) {
+    let accepted = false;
+    while (!accepted && !error && i < bypassCodes.length) {
         const bypassCode = `${String(bypassCodes[i])}`;
         await page.keyboard.sendCharacter(bypassCode);
         await this.screenshot(page);
@@ -887,7 +899,7 @@ exports.loginDuoSecurityBypassCode = async (page, username = "casuser") => {
             i++;
         } else {
             await this.log(`Duo Security accepted the bypass code ${bypassCode}`);
-            return;
+            accepted = true;
         }
     }
 };

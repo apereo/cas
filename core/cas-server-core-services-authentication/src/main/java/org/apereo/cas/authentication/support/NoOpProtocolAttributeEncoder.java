@@ -20,7 +20,8 @@ import java.util.Map;
 public class NoOpProtocolAttributeEncoder implements ProtocolAttributeEncoder {
 
     @Override
-    public Map<String, Object> encodeAttributes(final Map<String, Object> attributes,
+    public Map<String, Object> encodeAttributes(final Map<String, Object> model,
+                                                final Map<String, Object> attributes,
                                                 final RegisteredService registeredService,
                                                 final Service webApplicationService) {
         LOGGER.warn("Attributes are not encoded via [{}]. Total of [{}] attributes will be returned for service [{}]",

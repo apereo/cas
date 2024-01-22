@@ -38,8 +38,7 @@ class DefaultServiceTicketFactoryTests extends BaseTicketFactoryTests {
     @Test
     void verifyCustomExpirationPolicy() throws Throwable {
         val svc = RegisteredServiceTestUtils.getRegisteredService("customExpirationPolicy", CasRegisteredService.class);
-        svc.setServiceTicketExpirationPolicy(
-            new DefaultRegisteredServiceServiceTicketExpirationPolicy(10, "666"));
+        svc.setServiceTicketExpirationPolicy(new DefaultRegisteredServiceServiceTicketExpirationPolicy(10, "666"));
         servicesManager.save(svc);
 
         val factory = (ServiceTicketFactory) this.ticketFactory.get(ServiceTicket.class);
@@ -68,18 +67,17 @@ class DefaultServiceTicketFactoryTests extends BaseTicketFactoryTests {
         val svc = RegisteredServiceTestUtils.getRegisteredService("defaultExpirationPolicy", CasRegisteredService.class);
         servicesManager.save(svc);
         val factory = (ServiceTicketFactory) ticketFactory.get(ServiceTicket.class);
-
         assertThrows(ClassCastException.class,
             () -> factory.create(RegisteredServiceTestUtils.getService("defaultExpirationPolicy"),
                 CoreAuthenticationTestUtils.getAuthentication(), true, ProxyTicket.class));
-
         val serviceTicket = factory.create(RegisteredServiceTestUtils.getService("defaultExpirationPolicy"),
             CoreAuthenticationTestUtils.getAuthentication(), true, ServiceTicket.class);
         assertTrue(serviceTicket.isStateless());
         assertNotNull(serviceTicket.getAuthentication());
-
         val pgtIssuer = (ProxyGrantingTicketIssuerTicket) serviceTicket;
-        assertNull(pgtIssuer.grantProxyGrantingTicket("PGT-123", CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE));
+        val pgt = pgtIssuer.grantProxyGrantingTicket("PGT-123", CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
+        assertNotNull(pgt);
+        assertNotNull(pgt.getAuthentication());
     }
 
     abstract static class BaseMockTicketServiceTicket implements TicketGrantingTicket {

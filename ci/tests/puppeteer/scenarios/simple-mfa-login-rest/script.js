@@ -26,7 +26,7 @@ const cas = require("../../cas.js");
         mockServer = await cas.mockJsonServer(payload, 5432);
         const page = await cas.newPage(browser);
 
-        await cas.goto(page, "https://localhost:8443/cas/login?authn_method=mfa-simple");
+        await cas.gotoLoginWithAuthnMethod(page, undefined, "mfa-simple");
         await cas.loginWith(page);
         await page.waitForTimeout(1000);
         await cas.assertVisibility(page, "#token");

@@ -47,14 +47,15 @@ public abstract class AbstractProtocolAttributeEncoder implements ProtocolAttrib
     }
 
     @Override
-    public Map<String, Object> encodeAttributes(final Map<String, Object> attributes,
+    public Map<String, Object> encodeAttributes(final Map<String, Object> model,
+                                                final Map<String, Object> attributes,
                                                 final RegisteredService registeredService,
                                                 final Service webApplicationService) {
         LOGGER.trace("Starting to encode attributes for release to service [{}]", registeredService);
         val newEncodedAttributes = new HashMap<>(attributes);
         if (registeredService != null && registeredService.getAccessStrategy().isServiceAccessAllowed(registeredService, webApplicationService)) {
             val cachedAttributesToEncode = initialize(newEncodedAttributes);
-            encodeAttributesInternal(newEncodedAttributes, cachedAttributesToEncode,
+            encodeAttributesInternal(model, newEncodedAttributes, cachedAttributesToEncode,
                 this.cipherExecutor, registeredService, webApplicationService);
             LOGGER.debug("[{}] encoded attributes are available for release to [{}]: [{}]",
                 newEncodedAttributes.size(), registeredService.getName(), newEncodedAttributes.keySet());
@@ -64,8 +65,11 @@ public abstract class AbstractProtocolAttributeEncoder implements ProtocolAttrib
         return newEncodedAttributes;
     }
 
-    protected abstract void encodeAttributesInternal(Map<String, Object> attributes, Map<String, String> cachedAttributesToEncode,
-                                                     RegisteredServiceCipherExecutor cipher, RegisteredService registeredService,
+    protected abstract void encodeAttributesInternal(Map<String, Object> model,
+                                                     Map<String, Object> attributes,
+                                                     Map<String, String> cachedAttributesToEncode,
+                                                     RegisteredServiceCipherExecutor cipher,
+                                                     RegisteredService registeredService,
                                                      Service webApplicationService);
 
     /**

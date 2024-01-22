@@ -1,13 +1,11 @@
 package org.apereo.cas.support.events.ticket;
 
 import org.apereo.cas.support.events.AbstractCasEvent;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
-import org.apereo.cas.ticket.proxy.ProxyTicket;
-
 import lombok.Getter;
 import lombok.ToString;
 import org.apereo.inspektr.common.web.ClientInfo;
-
 import java.io.Serial;
 
 /**
@@ -26,16 +24,10 @@ public class CasProxyTicketGrantedEvent extends AbstractCasEvent {
 
     private final ProxyGrantingTicket proxyGrantingTicket;
 
-    private final ProxyTicket proxyTicket;
+    private final Ticket proxyTicket;
 
-    /**
-     * Instantiates a new CAS proxy ticket granted event.
-     *
-     * @param source              the source
-     * @param proxyGrantingTicket the ticket granting ticket
-     * @param proxyTicket         the service ticket
-     */
-    public CasProxyTicketGrantedEvent(final Object source, final ProxyGrantingTicket proxyGrantingTicket, final ProxyTicket proxyTicket, final ClientInfo clientInfo) {
+    public CasProxyTicketGrantedEvent(final Object source, final ProxyGrantingTicket proxyGrantingTicket,
+                                      final Ticket proxyTicket, final ClientInfo clientInfo) {
         super(source, clientInfo);
         this.proxyGrantingTicket = proxyGrantingTicket;
         this.proxyTicket = proxyTicket;

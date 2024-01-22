@@ -8,7 +8,7 @@ async function verifyAuthenticationFlow(context, service) {
     await cas.gotoLogin(page, service);
     await cas.click(page, "#rememberMe");
     await cas.loginWith(page);
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(2000);
     const ticket = await cas.assertTicketParameter(page);
 
     await cas.logb("Checking ticket validation response multiple times...");

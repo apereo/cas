@@ -6,7 +6,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.ExpirationPolicyBuilder;
+import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.token.JwtTicketBuilder;
 import org.apereo.cas.token.JwtTokenCipherSigningPublicKeyEndpoint;
@@ -112,9 +112,10 @@ class TokenCoreConfiguration {
             @Qualifier("tokenTicketValidator") final TicketValidator tokenTicketValidator,
             @Qualifier(JwtBuilder.TICKET_JWT_BUILDER_BEAN_NAME) final JwtBuilder tokenTicketJwtBuilder,
             @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
-            @Qualifier(ExpirationPolicyBuilder.BEAN_NAME_TICKET_GRANTING_TICKET_EXPIRATION_POLICY) final ExpirationPolicyBuilder grantingTicketExpirationPolicy) {
-            return new JwtTicketBuilder(tokenTicketValidator,
-                grantingTicketExpirationPolicy, tokenTicketJwtBuilder, servicesManager, casProperties);
+            @Qualifier(TicketFactory.BEAN_NAME)
+            final TicketFactory ticketFactory) {
+            return new JwtTicketBuilder(tokenTicketValidator, ticketFactory,
+                tokenTicketJwtBuilder, servicesManager, casProperties);
         }
     }
 

@@ -5,7 +5,9 @@ import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.PrincipalException;
+import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.credential.HttpBasedServiceCredential;
+import org.apereo.cas.authentication.metadata.BasicCredentialMetadata;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.CasModelRegisteredService;
@@ -16,9 +18,8 @@ import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.AbstractTicketValidationException;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.ServiceTicket;
-import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationContextTicketValidationException;
-import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
@@ -74,15 +75,15 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         }
     }
 
-    protected ProxyGrantingTicket handleProxyGrantingTicketDelivery(final String serviceTicketId, final Credential credential) throws Throwable {
+    protected Ticket handleProxyGrantingTicketDelivery(final String serviceTicketId, final Credential credential) throws Throwable {
         val serviceTicket = serviceValidateConfigurationContext.getTicketRegistry().getTicket(serviceTicketId, ServiceTicket.class);
         val authenticationResult = serviceValidateConfigurationContext.getAuthenticationSystemSupport()
             .finalizeAuthenticationTransaction(serviceTicket.getService(), credential);
-        val proxyGrantingTicketId = serviceValidateConfigurationContext.getCentralAuthenticationService()
+        val proxyGrantingTicket = serviceValidateConfigurationContext.getCentralAuthenticationService()
             .createProxyGrantingTicket(serviceTicketId, authenticationResult);
         LOGGER.debug("Generated proxy-granting ticket [{}] off of service ticket [{}] and credential [{}]",
-            proxyGrantingTicketId.getId(), serviceTicketId, credential);
-        return proxyGrantingTicketId;
+            proxyGrantingTicket.getId(), serviceTicketId, credential);
+        return proxyGrantingTicket;
     }
 
     @Override
@@ -138,7 +139,11 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
                 val registeredService = serviceValidateConfigurationContext.getServicesManager()
                     .findServiceBy(service, CasModelRegisteredService.class);
                 verifyRegisteredServiceProperties(registeredService, service);
-                return new HttpBasedServiceCredential(new URI(pgtUrl).toURL(), registeredService);
+                val credential = new HttpBasedServiceCredential(new URI(pgtUrl).toURL(), registeredService);
+                val serviceTicket = serviceValidateConfigurationContext.getTicketRegistry().getTicket(service.getArtifactId(), ServiceTicket.class);
+                val httpCredential = new BasicIdentifiableCredential(serviceTicket.getAuthentication().getPrincipal().getId());
+                credential.setCredentialMetadata(new BasicCredentialMetadata(httpCredential));
+                return credential;
             } catch (final Exception e) {
                 LOGGER.error("Error constructing [{}]", CasProtocolConstants.PARAMETER_PROXY_CALLBACK_URL);
                 LoggingUtils.error(LOGGER, e);
@@ -159,11 +164,11 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     protected ModelAndView handleTicketValidation(final HttpServletRequest request,
                                                   final HttpServletResponse response,
                                                   final WebApplicationService service, final String serviceTicketId) throws Throwable {
-        var proxyGrantingTicketId = (ProxyGrantingTicket) null;
+        var proxyGrantingTicket = (Ticket) null;
         val serviceCredential = getServiceCredentialsFromRequest(service, request);
         if (serviceCredential != null) {
             try {
-                proxyGrantingTicketId = handleProxyGrantingTicketDelivery(serviceTicketId, serviceCredential);
+                proxyGrantingTicket = handleProxyGrantingTicketDelivery(serviceTicketId, serviceCredential);
             } catch (final AuthenticationException e) {
                 LOGGER.warn("Failed to authenticate service credential [{}]", serviceCredential);
                 val description = getTicketValidationErrorDescription(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
@@ -202,7 +207,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
                 LOGGER.debug("Service [{}] is authorized to release the PGT directly, skip the proxy callback", registeredService);
             } else {
                 LOGGER.debug("Service [{}] is not authorized to release the PGT directly, make a proxy callback", registeredService);
-                proxyIou = handleProxyIouDelivery(serviceCredential, proxyGrantingTicketId);
+                proxyIou = handleProxyIouDelivery(serviceCredential, proxyGrantingTicket);
                 if (StringUtils.isEmpty(proxyIou)) {
                     val description = getTicketValidationErrorDescription(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
                         new Object[]{serviceCredential.getId()}, request);
@@ -214,8 +219,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         }
         onSuccessfulValidation(serviceTicketId, assertion);
         LOGGER.debug("Successfully validated service ticket [{}] for service [{}]", serviceTicketId, service.getId());
-        return generateSuccessView(assertion, proxyIou, service, request,
-            ctxResult.getContextId(), proxyGrantingTicketId);
+        return generateSuccessView(assertion, proxyIou, service, request, ctxResult.getContextId(), proxyGrantingTicket);
     }
 
     protected Assertion validateServiceTicket(final WebApplicationService service, final String serviceTicketId) throws Throwable {
@@ -247,8 +251,8 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         return new HashMap<>(0);
     }
 
-    private String handleProxyIouDelivery(final Credential serviceCredential, final TicketGrantingTicket proxyGrantingTicketId) throws Throwable {
-        return serviceValidateConfigurationContext.getProxyHandler().handle(serviceCredential, proxyGrantingTicketId);
+    private String handleProxyIouDelivery(final Credential serviceCredential, final Ticket proxyGrantingTicket) throws Throwable {
+        return serviceValidateConfigurationContext.getProxyHandler().handle(serviceCredential, proxyGrantingTicket);
     }
 
     private boolean validateAssertion(final HttpServletRequest request, final String serviceTicketId,
@@ -282,10 +286,12 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         return applicationContext.getMessage(code, args, code, request.getLocale());
     }
 
-    private ModelAndView generateSuccessView(final Assertion assertion, final String proxyIou,
-                                             final WebApplicationService service, final HttpServletRequest request,
+    private ModelAndView generateSuccessView(final Assertion assertion,
+                                             final String proxyIou,
+                                             final WebApplicationService service,
+                                             final HttpServletRequest request,
                                              final Optional<String> multifactorProvider,
-                                             final TicketGrantingTicket proxyGrantingTicket) {
+                                             final Ticket proxyGrantingTicket) {
         val modelAndView = serviceValidateConfigurationContext.getValidationViewFactory().getModelAndView(request, true, service, getClass());
         modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_ASSERTION, assertion);
         modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_SERVICE, service);
@@ -293,7 +299,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
             modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET_IOU, proxyIou);
         }
         if (proxyGrantingTicket != null) {
-            modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET, proxyGrantingTicket.getId());
+            modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET, proxyGrantingTicket);
         }
         multifactorProvider.ifPresent(provider -> {
             val authenticationContextAttribute = serviceValidateConfigurationContext.getCasProperties().getAuthn().getMfa().getCore().getAuthenticationContextAttribute();

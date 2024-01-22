@@ -96,7 +96,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, sId.getId());
         request.addParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET_URL, SERVICE.getId());
 
-        this.serviceValidateController.getServiceValidateConfigurationContext().setProxyHandler((credential, proxyGrantingTicketId) -> null);
+        this.serviceValidateController.getServiceValidateConfigurationContext().setProxyHandler((credential, __) -> null);
         val modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
         assertFalse(Objects.requireNonNull(modelAndView.getView()).toString().contains(SUCCESS));
         assertNull(modelAndView.getModel().get(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET_IOU));

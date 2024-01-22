@@ -31,7 +31,7 @@ const assert = require("assert");
         assert(body.includes("<cas:user>casuser@example.org</cas:user>"));
         assert(body.includes("<cas:isFromNewLogin>true</cas:isFromNewLogin>"));
         assert(body.includes("<cas:authenticationMethod>DelegatedClientAuthenticationHandler</cas:authenticationMethod>"));
-        await cas.goto(page, "https://localhost:8443/cas/login");
+        await cas.gotoLogin(page);
         await cas.assertCookie(page);
         await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
         await cas.assertInnerText(page, "#content div h2", "Log In Successful");
