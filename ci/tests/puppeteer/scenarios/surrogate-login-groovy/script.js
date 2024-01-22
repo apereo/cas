@@ -10,7 +10,7 @@ const cas = require("../../cas.js");
     await impersonate(page, "casuser2");
 
     await cas.log("Checking empty list of authorized accounts for user...");
-    
+
     await cas.gotoLogin(page, "https://apereo.github.io");
     await cas.loginWith(page, "+casuser3", "Mellon");
     await page.waitForTimeout(1000);
@@ -27,7 +27,7 @@ const cas = require("../../cas.js");
     await cas.gotoLogin(page, "https://apereo.github.io");
     await cas.loginWith(page, "+casuser4", "Mellon");
     await page.waitForTimeout(1000);
-    await cas.assertInnerTextContains(page, "#content p", "you may directly proceed to login");
+    await cas.assertInnerTextContains(page, "#content p", "you may directly proceed to log in");
     await cas.assertInnerTextContains(page, "#content p", "impersonation account selection is not allowed");
 
     await cas.gotoLogin(page, "https://apereo.github.io");
@@ -35,7 +35,7 @@ const cas = require("../../cas.js");
     await page.waitForTimeout(1000);
     await cas.assertTicketParameter(page);
     await cas.goto(page, "https://localhost:8443/cas/logout");
-    
+
     await browser.close();
 })();
 
