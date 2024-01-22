@@ -12,15 +12,13 @@ ext.githubPackageRegistryPassword = System.getenv("GH_PACKAGE_REGISTRY_TOKEN")
 
 buildCache {
     local { enabled = false }
-    remote(HttpBuildCache) {
-        url = 'https://develocity.apereo.org/cache/exp4'
-        allowUntrustedServer = true
-        credentials { creds ->
-            creds.username = System.getenv('GRADLE_ENTERPRISE_CACHE_USERNAME')
-            creds.password = System.getenv('GRADLE_ENTERPRISE_CACHE_PASSWORD')
-        }
-        push = true
-    }}
+    remote(gradleEnterprise.buildCache) {
+        enabled = true
+        // also check access key to avoid warning logs
+        def accessKey = System.getenv("GRADLE_ENTERPRISE_ACCESS_KEY")
+        push = isCiServer && accessKey != null && !accessKey.isEmpty()
+    }
+}
 
 gradleEnterprise {
     server = 'https://develocity.apereo.org/'
