@@ -119,7 +119,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Build with Gradle
-        run: ./gradlew build -DskipAot=true ${{ env.GRADLE_BUILD_OPTIONS }}
+        run: ./gradlew build testCAS testLogout testGroovy -DskipAot=true ${{ env.GRADLE_BUILD_OPTIONS }}
 
   ##########################################################################
 
