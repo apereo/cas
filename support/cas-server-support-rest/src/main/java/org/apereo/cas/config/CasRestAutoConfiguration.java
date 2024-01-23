@@ -41,7 +41,6 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -126,24 +125,20 @@ public class CasRestAutoConfiguration {
 
     @Configuration(value = "CasRestThrottleConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    @ConditionalOnBean(AuthenticationThrottlingExecutionPlan.class)
     static class CasRestThrottleConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "restAuthenticationThrottle")
+        @ConditionalOnMissingBean(name = "casRestThrottlingWebMvcConfigurer")
         public WebMvcConfigurer casRestThrottlingWebMvcConfigurer(
             @Qualifier(AuthenticationThrottlingExecutionPlan.BEAN_NAME)
             final ObjectProvider<AuthenticationThrottlingExecutionPlan> authenticationThrottlingExecutionPlan) {
             return new WebMvcConfigurer() {
                 @Override
-                public void addInterceptors(
-                    @Nonnull final InterceptorRegistry registry) {
+                public void addInterceptors(@Nonnull final InterceptorRegistry registry) {
                     authenticationThrottlingExecutionPlan.ifAvailable(plan -> {
                         val handler = new RefreshableHandlerInterceptor(plan::getAuthenticationThrottleInterceptors);
                         LOGGER.debug("Activating authentication throttling for REST endpoints...");
-                        registry.addInterceptor(handler)
-                            .order(0)
-                            .addPathPatterns("/v1/**");
+                        registry.addInterceptor(handler).order(0).addPathPatterns("/v1/**");
                     });
                 }
             };

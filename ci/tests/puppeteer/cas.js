@@ -415,9 +415,9 @@ exports.doRequest = async (url, method = "GET",
         };
         options.agent = new https.Agent(options);
 
-        this.logg(`Contacting ${url} via ${method}`);
+        this.logg(`Sending ${method} request to ${url}`);
         const handler = async (res) => {
-            await this.logg(`Response status code: ${res.statusCode}`);
+            await this.logg(`Response status: ${res.statusCode}`);
             if (statusCode > 0) {
                 assert.equal(res.statusCode, statusCode);
             }
