@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.execution.Action;
 
 import java.util.LinkedHashMap;
@@ -37,11 +38,14 @@ import static org.mockito.Mockito.*;
 class LoadSurrogatesListActionTests extends BaseSurrogateAuthenticationTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_LOAD_SURROGATES_LIST_ACTION)
-    private Action loadSurrogatesListAction;
+    protected Action loadSurrogatesListAction;
+
+    @Autowired
+    protected ConfigurableApplicationContext applicationContext;
 
     @Test
     void verifyGetListView() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
 
         WebUtils.putSurrogateAuthenticationRequest(context, true);
         WebUtils.putCredential(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
@@ -52,7 +56,7 @@ class LoadSurrogatesListActionTests extends BaseSurrogateAuthenticationTests {
 
     @Test
     void verifyAuthenticate() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
 
         val attributes = new LinkedHashMap<String, List<Object>>();
@@ -78,7 +82,7 @@ class LoadSurrogatesListActionTests extends BaseSurrogateAuthenticationTests {
 
     @Test
     void verifyAuthenticateNotAuthorized() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
 
         val attributes = new LinkedHashMap<String, List<Object>>();
@@ -104,7 +108,7 @@ class LoadSurrogatesListActionTests extends BaseSurrogateAuthenticationTests {
 
     @Test
     void verifySkipAuthenticate() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
         WebUtils.putSurrogateAuthenticationRequest(context, Boolean.TRUE);
 

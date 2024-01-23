@@ -49,7 +49,7 @@ class TimedMultifactorAuthenticationPolicyEventResolverTests extends BaseCasWebf
 
     @BeforeEach
     public void initialize() throws Exception {
-        this.context = MockRequestContext.create();
+        this.context = MockRequestContext.create(applicationContext);
 
         val request = context.getHttpServletRequest();
         request.setRemoteAddr("185.86.151.11");

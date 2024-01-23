@@ -41,7 +41,7 @@ class WebflowActionBeanSupplierTests {
                 .withId("customActionId")
                 .build()
                 .get();
-            val context = MockRequestContext.create();
+            val context = MockRequestContext.create(applicationContext);
             assertEquals("pass", action.execute(context).getId());
         }
     }
@@ -66,7 +66,7 @@ class WebflowActionBeanSupplierTests {
                 .build()
                 .get();
 
-            val context = MockRequestContext.create();
+            val context = MockRequestContext.create(applicationContext);
             assertEquals("result", action.execute(context).getId());
         }
     }

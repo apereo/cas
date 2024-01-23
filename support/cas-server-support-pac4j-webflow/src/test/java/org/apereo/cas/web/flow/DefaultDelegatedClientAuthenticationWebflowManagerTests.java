@@ -45,6 +45,7 @@ import org.pac4j.saml.state.SAML2StateGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import java.io.File;
@@ -84,6 +85,9 @@ class DefaultDelegatedClientAuthenticationWebflowManagerTests {
     @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     private JEEContext context;
 
     private MockRequestContext requestContext;
@@ -91,7 +95,7 @@ class DefaultDelegatedClientAuthenticationWebflowManagerTests {
     @BeforeEach
     public void setup() throws Exception {
         val service = RegisteredServiceTestUtils.getService();
-        requestContext = MockRequestContext.create()
+        requestContext = MockRequestContext.create(applicationContext)
             .withUserAgent("Chrome")
             .setParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
         context = new JEEContext(requestContext.getHttpServletRequest(), requestContext.getHttpServletResponse());

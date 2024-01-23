@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.execution.Action;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -31,9 +32,12 @@ class QRAuthenticationValidateTokenActionTests {
     @Qualifier(CasWebflowConstants.ACTION_ID_QR_AUTHENTICATION_VALIDATE_CHANNEL)
     private Action qrAuthenticationValidateWebSocketChannelAction;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @Test
     void verifyOperation() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
 
         context.setParameter(TokenConstants.PARAMETER_NAME_TOKEN, "token");
         context.setParameter("deviceId", "abcdefgh987654321");

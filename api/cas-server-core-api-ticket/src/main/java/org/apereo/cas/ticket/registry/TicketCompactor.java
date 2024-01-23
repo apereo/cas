@@ -9,7 +9,7 @@ import java.time.Instant;
 import java.util.List;
 
 /**
- * This is {@link org.apereo.cas.ticket.registry.TicketCompactor}.
+ * This is {@link TicketCompactor}.
  *
  * @author Misagh Moayyed
  * @since 7.0.0

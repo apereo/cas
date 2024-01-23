@@ -45,7 +45,7 @@ class ForgotUsernameCaptchaWebflowConfigurerTests extends BaseWebflowConfigurerT
     
     @Test
     void verifyCaptcha() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         initCaptchaAction.execute(context);
         assertTrue(WebUtils.isRecaptchaForgotUsernameEnabled(context));
     }
