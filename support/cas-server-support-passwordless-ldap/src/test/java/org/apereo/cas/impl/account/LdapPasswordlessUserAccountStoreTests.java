@@ -36,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.passwordless.accounts.ldap.bind-credential=password",
     "cas.authn.passwordless.accounts.ldap.email-attribute=mail",
     "cas.authn.passwordless.accounts.ldap.phone-attribute=telephoneNumber",
+    "cas.authn.passwordless.accounts.ldap.username-attribute=mail",
     "cas.authn.passwordless.accounts.ldap.request-password-attribute=description"
 })
 @Slf4j
@@ -56,6 +57,7 @@ class LdapPasswordlessUserAccountStoreTests extends BasePasswordlessUserAccountS
         assertTrue(user.isPresent());
         assertEquals("passwordlessuser@example.org", user.get().getEmail());
         assertEquals("123456789", user.get().getPhone());
+        assertEquals("passwordlessuser@example.org", user.get().getUsername());
         assertTrue(user.get().isRequestPassword());
     }
 }
