@@ -45,6 +45,12 @@ public class PasswordlessAuthenticationLdapAccountsProperties extends AbstractLd
 
     /**
      * Name of the LDAP attribute that
+     * indicates the username.
+     */
+    private String usernameAttribute;
+
+    /**
+     * Name of the LDAP attribute that
      * is the passwordless flow to request a password prompt from user.
      * The attribute value must be a boolean. Acceoted values
      * are {@code true}, {@code false}, {@code on}, {@code off}, {@code yes}, {@code no},
