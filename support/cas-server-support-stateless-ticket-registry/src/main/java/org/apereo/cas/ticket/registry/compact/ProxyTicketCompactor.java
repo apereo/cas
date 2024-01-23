@@ -19,6 +19,7 @@ import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicketFactory;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicketFactory;
+import org.apereo.cas.ticket.registry.TicketCompactor;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.EncodingUtils;
 import com.google.common.base.Splitter;
@@ -42,7 +43,7 @@ import java.util.stream.Collectors;
  * @since 7.0.0
  */
 @RequiredArgsConstructor
-public class ProxyTicketCompactor extends BaseTicketCompactor<ProxyTicket> {
+public class ProxyTicketCompactor implements TicketCompactor<ProxyTicket> {
     private static final int MAX_TICKET_LENGTH = 256;
 
     private final ObjectProvider<TicketFactory> ticketFactory;

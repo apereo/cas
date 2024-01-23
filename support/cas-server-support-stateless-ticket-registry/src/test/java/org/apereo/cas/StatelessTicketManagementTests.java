@@ -23,6 +23,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.context.annotation.Import;
+import java.io.Serializable;
+import java.util.HashMap;
 import java.util.UUID;
 import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
@@ -86,8 +88,11 @@ public class StatelessTicketManagementTests extends AbstractCentralAuthenticatio
         val ticketGrantingTicket = new TicketGrantingTicketImpl(UUID.randomUUID().toString(), authentication, NeverExpiresExpirationPolicy.INSTANCE);
         val serviceTicket = ticketGrantingTicket.grantServiceTicket(UUID.randomUUID().toString(),
             service, NeverExpiresExpirationPolicy.INSTANCE, true, TicketTrackingPolicy.noOp());
+
+        val properties = new HashMap<String, Serializable>(CoreAuthenticationTestUtils.getAttributes());
+        properties.put("url", RegisteredServiceTestUtils.CONST_TEST_URL2);
         val transientTicket = new TransientSessionTicketImpl(UUID.randomUUID().toString(),
-            NeverExpiresExpirationPolicy.INSTANCE, service, CoreAuthenticationTestUtils.getAttributes());
+            NeverExpiresExpirationPolicy.INSTANCE, service, properties);
         val proxyGrantingTicket = new ProxyGrantingTicketImpl(UUID.randomUUID().toString(),
             service, ticketGrantingTicket, authentication, NeverExpiresExpirationPolicy.INSTANCE);
         val proxyTicket = new ProxyTicketImpl(UUID.randomUUID().toString(),

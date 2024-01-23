@@ -18,6 +18,7 @@ import org.apereo.cas.ticket.ServiceTicketFactory;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.expiration.FixedInstantExpirationPolicy;
+import org.apereo.cas.ticket.registry.TicketCompactor;
 import org.apereo.cas.util.DateTimeUtils;
 import com.google.common.base.Splitter;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +39,7 @@ import java.util.stream.Collectors;
  * @since 7.0.0
  */
 @RequiredArgsConstructor
-public class ServiceTicketCompactor extends BaseTicketCompactor<ServiceTicket> {
+public class ServiceTicketCompactor implements TicketCompactor<ServiceTicket> {
     private static final int MAX_TICKET_LENGTH = 256;
 
     private final ObjectProvider<TicketFactory> ticketFactory;
