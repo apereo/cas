@@ -11,7 +11,6 @@ import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMeta
 import org.apereo.cas.authentication.metadata.MultifactorAuthenticationProviderMetadataPopulator;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
-import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationHandler;
@@ -151,11 +150,8 @@ class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
         @Qualifier("casSimpleMultifactorAuthenticationHandler")
         final AuthenticationHandler casSimpleMultifactorAuthenticationHandler,
         @Qualifier("casSimpleMultifactorAuthenticationMetaDataPopulator")
-        final AuthenticationMetaDataPopulator casSimpleMultifactorAuthenticationMetaDataPopulator,
-        @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
-        final PrincipalResolver principalResolver) {
+        final AuthenticationMetaDataPopulator casSimpleMultifactorAuthenticationMetaDataPopulator) {
         return plan -> {
-            //plan.registerAuthenticationHandlerWithPrincipalResolver(casSimpleMultifactorAuthenticationHandler, principalResolver);
             plan.registerAuthenticationHandler(casSimpleMultifactorAuthenticationHandler);
             plan.registerAuthenticationMetadataPopulator(casSimpleMultifactorAuthenticationMetaDataPopulator);
             plan.registerAuthenticationMetadataPopulator(casSimpleMultifactorProviderAuthenticationMetadataPopulator);
