@@ -40,7 +40,10 @@ public class PasswordlessAuthenticationLdapAccountsProperties extends AbstractLd
     /**
      * Name of the LDAP attribute that
      * indicates the user's name.
+     *
+     * @deprecated This property will likely be removed in v8.
      */
+    @Deprecated
     private String nameAttribute = "cn";
 
     /**
