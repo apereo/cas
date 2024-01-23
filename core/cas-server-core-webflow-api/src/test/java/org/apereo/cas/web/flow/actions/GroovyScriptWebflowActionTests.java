@@ -46,7 +46,7 @@ class GroovyScriptWebflowActionTests {
 
     @Test
     void verifyScript() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
 
         val script = new WatchableGroovyScriptResource(new ClassPathResource("GroovyWebflowAction.groovy"));
         val results = new GroovyScriptWebflowAction(script, applicationContext, casProperties);

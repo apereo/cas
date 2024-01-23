@@ -65,7 +65,7 @@ class DefaultDelegatedClientIdentityProviderRedirectionStrategyTests {
     private CasCookieBuilder casCookieBuilder;
 
     private static MockRequestContext getMockRequestContext() throws Exception {
-        return org.apereo.cas.util.MockRequestContext.create();
+        return MockRequestContext.create();
     }
 
     private static DelegatedClientIdentityProviderConfiguration getProviderConfiguration(final String client) {
