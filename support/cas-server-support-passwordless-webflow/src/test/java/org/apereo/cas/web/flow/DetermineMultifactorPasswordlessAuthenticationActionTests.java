@@ -42,7 +42,6 @@ class DetermineMultifactorPasswordlessAuthenticationActionTests {
             return new DefaultMultifactorAuthenticationTriggerSelectionStrategy(List.of());
         }
     }
-
     @Import({
         DetermineMultifactorPasswordlessAuthenticationActionTests.MultifactorAuthenticationTestConfiguration.class,
         BaseWebflowConfigurerTests.SharedTestConfiguration.class
@@ -161,39 +160,6 @@ class DetermineMultifactorPasswordlessAuthenticationActionTests {
 
         @Test
         @Order(100)
-        void verifyAction() throws Throwable {
-            TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
-            val flow = new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN);
-            flow.setApplicationContext(applicationContext);
-            val exec = new MockFlowExecutionContext(new MockFlowSession(flow));
-            val context = MockRequestContext.create(applicationContext);
-            context.setFlowExecutionContext(exec);
-            val account = PasswordlessUserAccount.builder()
-                .email("email")
-                .phone("phone")
-                .username("casuser")
-                .name("casuser")
-                .build();
-            PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(context, account);
-            assertEquals(TestMultifactorAuthenticationProvider.ID, determineMultifactorPasswordlessAuthenticationAction.execute(context).getId());
-        }
-    }
-
-    @Import(BaseWebflowConfigurerTests.SharedTestConfiguration.class)
-    @TestPropertySource(properties = {
-        "cas.authn.passwordless.accounts.simple.casuser=casuser@helloworld.org",
-        "cas.authn.passwordless.core.multifactor-authentication-activated=true",
-        "cas.authn.mfa.triggers.principal.global-principal-attribute-name-triggers=groupMembership",
-        "cas.authn.mfa.triggers.principal.global-principal-attribute-value-regex=adopters"
-    })
-    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-    @Nested
-    class WithPrincipalMultifactorAuthenticationTrigger extends BasePasswordlessAuthenticationActionTests {
-        @Autowired
-        @Qualifier(CasWebflowConstants.ACTION_ID_DETERMINE_PASSWORDLESS_MULTIFACTOR_AUTHN)
-        private Action determineMultifactorPasswordlessAuthenticationAction;
-        
-        @Test
         void verifyAction() throws Throwable {
             TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
             val flow = new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN);

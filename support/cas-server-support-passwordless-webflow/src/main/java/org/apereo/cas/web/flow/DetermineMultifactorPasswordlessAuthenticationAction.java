@@ -3,11 +3,9 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationTriggerSelectionStrategy;
-import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -38,7 +36,8 @@ public class DetermineMultifactorPasswordlessAuthenticationAction extends BasePa
     private final PrincipalFactory passwordlessPrincipalFactory;
 
     private final AuthenticationSystemSupport authenticationSystemSupport;
-    
+
+
     public DetermineMultifactorPasswordlessAuthenticationAction(final CasConfigurationProperties casProperties,
                                                                 final MultifactorAuthenticationTriggerSelectionStrategy multifactorTriggerSelectionStrategy,
                                                                 final PrincipalFactory passwordlessPrincipalFactory,
@@ -72,49 +71,43 @@ public class DetermineMultifactorPasswordlessAuthenticationAction extends BasePa
             return success();
         }
 
-        val authentication = buildAuthentication(user);
+        val attributes = CollectionUtils.toMultiValuedMap((Map) user.getAttributes());
+        val principal = passwordlessPrincipalFactory.createPrincipal(user.getUsername(), attributes);
+        val auth = DefaultAuthenticationBuilder.newInstance().setPrincipal(principal).build();
         val service = WebUtils.getService(requestContext);
 
-        val result = resolveMultifactorAuthenticationProvider(requestContext, authentication, service);
+        val result = resolveMultifactorAuthenticationProvider(requestContext, auth, service);
         if (result.isEmpty()) {
             LOGGER.debug("No CAS-provided multifactor authentication trigger required user [{}] to proceed with MFA. "
                 + "CAS will proceed with its normal passwordless authentication flow.", user);
             return success();
         }
 
-        populateContextWithAuthenticationResult(requestContext, authentication, service);
+        populateContextWithAuthenticationResult(requestContext, auth, service);
+
         LOGGER.debug("Proceed with multifactor authentication flow [{}] for user [{}]", result.get(), user);
         return new EventFactorySupport().event(this, result.map(MultifactorAuthenticationProvider::getId).orElse(StringUtils.EMPTY));
     }
 
-    protected Authentication buildAuthentication(final PasswordlessUserAccount user) throws Throwable {
-        val userAttributes = CollectionUtils.toMultiValuedMap((Map) user.getAttributes());
-        val resolvedPrincipal = authenticationSystemSupport.getPrincipalResolver()
-            .resolve(new BasicIdentifiableCredential(user.getUsername()));
-        val attributes = CoreAuthenticationUtils.mergeAttributes(userAttributes, resolvedPrincipal.getAttributes());
-        val principal = passwordlessPrincipalFactory.createPrincipal(resolvedPrincipal.getId(), attributes);
-        return DefaultAuthenticationBuilder.newInstance().setPrincipal(principal).build();
-    }
-
-    protected void populateContextWithAuthenticationResult(final RequestContext requestContext, final Authentication authentication,
+    protected void populateContextWithAuthenticationResult(final RequestContext requestContext, final Authentication auth,
                                                            final WebApplicationService service) throws Throwable {
         val builder = authenticationSystemSupport.getAuthenticationResultBuilderFactory().newBuilder();
         val authenticationResult = builder
-            .collect(authentication)
-            .build(authenticationSystemSupport.getPrincipalElectionStrategy(), service);
+            .collect(auth)
+            .build(this.authenticationSystemSupport.getPrincipalElectionStrategy(), service);
         WebUtils.putAuthenticationResultBuilder(builder, requestContext);
         WebUtils.putAuthenticationResult(authenticationResult, requestContext);
-        WebUtils.putAuthentication(authentication, requestContext);
+        WebUtils.putAuthentication(auth, requestContext);
     }
 
     protected Optional<MultifactorAuthenticationProvider> resolveMultifactorAuthenticationProvider(
-        final RequestContext requestContext, final Authentication authentication,
+        final RequestContext requestContext, final Authentication auth,
         final WebApplicationService service) {
         try {
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
             val registeredService = WebUtils.getRegisteredService(requestContext);
-            return multifactorTriggerSelectionStrategy.resolve(request, response, registeredService, authentication, service);
+            return multifactorTriggerSelectionStrategy.resolve(request, response, registeredService, auth, service);
         } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
         }
