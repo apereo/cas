@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 
@@ -31,6 +32,8 @@ public class DefaultAuthenticationSystemSupport implements AuthenticationSystemS
     private final AuthenticationTransactionFactory authenticationTransactionFactory;
 
     private final ServicesManager servicesManager;
+
+    private final PrincipalResolver principalResolver;
     @Override
     public AuthenticationResultBuilder establishAuthenticationContextFromInitial(final Authentication authentication,
                                                                                  final Credential... credentials) {

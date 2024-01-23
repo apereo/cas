@@ -25,6 +25,7 @@ dependencies {
     implementation project(":core:cas-server-core-webflow")
     implementation project(":core:cas-server-core-web")
 
+    implementation project(":support:cas-server-support-person-directory-core")
     implementation project(":support:cas-server-support-thymeleaf-core")
     implementation project(":support:cas-server-support-actions")
     implementation project(":support:cas-server-support-actions-core")
