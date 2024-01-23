@@ -155,7 +155,6 @@ class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
         @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
         final PrincipalResolver principalResolver) {
         return plan -> {
-            //plan.registerAuthenticationHandlerWithPrincipalResolver(casSimpleMultifactorAuthenticationHandler, principalResolver);
             plan.registerAuthenticationHandler(casSimpleMultifactorAuthenticationHandler);
             plan.registerAuthenticationMetadataPopulator(casSimpleMultifactorAuthenticationMetaDataPopulator);
             plan.registerAuthenticationMetadataPopulator(casSimpleMultifactorProviderAuthenticationMetadataPopulator);
