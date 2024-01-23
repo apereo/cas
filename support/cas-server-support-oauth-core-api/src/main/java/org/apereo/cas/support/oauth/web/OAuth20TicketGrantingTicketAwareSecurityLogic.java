@@ -49,7 +49,7 @@ public class OAuth20TicketGrantingTicketAwareSecurityLogic extends DefaultSecuri
         }
 
         if (ticketGrantingTicket == null) {
-            LOGGER.debug("No ticket-granting-ticket/SSO session => return no pac4j user profiles to be in sync");
+            LOGGER.debug("No ticket-granting-ticket/SSO session => No user profiles found");
             return new ArrayList<>();
         }
 

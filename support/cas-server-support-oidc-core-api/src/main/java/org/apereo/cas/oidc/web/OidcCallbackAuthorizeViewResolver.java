@@ -10,7 +10,6 @@ import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationMo
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResponseModeFactory;
 import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -18,9 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
-
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
@@ -46,7 +43,7 @@ public class OidcCallbackAuthorizeViewResolver implements OAuth20CallbackAuthori
             val result = manager.getProfile();
             if (result.isPresent()) {
                 LOGGER.trace("Redirecting to URL [{}] without prompting for login", url);
-                return new ModelAndView(new RedirectView(url));
+                return OAuth20CallbackAuthorizeViewResolver.asDefault().resolve(context, manager, url);
             }
             val originalRedirectUrl = oauthRequestParameterResolver.resolveRequestParameter(context, OAuth20Constants.REDIRECT_URI);
             if (originalRedirectUrl.isEmpty()) {
@@ -76,10 +73,10 @@ public class OidcCallbackAuthorizeViewResolver implements OAuth20CallbackAuthori
             LOGGER.trace("Removing login prompt from URL [{}]", url);
             val newUrl = OidcRequestSupport.removeOidcPromptFromAuthorizationRequest(url, OidcConstants.PROMPT_LOGIN);
             LOGGER.trace("Redirecting to URL [{}]", newUrl);
-            return new ModelAndView(new RedirectView(newUrl));
+            return OAuth20CallbackAuthorizeViewResolver.asDefault().resolve(context, manager, newUrl);
         }
         LOGGER.trace("Redirecting to URL [{}]", url);
-        return new ModelAndView(new RedirectView(url));
+        return OAuth20CallbackAuthorizeViewResolver.asDefault().resolve(context, manager, url);
     }
 
 }

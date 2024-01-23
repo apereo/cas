@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationTriggerSelectionStrategy;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
+import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -92,7 +93,8 @@ public class DetermineMultifactorPasswordlessAuthenticationAction extends BasePa
         val resolvedPrincipal = authenticationSystemSupport.getPrincipalResolver()
             .resolve(new BasicIdentifiableCredential(user.getUsername()));
         val attributes = CoreAuthenticationUtils.mergeAttributes(userAttributes, resolvedPrincipal.getAttributes());
-        val principal = passwordlessPrincipalFactory.createPrincipal(resolvedPrincipal.getId(), attributes);
+        val principalId = resolvedPrincipal instanceof NullPrincipal ? user.getUsername() : resolvedPrincipal.getId();
+        val principal = passwordlessPrincipalFactory.createPrincipal(principalId, attributes);
         return DefaultAuthenticationBuilder.newInstance().setPrincipal(principal).build();
     }
 
