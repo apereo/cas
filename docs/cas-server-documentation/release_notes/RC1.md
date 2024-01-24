@@ -45,7 +45,7 @@ The following items are new improvements and enhancements presented in this rele
 
 The migration of the entire codebase to Spring Boot `3.3` is ongoing, and at the 
 moment is waiting for the wider ecosystem of supporting frameworks and libraries to catch up to 
-these changes. As a quick status update, we anticipate the work to finalize in the next few release candidates.
+changes. We anticipate the work to finalize in the next few release candidates and certainly prior to the final release.
 
 ### OpenRewrite Upgrade Recipes
 
@@ -103,6 +103,7 @@ does not track or store tickets in a persistent manner via a backend storage tec
 - Spring Boot
 - Spring Data
 - Spring Session
+- Spring Cloud
 - Twilio
 - Pac4j
 - Grouper
