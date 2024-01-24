@@ -12,7 +12,6 @@ casbot:
       organization: apereo
       name: cas
       url: https://github.com/apereo/cas
-      committers: mmoayyed,leleuj,hdeadman
       admins: mmoayyed,apereocas-bot
 
 security:
