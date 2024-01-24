@@ -56,7 +56,6 @@ dependencyResolutionManagement {
             }
         }
 
-        mavenLocal()
         mavenCentral()
         maven {
             url "https://build.shibboleth.net/maven/snapshots"
