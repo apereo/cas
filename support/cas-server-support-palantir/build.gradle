@@ -84,10 +84,9 @@ node {
 tasks.named("yarn", YarnTask) {
     args = ['--network-timeout', '600000']
     outputs.cacheIf { true }
-    inputs.files(
-        'client/package.json',
-        'client/vite.config.js'
-    ).withPropertyName('yarnInstallConfig').withPathSensitivity(PathSensitivity.RELATIVE)
+    inputs.files('client/package.json','client/vite.config.js')
+            .withPropertyName('yarnInstallConfig')
+            .withPathSensitivity(PathSensitivity.RELATIVE)
     outputs.dir(file("client/node_modules"))
 }
 
@@ -99,10 +98,9 @@ tasks.register("build-ui", NpxTask) {
     command = "vite"
     args = ["build", "--emptyOutDir", "--outDir", assetsDirectory.canonicalPath ]
     dependsOn(tasks.named("yarn"))
-    inputs.files(
-        'client/package.json',
-        'client/vite.config.js'
-    ).withPropertyName('uiBuildConfig').withPathSensitivity(PathSensitivity.RELATIVE)
+    inputs.files('client/package.json','client/vite.config.js')
+            .withPropertyName('uiBuildConfig')
+            .withPathSensitivity(PathSensitivity.RELATIVE)
     environment = ["BUILD_PATH": "build"]
 }
-[processResources, resourcesJar].each {it.dependsOn(tasks.named("build-ui")) }
+build.dependsOn(tasks.named("build-ui"))
