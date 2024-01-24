@@ -5,6 +5,7 @@ import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -23,7 +24,7 @@ public class DefaultDelegatedClientAuthenticationFailureEvaluatorTests {
     public void verifyThrottling() {
         val evaluator = new DefaultDelegatedClientAuthenticationFailureEvaluator(
                 mock(DelegatedClientAuthenticationConfigurationContext.class));
-        val optModelAndView = evaluator.evaluate(new MockHttpServletRequest(), 423);
-        assertEquals("error/423", optModelAndView.get().getViewName());
+        val optModelAndView = evaluator.evaluate(new MockHttpServletRequest(), HttpStatus.LOCKED.value());
+        assertEquals("error/%s".formatted(HttpStatus.LOCKED.value()), optModelAndView.get().getViewName());
     }
 }

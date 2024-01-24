@@ -35,7 +35,7 @@ public class DefaultDelegatedClientAuthenticationFailureEvaluator implements Del
     @Override
     public Optional<ModelAndView> evaluate(final HttpServletRequest request, final int status) {
         if (status == HttpStatus.LOCKED.value()) {
-            return Optional.of(new ModelAndView("error/423", new HashMap<>()));
+            return Optional.of(new ModelAndView("error/%s".formatted(status), new HashMap<>()));
         }
         val params = request.getParameterMap();
         val foundError = Stream.of("error", "error_code", "error_description", "error_message")
