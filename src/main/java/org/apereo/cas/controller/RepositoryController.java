@@ -49,6 +49,7 @@ public class RepositoryController {
                 val map = new LinkedHashMap<String, String>();
                 map.put("number", pr.getNumber());
                 map.put("title", pr.getTitle());
+                map.put("branch", pr.getBase().getLabel());
                 map.put("author", pr.getUser().getLogin());
                 return map;
             })
