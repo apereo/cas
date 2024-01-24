@@ -143,7 +143,7 @@ public class ConfigurationMetadataGenerator {
         var hints = new LinkedHashSet<ConfigurationMetadataHint>(0);
         val allValidProps = props.stream()
             .filter(p -> p.getDeprecation() == null
-                || !Deprecation.Level.ERROR.equals(p.getDeprecation().getLevel())).toList();
+                || Deprecation.Level.ERROR != p.getDeprecation().getLevel()).toList();
 
         for (val entry : allValidProps) {
             val propName = StringUtils.substringAfterLast(entry.getName(), ".");

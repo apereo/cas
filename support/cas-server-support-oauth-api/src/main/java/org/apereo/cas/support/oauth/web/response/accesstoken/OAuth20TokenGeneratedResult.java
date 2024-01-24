@@ -3,8 +3,7 @@ package org.apereo.cas.support.oauth.web.response.accesstoken;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
-import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
-import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
+import org.apereo.cas.ticket.Ticket;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -29,9 +28,9 @@ public class OAuth20TokenGeneratedResult implements Serializable {
     @Serial
     private static final long serialVersionUID = -4111380934505564576L;
 
-    private final OAuth20AccessToken accessToken;
+    private final Ticket accessToken;
 
-    private final OAuth20RefreshToken refreshToken;
+    private final Ticket refreshToken;
 
     private final OAuth20ResponseTypes responseType;
 
@@ -47,11 +46,11 @@ public class OAuth20TokenGeneratedResult implements Serializable {
     @Getter
     private final Map<String, Object> details = new LinkedHashMap<>();
 
-    public Optional<OAuth20AccessToken> getAccessToken() {
+    public Optional<Ticket> getAccessToken() {
         return Optional.ofNullable(accessToken);
     }
 
-    public Optional<OAuth20RefreshToken> getRefreshToken() {
+    public Optional<Ticket> getRefreshToken() {
         return Optional.ofNullable(refreshToken);
     }
 

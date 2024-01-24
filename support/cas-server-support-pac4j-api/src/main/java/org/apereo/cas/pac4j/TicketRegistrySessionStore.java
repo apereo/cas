@@ -73,7 +73,7 @@ public class TicketRegistrySessionStore implements SessionStore {
 
         if (value == null && ticket != null) {
             ticket.getProperties().remove(key);
-            FunctionUtils.doUnchecked(__ -> ticketRegistry.updateTicket(ticket));
+            updateTicket(context, ticket);
         } else if (ticket == null) {
             FunctionUtils.doAndHandle(__ -> {
                 val transientFactory = (TransientSessionTicketFactory) ticketFactory.get(TransientSessionTicket.class);
@@ -87,8 +87,15 @@ public class TicketRegistrySessionStore implements SessionStore {
             });
         } else {
             ticket.getProperties().putAll(properties);
-            FunctionUtils.doUnchecked(__ -> ticketRegistry.updateTicket(ticket));
+            updateTicket(context, ticket);
         }
+    }
+
+    private void updateTicket(final WebContext context, final TransientSessionTicket ticket) {
+        FunctionUtils.doUnchecked(__ -> {
+            val updatedTicket = ticketRegistry.updateTicket(ticket);
+            context.setRequestAttribute(SESSION_ID_IN_REQUEST_ATTRIBUTE, updatedTicket.getId());
+        });
     }
 
     @Override

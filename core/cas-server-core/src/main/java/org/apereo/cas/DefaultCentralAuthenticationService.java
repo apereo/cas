@@ -50,8 +50,8 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jooq.lambda.Unchecked;
 import org.jooq.lambda.fi.util.function.CheckedSupplier;
 import java.io.Serial;
+import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -292,6 +292,10 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
 
             enforceRegisteredServiceAccess(selectedService, registeredService, accessPrincipal);
 
+            val assertionContext = serviceTicket.isStateless()
+                ? CollectionUtils.<String, Serializable>wrap(Principal.class.getName(), authentication.getPrincipal().getId())
+                : CollectionUtils.<String, Serializable>wrap(TicketGrantingTicket.class.getName(), ticketGrantingTicket.getRoot().getId());
+
             val assertion = DefaultAssertionBuilder.builder()
                 .primaryAuthentication(finalAuthentication)
                 .originalAuthentication(authentication)
@@ -302,9 +306,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
                     : ticketGrantingTicket.getChainedAuthentications())
                 .newLogin(((RenewableServiceTicket) serviceTicket).isFromNewLogin())
                 .stateless(serviceTicket.isStateless())
-                .context(serviceTicket.isStateless()
-                    ? Map.of()
-                    : CollectionUtils.wrap(TicketGrantingTicket.class.getName(), ticketGrantingTicket.getRoot().getId()))
+                .context(assertionContext)
                 .build()
                 .assemble();
             val clientInfo = ClientInfoHolder.getClientInfo();

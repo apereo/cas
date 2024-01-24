@@ -48,10 +48,10 @@ public class RestfulIPAddressIntelligenceService extends BaseIPAddressIntelligen
             response = HttpUtils.execute(exec);
             if (response != null) {
                 val status = HttpStatus.valueOf(response.getCode());
-                if (status.equals(HttpStatus.FORBIDDEN) || status.equals(HttpStatus.UNAUTHORIZED)) {
+                if (status == HttpStatus.FORBIDDEN || status == HttpStatus.UNAUTHORIZED) {
                     throw new AuthenticationException("Unable to accept response status " + status);
                 }
-                if (status.equals(HttpStatus.OK) || status.equals(HttpStatus.ACCEPTED)) {
+                if (status == HttpStatus.OK || status == HttpStatus.ACCEPTED) {
                     return IPAddressIntelligenceResponse.allowed();
                 }
                 try (val content = ((HttpEntityContainer) response).getEntity().getContent()) {

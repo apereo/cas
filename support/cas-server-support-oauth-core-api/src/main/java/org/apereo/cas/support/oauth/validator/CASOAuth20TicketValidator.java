@@ -8,6 +8,7 @@ import org.apereo.cas.client.validation.Assertion;
 import org.apereo.cas.client.validation.AssertionImpl;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
+import org.apereo.cas.validation.TicketValidationResult;
 import org.apereo.cas.validation.TicketValidator;
 
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,8 @@ public class CASOAuth20TicketValidator implements org.apereo.cas.client.validati
         val assertion = validationResult.getAssertion();
 
         val principalAttributes = new HashMap(validationResult.getPrincipal().getAttributes());
+        principalAttributes.put(TicketValidationResult.class.getName(), validationResult);
+        
         principalAttributes.putAll(assertion.getContext());
         val originalAttributes = Optional.ofNullable(assertion.getOriginalAuthentication())
             .map(Authentication.class::cast)

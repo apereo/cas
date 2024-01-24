@@ -1,11 +1,14 @@
 package org.apereo.cas.support.oauth.validator.token;
 
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
+import org.apereo.cas.ticket.AuthenticationAwareTicket;
+import org.apereo.cas.ticket.code.OAuth20Code;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -34,13 +37,6 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
 
     private int order = Ordered.LOWEST_PRECEDENCE;
 
-    /**
-     * Check the grant type against expected grant types.
-     *
-     * @param type          the current grant type
-     * @param expectedTypes the expected grant types
-     * @return whether the grant type is supported
-     */
     private static boolean isGrantTypeSupported(final String type, final OAuth20GrantTypes... expectedTypes) {
         LOGGER.debug("Grant type received: [{}]", type);
         for (val expectedType : expectedTypes) {
@@ -48,7 +44,6 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
                 return true;
             }
         }
-
         LOGGER.error("Unsupported grant type: [{}]", type);
         return false;
     }
@@ -68,9 +63,8 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
             LOGGER.warn("Could not locate authenticated profile for this request. Request is not authenticated");
             return false;
         }
-
-        val uProfile = profile.get();
-        return validateInternal(context, grantType, manager, uProfile);
+        val userProfile = profile.get();
+        return validateInternal(context, grantType, manager, userProfile);
     }
 
     @Override
@@ -79,27 +73,10 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
         return OAuth20Utils.isGrantType(grantType.map(String::valueOf).orElse(StringUtils.EMPTY), getGrantType());
     }
 
-    /**
-     * Is grant type supported service.
-     *
-     * @param registeredService the registered service
-     * @param type              the type
-     * @return true/false
-     */
     protected boolean isGrantTypeSupportedBy(final OAuthRegisteredService registeredService, final String type) {
         return OAuth20RequestParameterResolver.isAuthorizedGrantTypeForService(type, registeredService);
     }
 
-    /**
-     * Validate internal.
-     *
-     * @param context     the context
-     * @param grantType   the grant type
-     * @param manager     the manager
-     * @param userProfile the profile
-     * @return true /false
-     * @throws Throwable the throwable
-     */
     protected boolean validateInternal(final WebContext context,
                                        final String grantType,
                                        final ProfileManager manager,
@@ -107,10 +84,11 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
         return false;
     }
 
-    /**
-     * Gets grant type.
-     *
-     * @return the grant type
-     */
     protected abstract OAuth20GrantTypes getGrantType();
+
+    protected static Authentication resolveAuthenticationFrom(final OAuth20Code oauthCode) {
+        return oauthCode.isStateless()
+            ? oauthCode.getAuthentication()
+            : ((AuthenticationAwareTicket) oauthCode.getTicketGrantingTicket()).getAuthentication();
+    }
 }

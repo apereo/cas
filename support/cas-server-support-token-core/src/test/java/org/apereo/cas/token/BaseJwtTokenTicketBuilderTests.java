@@ -20,6 +20,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.validation.TicketValidationResult;
 import org.apereo.cas.validation.TicketValidator;
 import lombok.val;
 import org.springframework.beans.factory.InitializingBean;
@@ -92,7 +93,7 @@ public abstract class BaseJwtTokenTicketBuilderTests {
                 CollectionUtils.wrap("name", List.of("value"),
                     ProtocolAttributeEncoder.encodeAttribute("custom:name"), CollectionUtils.wrapList("custom:value")));
             when(validator.validate(anyString(), anyString()))
-                .thenReturn(TicketValidator.ValidationResult.builder().principal(principal).build());
+                .thenReturn(TicketValidationResult.builder().principal(principal).build());
             return validator;
 
         }

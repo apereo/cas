@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.io.Serial;
+import java.time.Clock;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 
@@ -38,7 +39,8 @@ import java.time.temporal.ChronoUnit;
 @Builder
 @Slf4j
 public class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
-
+    private static final long MAX_EXPIRATION_IN_YEARS = 50L;
+    
     @Serial
     private static final long serialVersionUID = -7636642464326939536L;
 
@@ -85,5 +87,10 @@ public class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
     public ZonedDateTime getIdleExpirationTime(final Ticket ticketState) {
         val lastTimeUsed = ticketState.getLastTimeUsed();
         return lastTimeUsed.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
+    }
+
+    @Override
+    public ZonedDateTime toMaximumExpirationTime(final Ticket ticketState) {
+        return ZonedDateTime.now(Clock.systemUTC()).plusYears(MAX_EXPIRATION_IN_YEARS);
     }
 }

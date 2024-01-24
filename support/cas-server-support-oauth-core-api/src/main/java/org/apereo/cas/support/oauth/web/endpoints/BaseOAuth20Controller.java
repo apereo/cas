@@ -1,6 +1,8 @@
 package org.apereo.cas.support.oauth.web.endpoints;
 
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
+import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -26,12 +28,16 @@ import jakarta.servlet.http.HttpServletRequest;
 public abstract class BaseOAuth20Controller<T extends OAuth20ConfigurationContext> {
     private final T configurationContext;
 
-    /**
-     * Extract access token from token.
-     *
-     * @param token the token
-     * @return the string
-     */
+    protected OAuth20AccessToken resolveAccessToken(final Ticket givenAccessToken) {
+        return resolveToken(givenAccessToken, OAuth20AccessToken.class);
+    }
+
+    protected <U extends Ticket> U resolveToken(final Ticket token, final Class<U> clazz) {
+        return token.isStateless()
+            ? configurationContext.getTicketRegistry().getTicket(token.getId(), clazz)
+            : clazz.cast(token);
+    }
+
     protected String extractAccessTokenFrom(final String token) {
         return OAuth20JwtAccessTokenEncoder.builder()
             .accessTokenJwtBuilder(getConfigurationContext().getAccessTokenJwtBuilder())

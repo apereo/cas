@@ -57,7 +57,7 @@ public class CasThemesAutoConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ThemeSource themeSource(final CasConfigurationProperties casProperties) {
-        if (casProperties.getView().getThemeSourceType().equals(ViewProperties.ThemeSourceTypes.AGGREGATE)) {
+        if (casProperties.getView().getThemeSourceType() == ViewProperties.ThemeSourceTypes.AGGREGATE) {
             return new AggregateCasThemeSource(casProperties);
         }
         return new DefaultCasThemeSource(casProperties);

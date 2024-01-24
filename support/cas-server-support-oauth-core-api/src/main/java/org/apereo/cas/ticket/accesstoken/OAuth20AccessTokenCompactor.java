@@ -1,4 +1,4 @@
-package org.apereo.cas.ticket.code;
+package org.apereo.cas.ticket.accesstoken;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
@@ -22,42 +22,42 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * This is {@link OAuth20CodeCompactor}.
+ * This is {@link OAuth20AccessTokenCompactor}.
  *
  * @author Misagh Moayyed
  * @since 7.1.0
  */
 @RequiredArgsConstructor
-public class OAuth20CodeCompactor implements TicketCompactor<OAuth20Code> {
+public class OAuth20AccessTokenCompactor implements TicketCompactor<OAuth20AccessToken> {
     private final ObjectProvider<TicketFactory> ticketFactory;
     private final ServiceFactory serviceFactory;
     private final PrincipalFactory principalFactory;
+
     @Getter
     private long maximumTicketLength = 384;
-
+    
     @Override
     public String compact(final StringBuilder builder, final Ticket ticket) throws Exception {
-        val code = (OAuth20Code) ticket;
-        builder.append(String.format("%s%s", DELIMITER, code.getService().getShortenedId()));
-        builder.append(String.format("%s%s", DELIMITER, code.getClientId()));
-        builder.append(String.format("%s%s", DELIMITER, String.join("|", code.getScopes())));
-        builder.append(String.format("%s%s", DELIMITER, StringUtils.defaultString(code.getCodeChallenge())));
-        builder.append(String.format("%s%s", DELIMITER, StringUtils.defaultString(code.getCodeChallengeMethod())));
-        builder.append(String.format("%s%s", DELIMITER, code.getResponseType() != null ? code.getResponseType().ordinal() : OAuth20ResponseTypes.CODE.ordinal()));
-        builder.append(String.format("%s%s", DELIMITER, code.getGrantType() != null ? code.getGrantType().ordinal() : OAuth20GrantTypes.AUTHORIZATION_CODE.ordinal()));
-        builder.append(compactAuthenticationAttempt(code).toString());
+        val accessToken = (OAuth20AccessToken) ticket;
+        builder.append(String.format("%s%s", DELIMITER, accessToken.getService().getShortenedId()));
+        builder.append(String.format("%s%s", DELIMITER, accessToken.getClientId()));
+        builder.append(String.format("%s%s", DELIMITER, String.join("|", accessToken.getScopes())));
+        builder.append(String.format("%s%s", DELIMITER, accessToken.getResponseType() != null ? accessToken.getResponseType().ordinal() : OAuth20ResponseTypes.CODE.ordinal()));
+        builder.append(String.format("%s%s", DELIMITER, accessToken.getGrantType() != null ? accessToken.getGrantType().ordinal() : OAuth20GrantTypes.AUTHORIZATION_CODE.ordinal()));
+        
+        builder.append(compactAuthenticationAttempt(accessToken).toString());
         return builder.toString();
     }
 
+    
     @Override
-    public Class<OAuth20Code> getTicketType() {
-        return OAuth20Code.class;
+    public Class<OAuth20AccessToken> getTicketType() {
+        return OAuth20AccessToken.class;
     }
 
     @Override
@@ -68,23 +68,20 @@ public class OAuth20CodeCompactor implements TicketCompactor<OAuth20Code> {
         val scopes = StringUtils.isNotBlank(structure.ticketElements().get(4))
             ? Splitter.on("|").splitToList(structure.ticketElements().get(4))
             : new HashSet<String>();
-        val codeChallenge = StringUtils.trimToNull(structure.ticketElements().get(5));
-        val codeChallengeMethod = StringUtils.trimToNull(structure.ticketElements().get(6));
 
-        val responseType = OAuth20ResponseTypes.values()[Integer.parseInt(structure.ticketElements().get(7))];
-        val grantType = OAuth20GrantTypes.values()[Integer.parseInt(structure.ticketElements().get(8))];
+        val responseType = OAuth20ResponseTypes.values()[Integer.parseInt(structure.ticketElements().get(5))];
+        val grantType = OAuth20GrantTypes.values()[Integer.parseInt(structure.ticketElements().get(6))];
 
         val authentication = expandAuthentication(principalFactory, structure);
-        val codeFactory = (OAuth20CodeFactory) ticketFactory.getObject().get(getTicketType());
-        val code = codeFactory.create(service, authentication, null,
-            scopes, codeChallenge, codeChallengeMethod, clientId, new HashMap<>(), responseType, grantType);
-        code.setExpirationPolicy(new FixedInstantExpirationPolicy(structure.expirationTime()));
-        code.setCreationTime(DateTimeUtils.zonedDateTimeOf(structure.creationTime()));
-        return code;
+        val accessTokenFactory = (OAuth20AccessTokenFactory) ticketFactory.getObject().get(getTicketType());
+        val accessToken = accessTokenFactory.create(service, authentication, scopes, clientId, responseType, grantType);
+        accessToken.setExpirationPolicy(new FixedInstantExpirationPolicy(structure.expirationTime()));
+        accessToken.setCreationTime(DateTimeUtils.zonedDateTimeOf(structure.creationTime()));
+        return accessToken;
     }
 
     protected Authentication expandAuthentication(final PrincipalFactory principalFactory, final CompactTicket structure) throws Throwable {
-        val authenticationData = Splitter.on(":").splitToList(structure.ticketElements().get(9));
+        val authenticationData = Splitter.on(":").splitToList(structure.ticketElements().get(7));
         val principal = principalFactory.createPrincipal(authenticationData.getFirst());
         val handlers = Arrays.stream(authenticationData.get(1).split("#")).collect(Collectors.toSet());
         val credentialTypes = Arrays.stream(authenticationData.get(2).split("#")).collect(Collectors.toSet());
@@ -100,7 +97,7 @@ public class OAuth20CodeCompactor implements TicketCompactor<OAuth20Code> {
             .build();
     }
 
-    protected StringBuilder compactAuthenticationAttempt(final OAuth20Code code) {
+    protected StringBuilder compactAuthenticationAttempt(final OAuth20AccessToken code) {
         val authentication = code.getAuthentication();
         val builder = new StringBuilder();
         if (authentication != null) {

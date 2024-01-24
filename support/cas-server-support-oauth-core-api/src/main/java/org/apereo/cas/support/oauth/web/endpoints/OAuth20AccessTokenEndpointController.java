@@ -17,7 +17,6 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20Acc
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.ticket.OAuth20UnauthorizedScopeRequestException;
-import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import com.google.common.base.Supplier;
@@ -144,31 +143,27 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
         return handleRequest(request, response);
     }
 
-    /**
-     * Generate access token response model and view.
-     *
-     * @param requestHolder the request holder
-     * @param result        the result
-     * @return the model and view
-     */
     protected ModelAndView generateAccessTokenResponse(
-        final AccessTokenRequestContext requestHolder,
+        final AccessTokenRequestContext tokenRequestContext,
         final OAuth20TokenGeneratedResult result) {
         LOGGER.debug("Generating access token response for [{}]", result);
         val deviceRefreshInterval = Beans.newDuration(getConfigurationContext().getCasProperties()
             .getAuthn().getOauth().getDeviceToken().getRefreshInterval()).getSeconds();
         val dtPolicy = getConfigurationContext().getDeviceTokenExpirationPolicy();
-        val tokenResult = OAuth20AccessTokenResponseResult.builder()
-            .registeredService(requestHolder.getRegisteredService())
-            .service(requestHolder.getService())
-            .accessTokenTimeout(result.getAccessToken().map(OAuth20AccessToken::getExpiresIn).orElse(0L))
+        val accessTokenTimeout = determineAccessTokenTimeoutInSeconds(result);
+
+        val tokenResult = OAuth20AccessTokenResponseResult
+            .builder()
+            .registeredService(tokenRequestContext.getRegisteredService())
+            .service(tokenRequestContext.getService())
+            .accessTokenTimeout(accessTokenTimeout)
             .deviceRefreshInterval(deviceRefreshInterval)
             .deviceTokenTimeout(dtPolicy.buildTicketExpirationPolicy().getTimeToLive())
             .responseType(result.getResponseType().orElse(OAuth20ResponseTypes.NONE))
             .casProperties(getConfigurationContext().getCasProperties())
             .generatedToken(result)
             .grantType(result.getGrantType().orElse(OAuth20GrantTypes.NONE))
-            .userProfile(requestHolder.getUserProfile())
+            .userProfile(tokenRequestContext.getUserProfile())
             .build();
         val generatedTokenResult = getConfigurationContext().getAccessTokenResponseGenerator().generate(tokenResult);
 
@@ -177,7 +172,7 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
             context.put("status", generatedTokenResult.getStatus());
         }
         context.put(CasProtocolConstants.PARAMETER_SERVICE, tokenResult.getService().getId());
-        context.put(OAuth20Constants.CLIENT_ID, requestHolder.getRegisteredService().getClientId());
+        context.put(OAuth20Constants.CLIENT_ID, tokenRequestContext.getRegisteredService().getClientId());
         LoggingUtils.protocolMessage("OAuth/OpenID Connect Token Response", context);
         return generatedTokenResult;
     }
@@ -207,5 +202,9 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
             .findFirst()
             .orElseThrow((Supplier<RuntimeException>) () -> new UnsupportedOperationException("Access token request is not supported"))
             .validate(context);
+    }
+
+    protected Long determineAccessTokenTimeoutInSeconds(final OAuth20TokenGeneratedResult accessTokenResult) {
+        return OAuth20Utils.getAccessTokenTimeout(accessTokenResult);
     }
 }

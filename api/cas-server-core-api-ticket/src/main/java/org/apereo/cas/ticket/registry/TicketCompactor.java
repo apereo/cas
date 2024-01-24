@@ -1,9 +1,12 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.ticket.EncodedTicket;
 import org.apereo.cas.ticket.Ticket;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 import java.time.Instant;
 import java.util.List;
@@ -15,6 +18,12 @@ import java.util.List;
  * @since 7.0.0
  */
 public interface TicketCompactor<T extends Ticket> {
+    /**
+     * Logger instance.
+     */
+    Logger LOGGER = LoggerFactory.getLogger(TicketCompactor.class);
+
+
     /**
      * Delimiter character to separate fields in the compacted ticket.
      */
@@ -64,6 +73,15 @@ public interface TicketCompactor<T extends Ticket> {
     Class<T> getTicketType();
 
     /**
+     * Gets ticket length.
+     *
+     * @return the ticket length
+     */
+    default long getMaximumTicketLength() {
+        return 0L;
+    }
+
+    /**
      * Parse common ticket structure.
      *
      * @param ticketId the ticket id
@@ -79,9 +97,15 @@ public interface TicketCompactor<T extends Ticket> {
     /**
      * Validate.
      *
-     * @param finalTicketId the final ticket id
+     * @param finalTicket the final ticket
+     * @return the ticket
      */
-    default void validate(final String finalTicketId) {
+    default Ticket validate(final EncodedTicket finalTicket) {
+        if (getMaximumTicketLength() > 0 && finalTicket.getId().length() >= getMaximumTicketLength()) {
+            LOGGER.warn("Final ticket id %s length %s exceeds %s characters"
+                .formatted(finalTicket.getId(), finalTicket.getId().length(), getMaximumTicketLength()));
+        }
+        return finalTicket;
     }
 
     @RequiredArgsConstructor

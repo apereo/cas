@@ -240,8 +240,10 @@ class CasOAuth20Configuration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public JwtBuilder accessTokenJwtBuilder(
             final CasConfigurationProperties casProperties,
-            @Qualifier("oauthRegisteredServiceJwtAccessTokenCipherExecutor") final RegisteredServiceCipherExecutor oauthRegisteredServiceJwtAccessTokenCipherExecutor,
-            @Qualifier("oauthAccessTokenJwtCipherExecutor") final CipherExecutor oauthAccessTokenJwtCipherExecutor,
+            @Qualifier("oauthRegisteredServiceJwtAccessTokenCipherExecutor")
+            final RegisteredServiceCipherExecutor oauthRegisteredServiceJwtAccessTokenCipherExecutor,
+            @Qualifier("oauthAccessTokenJwtCipherExecutor")
+            final CipherExecutor oauthAccessTokenJwtCipherExecutor,
             @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
             return new OAuth20JwtBuilder(oauthAccessTokenJwtCipherExecutor, servicesManager,
                 oauthRegisteredServiceJwtAccessTokenCipherExecutor, casProperties);
@@ -262,7 +264,7 @@ class CasOAuth20Configuration {
             @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS) final AuditableExecution registeredServiceAccessStrategyEnforcer,
             @Qualifier(CentralAuthenticationService.BEAN_NAME) final CentralAuthenticationService centralAuthenticationService,
             @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER) final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-            @Qualifier("oAuth2UserProfileDataCreator") final OAuth20UserProfileDataCreator oAuth2UserProfileDataCreator,
+            @Qualifier(OAuth20UserProfileDataCreator.BEAN_NAME) final OAuth20UserProfileDataCreator oauth2UserProfileDataCreator,
             @Qualifier("oauthDistributedSessionCookieGenerator") final CasCookieBuilder oauthDistributedSessionCookieGenerator,
             @Qualifier(OAuth20UserProfileViewRenderer.BEAN_NAME) final OAuth20UserProfileViewRenderer oauthUserProfileViewRenderer,
             @Qualifier(WebApplicationService.BEAN_NAME_FACTORY) final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
@@ -287,7 +289,8 @@ class CasOAuth20Configuration {
             final ObjectProvider<List<OAuth20AuthorizationResponseBuilder>> oauthAuthorizationResponseBuilders,
             final ObjectProvider<List<OAuth20AuthorizationRequestValidator>> oauthAuthorizationRequestValidators,
             @Qualifier("oauthTokenGenerator") final OAuth20TokenGenerator oauthTokenGenerator,
-            final List<OAuth20IntrospectionResponseGenerator> oauthIntrospectionResponseGenerator) {
+            final List<OAuth20IntrospectionResponseGenerator> oauthIntrospectionResponseGenerator,
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER) final PrincipalResolver defaultPrincipalResolver) {
             return OAuth20ConfigurationContext.builder()
                 .argumentExtractor(argumentExtractor)
                 .requestParameterResolver(oauthRequestParameterResolver)
@@ -312,7 +315,7 @@ class CasOAuth20Configuration {
                 .accessTokenResponseGenerator(accessTokenResponseGenerator)
                 .deviceTokenExpirationPolicy(deviceTokenExpirationPolicy)
                 .accessTokenGrantRequestValidators(oauthTokenRequestValidators)
-                .userProfileDataCreator(oAuth2UserProfileDataCreator)
+                .userProfileDataCreator(oauth2UserProfileDataCreator)
                 .userProfileViewRenderer(oauthUserProfileViewRenderer)
                 .consentApprovalViewResolver(consentApprovalViewResolver)
                 .authenticationBuilder(oauthCasAuthenticationBuilder)
@@ -323,6 +326,7 @@ class CasOAuth20Configuration {
                 .authenticationAttributeReleasePolicy(authenticationAttributeReleasePolicy)
                 .attributeDefinitionStore(attributeDefinitionStore)
                 .introspectionResponseGenerator(oauthIntrospectionResponseGenerator)
+                .principalResolver(defaultPrincipalResolver)
                 .build();
         }
     }
@@ -340,10 +344,10 @@ class CasOAuth20Configuration {
             return new OAuth20ConsentApprovalViewResolver(casProperties, oauthDistributedSessionStore);
         }
 
-        @ConditionalOnMissingBean(name = "oAuth2UserProfileDataCreator")
+        @ConditionalOnMissingBean(name = OAuth20UserProfileDataCreator.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public OAuth20UserProfileDataCreator oAuth2UserProfileDataCreator(
+        public OAuth20UserProfileDataCreator oauth2UserProfileDataCreator(
             @Qualifier("oauth20ConfigurationContext") final ObjectProvider<OAuth20ConfigurationContext> context) {
             return new DefaultOAuth20UserProfileDataCreator(context);
         }
@@ -372,11 +376,11 @@ class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20AccessTokenResponseGenerator accessTokenResponseGenerator(
+            @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry,
             @Qualifier("accessTokenJwtBuilder") final JwtBuilder accessTokenJwtBuilder,
             final CasConfigurationProperties casProperties) {
-            return new OAuth20DefaultAccessTokenResponseGenerator(accessTokenJwtBuilder, casProperties);
+            return new OAuth20DefaultAccessTokenResponseGenerator(accessTokenJwtBuilder, ticketRegistry, casProperties);
         }
-
     }
 
     @Configuration(value = "CasOAuth20ClientConfiguration", proxyBeanMethods = false)
