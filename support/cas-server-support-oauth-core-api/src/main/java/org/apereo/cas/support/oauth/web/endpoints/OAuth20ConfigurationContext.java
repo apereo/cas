@@ -4,6 +4,7 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -144,6 +145,8 @@ public class OAuth20ConfigurationContext {
 
     private final List<OAuth20IntrospectionResponseGenerator> introspectionResponseGenerator;
 
+    private final PrincipalResolver principalResolver;
+    
     /**
      * Gets ticket granting ticket.
      *

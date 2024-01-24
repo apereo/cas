@@ -203,15 +203,6 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
                     casProperties.getServer().getPrefix())));
     }
 
-    /**
-     * Build callback url for request string.
-     *
-     * @param registeredService the registered service
-     * @param context           the context
-     * @param service           the service
-     * @param authentication    the authentication
-     * @return the model and view
-     */
     protected ModelAndView buildAuthorizationForRequest(
         final OAuthRegisteredService registeredService,
         final JEEContext context,
@@ -240,10 +231,11 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
             .stream()
             .filter(BeanSupplier::isNotProxy)
             .sorted(OrderComparator.INSTANCE)
-            .filter(bldr -> bldr.supports(authzRequest))
+            .filter(builder -> builder.supports(authzRequest))
             .findFirst()
             .map(Unchecked.function(builder -> {
-                if (authzRequest.isSingleSignOnSessionRequired() && payload.getTicketGrantingTicket() == null) {
+                if (authzRequest.isSingleSignOnSessionRequired() && payload.getTicketGrantingTicket() == null
+                    && OAuth20Utils.findStatelessTicketValidationResult(payload.getUserProfile()) == null) {
                     val message = String.format("Missing ticket-granting-ticket for client id [%s] and service [%s]",
                         authzRequest.getClientId(), registeredService.getName());
                     LOGGER.error(message);

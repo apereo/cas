@@ -533,7 +533,7 @@ public abstract class AbstractOAuth20Tests {
         val service = factory.createService(registeredService.getClientId());
 
         val tgt = new MockTicketGrantingTicket("casuser");
-        this.ticketRegistry.addTicket(tgt);
+        ticketRegistry.addTicket(tgt);
 
         val code = oAuthCodeFactory.create(service, authentication,
             tgt, new ArrayList<>(),

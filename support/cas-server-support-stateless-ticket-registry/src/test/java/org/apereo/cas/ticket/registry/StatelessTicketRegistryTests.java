@@ -74,6 +74,8 @@ public class StatelessTicketRegistryTests extends BaseTicketRegistryTests {
         val tgt = new TicketGrantingTicketImpl(ticketGrantingTicketId, originalAuthn,
             new TicketGrantingTicketExpirationPolicy(5000, 2000));
         val addedTicketGrantingTicket = newTicketRegistry.addTicket(tgt);
+        assertNotNull(addedTicketGrantingTicket.getExpirationPolicy());
+        assertTrue(addedTicketGrantingTicket.isStateless());
         val foundTicketGrantingTicket = newTicketRegistry.getTicket(addedTicketGrantingTicket.getId());
         assertNotNull(foundTicketGrantingTicket);
         assertEquals(tgt, foundTicketGrantingTicket);

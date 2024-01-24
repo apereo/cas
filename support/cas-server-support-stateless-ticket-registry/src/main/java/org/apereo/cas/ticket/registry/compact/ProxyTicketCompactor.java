@@ -23,6 +23,7 @@ import org.apereo.cas.ticket.registry.TicketCompactor;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.EncodingUtils;
 import com.google.common.base.Splitter;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
@@ -44,11 +45,11 @@ import java.util.stream.Collectors;
  */
 @RequiredArgsConstructor
 public class ProxyTicketCompactor implements TicketCompactor<ProxyTicket> {
-    private static final int MAX_TICKET_LENGTH = 256;
-
     private final ObjectProvider<TicketFactory> ticketFactory;
     private final ServiceFactory serviceFactory;
     private final PrincipalFactory principalFactory;
+    @Getter
+    private long maximumTicketLength = 256;
 
     @Override
     public String compact(final StringBuilder builder, final Ticket ticket) throws Exception {
@@ -120,11 +121,5 @@ public class ProxyTicketCompactor implements TicketCompactor<ProxyTicket> {
                 name -> new DefaultAuthenticationHandlerExecutionResult(name, principal))))
             .addAttribute(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE, handlers)
             .build();
-    }
-
-    @Override
-    public void validate(final String finalTicketId) {
-        Assert.isTrue(finalTicketId.length() <= MAX_TICKET_LENGTH,
-            "Final ticket id %s length %s exceeds %s characters".formatted(finalTicketId, finalTicketId.length(), MAX_TICKET_LENGTH));
     }
 }

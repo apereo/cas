@@ -7,6 +7,8 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.ticket.TicketCatalogConfigurer;
 import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenCompactor;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.code.OAuth20CodeCompactor;
 import org.apereo.cas.ticket.registry.TicketCompactor;
@@ -19,6 +21,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
@@ -40,13 +43,28 @@ public class CasOAuth20TicketsAutoConfiguration {
         return new OAuth20TicketCatalogConfigurer();
     }
 
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "oauth20CodeTicketCompactor")
-    public TicketCompactor<OAuth20Code> oauth20CodeTicketCompactor(
-        @Qualifier(PrincipalFactory.BEAN_NAME) final PrincipalFactory principalFactory,
-        @Qualifier(WebApplicationService.BEAN_NAME_FACTORY) final ServiceFactory serviceFactory,
-        @Qualifier(TicketFactory.BEAN_NAME) final ObjectProvider<TicketFactory> ticketFactory) {
-        return new OAuth20CodeCompactor(ticketFactory, serviceFactory, principalFactory);
+    @Configuration(value = "CasOAuth20StatelessTicketsAutoConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "stateless")
+    static class CasOAuth20StatelessTicketsAutoConfiguration {
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "oauth20CodeTicketCompactor")
+        public TicketCompactor<OAuth20Code> oauth20CodeTicketCompactor(
+            @Qualifier(PrincipalFactory.BEAN_NAME) final PrincipalFactory principalFactory,
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY) final ServiceFactory serviceFactory,
+            @Qualifier(TicketFactory.BEAN_NAME) final ObjectProvider<TicketFactory> ticketFactory) {
+            return new OAuth20CodeCompactor(ticketFactory, serviceFactory, principalFactory);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "oauth20AccessTokenTicketCompactor")
+        public TicketCompactor<OAuth20AccessToken> oauth20AccessTokenTicketCompactor(
+            @Qualifier(PrincipalFactory.BEAN_NAME) final PrincipalFactory principalFactory,
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY) final ServiceFactory serviceFactory,
+            @Qualifier(TicketFactory.BEAN_NAME) final ObjectProvider<TicketFactory> ticketFactory) {
+            return new OAuth20AccessTokenCompactor(ticketFactory, serviceFactory, principalFactory);
+        }
     }
 }

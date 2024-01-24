@@ -63,6 +63,8 @@ class OidcResponseConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20AccessTokenResponseGenerator oidcAccessTokenResponseGenerator(
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
             @Qualifier("oidcIdTokenGenerator")
             final IdTokenGeneratorService oidcIdTokenGenerator,
             @Qualifier("accessTokenJwtBuilder")
@@ -71,7 +73,7 @@ class OidcResponseConfiguration {
             @Qualifier(OidcIssuerService.BEAN_NAME)
             final OidcIssuerService oidcIssuerService) {
             return new OidcAccessTokenResponseGenerator(oidcIdTokenGenerator, accessTokenJwtBuilder,
-                casProperties, oidcIssuerService);
+                ticketRegistry, casProperties, oidcIssuerService);
         }
     }
 

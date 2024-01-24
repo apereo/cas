@@ -7,10 +7,9 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.support.oauth.web.response.OAuth20AuthorizationRequest;
+import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGeneratedResult;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseResult;
-import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
-
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.web.servlet.ModelAndView;
@@ -36,10 +35,11 @@ public class OAuth20ResourceOwnerCredentialsResponseBuilder<T extends OAuth20Con
         resourceResolverName = AuditResourceResolvers.OAUTH2_AUTHORIZATION_RESPONSE_RESOURCE_RESOLVER)
     public ModelAndView build(final AccessTokenRequestContext holder) throws Throwable {
         val accessTokenResult = configurationContext.getAccessTokenGenerator().generate(holder);
+        val accessTokenTimeout = determineAccessTokenTimeoutInSeconds(accessTokenResult);
         val result = OAuth20AccessTokenResponseResult.builder()
             .registeredService(holder.getRegisteredService())
             .service(holder.getService())
-            .accessTokenTimeout(accessTokenResult.getAccessToken().map(OAuth20AccessToken::getExpiresIn).orElse(0L))
+            .accessTokenTimeout(accessTokenTimeout)
             .responseType(holder.getResponseType())
             .casProperties(configurationContext.getCasProperties())
             .generatedToken(accessTokenResult)
@@ -48,6 +48,10 @@ public class OAuth20ResourceOwnerCredentialsResponseBuilder<T extends OAuth20Con
             .build();
         configurationContext.getAccessTokenResponseGenerator().generate(result);
         return new ModelAndView();
+    }
+
+    protected Long determineAccessTokenTimeoutInSeconds(final OAuth20TokenGeneratedResult accessTokenResult) {
+        return OAuth20Utils.getAccessTokenTimeout(accessTokenResult);
     }
 
     @Override

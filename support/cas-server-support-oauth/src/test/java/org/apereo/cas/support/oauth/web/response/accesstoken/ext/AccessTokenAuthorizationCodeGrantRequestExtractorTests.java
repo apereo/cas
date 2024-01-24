@@ -108,6 +108,27 @@ class AccessTokenAuthorizationCodeGrantRequestExtractorTests extends AbstractOAu
     }
 
     @Test
+    void verifyStatelessExtraction() throws Throwable {
+        val service = getRegisteredService(REDIRECT_URI, UUID.randomUUID().toString(), CLIENT_SECRET);
+        service.setGenerateRefreshToken(true);
+        servicesManager.save(service);
+
+        val request = new MockHttpServletRequest();
+        request.addParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
+        request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
+        request.addParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
+
+        val principal = RegisteredServiceTestUtils.getPrincipal();
+        val code = addCode(principal, service).markTicketStateless();
+        request.addParameter(OAuth20Constants.CODE, code.getId());
+
+        val response = new MockHttpServletResponse();
+        val context = new JEEContext(request, response);
+        val result = extractor.extract(context);
+        assertNotNull(result);
+    }
+
+    @Test
     void verifyExpiredCode() throws Throwable {
         val service = getRegisteredService(REDIRECT_URI, UUID.randomUUID().toString(), CLIENT_SECRET);
         service.setGenerateRefreshToken(true);

@@ -7,12 +7,13 @@ import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.support.oauth.web.response.OAuth20AuthorizationRequest;
-
+import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.WebContext;
 import org.springframework.web.servlet.ModelAndView;
-
 import java.util.Map;
 import java.util.Optional;
 
@@ -56,5 +57,19 @@ public abstract class BaseOAuth20AuthorizationResponseBuilder<T extends OAuth20C
                 .resolveRequestParameter(context, OAuth20Constants.RESPONSE_TYPE).map(String::valueOf).orElse(StringUtils.EMPTY))
             .grantType(configurationContext.getRequestParameterResolver()
                 .resolveRequestParameter(context, OAuth20Constants.GRANT_TYPE).map(String::valueOf).orElse(StringUtils.EMPTY)));
+    }
+
+    protected OAuth20AccessToken resolveAccessToken(final Ticket givenAccessToken) {
+        return resolveToken(givenAccessToken, OAuth20AccessToken.class);
+    }
+
+    protected OAuth20RefreshToken resolveRefreshToken(final Ticket givenRefreshToken) {
+        return resolveToken(givenRefreshToken, OAuth20RefreshToken.class);
+    }
+
+    protected <U extends Ticket> U resolveToken(final Ticket token, final Class<U> clazz) {
+        return token.isStateless()
+            ? configurationContext.getTicketRegistry().getTicket(token.getId(), clazz)
+            : clazz.cast(token);
     }
 }

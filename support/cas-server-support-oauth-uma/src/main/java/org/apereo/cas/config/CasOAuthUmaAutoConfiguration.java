@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
@@ -167,9 +168,11 @@ public class CasOAuthUmaAutoConfiguration {
             @Qualifier("umaResourceSetRepository")
             final ResourceSetRepository umaResourceSetRepository,
             final CasConfigurationProperties casProperties,
-            final List<OAuth20IntrospectionResponseGenerator> oauthIntrospectionResponseGenerator) {
+            final List<OAuth20IntrospectionResponseGenerator> oauthIntrospectionResponseGenerator,
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER) final PrincipalResolver defaultPrincipalResolver) {
 
-            return UmaConfigurationContext.builder()
+            return UmaConfigurationContext
+                .builder()
                 .authenticationAttributeReleasePolicy(authenticationAttributeReleasePolicy)
                 .applicationContext(applicationContext)
                 .accessTokenGenerator(oauthTokenGenerator)
@@ -185,9 +188,9 @@ public class CasOAuthUmaAutoConfiguration {
                 .idTokenSigningAndEncryptionService(umaTokenSigningAndEncryptionService)
                 .ticketFactory(ticketFactory)
                 .introspectionResponseGenerator(oauthIntrospectionResponseGenerator)
+                .principalResolver(defaultPrincipalResolver)
                 .build();
         }
-
     }
 
     @Configuration(value = "CasOAuthUmaInterceptorConfiguration", proxyBeanMethods = false)

@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.config.CasStatelessTicketRegistryAutoConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.ProxyGrantingTicketImpl;
@@ -52,7 +53,8 @@ public class StatelessTicketManagementTests extends AbstractCentralAuthenticatio
         assertNotNull(validatedAssertion);
         assertTrue(validatedAssertion.isStateless());
         assertEquals(1, validatedAssertion.getChainedAuthentications().size());
-        assertTrue(validatedAssertion.getContext().isEmpty());
+        assertTrue(validatedAssertion.getContext().containsKey(Principal.class.getName()));
+        assertFalse(validatedAssertion.getContext().containsKey(TicketGrantingTicketImpl.class.getName()));
 
         val authentication = validatedAssertion.getPrimaryAuthentication();
         assertTrue(authentication.getSuccesses().containsKey(SimpleTestUsernamePasswordAuthenticationHandler.class.getSimpleName()));

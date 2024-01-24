@@ -28,7 +28,7 @@ import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.concurrent.CasReentrantLock;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.validation.TicketValidator;
+import org.apereo.cas.validation.TicketValidationResult;
 import org.apereo.cas.web.BrowserStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.SingleSignOnParticipationRequest;
@@ -88,7 +88,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
 
     private final CasReentrantLock lock = new CasReentrantLock();
 
-    protected static void logCasValidationAssertion(final TicketValidator.ValidationResult assertion) {
+    protected static void logCasValidationAssertion(final TicketValidationResult assertion) {
         LOGGER.debug("CAS Assertion Principal: [{}]", assertion.getPrincipal());
         LOGGER.debug("CAS Assertion Authentication Attributes: [{}]", assertion.getAttributes());
         LOGGER.debug("CAS Assertion Service: [{}]", assertion.getService());

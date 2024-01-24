@@ -35,7 +35,7 @@ public class NeverExpiresExpirationPolicy extends AbstractCasExpirationPolicy {
      */
     public static final ExpirationPolicy INSTANCE = new NeverExpiresExpirationPolicy();
 
-    private static final long MAX_EXPIRATION_IN_YEARS = 10L;
+    private static final long MAX_EXPIRATION_IN_YEARS = 50L;
 
     @Serial
     private static final long serialVersionUID = 3833747698242303540L;
