@@ -415,7 +415,8 @@ public class OAuth20Utils {
      * @return the access token timeout
      */
     public static Long getAccessTokenTimeout(final OAuth20TokenGeneratedResult accessTokenResult) {
-        return accessTokenResult.getAccessToken()
+        return accessTokenResult
+            .getAccessToken()
             .map(token -> {
                 if (token.isStateless()) {
                     val duration = Duration.between(ZonedDateTime.now(Clock.systemUTC()),
@@ -424,6 +425,6 @@ public class OAuth20Utils {
                 }
                 return ((OAuth20AccessToken) token).getExpiresIn();
             })
-            .orElseThrow();
+            .orElse(0L);
     }
 }

@@ -11,7 +11,6 @@ import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -19,7 +18,6 @@ import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -41,9 +39,9 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
     private static boolean shouldGenerateDeviceFlowResponse(final OAuth20AccessTokenResponseResult result) {
         val generatedToken = result.getGeneratedToken();
         return OAuth20ResponseTypes.DEVICE_CODE == result.getResponseType()
-               && generatedToken.getDeviceCode().isPresent()
-               && generatedToken.getUserCode().isPresent()
-               && generatedToken.getAccessToken().isEmpty();
+            && generatedToken.getDeviceCode().isPresent()
+            && generatedToken.getUserCode().isPresent()
+            && generatedToken.getAccessToken().isEmpty();
     }
 
     @Audit(action = AuditableActions.OAUTH2_ACCESS_TOKEN_RESPONSE,
@@ -92,12 +90,12 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
             model.put(OAuth20Constants.ACCESS_TOKEN, token.isStateless() ? token.getId() : encodeAccessToken(accessToken, result));
             model.put(OAuth20Constants.SCOPE, String.join(" ", accessToken.getScopes()));
             model.put(OAuth20Constants.EXPIRES_IN, accessToken.getExpiresIn());
-            if (accessToken.getAuthentication().containsAttribute(OAuth20Constants.DPOP_CONFIRMATION)) {
-                model.put(OAuth20Constants.TOKEN_TYPE, OAuth20Constants.TOKEN_TYPE_DPOP);
-            }
+
+            model.put(OAuth20Constants.TOKEN_TYPE,
+                accessToken.getAuthentication().containsAttribute(OAuth20Constants.DPOP_CONFIRMATION)
+                    ? OAuth20Constants.TOKEN_TYPE_DPOP : OAuth20Constants.TOKEN_TYPE_BEARER);
         });
         generatedToken.getRefreshToken().ifPresent(rt -> model.put(OAuth20Constants.REFRESH_TOKEN, rt.getId()));
-        model.put(OAuth20Constants.TOKEN_TYPE, OAuth20Constants.TOKEN_TYPE_BEARER);
         return model;
     }
 
