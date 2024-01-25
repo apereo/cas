@@ -35,6 +35,8 @@ public class CASOAuth20TicketValidator implements org.apereo.cas.client.validati
         val assertion = validationResult.getAssertion();
 
         val principalAttributes = new HashMap(validationResult.getPrincipal().getAttributes());
+        principalAttributes.put("stateless", validationResult.getAssertion().isStateless());
+        
         principalAttributes.putAll(assertion.getContext());
         val originalAttributes = Optional.ofNullable(assertion.getOriginalAuthentication())
             .map(Authentication.class::cast)

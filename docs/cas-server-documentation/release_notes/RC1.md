@@ -45,7 +45,7 @@ The following items are new improvements and enhancements presented in this rele
 
 The migration of the entire codebase to Spring Boot `3.3` is ongoing, and at the 
 moment is waiting for the wider ecosystem of supporting frameworks and libraries to catch up to 
-these changes. As a quick status update, we anticipate the work to finalize in the next few release candidates.
+changes. We anticipate the work to finalize in the next few release candidates and certainly prior to the final release.
 
 ### OpenRewrite Upgrade Recipes
 
@@ -63,7 +63,7 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 ### Testing Strategy
 
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `468` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `473` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`. Furthermore, a large number of test categories that group internal unit tests
 are now configured to run with parallelism enabled.
 
@@ -103,6 +103,7 @@ does not track or store tickets in a persistent manner via a backend storage tec
 - Spring Boot
 - Spring Data
 - Spring Session
+- Spring Cloud
 - Twilio
 - Pac4j
 - Grouper

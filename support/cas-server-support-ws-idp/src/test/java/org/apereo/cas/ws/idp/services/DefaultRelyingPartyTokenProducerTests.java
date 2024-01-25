@@ -6,7 +6,7 @@ import org.apereo.cas.authentication.SecurityTokenServiceClient;
 import org.apereo.cas.authentication.SecurityTokenServiceClientBuilder;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.validation.TicketValidator;
+import org.apereo.cas.validation.TicketValidationResult;
 import org.apereo.cas.ws.idp.WSFederationClaims;
 import org.apereo.cas.ws.idp.web.WSFederationRequest;
 
@@ -71,14 +71,14 @@ class DefaultRelyingPartyTokenProducerTests extends BaseCoreWsSecurityIdentityPr
             WSFederationRequest.of(request), request, assertion));
     }
 
-    private static TicketValidator.ValidationResult getValidationResult(final Map<String, List<Object>> attributes) throws Throwable {
+    private static TicketValidationResult getValidationResult(final Map<String, List<Object>> attributes) throws Throwable {
         val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("casuser", attributes);
-        val assertion = mock(TicketValidator.ValidationResult.class);
+        val assertion = mock(TicketValidationResult.class);
         when(assertion.getPrincipal()).thenReturn(principal);
         return assertion;
     }
 
-    private static TicketValidator.ValidationResult getValidationResult() throws Throwable {
+    private static TicketValidationResult getValidationResult() throws Throwable {
         return getValidationResult(CoreAuthenticationTestUtils.getAttributes());
     }
 

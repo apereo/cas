@@ -7,6 +7,7 @@ import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -18,6 +19,8 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serial;
+import java.time.Clock;
+import java.time.ZonedDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -54,10 +57,13 @@ public abstract class BaseDelegatingExpirationPolicy extends AbstractCasExpirati
      * Add policy.
      *
      * @param policy the policy
+     * @return the base delegating expiration policy
      */
-    public void addPolicy(final ExpirationPolicy policy) {
+    @CanIgnoreReturnValue
+    public BaseDelegatingExpirationPolicy addPolicy(final ExpirationPolicy policy) {
         LOGGER.trace("Adding expiration policy [{}] with name [{}]", policy, policy.getName());
         this.policies.put(policy.getName(), policy);
+        return this;
     }
 
     /**
@@ -65,10 +71,13 @@ public abstract class BaseDelegatingExpirationPolicy extends AbstractCasExpirati
      *
      * @param name   the name
      * @param policy the policy
+     * @return the base delegating expiration policy
      */
-    public void addPolicy(final String name, final ExpirationPolicy policy) {
+    @CanIgnoreReturnValue
+    public BaseDelegatingExpirationPolicy addPolicy(final String name, final ExpirationPolicy policy) {
         LOGGER.trace("Adding expiration policy [{}] with name [{}]", policy, name);
         this.policies.put(name, policy);
+        return this;
     }
 
     @Override
@@ -83,13 +92,7 @@ public abstract class BaseDelegatingExpirationPolicy extends AbstractCasExpirati
         LOGGER.trace("Activating expiration policy [{}] for ticket [{}]", policy.getName(), ticketState);
         return policy.isExpired(ticketState);
     }
-
-    /**
-     * Checks the given ticketState and gets the timeToLive for the relevant expiration policy.
-     *
-     * @param ticketState The ticketState to get the delegated expiration policy for
-     * @return The TTL for the relevant expiration policy
-     */
+    
     @Override
     public Long getTimeToLive(final Ticket ticketState) {
         val match = getExpirationPolicyFor((AuthenticationAwareTicket) ticketState);
@@ -115,12 +118,6 @@ public abstract class BaseDelegatingExpirationPolicy extends AbstractCasExpirati
         return this.policies.get(POLICY_NAME_DEFAULT).getTimeToIdle();
     }
 
-    /**
-     * Gets expiration policy by its name.
-     *
-     * @param ticketState the ticket state
-     * @return the expiration policy for
-     */
     protected Optional<ExpirationPolicy> getExpirationPolicyFor(final AuthenticationAwareTicket ticketState) {
         val name = getExpirationPolicyNameFor(ticketState);
         LOGGER.trace("Received expiration policy name [{}] to activate", name);
@@ -133,12 +130,12 @@ public abstract class BaseDelegatingExpirationPolicy extends AbstractCasExpirati
         return Optional.empty();
     }
 
-    /**
-     * Gets expiration policy name for.
-     *
-     * @param ticketState the ticket state
-     * @return the expiration policy name for
-     */
     protected abstract String getExpirationPolicyNameFor(AuthenticationAwareTicket ticketState);
 
+    @Override
+    public ZonedDateTime toMaximumExpirationTime(final Ticket ticketState) {
+        val result = getExpirationPolicyFor((AuthenticationAwareTicket) ticketState);
+        return result.map(policy -> policy.toMaximumExpirationTime(ticketState))
+            .orElseGet(() -> ZonedDateTime.now(Clock.systemUTC()));
+    }
 }

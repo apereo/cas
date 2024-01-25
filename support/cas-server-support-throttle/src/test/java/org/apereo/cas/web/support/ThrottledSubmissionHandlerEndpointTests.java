@@ -49,5 +49,6 @@ class ThrottledSubmissionHandlerEndpointTests extends AbstractCasEndpointTests {
 
         throttle.recordSubmissionFailure(request);
         assertFalse(throttledSubmissionHandlerEndpoint.getRecords().isEmpty());
+        assertDoesNotThrow(() -> throttledSubmissionHandlerEndpoint.release());
     }
 }

@@ -2,6 +2,7 @@ package org.apereo.cas.support.oauth.util;
 
 import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.FullRegexRegisteredServiceMatchingStrategy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
@@ -11,25 +12,27 @@ import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
+import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGeneratedResult;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResponseModeFactory;
 import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.util.CollectionUtils;
-
+import org.apereo.cas.validation.Assertion;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.pac4j.core.profile.BasicUserProfile;
 import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.jee.context.JEEContext;
+import org.pac4j.jee.context.session.JEESessionStore;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -144,7 +147,6 @@ class OAuth20UtilsTests extends AbstractOAuth20Tests {
         assertFalse(OAuth20Utils.checkCallbackValid(registeredService, "http://test2.org/cas"));
     }
 
-    
 
     @Test
     void verifyServiceHeader() throws Throwable {
@@ -190,5 +192,43 @@ class OAuth20UtilsTests extends AbstractOAuth20Tests {
         supportedResponseTypes.add(OAuth20ResponseTypes.ID_TOKEN.getType());
         registeredService.setSupportedResponseTypes(supportedResponseTypes);
         assertTrue(oauthRequestParameterResolver.isAuthorizedResponseTypeForService(context, registeredService));
+    }
+
+    @Test
+    void verifyFindStatelessRequest() throws Throwable {
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        val context = new JEEContext(request, response);
+
+        val assertion = mock(Assertion.class);
+        when(assertion.isStateless()).thenReturn(Boolean.TRUE);
+        when(assertion.getPrimaryAuthentication()).thenReturn(RegisteredServiceTestUtils.getAuthentication());
+        val profile = new BasicUserProfile();
+        profile.addAttribute(Principal.class.getName(), RegisteredServiceTestUtils.getPrincipal("casuser"));
+        profile.addAttribute("stateless", Boolean.TRUE);
+        val profileManager = new ProfileManager(context, new JEESessionStore());
+        profileManager.save(true, profile, false);
+        val result = OAuth20Utils.isStatelessAuthentication(profileManager);
+        assertTrue(result);
+    }
+
+    @Test
+    void verifyAccessTokenTimeout() throws Throwable {
+        val accessToken = getAccessToken();
+        when(accessToken.getExpiresIn()).thenReturn(60L);
+        val result = OAuth20TokenGeneratedResult.builder().accessToken(accessToken).build();
+        val timeout = OAuth20Utils.getAccessTokenTimeout(result);
+        assertEquals(accessToken.getExpiresIn(), timeout);
+    }
+
+    @Test
+    void verifyStatelessAccessTokenTimeout() throws Throwable {
+        val accessToken = getAccessToken();
+        when(accessToken.getExpiresIn()).thenReturn(60L);
+        when(accessToken.isStateless()).thenReturn(Boolean.TRUE);
+        val result = OAuth20TokenGeneratedResult.builder().accessToken(accessToken).build();
+        val timeout = OAuth20Utils.getAccessTokenTimeout(result);
+        assertTrue(timeout > 0);
+        assertNotEquals(accessToken.getExpiresIn(), timeout);
     }
 }

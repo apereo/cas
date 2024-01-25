@@ -21,7 +21,7 @@ import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasOAuth20AutoConfiguration;
-import org.apereo.cas.config.CasOAuth20ProtocolTicketCatalogAutoConfiguration;
+import org.apereo.cas.config.CasOAuth20TicketsAutoConfiguration;
 import org.apereo.cas.config.CasOidcAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
@@ -527,7 +527,7 @@ public abstract class AbstractOidcTests {
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasOidcAutoConfiguration.class,
-        CasOAuth20ProtocolTicketCatalogAutoConfiguration.class,
+        CasOAuth20TicketsAutoConfiguration.class,
         CasOAuth20AutoConfiguration.class,
         CasWebAppAutoConfiguration.class
     })

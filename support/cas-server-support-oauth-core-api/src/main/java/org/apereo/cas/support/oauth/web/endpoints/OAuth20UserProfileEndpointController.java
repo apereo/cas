@@ -89,20 +89,17 @@ public class OAuth20UserProfileEndpointController<T extends OAuth20Configuration
         }
         LoggingUtils.protocolMessage("OAuth/OpenID Connect User Profile Request",
             Map.of("Access Token", decodedAccessTokenId, "Client ID", accessTokenTicket.getClientId()));
-        
+
         try {
             validateAccessToken(accessTokenResult.getKey(), accessTokenTicket, request, response);
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-            return buildUnauthorizedResponseEntity(OAuth20Constants.INVALID_REQUEST);
-        }
-        return FunctionUtils.doAndHandle(() -> {
             updateAccessTokenUsage(accessTokenTicket);
             val context = new JEEContext(request, response);
             val map = getConfigurationContext().getUserProfileDataCreator().createFrom(accessTokenTicket, context);
             return getConfigurationContext().getUserProfileViewRenderer().render(map, accessTokenTicket, response);
-        },
-            e -> buildUnauthorizedResponseEntity(OAuth20Constants.INVALID_REQUEST)).get();
+        } catch (final Throwable e) {
+            LoggingUtils.error(LOGGER, e);
+            return buildUnauthorizedResponseEntity(OAuth20Constants.INVALID_REQUEST);
+        }
     }
 
     protected void validateAccessToken(final String accessTokenId, final OAuth20AccessToken accessToken,
@@ -110,11 +107,13 @@ public class OAuth20UserProfileEndpointController<T extends OAuth20Configuration
     }
 
     protected void updateAccessTokenUsage(final OAuth20AccessToken accessTokenTicket) throws Exception {
-        accessTokenTicket.update();
-        if (accessTokenTicket.isExpired()) {
-            getConfigurationContext().getTicketRegistry().deleteTicket(accessTokenTicket.getId());
-        } else {
-            getConfigurationContext().getTicketRegistry().updateTicket(accessTokenTicket);
+        if (!accessTokenTicket.isStateless()) {
+            accessTokenTicket.update();
+            if (accessTokenTicket.isExpired()) {
+                getConfigurationContext().getTicketRegistry().deleteTicket(accessTokenTicket.getId());
+            } else {
+                getConfigurationContext().getTicketRegistry().updateTicket(accessTokenTicket);
+            }
         }
     }
 

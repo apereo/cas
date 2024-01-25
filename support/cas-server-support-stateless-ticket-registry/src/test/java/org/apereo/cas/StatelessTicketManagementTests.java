@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.config.CasStatelessTicketRegistryAutoConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.ProxyGrantingTicketImpl;
@@ -23,6 +24,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.context.annotation.Import;
+import java.io.Serializable;
+import java.util.HashMap;
 import java.util.UUID;
 import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
@@ -50,7 +53,8 @@ public class StatelessTicketManagementTests extends AbstractCentralAuthenticatio
         assertNotNull(validatedAssertion);
         assertTrue(validatedAssertion.isStateless());
         assertEquals(1, validatedAssertion.getChainedAuthentications().size());
-        assertTrue(validatedAssertion.getContext().isEmpty());
+        assertTrue(validatedAssertion.getContext().containsKey(Principal.class.getName()));
+        assertFalse(validatedAssertion.getContext().containsKey(TicketGrantingTicketImpl.class.getName()));
 
         val authentication = validatedAssertion.getPrimaryAuthentication();
         assertTrue(authentication.getSuccesses().containsKey(SimpleTestUsernamePasswordAuthenticationHandler.class.getSimpleName()));
@@ -86,8 +90,11 @@ public class StatelessTicketManagementTests extends AbstractCentralAuthenticatio
         val ticketGrantingTicket = new TicketGrantingTicketImpl(UUID.randomUUID().toString(), authentication, NeverExpiresExpirationPolicy.INSTANCE);
         val serviceTicket = ticketGrantingTicket.grantServiceTicket(UUID.randomUUID().toString(),
             service, NeverExpiresExpirationPolicy.INSTANCE, true, TicketTrackingPolicy.noOp());
+
+        val properties = new HashMap<String, Serializable>(CoreAuthenticationTestUtils.getAttributes());
+        properties.put("url", RegisteredServiceTestUtils.CONST_TEST_URL2);
         val transientTicket = new TransientSessionTicketImpl(UUID.randomUUID().toString(),
-            NeverExpiresExpirationPolicy.INSTANCE, service, CoreAuthenticationTestUtils.getAttributes());
+            NeverExpiresExpirationPolicy.INSTANCE, service, properties);
         val proxyGrantingTicket = new ProxyGrantingTicketImpl(UUID.randomUUID().toString(),
             service, ticketGrantingTicket, authentication, NeverExpiresExpirationPolicy.INSTANCE);
         val proxyTicket = new ProxyTicketImpl(UUID.randomUUID().toString(),

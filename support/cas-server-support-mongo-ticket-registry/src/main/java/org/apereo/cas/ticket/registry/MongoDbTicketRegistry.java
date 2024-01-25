@@ -202,7 +202,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Stream<? extends Ticket> getSessionsFor(final String principalId) {
-        val ticketDefinitions = ticketCatalog.findTicketImplementations(TicketGrantingTicket.class);
+        val ticketDefinitions = ticketCatalog.findTicketDefinition(TicketGrantingTicket.class);
         return ticketDefinitions
             .stream()
             .map(this::getTicketCollectionInstanceByMetadata)

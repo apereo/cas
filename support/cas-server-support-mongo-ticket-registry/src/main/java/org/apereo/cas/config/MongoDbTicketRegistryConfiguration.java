@@ -44,9 +44,7 @@ class MongoDbTicketRegistryConfiguration {
         final TicketSerializationManager ticketSerializationManager) {
 
         val mongo = casProperties.getTicket().getRegistry().getMongo();
-        new MongoDbTicketRegistryFacilitator(ticketCatalog, mongoDbTicketRegistryTemplate,
-            mongo.isDropCollection(), mongo.isUpdateIndexes(), mongo.isDropIndexes())
-            .createTicketCollections();
+        new MongoDbTicketRegistryFacilitator(ticketCatalog, mongoDbTicketRegistryTemplate, mongo).createTicketCollections();
 
         val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(mongo.getCrypto(), "mongo");
         return new MongoDbTicketRegistry(cipher, ticketSerializationManager, ticketCatalog, mongoDbTicketRegistryTemplate);

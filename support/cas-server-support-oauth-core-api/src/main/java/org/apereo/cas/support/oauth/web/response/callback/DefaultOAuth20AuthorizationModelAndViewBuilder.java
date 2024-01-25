@@ -30,15 +30,6 @@ public class DefaultOAuth20AuthorizationModelAndViewBuilder implements OAuth20Au
         return builder.build(registeredService, redirectUrl, parameters);
     }
 
-    /**
-     * Prepare.
-     *
-     * @param registeredService the registered service
-     * @param redirectUrl       the redirect url
-     * @param parameters        the parameters
-     * @return the string
-     * @throws Exception the exception
-     */
     protected String prepareRedirectUrl(final OAuthRegisteredService registeredService,
                                         final String redirectUrl, final Map<String, String> parameters) throws Exception {
         return redirectUrl;

@@ -39,14 +39,14 @@ class AdaptiveMultifactorAuthenticationPolicyEventResolverTests extends BaseCasW
     @Autowired
     @Qualifier("adaptiveAuthenticationPolicyWebflowEventResolver")
     protected CasWebflowEventResolver resolver;
-
+    
     private MockRequestContext context;
 
     private MockHttpServletRequest request;
 
     @BeforeEach
     public void initialize() throws Exception {
-        this.context = MockRequestContext.create();
+        this.context = MockRequestContext.create(applicationContext);
 
         request = this.context.getHttpServletRequest();
         request.setRemoteAddr("185.86.151.11");

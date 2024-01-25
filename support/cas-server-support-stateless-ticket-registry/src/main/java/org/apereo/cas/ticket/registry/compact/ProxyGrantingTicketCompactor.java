@@ -18,6 +18,7 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.expiration.FixedInstantExpirationPolicy;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicketFactory;
+import org.apereo.cas.ticket.registry.TicketCompactor;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.EncodingUtils;
 import com.google.common.base.Splitter;
@@ -37,7 +38,7 @@ import java.util.stream.Collectors;
  * @since 7.0.0
  */
 @RequiredArgsConstructor
-public class ProxyGrantingTicketCompactor extends BaseTicketCompactor<ProxyGrantingTicket> {
+public class ProxyGrantingTicketCompactor implements TicketCompactor<ProxyGrantingTicket> {
     private final ObjectProvider<TicketFactory> ticketFactory;
     private final ServiceFactory serviceFactory;
     private final PrincipalFactory principalFactory;
