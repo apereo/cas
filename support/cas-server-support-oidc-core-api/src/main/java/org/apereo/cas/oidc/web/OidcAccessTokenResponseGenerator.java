@@ -58,7 +58,7 @@ public class OidcAccessTokenResponseGenerator extends OAuth20DefaultAccessTokenR
         accessToken
             .map(this::resolveAccessToken)
             .ifPresent(token -> {
-                if (result.getRegisteredService() instanceof final OidcRegisteredService oidcService
+                if (result.getRegisteredService() instanceof OidcRegisteredService
                     && !token.getScopes().contains(OidcConstants.CLIENT_REGISTRATION_SCOPE)) {
                     val idToken = generateIdToken(result, token);
                     model.put(OidcConstants.ID_TOKEN, idToken);
