@@ -8,7 +8,9 @@ import org.apereo.cas.ticket.RenewableServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
+import org.apereo.cas.ticket.expiration.BaseDelegatingExpirationPolicy;
 import org.apereo.cas.ticket.expiration.MultiTimeUseOrTimeoutExpirationPolicy;
+import org.apereo.cas.ticket.expiration.RememberMeDelegatingExpirationPolicy;
 import org.apereo.cas.ticket.expiration.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.util.RandomUtils;
@@ -53,7 +55,7 @@ public class StatelessTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
-    
+
     @Override
     protected boolean canTicketRegistryIterate() {
         return false;
@@ -66,20 +68,25 @@ public class StatelessTicketRegistryTests extends BaseTicketRegistryTests {
 
     @RepeatedTest(2)
     void verifyStatelessTickets() throws Exception {
+        val expirationPolicy = new RememberMeDelegatingExpirationPolicy()
+            .addPolicy(RememberMeDelegatingExpirationPolicy.POLICY_NAME_REMEMBER_ME,
+                new TicketGrantingTicketExpirationPolicy(60000, 2000))
+            .addPolicy(BaseDelegatingExpirationPolicy.POLICY_NAME_DEFAULT,
+                new TicketGrantingTicketExpirationPolicy(2000, 2000));
+
         val attributes = new HashMap<String, List<Object>>();
         IntStream.rangeClosed(1, 10).forEach(i -> attributes.put(RandomUtils.randomAlphabetic(1), List.of(RandomUtils.randomAlphabetic(10))));
-        
+
         val principal = RegisteredServiceTestUtils.getPrincipal(UUID.randomUUID().toString(), attributes);
         val originalAuthn = RegisteredServiceTestUtils.getAuthentication(principal, attributes);
-        val tgt = new TicketGrantingTicketImpl(ticketGrantingTicketId, originalAuthn,
-            new TicketGrantingTicketExpirationPolicy(5000, 2000));
+        val tgt = new TicketGrantingTicketImpl(ticketGrantingTicketId, originalAuthn, expirationPolicy);
         val addedTicketGrantingTicket = newTicketRegistry.addTicket(tgt);
         assertNotNull(addedTicketGrantingTicket.getExpirationPolicy());
         assertTrue(addedTicketGrantingTicket.isStateless());
         val foundTicketGrantingTicket = newTicketRegistry.getTicket(addedTicketGrantingTicket.getId());
         assertNotNull(foundTicketGrantingTicket);
         assertEquals(tgt, foundTicketGrantingTicket);
-        
+
         val service = RegisteredServiceTestUtils.getService("https://apereo.github.io/cas");
         service.getAttributes().putAll(attributes);
         servicesManager.save(RegisteredServiceTestUtils.getRegisteredService(service.getId()));
