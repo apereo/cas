@@ -18,7 +18,6 @@ import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import org.apereo.cas.validation.TicketValidationResult;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.oauth2.sdk.client.RedirectURIValidator;
@@ -44,7 +43,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -387,14 +385,13 @@ public class OAuth20Utils {
      * @param manager the manager
      * @return the ticket validation result
      */
-    public static TicketValidationResult findStatelessTicketValidationResult(final ProfileManager manager) {
+    public static Boolean isStatelessAuthentication(final ProfileManager manager) {
         return manager
             .getProfile()
             .stream()
-            .map(OAuth20Utils::findStatelessTicketValidationResult)
-            .filter(Objects::nonNull)
+            .map(OAuth20Utils::isStatelessAuthentication)
             .findFirst()
-            .orElse(null);
+            .orElse(Boolean.FALSE);
     }
 
     /**
@@ -402,10 +399,10 @@ public class OAuth20Utils {
      * @param profile the profile
      * @return the ticket validation result
      */
-    public static TicketValidationResult findStatelessTicketValidationResult(final UserProfile profile) {
-        val validationResult = (TicketValidationResult) profile.getAttribute(TicketValidationResult.class.getName());
+    public static Boolean isStatelessAuthentication(final UserProfile profile) {
+        val validationResult = (Boolean) profile.getAttribute("stateless");
         val principal = profile.getAttribute(Principal.class.getName());
-        return validationResult != null && validationResult.getAssertion().isStateless() && principal != null ? validationResult : null;
+        return validationResult != null && validationResult && principal != null;
     }
 
     /**

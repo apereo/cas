@@ -37,7 +37,7 @@ public class OAuth20TicketGrantingTicketAwareSecurityLogic extends DefaultSecuri
     protected List<UserProfile> loadProfiles(final CallContext callContext, final ProfileManager manager, final List<Client> clients) {
         val request = ((JEEContext) callContext.webContext()).getNativeRequest();
         val ticketGrantingTicket = getTicketGrantingTicket(manager, request);
-        val validationResult = OAuth20Utils.findStatelessTicketValidationResult(manager);
+        val validationResult = OAuth20Utils.isStatelessAuthentication(manager);
         if (ticketGrantingTicket == null && validationResult == null) {
             LOGGER.debug("No ticket-granting ticket => No user profiles found");
             return new ArrayList<>();

@@ -45,7 +45,7 @@ class OAuth20TicketGrantingTicketAwareSecurityLogicTests extends AbstractOAuth20
         val profile = new BasicUserProfile();
         profile.addAttribute(Principal.class.getName(), RegisteredServiceTestUtils.getPrincipal("casuser"));
         val validationResult = TicketValidationResult.builder().assertion(assertion).build();
-        profile.addAttribute(TicketValidationResult.class.getName(), validationResult);
+        profile.addAttribute("stateless", Boolean.TRUE);
         val context = new JEEContext(request, response);
         val profileManager = new ProfileManager(context, new JEESessionStore());
         profileManager.save(true, profile, false);
