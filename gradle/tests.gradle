@@ -210,10 +210,6 @@ tasks.named('test') {
 }
 
 tasks.withType(Test).configureEach {
-    it.inputs.property("github.repository") {
-        System.getenv("GITHUB_REPOSITORY") ?: "apereo/cas"
-    }
-
     scanForTestClasses = false
     ignoreFailures = providers.systemProperty("ignoreTestFailures").present
     forkEvery = 2000
@@ -221,9 +217,8 @@ tasks.withType(Test).configureEach {
     if (maxParallelForks != 2) {
         logger.info "Maximum number of parallel forks is set to ${maxParallelForks}"
     }
-    def ci = System.getenv().containsKey("CI")
+
     systemProperty("spring.main.banner-mode", "off")
-    systemProperty("CI", ci)
     
     failFast = true
 
