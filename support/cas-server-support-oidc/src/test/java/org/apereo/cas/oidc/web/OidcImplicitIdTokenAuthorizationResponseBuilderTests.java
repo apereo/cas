@@ -3,6 +3,7 @@ package org.apereo.cas.oidc.web;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.oidc.AbstractOidcTests;
+import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
@@ -12,10 +13,15 @@ import org.apereo.cas.support.oauth.web.response.OAuth20AuthorizationRequest;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 
 import lombok.val;
+import org.apache.hc.core5.net.URIBuilder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.profile.CommonProfile;
+import org.springframework.web.servlet.view.AbstractUrlBasedView;
+import org.springframework.web.servlet.view.RedirectView;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +39,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class OidcImplicitIdTokenAuthorizationResponseBuilderTests extends AbstractOidcTests {
     @Test
     void verifyOperation() throws Throwable {
-        val authzRequest = OAuth20AuthorizationRequest.builder()
+        val authzRequest = OAuth20AuthorizationRequest
+            .builder()
             .responseType(OAuth20ResponseTypes.ID_TOKEN.getType())
             .build();
         assertTrue(oidcImplicitIdTokenCallbackUrlBuilder.supports(authzRequest));
@@ -68,7 +75,17 @@ class OidcImplicitIdTokenAuthorizationResponseBuilderTests extends AbstractOidcT
             .build();
 
         servicesManager.save(registeredService);
-        val mv = oidcImplicitIdTokenCallbackUrlBuilder.build(holder);
-        assertNotNull(mv);
+        val modelAndView = oidcImplicitIdTokenCallbackUrlBuilder.build(holder);
+        assertNotNull(modelAndView);
+        val redirectUrl = ((AbstractUrlBasedView) modelAndView.getView()).getUrl();
+        assertNotNull(redirectUrl);
+        val urlBuilder = new URIBuilder(redirectUrl);
+        assertTrue(urlBuilder.getQueryParams().isEmpty());
+
+        val fragment = urlBuilder.getFragment();
+        assertTrue(fragment.contains(OidcConstants.ID_TOKEN + '='));
+        assertTrue(fragment.contains(OAuth20Constants.STATE + '='));
+        assertTrue(fragment.contains(OAuth20Constants.NONCE + '='));
+        assertFalse(fragment.contains(OAuth20Constants.ACCESS_TOKEN + '='));
     }
 }

@@ -26,8 +26,8 @@ public interface IdTokenGeneratorService {
      * @throws Throwable the throwable
      */
     OidcIdToken generate(OAuth20AccessToken accessToken,
-                              UserProfile userProfile,
-                              OAuth20ResponseTypes responseType,
-                              OAuth20GrantTypes grantType,
-                              OAuthRegisteredService registeredService) throws Throwable;
+                         UserProfile userProfile,
+                         OAuth20ResponseTypes responseType,
+                         OAuth20GrantTypes grantType,
+                         OAuthRegisteredService registeredService) throws Throwable;
 }
