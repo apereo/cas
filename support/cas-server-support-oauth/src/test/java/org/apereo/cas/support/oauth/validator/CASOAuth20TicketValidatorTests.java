@@ -12,7 +12,6 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.util.http.HttpRequestUtils;
-import org.apereo.cas.validation.TicketValidationResult;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -75,7 +74,7 @@ class CASOAuth20TicketValidatorTests extends AbstractOAuth20Tests {
         assertTrue(profileResult.isPresent());
         val up = (BasicUserProfile) profileResult.get();
         assertTrue(up.containsAttribute(TicketGrantingTicket.class.getName()));
-        assertTrue(up.containsAttribute(TicketValidationResult.class.getName()));
+        assertTrue(up.containsAttribute("stateless"));
         assertTrue(up.containsAttribute("uid"));
         assertTrue(up.containsAttribute("givenName"));
         assertTrue(up.containsAttribute("memberOf"));

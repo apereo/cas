@@ -235,7 +235,7 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
             .findFirst()
             .map(Unchecked.function(builder -> {
                 if (authzRequest.isSingleSignOnSessionRequired() && payload.getTicketGrantingTicket() == null
-                    && OAuth20Utils.findStatelessTicketValidationResult(payload.getUserProfile()) == null) {
+                    && OAuth20Utils.isStatelessAuthentication(payload.getUserProfile()) == null) {
                     val message = String.format("Missing ticket-granting-ticket for client id [%s] and service [%s]",
                         authzRequest.getClientId(), registeredService.getName());
                     LOGGER.error(message);
