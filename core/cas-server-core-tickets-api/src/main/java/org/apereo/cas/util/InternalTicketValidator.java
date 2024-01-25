@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
+import org.apereo.cas.validation.TicketValidationResult;
 import org.apereo.cas.validation.TicketValidator;
 
 import lombok.RequiredArgsConstructor;
@@ -29,7 +30,7 @@ public class InternalTicketValidator implements TicketValidator {
     private final ServicesManager servicesManager;
 
     @Override
-    public ValidationResult validate(final String ticketId, final String serviceId) throws Throwable {
+    public TicketValidationResult validate(final String ticketId, final String serviceId) throws Throwable {
         val service = webApplicationServiceFactory.createService(serviceId);
         val assertion = centralAuthenticationService.validateServiceTicket(ticketId, service);
         val authentication = assertion.getPrimaryAuthentication();
@@ -38,7 +39,8 @@ public class InternalTicketValidator implements TicketValidator {
         val authenticationAttributes = authenticationAttributeReleasePolicy.getAuthenticationAttributesForRelease(
             authentication, assertion, new HashMap<>(0), registeredService);
 
-        return ValidationResult.builder()
+        return TicketValidationResult
+            .builder()
             .principal(principal)
             .service(service)
             .attributes(authenticationAttributes)

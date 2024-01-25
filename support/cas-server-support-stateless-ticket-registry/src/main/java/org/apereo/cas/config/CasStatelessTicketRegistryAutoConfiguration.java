@@ -73,7 +73,7 @@ public class CasStatelessTicketRegistryAutoConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "statelessTicketRegistry")
     public TicketRegistry ticketRegistry(
-        final List<TicketCompactor<Ticket>> ticketCompactors,
+        final List<TicketCompactor<? extends Ticket>> ticketCompactors,
         @Qualifier(TicketCatalog.BEAN_NAME)
         final TicketCatalog ticketCatalog,
         @Qualifier(TicketSerializationManager.BEAN_NAME)

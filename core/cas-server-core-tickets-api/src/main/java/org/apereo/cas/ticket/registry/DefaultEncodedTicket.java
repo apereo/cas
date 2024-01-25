@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.ticket.EncodedTicket;
+import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.util.EncodingUtils;
 
@@ -12,6 +13,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
@@ -43,6 +45,9 @@ public class DefaultEncodedTicket implements EncodedTicket {
     private final String prefix;
 
     private boolean stateless;
+
+    @Setter
+    private ExpirationPolicy expirationPolicy;
 
     @JsonCreator
     public DefaultEncodedTicket(@JsonProperty("encoded") final String encodedTicket,

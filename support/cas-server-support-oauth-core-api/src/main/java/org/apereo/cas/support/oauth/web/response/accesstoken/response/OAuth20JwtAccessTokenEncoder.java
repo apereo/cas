@@ -1,11 +1,15 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.response;
 
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.ticket.AuthenticationAwareTicket;
+import org.apereo.cas.ticket.OAuth20Token;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CollectionUtils;
@@ -22,10 +26,11 @@ import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-
 import java.text.ParseException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -54,6 +59,7 @@ public class OAuth20JwtAccessTokenEncoder implements CipherExecutor<String, Stri
     /**
      * Decode a JWT token or return an opaque token as-is.
      * Avoid logging stack trace if JWT parsing fails.
+     *
      * @param tokenId    encrypted value
      * @param parameters the parameters
      * @return the decoded value.
@@ -90,9 +96,23 @@ public class OAuth20JwtAccessTokenEncoder implements CipherExecutor<String, Stri
 
     protected JwtBuilder.JwtRequest getJwtRequestBuilder(
         final OAuthRegisteredService registeredService,
-        final OAuth20AccessToken accessToken) {
-        
+        final AuthenticationAwareTicket accessToken) {
+
         val authentication = accessToken.getAuthentication();
+        val builder = JwtBuilder.JwtRequest.builder();
+        return builder
+            .serviceAudience(determineServiceAudience(registeredService, accessToken))
+            .issueDate(DateTimeUtils.dateOf(authentication.getAuthenticationDate()))
+            .jwtId(accessToken.getId())
+            .subject(authentication.getPrincipal().getId())
+            .validUntilDate(determineValidUntilDate(accessToken))
+            .attributes(collectAttributes(authentication))
+            .registeredService(Optional.of(registeredService))
+            .issuer(StringUtils.defaultIfBlank(this.issuer, casProperties.getServer().getPrefix()))
+            .build();
+    }
+
+    protected Map<String, List<Object>> collectAttributes(final Authentication authentication) {
         val attributes = new HashMap<>(authentication.getAttributes());
         attributes.putAll(authentication.getPrincipal().getAttributes());
 
@@ -113,31 +133,28 @@ public class OAuth20JwtAccessTokenEncoder implements CipherExecutor<String, Stri
                     attributes.put(claim.getKey(), List.of(claim.getValue()));
                 });
         }
+        return attributes;
+    }
 
-        val builder = JwtBuilder.JwtRequest.builder();
-        val validUntilDate = authentication.getAuthenticationDate()
-            .plusSeconds(accessToken.getExpirationPolicy().getTimeToLive());
+    protected Date determineValidUntilDate(final AuthenticationAwareTicket accessToken) {
+        val authenticationDate = accessToken.getAuthentication().getAuthenticationDate();
+        return DateTimeUtils.dateOf(authenticationDate.plusSeconds(accessToken.getExpirationPolicy().getTimeToLive()));
+    }
 
-        val serviceAudiences = registeredService.getAudience().isEmpty()
-            ? Set.of(accessToken.getClientId())
-            : registeredService.getAudience();
-        return builder
-            .serviceAudience(serviceAudiences)
-            .issueDate(DateTimeUtils.dateOf(authentication.getAuthenticationDate()))
-            .jwtId(accessToken.getId())
-            .subject(authentication.getPrincipal().getId())
-            .validUntilDate(DateTimeUtils.dateOf(validUntilDate))
-            .attributes(attributes)
-            .registeredService(Optional.of(registeredService))
-            .issuer(StringUtils.defaultIfBlank(this.issuer, casProperties.getServer().getPrefix()))
-            .build();
+    protected Set<String> determineServiceAudience(final OAuthRegisteredService registeredService,
+                                                   final AuthenticationAwareTicket accessToken) {
+        if (registeredService.getAudience().isEmpty()) {
+            return Set.of(((OAuth20Token) accessToken).getClientId());
+        }
+        return registeredService.getAudience();
     }
 
     protected boolean shouldEncodeAsJwt(final OAuthRegisteredService oAuthRegisteredService,
-                                        final OAuth20AccessToken accessToken) {
+                                        final Ticket accessToken) {
         return casProperties.getAuthn().getOauth().getAccessToken().isCreateAsJwt()
             || (oAuthRegisteredService != null && oAuthRegisteredService.isJwtAccessToken())
-            || accessToken.getAuthentication().containsAttribute(OAuth20Constants.DPOP);
+            || (accessToken instanceof final AuthenticationAwareTicket aat
+            && aat.getAuthentication().containsAttribute(OAuth20Constants.DPOP));
     }
 
     protected RegisteredService resolveRegisteredService(final Header header) {

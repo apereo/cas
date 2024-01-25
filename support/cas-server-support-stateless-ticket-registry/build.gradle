@@ -10,7 +10,7 @@ ext {
 
 dependencies {
     api project(":api:cas-server-core-api-util")
-
+    
     implementation project(":core:cas-server-core-logging")
     implementation project(":core:cas-server-core-tickets-api")
     implementation project(":core:cas-server-core-services-api")
@@ -32,8 +32,11 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-audit", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-audit-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
-    
+
     testImplementation project(path: ":support:cas-server-support-reports", configuration: "tests")
+    
+    testImplementation project(":support:cas-server-support-person-directory")
+    testImplementation project(":support:cas-server-support-reports")
 
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-web")
@@ -51,6 +54,4 @@ dependencies {
     testImplementation project(":core:cas-server-core-webflow-mfa")
     testImplementation project(":core:cas-server-core-webflow")
 
-    testImplementation project(":support:cas-server-support-person-directory")
-    testImplementation project(":support:cas-server-support-reports")
 }

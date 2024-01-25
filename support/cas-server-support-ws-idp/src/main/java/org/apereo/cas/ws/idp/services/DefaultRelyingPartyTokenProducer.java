@@ -5,7 +5,7 @@ import org.apereo.cas.authentication.SecurityTokenServiceClientBuilder;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.validation.TicketValidator;
+import org.apereo.cas.validation.TicketValidationResult;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.web.WSFederationRequest;
 
@@ -59,7 +59,7 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
     @Override
     public String produce(final SecurityToken securityToken, final WSFederationRegisteredService service,
                           final WSFederationRequest fedRequest, final HttpServletRequest request,
-                          final TicketValidator.ValidationResult assertion) throws Exception {
+                          final TicketValidationResult assertion) throws Exception {
         val sts = clientBuilder.buildClientForRelyingPartyTokenResponses(securityToken, service);
         mapAttributesToRequestedClaims(service, sts, assertion);
         val rpToken = requestSecurityTokenResponse(service, sts, assertion);
@@ -69,7 +69,7 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
 
     protected void mapAttributesToRequestedClaims(final WSFederationRegisteredService service,
                                                   final SecurityTokenServiceClient sts,
-                                                  final TicketValidator.ValidationResult assertion) throws Exception {
+                                                  final TicketValidationResult assertion) throws Exception {
         val writer = new W3CDOMStreamWriter();
         writer.writeStartElement("wst", "Claims", STSUtils.WST_NS_05_12);
         writer.writeNamespace("wst", STSUtils.WST_NS_05_12);
@@ -84,14 +84,14 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
     }
 
     protected void writeAttributes(final XMLStreamWriter writer,
-                                   final TicketValidator.ValidationResult assertion,
+                                   final TicketValidationResult assertion,
                                    final WSFederationRegisteredService service) {
         attributeWriter.write(writer, assertion.getPrincipal(), service);
     }
 
     private Element requestSecurityTokenResponse(final WSFederationRegisteredService service,
                                                  final SecurityTokenServiceClient sts,
-                                                 final TicketValidator.ValidationResult assertion) {
+                                                 final TicketValidationResult assertion) {
         try {
             val properties = sts.getProperties();
             properties.put(SecurityConstants.USERNAME, assertion.getPrincipal().getId());

@@ -47,7 +47,7 @@ public class PasswordStrengthAuthenticationPostProcessorTests extends BasePasswo
         val exception = assertThrows(WeakPasswordException.class,
             () -> passwordStrengthAuthenticationPostProcessor.process(builder, transaction));
 
-        val requestContext = MockRequestContext.create();
+        val requestContext = MockRequestContext.create(applicationContext);
         assertTrue(weakPasswordWebflowExceptionHandler.supports(exception, requestContext));
         val event = weakPasswordWebflowExceptionHandler.handle(exception, requestContext);
         assertEquals(WeakPasswordException.class.getSimpleName(), event.getId());

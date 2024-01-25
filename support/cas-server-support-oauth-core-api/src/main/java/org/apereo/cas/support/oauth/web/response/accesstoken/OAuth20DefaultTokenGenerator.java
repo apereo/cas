@@ -46,40 +46,23 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
-    /**
-     * The Access token factory.
-     */
     protected final OAuth20AccessTokenFactory accessTokenFactory;
 
-    /**
-     * The device token factory.
-     */
     protected final OAuth20DeviceTokenFactory deviceTokenFactory;
 
-    /**
-     * The device user code factory.
-     */
     protected final OAuth20DeviceUserCodeFactory deviceUserCodeFactory;
 
-    /**
-     * The refresh token factory.
-     */
     protected final OAuth20RefreshTokenFactory refreshTokenFactory;
 
-    /**
-     * The CAS service.
-     */
     protected final TicketRegistry ticketRegistry;
 
-    /**
-     * CAS configuration settings.
-     */
     protected final CasConfigurationProperties casProperties;
 
     private static OAuth20TokenGeneratedResult generateAccessTokenResult(
         final AccessTokenRequestContext holder,
-        final Pair<OAuth20AccessToken, OAuth20RefreshToken> pair) {
-        return OAuth20TokenGeneratedResult.builder()
+        final Pair<Ticket, Ticket> pair) {
+        return OAuth20TokenGeneratedResult
+            .builder()
             .registeredService(holder.getRegisteredService())
             .accessToken(pair.getKey())
             .refreshToken(pair.getValue())
@@ -89,13 +72,13 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
     }
 
     @Override
-    public OAuth20TokenGeneratedResult generate(final AccessTokenRequestContext holder) throws Throwable {
-        if (OAuth20ResponseTypes.DEVICE_CODE.equals(holder.getResponseType())) {
-            return generateAccessTokenOAuthDeviceCodeResponseType(holder);
+    public OAuth20TokenGeneratedResult generate(final AccessTokenRequestContext tokenRequestContext) throws Throwable {
+        if (OAuth20ResponseTypes.DEVICE_CODE == tokenRequestContext.getResponseType()) {
+            return generateAccessTokenOAuthDeviceCodeResponseType(tokenRequestContext);
         }
 
-        val pair = generateAccessTokenOAuthGrantTypes(holder);
-        return generateAccessTokenResult(holder, pair);
+        val accessAndRefreshTokens = generateAccessTokenOAuthGrantTypes(tokenRequestContext);
+        return generateAccessTokenResult(tokenRequestContext, accessAndRefreshTokens);
     }
 
     protected OAuth20TokenGeneratedResult generateAccessTokenOAuthDeviceCodeResponseType(final AccessTokenRequestContext holder) throws Throwable {
@@ -148,7 +131,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
             .build();
     }
 
-    protected Pair<OAuth20AccessToken, OAuth20RefreshToken> generateAccessTokenOAuthGrantTypes(
+    protected Pair<Ticket, Ticket> generateAccessTokenOAuthGrantTypes(
         final AccessTokenRequestContext holder) throws Throwable {
         LOGGER.debug("Creating access token for [{}]", holder.getService());
         val ticketGrantingTicket = holder.getTicketGrantingTicket();
@@ -183,10 +166,10 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
             holder.getGrantType());
 
         LOGGER.debug("Created access token [{}]", accessToken);
-        addTicketToRegistry(accessToken, ticketGrantingTicket);
+        val addedAccessToken = addTicketToRegistry(accessToken, ticketGrantingTicket);
         LOGGER.debug("Added access token [{}] to registry", accessToken);
 
-        updateOAuthCode(holder, accessToken);
+        updateOAuthCode(holder, addedAccessToken);
 
         val refreshToken = FunctionUtils.doIf(holder.isGenerateRefreshToken(),
             Unchecked.supplier(() -> generateRefreshToken(holder, accessToken)),
@@ -195,15 +178,15 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
                 return null;
             }).get();
 
-        return Pair.of(accessToken, refreshToken);
+        return Pair.of(addedAccessToken, refreshToken);
     }
 
-    protected void updateOAuthCode(final AccessTokenRequestContext holder, final OAuth20AccessToken accessToken) throws Exception {
-        if (holder.isRefreshToken()) {
+    protected void updateOAuthCode(final AccessTokenRequestContext holder, final Ticket accessToken) throws Exception {
+        if (holder.isRefreshToken() && !holder.getToken().isStateless()) {
             val refreshToken = (OAuth20RefreshToken) holder.getToken();
             refreshToken.getAccessTokens().add(accessToken.getId());
             ticketRegistry.updateTicket(refreshToken);
-        } else if (holder.isCodeToken()) {
+        } else if (holder.isCodeToken() && !holder.getToken().isStateless()) {
             val codeState = (Ticket) holder.getToken();
             codeState.update();
 
@@ -216,27 +199,22 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         }
     }
 
-    protected void addTicketToRegistry(final Ticket ticket, final Ticket ticketGrantingTicket) throws Exception {
+    protected Ticket addTicketToRegistry(final Ticket ticket, final Ticket ticketGrantingTicket) throws Exception {
         LOGGER.debug("Adding ticket [{}] to registry", ticket);
-        ticketRegistry.addTicket(ticket);
+        val addedToken = ticketRegistry.addTicket(ticket);
         if (ticketGrantingTicket != null) {
             LOGGER.debug("Updating parent ticket-granting ticket [{}]", ticketGrantingTicket);
             ticketRegistry.updateTicket(ticketGrantingTicket);
         }
+        return addedToken;
     }
 
-    /**
-     * Add ticket to registry.
-     *
-     * @param ticket the ticket
-     * @throws Exception the exception
-     */
-    protected void addTicketToRegistry(final Ticket ticket) throws Exception {
-        addTicketToRegistry(ticket, null);
+    protected Ticket addTicketToRegistry(final Ticket ticket) throws Exception {
+        return addTicketToRegistry(ticket, null);
     }
 
-    protected OAuth20RefreshToken generateRefreshToken(final AccessTokenRequestContext responseHolder,
-                                                       final OAuth20AccessToken accessToken) throws Throwable {
+    protected Ticket generateRefreshToken(final AccessTokenRequestContext responseHolder,
+                                          final OAuth20AccessToken accessToken) throws Throwable {
         LOGGER.debug("Creating refresh token for [{}]", responseHolder.getService());
         val refreshToken = refreshTokenFactory.create(responseHolder.getService(),
             responseHolder.getAuthentication(),
@@ -248,11 +226,11 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
             responseHolder.getResponseType(),
             responseHolder.getGrantType());
         LOGGER.debug("Adding refresh token [{}] to the registry", refreshToken);
-        addTicketToRegistry(refreshToken, responseHolder.getTicketGrantingTicket());
+        val addedRefreshToken = addTicketToRegistry(refreshToken, responseHolder.getTicketGrantingTicket());
         if (responseHolder.isExpireOldRefreshToken()) {
             expireOldRefreshToken(responseHolder);
         }
-        return refreshToken;
+        return addedRefreshToken;
     }
 
     private OAuth20DeviceUserCode getDeviceUserCodeFromRegistry(final OAuth20DeviceToken deviceCodeTicket) {
@@ -276,7 +254,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
             .get();
     }
 
-    private Pair<OAuth20DeviceToken, OAuth20DeviceUserCode> createDeviceTokensInTicketRegistry(
+    private Pair<Ticket, Ticket> createDeviceTokensInTicketRegistry(
         final AccessTokenRequestContext holder) throws Throwable {
         val deviceToken = deviceTokenFactory.createDeviceCode(holder.getService());
         LOGGER.debug("Created device code token [{}]", deviceToken.getId());
@@ -284,13 +262,13 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         val deviceUserCode = deviceUserCodeFactory.createDeviceUserCode(deviceToken);
         LOGGER.debug("Created device user code token [{}]", deviceUserCode.getId());
 
-        addTicketToRegistry(deviceToken);
-        LOGGER.debug("Added device token [{}] to registry", deviceToken);
+        val addedDeviceToken = addTicketToRegistry(deviceToken);
+        LOGGER.debug("Added device token [{}] to registry", addedDeviceToken);
 
-        addTicketToRegistry(deviceUserCode);
-        LOGGER.debug("Added device user token [{}] to registry", deviceUserCode);
+        val addedDeviceUserCode = addTicketToRegistry(deviceUserCode);
+        LOGGER.debug("Added device user token [{}] to registry", addedDeviceUserCode);
 
-        return Pair.of(deviceToken, deviceUserCode);
+        return Pair.of(addedDeviceToken, addedDeviceUserCode);
     }
 
     private void expireOldRefreshToken(final AccessTokenRequestContext responseHolder) throws Exception {

@@ -17,6 +17,11 @@ import java.util.Map;
 public interface OAuth20UserProfileDataCreator {
 
     /**
+     * Bean name of {@link OAuth20UserProfileDataCreator}.
+     */
+    String BEAN_NAME = "oauth2UserProfileDataCreator";
+
+    /**
      * Create internal user profile data.
      *
      * @param accessToken oauth access token

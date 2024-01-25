@@ -6,10 +6,11 @@ import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -17,7 +18,6 @@ import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -33,15 +33,15 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
         .defaultTypingEnabled(false).build().toObjectMapper();
 
     protected final JwtBuilder accessTokenJwtBuilder;
-
-    private final CasConfigurationProperties casProperties;
+    protected final TicketRegistry ticketRegistry;
+    protected final CasConfigurationProperties casProperties;
 
     private static boolean shouldGenerateDeviceFlowResponse(final OAuth20AccessTokenResponseResult result) {
         val generatedToken = result.getGeneratedToken();
         return OAuth20ResponseTypes.DEVICE_CODE == result.getResponseType()
-               && generatedToken.getDeviceCode().isPresent()
-               && generatedToken.getUserCode().isPresent()
-               && generatedToken.getAccessToken().isEmpty();
+            && generatedToken.getDeviceCode().isPresent()
+            && generatedToken.getUserCode().isPresent()
+            && generatedToken.getAccessToken().isEmpty();
     }
 
     @Audit(action = AuditableActions.OAUTH2_ACCESS_TOKEN_RESPONSE,
@@ -52,7 +52,6 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
         if (shouldGenerateDeviceFlowResponse(result)) {
             return generateResponseForDeviceToken(result);
         }
-
         return generateResponseForAccessToken(result);
     }
 
@@ -70,8 +69,8 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
         model.put(OAuth20Constants.DEVICE_VERIFICATION_URI, uri);
         model.put(OAuth20Constants.EXPIRES_IN, result.getDeviceTokenTimeout());
         val generatedToken = result.getGeneratedToken();
-        generatedToken.getUserCode().ifPresent(c -> model.put(OAuth20Constants.DEVICE_USER_CODE, c));
-        generatedToken.getDeviceCode().ifPresent(c -> model.put(OAuth20Constants.DEVICE_CODE, c));
+        generatedToken.getUserCode().ifPresent(userCode -> model.put(OAuth20Constants.DEVICE_USER_CODE, userCode));
+        generatedToken.getDeviceCode().ifPresent(deviceCode -> model.put(OAuth20Constants.DEVICE_CODE, deviceCode));
         model.put(OAuth20Constants.DEVICE_INTERVAL, result.getDeviceRefreshInterval());
         return model;
     }
@@ -87,19 +86,21 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
         val model = new LinkedHashMap<String, Object>();
         val generatedToken = result.getGeneratedToken();
         generatedToken.getAccessToken().ifPresent(token -> {
-            model.put(OAuth20Constants.ACCESS_TOKEN, encodeAccessToken(token, result));
-            model.put(OAuth20Constants.SCOPE, String.join(" ", token.getScopes()));
-            model.put(OAuth20Constants.EXPIRES_IN, token.getExpiresIn());
-        });
-        generatedToken.getRefreshToken().ifPresent(t -> model.put(OAuth20Constants.REFRESH_TOKEN, t.getId()));
-        model.put(OAuth20Constants.TOKEN_TYPE, OAuth20Constants.TOKEN_TYPE_BEARER);
+            val accessToken = resolveAccessToken(token);
+            model.put(OAuth20Constants.ACCESS_TOKEN, token.isStateless() ? token.getId() : encodeAccessToken(accessToken, result));
+            model.put(OAuth20Constants.SCOPE, String.join(" ", accessToken.getScopes()));
+            model.put(OAuth20Constants.EXPIRES_IN, accessToken.getExpiresIn());
 
-        generatedToken.getAccessToken().ifPresent(token -> {
-            if (token.getAuthentication().containsAttribute(OAuth20Constants.DPOP_CONFIRMATION)) {
-                model.put(OAuth20Constants.TOKEN_TYPE, OAuth20Constants.TOKEN_TYPE_DPOP);
-            }
+            model.put(OAuth20Constants.TOKEN_TYPE,
+                accessToken.getAuthentication().containsAttribute(OAuth20Constants.DPOP_CONFIRMATION)
+                    ? OAuth20Constants.TOKEN_TYPE_DPOP : OAuth20Constants.TOKEN_TYPE_BEARER);
         });
+        generatedToken.getRefreshToken().ifPresent(rt -> model.put(OAuth20Constants.REFRESH_TOKEN, rt.getId()));
         return model;
+    }
+
+    protected OAuth20AccessToken resolveAccessToken(final Ticket token) {
+        return (OAuth20AccessToken) (token.isStateless() ? ticketRegistry.getTicket(token.getId()) : token);
     }
 
     protected String encodeAccessToken(final OAuth20AccessToken accessToken,
@@ -110,7 +111,8 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
 
     protected OAuth20JwtAccessTokenEncoder.OAuth20JwtAccessTokenEncoderBuilder getAccessTokenBuilder(
         final OAuth20AccessToken accessToken, final OAuth20AccessTokenResponseResult result) {
-        return OAuth20JwtAccessTokenEncoder.builder()
+        return OAuth20JwtAccessTokenEncoder
+            .builder()
             .accessToken(accessToken)
             .registeredService(result.getRegisteredService())
             .service(result.getService())

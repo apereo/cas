@@ -16,6 +16,7 @@ import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import static org.junit.jupiter.api.Assertions.*;
@@ -43,10 +44,13 @@ class GroovyDelegatedClientAuthenticationRequestCustomizerTests {
     @Qualifier("groovyDelegatedClientAuthenticationRequestCustomizer")
     private DelegatedClientAuthenticationRequestCustomizer groovyDelegatedClientAuthenticationRequestCustomizer;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @BeforeEach
     public void setup() throws Exception {
         val service = RegisteredServiceTestUtils.getService();
-        requestContext = MockRequestContext.create();
+        requestContext = MockRequestContext.create(applicationContext);
         httpServletResponse = requestContext.getHttpServletResponse();
         httpServletRequest = requestContext.getHttpServletRequest();
         httpServletRequest.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());

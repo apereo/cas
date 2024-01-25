@@ -5,6 +5,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
+import org.apereo.cas.ticket.expiration.FixedInstantExpirationPolicy;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.CompressionUtils;
 import org.apereo.cas.util.EncodingUtils;
@@ -16,6 +17,9 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -29,12 +33,12 @@ import java.util.function.Predicate;
 @Monitorable
 @Slf4j
 public class StatelessTicketRegistry extends AbstractTicketRegistry {
-    private final List<TicketCompactor<Ticket>> ticketCompactors;
+    private final List<TicketCompactor<? extends Ticket>> ticketCompactors;
 
     public StatelessTicketRegistry(final CipherExecutor<byte[], byte[]> cipherExecutor,
                                    final TicketSerializationManager ticketSerializationManager,
                                    final TicketCatalog ticketCatalog,
-                                   final List<TicketCompactor<Ticket>> compactors) {
+                                   final List<TicketCompactor<? extends Ticket>> compactors) {
         super(cipherExecutor, ticketSerializationManager, ticketCatalog);
         this.ticketCompactors = List.copyOf(compactors);
     }
@@ -59,6 +63,15 @@ public class StatelessTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     protected Ticket addSingleTicket(final Ticket ticket) throws Exception {
+        return compactTicket(ticket);
+    }
+
+    @Override
+    public Ticket updateTicket(final Ticket ticket) throws Exception {
+        return compactTicket(ticket);
+    }
+
+    protected Ticket compactTicket(final Ticket ticket) throws Exception {
         val metadata = ticketCatalog.find(ticket.getPrefix());
         val ticketCompactor = findTicketCompactor(metadata);
         val compactedTicket = ticketCompactor.compact(ticket);
@@ -68,16 +81,16 @@ public class StatelessTicketRegistry extends AbstractTicketRegistry {
         val encoded64 = EncodingUtils.encodeUrlSafeBase64(encoded);
         val finalTicketId = ticket.getPrefix() + UniqueTicketIdGenerator.SEPARATOR + encoded64;
         LOGGER.debug("Compacted ticket in encoded form is [{}]", finalTicketId);
-        ticketCompactor.validate(finalTicketId);
-        return new DefaultEncodedTicket(finalTicketId, ticket.getPrefix()).markTicketStateless();
+
+        val encodedToken = new DefaultEncodedTicket(finalTicketId, ticket.getPrefix());
+        encodedToken.markTicketStateless();
+        val expirationTime = ticket.getExpirationPolicy().toMaximumExpirationTime(ticket).toEpochSecond();
+        encodedToken.setExpirationPolicy(new FixedInstantExpirationPolicy(Instant.ofEpochSecond(expirationTime)));
+        encodedToken.setCreationTime(ZonedDateTime.now(Clock.systemUTC()));
+        return ticketCompactor.validate(encodedToken);
     }
 
-    @Override
-    public Ticket updateTicket(final Ticket ticket) throws Exception {
-        return addSingleTicket(ticket);
-    }
-
-    protected TicketCompactor<Ticket> findTicketCompactor(final TicketDefinition metadata) {
+    protected TicketCompactor<? extends Ticket> findTicketCompactor(final TicketDefinition metadata) {
         return ticketCompactors
             .stream()
             .filter(BeanSupplier::isNotProxy)

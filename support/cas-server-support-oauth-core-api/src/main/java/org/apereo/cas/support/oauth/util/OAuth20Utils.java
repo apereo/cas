@@ -1,6 +1,7 @@
 package org.apereo.cas.support.oauth.util;
 
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
@@ -11,7 +12,9 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGeneratedResult;
 import org.apereo.cas.ticket.OAuth20Token;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -33,6 +36,9 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 import jakarta.servlet.http.HttpServletResponse;
 import java.net.URI;
+import java.time.Clock;
+import java.time.Duration;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -371,5 +377,51 @@ public class OAuth20Utils {
         return !OAuth20Utils.isAccessTokenRequest(callContext.webContext())
             || StringUtils.isBlank(registeredService.getTokenEndpointAuthenticationMethod())
             || Arrays.stream(authenticationMethod).anyMatch(method -> StringUtils.equalsIgnoreCase(registeredService.getTokenEndpointAuthenticationMethod(), method.getType()));
+    }
+
+    /**
+     * Find stateless ticket validation result.
+     *
+     * @param manager the manager
+     * @return the ticket validation result
+     */
+    public static Boolean isStatelessAuthentication(final ProfileManager manager) {
+        return manager
+            .getProfile()
+            .stream()
+            .map(OAuth20Utils::isStatelessAuthentication)
+            .findFirst()
+            .orElse(Boolean.FALSE);
+    }
+
+    /**
+     * Find stateless ticket validation result.
+     * @param profile the profile
+     * @return the ticket validation result
+     */
+    public static Boolean isStatelessAuthentication(final UserProfile profile) {
+        val validationResult = (Boolean) profile.getAttribute("stateless");
+        val principal = profile.getAttribute(Principal.class.getName());
+        return validationResult != null && validationResult && principal != null;
+    }
+
+    /**
+     * Gets access token timeout (in seconds).
+     *
+     * @param accessTokenResult the access token result
+     * @return the access token timeout
+     */
+    public static Long getAccessTokenTimeout(final OAuth20TokenGeneratedResult accessTokenResult) {
+        return accessTokenResult
+            .getAccessToken()
+            .map(token -> {
+                if (token.isStateless()) {
+                    val duration = Duration.between(ZonedDateTime.now(Clock.systemUTC()),
+                        token.getExpirationPolicy().toMaximumExpirationTime(token));
+                    return duration.getSeconds();
+                }
+                return ((OAuth20AccessToken) token).getExpiresIn();
+            })
+            .orElse(0L);
     }
 }

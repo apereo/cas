@@ -5,6 +5,7 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
+import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
@@ -44,7 +45,6 @@ public class DefaultOAuth20UserProfileDataCreator<T extends OAuth20Configuration
     public Map<String, Object> createFrom(final OAuth20AccessToken accessToken, final WebContext context) throws Throwable {
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
             configurationContext.getObject().getServicesManager(), accessToken.getClientId());
-
         val principal = getAccessTokenAuthenticationPrincipal(accessToken, context, registeredService);
         val modelAttributes = new HashMap<String, Object>();
         modelAttributes.put(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ID, principal.getId());
@@ -70,6 +70,11 @@ public class DefaultOAuth20UserProfileDataCreator<T extends OAuth20Configuration
         val authnAttributes = getConfigurationContext().getObject().getAuthenticationAttributeReleasePolicy()
             .getAuthenticationAttributesForRelease(authentication, registeredService);
         attributes.putAll(authnAttributes);
+        if (accessToken.isStateless()) {
+            val resolvedPrincipal = configurationContext.getObject().getPrincipalResolver()
+                .resolve(new BasicIdentifiableCredential(authentication.getPrincipal().getId()));
+            attributes.putAll(resolvedPrincipal.getAttributes());
+        }
         val operatingPrincipal = getConfigurationContext().getObject().getPrincipalFactory()
             .createPrincipal(authentication.getPrincipal().getId(), attributes);
 

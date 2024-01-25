@@ -18,7 +18,6 @@ const cas = require("../../cas.js");
     await cas.pressEnter(page);
     await page.waitForNavigation();
     await page.waitForTimeout(1000);
-    await cas.assertTextContent(page, "div .banner-danger p", "reCAPTCHA validation failed.");
+    await cas.assertTextContent(page, "div .banner-danger p", "reCAPTCHA’s validation failed.");
     await browser.close();
 })();
-

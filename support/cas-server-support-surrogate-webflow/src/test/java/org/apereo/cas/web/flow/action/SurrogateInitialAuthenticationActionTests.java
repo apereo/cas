@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.execution.Action;
 
 
@@ -32,16 +33,19 @@ class SurrogateInitialAuthenticationActionTests {
     @Qualifier(CasWebflowConstants.ACTION_ID_SURROGATE_INITIAL_AUTHENTICATION)
     private Action initialAuthenticationAction;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @Test
     void verifyNoCredentialsFound() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         assertNull(initialAuthenticationAction.execute(context));
         assertFalse(WebUtils.hasSurrogateAuthenticationRequest(context));
     }
 
     @Test
     void verifySurrogateCredentialsFound() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         val credential = new UsernamePasswordCredential();
         credential.setUsername("casuser");
         credential.assignPassword("Mellon");
@@ -52,7 +56,7 @@ class SurrogateInitialAuthenticationActionTests {
 
     @Test
     void verifySelectingSurrogateList() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         val usernamePasswordCredential = new UsernamePasswordCredential();
         usernamePasswordCredential.setUsername("+casuser");
         usernamePasswordCredential.assignPassword("Mellon");
@@ -66,7 +70,7 @@ class SurrogateInitialAuthenticationActionTests {
 
     @Test
     void verifyUsernamePasswordCredentialsFound() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         val c = new UsernamePasswordCredential();
         c.setUsername("cassurrogate+casuser");
         c.assignPassword("Mellon");
@@ -81,7 +85,7 @@ class SurrogateInitialAuthenticationActionTests {
 
     @Test
     void verifyUsernamePasswordCredentialsBadPasswordAndCancelled() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         var credential = new UsernamePasswordCredential();
         credential.setUsername("cassurrogate+casuser");
         credential.assignPassword("badpassword");

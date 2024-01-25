@@ -1,7 +1,6 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.BaseTicketCatalogConfigurer;
 import org.apereo.cas.ticket.TicketCatalog;
@@ -16,24 +15,18 @@ import org.apereo.cas.ticket.device.OAuth20DeviceToken;
 import org.apereo.cas.ticket.device.OAuth20DeviceUserCode;
 import org.apereo.cas.ticket.refreshtoken.OAuth20DefaultRefreshToken;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.core.Ordered;
 
 /**
- * This is {@link CasOAuth20ProtocolTicketCatalogAutoConfiguration}.
+ * This is {@link OAuth20TicketCatalogConfigurer}.
  *
  * @author Misagh Moayyed
- * @since 5.1.0
+ * @since 7.1.0
  */
-@EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OAuth)
-@AutoConfiguration
-public class CasOAuth20ProtocolTicketCatalogAutoConfiguration extends BaseTicketCatalogConfigurer {
+public class OAuth20TicketCatalogConfigurer extends BaseTicketCatalogConfigurer {
 
     @Override
     public void configureTicketCatalog(final TicketCatalog plan,
@@ -77,9 +70,9 @@ public class CasOAuth20ProtocolTicketCatalogAutoConfiguration extends BaseTicket
         registerTicketDefinition(plan, metadata);
     }
 
-    private void buildAndRegisterDeviceTokenDefinition(final TicketCatalog plan,
-                                                       final TicketDefinition metadata,
-                                                       final CasConfigurationProperties casProperties) {
+    protected void buildAndRegisterDeviceTokenDefinition(final TicketCatalog plan,
+                                                         final TicketDefinition metadata,
+                                                         final CasConfigurationProperties casProperties) {
         metadata.getProperties().setStorageName(casProperties.getAuthn().getOauth().getDeviceToken().getStorageName());
         val timeout = Beans.newDuration(casProperties.getAuthn().getOauth().getDeviceToken().getMaxTimeToLiveInSeconds()).getSeconds();
         metadata.getProperties().setStorageTimeout(timeout);
@@ -87,8 +80,8 @@ public class CasOAuth20ProtocolTicketCatalogAutoConfiguration extends BaseTicket
         registerTicketDefinition(plan, metadata);
     }
 
-    private void buildAndRegisterDeviceUserCodeDefinition(final TicketCatalog plan, final TicketDefinition metadata,
-                                                          final CasConfigurationProperties casProperties) {
+    protected void buildAndRegisterDeviceUserCodeDefinition(final TicketCatalog plan, final TicketDefinition metadata,
+                                                            final CasConfigurationProperties casProperties) {
         metadata.getProperties().setStorageName(casProperties.getAuthn().getOauth().getDeviceUserCode().getStorageName());
         val timeout = Beans.newDuration(casProperties.getAuthn().getOauth().getDeviceUserCode().getMaxTimeToLiveInSeconds()).getSeconds();
         metadata.getProperties().setStorageTimeout(timeout);

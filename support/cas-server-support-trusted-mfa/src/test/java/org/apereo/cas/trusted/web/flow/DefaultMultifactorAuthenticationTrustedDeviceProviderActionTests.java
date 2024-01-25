@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.execution.Action;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
@@ -38,6 +39,9 @@ public class DefaultMultifactorAuthenticationTrustedDeviceProviderActionTests {
     @Qualifier("multifactorAuthenticationTrustedDeviceProviderAction")
     private MultifactorAuthenticationTrustedDeviceProviderAction action;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @Test
     void verifyOperation() throws Throwable {
         val context = getMockRequestContext();
@@ -51,8 +55,8 @@ public class DefaultMultifactorAuthenticationTrustedDeviceProviderActionTests {
         assertEquals(1, WebUtils.getMultifactorAuthenticationTrustedDevices(context).size());
     }
 
-    private static MockRequestContext getMockRequestContext() throws Throwable {
-        val context = MockRequestContext.create();
+    private MockRequestContext getMockRequestContext() throws Throwable {
+        val context = MockRequestContext.create(applicationContext);
         context.getHttpServletRequest().setRemoteAddr("123.456.789.123");
         context.getHttpServletRequest().setLocalAddr("123.456.789.123");
         context.getHttpServletRequest().addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");

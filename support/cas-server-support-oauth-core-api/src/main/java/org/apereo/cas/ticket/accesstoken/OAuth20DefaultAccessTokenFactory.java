@@ -34,24 +34,12 @@ import java.util.Map;
 @Getter
 public class OAuth20DefaultAccessTokenFactory implements OAuth20AccessTokenFactory {
 
-    /**
-     * Default instance for the ticket id generator.
-     */
     protected final UniqueTicketIdGenerator accessTokenIdGenerator;
 
-    /**
-     * ExpirationPolicy for refresh tokens.
-     */
     protected final ExpirationPolicyBuilder<OAuth20AccessToken> expirationPolicyBuilder;
 
-    /**
-     * JWT builder instance.
-     */
     protected final JwtBuilder jwtBuilder;
 
-    /**
-     * Services manager.
-     */
     protected final ServicesManager servicesManager;
 
     protected final TicketTrackingPolicy descendantTicketsTrackingPolicy;
@@ -76,14 +64,11 @@ public class OAuth20DefaultAccessTokenFactory implements OAuth20AccessTokenFacto
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(jwtBuilder.getServicesManager(), clientId);
         val expirationPolicyToUse = determineExpirationPolicyForService(registeredService);
         val accessTokenId = generateAccessTokenId(service, authentication);
-
-        val at = new OAuth20DefaultAccessToken(accessTokenId, service, authentication,
+        val accessToken = new OAuth20DefaultAccessToken(accessTokenId, service, authentication,
             expirationPolicyToUse, ticketGrantingTicket, token, scopes,
             clientId, requestClaims, responseType, grantType);
-
-        descendantTicketsTrackingPolicy.trackTicket(ticketGrantingTicket, at);
-
-        return at;
+        descendantTicketsTrackingPolicy.trackTicket(ticketGrantingTicket, accessToken);
+        return accessToken;
     }
 
     protected String generateAccessTokenId(final Service service, final Authentication authentication) throws Throwable {

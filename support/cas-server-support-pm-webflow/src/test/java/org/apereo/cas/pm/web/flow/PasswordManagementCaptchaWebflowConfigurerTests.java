@@ -43,7 +43,7 @@ class PasswordManagementCaptchaWebflowConfigurerTests extends BaseWebflowConfigu
 
     @Test
     void verifyCaptcha() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         initCaptchaAction.execute(context);
         assertTrue(WebUtils.isRecaptchaPasswordManagementEnabled(context));
     }

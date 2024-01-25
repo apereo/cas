@@ -1,0 +1,17 @@
+{
+  "@class" : "java.util.LinkedHashMap",
+  "casuser" : {
+    "@class" : "org.apereo.cas.api.PasswordlessUserAccount",
+    "username": "casuser",
+    "email": "casuser@example.org",
+    "phone": "1234567890",
+    "name": "CAS",
+    "requestPassword": false,
+    "multifactorAuthenticationEligible": "TRUE",
+    "attributes" : {
+      "@class" : "java.util.TreeMap",
+      "memberOf" : [ "java.util.ArrayList", [ "mfa" ] ],
+      "email": [ "java.util.ArrayList", [ "casuser@example.org" ] ]
+    }
+  }
+}

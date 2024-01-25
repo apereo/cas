@@ -18,14 +18,15 @@ import org.apereo.cas.ticket.ServiceTicketFactory;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.expiration.FixedInstantExpirationPolicy;
+import org.apereo.cas.ticket.registry.TicketCompactor;
 import org.apereo.cas.util.DateTimeUtils;
 import com.google.common.base.Splitter;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.util.Assert;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.Function;
@@ -38,12 +39,12 @@ import java.util.stream.Collectors;
  * @since 7.0.0
  */
 @RequiredArgsConstructor
-public class ServiceTicketCompactor extends BaseTicketCompactor<ServiceTicket> {
-    private static final int MAX_TICKET_LENGTH = 256;
-
+public class ServiceTicketCompactor implements TicketCompactor<ServiceTicket> {
     private final ObjectProvider<TicketFactory> ticketFactory;
     private final ServiceFactory serviceFactory;
     private final PrincipalFactory principalFactory;
+    @Getter
+    private long maximumTicketLength = 256;
 
     @Override
     public String compact(final StringBuilder builder, final Ticket ticket) throws Exception {
@@ -118,11 +119,5 @@ public class ServiceTicketCompactor extends BaseTicketCompactor<ServiceTicket> {
                 name -> new DefaultAuthenticationHandlerExecutionResult(name, principal))))
             .addAttribute(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE, handlers)
             .build();
-    }
-
-    @Override
-    public void validate(final String finalTicketId) {
-        Assert.isTrue(finalTicketId.length() <= MAX_TICKET_LENGTH,
-            "Final ticket id %s length %s exceeds %s characters".formatted(finalTicketId, finalTicketId.length(), MAX_TICKET_LENGTH));
     }
 }

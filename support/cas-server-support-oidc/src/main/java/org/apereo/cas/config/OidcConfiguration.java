@@ -773,7 +773,9 @@ class OidcConfiguration {
             final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
             @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
             final AuditableExecution registeredServiceAccessStrategyEnforcer,
-            final List<OAuth20IntrospectionResponseGenerator> oauthIntrospectionResponseGenerator) {
+            final List<OAuth20IntrospectionResponseGenerator> oauthIntrospectionResponseGenerator,
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+            final PrincipalResolver principalResolver) {
             return (OidcConfigurationContext) OidcConfigurationContext.builder()
                 .introspectionSigningAndEncryptionService(oidcTokenIntrospectionSigningAndEncryptionService)
                 .introspectionResponseGenerator(oauthIntrospectionResponseGenerator)
@@ -824,6 +826,7 @@ class OidcConfiguration {
                 .accessTokenJwtBuilder(accessTokenJwtBuilder)
                 .clientSecretValidator(oauth20ClientSecretValidator)
                 .attributeDefinitionStore(attributeDefinitionStore)
+                .principalResolver(principalResolver)
                 .build();
         }
     }
