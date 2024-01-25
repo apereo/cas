@@ -91,12 +91,11 @@ tasks.named("yarn", YarnTask) {
 }
 
 tasks.register("build-ui", NpxTask) {
-    def assetsDirectory = project.layout.buildDirectory.file("generated/assets").get().asFile
     outputs.cacheIf { true }
-    outputs.dir(assetsDirectory)
+    outputs.dir(file("build/generated/assets"))
 
     command = "vite"
-    args = ["build", "--emptyOutDir", "--outDir", assetsDirectory.canonicalPath ]
+    args = ["build", "--emptyOutDir", "--outDir", "../build/generated/assets" ]
     dependsOn(tasks.named("yarn"))
     inputs.files('client/package.json','client/vite.config.js')
             .withPropertyName('uiBuildConfig')
