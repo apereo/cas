@@ -17,7 +17,6 @@ import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResponseModeFac
 import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.Assertion;
-import org.apereo.cas.validation.TicketValidationResult;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
 import lombok.val;
@@ -206,13 +205,11 @@ class OAuth20UtilsTests extends AbstractOAuth20Tests {
         when(assertion.getPrimaryAuthentication()).thenReturn(RegisteredServiceTestUtils.getAuthentication());
         val profile = new BasicUserProfile();
         profile.addAttribute(Principal.class.getName(), RegisteredServiceTestUtils.getPrincipal("casuser"));
-        val validationResult = TicketValidationResult.builder().assertion(assertion).build();
         profile.addAttribute("stateless", Boolean.TRUE);
         val profileManager = new ProfileManager(context, new JEESessionStore());
         profileManager.save(true, profile, false);
         val result = OAuth20Utils.isStatelessAuthentication(profileManager);
-        assertNotNull(result);
-        assertEquals(result, validationResult);
+        assertTrue(result);
     }
 
     @Test
