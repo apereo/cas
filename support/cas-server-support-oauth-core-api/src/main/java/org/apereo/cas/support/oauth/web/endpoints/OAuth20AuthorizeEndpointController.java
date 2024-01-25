@@ -130,25 +130,11 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
         return handleRequest(request, response);
     }
 
-    /**
-     * Is the request authenticated?
-     *
-     * @param manager           the Profile Manager
-     * @param context           the context
-     * @param registeredService the registered service
-     * @return whether the request is authenticated or not
-     */
     protected boolean isRequestAuthenticated(final ProfileManager manager, final WebContext context,
                                              final OAuthRegisteredService registeredService) {
         return manager.getProfile().isPresent();
     }
 
-    /**
-     * Gets registered service by client id.
-     *
-     * @param clientId the client id
-     * @return the registered service by client id
-     */
     protected OAuthRegisteredService getRegisteredServiceByClientId(final String clientId) {
         return OAuth20Utils.getRegisteredOAuthServiceByClientId(getConfigurationContext().getServicesManager(), clientId);
     }
@@ -205,8 +191,7 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
 
     protected ModelAndView buildAuthorizationForRequest(
         final OAuthRegisteredService registeredService,
-        final JEEContext context,
-        final Service service,
+        final JEEContext context, final Service service,
         final Authentication authentication) {
 
         val registeredBuilders = getConfigurationContext().getOauthAuthorizationResponseBuilders().getObject();
@@ -235,7 +220,7 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
             .findFirst()
             .map(Unchecked.function(builder -> {
                 if (authzRequest.isSingleSignOnSessionRequired() && payload.getTicketGrantingTicket() == null
-                    && OAuth20Utils.isStatelessAuthentication(payload.getUserProfile()) == null) {
+                    && !OAuth20Utils.isStatelessAuthentication(payload.getUserProfile())) {
                     val message = String.format("Missing ticket-granting-ticket for client id [%s] and service [%s]",
                         authzRequest.getClientId(), registeredService.getName());
                     LOGGER.error(message);
