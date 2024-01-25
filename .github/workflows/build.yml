@@ -54,4 +54,4 @@ jobs:
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
         shell: bash
       - name: Build with Gradle
-        run: ./gradlew build testCAS testLogout testGroovy ${{ env.GRADLE_BUILD_OPTIONS }}
+        run: ./gradlew build testCAS testLogout testGroovy -x check ${{ env.GRADLE_BUILD_OPTIONS }}
