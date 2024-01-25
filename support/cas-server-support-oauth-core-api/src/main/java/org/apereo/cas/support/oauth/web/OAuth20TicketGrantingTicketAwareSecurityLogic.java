@@ -38,7 +38,7 @@ public class OAuth20TicketGrantingTicketAwareSecurityLogic extends DefaultSecuri
         val request = ((JEEContext) callContext.webContext()).getNativeRequest();
         val ticketGrantingTicket = getTicketGrantingTicket(manager, request);
         val validationResult = OAuth20Utils.isStatelessAuthentication(manager);
-        if (ticketGrantingTicket == null && validationResult == null) {
+        if (ticketGrantingTicket == null && !validationResult) {
             LOGGER.debug("No ticket-granting ticket => No user profiles found");
             return new ArrayList<>();
         }

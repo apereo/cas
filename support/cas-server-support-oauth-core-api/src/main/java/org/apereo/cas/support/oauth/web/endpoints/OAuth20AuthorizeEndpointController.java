@@ -310,4 +310,5 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
             grantType, scopes, authzRequest.getClientId());
         return holder;
     }
+    
 }

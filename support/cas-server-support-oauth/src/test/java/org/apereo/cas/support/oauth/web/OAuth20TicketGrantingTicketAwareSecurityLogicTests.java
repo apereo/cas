@@ -6,9 +6,7 @@ import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.validation.Assertion;
-import org.apereo.cas.validation.TicketValidationResult;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -19,10 +17,8 @@ import org.pac4j.jee.context.JEEContext;
 import org.pac4j.jee.context.session.JEESessionStore;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
 import java.util.List;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -44,7 +40,6 @@ class OAuth20TicketGrantingTicketAwareSecurityLogicTests extends AbstractOAuth20
         when(assertion.getPrimaryAuthentication()).thenReturn(RegisteredServiceTestUtils.getAuthentication());
         val profile = new BasicUserProfile();
         profile.addAttribute(Principal.class.getName(), RegisteredServiceTestUtils.getPrincipal("casuser"));
-        val validationResult = TicketValidationResult.builder().assertion(assertion).build();
         profile.addAttribute("stateless", Boolean.TRUE);
         val context = new JEEContext(request, response);
         val profileManager = new ProfileManager(context, new JEESessionStore());
