@@ -340,11 +340,7 @@ subprojects {
 
     ext.buildJarFile = new File(project.layout.buildDirectory.getAsFile().get(), "libs/${project.name}-${project.version}.jar")
 
-    [compileTestJava, compileJava].each {
-        it.inputs.property("github.repository") {
-            System.getenv("GITHUB_REPOSITORY") ?: "apereo/cas"
-        }
-        
+    [compileTestJava, compileJava].each {        
         if (rootProject.generateGitProperties) {
             it.dependsOn("generateGitProperties")
         }
