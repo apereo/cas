@@ -25,6 +25,8 @@ public class ThrottledSubmission implements Serializable {
     @Serial
     private static final long serialVersionUID = -853401483455717926L;
 
+    private final String id;
+
     private final String key;
 
     @Builder.Default

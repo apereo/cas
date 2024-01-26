@@ -13,6 +13,8 @@ import java.time.Clock;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -28,41 +30,47 @@ import java.util.stream.Collectors;
 public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter extends AbstractThrottledSubmissionHandlerInterceptorAdapter
     implements InMemoryThrottledSubmissionHandlerInterceptor {
 
+    private final List<ThrottledSubmissionReceiver> throttledSubmissionReceivers;
+
     protected AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter(
         final ThrottledSubmissionHandlerConfigurationContext configurationContext) {
         super(configurationContext);
+
+        throttledSubmissionReceivers = new ArrayList<>(getConfigurationContext().getApplicationContext()
+            .getBeansOfType(ThrottledSubmissionReceiver.class).values());
+        AnnotationAwareOrderComparator.sort(throttledSubmissionReceivers);
     }
 
     @Override
     public void recordSubmissionFailure(final HttpServletRequest request) {
         val key = constructKey(request);
-        LOGGER.debug("Recording submission failure [{}]", key);
 
         val duration = Beans.newDuration(getConfigurationContext().getCasProperties()
             .getAuthn().getThrottle().getFailure().getThrottleWindowSeconds());
         val expiration = ZonedDateTime.now(Clock.systemUTC()).plusSeconds(duration.getSeconds());
 
-        val submission = ThrottledSubmission.builder()
+        val submission = ThrottledSubmission
+            .builder()
+            .id(UUID.randomUUID().toString())
             .key(key)
             .username(getUsernameParameterFromRequest(request))
             .clientIpAddress(ClientInfoHolder.getClientInfo().getClientIpAddress())
             .expiration(expiration)
             .build();
+        LOGGER.debug("Recording submission failure entry [{}]", submission);
         getConfigurationContext().getThrottledSubmissionStore().put(submission);
-        val receivers = new ArrayList<>(getConfigurationContext().getApplicationContext()
-            .getBeansOfType(ThrottledSubmissionReceiver.class).values());
-        AnnotationAwareOrderComparator.sort(receivers);
-        receivers.forEach(Unchecked.consumer(receiver -> receiver.receive(submission)));
+        throttledSubmissionReceivers.forEach(Unchecked.consumer(receiver -> receiver.receive(submission)));
     }
 
     @Override
     public boolean exceedsThreshold(final HttpServletRequest request) {
         val key = constructKey(request);
-        LOGGER.trace("Throttling threshold key is [{}] with submission threshold [{}]", key, getThresholdRate());
+        LOGGER.trace("Throttling threshold key is [{}] with calculated threshold [{}]", key, getThresholdRate());
         val store = getConfigurationContext().getThrottledSubmissionStore();
 
         if (store.contains(key)) {
             val submission = store.get(key);
+            LOGGER.trace("Found existing throttled submission [{}] for key [{}]", submission, key);
             if (!submission.hasExpiredAlready()) {
                 LOGGER.warn("Throttled submission [{}] remains throttled; submission expires at [{}]", key, submission.getExpiration());
                 return true;

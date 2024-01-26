@@ -50,4 +50,9 @@ public class OidcImplicitIdTokenAuthorizationResponseBuilder<T extends OidcConfi
         parameters.add(new BasicNameValuePair(OidcConstants.ID_TOKEN, idToken.token()));
         return super.buildCallbackUrlResponseType(tokenRequestContext, accessToken, givenRefreshToken, parameters);
     }
+
+    @Override
+    protected boolean includeAccessTokenInResponse(final AccessTokenRequestContext tokenRequestContext) {
+        return false;
+    }
 }
