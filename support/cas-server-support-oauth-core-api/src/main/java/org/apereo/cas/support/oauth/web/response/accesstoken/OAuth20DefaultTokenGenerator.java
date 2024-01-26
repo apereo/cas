@@ -176,29 +176,36 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
     protected Ticket addAccessToken(final AccessTokenRequestContext tokenRequestContext,
                                     final OAuth20AccessToken accessToken,
                                     final Ticket ticketGrantingTicket) throws Exception {
+        var finalAccessToken = (Ticket) accessToken;
         if (tokenRequestContext.getResponseType() != OAuth20ResponseTypes.ID_TOKEN) {
             LOGGER.debug("Created access token [{}]", accessToken);
-            val addedAccessToken = addTicketToRegistry(accessToken, ticketGrantingTicket);
-            LOGGER.debug("Added access token [{}] to registry", accessToken);
-            updateOAuthCode(tokenRequestContext, addedAccessToken);
-            return addedAccessToken;
+            finalAccessToken = addTicketToRegistry(accessToken, ticketGrantingTicket);
+            LOGGER.debug("Added access token [{}] to registry", finalAccessToken);
+            updateRefreshToken(tokenRequestContext, finalAccessToken);
         }
-        return accessToken;
+        updateOAuthCode(tokenRequestContext);
+        return finalAccessToken;
     }
 
-    protected void updateOAuthCode(final AccessTokenRequestContext tokenRequestContext, final Ticket accessToken) throws Exception {
+    private void updateRefreshToken(final AccessTokenRequestContext tokenRequestContext,
+                                    final Ticket accessToken) throws Exception {
         if (tokenRequestContext.isRefreshToken() && !tokenRequestContext.getToken().isStateless()) {
             val refreshToken = (OAuth20RefreshToken) tokenRequestContext.getToken();
+            LOGGER.trace("Tracking access token [{}] linked to refresh token [{}]", accessToken.getId(), refreshToken.getId());
             refreshToken.getAccessTokens().add(accessToken.getId());
             ticketRegistry.updateTicket(refreshToken);
-        } else if (tokenRequestContext.isCodeToken() && !tokenRequestContext.getToken().isStateless()) {
-            val codeState = (Ticket) tokenRequestContext.getToken();
-            codeState.update();
+        }
+    }
 
-            if (tokenRequestContext.getToken().isExpired()) {
-                ticketRegistry.deleteTicket(tokenRequestContext.getToken().getId());
+    private void updateOAuthCode(final AccessTokenRequestContext tokenRequestContext) throws Exception {
+        val token = tokenRequestContext.getToken();
+        if (tokenRequestContext.isCodeToken() && !token.isStateless()) {
+            token.update();
+            LOGGER.trace("Updated OAuth code [{}]", token.getId());
+            if (token.isExpired()) {
+                ticketRegistry.deleteTicket(token);
             } else {
-                ticketRegistry.updateTicket(tokenRequestContext.getToken());
+                ticketRegistry.updateTicket(token);
             }
             ticketRegistry.updateTicket(tokenRequestContext.getTicketGrantingTicket());
         }
