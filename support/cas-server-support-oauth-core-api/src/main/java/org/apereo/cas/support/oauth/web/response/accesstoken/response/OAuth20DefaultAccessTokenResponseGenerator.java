@@ -77,9 +77,9 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
 
     protected ModelAndView generateResponseForAccessToken(final OAuth20AccessTokenResponseResult result) {
         val model = getAccessTokenResponseModel(result);
-        val mv = new ModelAndView(new MappingJackson2JsonView(MAPPER), model);
-        mv.setStatus(HttpStatus.OK);
-        return mv;
+        val modelAndView = new ModelAndView(new MappingJackson2JsonView(MAPPER), model);
+        modelAndView.setStatus(HttpStatus.OK);
+        return modelAndView;
     }
 
     protected Map<String, Object> getAccessTokenResponseModel(final OAuth20AccessTokenResponseResult result) {
