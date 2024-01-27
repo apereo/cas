@@ -43,7 +43,6 @@ public class LogoutViewSetupAction extends AbstractLogoutAction {
     @Override
     protected Event doInternalExecute(final RequestContext context) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-        
         WebUtils.putGeoLocationTrackingIntoFlowScope(context,
             casProperties.getEvents().getCore().isTrackGeolocation());
         val continuation = (SingleLogoutContinuation) request.getAttribute(SingleLogoutContinuation.class.getName());

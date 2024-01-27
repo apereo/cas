@@ -43,6 +43,7 @@ public class RegisteredServiceAccessEndpointTests extends AbstractCasEndpointTes
     private RegisteredServiceAccessEndpoint endpoint;
 
     @Autowired
+    @Qualifier("mockMvc")
     private MockMvc mockMvc;
 
     @Test
