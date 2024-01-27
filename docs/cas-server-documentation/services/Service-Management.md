@@ -18,7 +18,7 @@ service registry that stores one or more registered services containing metadata
 
 The following endpoints are provided by CAS:
 
-{% include_cached actuators.html endpoints="registeredServices" casModule="cas-server-support-reports" %}
+{% include_cached actuators.html endpoints="registeredServices,serviceAccess" casModule="cas-server-support-reports" %}
 
 ## Registered Services
 
