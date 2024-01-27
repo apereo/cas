@@ -31,3 +31,8 @@ would be enacted and validated when an authentication request from the applicati
 | Chaining                 | See [this guide](Service-Access-Strategy-Chain.html).                   |
 | Custom                   | See [this guide](Service-Access-Strategy-Custom.html).                  |
 
+## Actuator Endpoints
+
+The following endpoints are provided by CAS:
+
+{% include_cached actuators.html endpoints="serviceAccess" casModule="cas-server-support-reports" %}

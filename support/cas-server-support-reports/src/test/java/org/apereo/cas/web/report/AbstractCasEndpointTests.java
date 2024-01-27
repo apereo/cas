@@ -28,9 +28,15 @@ import org.apereo.cas.services.ServicesManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.actuate.autoconfigure.endpoint.EndpointAutoConfiguration;
+import org.springframework.boot.actuate.autoconfigure.endpoint.web.ServletEndpointManagementContextConfiguration;
+import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointAutoConfiguration;
+import org.springframework.boot.actuate.autoconfigure.endpoint.web.servlet.WebMvcEndpointManagementContextConfiguration;
 import org.springframework.boot.actuate.autoconfigure.health.HealthEndpointAutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -46,7 +52,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@SpringBootTest(classes = AbstractCasEndpointTests.SharedTestConfiguration.class,
+@SpringBootTest(
+    classes = AbstractCasEndpointTests.SharedTestConfiguration.class,
     properties = "management.endpoints.web.exposure.include=*")
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 @EnableScheduling
@@ -72,7 +79,14 @@ public abstract class AbstractCasEndpointTests {
         RefreshAutoConfiguration.class,
         HealthEndpointAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
-        AopAutoConfiguration.class
+        AopAutoConfiguration.class,
+        EndpointAutoConfiguration.class,
+        WebEndpointAutoConfiguration.class,
+        ServletWebServerFactoryAutoConfiguration.class,
+        DispatcherServletAutoConfiguration.class,
+
+        ServletEndpointManagementContextConfiguration.class,
+        WebMvcEndpointManagementContextConfiguration.class
     })
     @SpringBootConfiguration
     @Import({

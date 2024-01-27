@@ -1,7 +1,9 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
+import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -35,6 +37,7 @@ import org.apereo.cas.web.report.CasRuntimeModulesEndpoint;
 import org.apereo.cas.web.report.ConfigurationJasyptCipherEndpoint;
 import org.apereo.cas.web.report.RegisteredAuthenticationHandlersEndpoint;
 import org.apereo.cas.web.report.RegisteredAuthenticationPoliciesEndpoint;
+import org.apereo.cas.web.report.RegisteredServiceAccessEndpoint;
 import org.apereo.cas.web.report.RegisteredServicesEndpoint;
 import org.apereo.cas.web.report.SingleSignOnSessionStatusEndpoint;
 import org.apereo.cas.web.report.SingleSignOnSessionsEndpoint;
@@ -42,6 +45,7 @@ import org.apereo.cas.web.report.SpringWebflowEndpoint;
 import org.apereo.cas.web.report.StatisticsEndpoint;
 import org.apereo.cas.web.report.TicketExpirationPoliciesEndpoint;
 import org.apereo.cas.web.report.TicketRegistryEndpoint;
+import org.apereo.cas.web.support.ArgumentExtractor;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -249,6 +253,30 @@ public class CasReportsAutoConfiguration {
                 applicationContext);
         }
 
+        @Bean
+        @ConditionalOnAvailableEndpoint
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public RegisteredServiceAccessEndpoint registeredServiceAccessEndpoint(
+            @Qualifier(ArgumentExtractor.BEAN_NAME)
+            final ObjectProvider<ArgumentExtractor> argumentExtractor,
+            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
+            final ObjectProvider<AuthenticationServiceSelectionPlan> authenticationServiceSelectionPlan,
+            final CasConfigurationProperties casProperties,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ObjectProvider<ServicesManager> servicesManager,
+            @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
+            final ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport,
+            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
+            final ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer,
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+            final ObjectProvider<PrincipalResolver> defaultPrincipalResolver,
+            @Qualifier(PrincipalFactory.BEAN_NAME)
+            final ObjectProvider<PrincipalFactory> principalFactory) {
+
+            return new RegisteredServiceAccessEndpoint(casProperties, servicesManager,
+                authenticationServiceSelectionPlan, argumentExtractor, registeredServiceAccessStrategyEnforcer,
+                authenticationSystemSupport, defaultPrincipalResolver, principalFactory);
+        }
     }
 
     @Configuration(value = "AuditActivityEndpointsConfiguration", proxyBeanMethods = false)

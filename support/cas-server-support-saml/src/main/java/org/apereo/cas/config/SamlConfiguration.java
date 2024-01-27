@@ -39,6 +39,7 @@ import org.apereo.cas.web.view.attributes.NoOpProtocolAttributesRenderer;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -198,23 +199,25 @@ class SamlConfiguration {
         public SamlValidateEndpoint samlValidateEndpoint(
             final CasConfigurationProperties casProperties,
             @Qualifier("samlResponseBuilder")
-            final SamlResponseBuilder samlResponseBuilder,
+            final ObjectProvider<SamlResponseBuilder> samlResponseBuilder,
             @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
-            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+            final ObjectProvider<ServiceFactory<WebApplicationService>> webApplicationServiceFactory,
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
-            final OpenSamlConfigBean openSamlConfigBean,
+            final ObjectProvider<OpenSamlConfigBean> openSamlConfigBean,
             @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager,
+            final ObjectProvider<ServicesManager> servicesManager,
             @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
-            final AuthenticationSystemSupport authenticationSystemSupport,
+            final ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport,
             @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
-            final AuditableExecution registeredServiceAccessStrategyEnforcer,
+            final ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer,
             @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
-            final PrincipalResolver defaultPrincipalResolver,
-            @Qualifier(PrincipalFactory.BEAN_NAME) final PrincipalFactory principalFactory) {
+            final ObjectProvider<PrincipalResolver> defaultPrincipalResolver,
+            @Qualifier(PrincipalFactory.BEAN_NAME)
+            final ObjectProvider<PrincipalFactory> principalFactory) {
             return new SamlValidateEndpoint(casProperties, servicesManager,
                 authenticationSystemSupport, webApplicationServiceFactory, principalFactory,
-                samlResponseBuilder, openSamlConfigBean, registeredServiceAccessStrategyEnforcer, defaultPrincipalResolver);
+                samlResponseBuilder, openSamlConfigBean, registeredServiceAccessStrategyEnforcer,
+                defaultPrincipalResolver);
         }
 
         @Bean

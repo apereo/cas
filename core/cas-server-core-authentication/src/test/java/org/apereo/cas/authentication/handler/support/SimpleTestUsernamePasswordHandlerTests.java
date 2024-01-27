@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.handler.support;
 
+import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.credential.RememberMeUsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Service;
@@ -23,7 +24,7 @@ import static org.mockito.Mockito.*;
 @Tag("AuthenticationHandler")
 class SimpleTestUsernamePasswordHandlerTests {
 
-    private SimpleTestUsernamePasswordAuthenticationHandler authenticationHandler;
+    private AuthenticationHandler authenticationHandler;
 
     @BeforeEach
     public void initialize() {
