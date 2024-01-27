@@ -43,4 +43,18 @@ public enum DuoSecurityUserAccountStatus {
             default -> AUTH;
         };
     }
+
+    /**
+     * Convert status to string value understood by Duo Security.
+     *
+     * @return the string
+     */
+    public String toValue() {
+        return switch (this) {
+            case ALLOW -> "bypass";
+            case DENY -> "disabled";
+            case UNAVAILABLE -> "locked out";
+            default -> "active";
+        };
+    }
 }

@@ -688,6 +688,19 @@ exports.decodeJwt = async (token, complete = false) => {
     return decoded;
 };
 
+exports.updateDuoSecurityUserStatus = async (user = "casuser", status = "AUTH") => {
+    await this.log(`Updating user account status to ${status} in Duo Security for ${user}...`);
+    const body = JSON.stringify({ "status": status });
+    await this.doRequest(`https://localhost:8443/cas/actuator/duoAdmin/${user}`,
+        "PUT",
+        {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+        },
+        200,
+        body);
+};
+
 exports.fetchDuoSecurityBypassCodes = async (user = "casuser") => {
     await this.log(`Fetching Bypass codes from Duo Security for ${user}...`);
     const response = await this.doRequest(`https://localhost:8443/cas/actuator/duoAdmin/bypassCodes?username=${user}`,

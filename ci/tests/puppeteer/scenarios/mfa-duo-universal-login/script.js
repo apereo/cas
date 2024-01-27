@@ -6,6 +6,7 @@ const assert = require("assert");
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.gotoLoginWithAuthnMethod(page, undefined, "mfa-duo");
+    await cas.updateDuoSecurityUserStatus("duocode");
     await cas.loginWith(page, "duocode", "Mellon");
     await page.waitForTimeout(4000);
     const bypassCodes = await cas.fetchDuoSecurityBypassCodes("duocode");
