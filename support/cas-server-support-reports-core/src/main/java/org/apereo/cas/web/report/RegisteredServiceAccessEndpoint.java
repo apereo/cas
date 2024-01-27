@@ -19,6 +19,8 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -68,6 +70,12 @@ public class RegisteredServiceAccessEndpoint extends BaseCasActuatorEndpoint {
         this.principalFactory = principalFactory;
     }
 
+    /**
+     * Authorize user based on application access strategy.
+     *
+     * @param request the request
+     * @return the response entity
+     */
     @GetMapping(
         consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
         produces = {
@@ -76,7 +84,13 @@ public class RegisteredServiceAccessEndpoint extends BaseCasActuatorEndpoint {
             MEDIA_TYPE_CAS_YAML,
             MediaType.APPLICATION_JSON_VALUE
         })
-    @Operation(summary = "Verify if service access can be granted to the user")
+    @Operation(summary = "Verify if service access can be granted to the user", parameters = {
+        @Parameter(name = "username", required = true, in = ParameterIn.QUERY),
+        @Parameter(name = "password", required = false, in = ParameterIn.QUERY, description = "The password to authenticate the user if necessary"),
+        @Parameter(name = "service", required = false, in = ParameterIn.QUERY),
+        @Parameter(name = "client_id", required = false, in = ParameterIn.QUERY, description = "The application client id for OAuth or OpenID Connect"),
+        @Parameter(name = "entityId", required = false, in = ParameterIn.QUERY, description = "The entity id for SAML2 service providers")
+    })
     public ResponseEntity authorize(final HttpServletRequest request) {
         try {
             val service = authenticationServiceSelectionPlan.getObject().resolveService(argumentExtractor.getObject().extractService(request));

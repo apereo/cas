@@ -19,6 +19,7 @@ const assert = require("assert");
         await cas.gotoLogin(page);
         await page.waitForTimeout(1000);
 
+        await cas.updateDuoSecurityUserStatus("duocode");
         await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
         await page.waitForTimeout(5000);
         await cas.screenshot(page);
