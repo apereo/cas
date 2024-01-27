@@ -676,7 +676,7 @@ public abstract class AbstractOAuth20Tests {
         val mockResponse = new MockHttpServletResponse();
 
         val service = RegisteredServiceTestUtils.getService(SERVICE_URL);
-        val holder = AccessTokenRequestContext.builder()
+        val tokenRequestContext = AccessTokenRequestContext.builder()
             .clientId(registeredService.getClientId())
             .service(service)
             .authentication(authentication)
@@ -687,7 +687,7 @@ public abstract class AbstractOAuth20Tests {
             .claims(oauthRequestParameterResolver.resolveRequestClaims(new JEEContext(mockRequest, mockResponse)))
             .build();
 
-        val generatedToken = oauthTokenGenerator.generate(holder);
+        val generatedToken = oauthTokenGenerator.generate(tokenRequestContext);
         val builder = OAuth20AccessTokenResponseResult.builder();
         val result = builder
             .registeredService(registeredService)

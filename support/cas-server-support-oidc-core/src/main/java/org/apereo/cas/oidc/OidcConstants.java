@@ -44,11 +44,6 @@ public interface OidcConstants {
     String REQUEST_URI = "request_uri";
 
     /**
-     * Expiration attribute used in PAR response payloads.
-     */
-    String EXPIRES_IN = "expires_in";
-
-    /**
      * The sub claim.
      */
     String CLAIM_SUB = "sub";
