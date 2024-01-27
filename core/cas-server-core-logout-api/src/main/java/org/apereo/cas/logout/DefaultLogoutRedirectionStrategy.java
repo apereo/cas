@@ -4,6 +4,8 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
+import org.apereo.cas.services.CasRegisteredService;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.WebUtils;
@@ -34,6 +36,8 @@ public class DefaultLogoutRedirectionStrategy implements LogoutRedirectionStrate
 
     private final ServiceFactory<WebApplicationService> serviceFactory;
 
+    private final ServicesManager servicesManager;
+
     @Override
     public LogoutRedirectionResponse handle(final HttpServletRequest request, final HttpServletResponse response) {
         val logoutResponse = LogoutRedirectionResponse.builder();
@@ -41,9 +45,14 @@ public class DefaultLogoutRedirectionStrategy implements LogoutRedirectionStrate
             .or(() -> {
                 val redirectUrl = casProperties.getView().getDefaultRedirectUrl();
                 return FunctionUtils.doIf(StringUtils.isNotBlank(redirectUrl),
-                    () -> Optional.of(serviceFactory.createService(redirectUrl)), Optional::<WebApplicationService>empty).get();
+                    () -> Optional.of(serviceFactory.createService(redirectUrl)),
+                    Optional::<WebApplicationService>empty).get();
             })
             .filter(service -> singleLogoutServiceLogoutUrlBuilder.isServiceAuthorized(service, Optional.of(request), Optional.of(response)))
+            .filter(service -> {
+                val registeredService = servicesManager.findServiceBy(service);
+                return registeredService instanceof CasRegisteredService;
+            })
             .ifPresentOrElse(service -> {
                 logoutResponse.service(Optional.of(service));
                 if (casProperties.getLogout().isFollowServiceRedirects()) {

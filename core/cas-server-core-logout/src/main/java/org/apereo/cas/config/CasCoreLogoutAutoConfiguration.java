@@ -107,6 +107,8 @@ public class CasCoreLogoutAutoConfiguration {
         @ConditionalOnMissingBean(name = "defaultLogoutRedirectionStrategy")
         public LogoutRedirectionStrategy defaultLogoutRedirectionStrategy(
             final CasConfigurationProperties casProperties,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
             @Qualifier(ArgumentExtractor.BEAN_NAME)
             final ArgumentExtractor argumentExtractor,
             @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
@@ -114,7 +116,8 @@ public class CasCoreLogoutAutoConfiguration {
             @Qualifier("singleLogoutServiceLogoutUrlBuilder")
             final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder) {
             return new DefaultLogoutRedirectionStrategy(argumentExtractor,
-                casProperties, singleLogoutServiceLogoutUrlBuilder, webApplicationServiceFactory);
+                casProperties, singleLogoutServiceLogoutUrlBuilder,
+                webApplicationServiceFactory, servicesManager);
         }
     }
 
