@@ -81,9 +81,11 @@ public class OAuth20TokenAuthorizationResponseBuilder<T extends OAuth20Configura
                 .casProperties(configurationContext.getCasProperties())
                 .build()
                 .encode(accessToken.getId());
-            builder.addParameter(OAuth20Constants.ACCESS_TOKEN, encodedAccessToken);
-            builder.addParameter(OAuth20Constants.TOKEN_TYPE, OAuth20Constants.TOKEN_TYPE_BEARER);
-            builder.addParameter(OAuth20Constants.EXPIRES_IN, String.valueOf(accessToken.getExpiresIn()));
+            if (accessToken.getExpiresIn() > 0) {
+                builder.addParameter(OAuth20Constants.ACCESS_TOKEN, encodedAccessToken);
+                builder.addParameter(OAuth20Constants.TOKEN_TYPE, OAuth20Constants.TOKEN_TYPE_BEARER);
+                builder.addParameter(OAuth20Constants.EXPIRES_IN, String.valueOf(accessToken.getExpiresIn()));
+            }
         }
 
         if (givenRefreshToken != null) {

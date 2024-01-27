@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.web;
 
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationModelAndViewBuilder;
@@ -26,7 +27,7 @@ public class OidcPushedAuthorizationModelAndViewBuilder implements OAuth20Author
                               final String redirectUrl,
                               final Map<String, String> parameters) {
         val model = new LinkedHashMap<String, Object>();
-        model.put(OidcConstants.EXPIRES_IN, Long.valueOf(parameters.get(OidcConstants.EXPIRES_IN)));
+        model.put(OAuth20Constants.EXPIRES_IN, Long.valueOf(parameters.get(OAuth20Constants.EXPIRES_IN)));
         model.put(OidcConstants.REQUEST_URI, parameters.get(OidcConstants.REQUEST_URI));
         val mv = new ModelAndView(new MappingJackson2JsonView(), model);
         mv.setStatus(HttpStatus.CREATED);

@@ -6,10 +6,12 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthAccessTokenExpirationPolicy;
 import org.apereo.cas.support.oauth.validator.token.device.InvalidOAuth20DeviceTokenException;
 import org.apereo.cas.support.oauth.validator.token.device.ThrottledOAuth20DeviceUserCodeApprovalException;
 import org.apereo.cas.support.oauth.validator.token.device.UnapprovedOAuth20DeviceUserCodeException;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
+import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 
 import lombok.val;
@@ -62,6 +64,18 @@ class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
         val id = mv.getModel().get("access_token").toString();
         val at = ticketRegistry.getTicket(id, OAuth20AccessToken.class);
         assertTrue(at.getAuthentication().getAttributes().containsKey("given_name"));
+    }
+
+    @Test
+    void verifyAccessTokenNeverAdded() throws Throwable {
+        val registeredService = getRegisteredService(UUID.randomUUID().toString(), "secret", new LinkedHashSet<>());
+        registeredService.setAccessTokenExpirationPolicy(new DefaultRegisteredServiceOAuthAccessTokenExpirationPolicy()
+            .setMaxTimeToLive("PT0S").setTimeToKill("PT0S"));
+        servicesManager.save(registeredService);
+        val mv = generateAccessTokenResponseAndGetModelAndView(registeredService);
+        assertTrue(mv.getModel().containsKey(OAuth20Constants.ACCESS_TOKEN));
+        val ticketId = mv.getModel().get(OAuth20Constants.ACCESS_TOKEN).toString();
+        assertThrows(InvalidTicketException.class, () -> ticketRegistry.getTicket(ticketId, OAuth20AccessToken.class));
     }
 
     @Test
