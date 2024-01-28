@@ -77,7 +77,10 @@ public class RegisteredServiceAccessEndpoint extends BaseCasActuatorEndpoint {
      * @return the response entity
      */
     @GetMapping(
-        consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+        consumes = {
+            MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            MediaType.APPLICATION_JSON_VALUE
+        },
         produces = {
             MEDIA_TYPE_SPRING_BOOT_V2_JSON,
             MEDIA_TYPE_SPRING_BOOT_V3_JSON,

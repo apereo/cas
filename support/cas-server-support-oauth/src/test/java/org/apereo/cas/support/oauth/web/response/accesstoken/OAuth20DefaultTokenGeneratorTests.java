@@ -11,7 +11,6 @@ import org.apereo.cas.support.oauth.validator.token.device.InvalidOAuth20DeviceT
 import org.apereo.cas.support.oauth.validator.token.device.ThrottledOAuth20DeviceUserCodeApprovalException;
 import org.apereo.cas.support.oauth.validator.token.device.UnapprovedOAuth20DeviceUserCodeException;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
-import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 
 import lombok.val;
