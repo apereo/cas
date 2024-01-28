@@ -48,17 +48,16 @@ public class AccessTokenRefreshTokenGrantRequestExtractor extends AccessTokenAut
 
     @Override
     protected AccessTokenRequestContext extractInternal(
-        final WebContext context, final AccessTokenRequestContext.AccessTokenRequestContextBuilder builder) {
+        final WebContext context, final AccessTokenRequestContext accessTokenRequestContext) {
 
         val registeredService = getOAuthRegisteredServiceBy(context);
         if (registeredService == null) {
             throw UnauthorizedServiceException.denied("Unable to locate service in registry");
         }
         val shouldRenewRefreshToken = registeredService.isGenerateRefreshToken() && registeredService.isRenewRefreshToken();
-        builder.generateRefreshToken(shouldRenewRefreshToken);
-        builder.expireOldRefreshToken(shouldRenewRefreshToken);
-
-        return super.extractInternal(context, builder);
+        return super.extractInternal(context, accessTokenRequestContext
+            .withGenerateRefreshToken(shouldRenewRefreshToken)
+            .withExpireOldRefreshToken(shouldRenewRefreshToken));
     }
     @Override
     protected OAuthRegisteredService getOAuthRegisteredServiceBy(final WebContext context) {

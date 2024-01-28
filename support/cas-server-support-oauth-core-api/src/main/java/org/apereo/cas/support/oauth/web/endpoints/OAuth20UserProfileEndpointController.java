@@ -80,8 +80,8 @@ public class OAuth20UserProfileEndpointController<T extends OAuth20Configuration
         }
 
         val accessTokenTicket = FunctionUtils.doAndHandle(() -> {
-            val state = getConfigurationContext().getTicketRegistry().getTicket(decodedAccessTokenId, OAuth20AccessToken.class);
-            return state == null || state.isExpired() ? null : state;
+            val decodedToken = getConfigurationContext().getTicketRegistry().getTicket(decodedAccessTokenId, OAuth20AccessToken.class);
+            return decodedToken == null || decodedToken.isExpired() ? null : decodedToken;
         });
         if (accessTokenTicket == null || accessTokenTicket.isExpired()) {
             LOGGER.error("Access token [{}] cannot be found in the ticket registry or has expired.", decodedAccessTokenId);
@@ -118,7 +118,8 @@ public class OAuth20UserProfileEndpointController<T extends OAuth20Configuration
     }
 
     protected Pair<String, String> getAccessTokenFromRequest(final HttpServletRequest request) {
-        var accessToken = StringUtils.defaultIfBlank(request.getParameter(OAuth20Constants.ACCESS_TOKEN),
+        var accessToken = StringUtils.defaultIfBlank(
+            request.getParameter(OAuth20Constants.ACCESS_TOKEN),
             request.getParameter(OAuth20Constants.TOKEN));
         if (StringUtils.isBlank(accessToken)) {
             val authHeader = request.getHeader(HttpConstants.AUTHORIZATION_HEADER);

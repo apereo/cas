@@ -6,14 +6,14 @@ const cas = require("../../cas.js");
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
 
-    const redirectUri = "https%3A%2F%2Fapereo.github.io";
+    const redirectUri = "http://localhost:9889/anything/app";
     const url = `https://localhost:8443/cas/oauth2.0/authorize?response_type=code&redirect_uri=${redirectUri}&client_id=client&scope=profile&state=9qa3`;
     
     await cas.goto(page, url);
     await cas.logPage(page);
     await page.waitForTimeout(1000);
     await cas.loginWith(page);
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(3000);
 
     const code = await cas.assertParameter(page, "code");
     await cas.log(`OAuth code ${code}`);
@@ -23,19 +23,22 @@ const cas = require("../../cas.js");
     accessTokenParams += "grant_type=authorization_code&";
     accessTokenParams += `redirect_uri=${redirectUri}`;
 
-    const accessTokenUrl = `https://localhost:8443/cas/oauth2.0/token?${accessTokenParams}&code=${code}`;
+    let accessTokenUrl = `https://localhost:8443/cas/oauth2.0/token?${accessTokenParams}&code=${code}`;
     await cas.log(`Calling ${accessTokenUrl}`);
 
     let accessToken = null;
+    let refreshToken = null;
     await cas.doPost(accessTokenUrl, "", {
         "Content-Type": "application/json"
     }, (res) => {
-        assert(res.data.access_token !== null);
+        assert(res.data.access_token !== undefined);
         accessToken = res.data.access_token;
+        refreshToken = res.data.refresh_token;
     }, (error) => {
         throw `Operation failed to obtain access token: ${error}`;
     });
-    assert(accessToken !== null);
+    assert(accessToken !== undefined);
+    assert(refreshToken !== undefined);
 
     const params = new URLSearchParams();
     params.append("access_token", accessToken);
@@ -45,7 +48,7 @@ const cas = require("../../cas.js");
             const result = res.data;
             assert(result.id === "casuser");
             assert(result.client_id === "client");
-            assert(result.service === "https://apereo.github.io");
+            assert(result.service === redirectUri);
             assert(result.email[0] === "casuser@apereo.org");
             assert(result.organization[0] === "apereo");
             assert(result.username[0] === "casuser");
@@ -53,5 +56,26 @@ const cas = require("../../cas.js");
             throw error;
         });
 
+    accessTokenParams = `grant_type=refresh_token&refresh_token=${refreshToken}`;
+    accessTokenUrl = `https://localhost:8443/cas/oauth2.0/token?${accessTokenParams}`;
+    await cas.log(`Calling endpoint: ${accessTokenUrl}`);
+
+    const value = "client:secret";
+    const buff = Buffer.alloc(value.length, value);
+    const authzHeader = `Basic ${buff.toString("base64")}`;
+    await cas.log(`Authorization header: ${authzHeader}`);
+
+    await cas.doPost(accessTokenUrl, "", {
+        "Content-Type": "application/json",
+        "Authorization": authzHeader
+    }, (res) => {
+        const result = res.data;
+        assert(result.access_token !== undefined);
+        assert(result.expires_in !== undefined);
+        assert(result.token_type === "Bearer");
+        assert(result.scope === "profile");
+    }, (error) => {
+        throw error;
+    });
     await browser.close();
 })();

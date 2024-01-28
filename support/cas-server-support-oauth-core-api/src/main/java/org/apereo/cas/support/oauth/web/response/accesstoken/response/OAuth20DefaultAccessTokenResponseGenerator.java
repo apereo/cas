@@ -92,11 +92,10 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
                 model.put(OAuth20Constants.ACCESS_TOKEN, token.isStateless() ? token.getId() : encodeAccessToken(accessToken, result));
                 model.put(OAuth20Constants.SCOPE, String.join(" ", accessToken.getScopes()));
                 model.put(OAuth20Constants.EXPIRES_IN, accessToken.getExpiresIn());
+                model.put(OAuth20Constants.TOKEN_TYPE,
+                    accessToken.getAuthentication().containsAttribute(OAuth20Constants.DPOP_CONFIRMATION)
+                        ? OAuth20Constants.TOKEN_TYPE_DPOP : OAuth20Constants.TOKEN_TYPE_BEARER);
             }
-            
-            model.put(OAuth20Constants.TOKEN_TYPE,
-                accessToken.getAuthentication().containsAttribute(OAuth20Constants.DPOP_CONFIRMATION)
-                    ? OAuth20Constants.TOKEN_TYPE_DPOP : OAuth20Constants.TOKEN_TYPE_BEARER);
         });
         generatedToken.getRefreshToken().ifPresent(rt -> model.put(OAuth20Constants.REFRESH_TOKEN, rt.getId()));
         return model;

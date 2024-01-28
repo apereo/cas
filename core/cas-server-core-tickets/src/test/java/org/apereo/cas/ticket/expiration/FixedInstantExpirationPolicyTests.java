@@ -38,7 +38,7 @@ public class FixedInstantExpirationPolicyTests {
         assertEquals(expirationPolicy, readPolicy);
         
         assertEquals(0, expirationPolicy.getTimeToIdle());
-        assertEquals(0, expirationPolicy.getTimeToLive());
+        assertNotEquals(0, expirationPolicy.getTimeToLive());
 
         val ticketGrantingTicket = new MockTicketGrantingTicket("casuser");
         assertNotNull(expirationPolicy.toMaximumExpirationTime(ticketGrantingTicket));

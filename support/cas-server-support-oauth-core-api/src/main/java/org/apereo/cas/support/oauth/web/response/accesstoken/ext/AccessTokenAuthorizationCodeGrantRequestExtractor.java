@@ -54,7 +54,8 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
         val service = getConfigurationContext().getWebApplicationServiceServiceFactory().createService(redirectUri);
 
         val generateRefreshToken = isAllowedToGenerateRefreshToken() && registeredService.isGenerateRefreshToken();
-        val builder = AccessTokenRequestContext.builder()
+        val builder = AccessTokenRequestContext
+            .builder()
             .scopes(scopes)
             .service(service)
             .authentication(token.getAuthentication())
@@ -64,7 +65,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
             .token(token)
             .claims(token.getClaims())
             .ticketGrantingTicket(token.getTicketGrantingTicket());
-        return extractInternal(context, builder);
+        return extractInternal(context, builder.build());
     }
 
     @Override
@@ -100,8 +101,8 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
 
     protected AccessTokenRequestContext extractInternal(
         final WebContext context,
-        final AccessTokenRequestContext.AccessTokenRequestContextBuilder builder) {
-        return builder.build();
+        final AccessTokenRequestContext tokenRequestContext) {
+        return tokenRequestContext;
     }
 
     protected String getRegisteredServiceIdentifierFromRequest(final WebContext context) {
