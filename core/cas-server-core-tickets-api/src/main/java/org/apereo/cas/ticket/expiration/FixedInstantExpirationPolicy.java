@@ -17,6 +17,7 @@ import lombok.With;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import java.io.Serial;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 
@@ -52,7 +53,8 @@ public class FixedInstantExpirationPolicy extends AbstractCasExpirationPolicy {
     @JsonIgnore
     @Override
     public Long getTimeToLive() {
-        return 0L;
+        val currentTime = ZonedDateTime.now(getClock()).toInstant();
+        return Duration.between(currentTime, expirationInstant).toSeconds();
     }
 
     @JsonIgnore

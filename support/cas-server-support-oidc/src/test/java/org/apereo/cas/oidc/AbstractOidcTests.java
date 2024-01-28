@@ -109,6 +109,8 @@ import org.springframework.web.context.ConfigurableWebApplicationContext;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.webflow.execution.Action;
 import java.io.Serializable;
+import java.time.Clock;
+import java.time.Duration;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -478,6 +480,7 @@ public abstract class AbstractOidcTests {
             OidcConstants.StandardScopes.OPENID.getScope()));
         when(accessToken.getToken()).thenReturn(code.getId());
         when(accessToken.getIdToken()).thenReturn(idToken);
+        when(accessToken.getExpiresIn()).thenReturn(Duration.ofDays(365 * 5).toSeconds());
         return accessToken;
     }
 

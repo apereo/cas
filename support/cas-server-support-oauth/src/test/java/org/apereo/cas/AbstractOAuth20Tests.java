@@ -307,7 +307,7 @@ public abstract class AbstractOAuth20Tests {
 
     @Autowired
     @Qualifier("defaultRefreshTokenFactory")
-    protected OAuth20RefreshTokenFactory oAuthRefreshTokenFactory;
+    protected OAuth20RefreshTokenFactory defaultRefreshTokenFactory;
 
     @Autowired
     @Qualifier("defaultOAuthCodeFactory")
@@ -561,7 +561,7 @@ public abstract class AbstractOAuth20Tests {
         val authentication = getAuthentication(principal);
         val factory = new WebApplicationServiceFactory();
         val service = factory.createService(registeredService.getServiceId());
-        val refreshToken = oAuthRefreshTokenFactory.create(service, authentication,
+        val refreshToken = defaultRefreshTokenFactory.create(service, authentication,
             new MockTicketGrantingTicket("casuser"),
             new ArrayList<>(), registeredService.getClientId(), StringUtils.EMPTY, new HashMap<>(),
             OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
@@ -575,7 +575,7 @@ public abstract class AbstractOAuth20Tests {
         val authentication = getAuthentication(principal);
         val factory = new WebApplicationServiceFactory();
         val service = factory.createService(registeredService.getServiceId());
-        val refreshToken = oAuthRefreshTokenFactory.create(service, authentication,
+        val refreshToken = defaultRefreshTokenFactory.create(service, authentication,
             new MockTicketGrantingTicket("casuser"),
             new ArrayList<>(), registeredService.getClientId(), accessToken.getId(), new HashMap<>(),
             OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);

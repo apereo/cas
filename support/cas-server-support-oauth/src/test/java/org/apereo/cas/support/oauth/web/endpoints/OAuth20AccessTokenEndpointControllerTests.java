@@ -900,7 +900,7 @@ class OAuth20AccessTokenEndpointControllerTests {
             val principal = createPrincipal();
             val factory = new WebApplicationServiceFactory();
             val service = factory.createService(registeredService.getServiceId());
-            val refreshToken = oAuthRefreshTokenFactory.create(service, null,
+            val refreshToken = defaultRefreshTokenFactory.create(service, null,
                     new MockTicketGrantingTicket("casuser"),
                     new ArrayList<>(), registeredService.getClientId(), StringUtils.EMPTY, new HashMap<>(),
                     OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
@@ -1025,7 +1025,7 @@ class OAuth20AccessTokenEndpointControllerTests {
             val authentication = getAuthentication(principal);
             val factory = new WebApplicationServiceFactory();
             val service = factory.createService(registeredService.getServiceId());
-            val refreshToken = oAuthRefreshTokenFactory.create(service, authentication,
+            val refreshToken = defaultRefreshTokenFactory.create(service, authentication,
                 new MockTicketGrantingTicket("casuser"),
                 scopes, registeredService.getClientId(), StringUtils.EMPTY, new HashMap<>(),
                 OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);

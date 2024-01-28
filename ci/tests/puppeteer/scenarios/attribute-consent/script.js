@@ -69,7 +69,7 @@ const os = require("os");
             const tempDir = os.tmpdir();
             const exported = path.join(tempDir, "consent.zip");
             res.data.pipe(fs.createWriteStream(exported));
-            cas.log(`Exported consent records are at ${exported}`);
+            await cas.log(`Exported consent records are at ${exported}`);
         },
         async (error) => {
             throw error;

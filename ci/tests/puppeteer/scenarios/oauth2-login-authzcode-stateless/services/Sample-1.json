@@ -2,7 +2,7 @@
   "@class" : "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
   "clientId": "client",
   "clientSecret": "secret",
-  "serviceId" : "^https://apereo.github.io.*",
+  "serviceId" : "^http://localhost:9889/anything/app.*",
   "bypassApprovalPrompt": true,
   "name" : "Sample",
   "id" : 1,
@@ -12,6 +12,7 @@
     "authorizedToReleaseAuthenticationAttributes": false,
     "allowedAttributes" : [ "java.util.ArrayList", [ "email", "organization" ] ]
   },
-  "supportedGrantTypes": [ "java.util.HashSet", [ "authorization_code" ] ],
+  "generateRefreshToken": "true",
+  "supportedGrantTypes": [ "java.util.HashSet", [ "authorization_code", "refresh_token" ] ],
   "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ]
 }

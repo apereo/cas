@@ -37,7 +37,7 @@ const path = require("path");
 
     await cas.doGet("https://localhost:8443/cas/actuator/auditevents",
         async (res) => {
-            cas.log(`Found ${res.data.events.length} audit records`);
+            await cas.log(`Found ${res.data.events.length} audit records`);
             assert(res.data.events.length >= 4);
             assert(res.data.events[0].principal !== null);
             assert(res.data.events[0].timestamp !== null);

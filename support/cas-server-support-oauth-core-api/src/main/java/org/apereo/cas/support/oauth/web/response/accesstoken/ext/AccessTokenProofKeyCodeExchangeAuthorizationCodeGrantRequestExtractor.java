@@ -34,9 +34,9 @@ public class AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtract
     @Override
     protected AccessTokenRequestContext extractInternal(
         final WebContext context,
-        final AccessTokenRequestContext.AccessTokenRequestContextBuilder builder) {
+        final AccessTokenRequestContext accessTokenRequestContext) {
         val challenge = getConfigurationContext().getRequestParameterResolver()
             .resolveRequestParameter(context, OAuth20Constants.CODE_VERIFIER).orElse(StringUtils.EMPTY);
-        return builder.codeVerifier(challenge).build();
+        return accessTokenRequestContext.withCodeVerifier(challenge);
     }
 }

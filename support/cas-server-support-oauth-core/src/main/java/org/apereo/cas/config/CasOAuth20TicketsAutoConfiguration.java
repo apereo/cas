@@ -11,6 +11,8 @@ import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenCompactor;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.code.OAuth20CodeCompactor;
+import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
+import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshTokenCompactor;
 import org.apereo.cas.ticket.registry.TicketCompactor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.extern.slf4j.Slf4j;
@@ -66,5 +68,16 @@ public class CasOAuth20TicketsAutoConfiguration {
             @Qualifier(TicketFactory.BEAN_NAME) final ObjectProvider<TicketFactory> ticketFactory) {
             return new OAuth20AccessTokenCompactor(ticketFactory, serviceFactory, principalFactory);
         }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "oauth20RefreshTokenTicketCompactor")
+        public TicketCompactor<OAuth20RefreshToken> oauth20RefreshTokenTicketCompactor(
+            @Qualifier(PrincipalFactory.BEAN_NAME) final PrincipalFactory principalFactory,
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY) final ServiceFactory serviceFactory,
+            @Qualifier(TicketFactory.BEAN_NAME) final ObjectProvider<TicketFactory> ticketFactory) {
+            return new OAuth20RefreshTokenCompactor(ticketFactory, serviceFactory, principalFactory);
+        }
+
     }
 }
