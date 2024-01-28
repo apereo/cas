@@ -11,7 +11,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-
 import java.util.Map;
 import java.util.Set;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -38,10 +37,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     },
     webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class RegisteredServiceAccessEndpointTests extends AbstractCasEndpointTests {
-    @Autowired
-    @Qualifier("registeredServiceAccessEndpoint")
-    private RegisteredServiceAccessEndpoint endpoint;
-
     @Autowired
     @Qualifier("mockMvc")
     private MockMvc mockMvc;
