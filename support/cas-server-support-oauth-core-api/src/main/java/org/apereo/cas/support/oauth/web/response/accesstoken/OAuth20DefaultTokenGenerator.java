@@ -78,8 +78,8 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         return generateAccessTokenResult(tokenRequestContext, accessAndRefreshTokens);
     }
 
-    protected OAuth20TokenGeneratedResult generateAccessTokenOAuthDeviceCodeResponseType(final AccessTokenRequestContext holder) throws Throwable {
-        val deviceCode = holder.getDeviceCode();
+    protected OAuth20TokenGeneratedResult generateAccessTokenOAuthDeviceCodeResponseType(final AccessTokenRequestContext tokenRequestContext) throws Throwable {
+        val deviceCode = tokenRequestContext.getDeviceCode();
 
         if (StringUtils.isNotBlank(deviceCode)) {
             val deviceCodeTicket = getDeviceTokenFromTicketRegistry(deviceCode);
@@ -90,14 +90,14 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
                 ticketRegistry.deleteTicket(deviceCode);
 
                 val deviceResult = AccessTokenRequestContext.builder()
-                    .service(holder.getService())
-                    .authentication(holder.getAuthentication())
-                    .registeredService(holder.getRegisteredService())
-                    .ticketGrantingTicket(holder.getTicketGrantingTicket())
-                    .grantType(holder.getGrantType())
+                    .service(tokenRequestContext.getService())
+                    .authentication(tokenRequestContext.getAuthentication())
+                    .registeredService(tokenRequestContext.getRegisteredService())
+                    .ticketGrantingTicket(tokenRequestContext.getTicketGrantingTicket())
+                    .grantType(tokenRequestContext.getGrantType())
                     .scopes(new LinkedHashSet<>(0))
-                    .responseType(holder.getResponseType())
-                    .generateRefreshToken(holder.getRegisteredService() != null && holder.isGenerateRefreshToken())
+                    .responseType(tokenRequestContext.getResponseType())
+                    .generateRefreshToken(tokenRequestContext.getRegisteredService() != null && tokenRequestContext.isGenerateRefreshToken())
                     .build();
 
                 val ticketPair = generateAccessTokenOAuthGrantTypes(deviceResult);
@@ -119,11 +119,11 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
             throw new UnapprovedOAuth20DeviceUserCodeException(deviceCodeTicket.getId());
         }
 
-        val deviceTokens = createDeviceTokensInTicketRegistry(holder);
+        val deviceTokens = createDeviceTokensInTicketRegistry(tokenRequestContext);
         return OAuth20TokenGeneratedResult
             .builder()
-            .responseType(holder.getResponseType())
-            .registeredService(holder.getRegisteredService())
+            .responseType(tokenRequestContext.getResponseType())
+            .registeredService(tokenRequestContext.getRegisteredService())
             .deviceCode(deviceTokens.deviceCode().getId())
             .userCode(deviceTokens.userCode().getId())
             .build();

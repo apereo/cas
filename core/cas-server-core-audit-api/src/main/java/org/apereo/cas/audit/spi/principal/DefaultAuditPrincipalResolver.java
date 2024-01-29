@@ -2,6 +2,7 @@ package org.apereo.cas.audit.spi.principal;
 
 import org.apereo.cas.audit.AuditPrincipalIdProvider;
 import org.apereo.cas.audit.AuditableContext;
+import org.apereo.cas.audit.AuditableEntity;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationTransaction;
@@ -62,6 +63,7 @@ public class DefaultAuditPrincipalResolver implements PrincipalResolver {
                 case final Authentication authentication -> getPrincipalFromAuthentication(auditTarget, returnValue, exception, authentication);
                 case final AuthenticationResult authenticationResult -> getPrincipalFromAuthenticationResult(auditTarget, returnValue, exception, authenticationResult);
                 case final AuditableContext auditableContext -> getPrincipalFromAuditContext(auditTarget, returnValue, exception, auditableContext);
+                case final AuditableEntity auditableEntity -> getPrincipalFromAuditableEntity(auditTarget, returnValue, exception, auditableEntity);
                 case final Assertion assertion -> getPrincipalFromAssertion(auditTarget, returnValue, exception, assertion);
                 case final Credential credential -> getPrincipalFromCredential(auditTarget, returnValue, exception, credential);
                 default -> UNKNOWN_USER;
@@ -112,6 +114,11 @@ public class DefaultAuditPrincipalResolver implements PrincipalResolver {
         val authentication = authenticationResult.getAuthentication();
         val principalId = auditPrincipalIdProvider.getPrincipalIdFrom(auditTarget, authentication, returnValue, exception);
         return StringUtils.defaultIfBlank(principalId, UNKNOWN_USER);
+    }
+
+    protected String getPrincipalFromAuditableEntity(final JoinPoint auditTarget, final Object returnValue,
+                                                      final Exception exception, final AuditableEntity entity) {
+        return StringUtils.defaultIfBlank(entity.getAuditablePrincipal(), UNKNOWN_USER);
     }
 
     protected String getPrincipalFromAuthentication(final JoinPoint auditTarget, final Object returnValue, final Exception exception,
