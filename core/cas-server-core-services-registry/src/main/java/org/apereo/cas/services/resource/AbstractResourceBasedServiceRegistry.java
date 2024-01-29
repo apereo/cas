@@ -28,6 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.beans.factory.DisposableBean;
@@ -261,6 +262,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
                 .map(this::load)
                 .filter(Objects::nonNull)
                 .flatMap(Collection::stream)
+                .filter(service -> StringUtils.isNotBlank(service.getServiceId()) && StringUtils.isNotBlank(service.getName()))
                 .sorted()
                 .collect(Collectors.toMap(RegisteredService::getId, Function.identity(),
                     (s1, s2) -> {
@@ -308,12 +310,13 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
 
         LOGGER.debug("Attempting to read and parse [{}]", file.getAbsoluteFile());
         try (val in = Files.newBufferedReader(file.toPath())) {
-            return this.registeredServiceSerializers
+            return registeredServiceSerializers
                 .stream()
                 .filter(serializer -> serializer.supports(file))
                 .map(serializer -> serializer.load(in))
                 .filter(Objects::nonNull)
                 .flatMap(Collection::stream)
+                .filter(service -> StringUtils.isNotBlank(service.getServiceId()) && StringUtils.isNotBlank(service.getName()))
                 .map(this::invokeServiceRegistryListenerPostLoad)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());

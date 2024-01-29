@@ -106,24 +106,24 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
         }
 
         try {
-            val requestHolder = examineAndExtractAccessTokenGrantRequest(request, response);
-            var authn = requestHolder.getAuthentication();
-            if (authn == null && requestHolder.getTicketGrantingTicket() instanceof final AuthenticationAwareTicket aat) {
+            val tokenRequestContext = examineAndExtractAccessTokenGrantRequest(request, response);
+            var authn = tokenRequestContext.getAuthentication();
+            if (authn == null && tokenRequestContext.getTicketGrantingTicket() instanceof final AuthenticationAwareTicket aat) {
                 authn = aat.getAuthentication();
             }
             LoggingUtils.protocolMessage("OAuth/OpenID Connect Token Request",
-                Map.of("Token", Optional.ofNullable(requestHolder.getToken()).map(OAuth20Token::getId).orElse("none"),
-                    "Device Code", StringUtils.defaultString(requestHolder.getDeviceCode()),
-                    "Scopes", String.join(",", requestHolder.getScopes()),
-                    "Registered Service", requestHolder.getRegisteredService().getName(),
-                    "Service", requestHolder.getService().getId(),
+                Map.of("Token", Optional.ofNullable(tokenRequestContext.getToken()).map(OAuth20Token::getId).orElse("none"),
+                    "Device Code", StringUtils.defaultString(tokenRequestContext.getDeviceCode()),
+                    "Scopes", String.join(",", tokenRequestContext.getScopes()),
+                    "Registered Service", tokenRequestContext.getRegisteredService().getName(),
+                    "Service", tokenRequestContext.getService().getId(),
                     "Principal", authn.getPrincipal().getId(),
-                    "Grant Type", requestHolder.getGrantType().getType(),
-                    "Response Type", requestHolder.getResponseType().getType()));
-            LOGGER.debug("Creating access token for [{}]", requestHolder);
-            val tokenResult = getConfigurationContext().getAccessTokenGenerator().generate(requestHolder);
-            LOGGER.debug("Access token generated result is: [{}]", tokenResult);
-            return generateAccessTokenResponse(requestHolder, tokenResult);
+                    "Grant Type", tokenRequestContext.getGrantType().getType(),
+                    "Response Type", tokenRequestContext.getResponseType().getType()));
+            LOGGER.debug("Creating access token for [{}]", tokenRequestContext);
+            val generatedTokenResult = getConfigurationContext().getAccessTokenGenerator().generate(tokenRequestContext);
+            LOGGER.debug("Access token generated result is: [{}]", generatedTokenResult);
+            return generateAccessTokenResponse(tokenRequestContext, generatedTokenResult);
         } catch (final Throwable e) {
             return handleAccessTokenException(e, response);
         }
@@ -184,7 +184,8 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
 
     private AccessTokenRequestContext examineAndExtractAccessTokenGrantRequest(final HttpServletRequest request,
                                                                                final HttpServletResponse response) throws Throwable {
-        val audit = AuditableContext.builder()
+        val audit = AuditableContext
+            .builder()
             .httpRequest(request)
             .httpResponse(response)
             .build();

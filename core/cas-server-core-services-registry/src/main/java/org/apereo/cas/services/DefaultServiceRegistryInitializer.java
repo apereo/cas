@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Comparator;
 import java.util.stream.Collectors;
@@ -48,6 +49,7 @@ public class DefaultServiceRegistryInitializer implements ServiceRegistryInitial
         servicesLoaded
             .stream()
             .sorted(Comparator.naturalOrder())
+            .filter(service -> StringUtils.isNotBlank(service.getServiceId()) && StringUtils.isNotBlank(service.getName()))
             .forEach(serviceRegistry::synchronize);
         servicesManager.load();
         LOGGER.info("Service registry [{}] contains [{}] service definitions",

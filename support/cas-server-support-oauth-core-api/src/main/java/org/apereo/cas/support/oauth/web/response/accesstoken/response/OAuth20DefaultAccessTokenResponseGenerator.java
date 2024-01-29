@@ -3,6 +3,7 @@ package org.apereo.cas.support.oauth.web.response.accesstoken.response;
 import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
@@ -92,9 +93,10 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
                 model.put(OAuth20Constants.ACCESS_TOKEN, token.isStateless() ? token.getId() : encodeAccessToken(accessToken, result));
                 model.put(OAuth20Constants.SCOPE, String.join(" ", accessToken.getScopes()));
                 model.put(OAuth20Constants.EXPIRES_IN, accessToken.getExpiresIn());
-                model.put(OAuth20Constants.TOKEN_TYPE,
-                    accessToken.getAuthentication().containsAttribute(OAuth20Constants.DPOP_CONFIRMATION)
+                val authentication = accessToken.getAuthentication();
+                model.put(OAuth20Constants.TOKEN_TYPE, authentication.containsAttribute(OAuth20Constants.DPOP_CONFIRMATION)
                         ? OAuth20Constants.TOKEN_TYPE_DPOP : OAuth20Constants.TOKEN_TYPE_BEARER);
+                result.getUserProfile().addAttribute(Principal.class.getName(), authentication.getPrincipal());
             }
         });
         generatedToken.getRefreshToken().ifPresent(rt -> model.put(OAuth20Constants.REFRESH_TOKEN, rt.getId()));

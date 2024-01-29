@@ -36,17 +36,19 @@ public class AccessTokenGrantAuditableRequestExtractor extends BaseAuditableExec
         val response = (HttpServletResponse) auditableContext.getResponse().orElseThrow();
 
         val context = new JEEContext(request, response);
-        val result = accessTokenGrantRequestExtractors.stream()
+        val tokenRequestContext = accessTokenGrantRequestExtractors
+            .stream()
             .filter(ext -> ext.supports(context))
             .findFirst()
             .orElseThrow(() -> new UnsupportedOperationException("Access token request is not supported"))
             .extract(context);
 
-        return AuditableExecutionResult.builder()
-            .authentication(result.getAuthentication())
-            .service(result.getService())
-            .registeredService(result.getRegisteredService())
-            .executionResult(result)
+        return AuditableExecutionResult
+            .builder()
+            .authentication(tokenRequestContext.getAuthentication())
+            .service(tokenRequestContext.getService())
+            .registeredService(tokenRequestContext.getRegisteredService())
+            .executionResult(tokenRequestContext)
             .build();
     }
 }
