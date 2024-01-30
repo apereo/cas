@@ -1,4 +1,4 @@
-package org.apereo.cas;
+package org.apereo.cas.adaptors.jdbc;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;

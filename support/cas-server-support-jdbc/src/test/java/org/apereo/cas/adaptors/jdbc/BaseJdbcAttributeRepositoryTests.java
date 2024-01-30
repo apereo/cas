@@ -1,5 +1,6 @@
-package org.apereo.cas;
+package org.apereo.cas.adaptors.jdbc;
 
+import org.apereo.cas.BasePrincipalAttributeRepositoryTests;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
