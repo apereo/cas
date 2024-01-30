@@ -16,8 +16,8 @@ const cas = require("../../cas.js");
     const json = JSON.parse(body);
     const authenticationSuccess = json.serviceResponse.authenticationSuccess;
     assert(authenticationSuccess.user === "casuser");
-    assert(authenticationSuccess.attributes.credentialType !== null);
-    assert(authenticationSuccess.attributes.credential !== null);
+    assert(authenticationSuccess.attributes.credentialType !== undefined);
+    assert(authenticationSuccess.attributes.credential !== undefined);
 
     await browser.close();
 })();

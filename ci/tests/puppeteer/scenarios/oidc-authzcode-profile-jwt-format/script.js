@@ -33,7 +33,7 @@ const assert = require("assert");
         "Content-Type": "application/json"
     }, async (res) => {
         await cas.log(res.data);
-        assert(res.data.access_token !== null);
+        assert(res.data.access_token !== undefined);
 
         accessToken = res.data.access_token;
         await cas.log(`Received access token ${accessToken}`);
@@ -41,13 +41,13 @@ const assert = require("assert");
         await cas.log("Decoding ID token...");
         const decoded = await cas.decodeJwt(res.data.id_token);
 
-        assert(decoded.sub !== null);
+        assert(decoded.sub !== undefined);
         assert(decoded["preferred_username"] === undefined);
     }, (error) => {
         throw `Operation failed to obtain access token: ${error}`;
     });
 
-    assert(accessToken !== null, "Access Token cannot be null");
+    assert(accessToken !== undefined, "Access Token cannot be null");
 
     const profileUrl = `https://localhost:8443/cas/oidc/profile?access_token=${accessToken}`;
     await cas.log(`Calling user profile ${profileUrl}`);
@@ -55,7 +55,7 @@ const assert = require("assert");
         "Accept": "application/jwt"
     }, (res) => {
         cas.log(res.data);
-        assert(res.data !== null);
+        assert(res.data !== undefined);
     }, (error) => {
         throw `Operation failed: ${error}`;
     });

@@ -15,20 +15,20 @@ const cas = require("../../cas.js");
     }, async (res) => {
 
         await cas.log(res.data);
-        assert(res.data.access_token !== null);
+        assert(res.data.access_token !== undefined);
 
         await cas.log("Decoding JWT access token...");
         const decoded = await cas.decodeJwt(res.data.id_token);
 
-        assert(res.data.id_token !== null);
-        assert(res.data.refresh_token !== null);
-        assert(res.data.token_type !== null);
-        assert(res.data.scope !== null);
-        assert(decoded.sub !== null);
-        assert(decoded.cn !== null);
-        assert(decoded.name !== null);
-        assert(decoded["preferred_username"] !== null);
-        assert(decoded["given-name"] !== null);
+        assert(res.data.id_token !== undefined);
+        assert(res.data.refresh_token !== undefined);
+        assert(res.data.token_type !== undefined);
+        assert(res.data.scope !== undefined);
+        assert(decoded.sub !== undefined);
+        assert(decoded.cn !== undefined);
+        assert(decoded.name !== undefined);
+        assert(decoded["preferred_username"] !== undefined);
+        assert(decoded["given-name"] !== undefined);
     }, (error) => {
         throw `Operation failed: ${error}`;
     });

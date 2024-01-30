@@ -42,7 +42,7 @@ const path = require("path");
             assert(res.data.events[0].principal !== undefined);
             assert(res.data.events[0].timestamp !== undefined);
             assert(res.data.events[0].type !== undefined);
-            assert(res.data.events[0].data.source !== null);
+            assert(res.data.events[0].data.source !== undefined);
         }, async (err) => {
             throw(err);
         });

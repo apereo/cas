@@ -25,14 +25,14 @@ const os = require("os");
     const baseUrl = "https://localhost:8443/cas/actuator/multifactorTrustedDevices";
     let response = await cas.doRequest(baseUrl);
     let record = JSON.parse(response)[0];
-    assert(record.id !== null);
-    assert(record.name !== null);
+    assert(record.id !== undefined);
+    assert(record.name !== undefined);
 
     response = await cas.doRequest(`${baseUrl}/${record.principal}`);
     record = JSON.parse(response)[0];
     console.dir(record, {depth: null, colors: true});
-    assert(record.id !== null);
-    assert(record.name !== null);
+    assert(record.id !== undefined);
+    assert(record.name !== undefined);
 
     await cas.doGet(`${baseUrl}/export`,
         (res) => {

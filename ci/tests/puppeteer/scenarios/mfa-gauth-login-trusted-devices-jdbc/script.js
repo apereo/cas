@@ -31,8 +31,8 @@ const assert = require("assert");
     const response = await cas.doRequest(baseUrl);
     const record = JSON.parse(response)[0];
     console.dir(record, {depth: null, colors: true});
-    assert(record.id !== null);
-    assert(record.name !== null);
+    assert(record.id !== undefined);
+    assert(record.name !== undefined);
 
     const postgres = await cas.dockerContainer("postgres-server");
     await cas.log("Pausing postgres server...");

@@ -18,7 +18,7 @@ const cas = require("../../cas.js");
     }, async (res) => {
 
         await cas.log(res.data);
-        assert(res.data.access_token !== null);
+        assert(res.data.access_token !== undefined);
 
         await cas.log("Decoding JWT access token...");
         await cas.decodeJwt(res.data.access_token);
@@ -26,9 +26,9 @@ const cas = require("../../cas.js");
         await cas.log("Decoding JWT ID token...");
         const decoded = await cas.decodeJwt(res.data.id_token);
 
-        assert(res.data.id_token !== null);
-        assert(res.data.refresh_token !== null);
-        assert(res.data.token_type !== null);
+        assert(res.data.id_token !== undefined);
+        assert(res.data.refresh_token !== undefined);
+        assert(res.data.token_type !== undefined);
         assert(res.data.scope === "MyCustomScope openid");
         
         assert(decoded.sub === "casuser");

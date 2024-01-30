@@ -12,12 +12,12 @@ const querystring = require("querystring");
     await page.waitForTimeout(1000);
     await cas.doGet("https://localhost:8443/cas/actuator/health",
         (res) => {
-            assert(res.data.components.redis !== null);
-            assert(res.data.components.memory !== null);
-            assert(res.data.components.ping !== null);
+            assert(res.data.components.redis !== undefined);
+            assert(res.data.components.memory !== undefined);
+            assert(res.data.components.ping !== undefined);
 
-            assert(res.data.components.redis.status !== null);
-            assert(res.data.components.redis.details !== null);
+            assert(res.data.components.redis.status !== undefined);
+            assert(res.data.components.redis.details !== undefined);
 
         }, (error) => {
             throw error;

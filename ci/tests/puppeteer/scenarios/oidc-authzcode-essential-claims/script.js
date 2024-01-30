@@ -32,7 +32,7 @@ const assert = require("assert");
         "Content-Type": "application/json"
     }, async (res) => {
         await cas.log(res.data);
-        assert(res.data.access_token !== null);
+        assert(res.data.access_token !== undefined);
 
         accessToken = res.data.access_token;
         await cas.log(`Received access token ${accessToken}`);
@@ -41,7 +41,7 @@ const assert = require("assert");
         throw `Operation failed to obtain access token: ${error}`;
     });
 
-    assert(accessToken !== null, "Access Token cannot be null");
+    assert(accessToken !== undefined, "Access Token cannot be null");
 
     const profileUrl = `https://localhost:8443/cas/oidc/profile?access_token=${accessToken}`;
     await cas.log(`Calling user profile ${profileUrl}`);
@@ -50,8 +50,8 @@ const assert = require("assert");
         "Content-Type": "application/json"
     }, (res) => {
         cas.log(res.data);
-        assert(res.data.name !== null);
-        assert(res.data.sub !== null);
+        assert(res.data.name !== undefined);
+        assert(res.data.sub !== undefined);
     }, (error) => {
         throw `Operation failed: ${error}`;
     });

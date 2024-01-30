@@ -31,8 +31,8 @@ async function fetchRefreshToken(page, clientId, redirectUrl) {
     await cas.doPost(accessTokenUrl, "", {"Content-Type": "application/json"},
         (res) => {
             
-            assert(res.data.access_token !== null);
-            assert(res.data.refresh_token !== null);
+            assert(res.data.access_token !== undefined);
+            assert(res.data.refresh_token !== undefined);
 
             accessToken = res.data.access_token;
             refreshToken = res.data.refresh_token;
@@ -44,8 +44,8 @@ async function fetchRefreshToken(page, clientId, redirectUrl) {
             throw `Operation failed to obtain access token: ${error}`;
         });
 
-    assert(accessToken !== null, "Access Token cannot be null");
-    assert(refreshToken !== null, "Refresh Token cannot be null");
+    assert(accessToken !== undefined, "Access Token cannot be null");
+    assert(refreshToken !== undefined, "Refresh Token cannot be null");
     return refreshToken;
 }
 
@@ -91,7 +91,7 @@ async function exchangeToken(refreshToken, clientId, successHandler, errorHandle
 
     await exchangeToken(refreshToken1, "client",
         (res) => {
-            assert(res.data.access_token !== null);
+            assert(res.data.access_token !== undefined);
             assert(res.data.refresh_token === undefined);
             assert(res.status === 200);
         }, () => {
@@ -100,8 +100,8 @@ async function exchangeToken(refreshToken, clientId, successHandler, errorHandle
 
     await exchangeToken(refreshToken2, "client2",
         (res) => {
-            assert(res.data.access_token !== null);
-            assert(res.data.refresh_token !== null);
+            assert(res.data.access_token !== undefined);
+            assert(res.data.refresh_token !== undefined);
             assert(res.status === 200);
         }, () => {
             throw "Operation should not fail";

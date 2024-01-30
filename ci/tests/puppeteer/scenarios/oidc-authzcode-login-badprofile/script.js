@@ -67,7 +67,7 @@ const assert = require("assert");
         assert(res.data["cn"] === undefined);
         assert(res.data["name"] === undefined);
         assert(res.data["family_name"] === undefined);
-        assert(res.data.sub !== null);
+        assert(res.data.sub !== undefined);
         assert(Object.keys(res.data).length === 1);
     }, (error) => {
         throw `Operation failed: ${error}`;

@@ -38,20 +38,20 @@ const assert = require("assert");
         "Content-Type": "application/json"
     }, async (res) => {
         await cas.log(res.data);
-        assert(res.data.access_token !== null);
+        assert(res.data.access_token !== undefined);
 
         accessToken = res.data.access_token;
         await cas.log(`Received access token ${accessToken}`);
 
         await cas.log("Decoding ID token...");
         const decoded = await cas.decodeJwt(res.data.id_token);
-        assert(decoded.sub !== null);
-        assert(decoded.aud !== null);
-        assert(decoded.jti !== null);
-        assert(decoded.sid !== null);
-        assert(decoded.iss !== null);
-        assert(decoded.state !== null);
-        assert(decoded.nonce !== null);
+        assert(decoded.sub !== undefined);
+        assert(decoded.aud !== undefined);
+        assert(decoded.jti !== undefined);
+        assert(decoded.sid !== undefined);
+        assert(decoded.iss !== undefined);
+        assert(decoded.state !== undefined);
+        assert(decoded.nonce !== undefined);
     }, (error) => {
         throw `Operation failed to obtain access token: ${error}`;
     });

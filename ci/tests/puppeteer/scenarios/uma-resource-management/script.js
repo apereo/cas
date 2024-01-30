@@ -5,7 +5,7 @@ const cas = require("../../cas.js");
     let url = "https://localhost:8443/cas/oauth2.0/.well-known/uma-configuration";
     await cas.doGet(url, async (res) => {
         assert(res.data.issuer !== undefined);
-        assert(res.data.rpt_endpoint !== null);
+        assert(res.data.rpt_endpoint !== undefined);
         assert(res.data.permission_registration_endpoint !== undefined);
         assert(res.data.resource_set_registration_endpoint !== undefined);
         assert(res.data.requesting_party_claims_endpoint !== undefined);
