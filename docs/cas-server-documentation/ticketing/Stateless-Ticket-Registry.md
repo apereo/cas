@@ -37,8 +37,9 @@ The above features do come with a number of caveats and limitations. See below.
 ## Supported Protocols
 
 - [CAS Protocol](../protocol/CAS-Protocol.html) is supported.
-- [SAML Protocol](../protocol/SAML-Protocol.html) is supported.
-- [SAM2 Protocol](../authentication/Configuring-SAML2-Authentication.html), with the exception of [SAML2 attribute queries](../installation/Configuring-SAML2-AttributeQuery.html), is supported.
+- [SAML1 Protocol](../protocol/SAML-Protocol.html) is supported.
+- [SAML2 Protocol](../authentication/Configuring-SAML2-Authentication.html), with the exception of [SAML2 attribute queries](../installation/Configuring-SAML2-AttributeQuery.html), is supported.
+- [OAuth Protocol](../authentication/OAuth-Authentication.html) is supported.
 
 <div class="alert alert-info"><strong>:information_source: What About...?</strong><p>
 Remember that not all CAS modules and features that interact with the ticket registry to create, update, fetch or remove tickets are supported.

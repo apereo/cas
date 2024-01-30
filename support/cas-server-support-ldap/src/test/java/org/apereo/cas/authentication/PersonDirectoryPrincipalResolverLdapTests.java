@@ -1,7 +1,6 @@
-package org.apereo.cas;
+package org.apereo.cas.authentication;
 
-import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.CoreAuthenticationUtils;
+import org.apereo.cas.BasePrincipalAttributeRepositoryTests;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
