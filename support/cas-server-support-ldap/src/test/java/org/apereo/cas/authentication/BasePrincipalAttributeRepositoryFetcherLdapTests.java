@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication;
 
-import org.apereo.cas.BasePrincipalAttributeRepositoryTests;
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
@@ -24,7 +23,7 @@ import java.util.UUID;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@SpringBootTest(classes = BasePrincipalAttributeRepositoryTests.SharedTestConfiguration.class,
+@SpringBootTest(classes = BaseLdapAuthenticationHandlerTests.SharedTestConfiguration.class,
 properties = {
     "cas.authn.attribute-repository.ldap[0].base-dn=ou=people,dc=example,dc=org",
     "cas.authn.attribute-repository.ldap[0].ldap-url=ldap://localhost:10389",
