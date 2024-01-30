@@ -76,6 +76,41 @@ async function verifyNormalFlows(page) {
     });
 }
 
+async function verifyDeviceCode(page) {
+    const url = "https://localhost:8443/cas/oauth2.0/accessToken?response_type=device_code&client_id=client3";
+    await cas.doPost(url, "", {
+        "Content-Type": "application/json"
+    }, async (res) => {
+        assert(res.data.device_code !== undefined);
+        assert(res.data.user_code !== undefined);
+        assert(res.data.verification_uri !== undefined);
+        assert(res.data.interval !== undefined);
+        assert(res.data.expires_in !== undefined);
+
+        await page.goto(res.data.verification_uri);
+        await page.waitForTimeout(1000);
+        await cas.loginWith(page);
+        await cas.type(page, "#usercode", res.data.user_code);
+        await cas.pressEnter(page);
+        await page.waitForNavigation();
+        await page.waitForTimeout(3000);
+
+        await cas.doPost(url, "", {
+            "Content-Type": "application/json"
+        }, (res) => {
+            assert(res.data.access_token !== undefined);
+            assert(res.data.token_type !== undefined);
+            assert(res.data.expires !== undefined);
+            assert(res.data.refresh_token !== undefined);
+        }, (error) => {
+            throw `Operation failed ${error}`;
+        });
+
+    }, async (error) => {
+        throw `Operation failed to obtain device token: ${error}`;
+    });
+}
+
 async function verifyJwtAccessToken(page) {
     const redirectUri = "http://localhost:9889/anything/jwtat";
     const url = `https://localhost:8443/cas/oauth2.0/authorize?response_type=code&redirect_uri=${redirectUri}&client_id=client2&scope=profile&state=9qa3`;
@@ -117,14 +152,19 @@ async function verifyJwtAccessToken(page) {
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     try {
-        // let context = await browser.createIncognitoBrowserContext();
-        // let page = await cas.newPage(context);
-        // await verifyNormalFlows(page);
-        // await context.close();
+        let context = await browser.createIncognitoBrowserContext();
+        let page = await cas.newPage(context);
+        await verifyNormalFlows(page);
+        await context.close();
 
         context = await browser.createIncognitoBrowserContext();
         page = await cas.newPage(context);
         await verifyJwtAccessToken(page);
+        await context.close();
+
+        context = await browser.createIncognitoBrowserContext();
+        page = await cas.newPage(context);
+        await verifyDeviceCode(page);
         await context.close();
     } finally {
         await browser.close();

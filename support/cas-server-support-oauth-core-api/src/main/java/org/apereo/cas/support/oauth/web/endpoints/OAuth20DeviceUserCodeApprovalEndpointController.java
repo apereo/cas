@@ -64,12 +64,12 @@ public class OAuth20DeviceUserCodeApprovalEndpointController extends BaseOAuth20
         }
         try {
             val factory = (OAuth20DeviceUserCodeFactory) getConfigurationContext().getTicketFactory().get(OAuth20DeviceUserCode.class);
-            val codeId = factory.generateDeviceUserCode(userCode);
+            val codeId = factory.normalizeUserCode(userCode);
             val deviceUserCode = getConfigurationContext().getTicketRegistry().getTicket(codeId, OAuth20DeviceUserCode.class);
             if (deviceUserCode.isUserCodeApproved()) {
                 return getModelAndViewForFailure("codeapproved");
             }
-            deviceUserCode.approveUserCode();
+            deviceUserCode.setUserCodeApproved(true);
             getConfigurationContext().getTicketRegistry().updateTicket(deviceUserCode);
             return new ModelAndView(OAuth20Constants.DEVICE_CODE_APPROVED_VIEW, HttpStatus.OK);
         } catch (final Exception e) {

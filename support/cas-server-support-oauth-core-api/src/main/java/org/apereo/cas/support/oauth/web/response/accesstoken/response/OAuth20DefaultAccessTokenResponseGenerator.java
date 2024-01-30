@@ -15,6 +15,7 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
@@ -89,7 +90,13 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
         generatedToken.getAccessToken().ifPresent(token -> {
             val accessToken = resolveAccessToken(token);
             if (accessToken.getExpiresIn() > 0) {
-                model.put(OAuth20Constants.ACCESS_TOKEN, encodeAccessToken(accessToken, result));
+                val encodedAccessTokenId = encodeAccessToken(accessToken, result);
+                if (StringUtils.equals(encodedAccessTokenId, accessToken.getId()) && token.isStateless()) {
+                    model.put(OAuth20Constants.ACCESS_TOKEN, token.getId());
+                } else {
+                    model.put(OAuth20Constants.ACCESS_TOKEN, encodedAccessTokenId);
+                }
+
                 model.put(OAuth20Constants.SCOPE, String.join(" ", accessToken.getScopes()));
                 model.put(OAuth20Constants.EXPIRES_IN, accessToken.getExpiresIn());
                 val authentication = accessToken.getAuthentication();

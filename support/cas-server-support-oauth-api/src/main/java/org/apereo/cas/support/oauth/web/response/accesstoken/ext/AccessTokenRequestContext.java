@@ -91,7 +91,8 @@ public class AccessTokenRequestContext implements Serializable {
 
     private final String redirectUri;
 
-    private final UserProfile userProfile;
+    @Setter
+    private UserProfile userProfile;
 
     @Setter
     private String dpopConfirmation;

@@ -23,14 +23,16 @@ public abstract class BaseAccessTokenGrantRequestExtractor implements AccessToke
     @Override
     public AccessTokenRequestContext extract(final WebContext webContext) throws Throwable {
         val tokenRequestContext = extractRequest(webContext);
-        val profile = new ProfileManager(webContext, configurationContext.getSessionStore()).getProfile().orElseThrow();
-        if (profile.containsAttribute(OAuth20Constants.DPOP_CONFIRMATION)) {
-            tokenRequestContext.setDpopConfirmation(profile.getAttribute(OAuth20Constants.DPOP_CONFIRMATION).toString());
-        }
-        if (profile.containsAttribute(OAuth20Constants.DPOP)) {
-            tokenRequestContext.setDpop(profile.getAttribute(OAuth20Constants.DPOP).toString());
-        }
-        return tokenRequestContext.withUserProfile(profile);
+        new ProfileManager(webContext, configurationContext.getSessionStore()).getProfile().ifPresent(profile -> {
+            if (profile.containsAttribute(OAuth20Constants.DPOP_CONFIRMATION)) {
+                tokenRequestContext.setDpopConfirmation(profile.getAttribute(OAuth20Constants.DPOP_CONFIRMATION).toString());
+            }
+            if (profile.containsAttribute(OAuth20Constants.DPOP)) {
+                tokenRequestContext.setDpop(profile.getAttribute(OAuth20Constants.DPOP).toString());
+            }
+            tokenRequestContext.setUserProfile(profile);
+        });
+        return tokenRequestContext;
     }
 
     protected abstract AccessTokenRequestContext extractRequest(WebContext webContext) throws Throwable;
