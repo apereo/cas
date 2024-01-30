@@ -20,11 +20,16 @@ import org.jooq.lambda.UncheckedException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.annotation.Import;
 import javax.security.auth.login.FailedLoginException;
 import java.util.Arrays;
 import static org.apereo.cas.util.junit.Assertions.*;
@@ -38,21 +43,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
-    SecurityAutoConfiguration.class,
-    CasCoreAuthenticationAutoConfiguration.class,
-    CasCoreServicesAutoConfiguration.class,
-    CasCoreUtilAutoConfiguration.class,
-    CasCoreTicketsAutoConfiguration.class,
-    CasPersonDirectoryAutoConfiguration.class,
-    CasCoreWebAutoConfiguration.class,
-    CasCoreNotificationsAutoConfiguration.class,
-    CasCoreLogoutAutoConfiguration.class,
-    CasCoreAutoConfiguration.class,
-    CasLdapAuthenticationAutoConfiguration.class
-})
+@SpringBootTest(classes = BaseLdapAuthenticationHandlerTests.SharedTestConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public abstract class BaseLdapAuthenticationHandlerTests {
     @Autowired
@@ -67,8 +58,8 @@ public abstract class BaseLdapAuthenticationHandlerTests {
     void verifyAuthenticateFailure() throws Throwable {
         assertNotEquals(0, ldapAuthenticationHandlers.size());
         assertThrowsWithRootCause(UncheckedException.class, FailedLoginException.class,
-            () -> ldapAuthenticationHandlers.toList()
-                .forEach(Unchecked.consumer(handler -> handler.authenticate(new UsernamePasswordCredential(getUsername(), getFailurePassword()), mock(Service.class)))));
+            () -> ldapAuthenticationHandlers.toList().forEach(Unchecked.consumer(handler ->
+                handler.authenticate(new UsernamePasswordCredential(getUsername(), getFailurePassword()), mock(Service.class)))));
     }
 
     @Test
@@ -94,5 +85,28 @@ public abstract class BaseLdapAuthenticationHandlerTests {
 
     String getSuccessPassword() {
         return "password";
+    }
+
+    @ImportAutoConfiguration({
+        MailSenderAutoConfiguration.class,
+        AopAutoConfiguration.class,
+        WebMvcAutoConfiguration.class,
+        SecurityAutoConfiguration.class,
+        RefreshAutoConfiguration.class
+    })
+    @SpringBootConfiguration
+    @Import({
+        CasCoreAuthenticationAutoConfiguration.class,
+        CasCoreServicesAutoConfiguration.class,
+        CasCoreUtilAutoConfiguration.class,
+        CasCoreTicketsAutoConfiguration.class,
+        CasPersonDirectoryAutoConfiguration.class,
+        CasCoreWebAutoConfiguration.class,
+        CasCoreNotificationsAutoConfiguration.class,
+        CasCoreLogoutAutoConfiguration.class,
+        CasCoreAutoConfiguration.class,
+        CasLdapAuthenticationAutoConfiguration.class
+    })
+    public static class SharedTestConfiguration {
     }
 }

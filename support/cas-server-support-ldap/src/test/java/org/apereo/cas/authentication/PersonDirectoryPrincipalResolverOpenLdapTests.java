@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication;
 
-import org.apereo.cas.BasePrincipalAttributeRepositoryTests;
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
@@ -36,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@SpringBootTest(classes = BasePrincipalAttributeRepositoryTests.SharedTestConfiguration.class,
+@SpringBootTest(classes = BaseLdapAuthenticationHandlerTests.SharedTestConfiguration.class,
     properties = {
     "cas.authn.attribute-repository.ldap[0].base-dn=ou=people,dc=example,dc=org",
     "cas.authn.attribute-repository.ldap[0].ldap-url=ldap://localhost:11389",

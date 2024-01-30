@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication;
 
-import org.apereo.cas.BasePrincipalAttributeRepositoryTests;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
@@ -31,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.0.0
  */
 @SpringBootTest(
-    classes = BasePrincipalAttributeRepositoryTests.SharedTestConfiguration.class,
+    classes = BaseLdapAuthenticationHandlerTests.SharedTestConfiguration.class,
     properties = {
         "cas.authn.attribute-repository.ldap[0].bind-dn=Administrator@cas.example.org",
         "cas.authn.attribute-repository.ldap[0].bind-credential=" + PersonDirectoryPrincipalResolverActiveDirectoryTests.AD_ADMIN_PASSWORD,
