@@ -5,9 +5,11 @@ const assert = require("assert");
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
-    const url = "https://localhost:8443/cas/oidc/oidcAuthorize?response_type=code"
+
+    let redirectUri = "http://localhost:9889/anything/app1";
+    let url = "https://localhost:8443/cas/oidc/oidcAuthorize?response_type=code"
         + "&client_id=client&scope=openid%20profile%20MyCustomScope&"
-        + "redirect_uri=https://apereo.github.io&nonce=3d3a7457f9ad3&"
+        + `redirect_uri=${redirectUri}&nonce=3d3a7457f9ad3&`
         + "state=1735fd6c43c14&claims=%7B%22userinfo%22%3A%20%7B%20%22name%22%3A%20%7B%22essential"
         + "%22%3A%20true%7D%2C%22phone_number%22%3A%20%7B%22essential%22%3A%20true%7D%7D%7D";
 
@@ -30,11 +32,11 @@ const assert = require("assert");
         await page.waitForNavigation();
     }
 
-    const code = await cas.assertParameter(page, "code");
+    let code = await cas.assertParameter(page, "code");
     await cas.log(`Current code is ${code}`);
-    const accessTokenUrl = "https://localhost:8443/cas/oidc/token?grant_type=authorization_code"
-        + `&client_id=client&client_secret=secret&redirect_uri=https://apereo.github.io&code=${code}`;
-    const payload = await cas.doPost(accessTokenUrl, "", {
+    let accessTokenUrl = "https://localhost:8443/cas/oidc/token?grant_type=authorization_code"
+        + `&client_id=client&client_secret=secret&redirect_uri=${redirectUri}&code=${code}`;
+    let payload = await cas.doPost(accessTokenUrl, "", {
         "Content-Type": "application/json"
     }, (res) => res.data, (error) => {
         throw `Operation failed to obtain access token: ${error}`;
@@ -56,8 +58,7 @@ const assert = require("assert");
     assert(decoded["cn"] !== undefined);
     assert(decoded["family_name"] !== undefined);
     assert(decoded["name"] !== undefined);
-
-
+    
     const profileUrl = `https://localhost:8443/cas/oidc/profile?access_token=${payload.access_token }`;
     await cas.log(`Calling user profile ${profileUrl}`);
 
@@ -66,7 +67,6 @@ const assert = require("assert");
     }, (res) => {
         assert(decoded["common-name"] === undefined);
         assert(decoded["lastname"] === undefined);
-
         assert(res.data["cn"] !== undefined);
         assert(res.data["name"] !== undefined);
         assert(res.data["family_name"] !== undefined);
@@ -74,6 +74,30 @@ const assert = require("assert");
     }, (error) => {
         throw `Operation failed: ${error}`;
     });
+    
+    redirectUri = "http://localhost:9889/anything/noaccesstoken";
+    await cas.log(`Trying service ${redirectUri} that would never receive an access token`);
+    url = "https://localhost:8443/cas/oidc/oidcAuthorize?response_type=code"
+        + "&client_id=client2&scope=openid%20profile&"
+        + `redirect_uri=${redirectUri}&nonce=3d3a7457f9ad3`;
+    await cas.goto(page, url);
+    await page.waitForTimeout(1000);
+    code = await cas.assertParameter(page, "code");
+    await cas.log(`Current code is ${code}`);
+    accessTokenUrl = "https://localhost:8443/cas/oidc/token?grant_type=authorization_code"
+        + `&client_id=client2&client_secret=secret2&redirect_uri=${redirectUri}&code=${code}`;
+    payload = await cas.doPost(accessTokenUrl, "", {
+        "Content-Type": "application/json"
+    }, (res) => res.data, (error) => {
+        throw `Operation failed to obtain access token: ${error}`;
+    });
+    assert(payload.access_token === undefined);
+    assert(payload.token_type === undefined);
+    assert(payload.expires_in === undefined);
+    assert(payload.scope === undefined);
+    assert(payload.id_token !== undefined);
+    assert(payload.refresh_token !== undefined);
 
+    await cas.gotoLogout(page);
     await browser.close();
 })();

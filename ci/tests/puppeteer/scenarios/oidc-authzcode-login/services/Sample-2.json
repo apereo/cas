@@ -1,0 +1,20 @@
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "client2",
+  "clientSecret": "secret2",
+  "serviceId": "^http://localhost:9889/anything/noaccesstoken.*",
+  "name": "Sample",
+  "id": 2,
+  "bypassApprovalPrompt": true,
+  "generateRefreshToken": true,
+  "description": "This service will not receive an access token because of its expiration policy",
+  "evaluationOrder": 10000,
+  "scopes" : [ "java.util.HashSet", [ "openid", "profile" ] ],
+  "supportedGrantTypes": [ "java.util.HashSet", [ "authorization_code" ] ],
+  "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ],
+  "accessTokenExpirationPolicy": {
+    "@class": "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthAccessTokenExpirationPolicy",
+    "maxTimeToLive": "PT0S",
+    "timeToKill": "PT0S"
+  }
+}
