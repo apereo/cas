@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.services.ServicesManager;
@@ -45,6 +46,8 @@ public class RiskAuthenticationCheckTokenAction extends BaseCasWebflowAction {
 
     protected final ServicesManager servicesManager;
 
+    protected final PrincipalResolver principalResolver;
+
     protected final CipherExecutor riskVerificationCipherExecutor;
 
     protected final ObjectProvider<GeoLocationService> geoLocationService;
@@ -54,8 +57,10 @@ public class RiskAuthenticationCheckTokenAction extends BaseCasWebflowAction {
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         try {
+            val applicationContext = requestContext.getActiveFlow().getApplicationContext();
             val riskToken = requestContext.getRequestParameters().getRequired(PARAMETER_NAME_RISK_TOKEN);
-            val jwtBuilder = new JwtBuilder(riskVerificationCipherExecutor, servicesManager, casProperties);
+            val jwtBuilder = new JwtBuilder(riskVerificationCipherExecutor, applicationContext,
+                servicesManager, principalResolver, casProperties);
             val jwtClaims = jwtBuilder.unpack(riskToken);
 
             val event = new CasEvent();

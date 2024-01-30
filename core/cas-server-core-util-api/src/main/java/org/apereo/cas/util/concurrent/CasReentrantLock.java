@@ -34,7 +34,7 @@ public class CasReentrantLock {
      * waiting time and the current thread has not been
      * {@linkplain Thread#interrupt interrupted}.
      *
-     * @return the boolean
+     * @return true or false
      */
     public boolean tryLock() {
         return FunctionUtils.doAndHandle(

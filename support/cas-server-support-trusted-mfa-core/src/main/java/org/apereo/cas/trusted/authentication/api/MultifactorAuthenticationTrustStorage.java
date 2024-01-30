@@ -99,7 +99,7 @@ public interface MultifactorAuthenticationTrustStorage {
      * Determine if the storage service is available
      * and is able to establish a connection.
      *
-     * @return the boolean
+     * @return true or false
      */
     default boolean isAvailable() {
         return true;

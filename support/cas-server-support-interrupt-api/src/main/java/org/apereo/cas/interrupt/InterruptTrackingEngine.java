@@ -48,7 +48,7 @@ public interface InterruptTrackingEngine {
      * If interrupt checking is set to execute after SSO sessions, then this attribute cannot be collected.
      *
      * @param requestContext the request context
-     * @return the boolean
+     * @return true or false
      * @throws Throwable the throwable
      */
     boolean isInterrupted(RequestContext requestContext) throws Throwable;

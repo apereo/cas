@@ -9,6 +9,8 @@ import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -51,6 +53,9 @@ class AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtractorTests
         assertTrue(extractor.requestMustBeAuthenticated());
 
         val context = new JEEContext(request, response);
+        val commonProfile = new CommonProfile();
+        commonProfile.setId("testuser");
+        new ProfileManager(context, oauthDistributedSessionStore).save(true, commonProfile, false);
         val result = extractor.extract(context);
         assertNotNull(result);
     }

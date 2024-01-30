@@ -88,15 +88,16 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
         val generatedToken = result.getGeneratedToken();
         generatedToken.getAccessToken().ifPresent(token -> {
             val accessToken = resolveAccessToken(token);
-
             if (accessToken.getExpiresIn() > 0) {
-                model.put(OAuth20Constants.ACCESS_TOKEN, token.isStateless() ? token.getId() : encodeAccessToken(accessToken, result));
+                model.put(OAuth20Constants.ACCESS_TOKEN, encodeAccessToken(accessToken, result));
                 model.put(OAuth20Constants.SCOPE, String.join(" ", accessToken.getScopes()));
                 model.put(OAuth20Constants.EXPIRES_IN, accessToken.getExpiresIn());
                 val authentication = accessToken.getAuthentication();
                 model.put(OAuth20Constants.TOKEN_TYPE, authentication.containsAttribute(OAuth20Constants.DPOP_CONFIRMATION)
-                        ? OAuth20Constants.TOKEN_TYPE_DPOP : OAuth20Constants.TOKEN_TYPE_BEARER);
-                result.getUserProfile().addAttribute(Principal.class.getName(), authentication.getPrincipal());
+                    ? OAuth20Constants.TOKEN_TYPE_DPOP : OAuth20Constants.TOKEN_TYPE_BEARER);
+                if (result.getUserProfile() != null) {
+                    result.getUserProfile().addAttribute(Principal.class.getName(), authentication.getPrincipal());
+                }
             }
         });
         generatedToken.getRefreshToken().ifPresent(rt -> model.put(OAuth20Constants.REFRESH_TOKEN, rt.getId()));
@@ -109,18 +110,8 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
 
     protected String encodeAccessToken(final OAuth20AccessToken accessToken,
                                        final OAuth20AccessTokenResponseResult result) {
-        return getAccessTokenBuilder(accessToken, result).build()
-            .encode(accessToken.getIdToken(), new Object[]{accessToken, result});
-    }
-
-    protected OAuth20JwtAccessTokenEncoder.OAuth20JwtAccessTokenEncoderBuilder getAccessTokenBuilder(
-        final OAuth20AccessToken accessToken, final OAuth20AccessTokenResponseResult result) {
-        return OAuth20JwtAccessTokenEncoder
-            .builder()
-            .accessToken(accessToken)
-            .registeredService(result.getRegisteredService())
-            .service(result.getService())
-            .accessTokenJwtBuilder(accessTokenJwtBuilder)
-            .casProperties(casProperties);
+        val cipher = OAuth20JwtAccessTokenEncoder.toEncodableCipher(accessTokenJwtBuilder,
+            result.getRegisteredService(), accessToken, result.getService(), casProperties);
+        return cipher.encode(accessToken.getId(), new Object[]{accessToken, result});
     }
 }

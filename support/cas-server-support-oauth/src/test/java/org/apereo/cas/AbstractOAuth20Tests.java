@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
@@ -279,6 +280,10 @@ public abstract class AbstractOAuth20Tests {
     protected ServicesManager servicesManager;
 
     @Autowired
+    @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+    protected PrincipalResolver principalResolver;
+
+    @Autowired
     @Qualifier(CentralAuthenticationService.BEAN_NAME)
     protected CentralAuthenticationService centralAuthenticationService;
 
@@ -543,17 +548,8 @@ public abstract class AbstractOAuth20Tests {
         return code;
     }
 
-    /**
-     * Extract access token from token.
-     *
-     * @param token the token
-     * @return the string
-     */
     protected String extractAccessTokenFrom(final String token) {
-        return OAuth20JwtAccessTokenEncoder.builder()
-            .accessTokenJwtBuilder(accessTokenJwtBuilder)
-            .build()
-            .decode(token);
+        return OAuth20JwtAccessTokenEncoder.toDecodableCipher(accessTokenJwtBuilder).decode(token);
     }
 
     protected OAuth20RefreshToken addRefreshToken(final Principal principal,

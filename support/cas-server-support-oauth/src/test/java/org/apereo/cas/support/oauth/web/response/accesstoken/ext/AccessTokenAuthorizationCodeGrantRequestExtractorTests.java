@@ -103,6 +103,11 @@ class AccessTokenAuthorizationCodeGrantRequestExtractorTests extends AbstractOAu
 
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
+
+        val commonProfile = new CommonProfile();
+        commonProfile.setId("testuser");
+        new ProfileManager(context, oauthDistributedSessionStore).save(true, commonProfile, false);
+
         val result = extractor.extract(context);
         assertNotNull(result);
     }
@@ -124,6 +129,9 @@ class AccessTokenAuthorizationCodeGrantRequestExtractorTests extends AbstractOAu
 
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
+        val commonProfile = new CommonProfile();
+        commonProfile.setId("testuser");
+        new ProfileManager(context, oauthDistributedSessionStore).save(true, commonProfile, false);
         val result = extractor.extract(context);
         assertNotNull(result);
     }
@@ -148,6 +156,9 @@ class AccessTokenAuthorizationCodeGrantRequestExtractorTests extends AbstractOAu
 
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
+        val commonProfile = new CommonProfile();
+        commonProfile.setId("testuser");
+        new ProfileManager(context, oauthDistributedSessionStore).save(true, commonProfile, false);
         assertThrows(InvalidTicketException.class, () -> extractor.extract(context));
     }
 

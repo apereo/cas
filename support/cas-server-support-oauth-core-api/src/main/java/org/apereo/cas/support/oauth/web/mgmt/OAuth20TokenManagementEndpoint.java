@@ -91,10 +91,7 @@ public class OAuth20TokenManagementEndpoint extends BaseCasActuatorEndpoint {
         }
     }
 
-    private String extractAccessTokenFrom(final String token) {
-        return OAuth20JwtAccessTokenEncoder.builder()
-            .accessTokenJwtBuilder(accessTokenJwtBuilder)
-            .build()
-            .decode(token);
+    protected String extractAccessTokenFrom(final String token) {
+        return OAuth20JwtAccessTokenEncoder.toDecodableCipher(accessTokenJwtBuilder).decode(token);
     }
 }

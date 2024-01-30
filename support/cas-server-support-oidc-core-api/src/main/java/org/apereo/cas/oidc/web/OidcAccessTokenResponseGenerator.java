@@ -41,14 +41,15 @@ public class OidcAccessTokenResponseGenerator extends OAuth20DefaultAccessTokenR
     }
 
     @Override
-    protected OAuth20JwtAccessTokenEncoder.OAuth20JwtAccessTokenEncoderBuilder getAccessTokenBuilder(
-        final OAuth20AccessToken accessToken,
-        final OAuth20AccessTokenResponseResult result) {
-        val builder = super.getAccessTokenBuilder(accessToken, result);
-        val service = Optional.ofNullable(result.getRegisteredService())
+    protected String encodeAccessToken(final OAuth20AccessToken accessToken,
+                                       final OAuth20AccessTokenResponseResult result) {
+        val oidcRegisteredService = Optional.ofNullable(result.getRegisteredService())
             .filter(OidcRegisteredService.class::isInstance)
             .map(OidcRegisteredService.class::cast);
-        return builder.issuer(oidcIssuerService.determineIssuer(service));
+        val oidcIssuer = oidcIssuerService.determineIssuer(oidcRegisteredService);
+        val cipher = OAuth20JwtAccessTokenEncoder.toEncodableCipher(accessTokenJwtBuilder,
+            result.getRegisteredService(), accessToken, result.getService(), oidcIssuer, casProperties);
+        return cipher.encode(accessToken.getId(), new Object[]{accessToken, result});
     }
 
     @Override

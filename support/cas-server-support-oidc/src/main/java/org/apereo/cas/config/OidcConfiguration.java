@@ -667,15 +667,18 @@ class OidcConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcAccessTokenJwtBuilder")
         public JwtBuilder accessTokenJwtBuilder(
+            final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier("oidcAccessTokenJwtCipherExecutor")
             final CipherExecutor<Serializable, String> oidcAccessTokenJwtCipherExecutor,
             @Qualifier("oidcRegisteredServiceJwtAccessTokenCipherExecutor")
             final RegisteredServiceCipherExecutor oidcRegisteredServiceJwtAccessTokenCipherExecutor,
             @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) {
-            return new OAuth20JwtBuilder(oidcAccessTokenJwtCipherExecutor, servicesManager,
-                oidcRegisteredServiceJwtAccessTokenCipherExecutor, casProperties);
+            final ServicesManager servicesManager,
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+            final PrincipalResolver principalResolver) {
+            return new OAuth20JwtBuilder(oidcAccessTokenJwtCipherExecutor, applicationContext, servicesManager,
+                oidcRegisteredServiceJwtAccessTokenCipherExecutor, casProperties, principalResolver);
         }
     }
 
@@ -1109,15 +1112,18 @@ class OidcConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcResponseModeJwtBuilder")
         public JwtBuilder oidcResponseModeJwtBuilder(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("oidcRegisteredServiceResponseModeJwtCipherExecutor")
             final RegisteredServiceCipherExecutor oidcRegisteredServiceResponseModeJwtCipherExecutor,
             final CasConfigurationProperties casProperties,
             @Qualifier("oidcResponseModeJwtCipherExecutor")
             final CipherExecutor<Serializable, String> oidcResponseModeJwtCipherExecutor,
             @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) {
-            return new OAuth20JwtBuilder(oidcResponseModeJwtCipherExecutor, servicesManager,
-                oidcRegisteredServiceResponseModeJwtCipherExecutor, casProperties);
+            final ServicesManager servicesManager,
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+            final PrincipalResolver principalResolver) {
+            return new OAuth20JwtBuilder(oidcResponseModeJwtCipherExecutor, applicationContext, servicesManager,
+                oidcRegisteredServiceResponseModeJwtCipherExecutor, casProperties, principalResolver);
         }
 
     }

@@ -26,6 +26,7 @@ import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMeta
 import org.apereo.cas.authentication.metadata.MultifactorAuthenticationProviderMetadataPopulator;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
@@ -338,6 +339,8 @@ class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action determineDuoUserAccountAction(
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+            final PrincipalResolver defaultPrincipalResolver,
             @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext) {
@@ -346,7 +349,7 @@ class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
                 .withProperties(casProperties)
                 .withAction(() -> BeanSupplier.of(Action.class)
                     .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
-                    .supply(() -> new DuoSecurityDetermineUserAccountAction(casProperties, servicesManager))
+                    .supply(() -> new DuoSecurityDetermineUserAccountAction(casProperties, servicesManager, defaultPrincipalResolver))
                     .otherwise(() -> ConsumerExecutionAction.NONE)
                     .get())
                 .withId(CasWebflowConstants.ACTION_ID_DETERMINE_DUO_USER_ACCOUNT)

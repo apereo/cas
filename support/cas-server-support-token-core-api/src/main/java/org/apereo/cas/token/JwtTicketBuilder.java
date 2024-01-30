@@ -48,7 +48,7 @@ public class JwtTicketBuilder implements TokenTicketBuilder {
     
     @Override
     @SuppressWarnings("JavaUtilDate")
-    public String build(final String serviceTicketId, final WebApplicationService webApplicationService) throws Exception {
+    public String build(final String serviceTicketId, final WebApplicationService webApplicationService) throws Throwable {
         val assertion = FunctionUtils.doUnchecked(() -> ticketValidator.validate(serviceTicketId, webApplicationService.getId()));
         val attributes = new LinkedHashMap(assertion.getAttributes());
         attributes.putAll(assertion.getPrincipal().getAttributes());
@@ -82,7 +82,7 @@ public class JwtTicketBuilder implements TokenTicketBuilder {
     public String build(final Authentication authentication,
                         final RegisteredService registeredService,
                         final String jwtIdentifier,
-                        final Map<String, List<Object>> claims) throws Exception {
+                        final Map<String, List<Object>> claims) throws Throwable {
         val attributes = new HashMap<>(authentication.getAttributes());
         attributes.putAll(authentication.getPrincipal().getAttributes());
         attributes.putAll(claims);
