@@ -1,6 +1,5 @@
-package org.apereo.cas.adaptors.jdbc;
+package org.apereo.cas.jdbc;
 
-import org.apereo.cas.BasePrincipalAttributeRepositoryTests;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -27,7 +26,7 @@ import java.sql.Statement;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@SpringBootTest(classes = BasePrincipalAttributeRepositoryTests.SharedTestConfiguration.class)
+@SpringBootTest(classes = CasJdbcAuthenticationConfigurationTests.SharedTestConfiguration.class)
 public abstract class BaseJdbcAttributeRepositoryTests {
     @Autowired
     @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)

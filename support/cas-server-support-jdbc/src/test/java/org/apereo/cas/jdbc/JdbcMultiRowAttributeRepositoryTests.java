@@ -1,4 +1,4 @@
-package org.apereo.cas.adaptors.jdbc;
+package org.apereo.cas.jdbc;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
