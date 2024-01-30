@@ -13,7 +13,7 @@
     "authorizedToReleaseAuthenticationAttributes": false,
     "allowedAttributes" : [ "java.util.ArrayList", [ "email", "organization" ] ]
   },
-  "generateRefreshToken": "true",
+  "generateRefreshToken": true,
   "supportedGrantTypes": [ "java.util.HashSet", [ "authorization_code", "refresh_token" ] ],
   "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ]
 }
