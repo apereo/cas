@@ -25,12 +25,12 @@ const path = require("path");
     }, (res) => {
         cas.log(`Found ${res.data.length} audit records`);
         assert(res.data.length >= 4);
-        assert(res.data[0].principal !== null);
-        assert(res.data[0].actionPerformed !== null);
-        assert(res.data[0].applicationCode !== null);
-        assert(res.data[0].clientIpAddress !== null);
-        assert(res.data[0].serverIpAddress !== null);
-        assert(res.data[0].resourceOperatedUpon !== null);
+        assert(res.data[0].principal !== undefined);
+        assert(res.data[0].actionPerformed !== undefined);
+        assert(res.data[0].applicationCode !== undefined);
+        assert(res.data[0].clientIpAddress !== undefined);
+        assert(res.data[0].serverIpAddress !== undefined);
+        assert(res.data[0].resourceOperatedUpon !== undefined);
     }, (error) => {
         throw(error);
     });
@@ -39,9 +39,9 @@ const path = require("path");
         async (res) => {
             await cas.log(`Found ${res.data.events.length} audit records`);
             assert(res.data.events.length >= 4);
-            assert(res.data.events[0].principal !== null);
-            assert(res.data.events[0].timestamp !== null);
-            assert(res.data.events[0].type !== null);
+            assert(res.data.events[0].principal !== undefined);
+            assert(res.data.events[0].timestamp !== undefined);
+            assert(res.data.events[0].type !== undefined);
             assert(res.data.events[0].data.source !== null);
         }, async (err) => {
             throw(err);

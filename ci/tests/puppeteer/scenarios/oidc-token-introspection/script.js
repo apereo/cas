@@ -16,8 +16,8 @@ const cas = require("../../cas.js");
         "Authorization": `Basic ${btoa("client:secret")}`
     }, (res) => {
         cas.log(res.data);
-        assert(res.data.access_token !== null);
-        assert(res.data.refresh_token !== null);
+        assert(res.data.access_token !== undefined);
+        assert(res.data.refresh_token !== undefined);
 
         introspect(res.data.access_token);
         introspect(res.data.refresh_token);

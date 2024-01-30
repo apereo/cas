@@ -31,7 +31,7 @@ async function fetchRefreshToken(page, clientId, redirectUrl) {
     await cas.doPost(accessTokenUrl, "", {"Content-Type": "application/json"},
         (res) => {
             
-            assert(res.data.access_token !== null);
+            assert(res.data.access_token !== undefined);
             assert(res.data.refresh_token !== null);
 
             accessToken = res.data.access_token;

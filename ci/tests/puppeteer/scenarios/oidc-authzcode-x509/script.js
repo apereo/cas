@@ -79,7 +79,7 @@ const request = require("request");
     }, (res) => res.data, (error) => {
         throw `Operation failed to obtain access token: ${error}`;
     });
-    assert(payload.access_token !== null);
+    assert(payload.access_token !== undefined);
     const decoded = await cas.decodeJwt(payload.id_token);
     assert(/CN=(.+), OU=dev, O=bft, L=mt, C=world/.test(decoded["sub"]));
     assert(decoded["sub"] === decoded["preferred_username"]);

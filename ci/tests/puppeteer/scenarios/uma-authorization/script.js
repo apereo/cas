@@ -91,8 +91,8 @@ const cas = require("../../cas.js");
             "Content-Type": "application/json"
         }, 200, permissionRequest));
     await cas.log(result);
-    assert(result.ticket !== null);
-    assert(result.code !== null);
+    assert(result.ticket !== undefined);
+    assert(result.code !== undefined);
 
     const permissionTicket = result.ticket;
     await cas.log(`Found UMA permission ticket ${permissionTicket}`);
@@ -135,8 +135,8 @@ const cas = require("../../cas.js");
             "Content-Type": "application/json"
         }, 308, authzRequest));
     await cas.log(result);
-    assert(result.error_details.requesting_party_claims.required_claims !== null);
-    assert(result.error_details.requesting_party_claims.required_scopes !== null);
+    assert(result.error_details.requesting_party_claims.required_claims !== undefined);
+    assert(result.error_details.requesting_party_claims.required_scopes !== undefined);
 
 
     await cas.log("Executing claim collection...");
@@ -165,7 +165,7 @@ const cas = require("../../cas.js");
             "Content-Type": "application/json"
         }, 200, authzRequest));
     await cas.log(result);
-    assert(result.rpt !== null);
+    assert(result.rpt !== undefined);
 
     const value = "client:secret";
     const buff = Buffer.alloc(value.length, value);

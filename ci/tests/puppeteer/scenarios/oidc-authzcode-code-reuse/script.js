@@ -32,7 +32,7 @@ const assert = require("assert");
     await cas.doPost(accessTokenUrl, "", {
         "Content-Type": "application/json"
     }, async (res) => {
-        assert(res.data.access_token !== null);
+        assert(res.data.access_token !== undefined);
 
         accessToken = res.data.access_token;
         await cas.log(`Received access token ${accessToken}`);
@@ -40,23 +40,23 @@ const assert = require("assert");
         await cas.log("Decoding ID token...");
         const decoded = await cas.decodeJwt(res.data.id_token);
 
-        assert(decoded.sub !== null);
+        assert(decoded.sub !== undefined);
         assert(decoded["preferred_username"] === undefined);
     }, (error) => {
         throw `Operation failed to obtain access token: ${error}`;
     });
 
-    assert(accessToken !== null, "Access Token cannot be null");
+    assert(accessToken !== undefined, "Access Token cannot be null");
 
     const profileUrl = `https://localhost:8443/cas/oidc/profile?access_token=${accessToken}`;
     await cas.log(`Calling user profile ${profileUrl}`);
     await cas.doPost(profileUrl, "", {
         "Content-Type": "application/json"
     }, (res) => {
-        assert(res.data.email !== null);
-        assert(res.data.gender !== null);
-        assert(res.data.name !== null);
-        assert(res.data["preferred_username"] !== null);
+        assert(res.data.email !== undefined);
+        assert(res.data.gender !== undefined);
+        assert(res.data.name !== undefined);
+        assert(res.data["preferred_username"] !== undefined);
     }, (error) => {
         throw `Operation failed: ${error}`;
     });
