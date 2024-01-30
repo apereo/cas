@@ -1,5 +1,6 @@
-package org.apereo.cas;
+package org.apereo.cas.authentication;
 
+import org.apereo.cas.BasePrincipalAttributeRepositoryTests;
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 
 import com.unboundid.ldap.sdk.LDAPConnection;

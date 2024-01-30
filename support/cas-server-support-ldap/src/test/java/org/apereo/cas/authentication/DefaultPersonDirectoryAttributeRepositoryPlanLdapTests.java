@@ -1,7 +1,7 @@
-package org.apereo.cas;
+package org.apereo.cas.authentication;
 
+import org.apereo.cas.BasePrincipalAttributeRepositoryTests;
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
-import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;

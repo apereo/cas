@@ -1,6 +1,5 @@
-package org.apereo.cas;
+package org.apereo.cas.authentication;
 
-import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.attribute.PrincipalAttributeRepositoryFetcher;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.val;
@@ -13,7 +12,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link PrincipalAttributeRepositoryFetcherCascadeTests}.
+ * This is {@link PrincipalAttributeRepositoryFetcherLdapTests}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
