@@ -82,7 +82,7 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
     @Override
     public void release() {
         try {
-            LOGGER.info("Beginning audit cleanup...");
+            LOGGER.info("Beginning cleanup to release throttled records...");
             getConfigurationContext().getThrottledSubmissionStore().release(getThresholdRate());
         } finally {
             LOGGER.debug("Done releasing throttled entries.");

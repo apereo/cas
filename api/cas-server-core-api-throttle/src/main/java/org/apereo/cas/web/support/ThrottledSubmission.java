@@ -1,5 +1,6 @@
 package org.apereo.cas.web.support;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.SuperBuilder;
@@ -42,5 +43,11 @@ public class ThrottledSubmission implements Serializable {
     public boolean hasExpiredAlready() {
         val now = ZonedDateTime.now(Clock.systemUTC());
         return expiration != null && (now.isAfter(expiration) || now.isEqual(expiration));
+    }
+
+    @JsonIgnore
+    public boolean isStillLocked() {
+        val now = ZonedDateTime.now(Clock.systemUTC());
+        return expiration != null && (expiration.isBefore(now) || expiration.isEqual(now));
     }
 }

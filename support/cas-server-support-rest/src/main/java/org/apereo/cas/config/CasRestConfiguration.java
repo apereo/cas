@@ -126,7 +126,6 @@ public class CasRestConfiguration {
 
     @Configuration(value = "CasRestThrottleConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    @ConditionalOnBean(AuthenticationThrottlingExecutionPlan.class)
     public static class CasRestThrottleConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

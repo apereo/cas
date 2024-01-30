@@ -95,7 +95,19 @@ public abstract class BaseMappableThrottledSubmissionsStore<T extends ThrottledS
                 LOGGER.debug("Throttled submission [{}] has expired and will be removed", entry.getKey());
                 return true;
             }
-            return submissionRate(now, entry.getValue()) < thresholdRate;
+            if (entry.isStillLocked()) {
+                LOGGER.debug("Throttled submission [{}] has not expired and will be released at [{}]",
+                    entry.getKey(), entry.getExpiration());
+                return false;
+            }
+
+            val submissionRate = submissionRate(now, entry.getValue());
+            val remove = submissionRate < thresholdRate;
+            if (remove) {
+                LOGGER.debug("Submission rate [{}] is less than [{}]. Throttled submission [{}] will be released",
+                    submissionRate, thresholdRate, entry);
+            }
+            return remove;
         });
     }
 }
