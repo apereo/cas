@@ -37,7 +37,7 @@ The above features do come with a number of caveats and limitations. See below.
 ## Supported Protocols
 
 - [CAS Protocol](../protocol/CAS-Protocol.html) is supported.
-- [SAML1 Protocol](../protocol/SAML-Protocol.html) is supported.
+- [SAML1 Protocol](../protocol/SAML-v1-Protocol.html) is supported.
 - [SAML2 Protocol](../authentication/Configuring-SAML2-Authentication.html), with the exception of [SAML2 attribute queries](../installation/Configuring-SAML2-AttributeQuery.html), is supported.
 - [OAuth Protocol](../authentication/OAuth-Authentication.html) is supported.
 

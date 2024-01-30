@@ -577,7 +577,7 @@ layout: null
             *   [Claims](/cas/{{ version }}/protocol/WS-Federation-Protocol-Claims.html)
         *   [Delegation](/cas/{{ version }}/integration/ADFS-Integration.html)
     *   [SAML](#samlprotocol)
-        *   [SAML1](/cas/{{ version }}/protocol/SAML-Protocol.html)
+        *   [SAML1](/cas/{{ version }}/protocol/SAML-v1-Protocol.html)
         *   [SAML2](#saml2authn)
             *   [Overview](/cas/{{ version }}/authentication/Configuring-SAML2-Authentication.html)
             *   [Delegation](/cas/{{ version }}/integration/Delegate-Authentication.html)    

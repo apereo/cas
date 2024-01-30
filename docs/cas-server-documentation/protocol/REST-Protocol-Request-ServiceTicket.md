@@ -27,7 +27,7 @@ POST /cas/v1/tickets/{TGT id} HTTP/1.0
 service={form encoded parameter for the service url}&renew=true&username=casuser&password=password
 ```
 
-You may also submit service ticket requests using the semantics [SAML1 protocol](SAML-Protocol.html).
+You may also submit service ticket requests using the semantics [SAML1 protocol](SAML-v1-Protocol.html).
 
 ## Successful Response
 
