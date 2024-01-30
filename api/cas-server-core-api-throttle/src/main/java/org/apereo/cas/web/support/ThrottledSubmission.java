@@ -53,6 +53,6 @@ public class ThrottledSubmission implements Serializable {
     @JsonIgnore
     public boolean isStillLocked() {
         val now = ZonedDateTime.now(Clock.systemUTC());
-        return expiration != null && (expiration.isBefore(now) || expiration.isEqual(now));
+        return expiration != null && (expiration.isAfter(now) || expiration.isEqual(now));
     }
 }
