@@ -1,4 +1,4 @@
-package org.apereo.cas.adaptors.jdbc;
+package org.apereo.cas.jdbc;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
@@ -7,7 +7,6 @@ import org.apereo.cas.configuration.model.support.jdbc.authn.QueryJdbcAuthentica
 import org.apereo.cas.jpa.JpaPersistenceProviderContext;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.util.serialization.SerializationUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,17 +18,14 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import javax.sql.DataSource;
-
 import java.util.List;
 import java.util.Set;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -40,18 +36,18 @@ import static org.mockito.Mockito.*;
  * @since 6.0.0
  */
 @TestPropertySource(properties = {
-    "database.user=postgres",
-    "database.password=password",
-    "database.driver-class=org.postgresql.Driver",
-    "database.name=postgres",
-    "database.url=jdbc:postgresql://localhost:5432/",
-    "database.dialect=org.hibernate.dialect.PostgreSQLDialect"
+    "database.user=root",
+    "database.password=mypass",
+    "database.driver-class=org.mariadb.jdbc.Driver",
+    "database.name=mysql",
+    "database.url=jdbc:mariadb://localhost:3306/",
+    "database.dialect=org.hibernate.dialect.MariaDB106Dialect"
 })
-@EnabledIfListeningOnPort(port = 5432)
-@Tag("Postgres")
-@Import(QueryDatabaseAuthenticationHandlerPostgresTests.DatabaseTestConfiguration.class)
-class QueryDatabaseAuthenticationHandlerPostgresTests extends BaseDatabaseAuthenticationHandlerTests {
-    private static final String SQL = "SELECT * FROM caspgusers where username=?";
+@EnabledIfListeningOnPort(port = 3306)
+@Tag("MariaDb")
+@Import(QueryDatabaseAuthenticationHandlerMariaDbTests.DatabaseTestConfiguration.class)
+class QueryDatabaseAuthenticationHandlerMariaDbTests extends BaseDatabaseAuthenticationHandlerTests {
+    private static final String SQL = "SELECT * FROM casmariadbusers where username=?";
 
     private static final String PASSWORD_FIELD = "password";
 
@@ -61,13 +57,12 @@ class QueryDatabaseAuthenticationHandlerPostgresTests extends BaseDatabaseAuthen
 
     @BeforeEach
     public void initialize() throws Exception {
-        try (val c = this.dataSource.getConnection()) {
-            c.setAutoCommit(true);
-            try (val pstmt = c.prepareStatement("insert into caspgusers (username, password, locations) values(?,?,?);")) {
-                val array = c.createArrayOf("text", new String[]{"usa", "uk"});
+        try (val connection = this.dataSource.getConnection()) {
+            connection.setAutoCommit(true);
+            try (val pstmt = connection.prepareStatement("insert into casmariadbusers (username, password, location) values(?,?,?);")) {
                 pstmt.setString(1, "casuser");
                 pstmt.setString(2, "Mellon");
-                pstmt.setArray(3, array);
+                pstmt.setString(3, "earth");
                 pstmt.executeUpdate();
             }
         }
@@ -78,36 +73,35 @@ class QueryDatabaseAuthenticationHandlerPostgresTests extends BaseDatabaseAuthen
         try (val c = this.dataSource.getConnection()) {
             try (val s = c.createStatement()) {
                 c.setAutoCommit(true);
-                s.execute("delete from caspgusers;");
+                s.execute("delete from casmariadbusers;");
             }
         }
     }
 
     @Test
     void verifySuccess() throws Throwable {
-        val properties = new QueryJdbcAuthenticationProperties().setSql(SQL).setFieldPassword(PASSWORD_FIELD);
-        properties.setName("DbHandler");
-        properties.setPrincipalAttributeList(List.of("locations"));
-        val q = new QueryDatabaseAuthenticationHandler(properties, null,
-            PrincipalFactoryUtils.newPrincipalFactory(), this.dataSource);
+        val properties = new QueryJdbcAuthenticationProperties().setSql(SQL).setFieldPassword(PASSWORD_FIELD).setFieldDisabled("disabled");
+        properties.setPrincipalAttributeList(List.of("location"));
+        val q = new QueryDatabaseAuthenticationHandler(properties, null, PrincipalFactoryUtils.newPrincipalFactory(), dataSource);
         val credential = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
         val result = q.authenticate(credential, mock(Service.class));
         assertNotNull(result);
         assertNotNull(result.getPrincipal());
-        assertTrue(result.getPrincipal().getAttributes().containsKey("locations"));
+        assertTrue(result.getPrincipal().getAttributes().containsKey("location"));
         assertNotNull(SerializationUtils.serialize(result));
     }
+
 
     @TestConfiguration(value = "TestConfiguration", proxyBeanMethods = false)
     static class DatabaseTestConfiguration {
         @Bean
         public JpaPersistenceProviderContext persistenceProviderContext() {
-            return new JpaPersistenceProviderContext().setIncludeEntityClasses(Set.of(QueryDatabaseAuthenticationHandlerPostgresTests.UsersTable.class.getName()));
+            return new JpaPersistenceProviderContext().setIncludeEntityClasses(Set.of(QueryDatabaseAuthenticationHandlerMariaDbTests.UsersTable.class.getName()));
         }
     }
 
     @SuppressWarnings("unused")
-    @Entity(name = "caspgusers")
+    @Entity(name = "casmariadbusers")
     static class UsersTable {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -119,10 +113,7 @@ class QueryDatabaseAuthenticationHandlerPostgresTests extends BaseDatabaseAuthen
         @Column
         private String password;
 
-        @Column(
-            name = "locations",
-            columnDefinition = "text[]"
-        )
-        private String[] locations;
+        @Column
+        private String location;
     }
 }

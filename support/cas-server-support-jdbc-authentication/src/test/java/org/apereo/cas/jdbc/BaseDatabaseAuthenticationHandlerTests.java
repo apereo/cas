@@ -1,4 +1,4 @@
-package org.apereo.cas.adaptors.jdbc;
+package org.apereo.cas.jdbc;
 
 import org.apereo.cas.config.CasHibernateJpaAutoConfiguration;
 import org.apereo.cas.config.DatabaseAuthenticationTestConfiguration;

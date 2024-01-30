@@ -1,4 +1,4 @@
-package org.apereo.cas.adaptors.jdbc;
+package org.apereo.cas.jdbc;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
@@ -19,7 +19,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link PrincipalAttributeRepositoryFetcherCascadeTests}.
+ * This is {@link PrincipalAttributeRepositoryFetcherJdbcTests}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attribute-repository.jdbc[0].sql=SELECT * FROM table_users WHERE {0}",
     "cas.authn.attribute-repository.jdbc[0].username=uid"
 })
-@Tag("JDBC")
+@Tag("JDBCAuthentication")
 class PrincipalAttributeRepositoryFetcherJdbcTests extends BaseJdbcAttributeRepositoryTests {
 
     @Test
