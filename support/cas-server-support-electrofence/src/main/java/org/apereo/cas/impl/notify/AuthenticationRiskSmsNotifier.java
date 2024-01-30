@@ -1,5 +1,6 @@
 package org.apereo.cas.impl.notify;
 
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.sms.SmsBodyBuilder;
@@ -10,6 +11,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.ApplicationContext;
 
 /**
  * This is {@link AuthenticationRiskSmsNotifier}.
@@ -21,10 +23,13 @@ import org.apache.commons.lang3.StringUtils;
 public class AuthenticationRiskSmsNotifier extends BaseAuthenticationRiskNotifier {
 
     public AuthenticationRiskSmsNotifier(final CasConfigurationProperties casProperties,
+                                         final ApplicationContext applicationContext,
                                          final CommunicationsManager communicationsManager,
                                          final ServicesManager servicesManager,
+                                         final PrincipalResolver principalResolver,
                                          final CipherExecutor riskVerificationCipherExecutor) {
-        super(casProperties, communicationsManager, servicesManager, riskVerificationCipherExecutor);
+        super(applicationContext, casProperties, communicationsManager, servicesManager,
+            principalResolver, riskVerificationCipherExecutor);
     }
 
     @Override
@@ -34,8 +39,7 @@ public class AuthenticationRiskSmsNotifier extends BaseAuthenticationRiskNotifie
 
         if (StringUtils.isBlank(sms.getText()) || StringUtils.isBlank(sms.getFrom())
             || !principal.getAttributes().containsKey(sms.getAttributeName())) {
-            LOGGER.debug("Could not send sms [{}] because either no phones could be found or sms settings are not configured.",
-                principal.getId());
+            LOGGER.debug("Could not send sms [{}] because either no phones could be found or sms settings are not configured.", principal.getId());
         } else {
             val verificationUrl = buildRiskVerificationUrl();
             val to = CollectionUtils.firstElement(principal.getAttributes().get(sms.getAttributeName()))

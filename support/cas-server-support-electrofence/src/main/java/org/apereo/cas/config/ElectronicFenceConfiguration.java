@@ -9,6 +9,7 @@ import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.impl.calcs.DateTimeAuthenticationRequestRiskCalculator;
@@ -156,6 +157,9 @@ class ElectronicFenceConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationRiskNotifier authenticationRiskEmailNotifier(
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+            final PrincipalResolver principalResolver,
             @Qualifier("cookieCipherExecutor")
             final CipherExecutor cookieCipherExecutor,
             @Qualifier(ServicesManager.BEAN_NAME)
@@ -163,14 +167,17 @@ class ElectronicFenceConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier(CommunicationsManager.BEAN_NAME)
             final CommunicationsManager communicationsManager) {
-            return new AuthenticationRiskEmailNotifier(casProperties,
-                communicationsManager, servicesManager, cookieCipherExecutor);
+            return new AuthenticationRiskEmailNotifier(casProperties, applicationContext, communicationsManager,
+                servicesManager, principalResolver, cookieCipherExecutor);
         }
 
         @ConditionalOnMissingBean(name = "authenticationRiskSmsNotifier")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationRiskNotifier authenticationRiskSmsNotifier(
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+            final PrincipalResolver defaultPrincipalResolver,
             @Qualifier("cookieCipherExecutor")
             final CipherExecutor cookieCipherExecutor,
             @Qualifier(ServicesManager.BEAN_NAME)
@@ -178,8 +185,8 @@ class ElectronicFenceConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier(CommunicationsManager.BEAN_NAME)
             final CommunicationsManager communicationsManager) {
-            return new AuthenticationRiskSmsNotifier(casProperties,
-                communicationsManager, servicesManager, cookieCipherExecutor);
+            return new AuthenticationRiskSmsNotifier(casProperties, applicationContext, communicationsManager,
+                servicesManager, defaultPrincipalResolver, cookieCipherExecutor);
         }
 
     }

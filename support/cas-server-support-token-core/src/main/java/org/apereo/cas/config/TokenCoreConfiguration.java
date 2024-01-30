@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -29,6 +30,7 @@ import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -92,10 +94,13 @@ class TokenCoreConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = JwtBuilder.TICKET_JWT_BUILDER_BEAN_NAME)
         public JwtBuilder tokenTicketJwtBuilder(
+            final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+            final PrincipalResolver defaultPrincipalResolver,
             @Qualifier("tokenCipherExecutor") final CipherExecutor tokenCipherExecutor,
             @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
-            return new JwtBuilder(tokenCipherExecutor, servicesManager,
+            return new JwtBuilder(tokenCipherExecutor, applicationContext, servicesManager, defaultPrincipalResolver,
                 new RegisteredServiceJwtTicketCipherExecutor(), casProperties);
         }
     }

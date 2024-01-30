@@ -90,7 +90,7 @@ public interface CredentialMetadata extends Serializable {
      * Contains property?.
      *
      * @param key the key
-     * @return the boolean
+     * @return true or false
      */
     boolean containsProperty(String key);
 }

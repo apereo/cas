@@ -54,7 +54,10 @@ public class OAuth20AccessTokenResponseResult implements Serializable, Auditable
     @Override
     @JsonIgnore
     public String getAuditablePrincipal() {
-        val principal = (Principal) userProfile.getAttribute(Principal.class.getName());
-        return principal != null ? principal.getId() : userProfile.getId();
+        if (userProfile != null) {
+            val principal = (Principal) userProfile.getAttribute(Principal.class.getName());
+            return principal != null ? principal.getId() : userProfile.getId();
+        }
+        return AuditableEntity.super.getAuditablePrincipal();
     }
 }

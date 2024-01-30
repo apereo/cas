@@ -164,11 +164,11 @@ public class AuditTrailManagementAspect {
         String currentPrincipal = null;
         var resolverName = audit.principalResolverName();
         if (!resolverName.trim().isEmpty()) {
-            val resolver = this.auditPrincipalResolvers.get(resolverName);
+            val resolver = auditPrincipalResolvers.get(resolverName);
             currentPrincipal = resolver.resolveFrom(joinPoint, retVal);
         }
         if (currentPrincipal == null) {
-            currentPrincipal = this.defaultAuditPrincipalResolver.resolveFrom(joinPoint, retVal);
+            currentPrincipal = defaultAuditPrincipalResolver.resolveFrom(joinPoint, retVal);
         }
         return currentPrincipal;
     }

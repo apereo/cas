@@ -58,4 +58,16 @@ class ConcurrentThrottledSubmissionsStoreTests {
         throttleSubmissionStore.release(0.01);
         assertNull(throttleSubmissionStore.get(expiredSubmission.getKey()));
     }
+
+    @Test
+    void verifyExpirationWindowDuringRelease() throws Throwable {
+        val submission = ThrottledSubmission
+            .builder()
+            .key(UUID.randomUUID().toString())
+            .expiration(ZonedDateTime.now(Clock.systemUTC()).plusSeconds(25))
+            .build();
+        throttleSubmissionStore.put(submission);
+        throttleSubmissionStore.release(0.5);
+        assertNotNull(throttleSubmissionStore.get(submission.getKey()));
+    }
 }

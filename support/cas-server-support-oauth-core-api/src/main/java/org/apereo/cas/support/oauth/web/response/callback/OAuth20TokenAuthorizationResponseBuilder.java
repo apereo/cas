@@ -12,7 +12,6 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequ
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -22,7 +21,6 @@ import org.apache.hc.core5.net.URIBuilder;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.UriComponentsBuilder;
-
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -62,7 +60,7 @@ public class OAuth20TokenAuthorizationResponseBuilder<T extends OAuth20Configura
     }
 
     protected ModelAndView buildCallbackUrlResponseType(final AccessTokenRequestContext tokenRequestContext,
-        final Ticket givenAccessToken, final Ticket givenRefreshToken, final List<NameValuePair> parameters) throws Throwable {
+                                                        final Ticket givenAccessToken, final Ticket givenRefreshToken, final List<NameValuePair> parameters) throws Throwable {
         val attributes = tokenRequestContext.getAuthentication().getAttributes();
         val state = attributes.get(OAuth20Constants.STATE).getFirst().toString();
         val nonce = attributes.get(OAuth20Constants.NONCE).getFirst().toString();
@@ -71,21 +69,13 @@ public class OAuth20TokenAuthorizationResponseBuilder<T extends OAuth20Configura
         val builder = new URIBuilder(tokenRequestContext.getRedirectUri());
 
 
-        if (includeAccessTokenInResponse(tokenRequestContext)) {
-            val encodedAccessToken = OAuth20JwtAccessTokenEncoder
-                .builder()
-                .accessToken(accessToken)
-                .registeredService(tokenRequestContext.getRegisteredService())
-                .service(tokenRequestContext.getService())
-                .accessTokenJwtBuilder(configurationContext.getAccessTokenJwtBuilder())
-                .casProperties(configurationContext.getCasProperties())
-                .build()
-                .encode(accessToken.getId());
-            if (accessToken.getExpiresIn() > 0) {
-                builder.addParameter(OAuth20Constants.ACCESS_TOKEN, encodedAccessToken);
-                builder.addParameter(OAuth20Constants.TOKEN_TYPE, OAuth20Constants.TOKEN_TYPE_BEARER);
-                builder.addParameter(OAuth20Constants.EXPIRES_IN, String.valueOf(accessToken.getExpiresIn()));
-            }
+        if (includeAccessTokenInResponse(tokenRequestContext) && accessToken.getExpiresIn() > 0) {
+            val cipher = OAuth20JwtAccessTokenEncoder.toEncodableCipher(configurationContext.getAccessTokenJwtBuilder(),
+                tokenRequestContext.getRegisteredService(), accessToken, tokenRequestContext.getService(), configurationContext.getCasProperties());
+            val encodedAccessToken = cipher.encode(accessToken.getId());
+            builder.addParameter(OAuth20Constants.ACCESS_TOKEN, encodedAccessToken);
+            builder.addParameter(OAuth20Constants.TOKEN_TYPE, OAuth20Constants.TOKEN_TYPE_BEARER);
+            builder.addParameter(OAuth20Constants.EXPIRES_IN, String.valueOf(accessToken.getExpiresIn()));
         }
 
         if (givenRefreshToken != null) {

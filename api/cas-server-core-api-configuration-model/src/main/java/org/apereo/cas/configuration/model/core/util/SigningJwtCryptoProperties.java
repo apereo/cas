@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.util;
 
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
@@ -33,6 +34,7 @@ public class SigningJwtCryptoProperties implements Serializable {
      * The signing key is a JWT whose length is defined by the signing key size setting.
      */
     @RequiredProperty
+    @ExpressionLanguageCapable
     private String key = StringUtils.EMPTY;
 
     /**

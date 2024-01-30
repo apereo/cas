@@ -29,6 +29,9 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.core.profile.ProfileManager;
+import org.pac4j.jee.context.JEEContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -589,6 +592,12 @@ class OAuth20AccessTokenEndpointControllerTests {
             mockRequest.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
             mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.DEVICE_CODE.getType());
             val mockResponse = new MockHttpServletResponse();
+
+            val commonProfile = new CommonProfile();
+            commonProfile.setId("testuser");
+            new ProfileManager(new JEEContext(mockRequest, mockResponse), oauthDistributedSessionStore)
+                .save(true, commonProfile, false);
+
             requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
             val mv = accessTokenController.handleRequest(mockRequest, mockResponse);
             val model = mv.getModel();

@@ -118,7 +118,7 @@ public class TicketGrantingTicketResource {
         return new ResponseEntity<>(requests, HttpStatus.OK);
     }
 
-    protected ResponseEntity<String> createResponseEntityForTicket(final HttpServletRequest request, final Ticket tgtId) throws Exception {
+    protected ResponseEntity<String> createResponseEntityForTicket(final HttpServletRequest request, final Ticket tgtId) throws Throwable {
         return ticketGrantingTicketResourceEntityResponseFactory.build(tgtId, request);
     }
 

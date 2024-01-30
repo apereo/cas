@@ -42,24 +42,24 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder extends BaseOA
         actionResolverName = AuditActionResolvers.OAUTH2_AUTHORIZATION_RESPONSE_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.OAUTH2_AUTHORIZATION_RESPONSE_RESOURCE_RESOLVER)
     @Override
-    public ModelAndView build(final AccessTokenRequestContext holder) throws Throwable {
-        val authentication = holder.getAuthentication();
+    public ModelAndView build(final AccessTokenRequestContext tokenRequestContext) throws Throwable {
+        val authentication = tokenRequestContext.getAuthentication();
         val factory = (OAuth20CodeFactory) configurationContext.getTicketFactory().get(OAuth20Code.class);
-        val code = factory.create(holder.getService(), authentication,
-            holder.getTicketGrantingTicket(), holder.getScopes(),
-            holder.getCodeChallenge(), holder.getCodeChallengeMethod(),
-            holder.getClientId(), holder.getClaims(),
-            holder.getResponseType(), holder.getGrantType());
+        val code = factory.create(tokenRequestContext.getService(), authentication,
+            tokenRequestContext.getTicketGrantingTicket(), tokenRequestContext.getScopes(),
+            tokenRequestContext.getCodeChallenge(), tokenRequestContext.getCodeChallengeMethod(),
+            tokenRequestContext.getClientId(), tokenRequestContext.getClaims(),
+            tokenRequestContext.getResponseType(), tokenRequestContext.getGrantType());
         LOGGER.debug("Generated OAuth code: [{}]", code);
         val addedCode = configurationContext.getTicketRegistry().addTicket(code);
-        val ticketGrantingTicket = holder.getTicketGrantingTicket();
+        val ticketGrantingTicket = tokenRequestContext.getTicketGrantingTicket();
         Optional.ofNullable(ticketGrantingTicket).ifPresent(tgt -> FunctionUtils.doAndHandle(ticket -> {
             configurationContext.getTicketRegistry().updateTicket(ticket);
         }, (CheckedFunction<Throwable, Ticket>) throwable -> {
             LOGGER.error("Unable to update ticket-granting-ticket [{}]", ticketGrantingTicket, throwable);
             return null;
         }).accept(tgt));
-        return buildCallbackViewViaRedirectUri(holder, addedCode);
+        return buildCallbackViewViaRedirectUri(tokenRequestContext, addedCode);
     }
 
     @Override

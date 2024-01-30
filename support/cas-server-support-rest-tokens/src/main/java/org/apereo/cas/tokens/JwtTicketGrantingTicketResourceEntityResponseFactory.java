@@ -40,7 +40,7 @@ public class JwtTicketGrantingTicketResourceEntityResponseFactory extends Defaul
     private final TokenTicketBuilder tokenTicketBuilder;
 
     @Override
-    public ResponseEntity<String> build(final Ticket ticketGrantingTicket, final HttpServletRequest request) throws Exception {
+    public ResponseEntity<String> build(final Ticket ticketGrantingTicket, final HttpServletRequest request) throws Throwable {
         var tokenParam = request.getParameter(TokenConstants.PARAMETER_NAME_TOKEN);
         if (StringUtils.isBlank(tokenParam)) {
             tokenParam = request.getHeader(TokenConstants.PARAMETER_NAME_TOKEN);

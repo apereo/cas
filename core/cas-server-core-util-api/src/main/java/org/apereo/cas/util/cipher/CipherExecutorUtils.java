@@ -2,6 +2,7 @@ package org.apereo.cas.util.cipher;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionOptionalSigningOptionalJwtCryptographyProperties;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import lombok.experimental.UtilityClass;
 import lombok.val;
@@ -55,9 +56,11 @@ public class CipherExecutorUtils {
         return supplier(() -> {
             val ctor = cipherClass.getDeclaredConstructor(String.class, String.class,
                 String.class, boolean.class, boolean.class, int.class, int.class);
-            val cipher = (T) ctor.newInstance(crypto.getEncryption().getKey(),
-                crypto.getSigning().getKey(),
-                crypto.getAlg(),
+            val resolver = SpringExpressionLanguageValueResolver.getInstance();
+            val cipher = (T) ctor.newInstance(
+                resolver.resolve(crypto.getEncryption().getKey()),
+                resolver.resolve(crypto.getSigning().getKey()),
+                resolver.resolve(crypto.getAlg()),
                 crypto.isEncryptionEnabled(),
                 crypto.isSigningEnabled(),
                 crypto.getSigning().getKeySize(),

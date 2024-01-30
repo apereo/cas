@@ -85,7 +85,7 @@ public class SamlObjectSignatureValidator {
      * @param resolver       the resolver
      * @param request        the request
      * @param context        the context
-     * @return the boolean
+     * @return true or false
      * @throws Throwable the throwable
      */
     public boolean verifySamlProfileRequest(final RequestAbstractType profileRequest,
@@ -110,7 +110,7 @@ public class SamlObjectSignatureValidator {
      * @param adaptor        the adaptor
      * @param request        the request
      * @param context        the context
-     * @return the boolean
+     * @return true or false
      * @throws Throwable the throwable
      */
     public boolean verifySamlProfileRequest(final RequestAbstractType profileRequest,

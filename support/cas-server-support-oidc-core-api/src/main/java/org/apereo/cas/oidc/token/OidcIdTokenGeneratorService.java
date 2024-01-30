@@ -31,7 +31,6 @@ import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import com.google.common.collect.ImmutableSet;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -44,7 +43,6 @@ import org.pac4j.core.profile.UserProfile;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.util.Assert;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -153,14 +151,14 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         if (includeClaims || oidc.getIdToken().isIncludeIdTokenClaims()) {
             FunctionUtils.doIf(oidc.getIdToken().isIncludeIdTokenClaims(),
                     ignore -> LOGGER.warn("Individual claims requested by OpenID scopes are forced to be included in the ID token. "
-                                          + "This is a violation of the OpenID Connect specification and a workaround via dedicated CAS configuration. "
-                                          + "Claims should be requested from the userinfo/profile endpoints in exchange for an access token."))
+                        + "This is a violation of the OpenID Connect specification and a workaround via dedicated CAS configuration. "
+                        + "Claims should be requested from the userinfo/profile endpoints in exchange for an access token."))
                 .accept(claims);
             collectIdTokenClaims(principal, registeredService, claims);
         } else {
             LOGGER.debug("Per OpenID Connect specification, individual claims requested by OpenID scopes "
-                         + "such as profile, email, address, etc. are only put "
-                         + "into the OpenID Connect ID token when the response type is set to id_token.");
+                + "such as profile, email, address, etc. are only put "
+                + "into the OpenID Connect ID token when the response type is set to id_token.");
         }
         claims.setStringClaim(OidcConstants.TXN, UUID.randomUUID().toString());
         return claims;
@@ -255,7 +253,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
             handleMappedClaimOrDefault(OidcConstants.CLAIM_PREFERRED_USERNAME,
                 registeredService, principal, claims, principal.getId());
         }
-        
+
         val collectors = new ArrayList<>(getConfigurationContext().getIdTokenClaimCollectors());
         AnnotationAwareOrderComparator.sortIfNecessary(collectors);
         collectors.forEach(collector -> collector.conclude(claims));
@@ -296,8 +294,8 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
 
     protected String getJwtId(final Ticket ticket) {
         val oAuthCallbackUrl = getConfigurationContext().getCasProperties().getServer().getPrefix()
-                               + OAuth20Constants.BASE_OAUTH20_URL + '/'
-                               + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
+            + OAuth20Constants.BASE_OAUTH20_URL + '/'
+            + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
         var jwtId = ticket.getId();
         if (ticket instanceof final TicketGrantingTicket tgt) {
             val streamServices = new LinkedHashMap<String, Service>();
@@ -321,16 +319,11 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
     protected void generateAccessTokenHash(final OAuth20AccessToken accessToken,
                                            final OidcRegisteredService registeredService,
                                            final JwtClaims claims) throws Throwable {
-        val encodedAccessToken = OAuth20JwtAccessTokenEncoder.builder()
-            .accessToken(accessToken)
-            .registeredService(registeredService)
-            .service(accessToken.getService())
-            .accessTokenJwtBuilder(getConfigurationContext().getAccessTokenJwtBuilder())
-            .casProperties(getConfigurationContext().getCasProperties())
-            .issuer(getConfigurationContext().getIssuerService().determineIssuer(Optional.of(registeredService)))
-            .build()
-            .encode(accessToken.getId());
-
+        val oidcIssuer = getConfigurationContext().getIssuerService().determineIssuer(Optional.of(registeredService));
+        val cipher = OAuth20JwtAccessTokenEncoder.toEncodableCipher(getConfigurationContext().getAccessTokenJwtBuilder(),
+            registeredService, accessToken, accessToken.getService(), oidcIssuer,
+            getConfigurationContext().getCasProperties());
+        val encodedAccessToken = cipher.encode(accessToken.getId());
         val jsonWebKey = getConfigurationContext().getIdTokenSigningAndEncryptionService()
             .getJsonWebKeySigningKey(Optional.of(registeredService));
 

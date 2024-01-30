@@ -59,7 +59,7 @@ public class RiskAuthenticationCheckTokenActionTests extends BaseWebflowConfigur
     }
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val riskToken = authenticationRiskEmailNotifier.createRiskToken();
         val context = MockRequestContext.create(applicationContext);
         context.setParameter(RiskAuthenticationCheckTokenAction.PARAMETER_NAME_RISK_TOKEN, riskToken);

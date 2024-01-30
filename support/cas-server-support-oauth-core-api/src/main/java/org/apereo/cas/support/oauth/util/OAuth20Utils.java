@@ -357,7 +357,7 @@ public class OAuth20Utils {
      * Is access token request?.
      *
      * @param webContext the web context
-     * @return the boolean
+     * @return true or false
      */
     public static boolean isAccessTokenRequest(final WebContext webContext) {
         return (Boolean) webContext.getRequestAttribute(OAuth20Constants.REQUEST_ATTRIBUTE_ACCESS_TOKEN_REQUEST).orElse(false);
