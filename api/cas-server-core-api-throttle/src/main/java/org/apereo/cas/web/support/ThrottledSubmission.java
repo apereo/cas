@@ -45,6 +45,11 @@ public class ThrottledSubmission implements Serializable {
         return expiration != null && (now.isAfter(expiration) || now.isEqual(expiration));
     }
 
+    /**
+     * Is still locked?.
+     *
+     * @return true/false
+     */
     @JsonIgnore
     public boolean isStillLocked() {
         val now = ZonedDateTime.now(Clock.systemUTC());
