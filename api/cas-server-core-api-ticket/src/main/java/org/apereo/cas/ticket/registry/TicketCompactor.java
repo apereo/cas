@@ -127,6 +127,7 @@ public interface TicketCompactor<T extends Ticket> {
          * This constant represents the service value of a compact ticket.
          */
         SERVICE(2);
+
         private final int index;
     }
 

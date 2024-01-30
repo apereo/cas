@@ -189,7 +189,7 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
         ticketRegistry.addTicket(deviceCode);
 
         val deviceUserCodeFactory = (OAuth20DeviceUserCodeFactory) ticketFactory.get(OAuth20DeviceUserCode.class);
-        val deviceUserCode = deviceUserCodeFactory.createDeviceUserCode(deviceCode);
+        val deviceUserCode = deviceUserCodeFactory.createDeviceUserCode(deviceCode.getService());
         ticketRegistry.addTicket(deviceUserCode);
 
         ticketRegistry.updateTicket(tgt);

@@ -74,7 +74,7 @@ class OidcAccessTokenResponseGeneratorTests extends AbstractOidcTests {
             .registeredService(getOidcRegisteredService())
             .responseType(OAuth20ResponseTypes.DEVICE_CODE)
             .deviceCode(devCode.getId())
-            .userCode(deviceUserCodeFactory.createDeviceUserCode(devCode).getId())
+            .userCode(deviceUserCodeFactory.createDeviceUserCode(devCode.getService()).getId())
             .build();
 
         val request = new MockHttpServletRequest();

@@ -267,27 +267,31 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
     }
 
     private DeviceTokens createDeviceTokensInTicketRegistry(
-        final AccessTokenRequestContext holder) throws Throwable {
-        val deviceToken = deviceTokenFactory.createDeviceCode(holder.getService());
+        final AccessTokenRequestContext tokenRequestContext) throws Throwable {
+
+        val deviceToken = deviceTokenFactory.createDeviceCode(tokenRequestContext.getService());
         LOGGER.debug("Created device code token [{}]", deviceToken.getId());
 
-        val deviceUserCode = deviceUserCodeFactory.createDeviceUserCode(deviceToken);
+        val deviceUserCode = deviceUserCodeFactory.createDeviceUserCode(deviceToken.getService());
         LOGGER.debug("Created device user code token [{}]", deviceUserCode.getId());
 
+        val addedDeviceUserCode = addTicketToRegistry(deviceUserCode);
+        LOGGER.debug("Added device user code [{}] to registry", addedDeviceUserCode);
+
+        deviceToken.setUserCode(addedDeviceUserCode.getId());
         val addedDeviceToken = addTicketToRegistry(deviceToken);
         LOGGER.debug("Added device token [{}] to registry", addedDeviceToken);
-
-        val addedDeviceUserCode = addTicketToRegistry(deviceUserCode);
-        LOGGER.debug("Added device user token [{}] to registry", addedDeviceUserCode);
-
+        
         return new DeviceTokens(addedDeviceToken, addedDeviceUserCode);
     }
 
-    private void expireOldRefreshToken(final AccessTokenRequestContext responseHolder) throws Exception {
-        val oldRefreshToken = responseHolder.getToken();
-        LOGGER.debug("Expiring old refresh token [{}]", oldRefreshToken);
-        oldRefreshToken.markTicketExpired();
-        ticketRegistry.deleteTicket(oldRefreshToken);
+    private void expireOldRefreshToken(final AccessTokenRequestContext tokenRequestContext) throws Exception {
+        val oldRefreshToken = tokenRequestContext.getToken();
+        if (!oldRefreshToken.isStateless()) {
+            LOGGER.debug("Expiring old refresh token [{}]", oldRefreshToken);
+            oldRefreshToken.markTicketExpired();
+            ticketRegistry.deleteTicket(oldRefreshToken);
+        }
     }
 
     record AccessAndRefreshTokens(Ticket accessToken, Ticket refreshToken) {

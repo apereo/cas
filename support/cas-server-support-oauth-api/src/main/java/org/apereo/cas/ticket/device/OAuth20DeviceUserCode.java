@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.device;
 
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.Ticket;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -27,13 +28,15 @@ public interface OAuth20DeviceUserCode extends Ticket {
 
     /**
      * Approve user code.
+     *
+     * @param approved the approved
      */
-    void approveUserCode();
+    void setUserCodeApproved(boolean approved);
 
     /**
-     * Gets device code.
+     * Gets service.
      *
-     * @return the device code
+     * @return the service
      */
-    String getDeviceCode();
+    Service getService();
 }

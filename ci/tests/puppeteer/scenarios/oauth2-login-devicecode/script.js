@@ -7,7 +7,6 @@ const puppeteer = require("puppeteer");
     await cas.doPost(url, "", {
         "Content-Type": "application/json"
     }, (res) => {
-        // await cas.log(res.data);
         assert(res.data.device_code !== undefined);
         assert(res.data.user_code !== undefined);
         assert(res.data.verification_uri !== undefined);
@@ -16,7 +15,7 @@ const puppeteer = require("puppeteer");
 
         verifyDeviceCode(res.data);
     }, (error) => {
-        throw `Operation failed to obtain access token: ${error}`;
+        throw `Operation failed to obtain device token: ${error}`;
     });
 })();
 
