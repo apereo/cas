@@ -33,10 +33,10 @@ const assert = require("assert");
     assert(result !== null);
     const entity = JSON.parse(result.toString());
     await cas.log(entity);
-    assert(entity.client_id !== null);
-    assert(entity.client_secret !== null);
-    assert(entity.registration_access_token !== null);
-    assert(entity.registration_client_uri !== null);
+    assert(entity.client_id !== undefined);
+    assert(entity.client_secret !== undefined);
+    assert(entity.registration_access_token !== undefined);
+    assert(entity.registration_client_uri !== undefined);
     assert(entity.contacts.length === 2);
 
     await cas.log("Fetching client configuration...");

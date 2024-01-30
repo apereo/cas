@@ -17,7 +17,7 @@ async function startFlow(context, clientName) {
     await cas.waitForElement(page, "body");
     const content = JSON.parse(await cas.innerText(page, "body"));
     await cas.log(content);
-    assert(content.form.SAMLResponse !== null);
+    assert(content.form.SAMLResponse !== undefined);
     const samlResponse = await cas.base64Decode(content.form.SAMLResponse);
     const parsedResult = await cas.parseXML(samlResponse);
     console.dir(parsedResult, {depth: null, colors: true});

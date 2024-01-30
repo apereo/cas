@@ -36,7 +36,7 @@ async function verifyAuthenticationFlow(context, service) {
     assert(authenticationSuccess.user === "casuser");
     assert(authenticationSuccess.attributes.credentialType[0] === "RememberMeUsernamePasswordCredential");
     assert(authenticationSuccess.attributes.isFromNewLogin[0] === true);
-    assert(authenticationSuccess.attributes.authenticationDate[0] !== null);
+    assert(authenticationSuccess.attributes.authenticationDate[0] !== undefined);
     assert(authenticationSuccess.attributes.authenticationMethod[0] === "STATIC");
     assert(authenticationSuccess.attributes.successfulAuthenticationHandlers[0] === "STATIC");
     assert(authenticationSuccess.attributes.longTermAuthenticationRequestTokenUsed[0] === true);
@@ -71,7 +71,7 @@ async function verifyExistingSsoSession(context, service) {
     assert(authenticationSuccess.user === "casuser");
     assert(authenticationSuccess.attributes.credentialType[0] === "RememberMeUsernamePasswordCredential");
     assert(authenticationSuccess.attributes.isFromNewLogin[0] === true);
-    assert(authenticationSuccess.attributes.authenticationDate[0] !== null);
+    assert(authenticationSuccess.attributes.authenticationDate[0] !== undefined);
     assert(authenticationSuccess.attributes.authenticationMethod[0] === "STATIC");
     assert(authenticationSuccess.attributes.successfulAuthenticationHandlers[0] === "STATIC");
     assert(authenticationSuccess.attributes.longTermAuthenticationRequestTokenUsed[0] === false);

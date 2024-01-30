@@ -31,10 +31,10 @@ async function testService(page, clientId, oidc = true) {
     if (oidc) {
         assert(decodedAccessToken.iss === "https://sso.example.org/cas/oidc");
         await cas.log("Decoding ID token...");
-        assert(payload.id_token !== null);
+        assert(payload.id_token !== undefined);
         const decodedIdToken = await cas.decodeJwt(payload.id_token);
-        assert(decodedIdToken.sub !== null);
-        assert(decodedIdToken.client_id !== null);
+        assert(decodedIdToken.sub !== undefined);
+        assert(decodedIdToken.client_id !== undefined);
         assert(decodedIdToken.iss === "https://sso.example.org/cas/oidc");
     } else {
         assert(decodedAccessToken.grant_type === "authorization_code");

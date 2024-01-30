@@ -30,10 +30,10 @@ const cas = require("../../cas.js");
     const json = JSON.parse(body);
     const authenticationSuccess = json.serviceResponse.authenticationSuccess;
     assert(authenticationSuccess.user === "caskeycloak@example.org");
-    assert(authenticationSuccess.attributes.name !== null);
-    assert(authenticationSuccess.attributes.email !== null);
-    assert(authenticationSuccess.attributes.department !== null);
-    assert(authenticationSuccess.attributes.cas_role !== null);
+    assert(authenticationSuccess.attributes.name !== undefined);
+    assert(authenticationSuccess.attributes.email !== undefined);
+    assert(authenticationSuccess.attributes.department !== undefined);
+    assert(authenticationSuccess.attributes.cas_role !== undefined);
     
     await browser.close();
 })();

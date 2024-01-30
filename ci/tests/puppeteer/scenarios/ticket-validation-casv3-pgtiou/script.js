@@ -22,7 +22,7 @@ async function validateRequest(service, ticket, format = "JSON") {
     const json = JSON.parse(body);
     const authenticationSuccess = json.serviceResponse.authenticationSuccess;
     assert(authenticationSuccess.user === "casuser");
-    assert(authenticationSuccess.attributes.credentialType !== null);
+    assert(authenticationSuccess.attributes.credentialType !== undefined);
     assert(authenticationSuccess.proxyGrantingTicket.includes("PGTIOU-"));
 
     await cas.gotoLogin(page, service);

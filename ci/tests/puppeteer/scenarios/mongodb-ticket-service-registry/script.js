@@ -17,21 +17,21 @@ const cas = require("../../cas.js");
     
     await cas.doGet("https://localhost:8443/cas/actuator/health",
         async (res) => {
-            assert(res.data.components.mongo !== null);
-            assert(res.data.components.memory !== null);
-            assert(res.data.components.ping !== null);
+            assert(res.data.components.mongo !== undefined);
+            assert(res.data.components.memory !== undefined);
+            assert(res.data.components.ping !== undefined);
 
-            assert(res.data.components.mongo.status !== null);
-            assert(res.data.components.mongo.details !== null);
+            assert(res.data.components.mongo.status !== undefined);
+            assert(res.data.components.mongo.details !== undefined);
 
 
             let details = res.data.components.mongo.details["MongoDbHealthIndicator-ticket-registry"];
             assert(details.name === "MongoDbHealthIndicator-ticket-registry");
-            assert(details.proxyGrantingTicketsCache !== null);
-            assert(details.ticketGrantingTicketsCache !== null);
-            assert(details.proxyTicketsCache !== null);
-            assert(details.serviceTicketsCache !== null);
-            assert(details.transientSessionTicketsCache !== null);
+            assert(details.proxyGrantingTicketsCache !== undefined);
+            assert(details.ticketGrantingTicketsCache !== undefined);
+            assert(details.proxyTicketsCache !== undefined);
+            assert(details.serviceTicketsCache !== undefined);
+            assert(details.transientSessionTicketsCache !== undefined);
 
             details = res.data.components.mongo.details["MongoDbHealthIndicator-service-registry"];
             assert(details.name === "MongoDbHealthIndicator-service-registry");
