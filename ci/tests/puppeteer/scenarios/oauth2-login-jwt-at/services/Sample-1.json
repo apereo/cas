@@ -2,7 +2,7 @@
   "@class" : "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
   "clientId": "client",
   "clientSecret": "secret",
-  "serviceId" : "https://apereo.github.io.*",
+  "serviceId" : "^http://localhost:9889/anything/app1.*",
   "bypassApprovalPrompt": true,
   "name" : "Sample",
   "id" : 1,

@@ -32,7 +32,7 @@ async function cleanUp() {
         let content = await cas.textContent(page, "body pre");
         let payload = JSON.parse(content);
         await cas.log(payload);
-        assert(payload.form.SAMLResponse !== null);
+        assert(payload.form.SAMLResponse !== undefined);
         await cas.log("Trying with an exising SSO session...");
         await cas.gotoLogout(page);
         await cas.gotoLogin(page);
@@ -48,7 +48,7 @@ async function cleanUp() {
         content = await cas.textContent(page, "body pre");
         payload = JSON.parse(content);
         await cas.log(payload);
-        assert(payload.form.SAMLResponse !== null);
+        assert(payload.form.SAMLResponse !== undefined);
 
         await browser.close();
         await cleanUp();

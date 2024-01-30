@@ -13,20 +13,20 @@ const cas = require("../../cas.js");
     await page.waitForTimeout(1000);
     await cas.doGet("https://localhost:8443/cas/actuator/health",
         (res) => {
-            assert(res.data.components.hazelcast !== null);
-            assert(res.data.components.memory !== null);
-            assert(res.data.components.ping !== null);
+            assert(res.data.components.hazelcast !== undefined);
+            assert(res.data.components.memory !== undefined);
+            assert(res.data.components.ping !== undefined);
 
-            assert(res.data.components.hazelcast.status !== null);
-            assert(res.data.components.hazelcast.details !== null);
+            assert(res.data.components.hazelcast.status !== undefined);
+            assert(res.data.components.hazelcast.details !== undefined);
 
             const details = res.data.components.hazelcast.details;
             assert(details.name === "HazelcastHealthIndicator");
-            assert(details.proxyGrantingTicketsCache !== null);
-            assert(details.ticketGrantingTicketsCache !== null);
-            assert(details.proxyTicketsCache !== null);
-            assert(details.serviceTicketsCache !== null);
-            assert(details.transientSessionTicketsCache !== null);
+            assert(details.proxyGrantingTicketsCache !== undefined);
+            assert(details.ticketGrantingTicketsCache !== undefined);
+            assert(details.proxyTicketsCache !== undefined);
+            assert(details.serviceTicketsCache !== undefined);
+            assert(details.transientSessionTicketsCache !== undefined);
         }, (error) => {
             throw error;
         }, { "Content-Type": "application/json" });

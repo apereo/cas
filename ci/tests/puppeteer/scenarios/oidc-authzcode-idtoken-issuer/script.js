@@ -23,7 +23,7 @@ async function testService(page, clientId, oidc = true) {
     }, (res) => res.data, (error) => {
         throw `Operation failed to obtain access token: ${error}`;
     });
-    assert(payload.access_token !== null);
+    assert(payload.access_token !== undefined);
 
     await cas.log("Decoding access token...");
     const decodedAccessToken = await cas.decodeJwt(payload.access_token);
