@@ -6,5 +6,6 @@
   "name": "Sample",
   "id": 1,
   "jwtAccessToken": "true",
+  "generateRefreshToken": true,
   "scopes" : [ "java.util.HashSet", ["openid", "MyCustomScope"]]
 }

@@ -60,7 +60,7 @@ async function verifyDeviceCode(data) {
     }, (res) => {
         assert(res.data.access_token !== undefined);
         assert(res.data.token_type !== undefined);
-        assert(res.data.expires !== undefined);
+        assert(res.data.expires_in !== undefined);
         assert(res.data.refresh_token !== undefined);
     }, (error) => {
         throw `Operation failed ${error}`;

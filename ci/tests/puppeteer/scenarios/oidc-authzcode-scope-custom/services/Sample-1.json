@@ -5,7 +5,7 @@
   "serviceId": "^https://localhost:9859/anything/sample1",
   "name": "Sample",
   "id": 1,
-  "scopes" : [ "java.util.HashSet", [ "cn", "givenName", "mail", "sn" ] ],
+  "scopes" : [ "java.util.HashSet", [ "openid", "profile", "custom" ] ],
   "supportedGrantTypes": [ "java.util.HashSet", [ "authorization_code" ] ],
   "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ],
   "bypassApprovalPrompt": true
