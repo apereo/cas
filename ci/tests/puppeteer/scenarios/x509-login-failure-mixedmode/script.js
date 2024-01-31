@@ -1,5 +1,4 @@
 const puppeteer = require("puppeteer");
-const assert = require("assert");
 const cas = require("../../cas.js");
 const fs = require("fs");
 const request = require("request");

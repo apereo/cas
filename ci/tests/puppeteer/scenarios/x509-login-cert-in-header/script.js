@@ -1,5 +1,4 @@
 const puppeteer = require("puppeteer");
-const assert = require("assert");
 const cas = require("../../cas.js");
 const fs = require("fs");
 
@@ -46,7 +45,5 @@ async function assertFailure(page) {
     await assertFailure(page);
     await browser.close();
 })();
-
-
 
 
