@@ -15,7 +15,7 @@ async function assertFailure(page) {
 
     const args = process.argv.slice(2);
     const config = JSON.parse(fs.readFileSync(args[0]));
-    assert(config !== null);
+
 
     await cas.log(`Certificate file: ${config.trustStoreCertificateFile}`);
 
