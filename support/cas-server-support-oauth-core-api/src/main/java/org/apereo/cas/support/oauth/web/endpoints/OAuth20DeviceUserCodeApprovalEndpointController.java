@@ -70,8 +70,9 @@ public class OAuth20DeviceUserCodeApprovalEndpointController extends BaseOAuth20
                 return getModelAndViewForFailure("codeapproved");
             }
             deviceUserCode.setUserCodeApproved(true);
-            getConfigurationContext().getTicketRegistry().updateTicket(deviceUserCode);
-            return new ModelAndView(OAuth20Constants.DEVICE_CODE_APPROVED_VIEW, HttpStatus.OK);
+            val updatedDeviceUserCode = getConfigurationContext().getTicketRegistry().updateTicket(deviceUserCode);
+            return new ModelAndView(OAuth20Constants.DEVICE_CODE_APPROVED_VIEW,
+                Map.of("code", updatedDeviceUserCode.getId()), HttpStatus.OK);
         } catch (final Exception e) {
             LoggingUtils.warn(LOGGER, e);
             return codeNotfound;

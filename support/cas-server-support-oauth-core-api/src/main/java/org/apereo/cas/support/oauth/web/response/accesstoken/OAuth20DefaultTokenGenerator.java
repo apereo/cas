@@ -78,7 +78,8 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         return generateAccessTokenResult(tokenRequestContext, accessAndRefreshTokens);
     }
 
-    protected OAuth20TokenGeneratedResult generateAccessTokenOAuthDeviceCodeResponseType(final AccessTokenRequestContext tokenRequestContext) throws Throwable {
+    protected OAuth20TokenGeneratedResult generateAccessTokenOAuthDeviceCodeResponseType(
+        final AccessTokenRequestContext tokenRequestContext) throws Throwable {
         val deviceCode = tokenRequestContext.getDeviceCode();
 
         if (StringUtils.isNotBlank(deviceCode)) {

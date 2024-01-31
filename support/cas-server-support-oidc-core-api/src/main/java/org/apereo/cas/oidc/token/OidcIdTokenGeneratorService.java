@@ -25,7 +25,6 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20Jwt
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.BaseIdTokenGeneratorService;
 import org.apereo.cas.ticket.OidcIdToken;
-import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.CollectionUtils;
@@ -106,8 +105,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         val oidc = getConfigurationContext().getCasProperties().getAuthn().getOidc();
         val claims = new JwtClaims();
 
-        val tgt = accessToken.getTicketGrantingTicket();
-        val jwtId = getJwtId(tgt);
+        val jwtId = getJwtId(accessToken);
         LOGGER.debug("Calculated ID token jti claim to be [{}]", jwtId);
         claims.setJwtId(jwtId);
 
@@ -135,9 +133,11 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
 
         val attributes = authentication.getAttributes();
         claims.setStringClaim(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
-        if (tgt instanceof final AuthenticationAwareTicket aat) {
-            claims.setClaim(OidcConstants.CLAIM_AUTH_TIME, aat.getAuthentication().getAuthenticationDate().toEpochSecond());
-        }
+
+        val authTime = accessToken.isStateless()
+            ? authentication.getAuthenticationDate().toEpochSecond()
+            : ((AuthenticationAwareTicket) accessToken.getTicketGrantingTicket()).getAuthentication().getAuthenticationDate().toEpochSecond();
+        claims.setClaim(OidcConstants.CLAIM_AUTH_TIME, authTime);
 
         if (attributes.containsKey(OAuth20Constants.STATE)) {
             setClaim(claims, OAuth20Constants.STATE, attributes.get(OAuth20Constants.STATE).getFirst());
@@ -150,7 +150,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         val includeClaims = responseType != OAuth20ResponseTypes.CODE && grantType != OAuth20GrantTypes.AUTHORIZATION_CODE;
         if (includeClaims || oidc.getIdToken().isIncludeIdTokenClaims()) {
             FunctionUtils.doIf(oidc.getIdToken().isIncludeIdTokenClaims(),
-                    ignore -> LOGGER.warn("Individual claims requested by OpenID scopes are forced to be included in the ID token. "
+                    __ -> LOGGER.warn("Individual claims requested by OpenID scopes are forced to be included in the ID token. "
                         + "This is a violation of the OpenID Connect specification and a workaround via dedicated CAS configuration. "
                         + "Claims should be requested from the userinfo/profile endpoints in exchange for an access token."))
                 .accept(claims);
@@ -287,16 +287,15 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
                                               final Object defaultValue) {
         val mapper = getConfigurationContext().getAttributeToScopeClaimMapper();
         val collectionValues = mapper.mapClaim(claimName, registeredService, principal, defaultValue);
-        val collectors = new ArrayList<>(getConfigurationContext().getIdTokenClaimCollectors());
-        AnnotationAwareOrderComparator.sortIfNecessary(collectors);
+        val collectors = getConfigurationContext().getIdTokenClaimCollectors();
         collectors.forEach(collector -> collector.collect(claims, claimName, collectionValues));
     }
 
-    protected String getJwtId(final Ticket ticket) {
+    protected String getJwtId(final OAuth20AccessToken ticket) {
         val oAuthCallbackUrl = getConfigurationContext().getCasProperties().getServer().getPrefix()
             + OAuth20Constants.BASE_OAUTH20_URL + '/'
             + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
-        var jwtId = ticket.getId();
+        var jwtId = ticket.isStateless() ? ticket.getId() : ticket.getTicketGrantingTicket().getId();
         if (ticket instanceof final TicketGrantingTicket tgt) {
             val streamServices = new LinkedHashMap<String, Service>();
             val services = tgt.getServices();
