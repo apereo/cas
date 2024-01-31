@@ -135,7 +135,7 @@ jobs:
           cache-dependency-path: ./ci/tests/puppeteer/package.json
           check-latest: true
       - name: Build Native Tests
-        uses: nick-fields/retry@v2
+        uses: nick-fields/retry@v3
         if: ${{ env.NATIVE_BUILD_ENABLED == 'true' }}
         with:
           max_attempts: ${{ env.MAX_ATTEMPTS }}
@@ -145,7 +145,7 @@ jobs:
           command: |
             ./ci/tests/puppeteer/run.sh --nb --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
       - name: Run Native Tests
-        uses: nick-fields/retry@v2
+        uses: nick-fields/retry@v3
         if: ${{ env.NATIVE_RUN_ENABLED == 'true' }}
         with:
           max_attempts: ${{ env.MAX_ATTEMPTS }}
@@ -193,7 +193,7 @@ jobs:
           cache: 'npm'
           cache-dependency-path: ./ci/tests/puppeteer/package.json
       - name: Build Native Tests
-        uses: nick-fields/retry@v2
+        uses: nick-fields/retry@v3
         if: ${{ env.NATIVE_BUILD_ENABLED == 'true' }}
         with:
           max_attempts: ${{ env.MAX_ATTEMPTS }}
@@ -204,7 +204,7 @@ jobs:
             export RUNNER_OS=${{ runner.os }}
             ./ci/tests/puppeteer/run.sh --nb --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
       - name: Run Native Tests
-        uses: nick-fields/retry@v2
+        uses: nick-fields/retry@v3
         if: ${{ env.NATIVE_RUN_ENABLED == 'true' }}
         with:
           max_attempts: ${{ env.MAX_ATTEMPTS }}

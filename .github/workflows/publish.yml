@@ -80,7 +80,7 @@ jobs:
            restore-keys: ${{ runner.os }}-gradle-
        - name: Publish SNAPSHOTs
          if: ${{ env.REPOSITORY_USER != null && env.REPOSITORY_PWD != null }}
-         uses: nick-fields/retry@v2
+         uses: nick-fields/retry@v3
          with:
            max_attempts: 3
            retry_on: error

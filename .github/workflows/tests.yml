@@ -117,7 +117,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Run Tests
-        uses: nick-fields/retry@v2
+        uses: nick-fields/retry@v3
         with:
           max_attempts: ${{ env.RETRY_ATTEMPTS }}
           retry_on: error
@@ -128,7 +128,7 @@ jobs:
             ./testcas.sh --no-watch --category ${{ matrix.category }}
             [[ $? -eq 0 ]] && ./testcas.sh --no-watch --with-coverage
       - name: "Upload to Codecov"
-        uses: "codecov/codecov-action@v3"
+        uses: "codecov/codecov-action@v4"
         continue-on-error: true
         if: ${{ env.CODECOV_TOKEN != null }}
         with:

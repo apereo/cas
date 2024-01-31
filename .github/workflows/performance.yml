@@ -131,7 +131,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: JMeter Performance Tests ${{ matrix.protocols }} / ${{ matrix.category }}
-        uses: nick-fields/retry@v2
+        uses: nick-fields/retry@v3
         with:
           max_attempts: 2
           timeout_minutes: 15

@@ -92,7 +92,7 @@ jobs:
             jekyll/.jekyll-cache
           key: ${{ runner.os }}-${{ github.repository }}
       - name: Publish Documentation
-        uses: nick-fields/retry@v2
+        uses: nick-fields/retry@v3
         with:
           timeout_minutes: 55
           max_attempts: 2
