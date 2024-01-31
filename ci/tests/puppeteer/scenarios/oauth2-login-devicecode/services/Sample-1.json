@@ -5,6 +5,7 @@
   "serviceId" : "^https://apereo.github.io.*",
   "bypassApprovalPrompt": true,
   "name" : "Sample",
+  "generateRefreshToken": true,
   "supportedResponseTypes": [ "java.util.HashSet", [ "device_code" ] ],
   "supportedGrantTypes": [ "java.util.HashSet", [ "urn:ietf:params:oauth:grant-type:device_code" ] ],
   "id" : 1

@@ -97,7 +97,9 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
                     model.put(OAuth20Constants.ACCESS_TOKEN, encodedAccessTokenId);
                 }
 
-                model.put(OAuth20Constants.SCOPE, String.join(" ", accessToken.getScopes()));
+                if (!accessToken.getScopes().isEmpty()) {
+                    model.put(OAuth20Constants.SCOPE, String.join(" ", accessToken.getScopes()));
+                }
                 model.put(OAuth20Constants.EXPIRES_IN, accessToken.getExpiresIn());
                 val authentication = accessToken.getAuthentication();
                 model.put(OAuth20Constants.TOKEN_TYPE, authentication.containsAttribute(OAuth20Constants.DPOP_CONFIRMATION)
