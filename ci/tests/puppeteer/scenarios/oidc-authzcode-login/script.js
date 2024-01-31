@@ -32,6 +32,7 @@ const assert = require("assert");
         await page.waitForNavigation();
     }
 
+    await page.waitForTimeout(1000);
     let code = await cas.assertParameter(page, "code");
     await cas.log(`Current code is ${code}`);
     let accessTokenUrl = "https://localhost:8443/cas/oidc/token?grant_type=authorization_code"
