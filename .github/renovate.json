@@ -19,6 +19,10 @@
       "ignoreTests": true,
       "automergeType": "pr",
       "automergeSchedule": ["at any time"]
+    },
+    {
+      "matchFileNames": ["**/package.json"],
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"]
     }
   ]
 }
