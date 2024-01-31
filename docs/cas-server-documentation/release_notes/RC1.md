@@ -96,6 +96,7 @@ does not track or store tickets in a persistent manner via a backend storage tec
 - When using OAuth or [OpenID Connect](../protocol/OIDC-Protocol.html), CAS will no longer create and track an access token for `id_token` grant types.
 - [External/delegated authentication](../integration/Delegate-Authentication.html) flows are improved to better handle throttled authentication requests.
 - A new `serviceAccess` [actuator endpoint](../services/Configuring-Service-Access-Strategy.html), allowing one to check CAS authorization decisions for a given service and user.
+- [JDBC](../integration/Attribute-Resolution-JDBC.html) and [LDAP](../integration/Attribute-Resolution-LDAP.html) attribute repositories are relocated to their own respective modules and moved away from the person directory module. 
 
 ## Library Upgrades
 
@@ -113,6 +114,7 @@ does not track or store tickets in a persistent manner via a backend storage tec
 - Micrometer
 - Apache Tomcat
 - Sentry
+- InfluxDb
 - Slack
 - Ldaptive
 - Node

@@ -93,14 +93,13 @@ async function verifyDeviceCode(page) {
         await cas.type(page, "#usercode", res.data.user_code);
         await cas.pressEnter(page);
         await page.waitForNavigation();
-        await page.waitForTimeout(3000);
-
+        await page.waitForTimeout(4000);
         await cas.doPost(url, "", {
             "Content-Type": "application/json"
         }, (res) => {
             assert(res.data.access_token !== undefined);
             assert(res.data.token_type !== undefined);
-            assert(res.data.expires !== undefined);
+            assert(res.data.expires_in !== undefined);
             assert(res.data.refresh_token !== undefined);
         }, (error) => {
             throw `Operation failed ${error}`;

@@ -28,9 +28,12 @@ const path = require("path");
         assert(res.data[0].principal !== undefined);
         assert(res.data[0].actionPerformed !== undefined);
         assert(res.data[0].applicationCode !== undefined);
-        assert(res.data[0].clientIpAddress !== undefined);
-        assert(res.data[0].serverIpAddress !== undefined);
-        assert(res.data[0].resourceOperatedUpon !== undefined);
+        assert(res.data[0].auditableResource !== undefined);
+        assert(res.data[0].whenActionWasPerformed !== undefined);
+        assert(res.data[0].clientInfo.clientIpAddress !== undefined);
+        assert(res.data[0].clientInfo.serverIpAddress !== undefined);
+        assert(res.data[0].clientInfo.userAgent !== undefined);
+        assert(res.data[0].clientInfo.locale !== undefined);
     }, (error) => {
         throw(error);
     });

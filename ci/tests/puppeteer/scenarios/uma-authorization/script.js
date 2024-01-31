@@ -136,7 +136,7 @@ const cas = require("../../cas.js");
         }, 308, authzRequest));
     await cas.log(result);
     assert(result.error_details.requesting_party_claims.required_claims !== undefined);
-    assert(result.error_details.requesting_party_claims.required_scopes !== undefined);
+    assert(result.error_details.requesting_party_claims.required_scopes === undefined);
 
 
     await cas.log("Executing claim collection...");

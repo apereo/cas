@@ -27,11 +27,11 @@ const cas = require("../../cas.js");
 
             let details = res.data.components.mongo.details["MongoDbHealthIndicator-ticket-registry"];
             assert(details.name === "MongoDbHealthIndicator-ticket-registry");
-            assert(details.proxyGrantingTicketsCache !== undefined);
-            assert(details.ticketGrantingTicketsCache !== undefined);
-            assert(details.proxyTicketsCache !== undefined);
-            assert(details.serviceTicketsCache !== undefined);
-            assert(details.transientSessionTicketsCache !== undefined);
+            assert(details.proxyGrantingTicketsCollection !== undefined);
+            assert(details.ticketGrantingTicketsCollection !== undefined);
+            assert(details.proxyTicketsCollection !== undefined);
+            assert(details.serviceTicketsCollection !== undefined);
+            assert(details.transientSessionTicketsCollection !== undefined);
 
             details = res.data.components.mongo.details["MongoDbHealthIndicator-service-registry"];
             assert(details.name === "MongoDbHealthIndicator-service-registry");
@@ -51,16 +51,4 @@ const cas = require("../../cas.js");
         "Accept": "application/json",
         "Content-Type": "application/x-www-form-urlencoded"
     });
-
-    // await cas.logg("Querying registry for all decoded ticket-granting tickets");
-    // await cas.doGet(`${baseUrl}/ticketRegistry/query?prefix=TGT&decode=true`, async res => {
-    //     assert(res.status === 200);
-    //     assert(res.data.length === 1);
-    // }, async err => {
-    //     throw err;
-    // }, {
-    //     'Accept': 'application/json',
-    //     'Content-Type': "application/x-www-form-urlencoded"
-    // });
-
 })();
