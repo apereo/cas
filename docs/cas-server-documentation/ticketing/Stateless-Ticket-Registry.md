@@ -38,8 +38,12 @@ The above features do come with a number of caveats and limitations. See below.
 
 - [CAS Protocol](../protocol/CAS-Protocol.html) is supported.
 - [SAML1 Protocol](../protocol/SAML-v1-Protocol.html) is supported.
-- [SAML2 Protocol](../authentication/Configuring-SAML2-Authentication.html), with the exception of [SAML2 attribute queries](../installation/Configuring-SAML2-AttributeQuery.html), is supported.
-- [OAuth2 Protocol](../authentication/OAuth-Authentication.html) is supported.
+- [SAML2 Protocol](../authentication/Configuring-SAML2-Authentication.html) is supported with the following exceptions:
+  - [SAML2 attribute queries](../installation/Configuring-SAML2-AttributeQuery.html)
+- [OAuth2 Protocol](../authentication/OAuth-Authentication.html) is supported with the following exceptions:
+  - [Device Authorization](../authentication/OAuth-ProtocolFlow-DeviceAuthorization.html)
+- [OpenID Connect Protocol](../protocol/OIDC-Protocol.html) is supported with the following exceptions: 
+  - [DPoP](../authentication/OIDC-Authentication-DPoP.html)
 
 <div class="alert alert-info"><strong>:information_source: What About...?</strong><p>
 Remember that not all CAS modules and features that interact with the ticket registry to create, update, fetch or remove tickets are supported.

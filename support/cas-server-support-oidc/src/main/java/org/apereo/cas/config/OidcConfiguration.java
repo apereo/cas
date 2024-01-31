@@ -153,8 +153,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.web.servlet.HandlerInterceptor;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -779,7 +781,12 @@ class OidcConfiguration {
             final List<OAuth20IntrospectionResponseGenerator> oauthIntrospectionResponseGenerator,
             @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
             final PrincipalResolver principalResolver) {
-            return (OidcConfigurationContext) OidcConfigurationContext.builder()
+
+            val sortedIdClaimCollectors = new ArrayList<>(oidcIdTokenClaimCollectors);
+            AnnotationAwareOrderComparator.sortIfNecessary(sortedIdClaimCollectors);
+
+            return (OidcConfigurationContext) OidcConfigurationContext
+                .builder()
                 .introspectionSigningAndEncryptionService(oidcTokenIntrospectionSigningAndEncryptionService)
                 .introspectionResponseGenerator(oauthIntrospectionResponseGenerator)
                 .argumentExtractor(argumentExtractor)
@@ -790,7 +797,7 @@ class OidcConfiguration {
                 .issuerService(oidcIssuerService)
                 .clientRegistrationRequestTranslator(oidcClientRegistrationRequestTranslator)
                 .ticketFactory(ticketFactory)
-                .idTokenClaimCollectors(oidcIdTokenClaimCollectors)
+                .idTokenClaimCollectors(sortedIdClaimCollectors)
                 .idTokenGeneratorService(oidcIdTokenGenerator)
                 .idTokenExpirationPolicy(oidcIdTokenExpirationPolicy)
                 .oidcRequestSupport(oidcRequestSupport)
