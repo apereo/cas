@@ -36,7 +36,7 @@ on:
 jobs:
   initialize:
     if: ${{ (github.event_name == 'schedule' || contains(github.event.pull_request.labels.*.name, 'Bot')) }}
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK
@@ -61,7 +61,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-latest]
+        os: [ubuntu-latest
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -95,7 +95,7 @@ jobs:
 
   build-latest-jdk:
     if: ${{ (github.event_name == 'schedule' || contains(github.event.pull_request.labels.*.name, 'Bot')) }}
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     needs: [initialize]
     continue-on-error: false
     steps:
@@ -125,7 +125,7 @@ jobs:
 
   build-graalvm:
     if: ${{ (github.event_name == 'schedule' || contains(github.event.pull_request.labels.*.name, 'Bot')) }}
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     needs: [initialize]
     continue-on-error: false
     steps:
