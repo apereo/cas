@@ -1,7 +1,6 @@
 const puppeteer = require("puppeteer");
 const cas = require("../../cas.js");
 const fs = require("fs");
-const assert = require("assert");
 const request = require("request");
 
 (async () => {

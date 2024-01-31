@@ -18,6 +18,14 @@
       "error",
       "unix"
     ],
+    "no-inline-comments": "error",
+    "line-comment-position": [
+      "error",
+      {
+        "position": "above"
+      }
+    ],
+    "no-multiple-empty-lines": "error",
     "quotes": "error",
     "semi": "error",
     "curly": "error",
@@ -40,12 +48,14 @@
     "prefer-arrow-callback": "error",
     "no-return-await": "error",
     "no-unreachable": "error",
+    "no-unreachable-loop": "error",
     "no-useless-concat": "error",
     "no-useless-escape": "error",
     "no-useless-return": "error",
     "eqeqeq": "error",
     "prefer-arrow-callback": "error",
     "prefer-const": "error",
+    "require-atomic-updates": "error",
     "no-alert": "error",
     "no-var": "error",
     "no-redeclare": "error",

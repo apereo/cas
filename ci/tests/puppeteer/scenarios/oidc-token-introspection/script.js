@@ -10,7 +10,6 @@ const cas = require("../../cas.js");
     await cas.log(`Calling ${url}`);
 
 
-
     await cas.doPost(url, "", {
         "Content-Type": "application/json",
         "Authorization": `Basic ${btoa("client:secret")}`
