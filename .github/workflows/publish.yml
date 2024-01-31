@@ -35,7 +35,7 @@ concurrency:
 
 jobs:
   initialize:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK
@@ -55,7 +55,7 @@ jobs:
   ##########################################################################
 
   publish-snapshots:
-     runs-on: macos-latest
+     runs-on: ubuntu-latest
      needs: [initialize]
      continue-on-error: false
      if: ${{ github.event_name == 'push' }}
@@ -91,7 +91,7 @@ jobs:
   ##########################################################################
 
   publish-modules-metadata:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     needs: [initialize]
     continue-on-error: false
     if: ${{ github.event_name == 'push' }}

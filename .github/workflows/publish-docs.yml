@@ -35,7 +35,7 @@ concurrency:
 
 jobs:
   initialize:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK
@@ -54,7 +54,7 @@ jobs:
   ##########################################################################
 
   publish-docs:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     if: ${{ github.event_name == 'push' || contains(github.event.pull_request.labels.*.name, 'CI') }}
     needs: [initialize]
     continue-on-error: false
