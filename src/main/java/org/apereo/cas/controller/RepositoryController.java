@@ -84,7 +84,9 @@ public class RepositoryController {
         if (pullRequest.isLocked() || pullRequest.isDraft() || pullRequest.isWorkInProgress()) {
             return ResponseEntity.status(HttpStatus.LOCKED).build();
         }
-        repository.removeLabelFrom(pullRequest, CasLabels.LABEL_CI);
+        if (pullRequest.isLabeledAs(CasLabels.LABEL_CI)) {
+            repository.removeLabelFrom(pullRequest, CasLabels.LABEL_CI);
+        }
         repository.labelPullRequestAs(pullRequest, CasLabels.LABEL_CI);
         return ResponseEntity.ok().build();
     }

@@ -380,14 +380,12 @@ public class GitHubTemplate implements GitHubOperations {
         var encodedName = new URI(null, null, label, null).toString();
         val url = pullRequest.getLabelsUrl() + '/' + encodedName;
         log.info("Removing label {} from pull request {} using {}", label, pullRequest, url);
-
-        var response = this.rest.exchange(
-            new RequestEntity<Void>(HttpMethod.DELETE, URI.create(url)), Label[].class);
-        if (!response.getStatusCode().is2xxSuccessful()) {
-            log.warn("Failed to remove label from pull request. Response status: {}", response.getStatusCode());
-        } else {
-            pullRequest.getLabels().removeIf(l -> l.getName().equalsIgnoreCase(label));
+        try {
+            rest.exchange(new RequestEntity<Void>(HttpMethod.DELETE, URI.create(url)), Label[].class);
+        } catch (final Exception e) {
+            log.warn("Failed to remove label from pull request. Response status: {}", e.getMessage());
         }
+        pullRequest.getLabels().removeIf(l -> l.getName().equalsIgnoreCase(label));
     }
 
     @Override

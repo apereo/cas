@@ -11,6 +11,7 @@
 
     <logger name="ch.qos.logback" level="off" />
     <logger name="org.springframework.boot.autoconfigure.security" level="info" />
+    <logger name="org.springframework.web.client" level="warn" />
     <root level="info">
         <appender-ref ref="STDOUT" />
     </root>
