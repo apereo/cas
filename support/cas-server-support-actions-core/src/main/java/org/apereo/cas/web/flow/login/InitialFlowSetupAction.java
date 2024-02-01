@@ -31,6 +31,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -78,11 +79,10 @@ public class InitialFlowSetupAction extends BaseCasWebflowAction {
     @Override
     protected Event doExecuteInternal(final RequestContext context) throws Throwable {
         configureCookieGenerators(context);
-        configureWebflowContext(context);
-
         configureWebflowForPostParameters(context);
         configureWebflowForCustomFields(context);
         configureWebflowForServices(context);
+        configureWebflowContext(context);
 
         val ticketGrantingTicketId = configureWebflowForTicketGrantingTicket(context);
         configureWebflowForSsoParticipation(context, ticketGrantingTicketId);
@@ -175,17 +175,29 @@ public class InitialFlowSetupAction extends BaseCasWebflowAction {
         WebUtils.putStaticAuthenticationIntoFlowScope(context, staticAuthEnabled);
 
         if (casProperties.getAuthn().getPolicy().isSourceSelectionEnabled()) {
-            val availableHandlers = authenticationEventExecutionPlan.getAuthenticationHandlers()
-                .stream()
-                .filter(handler -> handler.supports(UsernamePasswordCredential.class))
-                .map(handler -> StringUtils.capitalize(handler.getName().trim()))
-                .distinct()
-                .sorted()
-                .collect(Collectors.toList());
+            val availableHandlers = determineAuthenticationHandlersForSourceSelection(context);
             WebUtils.putAvailableAuthenticationHandleNames(context, availableHandlers);
         }
         context.getFlowScope().put("httpRequestSecure", request.isSecure());
         context.getFlowScope().put("httpRequestMethod", request.getMethod());
+    }
+
+    protected List<String> determineAuthenticationHandlersForSourceSelection(final RequestContext context) {
+        val availableHandlers = authenticationEventExecutionPlan.getAuthenticationHandlers()
+            .stream()
+            .filter(handler -> handler.supports(UsernamePasswordCredential.class))
+            .map(handler -> StringUtils.capitalize(handler.getName().trim()))
+            .distinct()
+            .sorted()
+            .collect(Collectors.toList());
+        val registeredService = WebUtils.getRegisteredService(context);
+        if (registeredService != null && registeredService.getAuthenticationPolicy() != null) {
+            val requiredHandlers = registeredService.getAuthenticationPolicy().getRequiredAuthenticationHandlers();
+            if (requiredHandlers != null && !requiredHandlers.isEmpty()) {
+                availableHandlers.removeIf(handler -> !requiredHandlers.contains(handler));
+            }
+        }
+        return availableHandlers;
     }
 
     protected void configureCookieGenerators(final RequestContext context) {
