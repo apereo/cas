@@ -6,8 +6,6 @@ import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
-import org.apereo.inspektr.common.web.ClientInfo;
-import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +40,7 @@ class PrincipalFromRequestHeaderNonInteractiveCredentialsActionTests extends Bas
         context.getHttpServletRequest().setRemoteUser("test");
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, this.action.execute(context).getId());
 
-        context.getHttpServletRequest().addHeader("principal", "casuser");
+        context.addHeader("principal", "casuser");
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, this.action.execute(context).getId());
     }
 
@@ -61,11 +59,11 @@ class PrincipalFromRequestHeaderNonInteractiveCredentialsActionTests extends Bas
         val context = MockRequestContext.create(applicationContext);
         
         context.getHttpServletRequest().setRemoteUser("xyz");
-        context.getHttpServletRequest().setRemoteAddr("1.2.3.4");
-        context.getHttpServletRequest().setLocalAddr("1.2.3.4");
-        context.getHttpServletRequest().addHeader(HttpRequestUtils.USER_AGENT_HEADER, "FIREFOX");
+        context.setRemoteAddr("1.2.3.4");
+        context.setLocalAddr("1.2.3.4");
+        context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "FIREFOX");
         context.setParameter("geolocation", "1000,1000,1000,1000");
-        ClientInfoHolder.setClientInfo(ClientInfo.from(context.getHttpServletRequest()));
+        context.setClientInfo();
 
         context.setParameter(casProperties.getAuthn().getMfa().getTriggers().getHttp().getRequestParameter(), "mfa-whatever");
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());

@@ -13,8 +13,6 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.inspektr.common.web.ClientInfo;
-import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
@@ -121,10 +119,10 @@ class MultifactorAuthenticationSetTrustActionTests extends AbstractMultifactorAu
         val registeredService = RegisteredServiceTestUtils.getRegisteredService("sample-service", Collections.emptyMap());
         WebUtils.putRegisteredService(context, registeredService);
 
-        context.getHttpServletRequest().setRemoteAddr("123.456.789.000");
-        context.getHttpServletRequest().setLocalAddr("123.456.789.000");
-        context.getHttpServletRequest().addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
-        ClientInfoHolder.setClientInfo(ClientInfo.from(context.getHttpServletRequest()));
+        context.setRemoteAddr("123.456.789.000");
+        context.setLocalAddr("123.456.789.000");
+        context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
+        context.setClientInfo();
         
         val authn = RegisteredServiceTestUtils.getAuthentication("casuser-setdevice");
         WebUtils.putAuthentication(authn, context);

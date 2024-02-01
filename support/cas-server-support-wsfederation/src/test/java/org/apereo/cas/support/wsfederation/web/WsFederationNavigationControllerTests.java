@@ -9,8 +9,6 @@ import org.apereo.cas.support.wsfederation.AbstractWsFederationTests;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.val;
-import org.apereo.inspektr.common.web.ClientInfo;
-import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,10 +35,10 @@ class WsFederationNavigationControllerTests extends AbstractWsFederationTests {
     void verifyOperation() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
 
-        context.getHttpServletRequest().setRemoteAddr("185.86.151.11");
-        context.getHttpServletRequest().setLocalAddr("185.88.151.11");
-        context.getHttpServletRequest().addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
-        ClientInfoHolder.setClientInfo(ClientInfo.from(context.getHttpServletRequest()));
+        context.setRemoteAddr("185.86.151.11");
+        context.setLocalAddr("185.88.151.11");
+        context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
+        context.setClientInfo();
 
         val config = wsFederationConfigurations.toList().getFirst();
         val registeredService = RegisteredServiceTestUtils.getRegisteredService("https://wsfedservice");

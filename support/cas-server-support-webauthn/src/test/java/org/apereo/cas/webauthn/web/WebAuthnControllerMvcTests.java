@@ -3,7 +3,6 @@ package org.apereo.cas.webauthn.web;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockRequestContext;
-import org.apereo.cas.util.MockServletContext;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.security.BaseWebSecurityTests;
 import org.apereo.cas.web.support.WebUtils;
@@ -29,7 +28,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
 import jakarta.servlet.http.HttpServletRequest;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
@@ -130,7 +128,6 @@ class WebAuthnControllerMvcTests {
 
     private void populateSecurityContext(final MvcResult result) throws Exception {
         val requestContext = MockRequestContext.create(webApplicationContext);
-        requestContext.setExternalContext(new ServletExternalContext(new MockServletContext(), result.getRequest(), result.getResponse()));
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), requestContext);
         populateSecurityContextAction.execute(requestContext);
     }

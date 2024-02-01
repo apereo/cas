@@ -66,7 +66,7 @@ class WebUtilsTests {
         assertNotNull(WebUtils.produceErrorView("error-view", new IllegalArgumentException()));
         assertNotNull(WebUtils.getHttpRequestFullUrl(context));
 
-        context.getHttpServletRequest().setQueryString("param=value");
+        context.setQueryString("param=value");
         assertNotNull(WebUtils.getHttpRequestFullUrl(context.getHttpServletRequest()));
         assertFalse(WebUtils.isGraphicalUserAuthenticationEnabled(context));
         assertNull(WebUtils.getAvailableAuthenticationHandleNames(context));

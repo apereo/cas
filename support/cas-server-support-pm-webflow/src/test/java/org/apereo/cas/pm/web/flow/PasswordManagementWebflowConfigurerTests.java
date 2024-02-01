@@ -20,12 +20,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.servlet.HandlerAdapter;
-import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.TransitionableState;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.mvc.servlet.FlowHandler;
 import java.util.stream.StreamSupport;
 import static org.junit.jupiter.api.Assertions.*;
@@ -81,8 +79,6 @@ class PasswordManagementWebflowConfigurerTests {
             assertTrue(passwordResetHandlerAdapter.supports(handler));
 
             val context = MockRequestContext.create(applicationContext);
-            RequestContextHolder.setRequestContext(context);
-            ExternalContextHolder.setExternalContext(context.getExternalContext());
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, verifySecurityQuestionsAction.execute(context).getId());
 
             state = (TransitionableState) flow.getState(CasWebflowConstants.STATE_ID_EXPIRED_PASSWORD);
@@ -149,9 +145,7 @@ class PasswordManagementWebflowConfigurerTests {
             assertEquals(sendAcct.getTransition(casSimpleMultifactorAuthenticationProvider.getId()).getTargetStateId(),
                 casSimpleMultifactorAuthenticationProvider.getId());
 
-            val context = MockRequestContext.create();
-            RequestContextHolder.setRequestContext(context);
-            ExternalContextHolder.setExternalContext(context.getExternalContext());
+            val context = MockRequestContext.create(applicationContext);
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, verifySecurityQuestionsAction.execute(context).getId());
 
             state = (TransitionableState) flow.getState(CasWebflowConstants.STATE_ID_EXPIRED_PASSWORD);

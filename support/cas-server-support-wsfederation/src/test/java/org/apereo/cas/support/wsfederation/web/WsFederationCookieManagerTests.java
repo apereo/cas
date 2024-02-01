@@ -6,8 +6,6 @@ import org.apereo.cas.support.wsfederation.AbstractWsFederationTests;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.val;
-import org.apereo.inspektr.common.web.ClientInfo;
-import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,10 +22,10 @@ class WsFederationCookieManagerTests extends AbstractWsFederationTests {
     void verifyOperation() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
 
-        context.getHttpServletRequest().setRemoteAddr("185.86.151.11");
-        context.getHttpServletRequest().setLocalAddr("185.88.151.11");
-        context.getHttpServletRequest().addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
-        ClientInfoHolder.setClientInfo(ClientInfo.from(context.getHttpServletRequest()));
+        context.setRemoteAddr("185.86.151.11");
+        context.setLocalAddr("185.88.151.11");
+        context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
+        context.setClientInfo();
 
         context.setParameter(CasProtocolConstants.PARAMETER_METHOD, "POST");
         context.getHttpServletRequest().setAttribute("locale", "en");

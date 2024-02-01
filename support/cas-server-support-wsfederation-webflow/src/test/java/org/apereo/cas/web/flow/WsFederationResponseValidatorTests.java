@@ -12,8 +12,6 @@ import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
-import org.apereo.inspektr.common.web.ClientInfo;
-import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
@@ -92,10 +90,10 @@ class WsFederationResponseValidatorTests {
     private RequestContext prepareContext() throws Exception {
         val context = MockRequestContext.create(applicationContext);
 
-        context.getHttpServletRequest().setRemoteAddr("185.86.151.11");
-        context.getHttpServletRequest().setLocalAddr("185.88.151.11");
-        context.getHttpServletRequest().addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
-        ClientInfoHolder.setClientInfo(ClientInfo.from(context.getHttpServletRequest()));
+        context.setRemoteAddr("185.86.151.11");
+        context.setLocalAddr("185.88.151.11");
+        context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
+        context.setClientInfo();
 
         val registeredService = RegisteredServiceTestUtils.getRegisteredService("https://wsfedservice-validate");
         servicesManager.save(registeredService);

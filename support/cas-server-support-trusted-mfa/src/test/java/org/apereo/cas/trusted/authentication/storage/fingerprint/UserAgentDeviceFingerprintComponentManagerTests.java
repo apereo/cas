@@ -7,10 +7,10 @@ import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -20,28 +20,27 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("MFATrustedDevices")
+@SpringBootTest(classes = RefreshAutoConfiguration.class)
 class UserAgentDeviceFingerprintComponentManagerTests {
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @Test
     void verifyAgentFingerprintNotFound() throws Throwable {
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
+        val context = MockRequestContext.create(applicationContext);
         ClientInfoHolder.setClientInfo(null);
         val ex = new UserAgentDeviceFingerprintComponentManager();
-        val context = new MockRequestContext();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
-        assertFalse(ex.extractComponent("casuser", request, response).isPresent());
+        assertFalse(ex.extractComponent("casuser",
+            context.getHttpServletRequest(), context.getHttpServletResponse()).isPresent());
     }
 
     @Test
     void verifyAgentFingerprintFound() throws Throwable {
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        request.setRemoteAddr("1.2.3.4");
-        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "TestAgent");
+        val context = MockRequestContext.create(applicationContext);
+        context.setRemoteAddr("1.2.3.4");
+        context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "TestAgent");
         val ex = new UserAgentDeviceFingerprintComponentManager();
-
-        val context = new MockRequestContext();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        assertTrue(ex.extractComponent("casuser", request, response).isPresent());
+        assertTrue(ex.extractComponent("casuser",
+            context.getHttpServletRequest(), context.getHttpServletResponse()).isPresent());
     }
 }

@@ -9,8 +9,6 @@ import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import lombok.val;
 import org.apache.hc.core5.net.URIBuilder;
-import org.apereo.inspektr.common.web.ClientInfo;
-import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,9 +58,9 @@ class ValidateAccountRegistrationTokenActionTests extends BaseWebflowConfigurerT
     void verifyPassRegistrationRequest() throws Throwable {
         val context = MockRequestContext.create();
 
-        context.getHttpServletRequest().setRemoteAddr("127.0.0.1");
-        context.getHttpServletRequest().setLocalAddr("127.0.0.1");
-        ClientInfoHolder.setClientInfo(ClientInfo.from(context.getHttpServletRequest()));
+        context.setRemoteAddr("127.0.0.1");
+        context.setLocalAddr("127.0.0.1");
+        context.setClientInfo();
 
         context.setParameter("username", "casuser");
         context.setParameter("email", "cas@example.org");
