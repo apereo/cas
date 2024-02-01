@@ -27,7 +27,7 @@ class SpnegoKnownClientSystemsFilterActionTests {
         val action = new BaseSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern("^192\\.158\\..+"),
             StringUtils.EMPTY, 0);
         val context = MockRequestContext.create();
-        context.getHttpServletRequest().setRemoteAddr("192.158.5.781");
+        context.setRemoteAddr("192.158.5.781");
         val ev = action.execute(context);
         assertEquals(new EventFactorySupport().yes(this).getId(), ev.getId());
     }
@@ -37,7 +37,7 @@ class SpnegoKnownClientSystemsFilterActionTests {
         val action = new BaseSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern("^192\\.158\\..+"),
             StringUtils.EMPTY, 0);
         val context = MockRequestContext.create();
-        context.getHttpServletRequest().setRemoteAddr("193.158.5.781");
+        context.setRemoteAddr("193.158.5.781");
         val ev = action.execute(context);
         assertNotEquals(new EventFactorySupport().yes(this).getId(), ev.getId());
     }
@@ -48,7 +48,7 @@ class SpnegoKnownClientSystemsFilterActionTests {
             "alternateRemoteIp", 120);
 
         val context = MockRequestContext.create();
-        context.getHttpServletRequest().setRemoteAddr("555.555.555.555");
+        context.setRemoteAddr("555.555.555.555");
         context.addHeader("alternateRemoteIp", ALTERNATE_REMOTE_IP);
         val ev = action.execute(context);
         assertEquals(new EventFactorySupport().yes(this).getId(), ev.getId());
@@ -60,7 +60,7 @@ class SpnegoKnownClientSystemsFilterActionTests {
             StringUtils.EMPTY, 0, "\\w+\\.\\w+\\.\\w+");
 
         val context = MockRequestContext.create();
-        context.getHttpServletRequest().setRemoteAddr(ALTERNATE_REMOTE_IP);
+        context.setRemoteAddr(ALTERNATE_REMOTE_IP);
         val ev = action.execute(context);
         assertEquals(new EventFactorySupport().yes(this).getId(), ev.getId());
     }
@@ -71,7 +71,7 @@ class SpnegoKnownClientSystemsFilterActionTests {
             StringUtils.EMPTY, 0, "\\w+\\.\\w+\\.\\w+");
 
         val context = MockRequestContext.create();
-        context.getHttpServletRequest().setRemoteAddr(ALTERNATE_REMOTE_IP);
+        context.setRemoteAddr(ALTERNATE_REMOTE_IP);
         val ev = action.execute(context);
         assertEquals(new EventFactorySupport().yes(this).getId(), ev.getId());
 
@@ -82,7 +82,7 @@ class SpnegoKnownClientSystemsFilterActionTests {
         val action = new HostNameSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern("14\\..+"),
             StringUtils.EMPTY, 0, "\\w+\\.\\w+\\.\\w+");
         val context = MockRequestContext.create();
-        context.getHttpServletRequest().setRemoteAddr(ALTERNATE_REMOTE_IP);
+        context.setRemoteAddr(ALTERNATE_REMOTE_IP);
         val ev = action.execute(context);
         assertEquals(new EventFactorySupport().no(this).getId(), ev.getId());
 

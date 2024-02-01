@@ -52,7 +52,7 @@ class ServiceThemeResolverTests {
 
         val context = MockRequestContext.create();
         context.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.getService(registeredService.getServiceId()));
-        context.getHttpServletRequest().addHeader(HttpRequestUtils.USER_AGENT_HEADER, MOZILLA);
+        context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, MOZILLA);
         assertEquals(DEFAULT_THEME_NAME, themeResolver.resolveThemeName(context.getHttpServletRequest()));
     }
 

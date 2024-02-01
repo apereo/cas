@@ -22,7 +22,7 @@ class X509CertificateCredentialsRequestHeaderActionTests extends BaseCertificate
     @Test
     void verifyCredentialsResultsInAuthnFailure() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
-        context.getHttpServletRequest().addHeader("ssl_client_cert", VALID_CERTIFICATE.getContent());
+        context.addHeader("ssl_client_cert", VALID_CERTIFICATE.getContent());
         assertEquals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE,
             action.execute(context).getId());
     }
@@ -30,7 +30,7 @@ class X509CertificateCredentialsRequestHeaderActionTests extends BaseCertificate
     @Test
     void verifyErrorInRequestResultsInError() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
-        context.getHttpServletRequest().addHeader("ssl_client_cert", VALID_CERTIFICATE.getContent());
+        context.addHeader("ssl_client_cert", VALID_CERTIFICATE.getContent());
         context.getRequestScope().put(REQUEST_ATTRIBUTE_X509_ERROR, "true");
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, action.execute(context).getId());
     }

@@ -22,13 +22,9 @@ import org.pac4j.core.credentials.TokenCredentials;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.ExternalContextHolder;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.execution.RequestContextHolder;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import static org.junit.jupiter.api.Assertions.*;
@@ -63,6 +59,9 @@ class LdapDelegatedClientAuthenticationCredentialResolverTests {
     @Qualifier("ldapDelegatedClientAuthenticationCredentialResolver")
     private DelegatedClientAuthenticationCredentialResolver ldapDelegatedClientAuthenticationCredentialResolver;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @BeforeAll
     public static void bootstrap() throws Throwable {
         ClientInfoHolder.setClientInfo(ClientInfo.from(new MockHttpServletRequest()));
@@ -77,13 +76,9 @@ class LdapDelegatedClientAuthenticationCredentialResolverTests {
 
     @Test
     void verifyOperation() throws Throwable {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        request.setAttribute(Credentials.class.getName(), "caspac4j");
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
+        val context = MockRequestContext.create(applicationContext);
+        context.getHttpServletRequest().setAttribute(Credentials.class.getName(), "caspac4j");
+        
         val credentials = new TokenCredentials(USER);
         val clientCredential = new ClientCredential(credentials, "FacebookClient");
         assertTrue(ldapDelegatedClientAuthenticationCredentialResolver.supports(clientCredential));

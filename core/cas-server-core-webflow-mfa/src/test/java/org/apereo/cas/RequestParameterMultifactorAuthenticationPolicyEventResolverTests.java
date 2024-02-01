@@ -15,10 +15,6 @@ import org.springframework.binding.expression.support.LiteralExpression;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.DefaultTransitionCriteria;
@@ -40,10 +36,7 @@ class RequestParameterMultifactorAuthenticationPolicyEventResolverTests extends 
 
     @Test
     void verifyOperation() throws Throwable {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        val context = MockRequestContext.create(applicationContext);
 
         val service = RegisteredServiceTestUtils.getRegisteredService();
         servicesManager.save(service);
@@ -59,7 +52,7 @@ class RequestParameterMultifactorAuthenticationPolicyEventResolverTests extends 
         val transition = new Transition(new DefaultTransitionCriteria(new LiteralExpression(TestMultifactorAuthenticationProvider.ID)), targetResolver);
         context.getRootFlow().getGlobalTransitionSet().add(transition);
 
-        request.addParameter(casProperties.getAuthn().getMfa().getTriggers().getHttp().getRequestParameter(), TestMultifactorAuthenticationProvider.ID);
+        context.setParameter(casProperties.getAuthn().getMfa().getTriggers().getHttp().getRequestParameter(), TestMultifactorAuthenticationProvider.ID);
         results = requestParameterAuthenticationPolicyWebflowEventResolver.resolve(context);
         assertNotNull(results);
         assertEquals(1, results.size());

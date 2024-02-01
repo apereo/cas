@@ -7,8 +7,6 @@ import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import lombok.val;
-import org.apereo.inspektr.common.web.ClientInfo;
-import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,9 +47,9 @@ class SubmitAccountRegistrationActionTests extends BaseWebflowConfigurerTests {
         context.setParameter("username", "casuser");
         context.setParameter("email", "cas@example.org");
         context.setParameter("phone", "3477465432");
-        context.getHttpServletRequest().setRemoteAddr("127.0.0.1");
-        context.getHttpServletRequest().setLocalAddr("127.0.0.1");
-        ClientInfoHolder.setClientInfo(ClientInfo.from(context.getHttpServletRequest()));
+        context.setRemoteAddr("127.0.0.1");
+        context.setLocalAddr("127.0.0.1");
+        context.setClientInfo();
         val results = submitAccountRegistrationAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, results.getId());
     }

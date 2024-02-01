@@ -57,7 +57,7 @@ class RegisteredServiceThemeResolverTests {
         @Test
         void verifyNoAccess() throws Throwable {
             val context = MockRequestContext.create();
-            context.getHttpServletRequest().addHeader("User-Agent", "Mozilla");
+            context.addHeader("User-Agent", "Mozilla");
 
             val registeredService = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
             val strategy = new DefaultRegisteredServiceAccessStrategy(false, true);

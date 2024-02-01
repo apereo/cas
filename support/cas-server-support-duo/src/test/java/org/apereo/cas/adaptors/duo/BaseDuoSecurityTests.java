@@ -28,8 +28,6 @@ import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
-import org.apereo.inspektr.common.web.ClientInfo;
-import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.binding.expression.support.LiteralExpression;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -56,10 +54,10 @@ public abstract class BaseDuoSecurityTests {
     public static RequestContext getMockRequestContext(final ConfigurableApplicationContext applicationContext) throws Throwable {
         val context = MockRequestContext.create(applicationContext);
 
-        context.getHttpServletRequest().setRemoteAddr("185.86.151.11");
-        context.getHttpServletRequest().setLocalAddr("195.88.151.11");
-        context.getHttpServletRequest().addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
-        ClientInfoHolder.setClientInfo(ClientInfo.from(context.getHttpServletRequest()));
+        context.setRemoteAddr("185.86.151.11");
+        context.setLocalAddr("195.88.151.11");
+        context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
+        context.setClientInfo();
 
         val provider = getDuoSecurityMultifactorAuthenticationProvider();
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext, provider);

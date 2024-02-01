@@ -24,14 +24,9 @@ import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguratio
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.Ordered;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.ExternalContextHolder;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.execution.RequestContextHolder;
 import java.util.ArrayList;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
@@ -63,6 +58,9 @@ class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategyTests {
     @Qualifier("shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy")
     private AuthenticationServiceSelectionStrategy shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+    
     @Test
     void verifyServiceAttribute() throws Throwable {
         val svc = RegisteredServiceTestUtils.getService("https://sso.shibboleth.org/idp/Authn/External");
@@ -102,15 +100,8 @@ class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategyTests {
     @Test
     void verifyQueryStrings() throws Throwable {
         val svc = RegisteredServiceTestUtils.getService("https://www.example.org?name=value");
-        val context = new MockRequestContext();
-
-        val request = new MockHttpServletRequest();
-        request.setQueryString("entityId=https://idp.example.org");
-
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
+        val context = MockRequestContext.create(applicationContext);
+        context.setQueryString("entityId=https://idp.example.org");
 
         var result = shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy.resolveServiceFrom(svc);
         assertEquals("https://idp.example.org", result.getId());
