@@ -56,7 +56,7 @@ class OAuth20DefaultAccessTokenResponseGeneratorTests extends AbstractOAuth20Tes
         val model = mv.getModel();
         assertTrue(model.containsKey(OAuth20Constants.ACCESS_TOKEN));
         assertTrue(model.containsKey(OAuth20Constants.EXPIRES_IN));
-        assertTrue(model.containsKey(OAuth20Constants.SCOPE));
+        assertFalse(model.containsKey(OAuth20Constants.SCOPE));
         assertTrue(model.containsKey(OAuth20Constants.TOKEN_TYPE));
 
         assertThrows(ParseException.class, () -> {
