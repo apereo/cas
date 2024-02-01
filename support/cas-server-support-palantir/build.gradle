@@ -81,6 +81,7 @@ node {
 }
 
 tasks.register("build-ui", NpxTask) {
+    dependsOn("npmInstall")
     outputs.cacheIf { true }
     outputs.dir(file("build/generated/assets"))
     command = "vite"
