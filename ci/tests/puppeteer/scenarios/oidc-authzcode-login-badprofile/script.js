@@ -41,7 +41,7 @@ const assert = require("assert");
     assert(payload.access_token !== undefined);
     assert(payload.token_type !== undefined);
     assert(payload.expires_in !== undefined);
-    assert(payload.scope !== undefined);
+    assert(payload.scope === undefined);
 
     const decoded = await cas.decodeJwt(payload.id_token);
     assert(decoded.sub !== undefined);

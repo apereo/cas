@@ -16,8 +16,7 @@ const assert = require("assert");
     await cas.goto(page, url);
     await page.waitForTimeout(1000);
     await cas.loginWith(page);
-
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(2000);
     await cas.assertVisibility(page, "#userInfoClaims");
     await cas.assertVisibility(page, "#scopes");
     await cas.assertVisibility(page, "#MyCustomScope");
@@ -31,8 +30,9 @@ const assert = require("assert");
         await cas.click(page, "#allow");
         await page.waitForNavigation();
     }
-
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(2000);
+    await cas.screenshot(page);
+    await cas.logPage(page);
     let code = await cas.assertParameter(page, "code");
     await cas.log(`Current code is ${code}`);
     let accessTokenUrl = "https://localhost:8443/cas/oidc/token?grant_type=authorization_code"
