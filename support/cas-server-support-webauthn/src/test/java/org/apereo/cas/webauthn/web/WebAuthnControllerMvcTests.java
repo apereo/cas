@@ -21,6 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
+import org.springframework.mock.web.MockServletContext;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.DeferredCsrfToken;
@@ -28,6 +29,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
 import jakarta.servlet.http.HttpServletRequest;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
@@ -128,6 +130,7 @@ class WebAuthnControllerMvcTests {
 
     private void populateSecurityContext(final MvcResult result) throws Exception {
         val requestContext = MockRequestContext.create(webApplicationContext);
+        requestContext.setExternalContext(new ServletExternalContext(new MockServletContext(), result.getRequest(), result.getResponse()));
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), requestContext);
         populateSecurityContextAction.execute(requestContext);
     }
