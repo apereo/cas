@@ -22,6 +22,7 @@ public class Memes {
     );
     
     public static final Memes NO_TESTS = new Memes(
+        "https://github.com/mmoayyed/cas/assets/1205228/8b8b8515-acce-4830-8a82-922442e4acad",
         "https://github.com/apereo/cas/assets/1205228/42a2e3c6-316a-41b3-96a0-2cc6fdb60f57",
         "https://github.com/apereo/cas/assets/1205228/1c8e3d1e-1c03-4dbe-b4b5-10f9592d7714",
         "https://github.com/apereo/cas/assets/1205228/8a633d54-e7cf-4ebf-a404-a7353ec79956",
