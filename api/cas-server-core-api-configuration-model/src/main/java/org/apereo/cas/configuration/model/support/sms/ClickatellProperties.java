@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.sms;
 
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -36,5 +37,6 @@ public class ClickatellProperties implements CasFeatureModule, Serializable {
      * URL to contact and send messages.
      */
     @RequiredProperty
+    @ExpressionLanguageCapable
     private String serverUrl = "https://platform.clickatell.com/messages";
 }
