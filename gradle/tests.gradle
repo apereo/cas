@@ -109,13 +109,20 @@ enum TestCategories {
     ZooKeeper(true)
 
     boolean parallelEnabled;
-
+    private ptsEnabled;
+    
     TestCategories() {
         parallelEnabled = false
+        ptsEnabled = false
     }
 
     TestCategories(boolean parallelEnabled) {
         this.parallelEnabled = parallelEnabled
+    }
+
+    TestCategories(boolean parallelEnabled, boolean ptsEnabled) {
+        this.parallelEnabled = parallelEnabled
+        this.ptsEnabled = ptsEnabled
     }
 }
 
@@ -178,9 +185,19 @@ TestCategories.values().each({ testCategory ->
                 group = "CAS Tests"
                 enabled = shouldTest(sourceTestDirs, testCategory.name())
                 outputs.file(jacocoTestExecutionResultsFile)
+
                 useJUnitPlatform {
                     includeTags testCategory.name()
                 }
+
+                if (testCategory.ptsEnabled) {
+                    predictiveSelection {
+                        enabled = true
+                        mode = RELEVANT_TESTS
+                        profile = STANDARD
+                    }
+                }
+
                 if (testCategory.parallelEnabled) {
                     systemProperty("junit.jupiter.execution.parallel.enabled", true)
                     systemProperty("junit.jupiter.execution.parallel.mode.default", "concurrent")
@@ -197,6 +214,7 @@ TestCategories.values().each({ testCategory ->
                         classDumpDir = layout.buildDirectory.dir('jacoco/classpathdumps').get().asFile
                     }
                 }
+
             }
         }
     }
