@@ -1,7 +1,10 @@
 package org.apereo.cas.ticket.accesstoken;
 
+import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -11,6 +14,9 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import com.nimbusds.jwt.JWTClaimsSet;
 import lombok.val;
 import org.jose4j.jwt.JwtClaims;
+import org.springframework.context.ConfigurableApplicationContext;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This is {@link OAuth20JwtBuilder}.
@@ -20,10 +26,12 @@ import org.jose4j.jwt.JwtClaims;
  */
 public class OAuth20JwtBuilder extends JwtBuilder {
     public OAuth20JwtBuilder(final CipherExecutor defaultTokenCipherExecutor,
+                             final ConfigurableApplicationContext applicationContext,
                              final ServicesManager servicesManager,
                              final RegisteredServiceCipherExecutor registeredServiceCipherExecutor,
-                             final CasConfigurationProperties casProperties) {
-        super(defaultTokenCipherExecutor, servicesManager,
+                             final CasConfigurationProperties casProperties,
+                             final PrincipalResolver principalResolver) {
+        super(defaultTokenCipherExecutor, applicationContext, servicesManager, principalResolver,
             registeredServiceCipherExecutor, casProperties);
     }
 
@@ -43,5 +51,22 @@ public class OAuth20JwtBuilder extends JwtBuilder {
             jwtClaims.setClaim(OAuth20Constants.SCOPE, String.join(" ", jwtClaims.getStringListClaimValue(OAuth20Constants.SCOPE)));
         }
         return JWTClaimsSet.parse(jwtClaims.getClaimsMap());
+    }
+
+    @Override
+    protected Map<String, List<Object>> collectClaims(final JwtRequest payload) throws Throwable {
+        val currentClaims = super.collectClaims(payload);
+        if (payload.isResolveSubject() && payload.getRegisteredService().isPresent()) {
+            val principal = getPrincipalResolver().resolve(new BasicIdentifiableCredential(payload.getSubject()));
+            val registeredService = payload.getRegisteredService().get();
+            val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+                .principal(principal)
+                .service(payload.getService().orElse(null))
+                .registeredService(registeredService)
+                .applicationContext(getApplicationContext())
+                .build();
+            currentClaims.putAll(registeredService.getAttributeReleasePolicy().getAttributes(context));
+        }
+        return currentClaims;
     }
 }

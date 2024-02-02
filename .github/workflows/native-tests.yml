@@ -10,6 +10,7 @@ env:
   GH_PACKAGE_REGISTRY_TOKEN: ${{ secrets.GH_PACKAGE_REGISTRY_TOKEN }}
   GRADLE_BUILDCACHE_USER: ci
   GRADLE_BUILDCACHE_PSW: ${{ secrets.GRADLE_BUILDCACHE_PSW }}
+  GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
   DUO_SECURITY_ADMIN_SKEY: ${{ secrets.DUO_SECURITY_ADMIN_SKEY }}
   DUO_SECURITY_ADMIN_IKEY: ${{ secrets.DUO_SECURITY_ADMIN_IKEY }}
   DUO_SECURITY_UNIVERSAL_PROMPT_SKEY: ${{ secrets.DUO_SECURITY_UNIVERSAL_PROMPT_SKEY }}
@@ -135,7 +136,7 @@ jobs:
           cache-dependency-path: ./ci/tests/puppeteer/package.json
           check-latest: true
       - name: Build Native Tests
-        uses: nick-fields/retry@v2
+        uses: nick-fields/retry@v3
         if: ${{ env.NATIVE_BUILD_ENABLED == 'true' }}
         with:
           max_attempts: ${{ env.MAX_ATTEMPTS }}
@@ -145,7 +146,7 @@ jobs:
           command: |
             ./ci/tests/puppeteer/run.sh --nb --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
       - name: Run Native Tests
-        uses: nick-fields/retry@v2
+        uses: nick-fields/retry@v3
         if: ${{ env.NATIVE_RUN_ENABLED == 'true' }}
         with:
           max_attempts: ${{ env.MAX_ATTEMPTS }}
@@ -193,7 +194,7 @@ jobs:
           cache: 'npm'
           cache-dependency-path: ./ci/tests/puppeteer/package.json
       - name: Build Native Tests
-        uses: nick-fields/retry@v2
+        uses: nick-fields/retry@v3
         if: ${{ env.NATIVE_BUILD_ENABLED == 'true' }}
         with:
           max_attempts: ${{ env.MAX_ATTEMPTS }}
@@ -204,7 +205,7 @@ jobs:
             export RUNNER_OS=${{ runner.os }}
             ./ci/tests/puppeteer/run.sh --nb --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
       - name: Run Native Tests
-        uses: nick-fields/retry@v2
+        uses: nick-fields/retry@v3
         if: ${{ env.NATIVE_RUN_ENABLED == 'true' }}
         with:
           max_attempts: ${{ env.MAX_ATTEMPTS }}

@@ -72,7 +72,6 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
 }
 
-
 node {
     version = "${nodeVersion}"
     yarnVersion = ''
@@ -81,22 +80,12 @@ node {
     nodeProjectDir = new File("${project.projectDir}", "client")
 }
 
-tasks.named("yarn", YarnTask) {
-    args = ['--network-timeout', '600000']
-    outputs.cacheIf { true }
-    inputs.files('client/package.json','client/vite.config.js')
-            .withPropertyName('yarnInstallConfig')
-            .withPathSensitivity(PathSensitivity.RELATIVE)
-    outputs.dir(file("client/node_modules"))
-}
-
 tasks.register("build-ui", NpxTask) {
+    dependsOn("npmInstall")
     outputs.cacheIf { true }
     outputs.dir(file("build/generated/assets"))
-
     command = "vite"
     args = ["build", "--emptyOutDir", "--outDir", "../build/generated/assets" ]
-    dependsOn(tasks.named("yarn"))
     inputs.files('client/package.json','client/vite.config.js')
             .withPropertyName('uiBuildConfig')
             .withPathSensitivity(PathSensitivity.RELATIVE)

@@ -91,8 +91,8 @@ const cas = require("../../cas.js");
             "Content-Type": "application/json"
         }, 200, permissionRequest));
     await cas.log(result);
-    assert(result.ticket !== null);
-    assert(result.code !== null);
+    assert(result.ticket !== undefined);
+    assert(result.code !== undefined);
 
 
     await cas.log("Checking for claims");

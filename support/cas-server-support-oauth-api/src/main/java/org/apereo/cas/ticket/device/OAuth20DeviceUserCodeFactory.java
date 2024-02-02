@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.device;
 
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.TicketFactory;
 
 /**
@@ -13,10 +14,21 @@ public interface OAuth20DeviceUserCodeFactory extends TicketFactory {
     /**
      * Create device user code device user code.
      *
-     * @param deviceCode the device code
+     * @param service the service
      * @return the device user code
      */
-    OAuth20DeviceUserCode createDeviceUserCode(OAuth20DeviceToken deviceCode);
+    default OAuth20DeviceUserCode createDeviceUserCode(final Service service) {
+        return createDeviceUserCode(null, service);
+    }
+
+    /**
+     * Create device user code o auth 20 device user code.
+     *
+     * @param id      the id
+     * @param service the service
+     * @return the o auth 20 device user code
+     */
+    OAuth20DeviceUserCode createDeviceUserCode(String id, Service service);
 
     /**
      * Generate device user code string.
@@ -24,5 +36,5 @@ public interface OAuth20DeviceUserCodeFactory extends TicketFactory {
      * @param providedCode the provided code
      * @return the string
      */
-    String generateDeviceUserCode(String providedCode);
+    String normalizeUserCode(String providedCode);
 }

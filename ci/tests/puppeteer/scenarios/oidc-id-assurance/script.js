@@ -11,7 +11,7 @@ const assert = require("assert");
     const payload = await getPayload(page, url, "client1", "secret1");
     const decoded = await cas.decodeJwt(payload.id_token);
     assert(decoded.sub === "casuser");
-    assert(decoded.txn !== null);
+    assert(decoded.txn !== undefined);
     assert(decoded.given_name === undefined);
     assert(decoded.family_name === undefined);
     assert(decoded.client_id === "client1");

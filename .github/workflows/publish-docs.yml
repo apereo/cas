@@ -10,6 +10,7 @@ env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   GRADLE_BUILDCACHE_USER: ci
   GRADLE_BUILDCACHE_PSW: ${{ secrets.GRADLE_BUILDCACHE_PSW }}
+  GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
   JDK_CURRENT: 21
   JDK_DISTRIBUTION: "corretto"
   DOCS_BRANCH: master
@@ -35,7 +36,7 @@ concurrency:
 
 jobs:
   initialize:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK
@@ -54,7 +55,7 @@ jobs:
   ##########################################################################
 
   publish-docs:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     if: ${{ github.event_name == 'push' || contains(github.event.pull_request.labels.*.name, 'CI') }}
     needs: [initialize]
     continue-on-error: false
@@ -92,7 +93,7 @@ jobs:
             jekyll/.jekyll-cache
           key: ${{ runner.os }}-${{ github.repository }}
       - name: Publish Documentation
-        uses: nick-fields/retry@v2
+        uses: nick-fields/retry@v3
         with:
           timeout_minutes: 55
           max_attempts: 2

@@ -2,6 +2,7 @@ package org.apereo.cas.acct.webflow;
 
 import org.apereo.cas.acct.AccountRegistrationUtils;
 import org.apereo.cas.config.CasAccountManagementWebflowAutoConfiguration;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -10,16 +11,9 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Import;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.ExternalContextHolder;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.SubflowState;
 import org.springframework.webflow.engine.ViewState;
-import org.springframework.webflow.execution.RequestContextHolder;
-import org.springframework.webflow.test.MockRequestControlContext;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -45,13 +39,9 @@ class AccountManagementWebflowConfigurerTests extends BaseWebflowConfigurerTests
         assertNotNull(subflow);
 
         val regFlow = (Flow) loginFlowDefinitionRegistry.getFlowDefinition(AccountManagementWebflowConfigurer.FLOW_ID_ACCOUNT_REGISTRATION);
-        val context = new MockRequestControlContext(regFlow);
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
-
+        val context = MockRequestContext.create(applicationContext);
+        context.setActiveFlow(regFlow);
+        
         val completeState = (ViewState) regFlow.getState(CasWebflowConstants.STATE_ID_COMPLETE_ACCOUNT_REGISTRATION);
         completeState.enter(context);
 

@@ -44,7 +44,6 @@ const YAML = require("yaml");
 })();
 
 
-
 function updateConfig(configFile, configFilePath, data) {
     const config = {
         cas: {

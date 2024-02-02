@@ -37,7 +37,7 @@ public interface AuthenticationRiskEvaluator {
      * @param score          the score
      * @param authentication the authentication
      * @param service        the service
-     * @return the boolean
+     * @return true or false
      */
     boolean isRiskyAuthenticationScore(AuthenticationRiskScore score, Authentication authentication, RegisteredService service);
 

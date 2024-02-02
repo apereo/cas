@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.api.AuthenticationRiskEvaluator;
 import org.apereo.cas.api.AuthenticationRiskMitigator;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.impl.plans.RiskyAuthenticationException;
@@ -118,6 +119,7 @@ class ElectronicFenceWebflowConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_RISK_AUTHENTICATION_TOKEN_CHECK)
         public Action riskAuthenticationCheckTokenAction(
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER) final PrincipalResolver principalResolver,
             @Qualifier(GeoLocationService.BEAN_NAME) final ObjectProvider<GeoLocationService> geoLocationService,
             @Qualifier(CasEventRepository.BEAN_NAME) final CasEventRepository casEventRepository,
             @Qualifier("cookieCipherExecutor") final CipherExecutor cookieCipherExecutor,
@@ -129,7 +131,7 @@ class ElectronicFenceWebflowConfiguration {
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
                 .withAction(() -> new RiskAuthenticationCheckTokenAction(casEventRepository, communicationsManager, servicesManager,
-                    cookieCipherExecutor, geoLocationService, casProperties))
+                    principalResolver, cookieCipherExecutor, geoLocationService, casProperties))
                 .withId(CasWebflowConstants.ACTION_ID_RISK_AUTHENTICATION_TOKEN_CHECK)
                 .build()
                 .get();

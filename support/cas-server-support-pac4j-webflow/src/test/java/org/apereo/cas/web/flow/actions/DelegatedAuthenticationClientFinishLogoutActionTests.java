@@ -57,7 +57,7 @@ class DelegatedAuthenticationClientFinishLogoutActionTests {
     @Order(1)
     void verifyOperationWithRedirect() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
-        context.getHttpServletRequest().addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
+        context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
         DelegationWebflowUtils.putDelegatedAuthenticationClientName(context, "SAML2Client");
         WebUtils.putLogoutRedirectUrl(context, "https://google.com");
 
@@ -76,7 +76,7 @@ class DelegatedAuthenticationClientFinishLogoutActionTests {
     @Order(1)
     void verifyOperationNoLogoutRedirectUrl() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
-        context.getHttpServletRequest().addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
+        context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
         DelegationWebflowUtils.putDelegatedAuthenticationClientName(context, "SAML2Client");
         val samlClient = (SAML2Client) identityProviders.findClient("SAML2Client").get();
         val logoutProcessor = (SAML2LogoutProcessor) samlClient.getLogoutProcessor();
@@ -95,7 +95,7 @@ class DelegatedAuthenticationClientFinishLogoutActionTests {
     @Order(1)
     void verifyOperationWithRelay() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
-        context.getHttpServletRequest().addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
+        context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
         context.setParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, "SAML2Client");
         val result = delegatedAuthenticationClientFinishLogoutAction.execute(context);
         assertNull(result);
@@ -105,7 +105,7 @@ class DelegatedAuthenticationClientFinishLogoutActionTests {
     @Order(100)
     void verifyOperationFailsWithError() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
-        context.getHttpServletRequest().addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
+        context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
         context.setParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, "SAML2Client");
         val samlClient = (SAML2Client) identityProviders.findClient("SAML2Client").orElseThrow();
 

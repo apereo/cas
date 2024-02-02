@@ -9,6 +9,7 @@ const cas = require("../../cas.js");
 
     await cas.log("Establish SSO session");
     await cas.gotoLogin(page);
+    await cas.updateDuoSecurityUserStatus("duocode");
     await cas.loginWith(page, "duocode", "Mellon");
     await cas.assertCookie(page);
 

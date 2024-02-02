@@ -6,7 +6,7 @@ const cas = require("../../cas.js");
 const startPuppeteerLoadTest = require("puppeteer-loadtest");
 const args = process.argv.slice(2);
 const config = JSON.parse(fs.readFileSync(args[0]));
-assert(config !== null);
+
 
 const paramOptions = {
     file: config.loadScript,

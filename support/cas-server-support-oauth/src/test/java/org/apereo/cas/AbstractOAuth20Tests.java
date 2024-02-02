@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
@@ -279,6 +280,10 @@ public abstract class AbstractOAuth20Tests {
     protected ServicesManager servicesManager;
 
     @Autowired
+    @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+    protected PrincipalResolver principalResolver;
+
+    @Autowired
     @Qualifier(CentralAuthenticationService.BEAN_NAME)
     protected CentralAuthenticationService centralAuthenticationService;
 
@@ -307,7 +312,7 @@ public abstract class AbstractOAuth20Tests {
 
     @Autowired
     @Qualifier("defaultRefreshTokenFactory")
-    protected OAuth20RefreshTokenFactory oAuthRefreshTokenFactory;
+    protected OAuth20RefreshTokenFactory defaultRefreshTokenFactory;
 
     @Autowired
     @Qualifier("defaultOAuthCodeFactory")
@@ -543,17 +548,8 @@ public abstract class AbstractOAuth20Tests {
         return code;
     }
 
-    /**
-     * Extract access token from token.
-     *
-     * @param token the token
-     * @return the string
-     */
     protected String extractAccessTokenFrom(final String token) {
-        return OAuth20JwtAccessTokenEncoder.builder()
-            .accessTokenJwtBuilder(accessTokenJwtBuilder)
-            .build()
-            .decode(token);
+        return OAuth20JwtAccessTokenEncoder.toDecodableCipher(accessTokenJwtBuilder).decode(token);
     }
 
     protected OAuth20RefreshToken addRefreshToken(final Principal principal,
@@ -561,7 +557,7 @@ public abstract class AbstractOAuth20Tests {
         val authentication = getAuthentication(principal);
         val factory = new WebApplicationServiceFactory();
         val service = factory.createService(registeredService.getServiceId());
-        val refreshToken = oAuthRefreshTokenFactory.create(service, authentication,
+        val refreshToken = defaultRefreshTokenFactory.create(service, authentication,
             new MockTicketGrantingTicket("casuser"),
             new ArrayList<>(), registeredService.getClientId(), StringUtils.EMPTY, new HashMap<>(),
             OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
@@ -575,7 +571,7 @@ public abstract class AbstractOAuth20Tests {
         val authentication = getAuthentication(principal);
         val factory = new WebApplicationServiceFactory();
         val service = factory.createService(registeredService.getServiceId());
-        val refreshToken = oAuthRefreshTokenFactory.create(service, authentication,
+        val refreshToken = defaultRefreshTokenFactory.create(service, authentication,
             new MockTicketGrantingTicket("casuser"),
             new ArrayList<>(), registeredService.getClientId(), accessToken.getId(), new HashMap<>(),
             OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
@@ -676,7 +672,7 @@ public abstract class AbstractOAuth20Tests {
         val mockResponse = new MockHttpServletResponse();
 
         val service = RegisteredServiceTestUtils.getService(SERVICE_URL);
-        val holder = AccessTokenRequestContext.builder()
+        val tokenRequestContext = AccessTokenRequestContext.builder()
             .clientId(registeredService.getClientId())
             .service(service)
             .authentication(authentication)
@@ -687,7 +683,7 @@ public abstract class AbstractOAuth20Tests {
             .claims(oauthRequestParameterResolver.resolveRequestClaims(new JEEContext(mockRequest, mockResponse)))
             .build();
 
-        val generatedToken = oauthTokenGenerator.generate(holder);
+        val generatedToken = oauthTokenGenerator.generate(tokenRequestContext);
         val builder = OAuth20AccessTokenResponseResult.builder();
         val result = builder
             .registeredService(registeredService)

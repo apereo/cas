@@ -63,7 +63,7 @@ public class DefaultTicketGrantingTicketResourceEntityResponseFactory implements
         resourceResolverName = AuditResourceResolvers.REST_API_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER)
     @Override
     @SuppressWarnings("JdkObsolete")
-    public ResponseEntity<String> build(final Ticket ticketGrantingTicket, final HttpServletRequest request) throws Exception {
+    public ResponseEntity<String> build(final Ticket ticketGrantingTicket, final HttpServletRequest request) throws Throwable {
         val ticketReference = new URI(request.getRequestURL().toString() + '/' + ticketGrantingTicket.getId());
         val headers = new HttpHeaders();
         headers.setLocation(ticketReference);

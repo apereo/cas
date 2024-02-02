@@ -26,7 +26,7 @@ const puppeteer = require("puppeteer");
     assert(response.status() === 200);
     url = await page.url();
     assert(url === casService);
-    
+
     let params = "grant_type=client_credentials&";
     params += `scope=${encodeURIComponent("openid")}`;
     const tokenUrl = `https://localhost:8443/cas/oidc/token?${params}`;
@@ -52,5 +52,10 @@ const puppeteer = require("puppeteer");
     assert(url.startsWith(casService));
     await cas.assertParameter(page, "state");
     await cas.assertParameter(page, "client_id");
+
+    await cas.gotoLogout(page, "https://localhost:9859/anything/oidc&client_id=whatever");
+    await page.waitForTimeout(1000);
+    await cas.assertPageUrlStartsWith(page, "https://localhost:8443/cas/logout");
+
     await browser.close();
 })();

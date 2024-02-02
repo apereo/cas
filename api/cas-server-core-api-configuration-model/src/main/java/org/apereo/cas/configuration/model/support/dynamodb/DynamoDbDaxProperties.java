@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.dynamodb;
 
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -34,21 +35,25 @@ public class DynamoDbDaxProperties implements Serializable {
     /**
      * Connection timeout, calculated in milliseconds.
      */
+    @DurationCapable
     private String connectTimeout = "PT5S";
 
     /**
      * How long should connections be kept alive, calculated in milliseconds.
      */
+    @DurationCapable
     private String connectionTtl = "PT0S";
 
     /**
      * Connection idle timeout, calculated in milliseconds.
      */
+    @DurationCapable
     private String idleTimeout = "PT15S";
 
     /**
      * Request execution timeout, calculated in milliseconds.
      */
+    @DurationCapable
     private String requestTimeout = "PT5S";
 
     /**

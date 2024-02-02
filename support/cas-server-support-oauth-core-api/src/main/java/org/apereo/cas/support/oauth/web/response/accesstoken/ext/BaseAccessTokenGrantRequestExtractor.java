@@ -2,7 +2,6 @@ package org.apereo.cas.support.oauth.web.response.accesstoken.ext;
 
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
-
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -23,17 +22,17 @@ public abstract class BaseAccessTokenGrantRequestExtractor implements AccessToke
 
     @Override
     public AccessTokenRequestContext extract(final WebContext webContext) throws Throwable {
-        val request = extractRequest(webContext);
-        new ProfileManager(webContext, configurationContext.getSessionStore())
-            .getProfile().ifPresent(profile -> {
-                if (profile.containsAttribute(OAuth20Constants.DPOP_CONFIRMATION)) {
-                    request.setDpopConfirmation(profile.getAttribute(OAuth20Constants.DPOP_CONFIRMATION).toString());
-                }
-                if (profile.containsAttribute(OAuth20Constants.DPOP)) {
-                    request.setDpop(profile.getAttribute(OAuth20Constants.DPOP).toString());
-                }
-            });
-        return request;
+        val tokenRequestContext = extractRequest(webContext);
+        new ProfileManager(webContext, configurationContext.getSessionStore()).getProfile().ifPresent(profile -> {
+            if (profile.containsAttribute(OAuth20Constants.DPOP_CONFIRMATION)) {
+                tokenRequestContext.setDpopConfirmation(profile.getAttribute(OAuth20Constants.DPOP_CONFIRMATION).toString());
+            }
+            if (profile.containsAttribute(OAuth20Constants.DPOP)) {
+                tokenRequestContext.setDpop(profile.getAttribute(OAuth20Constants.DPOP).toString());
+            }
+            tokenRequestContext.setUserProfile(profile);
+        });
+        return tokenRequestContext;
     }
 
     protected abstract AccessTokenRequestContext extractRequest(WebContext webContext) throws Throwable;

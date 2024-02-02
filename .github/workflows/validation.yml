@@ -8,6 +8,7 @@ env:
   GH_PACKAGE_REGISTRY_TOKEN: ${{ secrets.GH_PACKAGE_REGISTRY_TOKEN }}
   GRADLE_BUILDCACHE_USER: ci
   GRADLE_BUILDCACHE_PSW: ${{ secrets.GRADLE_BUILDCACHE_PSW }}
+  GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
   TERM: xterm-256color
   JDK_CURRENT: 21
   JDK_DISTRIBUTION: "corretto"
@@ -29,7 +30,7 @@ concurrency:
 
 jobs:
   initialize:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK
@@ -48,7 +49,7 @@ jobs:
 ##########################################################################
 
   validate-javadocs:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     needs: [initialize]
     continue-on-error: false
     steps:
@@ -77,7 +78,7 @@ jobs:
 ##########################################################################
 
   validate-commandline-shell:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     needs: [initialize]
     continue-on-error: false
     steps:
@@ -111,7 +112,7 @@ jobs:
 ##########################################################################
 
   validate-webapp-embedded:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     needs: [initialize]
     continue-on-error: false
     strategy:
@@ -148,7 +149,7 @@ jobs:
 ##########################################################################
 
   validate-webapp-external:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     needs: [initialize]
     continue-on-error: false
     strategy:
@@ -184,7 +185,7 @@ jobs:
 ##########################################################################
 
   validate-spring-cloud-config-server:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     needs: [initialize]
     continue-on-error: false
     steps:

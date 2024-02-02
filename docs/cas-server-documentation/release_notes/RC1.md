@@ -88,11 +88,15 @@ does not track or store tickets in a persistent manner via a backend storage tec
 
 ## Other Stuff
 
-- Internal cleanup and refactoring efforts to remove duplicate code, particularly when it comes to grouping `@AutoConfiguration` components.
+- Internal cleanup and refactoring efforts to remove duplicate code, when it comes to grouping `@AutoConfiguration` components.
 - Changes to the CAS Gradle build to allow more efficient caching of configuration and build artifacts and reduce overall build times.
 - Proxy ticket validation should now correctly resolve and determine the authenticated principal id.
-- Cleaning on throttled authentication attempts should now take submission expirations dates into account.
-- CAS user interface is now instructed to remove the *"Forgot Your Username?"* feature when the feature is disabled.
+- Cleaning of [throttled authentication attempts](../authentication/Configuring-Authentication-Throttling.html) should now take submission expirations dates into account.
+- CAS user interface is now instructed to remove the ["Forgot Your Username?"](../password_management/Password-Management-ForgotUsername.html) feature when the feature is disabled.
+- When using OAuth or [OpenID Connect](../protocol/OIDC-Protocol.html), CAS will no longer create and track an access token for `id_token` grant types.
+- [External/delegated authentication](../integration/Delegate-Authentication.html) flows are improved to better handle throttled authentication requests.
+- A new `serviceAccess` [actuator endpoint](../services/Configuring-Service-Access-Strategy.html), allowing one to check CAS authorization decisions for a given service and user.
+- [JDBC](../integration/Attribute-Resolution-JDBC.html) and [LDAP](../integration/Attribute-Resolution-LDAP.html) attribute repositories are relocated to their own respective modules and moved away from the person directory module. 
 
 ## Library Upgrades
 
@@ -110,9 +114,11 @@ does not track or store tickets in a persistent manner via a backend storage tec
 - Micrometer
 - Apache Tomcat
 - Sentry
+- InfluxDb
 - Slack
 - Ldaptive
 - Node
 - Amazon SDK
+- Jetty
 - Apache Groovy
 

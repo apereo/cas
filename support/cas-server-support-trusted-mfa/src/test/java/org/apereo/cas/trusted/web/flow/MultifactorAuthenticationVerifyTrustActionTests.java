@@ -11,8 +11,6 @@ import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
-import org.apereo.inspektr.common.web.ClientInfo;
-import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
@@ -56,10 +54,10 @@ class MultifactorAuthenticationVerifyTrustActionTests extends AbstractMultifacto
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
         WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService("sample-service", Collections.emptyMap()));
 
-        context.getHttpServletRequest().setRemoteAddr("123.456.789.000");
-        context.getHttpServletRequest().setLocalAddr("123.456.789.000");
-        context.getHttpServletRequest().addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
-        ClientInfoHolder.setClientInfo(ClientInfo.from(context.getHttpServletRequest()));
+        context.setRemoteAddr("123.456.789.000");
+        context.setLocalAddr("123.456.789.000");
+        context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
+        context.setClientInfo();
 
         val record = getMultifactorAuthenticationTrustRecord();
         record.setRecordDate(ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(5));

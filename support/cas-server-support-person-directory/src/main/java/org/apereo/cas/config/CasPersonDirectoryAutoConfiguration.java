@@ -19,8 +19,6 @@ import org.springframework.context.annotation.Import;
 @Import({
     CasPersonDirectoryConfiguration.class,
     CasPersonDirectoryJsonConfiguration.class,
-    CasPersonDirectoryJdbcConfiguration.class,
-    CasPersonDirectoryLdapConfiguration.class,
     CasPersonDirectoryRestConfiguration.class,
     CasPersonDirectoryGroovyConfiguration.class,
     CasPersonDirectoryStubConfiguration.class

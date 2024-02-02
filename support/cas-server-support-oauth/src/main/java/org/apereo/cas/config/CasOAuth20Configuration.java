@@ -239,14 +239,16 @@ class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public JwtBuilder accessTokenJwtBuilder(
+            final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier("oauthRegisteredServiceJwtAccessTokenCipherExecutor")
             final RegisteredServiceCipherExecutor oauthRegisteredServiceJwtAccessTokenCipherExecutor,
             @Qualifier("oauthAccessTokenJwtCipherExecutor")
             final CipherExecutor oauthAccessTokenJwtCipherExecutor,
-            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
-            return new OAuth20JwtBuilder(oauthAccessTokenJwtCipherExecutor, servicesManager,
-                oauthRegisteredServiceJwtAccessTokenCipherExecutor, casProperties);
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER) final PrincipalResolver principalResolver) {
+            return new OAuth20JwtBuilder(oauthAccessTokenJwtCipherExecutor, applicationContext, servicesManager,
+                oauthRegisteredServiceJwtAccessTokenCipherExecutor, casProperties, principalResolver);
         }
     }
 
@@ -1491,8 +1493,7 @@ class CasOAuth20Configuration {
                 plan.registerAuditResourceResolver(AuditResourceResolvers.OAUTH2_ACCESS_TOKEN_REQUEST_RESOURCE_RESOLVER, oauthAccessTokenGrantRequestAuditResourceResolver);
 
                 plan.registerAuditActionResolver(AuditActionResolvers.OAUTH2_ACCESS_TOKEN_RESPONSE_ACTION_RESOLVER,
-                    new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED,
-                        AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED));
+                    new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED, AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED));
                 plan.registerAuditResourceResolver(AuditResourceResolvers.OAUTH2_ACCESS_TOKEN_RESPONSE_RESOURCE_RESOLVER, oauthAccessTokenResponseAuditResourceResolver);
 
                 plan.registerAuditActionResolver(AuditActionResolvers.OAUTH2_AUTHORIZATION_RESPONSE_ACTION_RESOLVER,

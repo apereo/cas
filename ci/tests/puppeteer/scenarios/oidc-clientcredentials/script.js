@@ -15,7 +15,7 @@ async function sendRequest(url, clientid, clientsecret) {
     }
     await cas.doPost(url, "", headers, async (res) => {
         await cas.log(res.data);
-        assert(res.data.access_token !== null);
+        assert(res.data.access_token !== undefined);
 
         await cas.log("Decoding JWT access token...");
         const accessToken = await cas.decodeJwt(res.data.access_token);
@@ -30,9 +30,9 @@ async function sendRequest(url, clientid, clientsecret) {
         await cas.log("Decoding JWT ID token...");
         const idToken = await cas.decodeJwt(res.data.id_token);
 
-        assert(res.data.id_token !== null);
-        assert(res.data.refresh_token !== null);
-        assert(res.data.token_type !== null);
+        assert(res.data.id_token !== undefined);
+        assert(res.data.refresh_token !== undefined);
+        assert(res.data.token_type !== undefined);
         assert(res.data.scope.includes("MyCustomScope"));
         assert(res.data.scope.includes("profile"));
         assert(res.data.scope.includes("openid"));

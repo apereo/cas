@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.config.CasDynamoDbTicketRegistryAutoConfiguration;
 import org.apereo.cas.config.CasOAuth20TicketsAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -32,6 +33,7 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 import software.amazon.awssdk.core.SdkSystemSetting;
@@ -74,6 +76,9 @@ class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
     }
 
     @Autowired
+    private ConfigurableApplicationContext applicationContext;
+    
+    @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
@@ -83,6 +88,10 @@ class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
+
+    @Autowired
+    @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+    private PrincipalResolver principalResolver;
 
     @RepeatedTest(2)
     void verifyOAuthCodeCanBeAdded() throws Throwable {
@@ -96,7 +105,7 @@ class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
     void verifyAccessTokenCanBeAdded() throws Throwable {
         val code = createOAuthCode();
         val jwtBuilder = new JwtBuilder(CipherExecutor.noOpOfSerializableToString(),
-            servicesManager, RegisteredServiceCipherExecutor.noOp(), casProperties);
+            applicationContext, servicesManager, principalResolver, RegisteredServiceCipherExecutor.noOp(), casProperties);
         val token = new OAuth20DefaultAccessTokenFactory(neverExpiresExpirationPolicyBuilder(), jwtBuilder,
                 servicesManager, TicketTrackingPolicy.noOp())
             .create(RegisteredServiceTestUtils.getService(),

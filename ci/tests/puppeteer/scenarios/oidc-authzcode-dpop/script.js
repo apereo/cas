@@ -56,12 +56,12 @@ const jose = require("jose");
     }, (res) => {
         accessToken = res.data.access_token;
 
-        assert(accessToken !== null);
+        assert(accessToken !== undefined);
         assert(res.data.token_type === "DPoP");
 
         cas.decodeJwt(accessToken, true)
             .then((decoded) => {
-                assert(decoded !== null);
+                assert(decoded !== undefined);
                 cas.log(decoded);
                 assert(decoded.payload["DPoP"] !== undefined);
                 assert(decoded.payload["DPoPConfirmation"] !== undefined);
@@ -102,7 +102,7 @@ const jose = require("jose");
         "DPoP": dpopProofProfile
     }, (res) => {
         cas.log(res.data);
-        assert(res.data.sub !== null);
+        assert(res.data.sub !== undefined);
     }, (error) => {
         throw `Operation failed: ${error}`;
     });

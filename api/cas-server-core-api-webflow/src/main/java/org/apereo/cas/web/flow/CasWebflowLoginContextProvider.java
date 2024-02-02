@@ -46,7 +46,7 @@ public interface CasWebflowLoginContextProvider extends Ordered {
      * Is login form viewable?.
      *
      * @param requestContext the request context
-     * @return the boolean
+     * @return true or false
      */
     default boolean isLoginFormViewable(final RequestContext requestContext) {
         return false;

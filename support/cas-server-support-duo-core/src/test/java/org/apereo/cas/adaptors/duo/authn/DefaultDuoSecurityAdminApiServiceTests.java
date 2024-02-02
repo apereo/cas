@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.duo.authn;
 
+import org.apereo.cas.adaptors.duo.DuoSecurityUserAccount;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
@@ -51,21 +52,39 @@ class DefaultDuoSecurityAdminApiServiceTests {
         val properties = new DuoSecurityMultifactorAuthenticationProperties();
         try (val webServer = new MockWebServer(true, new ClassPathResource("duoAdminApiResponse-bypassCodes.json"))) {
             webServer.start();
-            ApplicationContextProvider.holdApplicationContext(applicationContext);
             properties.setDuoApiHost("localhost:%s".formatted(webServer.getPort()))
                 .setDuoAdminIntegrationKey(UUID.randomUUID().toString())
                 .setDuoAdminSecretKey(UUID.randomUUID().toString());
-            val service = new DefaultDuoSecurityAdminApiService(this.httpClient, properties);
-            val duoService = new UniversalPromptDuoSecurityAuthenticationService(properties, httpClient,
-                mock(Client.class), List.of(), Caffeine.newBuilder().build());
-            val bean = mock(DuoSecurityMultifactorAuthenticationProvider.class);
-            when(bean.getId()).thenReturn(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
-            when(bean.getDuoAuthenticationService()).thenReturn(duoService);
-            when(bean.matches(eq(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER))).thenReturn(true);
-            ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, bean, "duoProvider");
-
+            val service = getDuoSecurityAdminApiService(properties);
             val codes = service.getDuoSecurityBypassCodesFor("DU3RP9I2WOC59VZX672N");
             assertFalse(codes.isEmpty());
         }
+    }
+
+    @Test
+    void verifyAccountModification() throws Throwable {
+        val properties = new DuoSecurityMultifactorAuthenticationProperties();
+        try (val webServer = new MockWebServer(true, new ClassPathResource("duoAdminApiResponse-user.json"))) {
+            webServer.start();
+            properties.setDuoApiHost("localhost:%s".formatted(webServer.getPort()))
+                .setDuoAdminIntegrationKey(UUID.randomUUID().toString())
+                .setDuoAdminSecretKey(UUID.randomUUID().toString());
+            val service = getDuoSecurityAdminApiService(properties);
+            val userAccount = service.modifyDuoSecurityUserAccount(new DuoSecurityUserAccount("casuser"));
+            assertFalse(userAccount.isEmpty());
+        }
+    }
+
+    private DuoSecurityAdminApiService getDuoSecurityAdminApiService(
+        final DuoSecurityMultifactorAuthenticationProperties properties) {
+        val service = new DefaultDuoSecurityAdminApiService(this.httpClient, properties);
+        val duoService = new UniversalPromptDuoSecurityAuthenticationService(properties, httpClient,
+            mock(Client.class), List.of(), Caffeine.newBuilder().build());
+        val bean = mock(DuoSecurityMultifactorAuthenticationProvider.class);
+        when(bean.getId()).thenReturn(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
+        when(bean.getDuoAuthenticationService()).thenReturn(duoService);
+        when(bean.matches(eq(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER))).thenReturn(true);
+        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, bean, "duoProvider");
+        return service;
     }
 }

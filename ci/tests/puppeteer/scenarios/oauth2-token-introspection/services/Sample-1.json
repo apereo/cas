@@ -6,6 +6,6 @@
   "bypassApprovalPrompt": true,
   "name" : "Sample",
   "id" : 1,
-  "generateRefreshToken": "true",
+  "generateRefreshToken": true,
   "supportedGrantTypes": [ "java.util.HashSet", [ "client_credentials" ] ]
 }

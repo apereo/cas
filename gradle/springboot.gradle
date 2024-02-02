@@ -37,6 +37,11 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
 
     if (plugins.hasPlugin("war")) {
 
+        tasks.named("processBootRunResources") {
+            dependsOn(project(":support:cas-server-support-palantir").tasks.named("build-ui"))
+            duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+        }
+        
         tasks.named('javadoc') {
             enabled false
         }

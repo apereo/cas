@@ -1,6 +1,8 @@
 {
   "dependencies": "oauth-webflow",
-
+  "conditions": {
+    "docker": "true"
+  },
   "environmentVariables": [
     "OAUTH_ACCESS_TOKEN_SIGNING_KEY=zPdNCd0R1oMR0ClzEqZzapkte8rO0tNvygYjmHoUhitAu6CBscwMC3ZTKy8tleTKiQ6GVcuiQQgxfd1nSKxf7w",
     "OAUTH_ACCESS_TOKEN_ENCRYPTION_KEY=u696jJnPvm1DHLR7yVCSKMMzzoPoFxJZW4-MP1CkM5w"
@@ -20,7 +22,8 @@
     
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
-  ]
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }
 
 

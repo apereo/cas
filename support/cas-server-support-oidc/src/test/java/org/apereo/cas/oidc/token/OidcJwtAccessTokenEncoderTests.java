@@ -7,6 +7,8 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.util.crypto.DecodableCipher;
+import org.apereo.cas.util.crypto.EncodableCipher;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -32,15 +34,14 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 @Tag("OIDC")
 @TestPropertySource(properties = "cas.authn.oauth.access-token.crypto.encryption-enabled=false")
 class OidcJwtAccessTokenEncoderTests extends AbstractOidcTests {
-    private OAuth20JwtAccessTokenEncoder getAccessTokenEncoder(final OAuth20AccessToken accessToken,
-                                                               final RegisteredService registeredService) {
-        return OAuth20JwtAccessTokenEncoder.builder()
-            .accessToken(accessToken)
-            .registeredService(registeredService)
-            .service(accessToken.getService())
-            .accessTokenJwtBuilder(oidcAccessTokenJwtBuilder)
-            .casProperties(casProperties)
-            .build();
+    private EncodableCipher<String, String> getAccessTokenEncodingCipher(final OAuth20AccessToken accessToken,
+                                                                         final RegisteredService registeredService) {
+        return OAuth20JwtAccessTokenEncoder.toEncodableCipher(oidcAccessTokenJwtBuilder,
+            registeredService, accessToken, accessToken.getService(), casProperties);
+    }
+
+    private DecodableCipher<String, String> getAccessTokenDecodingCipher(final RegisteredService registeredService) {
+        return OAuth20JwtAccessTokenEncoder.toDecodableCipher(oidcAccessTokenJwtBuilder, registeredService);
     }
 
     @Test
@@ -54,8 +55,8 @@ class OidcJwtAccessTokenEncoderTests extends AbstractOidcTests {
         ));
         this.servicesManager.save(registeredService);
 
-        val token1 = getAccessTokenEncoder(accessToken, registeredService).encode(accessToken.getId());
-        val token2 = getAccessTokenEncoder(accessToken, registeredService).encode(accessToken.getId());
+        val token1 = getAccessTokenEncodingCipher(accessToken, registeredService).encode(accessToken.getId());
+        val token2 = getAccessTokenEncodingCipher(accessToken, registeredService).encode(accessToken.getId());
         assertEquals(token1, token2);
     }
 
@@ -63,10 +64,10 @@ class OidcJwtAccessTokenEncoderTests extends AbstractOidcTests {
     void verifyExtractionAsParameterForService() throws Throwable {
         val accessToken = getAccessToken();
         val registeredService = getRegisteredServiceForJwtAccessTokenWithKeys(accessToken);
-        val encoder = getAccessTokenEncoder(accessToken, registeredService);
-
+        val encoder = getAccessTokenEncodingCipher(accessToken, registeredService);
         val encodedAccessToken = encoder.encode(accessToken.getId());
-        val decoded = encoder.decode(encodedAccessToken);
+
+        val decoded = getAccessTokenDecodingCipher(registeredService).decode(encodedAccessToken);
         assertNotNull(decoded);
         assertEquals(accessToken.getId(), decoded);
     }
@@ -85,8 +86,7 @@ class OidcJwtAccessTokenEncoderTests extends AbstractOidcTests {
     void verifyNonEncodedToken(final String tokenId) throws Throwable {
         val accessToken = getAccessToken();
         val registeredService = getRegisteredServiceForJwtAccessTokenWithKeys(accessToken);
-        val encoder = getAccessTokenEncoder(accessToken, registeredService);
-
+        val encoder = getAccessTokenDecodingCipher(registeredService);
         val decode = encoder.decode(tokenId);
         assertEquals(tokenId, decode);
     }
@@ -96,13 +96,14 @@ class OidcJwtAccessTokenEncoderTests extends AbstractOidcTests {
         val accessToken = getAccessToken(StringUtils.EMPTY, "encoding-service-clientid");
         val registeredService = getRegisteredServiceForJwtAccessTokenWithKeys(accessToken);
 
-        val encoder = getAccessTokenEncoder(accessToken, registeredService);
+        val encoder = getAccessTokenEncodingCipher(accessToken, registeredService);
         val token1 = encoder.encode(accessToken.getId());
         val token2 = encoder.encode(accessToken.getId());
         assertEquals(token1, token2);
 
-        val decoded1 = encoder.decode(token1);
-        val decoded2 = encoder.decode(token2);
+        val decodingCipher = getAccessTokenDecodingCipher(registeredService);
+        val decoded1 = decodingCipher.decode(token1);
+        val decoded2 = decodingCipher.decode(token2);
         assertEquals(decoded1, decoded2);
         assertEquals(accessToken.getId(), decoded1);
     }

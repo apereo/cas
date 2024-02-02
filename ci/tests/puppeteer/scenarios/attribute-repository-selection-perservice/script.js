@@ -15,7 +15,7 @@ const cas = require("../../cas.js");
     assert(json.lastName[0] === "Johnson");
     assert(json.employeeNumber[0] === "123456");
     const originalFirstName = json.firstName[0];
-    assert(originalFirstName !== null);
+    assert(originalFirstName !== undefined);
     assert(json.displayName === undefined);
     assert(json.cn === undefined);
     await cas.gotoLogout(page);

@@ -25,7 +25,7 @@ public interface PasswordValidationService {
      * Does password comply with password policy.
      *
      * @param password the password
-     * @return the boolean
+     * @return true or false
      * @throws Throwable the throwable
      */
     boolean isAcceptedByPasswordPolicy(String password) throws Throwable;

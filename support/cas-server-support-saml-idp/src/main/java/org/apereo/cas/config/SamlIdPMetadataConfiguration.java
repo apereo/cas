@@ -135,16 +135,16 @@ class SamlIdPMetadataConfiguration {
         public SamlRegisteredServiceCachedMetadataEndpoint samlRegisteredServiceCachedMetadataEndpoint(
             final CasConfigurationProperties casProperties,
             @Qualifier(SamlRegisteredServiceCachingMetadataResolver.BEAN_NAME)
-            final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
+            final ObjectProvider<SamlRegisteredServiceCachingMetadataResolver> defaultSamlRegisteredServiceCachingMetadataResolver,
             @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager,
+            final ObjectProvider<ServicesManager> servicesManager,
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
-            final OpenSamlConfigBean openSamlConfigBean,
+            final ObjectProvider<OpenSamlConfigBean> openSamlConfigBean,
             @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
-            final AuditableExecution registeredServiceAccessStrategyEnforcer) {
+            final ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer) {
             return new SamlRegisteredServiceCachedMetadataEndpoint(casProperties,
-                defaultSamlRegisteredServiceCachingMetadataResolver, servicesManager, registeredServiceAccessStrategyEnforcer,
-                openSamlConfigBean);
+                defaultSamlRegisteredServiceCachingMetadataResolver, servicesManager,
+                registeredServiceAccessStrategyEnforcer, openSamlConfigBean);
         }
 
         @Bean

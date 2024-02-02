@@ -18,7 +18,8 @@ import org.springframework.context.annotation.Import;
 @AutoConfiguration
 @Import({
     LdapAuthenticationConfiguration.class,
-    LdapPasswordSynchronizationConfiguration.class
+    LdapPasswordSynchronizationConfiguration.class,
+    CasPersonDirectoryLdapConfiguration.class
 })
 public class CasLdapAuthenticationAutoConfiguration {
 }
