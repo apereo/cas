@@ -13,6 +13,8 @@ import org.apereo.cas.util.ServiceTicketIdGenerator;
 import org.apereo.cas.util.TicketGrantingTicketIdGenerator;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.util.thread.Cleanable;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -26,9 +28,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
+
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -126,7 +131,7 @@ class RedisServerTicketRegistryTests {
         "cas.ticket.registry.redis.crypto.encryption.key=AZ5y4I9qzKPYUVNL2Td4RMbpg6Z-ldui8VEFg8hsj1M",
         "cas.ticket.registry.redis.crypto.signing.key=cAPyoHMrOMWrwydOXzBA-ufZQM-TilnLjbRgMQWlUlwFmy07bOtAgCIdNBma3c5P4ae_JV6n1OpOAYqSh2NkmQ"
     })
-    class WithoutRediModulesTests extends BaseRedisSentinelTicketRegistryTests {
+    class WithoutRedisModulesTests extends BaseRedisSentinelTicketRegistryTests {
 
     }
 
@@ -280,6 +285,70 @@ class RedisServerTicketRegistryTests {
                 ticketRegistry.addTicket(tgt1);
             }
             assertEquals(1, ticketRegistry.countSessionsFor(principalId));
+        }
+    }
+
+    @Nested
+    @SpringBootTest(
+            classes = {
+                    CasRedisCoreAutoConfiguration.class,
+                    CasRedisTicketRegistryAutoConfiguration.class,
+                    BaseTicketRegistryTests.SharedTestConfiguration.class
+            }, properties = {
+            "cas.ticket.tgt.core.only-track-most-recent-session=true",
+            "cas.ticket.registry.redis.host=localhost",
+            "cas.ticket.registry.redis.port=6379"
+    })
+    class ConcurrentTests {
+        @Autowired
+        @Qualifier(TicketRegistry.BEAN_NAME)
+        private TicketRegistry ticketRegistry;
+
+        @Test
+        void verifyConcurrentAddTicket() throws Throwable {
+            val principalId = UUID.randomUUID().toString();
+            val testHasFailed = new AtomicBoolean();
+            val threads = new ArrayList<Thread>();
+            for (var i = 1; i <= 3; i++) {
+                val runnable = new RunnableAddTicket(ticketRegistry, principalId, 100);
+                val thread = new Thread(runnable);
+                thread.setName("Thread-" + i);
+                thread.setUncaughtExceptionHandler((t, e) -> {
+                    LOGGER.error(e.getMessage(), e);
+                    testHasFailed.set(true);
+                });
+                threads.add(thread);
+                thread.start();
+            }
+            for (val thread : threads) {
+                try {
+                    thread.join();
+                } catch (final Throwable e) {
+                    fail(e);
+                }
+            }
+            if (testHasFailed.get()) {
+                fail("Test failed");
+            }
+        }
+
+        @RequiredArgsConstructor
+        private static final class RunnableAddTicket implements Runnable {
+            private final TicketRegistry ticketRegistry;
+            private final String principalId;
+            private final int max;
+
+            @Override
+            @SneakyThrows
+            public void run() {
+                val authentication = CoreAuthenticationTestUtils.getAuthentication(principalId);
+                val ticketGenerator = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY);
+                for (int i = 0; i < max; i++) {
+                    val tgtId = ticketGenerator.getNewTicketId(TicketGrantingTicket.PREFIX);
+                    val tgt = new TicketGrantingTicketImpl(tgtId, authentication, NeverExpiresExpirationPolicy.INSTANCE);
+                    ticketRegistry.addTicket(tgt);
+                }
+            }
         }
     }
 }
