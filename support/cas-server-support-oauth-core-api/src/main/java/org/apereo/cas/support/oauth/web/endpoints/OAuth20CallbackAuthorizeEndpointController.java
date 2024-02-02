@@ -52,8 +52,7 @@ public class OAuth20CallbackAuthorizeEndpointController extends BaseOAuth20Contr
         if (clientId.isPresent() && redirectUri.isPresent()) {
             val servicesManager = getConfigurationContext().getServicesManager();
             val serviceClient = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId.get());
-            val serviceRedirectUri = OAuth20Utils.getRegisteredOAuthServiceByRedirectUri(servicesManager, redirectUri.get());
-            if (serviceClient != null && serviceClient.equals(serviceRedirectUri)) {
+            if (serviceClient != null && serviceClient.matches(redirectUri.get())) {
                 defaultUrl = redirectUri.get();
             }
         }
