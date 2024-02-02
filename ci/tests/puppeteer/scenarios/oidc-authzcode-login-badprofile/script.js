@@ -6,7 +6,7 @@ const assert = require("assert");
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     const url = "https://localhost:8443/cas/oidc/oidcAuthorize?response_type=code"
-        + "&client_id=client&scope=badprofile&"
+        + "&client_id=client&scope=openid%20badprofile&"
         + "redirect_uri=https://apereo.github.io&nonce=3d3a7457f9ad3&"
         + "state=1735fd6c43c14&claims=%7B%22userinfo%22%3A%20%7B%20%22name%22%3A%20%7B%22essential"
         + "%22%3A%20true%7D%2C%22phone_number%22%3A%20%7B%22essential%22%3A%20true%7D%7D%7D";
@@ -41,19 +41,20 @@ const assert = require("assert");
     assert(payload.access_token !== undefined);
     assert(payload.token_type !== undefined);
     assert(payload.expires_in !== undefined);
-    assert(payload.scope === undefined);
+    assert(payload.id_token !== undefined);
+    assert(payload.scope === "openid");
 
     const decoded = await cas.decodeJwt(payload.id_token);
     assert(decoded.sub !== undefined);
     assert(decoded.client_id !== undefined);
     assert(decoded["preferred_username"] !== undefined);
+    assert(decoded["name"] !== undefined);
 
     assert(decoded["identity-name"] === undefined);
     assert(decoded["common-name"] === undefined);
     assert(decoded["lastname"] === undefined);
     assert(decoded["cn"] === undefined);
     assert(decoded["family_name"] === undefined);
-    assert(decoded["name"] === undefined);
 
     const profileUrl = `https://localhost:8443/cas/oidc/profile?access_token=${payload.access_token }`;
     await cas.log(`Calling user profile ${profileUrl}`);
@@ -61,14 +62,13 @@ const assert = require("assert");
     await cas.doPost(profileUrl, "", {
         "Content-Type": "application/json"
     }, (res) => {
+        assert(res.data["name"] !== undefined);
         assert(decoded["common-name"] === undefined);
         assert(decoded["lastname"] === undefined);
-
         assert(res.data["cn"] === undefined);
-        assert(res.data["name"] === undefined);
         assert(res.data["family_name"] === undefined);
         assert(res.data.sub !== undefined);
-        assert(Object.keys(res.data).length === 1);
+        assert(Object.keys(res.data).length === 2);
     }, (error) => {
         throw `Operation failed: ${error}`;
     });

@@ -675,7 +675,7 @@ exports.decryptJwtWithSecret = async (jwt, secret, options = {}) => {
 
 exports.decodeJwt = async (token, complete = false) => {
     await this.log(`Decoding token ${token}`);
-
+    assert(token !== undefined, "Token cannot be undefined");
     const decoded = JwtOps.decode(token, {complete: complete});
     if (complete) {
         await this.logg(`Decoded token header: ${decoded.header}`);
