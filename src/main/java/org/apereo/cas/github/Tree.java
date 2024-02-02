@@ -20,30 +20,18 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.ToString;
-import java.time.ZonedDateTime;
 
-/**
- * A GitHub user.
- *
- * @author Andy Wilkinson
- */
 @Getter
-@ToString
-public class User {
+@ToString(of = {"sha"}, includeFieldNames = false)
+public class Tree {
 
-    private final String login;
-    private final String name;
-    private final String email;
-    private final ZonedDateTime date;
+    private final String url;
+    private final String sha;
 
     @JsonCreator
-    public User(@JsonProperty("login") final String login,
-                @JsonProperty("name") final String name,
-                @JsonProperty("email") final String email,
-                @JsonProperty("date") final ZonedDateTime date) {
-        this.login = login;
-        this.name = name;
-        this.email = email;
-        this.date = date;
+    public Tree(@JsonProperty("url") final String url,
+                @JsonProperty("sha") final String sha) {
+        this.url = url;
+        this.sha = sha;
     }
 }

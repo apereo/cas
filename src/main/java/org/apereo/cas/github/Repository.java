@@ -15,6 +15,7 @@ public class Repository {
     private final String url;
     private final String description;
     private final String mergeUrl;
+    private final User owner;
 
     @JsonCreator
     public Repository(@JsonProperty("id") final String id,
@@ -23,6 +24,7 @@ public class Repository {
                       @JsonProperty("fork") final boolean fork,
                       @JsonProperty("description") final String description,
                       @JsonProperty("merges_url") final String mergeUrl,
+                      @JsonProperty("owner") final User owner,
                       @JsonProperty("url") final String url) {
         this.id = id;
         this.name = name;
@@ -31,5 +33,6 @@ public class Repository {
         this.description = description;
         this.url = url;
         this.mergeUrl = mergeUrl;
+        this.owner = owner;
     }
 }

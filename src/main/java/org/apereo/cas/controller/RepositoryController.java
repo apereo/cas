@@ -40,6 +40,22 @@ public class RepositoryController {
         return map;
     }
 
+//    @GetMapping(value = "/repo/pulls/{prNumber}/commits", produces = MediaType.APPLICATION_JSON_VALUE)
+//    @Secured({"ROLE_ADMIN"})
+//    public ResponseEntity listPullRequestCommits(@PathVariable final String prNumber) {
+//        val pullRequest = repository.getPullRequest(prNumber);
+//        if (pullRequest == null) {
+//            return ResponseEntity.notFound().build();
+//        }
+//        val mostRecentCommit = repository.getPullRequestCommits(pullRequest)
+//            .stream()
+//            .filter(c -> !c.getCommit().isMergeCommit())
+//            .toList()
+//            .getFirst();
+//        val workflowRuns = repository.getSuccessfulWorkflowRunsFor(pullRequest.getHead(), mostRecentCommit);
+//        return ResponseEntity.ok(workflowRuns);
+//    }
+
     @GetMapping(value = "/repo/pulls", produces = MediaType.APPLICATION_JSON_VALUE)
     @Secured({"ROLE_ADMIN"})
     public List listPulls() {

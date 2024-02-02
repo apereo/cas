@@ -67,11 +67,16 @@ public interface GitHubOperations {
 
     Workflows getWorkflowRuns(String organization, String repository, Branch branch,
                               Workflows.WorkflowRunEvent event, Workflows.WorkflowRunStatus status,
-                              long page);
+                              Commit commit, long page);
 
     default Workflows getWorkflowRuns(String organization, String repository, Branch branch,
                                       Workflows.WorkflowRunEvent event, Workflows.WorkflowRunStatus status) {
-        return getWorkflowRuns(organization, repository, branch, event, status, 1);
+        return getWorkflowRuns(organization, repository, branch, event, status, null, 1);
+    }
+
+    default Workflows getWorkflowRuns(String organization, String repository, final Commit commit,
+                                      final Workflows.WorkflowRunStatus status) {
+        return getWorkflowRuns(organization, repository, null, null, status, commit, 1);
     }
 
     default Workflows getWorkflowRuns(String organization, String repository,
@@ -101,7 +106,7 @@ public interface GitHubOperations {
 
 
     default Workflows getWorkflowRuns(String organization, String repository, long page) {
-        return getWorkflowRuns(organization, repository, null, null, null, page);
+        return getWorkflowRuns(organization, repository, null, null, null, null, page);
     }
 
     Page<CommitStatus> getPullRequestCommitStatus(String organization, String repository, String number);

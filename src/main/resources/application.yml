@@ -14,11 +14,11 @@ casbot:
       url: https://github.com/apereo/cas
       admins: mmoayyed,apereocas-bot
 
-security:
-  en
 spring:
   security:
     user:
       name: apereocasbot
       password: ${CASBOT_GITHUB_CREDENTIALS_TOKEN}
       roles: ADMIN
+  jackson:
+    default-property-inclusion: non_null

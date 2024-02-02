@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.ToString;
+import java.util.regex.Pattern;
 
 @Getter
 @ToString(of={"author", "url", "sha"})
@@ -45,14 +46,29 @@ public class Commit {
 
     @Getter
     public static class GitCommit {
+        private static final Pattern MERGE_COMMIT_PATTERN = Pattern.compile("Merge branch '\\w+' into \\w+");
+
         private final String url;
         private final String message;
+        private final User author;
+        private final User committer;
+        private final Tree tree;
 
         @JsonCreator
         public GitCommit(@JsonProperty("url") final String url,
-                         @JsonProperty("message") final String message) {
+                         @JsonProperty("message") final String message,
+                         @JsonProperty("tree") final Tree tree,
+                         @JsonProperty("author") final User author,
+                         @JsonProperty("committer") final User committer) {
             this.url = url;
             this.message = message;
+            this.author = author;
+            this.committer = committer;
+            this.tree = tree;
+        }
+
+        public boolean isMergeCommit() {
+            return message != null && MERGE_COMMIT_PATTERN.matcher(message).find();
         }
     }
 }

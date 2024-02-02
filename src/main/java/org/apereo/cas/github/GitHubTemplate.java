@@ -183,9 +183,9 @@ public class GitHubTemplate implements GitHubOperations {
 
     @Override
     @SneakyThrows
-    public Workflows getWorkflowRuns(String organization, String repository, Branch branch,
-                                     Workflows.WorkflowRunEvent event, Workflows.WorkflowRunStatus status,
-                                     long page) {
+    public Workflows getWorkflowRuns(final String organization, final String repository, final Branch branch,
+                                     final Workflows.WorkflowRunEvent event, final Workflows.WorkflowRunStatus status,
+                                     final Commit commit, final long page) {
         var url = "https://api.github.com/repos/" + organization + '/' + repository + "/actions/runs";
         var urlBuilder = new URIBuilder(url);
 
@@ -198,6 +198,10 @@ public class GitHubTemplate implements GitHubOperations {
         if (status != null) {
             urlBuilder.addParameter("status", status.getName());
         }
+        if (commit != null) {
+            urlBuilder.addParameter("head_sha", commit.getSha());
+        }
+
         urlBuilder.addParameter("per_page", "25");
         urlBuilder.addParameter("page", String.valueOf(page));
 

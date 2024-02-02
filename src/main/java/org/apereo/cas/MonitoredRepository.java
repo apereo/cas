@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.github.Base;
 import org.apereo.cas.github.Branch;
 import org.apereo.cas.github.CheckRun;
 import org.apereo.cas.github.CombinedCommitStatus;
@@ -24,7 +25,6 @@ import java.io.StringReader;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -63,6 +63,11 @@ public class MonitoredRepository {
             log.error(e.getMessage(), e);
         }
         return pullRequests;
+    }
+
+    public Workflows getSuccessfulWorkflowRunsFor(final Base base, final Commit first) {
+        return gitHub.getWorkflowRuns(base.getRepository().getOwner().getLogin(),
+            base.getRepository().getName(), first, Workflows.WorkflowRunStatus.SUCCESS);
     }
 
     private static Predicate<Label> getLabelPredicateByName(final CasLabels name) {
@@ -265,11 +270,16 @@ public class MonitoredRepository {
             commits.addAll(pages.getContent());
             pages = pages.next();
         }
+        commits.sort(Collections.reverseOrder(Comparator.comparing(c -> c.getCommit().getAuthor().getDate())));
         return commits;
     }
 
     public Commit getHeadCommitFor(final Branch shaOrBranch) {
         return this.gitHub.getCommit(getOrganization(), getName(), shaOrBranch.getName());
+    }
+
+    public Commit getCommit(final String commitSha) {
+        return this.gitHub.getCommit(getOrganization(), getName(), commitSha);
     }
 
     public CheckRun getLatestCompletedCheckRunsFor(final PullRequest pr, String checkName) {
@@ -500,4 +510,6 @@ public class MonitoredRepository {
             log.error(e.getMessage(), e);
         }
     }
+
+
 }
