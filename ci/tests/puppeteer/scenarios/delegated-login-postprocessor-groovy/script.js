@@ -6,7 +6,9 @@ const assert = require("assert");
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
 
-    await cas.gotoLogin(page, "https://apereo.github.io");
+    const service = "https://localhost:9859/anything/cas";
+
+    await cas.gotoLogin(page, service);
     await cas.log("Checking for page URL...");
     await cas.logPage(page);
     let url = await page.url();
@@ -17,12 +19,12 @@ const assert = require("assert");
 
     url = await page.url();
     await cas.log(url);
-    assert(url.startsWith("https://apereo.github.io/"));
+    assert(url.startsWith(service));
     await cas.assertTicketParameter(page);
     await page.waitForTimeout(1000);
 
     await cas.log("Attempting login after SSO...");
-    await cas.gotoLogin(page, "https://apereo.github.io");
+    await cas.gotoLogin(page, service);
     url = await page.url();
     await cas.log(url);
     await cas.assertTicketParameter(page);

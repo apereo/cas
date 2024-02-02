@@ -6,7 +6,7 @@ const cas = require("../../cas.js");
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     
-    await cas.gotoLogin(page, "https://apereo.github.io");
+    await cas.gotoLogin(page, "https://localhost:9859/anything/cas");
     await page.waitForTimeout(2000);
     await cas.assertVisibility(page, "li #CasClient");
     await cas.screenshot(page);
