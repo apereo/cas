@@ -65,5 +65,5 @@
     "--management.endpoints.enabled-by-default=true"
   ],
   "buildScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/include.gradle",
-  "initScript": "${PWD}/ci/tests/mysql/run-mysql-server.sh"
+  "initScript": "${PWD}/ci/tests/mysql/run-mysql-server.sh,${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }
