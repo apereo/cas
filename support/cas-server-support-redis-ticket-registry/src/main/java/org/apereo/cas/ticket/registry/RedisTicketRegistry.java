@@ -38,7 +38,6 @@ import org.springframework.data.redis.core.convert.KeyspaceConfiguration;
 import org.springframework.data.redis.core.convert.MappingConfiguration;
 import org.springframework.data.redis.core.index.IndexConfiguration;
 import org.springframework.data.redis.core.mapping.RedisMappingContext;
-import org.springframework.util.Assert;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.time.Clock;
@@ -426,7 +425,6 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
                 val ops = casRedisTemplates.getSessionsRedisTemplate().boundSetOps(redisPrincipalPattern);
                 if (onlyTrackMostRecentSession) {
                     ops.expireAt(Instant.now(Clock.systemUTC()));
-                    Assert.isTrue(ops.members().isEmpty(), "Member count must be zero");
                 }
                 ops.add(digestedId);
                 ops.expire(timeout, TimeUnit.SECONDS);
