@@ -4,7 +4,6 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -25,18 +24,9 @@ public class OAuth20ClientCredentialsGrantTypeTokenRequestValidator extends OAut
     @Override
     public boolean supports(final WebContext context) {
         val requestParameterResolver = getConfigurationContext().getRequestParameterResolver();
-
         val grantType = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.GRANT_TYPE)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
-        if (!OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.CLIENT_CREDENTIALS)) {
-            return false;
-        }
-
-        if (requestParameterResolver.isParameterOnQueryString(context, OAuth20Constants.CLIENT_SECRET)) {
-            LOGGER.error("Cannot accept the [{}] in the query string for [{}]", OAuth20Constants.CLIENT_SECRET, OAuth20GrantTypes.CLIENT_CREDENTIALS);
-            return false;
-        }
-        return true;
+        return OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.CLIENT_CREDENTIALS);
     }
 
     @Override
