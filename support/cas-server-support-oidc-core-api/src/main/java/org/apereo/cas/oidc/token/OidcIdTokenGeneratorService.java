@@ -40,7 +40,6 @@ import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
 import org.pac4j.core.profile.UserProfile;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.util.Assert;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -258,10 +257,8 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
             handleMappedClaimOrDefault(OidcConstants.CLAIM_PREFERRED_USERNAME,
                 registeredService, principal, claims, principal.getId());
         }
-
-        val collectors = new ArrayList<>(getConfigurationContext().getIdTokenClaimCollectors());
-        AnnotationAwareOrderComparator.sortIfNecessary(collectors);
-        collectors.forEach(collector -> collector.conclude(claims));
+        getConfigurationContext().getIdTokenClaimCollectors()
+            .forEach(collector -> collector.conclude(claims));
     }
 
     private boolean isClaimSupportedForRelease(final String claimName, final RegisteredService registeredService) {
