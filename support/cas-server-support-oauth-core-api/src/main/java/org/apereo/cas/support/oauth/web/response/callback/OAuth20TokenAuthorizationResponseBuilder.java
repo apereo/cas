@@ -45,13 +45,13 @@ public class OAuth20TokenAuthorizationResponseBuilder<T extends OAuth20Configura
     @Audit(action = AuditableActions.OAUTH2_AUTHORIZATION_RESPONSE,
         actionResolverName = AuditActionResolvers.OAUTH2_AUTHORIZATION_RESPONSE_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.OAUTH2_AUTHORIZATION_RESPONSE_RESOURCE_RESOLVER)
-    public ModelAndView build(final AccessTokenRequestContext holder) throws Throwable {
-        LOGGER.debug("Authorize request verification successful for client [{}] with redirect uri [{}]", holder.getClientId(), holder.getRedirectUri());
-        val result = configurationContext.getAccessTokenGenerator().generate(holder);
+    public ModelAndView build(final AccessTokenRequestContext tokenRequestContext) throws Throwable {
+        LOGGER.debug("Authorize request verification successful for client [{}] with redirect uri [{}]", tokenRequestContext.getClientId(), tokenRequestContext.getRedirectUri());
+        val result = configurationContext.getAccessTokenGenerator().generate(tokenRequestContext);
         val accessToken = result.getAccessToken().orElseThrow();
         val refreshToken = result.getRefreshToken().orElse(null);
         LOGGER.debug("Generated OAuth access token: [{}]", accessToken);
-        return buildCallbackUrlResponseType(holder, accessToken, refreshToken, new ArrayList<>());
+        return buildCallbackUrlResponseType(tokenRequestContext, accessToken, refreshToken, new ArrayList<>());
     }
 
     @Override

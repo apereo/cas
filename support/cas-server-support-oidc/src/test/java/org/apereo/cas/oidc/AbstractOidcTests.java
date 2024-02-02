@@ -112,7 +112,6 @@ import java.io.Serializable;
 import java.time.Duration;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -483,7 +482,6 @@ public abstract class AbstractOidcTests {
         return accessToken;
     }
 
-
     protected OAuth20Code addCode(final Principal principal,
                                   final OAuthRegisteredService registeredService) throws Throwable {
         val tgt = new MockTicketGrantingTicket("casuser");
@@ -491,8 +489,8 @@ public abstract class AbstractOidcTests {
         val factory = new WebApplicationServiceFactory();
         val service = factory.createService(registeredService.getClientId());
         val code = defaultOAuthCodeFactory.create(service, authentication,
-            tgt, new ArrayList<>(),
-            null, null, "clientid", new HashMap<>(),
+            tgt, List.of(OidcConstants.StandardScopes.OPENID.getScope()),
+            null, null, registeredService.getClientId(), new HashMap<>(),
             OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         this.ticketRegistry.addTicket(code);
         return code;

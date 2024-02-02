@@ -41,7 +41,7 @@ such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicit
 
 The following items are new improvements and enhancements presented in this release. 
 
-## Spring Boot 3.3
+### Spring Boot 3.3
 
 The migration of the entire codebase to Spring Boot `3.3` is ongoing, and at the 
 moment is waiting for the wider ecosystem of supporting frameworks and libraries to catch up to 
