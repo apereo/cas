@@ -85,15 +85,30 @@ Application access requests and authorization decisions can now be submitted to 
 
 A new [stateless ticket registry](../ticketing/Stateless-Ticket-Registry.html) option is now available that 
 does not track or store tickets in a persistent manner via a backend storage technology. 
+  
+### Gradle & Devlocity 
+
+Throughout a series of experiments and while working with the Devlocity team, several changes are now made to the CAS Gradle build 
+to allow more efficient caching of configuration and build artifacts and reduce overall build times. The Gradle remote build cache
+that was previously set up and run on Heroku is now retired and replaced with a dedicated Devlocity server and is now publicly available.
+
+You can see the [build scan results here](https://develocity.apereo.org/). 
+ 
+### OAuth & OpenID Connect
+     
+A number of notable changes are listed here:
+
+- CAS may not generate and track access tokens if the expiration policy of tokens is set to be `0`. This is useful in scenarios where the relying party does only care about ID tokens (in the case of OpenID Connect) and has no need for access tokens.
+- CAS will no longer create and track an access token for `id_token` grant types.
+- CAS will no longer generate an ID token for OpenID connect authentication request that do not specify the `openid` scope.
 
 ## Other Stuff
 
 - Internal cleanup and refactoring efforts to remove duplicate code, when it comes to grouping `@AutoConfiguration` components.
-- Changes to the CAS Gradle build to allow more efficient caching of configuration and build artifacts and reduce overall build times.
+- 
 - Proxy ticket validation should now correctly resolve and determine the authenticated principal id.
 - Cleaning of [throttled authentication attempts](../authentication/Configuring-Authentication-Throttling.html) should now take submission expirations dates into account.
 - CAS user interface is now instructed to remove the ["Forgot Your Username?"](../password_management/Password-Management-ForgotUsername.html) feature when the feature is disabled.
-- When using OAuth or [OpenID Connect](../protocol/OIDC-Protocol.html), CAS will no longer create and track an access token for `id_token` grant types.
 - [External/delegated authentication](../integration/Delegate-Authentication.html) flows are improved to better handle throttled authentication requests.
 - A new `serviceAccess` [actuator endpoint](../services/Configuring-Service-Access-Strategy.html), allowing one to check CAS authorization decisions for a given service and user.
 - [JDBC](../integration/Attribute-Resolution-JDBC.html) and [LDAP](../integration/Attribute-Resolution-LDAP.html) attribute repositories are relocated to their own respective modules and moved away from the person directory module. 

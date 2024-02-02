@@ -64,14 +64,18 @@ class OidcIdTokenGeneratorServiceTests {
         private static final long serialVersionUID = 8152953800891665827L;
     }
 
-    private OAuth20AccessToken buildAccessToken(final MockTicketGrantingTicket tgt) {
+    private OAuth20AccessToken buildAccessToken(final MockTicketGrantingTicket tgt, final Set<String> scope) {
         val accessToken = mock(OAuth20AccessToken.class);
         when(accessToken.getAuthentication()).thenReturn(tgt.getAuthentication());
         when(accessToken.getTicketGrantingTicket()).thenReturn(tgt);
         when(accessToken.getId()).thenReturn(getClass().getSimpleName());
         when(accessToken.getClientId()).thenReturn("client");
-        when(accessToken.getScopes()).thenReturn(Set.of(OPENID.getScope(), PROFILE.getScope(), EMAIL.getScope(), PHONE.getScope()));
+        when(accessToken.getScopes()).thenReturn(scope);
         return accessToken;
+    }
+
+    protected OAuth20AccessToken buildAccessToken(final MockTicketGrantingTicket tgt) {
+        return buildAccessToken(tgt, Set.of(OPENID.getScope(), PROFILE.getScope(), EMAIL.getScope(), PHONE.getScope()));
     }
 
     @Nested
@@ -181,6 +185,22 @@ class OidcIdTokenGeneratorServiceTests {
         "cas.authn.oidc.core.claims-map.preferred_username=custom-attribute"
     })
     class DefaultTests extends AbstractOidcTests {
+
+        @Test
+        void verifyNoIdTokenForMissingOpenIdScope() throws Throwable {
+            val authentication = CoreAuthenticationTestUtils.getAuthentication();
+            val tgt = new MockTicketGrantingTicket(authentication);
+            val accessToken = buildAccessToken(tgt, Set.of(OidcConstants.StandardScopes.EMAIL.getScope()));
+
+            val registeredService = getOidcRegisteredService("clientid");
+            val profile = new CommonProfile();
+            profile.setClientName("OIDC");
+            profile.setId("casuser");
+            val idToken = oidcIdTokenGenerator.generate(accessToken, profile,
+                OAuth20ResponseTypes.ID_TOKEN, OAuth20GrantTypes.NONE, registeredService);
+            assertNull(idToken);
+        }
+
         @Test
         void verifyTokenGeneration() throws Throwable {
             val request = new MockHttpServletRequest();

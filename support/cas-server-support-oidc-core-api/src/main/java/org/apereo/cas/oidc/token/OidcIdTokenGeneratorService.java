@@ -84,7 +84,12 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
                                 final OAuthRegisteredService registeredService) throws Throwable {
         Assert.isAssignable(OidcRegisteredService.class, registeredService.getClass(),
             "Registered service instance is not an OIDC service");
-
+        if (!accessToken.getScopes().contains(OidcConstants.StandardScopes.OPENID.getScope())) {
+            LOGGER.warn("Authentication request does not include the [{}] scope. "
+                + "Including this scope is a MUST for OpenID Connect and CAS will not produce an ID token without this scope.",
+                OidcConstants.StandardScopes.OPENID.getScope());
+            return null;
+        }
         val oidcRegisteredService = (OidcRegisteredService) registeredService;
         LOGGER.trace("Attempting to produce claims for the id token [{}]", accessToken);
         val claims = buildJwtClaims(accessToken, oidcRegisteredService, responseType, grantType);
