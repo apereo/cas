@@ -49,6 +49,21 @@ class OAuth20CallbackAuthorizeEndpointControllerTests extends AbstractOAuth20Tes
     }
 
     @Test
+    void verifyOperationClientsWithSameRedirectUri() throws Throwable {
+        addRegisteredService();
+        val newRegisteredService = addRegisteredService();
+        addRegisteredService();
+
+        val request = new MockHttpServletRequest();
+        request.addParameter(OAuth20Constants.CLIENT_ID, newRegisteredService.getClientId());
+        request.addParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
+        val response = new MockHttpServletResponse();
+        val view = callbackAuthorizeController.handleRequest(request, response);
+        assertNotNull(view);
+        assertEquals(REDIRECT_URI, ((AbstractUrlBasedView) view.getView()).getUrl());
+    }
+
+    @Test
     void verifyOperationWithoutRedirectUri() throws Throwable {
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
