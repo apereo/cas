@@ -6,7 +6,7 @@ const assert = require("assert");
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
 
-    const redirectUrl = "https://apereo.github.io";
+    const redirectUrl = "https://localhost:9859/anything/cas";
     const request = "eyJhbGciOiJub25lIn0.eyJzY29wZSI6Im9wZW5pZCIsInJlc3BvbnNlX3R5cGUiOiJj"
         + "b2RlIiwicmVkaXJlY3RfdXJpIjoiaHR0cHM6XC9cL2FwZXJlby5naXRod"
         + "WIuaW8iLCJzdGF0ZSI6InZJTjFiMFk0Q2siLCJub25jZSI6IjFOOW1xUE"
