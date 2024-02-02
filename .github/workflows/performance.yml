@@ -45,11 +45,8 @@ jobs:
         with:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: ${{ env.JDK_DISTRIBUTION }}
-      - name: Setup Gradle Wrapper Cache
-        uses: actions/cache@v4
-        with:
-          path: ~/.gradle/wrapper
-          key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
       - name: Initialize
         run: ls ./ci && find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
 
@@ -77,19 +74,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-      - name: Setup Gradle Wrapper Cache
-        uses: actions/cache@v4
-        with:
-          path: ~/.gradle/wrapper
-          key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
-      - uses: actions/cache@v4
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
       - name: Locust Performance Tests
         run: ./ci/tests/perf/perftests-locust.sh ${{ matrix.category }}
 
@@ -120,17 +108,8 @@ jobs:
           distribution: ${{ env.JDK_DISTRIBUTION }}
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
-      - name: Setup Gradle Wrapper Cache
-        uses: actions/cache@v4
-        with:
-          path: ~/.gradle/wrapper
-          key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
-      - uses: actions/cache@v4
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
       - name: JMeter Performance Tests ${{ matrix.protocols }} / ${{ matrix.category }}
         uses: nick-fields/retry@v3
         with:

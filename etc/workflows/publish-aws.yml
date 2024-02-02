@@ -37,6 +37,8 @@ jobs:
         with:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: "zulu"
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
       - name: Initialize
         run: ls ./ci && find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
 
@@ -52,17 +54,13 @@ jobs:
         with:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: "zulu"
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - uses: actions/checkout@v4
       - name: Download Dependencies
         run: ./gradlew --build-cache --configure-on-demand --no-daemon downloadDependencies --parallel --refresh-dependencies
-      - uses: actions/cache@v4
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
 
   ##########################################################################
 
@@ -82,12 +80,8 @@ jobs:
           distribution: "zulu"
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
-      - uses: actions/cache@v4
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
       - name: Configure AWS credentials
         id: aws-credentials
         uses: aws-actions/configure-aws-credentials@v1
