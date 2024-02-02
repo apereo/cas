@@ -25,5 +25,5 @@
     "--cas.authn.pac4j.cas[0].protocol=CAS30",
     "--cas.authn.pac4j.cas[0].client-name=CasClient"
   ],
-  "initScript": "${PWD}/ci/tests/cas/run-cas-server.sh"
+  "initScript": "${PWD}/ci/tests/cas/run-cas-server.sh,${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }
