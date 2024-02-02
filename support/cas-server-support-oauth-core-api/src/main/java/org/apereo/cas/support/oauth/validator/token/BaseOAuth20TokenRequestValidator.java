@@ -6,7 +6,6 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
-
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +17,8 @@ import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.springframework.core.Ordered;
+import org.springframework.http.HttpMethod;
+import java.util.Locale;
 
 /**
  * This is {@link BaseOAuth20TokenRequestValidator}.
@@ -68,7 +69,10 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
             LOGGER.warn("Could not locate authenticated profile for this request. Request is not authenticated");
             return false;
         }
-
+        if (!validateClientSecretInRequestIfAny(context)) {
+            LOGGER.warn("Cannot accept [{}] as a query parameter in the request", OAuth20Constants.CLIENT_SECRET);
+            return false;
+        }
         val uProfile = profile.get();
         return validateInternal(context, grantType, manager, uProfile);
     }
@@ -113,4 +117,10 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
      * @return the grant type
      */
     protected abstract OAuth20GrantTypes getGrantType();
+    }
+
+    protected boolean validateClientSecretInRequestIfAny(final WebContext webContext) {
+        val requestParameterResolver = getConfigurationContext().getRequestParameterResolver();
+        val httpMethod = HttpMethod.valueOf(webContext.getRequestMethod().toUpperCase(Locale.ROOT));
+        return httpMethod.equals(HttpMethod.POST) || !requestParameterResolver.isParameterOnQueryString(webContext, OAuth20Constants.CLIENT_SECRET);
 }
