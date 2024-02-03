@@ -61,6 +61,7 @@ async function fetchProfile(accessToken) {
     const params = new URLSearchParams();
     params.append("access_token", accessToken);
 
+    await cas.log(`Getting user profile for access token ${accessToken}...`);
     await cas.doPost("https://localhost:8443/cas/oauth2.0/profile", params, {},
         (res) => {
             const result = res.data;
@@ -118,9 +119,9 @@ async function refreshTokens(refreshToken, clientId, successHandler, errorHandle
     failed = false;
     try {
         await fetchProfile(tokens.accessToken);
-        failed = true;
     } catch (e) {
         await cas.logg(`User profile request has failed, correctly ${e}`);
+        failed = true;
     }
     if (!failed) {
         throw `Profile request should not pass; ${tokens.accessToken} is expired`;
