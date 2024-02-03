@@ -19,11 +19,7 @@ async function fetchRefreshToken(page, clientId, redirectUrl) {
     const code = await cas.assertParameter(page, "code");
     await cas.log(`OAuth code ${code}`);
 
-    let accessTokenParams = `client_id=${clientId}&`;
-    accessTokenParams += "client_secret=secret&";
-    accessTokenParams += "grant_type=authorization_code&";
-    accessTokenParams += `redirect_uri=${redirectUrl}`;
-
+    const accessTokenParams = `client_id=${clientId}&client_secret=secret&grant_type=authorization_code&redirect_uri=${redirectUrl}`;
     let accessToken = null;
     let refreshToken = null;
 
@@ -72,13 +68,13 @@ async function exchangeToken(refreshToken, clientId, successHandler, errorHandle
     const page = await cas.newPage(browser);
 
     await cas.logg("Fetching first refresh token");
-    const redirectUrl1 = "https://github.com/apereo/cas";
+    const redirectUrl1 = "https://localhost:9859/anything/cas";
     const refreshToken1 = await fetchRefreshToken(page, "client", redirectUrl1);
 
     await cas.log("**********************************************");
     
     await cas.logg("Fetching second refresh token");
-    const redirectUrl2 = "https://apereo.github.io";
+    const redirectUrl2 = "https://localhost:9859/anything/sample";
     const refreshToken2 = await fetchRefreshToken(page, "client2", redirectUrl2);
 
     await cas.logg(`Refresh Token 1: ${refreshToken1}`);

@@ -2,7 +2,7 @@ const puppeteer = require("puppeteer");
 const cas = require("../../cas.js");
 const assert = require("assert");
 
-const redirectUrl = "https://github.com/apereo/cas";
+const redirectUrl = "https://localhost:9859/anything/cas";
 
 async function fetchCode(page) {
     const url = `https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=client&scope=openid%20offline_access&prompt=login&redirect_uri=${redirectUrl}`;
@@ -104,18 +104,26 @@ async function refreshTokens(refreshToken, clientId, successHandler, errorHandle
 
     await cas.logg("Logging out, removing all tokens...");
     await cas.gotoLogout(page);
+    let failed = false;
     try {
         await exchangeCode(page, code, "client");
-        throw `Request should not pass; ${code} is expired`;
     } catch(e) {
-        await cas.logg("Access token request has failed, correctly.");
+        await cas.logg(`Access token request has failed, correctly: ${e}`);
+        failed = true;
+    }
+    if (!failed) {
+        throw `Request should not pass; ${code} is expired`;
     }
 
+    failed = false;
     try {
         await fetchProfile(tokens.accessToken);
-        throw `Profile request should not pass; ${tokens.accessToken} is expired`;
+        failed = true;
     } catch (e) {
-        await cas.logg("User profile request has failed, correctly.");
+        await cas.logg(`User profile request has failed, correctly ${e}`);
+    }
+    if (!failed) {
+        throw `Profile request should not pass; ${tokens.accessToken} is expired`;
     }
 
     await refreshTokens(tokens.refreshToken, "client",
