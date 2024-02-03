@@ -9,14 +9,15 @@ const cas = require("../../cas.js");
     await cas.assertInnerText(page, "#content #fm1 button[name=submitBtn]", "ANMELDEN");
     await cas.attributeValue(page, "html", "lang", "de");
 
-    await cas.gotoLogin(page, "https://apereo.github.io");
+    const service = "https://localhost:9859/anything/cas";
+    await cas.gotoLogin(page, service);
     await cas.assertInnerText(page, "#content #fm1 button[name=submitBtn]", "SE CONNECTER");
     await cas.attributeValue(page, "html", "lang", "fr");
 
     await cas.gotoLogin(page);
     await cas.assertInnerText(page, "#content #fm1 button[name=submitBtn]", "SE CONNECTER");
 
-    await cas.gotoLoginWithLocale(page, "https://apereo.github.io", "es");
+    await cas.gotoLoginWithLocale(page, service, "es");
     await cas.assertInnerText(page, "#content #fm1 button[name=submitBtn]", "INICIAR SESIÓN");
     await cas.attributeValue(page, "html", "lang", "es");
 

@@ -6,7 +6,7 @@ const assert = require("assert");
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
 
-    const service = "https://apereo.github.io";
+    const service = "https://localhost:9859/anything/cas";
     await cas.gotoLogin(page, service);
     await cas.loginWith(page, "castest", process.env.AZURE_AD_USER_PASSWORD);
     const ticket = await cas.assertTicketParameter(page);

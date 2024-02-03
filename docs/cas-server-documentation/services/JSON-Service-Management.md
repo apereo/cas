@@ -113,7 +113,7 @@ Multiline strings with proper whitespace handling should also be supported:
 ```json
 {
   "@class": "org.apereo.cas.services.CasRegisteredService",
-  "serviceId": "^https://apereo.github.io.*",
+  "serviceId": "^https://app.example.org/.*",
   "id": 1,
   "name": "Sample",
   "description": 

@@ -6,7 +6,7 @@ const cas = require("../../cas.js");
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
 
-    const service1 = "https://apereo.github.io";
+    const service1 = "https://localhost:9859/anything/sample";
     await cas.gotoLogin(page, service1);
     await cas.loginWith(page);
     let ticket = await cas.assertTicketParameter(page);
