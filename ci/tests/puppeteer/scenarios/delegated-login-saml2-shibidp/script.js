@@ -7,7 +7,7 @@ const assert = require("assert");
     const browser = await puppeteer.launch(cas.browserOptions());
     try {
         const page = await cas.newPage(browser);
-        const service = "https://apereo.github.io";
+        const service = "https://localhost:9859/anything/cas";
         await cas.gotoLogin(page, service);
         await page.waitForTimeout(3000);
         await cas.assertVisibility(page, "#loginProviders");
