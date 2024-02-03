@@ -6,9 +6,7 @@ const assert = require("assert");
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
 
-    const redirectUrl = "https://localhost:9859/anything/cas";
-    const request = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsIm9yZy5hcGVyZW8uY2FzLnNlcnZpY2VzLlJlZ2lzdGVyZWRTZXJ2aWNlIjoiMjEzMzI0ODYyMSIsImtpZCI6IjEyMzQ1Njc4OTAifQ.eyJzdWIiOiJjYXN1c2VyIiwic2NvcGUiOiJvcGVuaWQiLCJpc3MiOiJodHRwczpcL1wvY2FzLmV4YW1wbGUub3JnIiwicmVzcG9uc2VfdHlwZSI6ImNvZGUiLCJyZWRpcmVjdF91cmkiOiJodHRwczpcL1wvYXBlcmVvLmdpdGh1Yi5pbyIsImlhdCI6MTY0NjczMTgxOSwianRpIjoiZWVkY2Q5Y2ItNDA1MS00ODAyLWFmYWUtYmFkMzU1NDNiYjU3IiwiY2xpZW50X2lkIjoiY2xpZW50In0.16XuMcIc68QSLeEfOdP6_hegZac-YI46tVfbeEhu6_fiPH5LxB4OOefTNuf0ST18scya18L3DaQLFQhdQkTneKa9dJt4fHl8POQ-IjpagaVWwFMGWM9VyVo_wd0rHd-1pg-OtnvH8PqSZuVoLm--eS0x7vQOX5IKedTXhACIQRZCq3Rxs9s9q1Rhjxv6hvkgWgrG42i5D6IEUxs1y-a9HLySm2_pxvg_7PiaNIps85Le9mWSrOf_F761q1pKHIR5INDoItMAHWKgnDLjQg8R1WPCyeq7XMacKeXDS4dYk0IeJPK1teyKWJrsdRBdzgnLVyM6MaFszHWOLv_U9Uy22g";
-    
+    const request = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjEyMzQ1Njc4OTAiLCJvcmcuYXBlcmVvLmNhcy5zZXJ2aWNlcy5SZWdpc3RlcmVkU2VydmljZSI6IjIxMzMyNDg2MjEifQ.CnsKICAic3ViIjogImNhc3VzZXIiLAogICJzY29wZSI6ICJvcGVuaWQiLAogICJpc3MiOiAiaHR0cHM6Ly9jYXMuZXhhbXBsZS5vcmciLAogICJyZXNwb25zZV90eXBlIjogImNvZGUiLAogICJyZWRpcmVjdF91cmkiOiAiaHR0cHM6Ly9sb2NhbGhvc3Q6OTg1OS9hbnl0aGluZy9jYXMiLAogICJpYXQiOiAxNjQ2NzMxODE5LAogICJqdGkiOiAiZWVkY2Q5Y2ItNDA1MS00ODAyLWFmYWUtYmFkMzU1NDNiYjU3IiwKICAiY2xpZW50X2lkIjogImNsaWVudCIKfQo.x1LLYmH_8jAbdfiYlQ5hreI2IY3m2olGbBM4Hi2O5wUE_fRPhFD3Z_YsMbK4Qp9Us1aqn3VdYaEovnBzr0W37WJhzTysWId2cffajH_z9xF47DIlkc5PXWNeWo0g8N_lMvFWkcQQNw1inU8J9370-sGZXyJSggLmCcbNjWrWGvFKtSBLMY-v-_HSnFKCDq9LK6mLN9HFqzWG3GhDrcCtl8JIsd1JC44QSoJ4WsxWIoUtto_j6EFwNyMC_2xI6E68L9uAbFfknXz3siuzp9NN9_M_peRGKXigKrZg8et9ggsRHqSHj2j5T-P9FmaFDlJz-rmCHytKE0KgKiYBkWG9Cg";
     const url = `https://localhost:8443/cas/oidc/authorize?request=${request}&client_id=client&redirect_uri=https://unknown.net`;
 
     await cas.log(`Browsing to ${url}`);
@@ -23,6 +21,7 @@ const assert = require("assert");
     const code = await cas.assertParameter(page, "code");
     await cas.log(`OAuth code ${code}`);
 
+    const redirectUrl = "https://localhost:9859/anything/cas";
     let accessTokenParams = "client_id=client&";
     accessTokenParams += "client_secret=secret&";
     accessTokenParams += "grant_type=authorization_code&";

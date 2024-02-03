@@ -31,7 +31,7 @@
     "--cas.authn.pac4j.saml[0].keystore-path=${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md/samlKeystore.jks",
     "--cas.authn.pac4j.saml[0].metadata.identity-provider-metadata-path=http://localhost:9443/simplesaml/saml2/idp/metadata.php",
     "--cas.authn.pac4j.saml[0].destination-binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect",
-    "--cas.authn.pac4j.saml[0].callback-url=https://localhost:8443/cas/login?service=https://apereo.github.io",
+    "--cas.authn.pac4j.saml[0].callback-url=https://localhost:8443/cas/login?service=https://localhost:9859/anything/cas",
     "--cas.authn.pac4j.saml[0].client-name=SAML2Client"
   ],
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",

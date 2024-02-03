@@ -6,13 +6,13 @@ const cas = require("../../cas.js");
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     
-    await cas.gotoLogin(page, "https://github.com");
+    await cas.gotoLogin(page, "https://localhost:9859/anything/cas");
     await page.waitForTimeout(1000);
 
     const loginProviders = await page.$("#loginProviders");
     assert(loginProviders === null);
 
-    await cas.gotoLogin(page, "https://google.com");
+    await cas.gotoLogin(page, "https://localhost:9859/anything/sample");
     await page.waitForTimeout(1000);
 
     await cas.assertVisibility(page, "li #CASServerOne");

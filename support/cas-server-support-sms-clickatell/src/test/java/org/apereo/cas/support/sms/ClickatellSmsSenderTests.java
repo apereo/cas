@@ -1,10 +1,8 @@
 package org.apereo.cas.support.sms;
 
 import org.apereo.cas.config.CasClickatellSmsAutoConfiguration;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.sms.SmsSender;
 import org.apereo.cas.util.MockWebServer;
-import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -16,7 +14,6 @@ import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguratio
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
-import java.net.URL;
 import static java.nio.charset.StandardCharsets.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.http.HttpStatus.*;

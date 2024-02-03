@@ -51,7 +51,7 @@
     "--cas.authn.mfa.simple.mail.subject=Token",
     "--cas.authn.mfa.simple.mail.text=${token}"
   ],
-  "initScript": "${PWD}/ci/tests/mail/run-mail-server.sh"
+  "initScript": "${PWD}/ci/tests/mail/run-mail-server.sh,${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }
 
 
