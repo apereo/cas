@@ -14,7 +14,6 @@ import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.util.spring.DirectObjectProvider;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import lombok.val;
@@ -65,14 +64,20 @@ class UniquePrincipalAuthenticationPolicyTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
+    @Autowired
+    @Qualifier("uniqueAuthenticationPolicy")
+    private AuthenticationPolicy uniqueAuthenticationPolicy;
+    
     @Test
     void verifyPolicyIsGoodUserNotFound() throws Throwable {
-        assertTrue(getPolicy().isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString()), applicationContext).isSuccess());
+        assertTrue(uniqueAuthenticationPolicy.isSatisfiedBy(
+            CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString()),
+            applicationContext).isSuccess());
     }
 
     @Test
     void verifyPolicyWithAssertion() throws Throwable {
-        assertTrue(getPolicy().isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString()),
+        assertTrue(uniqueAuthenticationPolicy.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString()),
             applicationContext, Map.of(Assertion.class.getName(), mock(Assertion.class))).isSuccess());
     }
 
@@ -83,12 +88,9 @@ class UniquePrincipalAuthenticationPolicyTests {
             authentication, NeverExpiresExpirationPolicy.INSTANCE);
         ticketRegistry.addTicket(ticket);
         assertThrows(UniquePrincipalRequiredException.class,
-            () -> getPolicy().isSatisfiedBy(authentication, applicationContext));
+            () -> uniqueAuthenticationPolicy.isSatisfiedBy(authentication, applicationContext));
     }
-
-    private AuthenticationPolicy getPolicy() {
-        return new UniquePrincipalAuthenticationPolicy(ticketRegistry, new DirectObjectProvider<>(singleSignOnParticipationStrategy));
-    }
+    
 
     @TestConfiguration(value = "AuthenticationPolicyTestConfiguration", proxyBeanMethods = false)
     static class AuthenticationPolicyTestConfiguration {
