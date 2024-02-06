@@ -1,21 +1,18 @@
 package org.apereo.cas.support.oauth.validator.authorization;
 
 import org.apereo.cas.AbstractOAuth20Tests;
-import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
-import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.jee.context.JEEContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -26,6 +23,10 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OAuth")
 class OAuth20TokenResponseTypeAuthorizationRequestValidatorTests extends AbstractOAuth20Tests {
+    @Autowired
+    @Qualifier("oauthTokenResponseTypeRequestValidator")
+    private OAuth20AuthorizationRequestValidator validator;
+
     @Test
     void verifySupports() throws Throwable {
         val service = new OAuthRegisteredService();
@@ -34,9 +35,6 @@ class OAuth20TokenResponseTypeAuthorizationRequestValidatorTests extends Abstrac
         service.setClientSecret("secret");
         service.setServiceId("https://callback.example.org");
         servicesManager.save(service);
-
-        val validator = new OAuth20TokenResponseTypeAuthorizationRequestValidator(servicesManager, new WebApplicationServiceFactory(),
-            new RegisteredServiceAccessStrategyAuditableEnforcer(applicationContext), oauthRequestParameterResolver);
 
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

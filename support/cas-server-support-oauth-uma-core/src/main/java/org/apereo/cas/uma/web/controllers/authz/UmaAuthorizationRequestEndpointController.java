@@ -162,7 +162,7 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
         val accessToken = resolveAccessToken(givenAccessToken);
 
         val cipher = OAuth20JwtAccessTokenEncoder.toEncodableCipher(getUmaConfigurationContext().getAccessTokenJwtBuilder(),
-            registeredService, accessToken, accessToken.getService(), getUmaConfigurationContext().getCasProperties());
+            registeredService, accessToken, accessToken.getService(), getUmaConfigurationContext().getCasProperties(), false);
         val encodedAccessToken = cipher.encode(accessToken.getId());
         val userProfile = OAuth20Utils.getAuthenticatedUserProfile(new JEEContext(request, response),
             getUmaConfigurationContext().getSessionStore());

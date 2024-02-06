@@ -10,6 +10,7 @@ import org.apereo.cas.support.oauth.OAuth20ClientAuthenticationMethods;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.OAuth20TokenExchangeTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.code.OAuth20DefaultOAuthCodeFactory;
@@ -47,6 +48,8 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -60,7 +63,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @Tag("OAuthWeb")
 class OAuth20AccessTokenEndpointControllerTests {
+
     @Nested
+    @TestPropertySource(properties = "cas.authn.oidc.discovery.scopes=openid,profile,create,email,read,update")
     class MvcTests extends AbstractOAuth20Tests {
         private MockMvc mvc;
 
@@ -197,6 +202,53 @@ class OAuth20AccessTokenEndpointControllerTests {
                 .andReturn();
         }
 
+        @Test
+        void verifyAccessTokenToAccessTokenExchange() throws Throwable {
+            val service = getRegisteredService(UUID.randomUUID().toString(), OAuth20GrantTypes.TOKEN_EXCHANGE);
+            val subjectToken = getAccessToken(service.getServiceId(), service.getClientId());
+            service.setScopes(Set.of("create", "update"));
+            servicesManager.save(service);
+            ticketRegistry.addTicket(subjectToken);
+
+            val resource = "https://api.example.org/%s".formatted(UUID.randomUUID().toString());
+            mvc.perform(post("/cas" + CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL)
+                    .param(OAuth20Constants.CLIENT_ID, service.getClientId())
+                    .param(OAuth20Constants.CLIENT_SECRET, service.getClientSecret())
+                    .queryParam(OAuth20Constants.RESOURCE, resource)
+                    .queryParam(OAuth20Constants.SUBJECT_TOKEN, subjectToken.getId())
+                    .queryParam(OAuth20Constants.SUBJECT_TOKEN_TYPE, OAuth20TokenExchangeTypes.ACCESS_TOKEN.getType())
+                    .queryParam(OAuth20Constants.REQUESTED_TOKEN_TYPE, OAuth20TokenExchangeTypes.ACCESS_TOKEN.getType())
+                    .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.TOKEN_EXCHANGE.getType())
+                    .queryParam(OAuth20Constants.SCOPE, "update")
+                )
+                .andExpect(jsonPath("$.scope").value("update"))
+                .andExpect(jsonPath("$.access_token").exists())
+                .andExpect(jsonPath("$.issued_token_type").value(OAuth20TokenExchangeTypes.ACCESS_TOKEN.getType()));
+        }
+
+        @Test
+        void verifyAccessTokenToJWTExchange() throws Throwable {
+            val service = getRegisteredService(UUID.randomUUID().toString(), OAuth20GrantTypes.TOKEN_EXCHANGE);
+            val subjectToken = getAccessToken(service.getServiceId(), service.getClientId());
+            service.setScopes(Set.of("create", "update"));
+            servicesManager.save(service);
+            ticketRegistry.addTicket(subjectToken);
+
+            val resource = "https://api.example.org/%s".formatted(UUID.randomUUID().toString());
+            mvc.perform(post("/cas" + CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL)
+                    .param(OAuth20Constants.CLIENT_ID, service.getClientId())
+                    .param(OAuth20Constants.CLIENT_SECRET, service.getClientSecret())
+                    .queryParam(OAuth20Constants.RESOURCE, resource)
+                    .queryParam(OAuth20Constants.SUBJECT_TOKEN, subjectToken.getId())
+                    .queryParam(OAuth20Constants.SUBJECT_TOKEN_TYPE, OAuth20TokenExchangeTypes.ACCESS_TOKEN.getType())
+                    .queryParam(OAuth20Constants.REQUESTED_TOKEN_TYPE, OAuth20TokenExchangeTypes.JWT.getType())
+                    .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.TOKEN_EXCHANGE.getType())
+                    .queryParam(OAuth20Constants.SCOPE, "update")
+                )
+                .andExpect(jsonPath("$.scope").value("update"))
+                .andExpect(jsonPath("$.access_token").exists())
+                .andExpect(jsonPath("$.issued_token_type").value(OAuth20TokenExchangeTypes.JWT.getType()));
+        }
     }
 
     @Nested
@@ -220,7 +272,6 @@ class OAuth20AccessTokenEndpointControllerTests {
 
         @BeforeEach
         public void initialize() {
-            clearAllServices();
             ticketRegistry.deleteAll();
         }
 

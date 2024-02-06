@@ -71,7 +71,8 @@ public class OAuth20TokenAuthorizationResponseBuilder<T extends OAuth20Configura
 
         if (includeAccessTokenInResponse(tokenRequestContext) && accessToken.getExpiresIn() > 0) {
             val cipher = OAuth20JwtAccessTokenEncoder.toEncodableCipher(configurationContext.getAccessTokenJwtBuilder(),
-                tokenRequestContext.getRegisteredService(), accessToken, tokenRequestContext.getService(), configurationContext.getCasProperties());
+                tokenRequestContext.getRegisteredService(), accessToken,
+                tokenRequestContext.getService(), configurationContext.getCasProperties(), false);
             val encodedAccessToken = cipher.encode(accessToken.getId());
             builder.addParameter(OAuth20Constants.ACCESS_TOKEN, encodedAccessToken);
             builder.addParameter(OAuth20Constants.TOKEN_TYPE, OAuth20Constants.TOKEN_TYPE_BEARER);

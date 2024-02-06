@@ -79,7 +79,12 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
     }
 
     protected boolean isGrantTypeSupportedBy(final OAuthRegisteredService registeredService, final String type) {
-        return OAuth20RequestParameterResolver.isAuthorizedGrantTypeForService(type, registeredService);
+        return isGrantTypeSupportedBy(registeredService, type, false);
+    }
+
+    protected boolean isGrantTypeSupportedBy(final OAuthRegisteredService registeredService,
+                                             final String type, final boolean rejectUndefined) {
+        return OAuth20RequestParameterResolver.isAuthorizedGrantTypeForService(type, registeredService, rejectUndefined);
     }
 
     protected boolean validateInternal(final WebContext context,

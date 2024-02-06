@@ -6,6 +6,7 @@ import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
@@ -107,6 +108,9 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
                 if (result.getUserProfile() != null) {
                     result.getUserProfile().addAttribute(Principal.class.getName(), authentication.getPrincipal());
                 }
+                if (result.getGrantType() == OAuth20GrantTypes.TOKEN_EXCHANGE) {
+                    model.put(OAuth20Constants.ISSUED_TOKEN_TYPE, result.getRequestedTokenType().getType());
+                }
             }
         });
         generatedToken.getRefreshToken().ifPresent(rt -> model.put(OAuth20Constants.REFRESH_TOKEN, rt.getId()));
@@ -119,8 +123,7 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
 
     protected String encodeAccessToken(final OAuth20AccessToken accessToken,
                                        final OAuth20AccessTokenResponseResult result) {
-        val cipher = OAuth20JwtAccessTokenEncoder.toEncodableCipher(accessTokenJwtBuilder,
-            result.getRegisteredService(), accessToken, result.getService(), casProperties);
+        val cipher = OAuth20JwtAccessTokenEncoder.toEncodableCipher(accessTokenJwtBuilder, result, accessToken, casProperties);
         return cipher.encode(accessToken.getId(), new Object[]{accessToken, result});
     }
 }

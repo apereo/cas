@@ -42,6 +42,7 @@ The above features do come with a number of caveats and limitations. See below.
   - [SAML2 attribute queries](../installation/Configuring-SAML2-AttributeQuery.html)
 - [OAuth2 Protocol](../authentication/OAuth-Authentication.html) is supported with the following exceptions:
   - [Device Authorization](../authentication/OAuth-ProtocolFlow-DeviceAuthorization.html)
+  - [Token Exchange](../authentication/OAuth-ProtocolFlow-TokenExchange.html)
 - [OpenID Connect Protocol](../protocol/OIDC-Protocol.html) is supported with the following exceptions: 
   - [DPoP](../authentication/OIDC-Authentication-DPoP.html)
 

@@ -521,6 +521,7 @@ layout: null
                 *   [Authorization Code](/cas/{{ version }}/authentication/OAuth-ProtocolFlow-AuthorizationCode.html)
                 *   [Client Credentials](/cas/{{ version }}/authentication/OAuth-ProtocolFlow-ClientCredentials.html)
                 *   [Device Authorization](/cas/{{ version }}/authentication/OAuth-ProtocolFlow-DeviceAuthorization.html)
+                *   [Token Exchange](/cas/{{ version }}/authentication/OAuth-ProtocolFlow-TokenExchange.html)
                 *   [Implicit](/cas/{{ version }}/authentication/OAuth-ProtocolFlow-Implicit.html)
                 *   [Refresh Token](/cas/{{ version }}/authentication/OAuth-ProtocolFlow-RefreshToken.html)
                 *   [Resource Owner](/cas/{{ version }}/authentication/OAuth-ProtocolFlow-ResourceOwner.html)

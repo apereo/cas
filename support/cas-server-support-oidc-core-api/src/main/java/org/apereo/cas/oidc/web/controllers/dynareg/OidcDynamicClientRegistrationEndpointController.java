@@ -78,7 +78,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOidcCon
             val accessToken = generateRegistrationAccessToken(request, response, savedService, registrationRequest);
 
             val cipher = OAuth20JwtAccessTokenEncoder.toEncodableCipher(getConfigurationContext().getAccessTokenJwtBuilder(),
-                savedService, accessToken, accessToken.getService(), getConfigurationContext().getCasProperties());
+                savedService, accessToken, accessToken.getService(), getConfigurationContext().getCasProperties(), false);
             val encodedAccessToken = cipher.encode(accessToken.getId());
             clientResponse.setRegistrationAccessToken(encodedAccessToken);
             return new ResponseEntity<>(clientResponse, HttpStatus.CREATED);
