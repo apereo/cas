@@ -14,8 +14,8 @@ const cas = require("../../cas.js");
         "Authorization": `Basic ${btoa("client:secret")}`
     }, (res) => {
         cas.log(res.data);
-        assert(res.data.access_token !== null);
-        assert(res.data.refresh_token !== null);
+        assert(res.data.access_token !== undefined);
+        assert(res.data.refresh_token !== undefined);
 
         introspect(res.data.access_token, successHandler);
         introspect(res.data.refresh_token, successHandler);
@@ -37,8 +37,8 @@ const cas = require("../../cas.js");
 
 function successHandler(res, token) {
     assert(res.data.active === true);
-    assert(res.data.iat !== null);
-    assert(res.data.exp !== null);
+    assert(res.data.iat !== undefined);
+    assert(res.data.exp !== undefined);
     assert(res.data.aud === "client");
     assert(res.data.uniqueSecurityName === "client");
     assert(res.data.scope === "CAS");

@@ -78,6 +78,22 @@ public class EncodingUtils {
             val result = Hex.decodeHex(data);
             return new String(result, StandardCharsets.UTF_8);
         } catch (final Exception e) {
+            LOGGER.trace(e.getMessage(), e);
+            return null;
+        }
+    }
+
+    /**
+     * Hex decode to byte array.
+     *
+     * @param data the data
+     * @return the byte [ ]
+     */
+    public static byte[] hexDecodeToByteArray(final String data) {
+        try {
+            return Hex.decodeHex(data.toCharArray());
+        } catch (final Exception e) {
+            LOGGER.trace(e.getMessage(), e);
             return null;
         }
     }
@@ -93,6 +109,7 @@ public class EncodingUtils {
             val result = Hex.encodeHex(data.getBytes(StandardCharsets.UTF_8));
             return new String(result);
         } catch (final Exception e) {
+            LOGGER.trace(e.getMessage(), e);
             return null;
         }
     }
@@ -108,6 +125,7 @@ public class EncodingUtils {
             val result = Hex.encodeHex(data);
             return new String(result);
         } catch (final Exception e) {
+            LOGGER.trace(e.getMessage(), e);
             return null;
         }
     }
@@ -120,6 +138,17 @@ public class EncodingUtils {
      */
     public static String encodeUrlSafeBase64(final byte[] data) {
         return Base64.encodeBase64URLSafeString(data);
+    }
+
+
+    /**
+     * Encode url safe base64 string.
+     *
+     * @param data the data
+     * @return the string
+     */
+    public static String encodeUrlSafeBase64(final String data) {
+        return Base64.encodeBase64URLSafeString(data.getBytes(StandardCharsets.UTF_8));
     }
 
     /**

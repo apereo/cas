@@ -24,4 +24,5 @@ public interface ProxyGrantingTicketFactory extends TicketFactory {
      * @throws Throwable the throwable
      */
     <T extends ProxyGrantingTicket> T create(ServiceTicket ticket, Authentication authentication, Class<T> clazz) throws Throwable;
+
 }

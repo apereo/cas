@@ -6,8 +6,8 @@ async function fetchIdentityProviders() {
     await cas.doGet("https://localhost:8443/cas/actuator/delegatedClients",
         (res) => {
             assert(res.status === 200);
-            assert(res.data.CasClient !== null);
-            assert(res.data.OidcClient !== null);
+            assert(res.data.CasClient !== undefined);
+            assert(res.data.OidcClient !== undefined);
         },
         (error) => {
             throw error;

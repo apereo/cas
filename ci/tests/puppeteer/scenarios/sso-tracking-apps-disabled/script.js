@@ -15,7 +15,7 @@ const cas = require("../../cas.js");
         assert(res.status === 200);
         const index = Object.keys(res.data.activeSsoSessions).length - 1;
         const activeSession = res.data.activeSsoSessions[index];
-        cas.log(JSON.stringify(activeSession.authenticated_services));
+        await cas.log(JSON.stringify(activeSession.authenticated_services));
         assert(activeSession.number_of_uses === 4);
         const services = activeSession.authenticated_services;
         assert(Object.keys(services).length === 4);
@@ -29,7 +29,7 @@ async function login(service) {
     const page = await cas.newPage(browser);
     for (let i = 1; i <= 4; i++) {
         await cas.log(`Logging into CAS; attempt ${i}`);
-        await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
+        await cas.gotoLogin(page, service);
         if (i === 1) {
             await cas.loginWith(page, "casuser", "Mellon");
         }

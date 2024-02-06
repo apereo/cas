@@ -1,6 +1,6 @@
 package org.apereo.cas.rest.factory;
 
-import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.Ticket;
 
 import org.springframework.http.ResponseEntity;
 
@@ -16,12 +16,12 @@ import jakarta.servlet.http.HttpServletRequest;
 public interface TicketGrantingTicketResourceEntityResponseFactory {
 
     /**
-     * Build response response entity.
+     * Build response entity.
      *
      * @param ticketGrantingTicket the ticket granting ticket
      * @param request              the request
      * @return the response entity
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
-    ResponseEntity<String> build(TicketGrantingTicket ticketGrantingTicket, HttpServletRequest request) throws Exception;
+    ResponseEntity<String> build(Ticket ticketGrantingTicket, HttpServletRequest request) throws Throwable;
 }

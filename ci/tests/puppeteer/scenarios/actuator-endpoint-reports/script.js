@@ -37,6 +37,8 @@ const cas = require("../../cas.js");
         "casModules",
         "casFeatures",
         "ticketExpirationPolicies?serviceId=10000001",
+        "serviceAccess?username=casuser&password=Mellon&service=https://example.com",
+        "serviceAccess?username=casuser&service=https://example.com",
         "springWebflow",
         "statistics",
         "resolveAttributes/casuser",

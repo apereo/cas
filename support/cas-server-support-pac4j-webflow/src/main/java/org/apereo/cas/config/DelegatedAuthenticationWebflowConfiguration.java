@@ -92,7 +92,6 @@ import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcProperties;
@@ -131,11 +130,11 @@ import java.util.stream.Collectors;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.DelegatedAuthentication)
-@AutoConfiguration
-public class DelegatedAuthenticationWebflowConfiguration {
+@Configuration(value = "DelegatedAuthenticationWebflowConfiguration", proxyBeanMethods = false)
+class DelegatedAuthenticationWebflowConfiguration {
     @Configuration(value = "DelegatedAuthenticationWebflowErrorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties({CasConfigurationProperties.class, WebProperties.class, WebMvcProperties.class})
-    public static class DelegatedAuthenticationWebflowErrorConfiguration {
+    static class DelegatedAuthenticationWebflowErrorConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "delegatedAuthenticationErrorViewResolver")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -157,7 +156,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
 
     @Configuration(value = "DelegatedAuthenticationWebflowExecutionPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class DelegatedAuthenticationWebflowExecutionPlanConfiguration {
+    static class DelegatedAuthenticationWebflowExecutionPlanConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "delegatedCasWebflowExecutionPlanConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -173,7 +172,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
 
     @Configuration(value = "DelegatedAuthenticationWebflowPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class DelegatedAuthenticationWebflowPlanConfiguration {
+    static class DelegatedAuthenticationWebflowPlanConfiguration {
         @ConditionalOnMissingBean(name = "delegatedAuthenticationWebflowConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -191,7 +190,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
 
     @Configuration(value = "DelegatedAuthenticationWebflowManagementConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class DelegatedAuthenticationWebflowManagementConfiguration {
+    static class DelegatedAuthenticationWebflowManagementConfiguration {
         @ConditionalOnMissingBean(name = DelegatedClientAuthenticationWebflowManager.DEFAULT_BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
@@ -225,7 +224,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
 
     @Configuration(value = "DelegatedAuthenticationWebflowClientConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class DelegatedAuthenticationWebflowClientConfiguration {
+    static class DelegatedAuthenticationWebflowClientConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -340,7 +339,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
 
     @Configuration(value = "DelegatedAuthenticationWebflowActionsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class DelegatedAuthenticationWebflowActionsConfiguration {
+    static class DelegatedAuthenticationWebflowActionsConfiguration {
 
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_CREDENTIAL_SELECTION_FINALIZE)
         @Bean
@@ -558,7 +557,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
 
     @Configuration(value = "DelegatedAuthenticationWebflowContextConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class DelegatedAuthenticationWebflowContextConfiguration {
+    static class DelegatedAuthenticationWebflowContextConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = DelegatedClientAuthenticationConfigurationContext.BEAN_NAME)
@@ -641,7 +640,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
 
     @Configuration(value = "DelegatedAuthenticationWebflowEndpointsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class DelegatedAuthenticationWebflowEndpointsConfiguration {
+    static class DelegatedAuthenticationWebflowEndpointsConfiguration {
         private static final FlowExecutionListener[] FLOW_EXECUTION_LISTENERS = new FlowExecutionListener[0];
 
         @Bean
@@ -728,7 +727,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
 
     @Configuration(value = "DelegatedAuthenticationWebflowUserInterfaceConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class DelegatedAuthenticationWebflowUserInterfaceConfiguration {
+    static class DelegatedAuthenticationWebflowUserInterfaceConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "delegatedAuthenticationCasWebflowLoginContextProvider")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

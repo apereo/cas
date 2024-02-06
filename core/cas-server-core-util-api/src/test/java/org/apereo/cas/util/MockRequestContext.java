@@ -3,6 +3,8 @@ package org.apereo.cas.util;
 import org.apereo.cas.util.http.HttpRequestUtils;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfo;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.binding.expression.support.LiteralExpression;
 import org.springframework.binding.message.DefaultMessageContext;
 import org.springframework.binding.message.MessageContext;
@@ -94,6 +96,16 @@ public class MockRequestContext extends MockRequestControlContext {
         return this;
     }
 
+    public MockRequestContext setRemoteAddr(final String remoteAddr) {
+        getHttpServletRequest().setRemoteAddr(remoteAddr);
+        return this;
+    }
+
+    public MockRequestContext setLocalAddr(final String localAddr) {
+        getHttpServletRequest().setLocalAddr(localAddr);
+        return this;
+    }
+
     public MockRequestContext setSessionAttribute(final String name, final String value) {
         Objects.requireNonNull(getHttpServletRequest().getSession(true)).setAttribute(name, value);
         return this;
@@ -137,6 +149,11 @@ public class MockRequestContext extends MockRequestControlContext {
         return this;
     }
 
+    public MockRequestContext setQueryString(final String s) {
+        getHttpServletRequest().setQueryString(s);
+        return this;
+    }
+
     public static MockRequestContext create() throws Exception {
         val staticContext = new StaticApplicationContext();
         staticContext.refresh();
@@ -160,6 +177,11 @@ public class MockRequestContext extends MockRequestControlContext {
             flow.setApplicationContext(applicationContext);
         }
         return requestContext;
+    }
+
+    public MockRequestContext setClientInfo() {
+        ClientInfoHolder.setClientInfo(ClientInfo.from(getHttpServletRequest()));
+        return this;
     }
 
     public MockRequestContext setMessageContext(final MessageContext messageContext) throws Exception {

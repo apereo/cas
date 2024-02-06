@@ -41,25 +41,25 @@ class TimeoutExpirationPolicyTests {
 
     @BeforeEach
     public void initialize() {
-        this.expirationPolicy = new TimeoutExpirationPolicy(TIMEOUT);
-
-        this.ticket = new TicketGrantingTicketImpl("test", CoreAuthenticationTestUtils
-            .getAuthentication(), this.expirationPolicy);
+        expirationPolicy = new TimeoutExpirationPolicy(TIMEOUT);
+        ticket = new TicketGrantingTicketImpl("test", CoreAuthenticationTestUtils.getAuthentication(), expirationPolicy);
     }
 
     @Test
     void verifyTicketIsNull() throws Throwable {
-        assertTrue(this.expirationPolicy.isExpired(null));
+        assertTrue(expirationPolicy.isExpired(null));
     }
 
     @Test
     void verifyTicketIsNotExpired() throws Throwable {
-        assertFalse(this.ticket.isExpired());
+        assertFalse(ticket.isExpired());
+        assertNotNull(ticket.getExpirationPolicy().toMaximumExpirationTime(ticket));
     }
 
     @Test
     void verifyTicketIsExpired() throws Throwable {
-        ticket = new TicketGrantingTicketImpl("test", CoreAuthenticationTestUtils.getAuthentication(), new TimeoutExpirationPolicy(-100));
+        ticket = new TicketGrantingTicketImpl("test", CoreAuthenticationTestUtils.getAuthentication(),
+            new TimeoutExpirationPolicy(-100));
         assertTrue(ticket.isExpired());
     }
 

@@ -1,20 +1,14 @@
 package org.apereo.cas.acct.webflow;
 
 import org.apereo.cas.acct.AccountRegistrationUtils;
-import org.apereo.cas.config.CasAccountManagementWebflowConfiguration;
-import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
-import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
-import org.apereo.cas.config.CasCoreTicketsConfiguration;
-import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
+import org.apereo.cas.config.CasAccountManagementWebflowAutoConfiguration;
+import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-
 import lombok.val;
 import org.apache.hc.core5.net.URIBuilder;
-import org.apereo.inspektr.common.web.ClientInfo;
-import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +16,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.execution.Action;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -34,11 +27,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Mail")
 @EnabledIfListeningOnPort(port = 25000)
 @Import({
-    CasCoreTicketsConfiguration.class,
-    CasCoreTicketCatalogConfiguration.class,
-    CasCoreTicketsSerializationConfiguration.class,
-    CasCoreTicketIdGeneratorsConfiguration.class,
-    CasAccountManagementWebflowConfiguration.class
+    CasCoreTicketsAutoConfiguration.class,
+    CasAccountManagementWebflowAutoConfiguration.class
 })
 @TestPropertySource(properties = {
     "spring.mail.host=localhost",
@@ -68,9 +58,9 @@ class ValidateAccountRegistrationTokenActionTests extends BaseWebflowConfigurerT
     void verifyPassRegistrationRequest() throws Throwable {
         val context = MockRequestContext.create();
 
-        context.getHttpServletRequest().setRemoteAddr("127.0.0.1");
-        context.getHttpServletRequest().setLocalAddr("127.0.0.1");
-        ClientInfoHolder.setClientInfo(ClientInfo.from(context.getHttpServletRequest()));
+        context.setRemoteAddr("127.0.0.1");
+        context.setLocalAddr("127.0.0.1");
+        context.setClientInfo();
 
         context.setParameter("username", "casuser");
         context.setParameter("email", "cas@example.org");

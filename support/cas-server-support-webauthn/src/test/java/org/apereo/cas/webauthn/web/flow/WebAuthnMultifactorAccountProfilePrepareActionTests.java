@@ -1,6 +1,5 @@
 package org.apereo.cas.webauthn.web.flow;
 
-import org.apereo.cas.config.CasWebflowAccountProfileConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -12,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Import;
 import org.springframework.webflow.execution.Action;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("WebflowMfaActions")
-@Import(CasWebflowAccountProfileConfiguration.class)
 @SpringBootTest(classes = BaseWebAuthnWebflowTests.SharedTestConfiguration.class,
     properties = "CasFeatureModule.AccountManagement.enabled=true")
 public class WebAuthnMultifactorAccountProfilePrepareActionTests {

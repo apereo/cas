@@ -74,6 +74,7 @@ class CASOAuth20TicketValidatorTests extends AbstractOAuth20Tests {
         assertTrue(profileResult.isPresent());
         val up = (BasicUserProfile) profileResult.get();
         assertTrue(up.containsAttribute(TicketGrantingTicket.class.getName()));
+        assertTrue(up.containsAttribute("stateless"));
         assertTrue(up.containsAttribute("uid"));
         assertTrue(up.containsAttribute("givenName"));
         assertTrue(up.containsAttribute("memberOf"));

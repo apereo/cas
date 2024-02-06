@@ -66,11 +66,8 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
 
         val throttled = throttleRequest(request, response) || exceedsThreshold(request);
         if (throttled) {
-            val throttle = getConfigurationContext().getCasProperties().getAuthn().getThrottle().getFailure();
-            LOGGER.warn("Throttling submission from [{}]. More than [{}] failed login attempts within [{}] seconds. "
-                        + "Authentication attempt exceeds the failure threshold [{}]", request.getRemoteAddr(),
-                this.thresholdRate, throttle.getRangeSeconds(), throttle.getThreshold());
-
+            LOGGER.warn("Throttling submission from [{}]. Authentication attempt exceeds the failure threshold [{}]",
+                request.getRemoteAddr(), this.thresholdRate);
             recordThrottle(request);
             return configurationContext.getThrottledRequestResponseHandler().handle(request, response);
         }
@@ -87,7 +84,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
 
         val recordEvent = shouldResponseBeRecordedAsFailure(response);
         if (recordEvent) {
-            LOGGER.debug("Recording submission failure for [{}]", request.getRequestURI());
+            LOGGER.debug("Recording submission failure for request URI [{}]", request.getRequestURI());
             recordSubmissionFailure(request);
         } else {
             LOGGER.trace("Skipping to record submission failure for [{}] with response status [{}]",

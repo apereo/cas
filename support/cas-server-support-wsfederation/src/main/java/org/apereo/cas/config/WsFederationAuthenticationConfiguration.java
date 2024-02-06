@@ -10,16 +10,17 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.support.wsfederation.WsFederationHelper;
+import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredential;
 import org.apereo.cas.support.wsfederation.services.WSFederationAuthenticationServiceRegistry;
 import org.apereo.cas.support.wsfederation.web.WsFederationCookieManager;
 import org.apereo.cas.support.wsfederation.web.WsFederationNavigationController;
 import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -37,12 +38,19 @@ import org.springframework.core.Ordered;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.WsFederation)
-@AutoConfiguration
-public class WsFederationAuthenticationConfiguration {
+@Configuration(value = "WsFederationAuthenticationConfiguration", proxyBeanMethods = false)
+class WsFederationAuthenticationConfiguration {
 
     @Configuration(value = "WsFederationAuthenticationHelperConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class WsFederationAuthenticationHelperConfiguration {
+    static class WsFederationAuthenticationHelperConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "wsFederationAuthenticationComponentSerializationPlanConfigurer")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public ComponentSerializationPlanConfigurer wsFederationAuthenticationComponentSerializationPlanConfigurer() {
+            return plan -> plan.registerSerializableClass(WsFederationCredential.class);
+        }
+        
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "wsFederationHelper")
@@ -74,7 +82,7 @@ public class WsFederationAuthenticationConfiguration {
 
     @Configuration(value = "WsFederationAuthenticationCookieConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class WsFederationAuthenticationCookieConfiguration {
+    static class WsFederationAuthenticationCookieConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "wsFederationCookieManager")
@@ -89,7 +97,7 @@ public class WsFederationAuthenticationConfiguration {
 
     @Configuration(value = "WsFederationAuthenticationControllerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class WsFederationAuthenticationControllerConfiguration {
+    static class WsFederationAuthenticationControllerConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public WsFederationNavigationController wsFederationNavigationController(

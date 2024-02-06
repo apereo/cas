@@ -24,7 +24,7 @@ The following items include a summary of features and technologies presented by 
 [Database](authentication/Database-Authentication.html), [X.509](authentication/X509-Authentication.html), [SPNEGO](authentication/SPNEGO-Authentication.html), 
 [JAAS](authentication/JAAS-Authentication.html), [JWT](authentication/JWT-Authentication.html), 
 [RADIUS](mfa/RADIUS-Authentication.html), [MongoDb](authentication/MongoDb-Authentication.html), etc)
-* Support for multiple protocols ([CAS](protocol/CAS-Protocol.html), [SAML v1](protocol/SAML-Protocol.html), [SAML v2](authentication/Configuring-SAML2-Authentication.html), [WS-Federation](protocol/WS-Federation-Protocol.html),
+* Support for multiple protocols ([CAS](protocol/CAS-Protocol.html), [SAML v1](protocol/SAML-v1-Protocol.html), [SAML v2](authentication/Configuring-SAML2-Authentication.html), [WS-Federation](protocol/WS-Federation-Protocol.html),
 [OAuth2](protocol/OAuth-Protocol.html), [OpenID Connect](protocol/OIDC-Protocol.html), [REST](protocol/REST-Protocol.html))
 * Support for [multifactor authentication](mfa/Configuring-Multifactor-Authentication.html) via a variety of 
 providers ([Duo Security](mfa/DuoSecurity-Authentication.html), [FIDO2 WebAuthN](mfa/FIDO2-WebAuthn-Authentication.html), [Google Authenticator](mfa/GoogleAuthenticator-Authentication.html), [Inwebo](mfa/Inwebo-Authentication.html), etc.)
@@ -35,7 +35,7 @@ providers ([Duo Security](mfa/DuoSecurity-Authentication.html), [FIDO2 WebAuthN]
 * Manage and review [audits](audits/Audits.html) and [logs](logging/Logging.html) centrally, and publish data to a variety of downstream systems.  
 * Manage and register [client applications and services](services/Service-Management.html) with specific authentication policies.
 * [Cross-platform client support](integration/CAS-Clients.html) (Java, .NET, PHP, Perl, Apache, etc).
-* Integrations with [InCommon, Box, Office365, ServiceNow, Salesforce, Workday, WebAdvisor](integration/Configuring-SAML-SP-Integrations.html), Drupal, Blackboard, Moodle, [Google Apps](integration/Google-Apps-Integration.html), etc.
+* Built-in integrations with [many SAML2 service providers](integration/Configuring-SAML-SP-Integrations.html).
 * Support for many other types of integrations, such as [SCIM](integration/SCIM-Provisioning.html), [reCAPTCHA](integration/Configuring-Google-reCAPTCHA.html), 
   [Swagger](integration/Swagger-Integration.html), etc.
 

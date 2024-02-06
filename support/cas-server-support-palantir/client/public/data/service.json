@@ -1,8 +1,0 @@
-{
-    "@class": "org.apereo.cas.services.RegexRegisteredService",
-    "serviceId": "test",
-    "name": "sample",
-    "id": 1,
-    "theme": "twbs",
-    "evaluationOrder": 10
-}

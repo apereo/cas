@@ -1,2 +1,1 @@
-org.apereo.cas.config.OktaAuthenticationConfiguration
-org.apereo.cas.config.OktaPersonDirectoryConfiguration
+org.apereo.cas.config.CasOktaAuthenticationAutoConfiguration

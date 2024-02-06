@@ -8,6 +8,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
+import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,8 +33,7 @@ public class ValidateAccountRegistrationTokenAction extends BaseCasWebflowAction
     protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
         var accountRegTicket = (TransientSessionTicket) null;
         try {
-            val activationToken = requestContext.getRequestParameters()
-                .getRequired(AccountRegistrationUtils.REQUEST_PARAMETER_ACCOUNT_REGISTRATION_ACTIVATION_TOKEN);
+            val activationToken = WebUtils.getRequestParameterOrAttribute(requestContext, AccountRegistrationUtils.REQUEST_PARAMETER_ACCOUNT_REGISTRATION_ACTIVATION_TOKEN).orElseThrow();
             accountRegTicket = ticketRegistry.getTicket(activationToken, TransientSessionTicket.class);
             val token = accountRegTicket.getProperty(AccountRegistrationUtils.PROPERTY_ACCOUNT_REGISTRATION_ACTIVATION_TOKEN, String.class);
             val registrationRequest = accountRegistrationService.validateToken(token);

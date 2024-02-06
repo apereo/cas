@@ -1,6 +1,15 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
+import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasCoreAutoConfiguration;
+import org.apereo.cas.config.CasCoreCookieAutoConfiguration;
+import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
+import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties;
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 import org.apereo.cas.services.support.RegisteredServiceMappedRegexAttributeFilter;
@@ -12,7 +21,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,6 +29,16 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junitpioneer.jupiter.RetryingTest;
+import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.actuate.autoconfigure.endpoint.EndpointAutoConfiguration;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.annotation.Import;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -334,7 +352,7 @@ public abstract class AbstractServiceRegistryTests {
             val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), type);
 
             val provider = new PrincipalAttributeRegisteredServiceUsernameProvider();
-            provider.setCanonicalizationMode(CaseCanonicalizationMode.UPPER.name());
+            provider.setCanonicalizationMode("UPPER");
             provider.setUsernameAttribute("cn");
             r.setUsernameAttributeProvider(provider);
             val r2 = serviceRegistry.save(r);
@@ -634,6 +652,30 @@ public abstract class AbstractServiceRegistryTests {
 
     protected Stream<Class<? extends BaseWebBasedRegisteredService>> getRegisteredServiceTypes() {
         return Stream.of(CasRegisteredService.class);
+    }
+
+    @ImportAutoConfiguration({
+        MailSenderAutoConfiguration.class,
+        AopAutoConfiguration.class,
+        WebMvcAutoConfiguration.class,
+        RefreshAutoConfiguration.class,
+        ServletWebServerFactoryAutoConfiguration.class,
+        DispatcherServletAutoConfiguration.class,
+        EndpointAutoConfiguration.class
+    })
+    @SpringBootConfiguration
+    @Import({
+        CasCoreUtilAutoConfiguration.class,
+        CasCoreServicesAutoConfiguration.class,
+        CasCoreNotificationsAutoConfiguration.class,
+        CasCoreWebAutoConfiguration.class,
+        CasCoreAuthenticationAutoConfiguration.class,
+        CasCoreAutoConfiguration.class,
+        CasCoreTicketsAutoConfiguration.class,
+        CasCoreLogoutAutoConfiguration.class,
+        CasCoreCookieAutoConfiguration.class
+    })
+    public static class SharedTestConfiguration {
     }
 
 }

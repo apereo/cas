@@ -1,19 +1,20 @@
 package org.apereo.cas.ticket.factory;
 
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceServiceTicketExpirationPolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.ticket.ProxyGrantingTicketIssuerTicket;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.ServiceTicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-
+import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
+import org.apereo.cas.ticket.proxy.ProxyTicket;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
 import java.io.Serial;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -37,8 +38,7 @@ class DefaultServiceTicketFactoryTests extends BaseTicketFactoryTests {
     @Test
     void verifyCustomExpirationPolicy() throws Throwable {
         val svc = RegisteredServiceTestUtils.getRegisteredService("customExpirationPolicy", CasRegisteredService.class);
-        svc.setServiceTicketExpirationPolicy(
-            new DefaultRegisteredServiceServiceTicketExpirationPolicy(10, "666"));
+        svc.setServiceTicketExpirationPolicy(new DefaultRegisteredServiceServiceTicketExpirationPolicy(10, "666"));
         servicesManager.save(svc);
 
         val factory = (ServiceTicketFactory) this.ticketFactory.get(ServiceTicket.class);
@@ -60,6 +60,24 @@ class DefaultServiceTicketFactoryTests extends BaseTicketFactoryTests {
             true, ServiceTicket.class);
         assertNotNull(serviceTicket);
         assertEquals(10, serviceTicket.getExpirationPolicy().getTimeToLive());
+    }
+
+    @Test
+    void verifyCompactServiceTicketWithoutTgt() throws Throwable {
+        val svc = RegisteredServiceTestUtils.getRegisteredService("defaultExpirationPolicy", CasRegisteredService.class);
+        servicesManager.save(svc);
+        val factory = (ServiceTicketFactory) ticketFactory.get(ServiceTicket.class);
+        assertThrows(ClassCastException.class,
+            () -> factory.create(RegisteredServiceTestUtils.getService("defaultExpirationPolicy"),
+                CoreAuthenticationTestUtils.getAuthentication(), true, ProxyTicket.class));
+        val serviceTicket = factory.create(RegisteredServiceTestUtils.getService("defaultExpirationPolicy"),
+            CoreAuthenticationTestUtils.getAuthentication(), true, ServiceTicket.class);
+        assertTrue(serviceTicket.isStateless());
+        assertNotNull(serviceTicket.getAuthentication());
+        val pgtIssuer = (ProxyGrantingTicketIssuerTicket) serviceTicket;
+        val pgt = pgtIssuer.grantProxyGrantingTicket("PGT-123", CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
+        assertNotNull(pgt);
+        assertNotNull(pgt.getAuthentication());
     }
 
     abstract static class BaseMockTicketServiceTicket implements TicketGrantingTicket {

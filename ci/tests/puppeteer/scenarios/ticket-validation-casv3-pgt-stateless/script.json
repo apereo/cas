@@ -1,0 +1,20 @@
+{
+  "dependencies": "stateless-ticket-registry",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    "--cas.audit.slf4j.use-single-line=true",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
+    "--cas.ticket.st.time-to-kill-in-seconds=60",
+    "--cas.authn.accept.name=STATIC",
+
+    "--cas.authn.attribute-repository.stub.attributes.uid=casuser",
+    "--cas.authn.attribute-repository.stub.attributes.lastname=User",
+    "--cas.authn.attribute-repository.stub.attributes.firstname=CAS",
+    "--cas.authn.attribute-repository.stub.attributes.phone=13477464523",
+    "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org"
+  ]
+}

@@ -31,8 +31,8 @@ async function fetchRefreshToken(page, clientId, redirectUrl) {
     await cas.doPost(accessTokenUrl, "", {"Content-Type": "application/json"},
         (res) => {
             
-            assert(res.data.access_token !== null);
-            assert(res.data.refresh_token !== null);
+            assert(res.data.access_token !== undefined);
+            assert(res.data.refresh_token !== undefined);
 
             accessToken = res.data.access_token;
             refreshToken = res.data.refresh_token;
@@ -44,8 +44,8 @@ async function fetchRefreshToken(page, clientId, redirectUrl) {
             throw `Operation failed to obtain access token: ${error}`;
         });
 
-    assert(accessToken !== null, "Access Token cannot be null");
-    assert(refreshToken !== null, "Refresh Token cannot be null");
+    assert(accessToken !== undefined, "Access Token cannot be null");
+    assert(refreshToken !== undefined, "Refresh Token cannot be null");
     return refreshToken;
 }
 
@@ -54,7 +54,7 @@ async function exchangeToken(refreshToken, clientId, successHandler, errorHandle
     accessTokenParams += `&grant_type=refresh_token&refresh_token=${refreshToken}`;
 
     const accessTokenUrl = `https://localhost:8443/cas/oidc/token?${accessTokenParams}`;
-    cas.log(`Calling endpoint: ${accessTokenUrl}`);
+    await cas.log(`Calling endpoint: ${accessTokenUrl}`);
 
     const value = `${clientId}:secret`;
     const buff = Buffer.alloc(value.length, value);
@@ -112,7 +112,7 @@ async function exchangeToken(refreshToken, clientId, successHandler, errorHandle
             throw `Operation should not fail but instead produced: ${error}`;
         });
 
-    cas.log("Let's wait 5 seconds for the TGT to expire, RTs should be still alive");
+    await cas.log("Let's wait 5 seconds for the TGT to expire, RTs should be still alive");
     await page.waitForTimeout(5000);
 
     await exchangeToken(refreshToken1, "client",

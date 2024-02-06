@@ -6,11 +6,11 @@ import org.apereo.cas.gauth.credential.GoogleAuthenticatorTokenCredential;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
@@ -21,8 +21,8 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.GoogleAuthenticator)
-@AutoConfiguration
-public class GoogleAuthenticatorAuthenticationComponentSerializationConfiguration {
+@Configuration(value = "GoogleAuthenticatorAuthenticationComponentSerializationConfiguration", proxyBeanMethods = false)
+class GoogleAuthenticatorAuthenticationComponentSerializationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "gauthComponentSerializationPlanConfigurer")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

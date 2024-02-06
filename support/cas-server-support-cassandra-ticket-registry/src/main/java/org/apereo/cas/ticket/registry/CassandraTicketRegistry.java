@@ -91,7 +91,8 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
             return null;
         }
 
-        val object = deserialize(holder.iterator().next());
+        val document = holder.iterator().next();
+        val object = deserializeTicket(document.getData(), document.getType());
         val result = decodeTicket(object);
         return FunctionUtils.doAndReturn(result != null && predicate.test(result), () -> result, () -> {
             LOGGER.trace("The condition enforced by the predicate [{}] cannot successfully accept/test the ticket id [{}]", encodedTicketId,
@@ -101,14 +102,13 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
     }
 
     @Override
-    public void addTicketInternal(final Ticket ticket) throws Exception {
-        addTicketToCassandra(ticket, true);
+    public Ticket addSingleTicket(final Ticket ticket) throws Exception {
+        return addTicketToCassandra(ticket, true);
     }
 
     @Override
     public Ticket updateTicket(final Ticket ticket) throws Exception {
-        addTicketToCassandra(ticket, false);
-        return ticket;
+        return addTicketToCassandra(ticket, false);
     }
 
     @Override
@@ -120,7 +120,7 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
                 return results
                     .stream()
                     .map(holder -> {
-                        val result = deserialize(holder);
+                        val result = deserializeTicket(holder.getData(), holder.getType());
                         return decodeTicket(result);
                     })
                     .collect(Collectors.toSet());
@@ -170,7 +170,7 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
             .stream()
             .flatMap(this::streamCassandraTicketBy)
             .map(holder -> {
-                val result = deserialize(holder);
+                val result = deserializeTicket(holder.getData(), holder.getType());
                 return decodeTicket(result);
             });
     }
@@ -191,7 +191,7 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
             .flatMap(query -> cassandraSessionFactory.getCqlTemplate().queryForStream(query, rowMapper))
             .distinct()
             .map(holder -> {
-                val result = deserialize(holder);
+                val result = deserializeTicket(holder.getData(), holder.getType());
                 return decodeTicket(result);
             })
             .filter(ticket -> !ticket.isExpired());
@@ -207,9 +207,6 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
         createTablesIfNecessary();
     }
 
-    private Ticket deserialize(final CassandraTicketHolder holder) {
-        return ticketSerializationManager.deserializeTicket(holder.getData(), holder.getType());
-    }
 
     private Collection<CassandraTicketHolder> findCassandraTicketBy(final TicketDefinition definition) {
         return findCassandraTicketBy(definition, null);
@@ -281,7 +278,7 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
     }
 
 
-    private void addTicketToCassandra(final Ticket ticket, final boolean inserting) throws Exception {
+    private Ticket addTicketToCassandra(final Ticket ticket, final boolean inserting) throws Exception {
         LOGGER.debug("Adding ticket [{}]", ticket.getId());
         val metadata = ticketCatalog.find(ticket);
         LOGGER.trace("Located ticket definition [{}] in the ticket catalog", metadata);
@@ -330,5 +327,6 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
         LOGGER.trace("Attempting to locate ticket via query [{}]", statement.getQuery());
         cassandraSessionFactory.getCqlTemplate().execute(statement);
         LOGGER.debug("Added ticket [{}]", encTicket.getId());
+        return ticket;
     }
 }

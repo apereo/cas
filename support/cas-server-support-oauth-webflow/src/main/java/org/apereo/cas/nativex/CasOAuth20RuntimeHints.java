@@ -12,10 +12,7 @@ import org.apereo.cas.ticket.device.OAuth20DefaultDeviceToken;
 import org.apereo.cas.ticket.device.OAuth20DefaultDeviceUserCode;
 import org.apereo.cas.ticket.refreshtoken.OAuth20DefaultRefreshToken;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
-import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
-import org.springframework.aot.hint.TypeReference;
-
 import java.util.List;
 
 /**
@@ -27,28 +24,21 @@ import java.util.List;
 public class CasOAuth20RuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
-        hints.serialization()
-            .registerType(OAuthRegisteredService.class)
-            .registerType(BaseOAuth20Token.class)
-            .registerType(OAuth20DefaultAccessToken.class)
-            .registerType(OAuth20DefaultCode.class)
-            .registerType(OAuth20DefaultRefreshToken.class)
-            .registerType(OAuth20DefaultDeviceToken.class)
-            .registerType(OAuth20DefaultDeviceUserCode.class);
+        registerSerializationHints(hints,
+            OAuthRegisteredService.class,
+            BaseOAuth20Token.class,
+            OAuth20DefaultAccessToken.class,
+            OAuth20DefaultCode.class,
+            OAuth20DefaultRefreshToken.class,
+            OAuth20DefaultDeviceToken.class,
+            OAuth20DefaultDeviceUserCode.class);
 
-        List.of(
+        registerReflectionHints(hints, List.of(
             OAuthRegisteredService.class,
             OAuth20RegisteredServiceCipherExecutor.class,
             OAuth20JwtAccessTokenCipherExecutor.class,
             OAuth20RegisteredServiceJwtAccessTokenCipherExecutor.class,
             OAuth20DistributedSessionCookieCipherExecutor.class
-        ).forEach(el ->
-            hints.reflection().registerType(TypeReference.of(el),
-                MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
-                MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
-                MemberCategory.INVOKE_DECLARED_METHODS,
-                MemberCategory.INVOKE_PUBLIC_METHODS,
-                MemberCategory.DECLARED_FIELDS,
-                MemberCategory.PUBLIC_FIELDS));
+        ));
     }
 }

@@ -7,7 +7,7 @@ const assert = require("assert");
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     const service = "https://localhost:9859/anything/1";
-    await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
+    await cas.gotoLogin(page, service);
     await cas.loginWith(page);
     await page.waitForTimeout(2000);
     const ticket = await cas.assertTicketParameter(page);

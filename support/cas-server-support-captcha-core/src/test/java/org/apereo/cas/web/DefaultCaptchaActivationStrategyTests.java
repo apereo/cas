@@ -61,9 +61,9 @@ class DefaultCaptchaActivationStrategyTests {
         val servicesManager = mock(ServicesManager.class);
         val strategy = new DefaultCaptchaActivationStrategy(servicesManager);
         val context = MockRequestContext.create();
-        context.getHttpServletRequest().setRemoteAddr("185.86.151.99");
-        context.getHttpServletRequest().setLocalAddr("195.88.151.11");
-        ClientInfoHolder.setClientInfo(ClientInfo.from(context.getHttpServletRequest()));
+        context.setRemoteAddr("185.86.151.99");
+        context.setLocalAddr("195.88.151.11");
+        context.setClientInfo();
 
         val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId());

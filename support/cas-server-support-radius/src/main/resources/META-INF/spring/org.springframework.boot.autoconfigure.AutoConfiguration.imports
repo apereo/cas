@@ -1,1 +1,1 @@
-org.apereo.cas.config.RadiusConfiguration
+org.apereo.cas.config.CasRadiusAutoConfiguration

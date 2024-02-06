@@ -33,7 +33,7 @@ const assert = require("assert");
     const result = JSON.parse(body);
     await cas.log(result);
     const requestUri = result.request_uri;
-    assert(requestUri !== null);
+    assert(requestUri !== undefined);
 
     url = `${authzUrl}?client_id=client&request_uri=${requestUri}`;
     await cas.log(`Going to ${url}`);

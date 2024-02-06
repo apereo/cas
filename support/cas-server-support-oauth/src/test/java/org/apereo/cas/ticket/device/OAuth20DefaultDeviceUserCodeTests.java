@@ -22,7 +22,7 @@ class OAuth20DefaultDeviceUserCodeTests extends AbstractOAuth20Tests {
         val devCode = defaultDeviceTokenFactory.createDeviceCode(RegisteredServiceTestUtils.getService());
         assertEquals(OAuth20DeviceToken.PREFIX, devCode.getPrefix());
 
-        val uc = defaultDeviceUserCodeFactory.createDeviceUserCode(devCode);
+        val uc = defaultDeviceUserCodeFactory.createDeviceUserCode(devCode.getService());
         assertNotNull(uc);
         assertEquals(OAuth20DeviceUserCode.PREFIX, uc.getPrefix());
     }

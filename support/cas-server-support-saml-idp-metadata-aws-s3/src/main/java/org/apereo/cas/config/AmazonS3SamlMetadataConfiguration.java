@@ -7,11 +7,11 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.val;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import software.amazon.awssdk.services.s3.S3Client;
 
@@ -23,8 +23,8 @@ import software.amazon.awssdk.services.s3.S3Client;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SAML, module = "aws-s3")
-@AutoConfiguration
-public class AmazonS3SamlMetadataConfiguration {
+@Configuration(value = "AmazonS3SamlMetadataConfiguration", proxyBeanMethods = false)
+class AmazonS3SamlMetadataConfiguration {
 
     @ConditionalOnMissingBean(name = "amazonS3Client")
     @Bean

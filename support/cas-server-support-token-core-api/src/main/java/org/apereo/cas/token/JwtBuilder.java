@@ -1,6 +1,8 @@
 package org.apereo.cas.token;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
@@ -20,13 +22,16 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.JWTParser;
 import com.nimbusds.jwt.PlainJWT;
 import com.nimbusds.jwt.SignedJWT;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+import lombok.With;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.context.ApplicationContext;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
@@ -49,17 +54,28 @@ import java.util.Set;
 @RequiredArgsConstructor
 @Getter
 public class JwtBuilder {
+    /**
+     * Bean name of the builder that builds tickets as JWTs.
+     */
+    public static final String TICKET_JWT_BUILDER_BEAN_NAME = "tokenTicketJwtBuilder";
+
     private final CipherExecutor<Serializable, String> defaultTokenCipherExecutor;
 
+    private final ApplicationContext applicationContext;
+
     private final ServicesManager servicesManager;
+
+    private final PrincipalResolver principalResolver;
 
     private final RegisteredServiceCipherExecutor registeredServiceCipherExecutor;
 
     private final CasConfigurationProperties casProperties;
 
     public JwtBuilder(final CipherExecutor<Serializable, String> cipherExecutor,
-                      final ServicesManager servicesManager, final CasConfigurationProperties properties) {
-        this(cipherExecutor, servicesManager, RegisteredServiceCipherExecutor.noOp(), properties);
+                      final ApplicationContext applicationContext, final ServicesManager servicesManager,
+                      final PrincipalResolver principalResolver, final CasConfigurationProperties properties) {
+        this(cipherExecutor, applicationContext, servicesManager, principalResolver,
+            RegisteredServiceCipherExecutor.noOp(), properties);
     }
 
     /**
@@ -149,11 +165,12 @@ public class JwtBuilder {
      *
      * @param payload the payload
      * @return the jwt
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
-    public String build(final JwtRequest payload) throws Exception {
+    public String build(final JwtRequest payload) throws Throwable {
         val serviceAudience = payload.getServiceAudience();
         Objects.requireNonNull(payload.getIssuer(), "Issuer cannot be undefined");
+        Objects.requireNonNull(serviceAudience, "Audience cannot be undefined");
         val claims = new JWTClaimsSet.Builder()
             .audience(new ArrayList<>(serviceAudience))
             .issuer(payload.getIssuer())
@@ -161,7 +178,8 @@ public class JwtBuilder {
             .issueTime(payload.getIssueDate())
             .subject(payload.getSubject());
 
-        payload.getAttributes()
+        val attributes = collectClaims(payload);
+        attributes
             .entrySet()
             .stream()
             .filter(entry -> !entry.getKey().startsWith(CentralAuthenticationService.NAMESPACE))
@@ -182,9 +200,14 @@ public class JwtBuilder {
                 .map(this::locateRegisteredService)
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow(() -> UnauthorizedServiceException.denied("Unable to locate registered service via any of %s".formatted(serviceAudience))));
+                .orElseThrow(() -> {
+                    val formatted = "There is no application record registered with the CAS service registry that would match %s. "
+                        + "Review the applications registered with the CAS service registry and make sure a matching record exists for %s.";
+                    return UnauthorizedServiceException.denied(formatted.formatted(serviceAudience, serviceAudience));
+                }));
         return build(registeredService, claimsSet);
     }
+
 
     /**
      * Build JWT.
@@ -224,6 +247,10 @@ public class JwtBuilder {
     protected JWTClaimsSet finalizeClaims(final JWTClaimsSet claimsSet, final JwtRequest payload) throws Exception {
         return claimsSet;
     }
+
+    protected Map<String, List<Object>> collectClaims(final JwtRequest payload) throws Throwable {
+        return payload.getAttributes();
+    }
     
     /**
      * The type Jwt request that allows the builder to create JWTs.
@@ -232,6 +259,8 @@ public class JwtBuilder {
     @Getter
     @ToString
     @SuppressWarnings("JavaUtilDate")
+    @AllArgsConstructor
+    @With
     public static class JwtRequest {
         private final String jwtId;
 
@@ -246,10 +275,15 @@ public class JwtBuilder {
 
         private final String issuer;
 
+        private boolean resolveSubject;
+        
         @Builder.Default
         private final Map<String, List<Object>> attributes = new LinkedHashMap<>();
 
         @Builder.Default
         private Optional<RegisteredService> registeredService = Optional.empty();
+
+        @Builder.Default
+        private Optional<Service> service = Optional.empty();
     }
 }

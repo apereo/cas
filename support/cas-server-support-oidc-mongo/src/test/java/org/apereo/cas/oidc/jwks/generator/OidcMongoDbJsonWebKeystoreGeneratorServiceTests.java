@@ -1,18 +1,15 @@
 package org.apereo.cas.oidc.jwks.generator;
 
-import org.apereo.cas.config.OidcJwksMongoDbConfiguration;
+import org.apereo.cas.config.CasOidcJwksMongoDbAutoConfiguration;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
-
 import java.nio.charset.StandardCharsets;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -33,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.oidc.jwks.mongo.drop-collection=true"
 })
 @EnabledIfListeningOnPort(port = 27017)
-@Import(OidcJwksMongoDbConfiguration.class)
+@Import(CasOidcJwksMongoDbAutoConfiguration.class)
 class OidcMongoDbJsonWebKeystoreGeneratorServiceTests extends AbstractOidcTests {
     @Test
     void verifyOperation() throws Throwable {

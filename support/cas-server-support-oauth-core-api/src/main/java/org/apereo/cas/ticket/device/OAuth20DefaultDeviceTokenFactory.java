@@ -26,14 +26,8 @@ public class OAuth20DefaultDeviceTokenFactory implements OAuth20DeviceTokenFacto
     @Getter
     protected final ExpirationPolicyBuilder<OAuth20DeviceToken> expirationPolicyBuilder;
 
-    /**
-     * Length of the generated user code.
-     */
     protected final int userCodeLength;
 
-    /**
-     * Services manager.
-     */
     protected final ServicesManager servicesManager;
 
     @Override

@@ -8,6 +8,6 @@ const cas = require("../../cas.js");
     await cas.gotoLogin(page);
     await cas.assertVisibility(page, "#recaptchaV3Section");
     const grecaptcha = await page.$("#g-recaptcha-token");
-    assert(await grecaptcha !== null);
+    assert(await grecaptcha !== undefined);
     await browser.close();
 })();

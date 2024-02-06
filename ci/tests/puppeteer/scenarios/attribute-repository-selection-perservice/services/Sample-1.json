@@ -1,0 +1,14 @@
+{
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://localhost:9859/anything/1",
+  "name" : "Sample",
+  "id" : 1,
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy",
+    "authorizedToReleaseAuthenticationAttributes": false,
+    "principalAttributesRepository" : {
+      "@class" : "org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository",
+      "attributeRepositoryIds": ["java.util.HashSet", [ "MyJson" ]]
+    }
+  }
+}

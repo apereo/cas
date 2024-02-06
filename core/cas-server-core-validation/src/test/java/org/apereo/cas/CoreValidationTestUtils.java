@@ -43,7 +43,7 @@ public class CoreValidationTestUtils {
         Arrays.stream(extraPrincipals).map(CoreAuthenticationTestUtils::getAuthentication).forEach(list::add);
         return new ImmutableAssertion(CoreAuthenticationTestUtils.getAuthentication(),
             CoreAuthenticationTestUtils.getAuthentication(),
-            list, fromNewLogin, RegisteredServiceTestUtils.getService(), registeredService, Map.of());
+            list, fromNewLogin, false, RegisteredServiceTestUtils.getService(), registeredService, Map.of());
     }
 
     public static Assertion getAssertion(final RegisteredService registeredService) {

@@ -40,7 +40,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = BaseQRAuthenticationTokenValidatorServiceTests.SharedTestConfiguration.class)
 class QRAuthenticationChannelControllerTests {
     @Autowired
-    @Qualifier("tokenTicketJwtBuilder")
+    @Qualifier(JwtBuilder.TICKET_JWT_BUILDER_BEAN_NAME)
     private JwtBuilder jwtBuilder;
 
     @Autowired

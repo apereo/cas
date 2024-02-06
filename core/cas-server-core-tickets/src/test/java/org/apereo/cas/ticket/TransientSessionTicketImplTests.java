@@ -23,11 +23,11 @@ class TransientSessionTicketImplTests {
     void verifyOperation() throws Throwable {
         val ticket = new TransientSessionTicketImpl("TST-1", NeverExpiresExpirationPolicy.INSTANCE,
             CoreAuthenticationTestUtils.getService(), Map.of("key", "value"));
-        ticket.put("key2", "value2");
-        ticket.putAll(Map.of("key3", "value3"));
-        assertTrue(ticket.contains("key2"));
-        assertNull(ticket.get("invalid", String.class));
-        assertNotNull(ticket.get("key3", String.class));
-        assertNotNull(ticket.get("something", String.class, "default"));
+        ticket.putProperty("key2", "value2");
+        ticket.putAllProperties(Map.of("key3", "value3"));
+        assertTrue(ticket.containsProperty("key2"));
+        assertNull(ticket.getProperty("invalid", String.class));
+        assertNotNull(ticket.getProperty("key3", String.class));
+        assertNotNull(ticket.getProperty("something", String.class, "default"));
     }
 }

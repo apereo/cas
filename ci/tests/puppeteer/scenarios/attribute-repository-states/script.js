@@ -6,7 +6,7 @@ async function returnCasResponse(page, appId) {
     await cas.log(`Producing CAS response for appId ${appId}`);
     await cas.gotoLogout(page);
     const service = `http://localhost:9889/anything/${appId}`;
-    await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
+    await cas.gotoLogin(page, service);
     await cas.loginWith(page);
     const ticket = await cas.assertTicketParameter(page);
     const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);

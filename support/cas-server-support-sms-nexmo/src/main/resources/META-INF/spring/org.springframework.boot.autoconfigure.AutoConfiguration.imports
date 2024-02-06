@@ -1,1 +1,1 @@
-org.apereo.cas.config.NexmoSmsConfiguration
+org.apereo.cas.config.CasNexmoSmsAutoConfiguration

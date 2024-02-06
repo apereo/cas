@@ -13,7 +13,7 @@ public interface ThrottledSubmissionsStore<T extends ThrottledSubmission> {
     /**
      * Default bean name.
      */
-    String BEAN_NAME = "throttleSubmissionMap";
+    String BEAN_NAME = "throttleSubmissionStore";
 
     /**
      * Remove element passing the given condition.

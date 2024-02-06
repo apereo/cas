@@ -79,8 +79,8 @@ public class ProxyController extends AbstractDelegateController {
             return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_REQUEST_PROXY, null, request);
         }
         try {
-            val proxyTicket = this.centralAuthenticationService.grantProxyTicket(proxyGrantingTicket, targetService);
-            val model = CollectionUtils.wrap(CasProtocolConstants.PARAMETER_TICKET, proxyTicket);
+            val proxyTicket = centralAuthenticationService.grantProxyTicket(proxyGrantingTicket, targetService);
+            val model = CollectionUtils.wrap(CasProtocolConstants.PARAMETER_TICKET, proxyTicket.getId());
             return new ModelAndView(this.successView, (Map) model);
         } catch (final AbstractTicketException e) {
             return generateErrorView(e.getCode(), new Object[]{proxyGrantingTicket}, request);
@@ -89,24 +89,10 @@ public class ProxyController extends AbstractDelegateController {
         }
     }
 
-    /**
-     * Gets the target service from the request.
-     *
-     * @param request the request
-     * @return the target service
-     */
     private Service getTargetService(final HttpServletRequest request) {
         return this.webApplicationServiceFactory.createService(request);
     }
 
-    /**
-     * Generate error view stuffing the code and description
-     * of the error into the model. View name is set to {@link #failureView}.
-     *
-     * @param code the code
-     * @param args the msg args
-     * @return the model and view
-     */
     private ModelAndView generateErrorView(final String code, final Object[] args, final HttpServletRequest request) {
         val modelAndView = new ModelAndView(this.failureView);
         modelAndView.addObject("code", StringEscapeUtils.escapeHtml4(code));

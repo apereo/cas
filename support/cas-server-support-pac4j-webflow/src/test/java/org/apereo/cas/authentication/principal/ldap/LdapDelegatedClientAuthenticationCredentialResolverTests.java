@@ -3,7 +3,7 @@ package org.apereo.cas.authentication.principal.ldap;
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.DelegatedClientAuthenticationCredentialResolver;
-import org.apereo.cas.config.DelegatedAuthenticationProfileSelectionConfiguration;
+import org.apereo.cas.config.CasDelegatedAuthenticationAutoConfiguration;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
@@ -22,13 +22,9 @@ import org.pac4j.core.credentials.TokenCredentials;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.ExternalContextHolder;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.execution.RequestContextHolder;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import static org.junit.jupiter.api.Assertions.*;
@@ -42,9 +38,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Ldap")
 @EnabledIfListeningOnPort(port = 10389)
 @SpringBootTest(classes = {
-    DelegatedAuthenticationProfileSelectionConfiguration.class,
+    CasDelegatedAuthenticationAutoConfiguration.class,
     BaseDelegatedAuthenticationTests.SharedTestConfiguration.class
 }, properties = {
+    "spring.main.allow-bean-definition-overriding=true",
     "cas.authn.pac4j.profile-selection.ldap.ldap-url=ldap://localhost:10389",
     "cas.authn.pac4j.profile-selection.ldap.base-dn=ou=people,dc=example,dc=org",
     "cas.authn.pac4j.profile-selection.ldap.search-filter=uid={0}",
@@ -62,6 +59,9 @@ class LdapDelegatedClientAuthenticationCredentialResolverTests {
     @Qualifier("ldapDelegatedClientAuthenticationCredentialResolver")
     private DelegatedClientAuthenticationCredentialResolver ldapDelegatedClientAuthenticationCredentialResolver;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @BeforeAll
     public static void bootstrap() throws Throwable {
         ClientInfoHolder.setClientInfo(ClientInfo.from(new MockHttpServletRequest()));
@@ -76,13 +76,9 @@ class LdapDelegatedClientAuthenticationCredentialResolverTests {
 
     @Test
     void verifyOperation() throws Throwable {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        request.setAttribute(Credentials.class.getName(), "caspac4j");
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
+        val context = MockRequestContext.create(applicationContext);
+        context.getHttpServletRequest().setAttribute(Credentials.class.getName(), "caspac4j");
+        
         val credentials = new TokenCredentials(USER);
         val clientCredential = new ClientCredential(credentials, "FacebookClient");
         assertTrue(ldapDelegatedClientAuthenticationCredentialResolver.supports(clientCredential));

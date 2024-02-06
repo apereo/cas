@@ -43,7 +43,7 @@ class QRAuthenticationTokenAuthenticationHandlerTests {
     private AuthenticationHandler qrAuthenticationTokenAuthenticationHandler;
 
     @Autowired
-    @Qualifier("tokenTicketJwtBuilder")
+    @Qualifier(JwtBuilder.TICKET_JWT_BUILDER_BEAN_NAME)
     private JwtBuilder jwtBuilder;
 
     @Autowired

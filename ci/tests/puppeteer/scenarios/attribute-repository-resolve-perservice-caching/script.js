@@ -7,8 +7,8 @@ const path = require("path");
 (async () => {
     await cas.doGet("https://localhost:8443/cas/actuator/resolveAttributes/casuser",
         async (res) => {
-            assert(res.data.uid !== null);
-            assert(res.data.attributes !== null);
+            assert(res.data.uid !== undefined);
+            assert(res.data.attributes !== undefined);
             assert(Object.keys(res.data.attributes).length === 0);
         }, async (error) => {
             throw error;
@@ -17,7 +17,7 @@ const path = require("path");
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     const service = "https://apereo.github.io";
-    await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
+    await cas.gotoLogin(page, service);
 
     await cas.loginWith(page);
     const ticket = await cas.assertTicketParameter(page);
@@ -27,7 +27,7 @@ const path = require("path");
     assert(json.lastName[0] === "Johnson");
     assert(json.employeeNumber[0] === "123456");
     const originalFirstName = json.firstName[0];
-    assert(originalFirstName !== null);
+    assert(originalFirstName !== undefined);
     assert(json.displayName === undefined);
 
     const newFirstName = (Math.random() + 1).toString(36).substring(4);

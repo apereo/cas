@@ -25,7 +25,7 @@ public class NonInflatingSaml20ObjectBuilder extends AbstractSaml20ObjectBuilder
 
     @Override
     protected String inflateAuthnRequest(final byte[] decodedBytes) {
-        val inflated = CompressionUtils.decodeByteArrayToString(decodedBytes);
+        val inflated = CompressionUtils.inflateToString(decodedBytes);
         if (!StringUtils.isEmpty(inflated)) {
             return inflated;
         }

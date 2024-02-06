@@ -9,10 +9,8 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
 import javax.security.auth.login.FailedLoginException;
 
 /**
@@ -50,10 +48,11 @@ public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAu
 
         LOGGER.debug("Attempting to authenticate [{}]", httpCredential);
         val callbackUrl = httpCredential.getCallbackUrl();
-        if (!this.httpClient.isValidEndPoint(callbackUrl)) {
+        if (!httpClient.isValidEndPoint(callbackUrl)) {
             throw new FailedLoginException(callbackUrl.toExternalForm() + " sent an unacceptable response status code");
         }
-        val proxyPrincipal = principalFactory.createPrincipal(httpCredential.getId());
+        val principalId = httpCredential.getCredentialMetadata().getId();
+        val proxyPrincipal = principalFactory.createPrincipal(principalId);
         return new DefaultAuthenticationHandlerExecutionResult(this, httpCredential, proxyPrincipal);
     }
 

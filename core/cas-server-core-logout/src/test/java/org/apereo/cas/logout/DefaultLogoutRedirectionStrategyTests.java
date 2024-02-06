@@ -1,19 +1,30 @@
 package org.apereo.cas.logout;
 
 import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasCoreAutoConfiguration;
+import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
+import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.MockRequestContext;
-import org.apereo.cas.web.support.DefaultArgumentExtractor;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * This is {@link DefaultLogoutRedirectionStrategyTests}.
@@ -30,99 +41,92 @@ class DefaultLogoutRedirectionStrategyTests {
         return context;
     }
 
-    @Test
-    void verifyNoRedirect() throws Throwable {
-        val context = getMockRequestContext();
-        val props = new CasConfigurationProperties();
-        props.getLogout().setFollowServiceRedirects(true);
+    @SpringBootTest(classes = {
+        RefreshAutoConfiguration.class,
+        WebMvcAutoConfiguration.class,
+        CasCoreLogoutAutoConfiguration.class,
+        CasCoreTicketsAutoConfiguration.class,
+        CasCoreServicesAutoConfiguration.class,
+        CasCoreWebAutoConfiguration.class,
+        CasCoreAuthenticationAutoConfiguration.class,
+        CasCoreNotificationsAutoConfiguration.class,
+        CasCoreAutoConfiguration.class
+    })
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    static class BaseTests {
+        @Autowired
+        @Qualifier("defaultLogoutRedirectionStrategy")
+        protected LogoutRedirectionStrategy defaultLogoutRedirectionStrategy;
 
-        val extractor = new DefaultArgumentExtractor(new LogoutWebApplicationServiceFactory(props.getLogout()));
-        val strategy = new DefaultLogoutRedirectionStrategy(extractor, props,
-            mock(SingleLogoutServiceLogoutUrlBuilder.class), new WebApplicationServiceFactory());
-
-        assertTrue(strategy.supports(context.getHttpServletRequest(), context.getHttpServletResponse()));
-        var response = strategy.handle(context.getHttpServletRequest(), context.getHttpServletResponse());
-        assertTrue(response.getLogoutRedirectUrl().isEmpty());
-
-        WebUtils.putLogoutRedirectUrl(context.getHttpServletRequest(), "https://github.com/apereo/cas");
-        response = strategy.handle(context.getHttpServletRequest(), context.getHttpServletResponse());
-        assertFalse(response.getLogoutRedirectUrl().isEmpty());
+        @Autowired
+        @Qualifier(ServicesManager.BEAN_NAME)
+        protected ServicesManager servicesManager;
     }
 
-    @Test
-    void verifyRedirectToTrustedUrl() throws Throwable {
-        val context = getMockRequestContext();
-        WebUtils.putLogoutRedirectUrl(context.getHttpServletRequest(), "https://github.com/apereo/cas");
-        val props = new CasConfigurationProperties();
-        props.getLogout().setFollowServiceRedirects(true);
-        val extractor = new DefaultArgumentExtractor(new LogoutWebApplicationServiceFactory(props.getLogout()));
-        val strategy = new DefaultLogoutRedirectionStrategy(extractor, props,
-            mock(SingleLogoutServiceLogoutUrlBuilder.class), new WebApplicationServiceFactory());
-        var response = strategy.handle(context.getHttpServletRequest(), context.getHttpServletResponse());
-        assertFalse(response.getLogoutRedirectUrl().isEmpty());
+    @Nested
+    @TestPropertySource(properties = "cas.logout.follow-service-redirects=true")
+    class NoRedirectTests extends BaseTests {
+        @Test
+        void verifyNoRedirect() throws Throwable {
+            val context = getMockRequestContext();
+            assertTrue(defaultLogoutRedirectionStrategy.supports(context.getHttpServletRequest(), context.getHttpServletResponse()));
+            var response = defaultLogoutRedirectionStrategy.handle(context.getHttpServletRequest(), context.getHttpServletResponse());
+            assertTrue(response.getLogoutRedirectUrl().isEmpty());
+
+            WebUtils.putLogoutRedirectUrl(context.getHttpServletRequest(), "https://github.com/apereo/cas");
+            response = defaultLogoutRedirectionStrategy.handle(context.getHttpServletRequest(), context.getHttpServletResponse());
+            assertFalse(response.getLogoutRedirectUrl().isEmpty());
+            assertEquals("https://github.com/apereo/cas", response.getLogoutRedirectUrl().get());
+        }
     }
 
-    @Test
-    void verifyRedirectToService() throws Throwable {
-        val props = new CasConfigurationProperties();
-        props.getLogout().setFollowServiceRedirects(true).setRedirectParameter(List.of("targetParam"));
-        val context = getMockRequestContext();
-        context.setParameter("targetParam", "https://github.com/apereo/cas");
-
-        val extractor = new DefaultArgumentExtractor(new LogoutWebApplicationServiceFactory(props.getLogout()));
-        val logoutUrlBuilder = mock(SingleLogoutServiceLogoutUrlBuilder.class);
-        when(logoutUrlBuilder.isServiceAuthorized(any(WebApplicationService.class), any(), any())).thenReturn(Boolean.TRUE);
-        val strategy = new DefaultLogoutRedirectionStrategy(extractor, props, logoutUrlBuilder,
-            new WebApplicationServiceFactory());
-        var response = strategy.handle(context.getHttpServletRequest(), context.getHttpServletResponse());
-        assertFalse(response.getLogoutRedirectUrl().isEmpty());
+    @Nested
+    @TestPropertySource(properties = "cas.logout.follow-service-redirects=true")
+    class RedirectTests extends BaseTests {
+        @Test
+        void verifyRedirectToTrustedUrl() throws Throwable {
+            val context = getMockRequestContext();
+            WebUtils.putLogoutRedirectUrl(context.getHttpServletRequest(), "https://github.com/apereo/cas");
+            var response = defaultLogoutRedirectionStrategy.handle(context.getHttpServletRequest(), context.getHttpServletResponse());
+            assertFalse(response.getLogoutRedirectUrl().isEmpty());
+            assertEquals("https://github.com/apereo/cas", response.getLogoutRedirectUrl().get());
+        }
     }
 
-    @Test
-    void verifyRedirectToDefaultServiceInConfig() throws Throwable {
-        val props = new CasConfigurationProperties();
-        props.getView().setDefaultRedirectUrl("https://google.com");
-        props.getLogout().setFollowServiceRedirects(true);
-        val context = getMockRequestContext();
-        val extractor = new DefaultArgumentExtractor(new LogoutWebApplicationServiceFactory(props.getLogout()));
-        val logoutUrlBuilder = mock(SingleLogoutServiceLogoutUrlBuilder.class);
-        when(logoutUrlBuilder.isServiceAuthorized(any(WebApplicationService.class), any(), any())).thenReturn(Boolean.TRUE);
-        val strategy = new DefaultLogoutRedirectionStrategy(extractor, props, logoutUrlBuilder,
-            new WebApplicationServiceFactory());
-        var response = strategy.handle(context.getHttpServletRequest(), context.getHttpServletResponse());
-        assertFalse(response.getLogoutRedirectUrl().isEmpty());
+    @Nested
+    @TestPropertySource(properties = {
+        "cas.logout.follow-service-redirects=true",
+        "cas.logout.redirect-parameter=targetParam"
+    })
+    class RedirectToServiceTests extends BaseTests {
+        @Test
+        void verifyRedirectToService() throws Throwable {
+            val context = getMockRequestContext();
+            context.setParameter("targetParam", "https://github.com/apereo/cas");
+
+            var response = defaultLogoutRedirectionStrategy.handle(context.getHttpServletRequest(), context.getHttpServletResponse());
+            assertTrue(response.getLogoutRedirectUrl().isEmpty());
+
+            servicesManager.save(RegisteredServiceTestUtils.getRegisteredService("https://github.com/apereo/cas"));
+            response = defaultLogoutRedirectionStrategy.handle(context.getHttpServletRequest(), context.getHttpServletResponse());
+            assertFalse(response.getLogoutRedirectUrl().isEmpty());
+            assertEquals("https://github.com/apereo/cas", response.getLogoutRedirectUrl().get());
+        }
     }
 
-    @Test
-    void verifyRedirectToServiceDisabledInConfig() throws Throwable {
-        val props = new CasConfigurationProperties();
-        props.getLogout().setFollowServiceRedirects(false).setRedirectParameter(List.of("targetParam"));
-        val context = getMockRequestContext();
-        context.setParameter("targetParam", "https://github.com/apereo/cas");
-
-        val extractor = new DefaultArgumentExtractor(new LogoutWebApplicationServiceFactory(props.getLogout()));
-        val logoutUrlBuilder = mock(SingleLogoutServiceLogoutUrlBuilder.class);
-        when(logoutUrlBuilder.isServiceAuthorized(any(WebApplicationService.class), any(), any())).thenReturn(Boolean.TRUE);
-        val strategy = new DefaultLogoutRedirectionStrategy(extractor, props, logoutUrlBuilder,
-            new WebApplicationServiceFactory());
-        var response = strategy.handle(context.getHttpServletRequest(), context.getHttpServletResponse());
-        assertFalse(response.getLogoutRedirectUrl().isPresent());
-    }
-
-    @Test
-    void verifyRedirectToUnauthzService() throws Throwable {
-        val props = new CasConfigurationProperties();
-        props.getLogout().setFollowServiceRedirects(true).setRedirectParameter(List.of("targetParam"));
-
-        val context = getMockRequestContext();
-        context.setParameter("targetParam", "https://github.com/apereo/cas");
-
-        val logoutUrlBuilder = mock(SingleLogoutServiceLogoutUrlBuilder.class);
-        val extractor = new DefaultArgumentExtractor(new LogoutWebApplicationServiceFactory(props.getLogout()));
-        val strategy = new DefaultLogoutRedirectionStrategy(extractor, props, logoutUrlBuilder,
-            new WebApplicationServiceFactory());
-        when(logoutUrlBuilder.isServiceAuthorized(any(WebApplicationService.class), any(), any())).thenReturn(Boolean.FALSE);
-        var response = strategy.handle(context.getHttpServletRequest(), context.getHttpServletResponse());
-        assertFalse(response.getLogoutRedirectUrl().isPresent());
+    @Nested
+    @TestPropertySource(properties = {
+        "cas.logout.follow-service-redirects=true",
+        "cas.view.default-redirect-url=https://google.com"
+    })
+    class DefaultServiceTests extends BaseTests {
+        @Test
+        void verifyRedirectToDefaultServiceInConfig() throws Throwable {
+            val context = getMockRequestContext();
+            servicesManager.save(RegisteredServiceTestUtils.getRegisteredService("https://google.com"));
+            val response = defaultLogoutRedirectionStrategy.handle(context.getHttpServletRequest(), context.getHttpServletResponse());
+            assertFalse(response.getLogoutRedirectUrl().isEmpty());
+            assertEquals("https://google.com", response.getLogoutRedirectUrl().get());
+        }
     }
 }

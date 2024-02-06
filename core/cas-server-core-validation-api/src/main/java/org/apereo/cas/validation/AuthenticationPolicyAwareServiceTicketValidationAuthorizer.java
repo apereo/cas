@@ -9,6 +9,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,11 +45,13 @@ public class AuthenticationPolicyAwareServiceTicketValidationAuthorizer implemen
         val primaryAuthentication = assertion.getPrimaryAuthentication();
         val attributes = primaryAuthentication.getAttributes();
         if (!attributes.containsKey(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS)) {
+            LOGGER.warn("No successful authentication handlers are recorded for the authentication attempt");
             throw UnauthorizedServiceException.denied("Unauthorized: %s".formatted(service.getId()));
         }
         val successfulHandlerNames = CollectionUtils.toCollection(attributes.get(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS));
         val assertedHandlers = authenticationEventExecutionPlan.getAuthenticationHandlers()
             .stream()
+            .filter(BeanSupplier::isNotProxy)
             .filter(handler -> successfulHandlerNames.contains(handler.getName()))
             .collect(Collectors.toSet());
 

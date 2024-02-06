@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 
 import java.io.Serial;
 
@@ -27,6 +28,7 @@ import java.io.Serial;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @ToString
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+@Accessors(chain = true)
 public class DefaultRegisteredServiceOAuthCodeExpirationPolicy implements RegisteredServiceOAuthCodeExpirationPolicy {
     @Serial
     private static final long serialVersionUID = 8435436756392637728L;

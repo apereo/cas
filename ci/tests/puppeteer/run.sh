@@ -143,6 +143,12 @@ while (( "$#" )); do
     BUILDFLAGS="${BUILDFLAGS} --offline"
     shift 1;
     ;;
+  --hol|-hol)
+    export HEADLESS="true"
+    BUILDFLAGS="${BUILDFLAGS} --offline"
+    DISABLE_LINTER="true"
+    shift 1;
+    ;;
   --ho|-ho)
     export HEADLESS="true"
     BUILDFLAGS="${BUILDFLAGS} --offline"
@@ -151,6 +157,7 @@ while (( "$#" )); do
   --hr|-hr)
     export HEADLESS="true"
     RERUN="true"
+    DISABLE_LINTER="true"
     shift 1;
     ;;
   --hd|--hdo)
@@ -170,14 +177,7 @@ while (( "$#" )); do
     BUILDFLAGS="${BUILDFLAGS} --offline"
     shift 1;
     ;;
-  --hbdo)
-    export HEADLESS="true"
-    REBUILD="true"
-    DEBUG="true"
-    BUILDFLAGS="${BUILDFLAGS} --offline"
-    shift 1;
-    ;;
-  --hbod|-hbod)
+  --hbod|-hbod|--hbdo)
     export HEADLESS="true"
     REBUILD="true"
     BUILDFLAGS="${BUILDFLAGS} --offline"
@@ -196,6 +196,7 @@ while (( "$#" )); do
     ;;
   --rerun|--resume|--r)
     RERUN="true"
+    DISABLE_LINTER="true"
     shift 1;
     ;;
   --bogy|--boyd|--body)
@@ -219,7 +220,7 @@ while (( "$#" )); do
     export HEADLESS="true"
     shift 1;
     ;;
-  --nolint|--no-lint)
+  --nolint|--no-lint|--nol)
     DISABLE_LINTER="true"
     shift 1;
     ;;
@@ -306,7 +307,7 @@ fi
 scenarioName=${scenario##*/}
 enabled=$(jq -j '.enabled' "${config}")
 if [[ "${enabled}" == "false" ]]; then
-  printyellow "\nTest scenario ${scenarioName} is not enabled. \nReview the scenario configuration at ${config} and re-enable the test."
+  printyellow "Test scenario ${scenarioName} is not enabled. \nReview the scenario configuration at ${config} and re-enable the test."
   exit 0
 fi
 

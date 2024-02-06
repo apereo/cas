@@ -1,7 +1,7 @@
 package org.apereo.cas.validation;
 
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -49,17 +49,14 @@ public class ImmutableAssertion implements Assertion {
     @JsonProperty
     private final List<Authentication> chainedAuthentications;
 
-    /**
-     * Was this the result of a new login.
-     */
     @JsonProperty
     private final boolean fromNewLogin;
 
-    /**
-     * The service we are asserting this ticket for.
-     */
     @JsonProperty
-    private final WebApplicationService service;
+    private final boolean stateless;
+
+    @JsonProperty
+    private final Service service;
 
     @JsonProperty
     private final RegisteredService registeredService;

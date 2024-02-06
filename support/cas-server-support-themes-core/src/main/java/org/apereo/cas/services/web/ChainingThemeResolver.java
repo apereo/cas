@@ -21,9 +21,8 @@ import java.util.Set;
  */
 @Slf4j
 public class ChainingThemeResolver extends AbstractThemeResolver {
-
-
-    private final Set<ThemeResolver> chain = new LinkedHashSet<>(0);
+    
+    private final Set<ThemeResolver> chain = new LinkedHashSet<>();
 
     /**
      * Add resolver to the chain.
@@ -42,11 +41,9 @@ public class ChainingThemeResolver extends AbstractThemeResolver {
     public String resolveThemeName(
         @Nonnull
         final HttpServletRequest httpServletRequest) {
-        val it = chain.iterator();
-        while (it.hasNext()) {
-            val r = it.next();
-            LOGGER.trace("Attempting to resolve theme via [{}]", r.getClass().getSimpleName());
-            val resolverTheme = r.resolveThemeName(httpServletRequest);
+        for (val themeResolver : chain) {
+            LOGGER.trace("Attempting to resolve theme via [{}]", themeResolver.getClass().getSimpleName());
+            val resolverTheme = themeResolver.resolveThemeName(httpServletRequest);
             if (!resolverTheme.equalsIgnoreCase(getDefaultThemeName())) {
                 LOGGER.trace("Resolved theme [{}]", resolverTheme);
                 return resolverTheme;

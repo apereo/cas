@@ -4,9 +4,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.DefaultServiceMatchingStrategy;
 import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.config.SamlAuthenticationEventExecutionPlanConfiguration;
-import org.apereo.cas.config.SamlConfiguration;
-import org.apereo.cas.config.SamlServiceFactoryConfiguration;
+import org.apereo.cas.config.CasSamlAutoConfiguration;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.ServicesManagerConfigurationContext;
 import org.apereo.cas.services.mgmt.DefaultServicesManager;
@@ -15,7 +13,6 @@ import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -25,11 +22,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -39,11 +34,7 @@ import static org.mockito.Mockito.*;
  * @author Scott Battaglia
  * @since 3.1
  */
-@Import({
-    SamlAuthenticationEventExecutionPlanConfiguration.class,
-    SamlServiceFactoryConfiguration.class,
-    SamlConfiguration.class
-})
+@Import(CasSamlAutoConfiguration.class)
 @Tag("SAML")
 class SamlServiceTests extends AbstractOpenSamlTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "samlService.json");

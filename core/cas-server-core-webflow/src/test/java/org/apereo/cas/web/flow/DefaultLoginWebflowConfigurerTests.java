@@ -2,27 +2,19 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.support.CasLocaleChangeInterceptor;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.binding.expression.Expression;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.servlet.resource.ResourceUrlProviderExposingInterceptor;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.ViewFactory;
-import org.springframework.webflow.test.MockRequestControlContext;
-
 import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -84,12 +76,25 @@ class DefaultLoginWebflowConfigurerTests extends BaseWebflowConfigurerTests {
 
     @Test
     void verifyWebflowConfigError() throws Throwable {
-        val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
+        val flow = (Flow) loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         val stopState = (EndState) flow.getState(CasWebflowConstants.STATE_ID_VIEW_WEBFLOW_CONFIG_ERROR);
-        val context = new MockRequestControlContext(flow);
-        val request = new MockHttpServletRequest();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        val context = MockRequestContext.create(applicationContext);
+        context.setActiveFlow(flow);
         context.getFlashScope().put(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION, new RuntimeException());
         assertDoesNotThrow(() -> stopState.enter(context));
+    }
+
+    @Test
+    void verifyStorageStates() throws Exception {
+        val flow = (Flow) loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
+        val writeState = (ViewState) flow.getState(CasWebflowConstants.STATE_ID_BROWSER_STORAGE_WRITE);
+        assertNotNull(writeState);
+        assertEquals(1, writeState.getEntryActionList().size());
+        assertEquals(CasWebflowConstants.STATE_ID_SERVICE_CHECK, writeState.getTransition(CasWebflowConstants.TRANSITION_ID_CONTINUE).getTargetStateId());
+        val readState = (ViewState) flow.getState(CasWebflowConstants.STATE_ID_BROWSER_STORAGE_READ);
+        assertNotNull(readState);
+        assertEquals(1, readState.getRenderActionList().size());
+        assertEquals(0, readState.getEntryActionList().size());
+        assertEquals(CasWebflowConstants.STATE_ID_VERIFY_BROWSER_STORAGE_READ, readState.getTransition(CasWebflowConstants.TRANSITION_ID_CONTINUE).getTargetStateId());
     }
 }

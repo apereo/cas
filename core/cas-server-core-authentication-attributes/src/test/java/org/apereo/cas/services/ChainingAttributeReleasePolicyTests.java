@@ -2,7 +2,7 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.ChainingPrincipalAttributesRepository;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
@@ -18,6 +18,7 @@ import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguratio
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
+import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -30,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasCoreUtilConfiguration.class
+    CasCoreUtilAutoConfiguration.class
 })
 class ChainingAttributeReleasePolicyTests {
     @Autowired
@@ -52,10 +53,13 @@ class ChainingAttributeReleasePolicyTests {
     @Test
     void verifyOperationWithReplaceAndOrder() throws Throwable {
         configureChainingReleasePolicy(10, 1);
+        val service = CoreAuthenticationTestUtils.getService(UUID.randomUUID().toString());
+        val registeredService = CoreAuthenticationTestUtils.getRegisteredService(service.getId());
+
         chain.setMergingPolicy(PrincipalAttributesCoreProperties.MergingStrategyTypes.REPLACE);
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
-            .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
-            .service(CoreAuthenticationTestUtils.getService())
+            .registeredService(registeredService)
+            .service(service)
             .principal(CoreAuthenticationTestUtils.getPrincipal())
             .applicationContext(applicationContext)
             .build();
@@ -69,9 +73,11 @@ class ChainingAttributeReleasePolicyTests {
     @Test
     void verifyOperationWithReplace() throws Throwable {
         chain.setMergingPolicy(PrincipalAttributesCoreProperties.MergingStrategyTypes.REPLACE);
+        val service = CoreAuthenticationTestUtils.getService(UUID.randomUUID().toString());
+        val registeredService = CoreAuthenticationTestUtils.getRegisteredService(service.getId());
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
-            .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
-            .service(CoreAuthenticationTestUtils.getService())
+            .registeredService(registeredService)
+            .service(service)
             .principal(CoreAuthenticationTestUtils.getPrincipal())
             .applicationContext(applicationContext)
             .build();
@@ -90,10 +96,12 @@ class ChainingAttributeReleasePolicyTests {
 
     @Test
     void verifyOperationWithAdd() throws Throwable {
+        val service = CoreAuthenticationTestUtils.getService(UUID.randomUUID().toString());
+        val registeredService = CoreAuthenticationTestUtils.getRegisteredService(service.getId());
         chain.setMergingPolicy(PrincipalAttributesCoreProperties.MergingStrategyTypes.ADD);
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
-            .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
-            .service(CoreAuthenticationTestUtils.getService())
+            .registeredService(registeredService)
+            .service(service)
             .principal(CoreAuthenticationTestUtils.getPrincipal())
             .applicationContext(applicationContext)
             .build();
@@ -106,10 +114,12 @@ class ChainingAttributeReleasePolicyTests {
 
     @Test
     void verifyOperationWithMultivalued() throws Throwable {
+        val service = CoreAuthenticationTestUtils.getService(UUID.randomUUID().toString());
+        val registeredService = CoreAuthenticationTestUtils.getRegisteredService(service.getId());
         chain.setMergingPolicy(PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED);
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
-            .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
-            .service(CoreAuthenticationTestUtils.getService())
+            .registeredService(registeredService)
+            .service(service)
             .principal(CoreAuthenticationTestUtils.getPrincipal())
             .applicationContext(applicationContext)
             .build();

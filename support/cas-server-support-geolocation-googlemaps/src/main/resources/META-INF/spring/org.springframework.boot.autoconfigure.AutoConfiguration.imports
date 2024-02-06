@@ -1,1 +1,1 @@
-org.apereo.cas.config.GoogleMapsGeoCodingConfiguration
+org.apereo.cas.config.CasGoogleMapsGeoCodingAutoConfiguration

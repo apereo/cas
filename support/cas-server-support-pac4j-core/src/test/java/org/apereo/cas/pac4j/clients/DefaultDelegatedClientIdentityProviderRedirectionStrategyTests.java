@@ -1,6 +1,6 @@
 package org.apereo.cas.pac4j.clients;
 
-import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.delegation.DelegationAutoRedirectTypes;
 import org.apereo.cas.pac4j.client.DefaultDelegatedClientIdentityProviderRedirectionStrategy;
@@ -49,7 +49,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasCoreUtilConfiguration.class
+    CasCoreUtilAutoConfiguration.class
 }, properties = "cas.authn.pac4j.cookie.enabled=true")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class DefaultDelegatedClientIdentityProviderRedirectionStrategyTests {
@@ -65,7 +65,7 @@ class DefaultDelegatedClientIdentityProviderRedirectionStrategyTests {
     private CasCookieBuilder casCookieBuilder;
 
     private static MockRequestContext getMockRequestContext() throws Exception {
-        return org.apereo.cas.util.MockRequestContext.create();
+        return MockRequestContext.create();
     }
 
     private static DelegatedClientIdentityProviderConfiguration getProviderConfiguration(final String client) {

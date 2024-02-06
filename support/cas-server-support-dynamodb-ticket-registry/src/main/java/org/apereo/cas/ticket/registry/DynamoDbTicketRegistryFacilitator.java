@@ -301,8 +301,8 @@ public class DynamoDbTicketRegistryFacilitator {
     public Map<String, AttributeValue> buildTableAttributeValuesMapFromTicket(
         final TicketPayload payload) {
         val values = new HashMap<String, AttributeValue>();
-        val ttl = Optional.ofNullable(payload.getOriginalTicket().getExpirationPolicy().getMaximumExpirationTime(payload.getOriginalTicket()))
-            .or(() -> Optional.ofNullable(NeverExpiresExpirationPolicy.INSTANCE.getMaximumExpirationTime(payload.getEncodedTicket())))
+        val ttl = Optional.ofNullable(payload.getOriginalTicket().getExpirationPolicy().toMaximumExpirationTime(payload.getOriginalTicket()))
+            .or(() -> Optional.ofNullable(NeverExpiresExpirationPolicy.INSTANCE.toMaximumExpirationTime(payload.getEncodedTicket())))
             .map(ChronoZonedDateTime::toEpochSecond)
             .orElse(-1L);
 

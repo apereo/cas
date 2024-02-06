@@ -1,13 +1,10 @@
 package org.apereo.cas.adaptors.duo.web.flow;
 
-import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
-import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
-import org.apereo.cas.config.DuoSecurityAuthenticationEventExecutionPlanConfiguration;
-import org.apereo.cas.config.DuoSecurityConfiguration;
-import org.apereo.cas.config.DuoSecurityMultifactorProviderBypassConfiguration;
-import org.apereo.cas.config.SurrogateAuthenticationAuditConfiguration;
-import org.apereo.cas.config.SurrogateAuthenticationConfiguration;
-import org.apereo.cas.config.SurrogateAuthenticationWebflowConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
+import org.apereo.cas.config.CasDuoSecurityAutoConfiguration;
+import org.apereo.cas.config.CasSurrogateAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasSurrogateAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
@@ -35,13 +32,12 @@ import static org.junit.jupiter.api.Assertions.*;
 class DuoSecuritySurrogateWebflowConfigurerTests {
 
     @Import({
-        CasCoreMultifactorAuthenticationConfiguration.class,
-        CasMultifactorAuthenticationWebflowConfiguration.class,
-        SurrogateAuthenticationConfiguration.class,
-        SurrogateAuthenticationAuditConfiguration.class,
-        SurrogateAuthenticationWebflowConfiguration.class
+        CasCoreMultifactorAuthenticationAutoConfiguration.class,
+        CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
+        CasSurrogateAuthenticationAutoConfiguration.class,
+        CasSurrogateAuthenticationWebflowAutoConfiguration.class
     })
-    static class SharedTestConfiguration {
+    public static class SharedTestConfiguration {
     }
 
     @Nested
@@ -64,9 +60,7 @@ class DuoSecuritySurrogateWebflowConfigurerTests {
 
     @Nested
     @Import({
-        DuoSecurityConfiguration.class,
-        DuoSecurityAuthenticationEventExecutionPlanConfiguration.class,
-        DuoSecurityMultifactorProviderBypassConfiguration.class,
+        CasDuoSecurityAutoConfiguration.class,
         DuoSecuritySurrogateWebflowConfigurerTests.SharedTestConfiguration.class
     })
     @TestPropertySource(properties = {

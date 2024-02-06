@@ -55,7 +55,7 @@ public interface OAuth20Token extends ServiceTicket {
     OAuth20GrantTypes getGrantType();
 
     /**
-     * Is oauth code?
+     * Is this an oauth code?
      *
      * @return true/false
      */

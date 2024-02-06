@@ -31,21 +31,44 @@ dependencies {
     }
 }
 
+abstract class ConfigurationMetadataLocationProvider implements CommandLineArgumentProvider {
+    @InputFile
+    @PathSensitive(PathSensitivity.RELATIVE)
+    abstract RegularFileProperty getInputSpringConfigurationMetadata()
+
+    @OutputFile
+    abstract RegularFileProperty getOutputSpringConfigurationMetadata()
+    
+    @Override
+    Iterable<String> asArguments() {
+        [ inputSpringConfigurationMetadata.get().asFile.canonicalPath, outputSpringConfigurationMetadata.get().asFile.canonicalPath ]
+    }
+}
+
 if (!skipConfigurationMetadata) {
-    def outputFile = project.layout.buildDirectory.file("generated/spring-configuration-metadata/META-INF/spring-configuration-metadata.json")
-    def inputFile = project.layout.buildDirectory.file("classes/java/main/META-INF/spring-configuration-metadata.json")
+    def outputFile= project.layout.buildDirectory.file("generated/spring-configuration-metadata/META-INF/spring-configuration-metadata.json")
+    def inputFile= project.layout.buildDirectory.file("classes/java/main/META-INF/spring-configuration-metadata.json")
 
     tasks.register('generateConfigurationMetadata', JavaExec) {
-        inputs.files(tasks.named('processResources'), tasks.named('compileJava'))
+        dependsOn("processResources", "compileConfigurationMetadataJava", "processConfigurationMetadataResources")
+
+        def sortedClasspath = sourceSets.main.compileClasspath + sourceSets.main.runtimeClasspath + sourceSets.configurationMetadata.runtimeClasspath
+        classpath = files(sortedClasspath.sort())
+        mainClass = "org.apereo.cas.configuration.metadata.ConfigurationMetadataGenerator"
+        argumentProviders.add(
+            objects.newInstance(ConfigurationMetadataLocationProvider).tap {
+                inputSpringConfigurationMetadata = inputFile
+                outputSpringConfigurationMetadata = outputFile
+            }
+        )
+
+        inputs.files(inputFile)
+                .withPropertyName('configurationMetadataGeneration')
+                .withPathSensitivity(PathSensitivity.RELATIVE)
 
         outputs.cacheIf { true }
         outputs.file(outputFile)
 
-        mainClass.set("org.apereo.cas.configuration.metadata.ConfigurationMetadataGenerator")
-
-        def sortedClasspath = sourceSets.main.compileClasspath + sourceSets.main.runtimeClasspath + sourceSets.configurationMetadata.runtimeClasspath
-        classpath = files(sortedClasspath.sort())
-        args project.layout.buildDirectory.getAsFile().get().path, projectDir.canonicalPath
         finalizedBy("copyConfigurationMetadata")
     }
 
@@ -63,6 +86,8 @@ if (!skipConfigurationMetadata) {
 
     tasks.named('compileJava') {
         inputs.files(tasks.named('processResources'))
+                .withPropertyName('configurationMetadataResources')
+                .withPathSensitivity(PathSensitivity.RELATIVE)
         finalizedBy("generateConfigurationMetadata")
     }
 

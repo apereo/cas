@@ -107,21 +107,7 @@ public class SamlIdPSessionManager {
         return currentContext.map(ctx -> (Map<String, SamlIdPSessionEntry>) ctx)
             .flatMap(ctx -> context.getRequestParameter(SamlIdPConstants.AUTHN_REQUEST_ID)
                 .map(ctx::get)
-                .or(Unchecked.supplier(() -> {
-                    val applicationContext = openSamlConfigBean.getApplicationContext();
-                    val argumentExtractor = applicationContext.getBean(ArgumentExtractor.BEAN_NAME, ArgumentExtractor.class);
-                    val service = argumentExtractor.extractService(((JEEContext) context).getNativeRequest());
-                    return Optional.ofNullable(service)
-                        .map(Unchecked.function(__ -> {
-                            val serviceSelectionPlan = applicationContext.getBean(AuthenticationServiceSelectionPlan.BEAN_NAME, AuthenticationServiceSelectionPlan.class);
-                            val resolvedService = serviceSelectionPlan.resolveService(service);
-                            val authnRequestId = resolvedService.getAttributes().get(SamlIdPConstants.AUTHN_REQUEST_ID);
-                            return CollectionUtils.firstElement(authnRequestId)
-                                .map(Object::toString)
-                                .map(ctx::get)
-                                .orElse(null);
-                        }));
-                })))
+                .or(Unchecked.supplier(() -> getSamlIdPSessionEntryFromRequest(context, ctx))))
             .filter(entry -> StringUtils.isNotBlank(entry.getSamlRequest()))
             .map(entry -> {
                 val authnRequest = fetch(clazz, entry.getSamlRequest());
@@ -153,6 +139,22 @@ public class SamlIdPSessionManager {
                 }
             });
         }
+    }
+
+    private Optional<SamlIdPSessionEntry> getSamlIdPSessionEntryFromRequest(final WebContext context, final Map<String, SamlIdPSessionEntry> ctx) {
+        val applicationContext = openSamlConfigBean.getApplicationContext();
+        val argumentExtractor = applicationContext.getBean(ArgumentExtractor.BEAN_NAME, ArgumentExtractor.class);
+        val service = argumentExtractor.extractService(((JEEContext) context).getNativeRequest());
+        return Optional.ofNullable(service)
+            .map(Unchecked.function(__ -> {
+                val serviceSelectionPlan = applicationContext.getBean(AuthenticationServiceSelectionPlan.BEAN_NAME, AuthenticationServiceSelectionPlan.class);
+                val resolvedService = serviceSelectionPlan.resolveService(service);
+                val authnRequestId = resolvedService.getAttributes().get(SamlIdPConstants.AUTHN_REQUEST_ID);
+                return CollectionUtils.firstElement(authnRequestId)
+                    .map(Object::toString)
+                    .map(ctx::get)
+                    .orElse(null);
+            }));
     }
 
     @Getter

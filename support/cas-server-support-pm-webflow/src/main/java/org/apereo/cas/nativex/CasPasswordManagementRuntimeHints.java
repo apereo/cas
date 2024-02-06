@@ -5,9 +5,7 @@ import org.apereo.cas.pm.PasswordResetTokenCipherExecutor;
 import org.apereo.cas.pm.impl.JsonResourcePasswordManagementService;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.web.CaptchaActivationStrategy;
-import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -24,19 +22,6 @@ public class CasPasswordManagementRuntimeHints implements CasRuntimeHintsRegistr
         registerReflectionHints(hints, List.of(
             PasswordChangeRequest.class,
             PasswordResetTokenCipherExecutor.class));
-
-        hints.serialization()
-            .registerType(JsonResourcePasswordManagementService.JsonBackedAccount.class)
-            .registerType(PasswordChangeRequest.class);
-    }
-
-    private static void registerReflectionHints(final RuntimeHints hints, final Collection entries) {
-        entries.forEach(el -> hints.reflection().registerType((Class) el,
-            MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
-            MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
-            MemberCategory.INVOKE_DECLARED_METHODS,
-            MemberCategory.INVOKE_PUBLIC_METHODS,
-            MemberCategory.DECLARED_FIELDS,
-            MemberCategory.PUBLIC_FIELDS));
+        registerSerializationHints(hints, JsonResourcePasswordManagementService.JsonBackedAccount.class, PasswordChangeRequest.class);
     }
 }

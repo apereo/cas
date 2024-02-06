@@ -1,10 +1,9 @@
 package org.apereo.cas.logging;
 
-import org.apereo.cas.config.GoogleCloudLoggingConfiguration;
+import org.apereo.cas.config.CasGoogleCloudLoggingAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.text.MessageSanitizer;
-
 import lombok.val;
 import org.apache.logging.log4j.ThreadContext;
 import org.apache.logging.log4j.core.LoggerContext;
@@ -20,13 +19,11 @@ import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.HandlerInterceptor;
-
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -39,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    GoogleCloudLoggingConfiguration.class
+    CasGoogleCloudLoggingAutoConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class GoogleCloudAppenderTests {
@@ -68,7 +65,7 @@ class GoogleCloudAppenderTests {
         ThreadContext.put("remoteIp", "127.0.0.1");
         ThreadContext.put("method", request.getMethod());
         googleCloudLoggingInterceptor.preHandle(request, response, this);
-        
+
         val context = LoggerContext.getContext(false);
         val logger = context.getLogger(GoogleCloudAppender.class.getName());
         val appender = (GoogleCloudAppender) logger.getAppenders().get("GoogleCloudAppender");

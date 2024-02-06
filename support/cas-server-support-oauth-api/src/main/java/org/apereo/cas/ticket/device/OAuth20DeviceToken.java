@@ -34,9 +34,9 @@ public interface OAuth20DeviceToken extends Ticket {
     String getUserCode();
 
     /**
-     * Instantiates a new Assign user code.
+     * Assign user code.
      *
      * @param userCode the user code
      */
-    void assignUserCode(OAuth20DeviceUserCode userCode);
+    void setUserCode(String userCode);
 }

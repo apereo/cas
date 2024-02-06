@@ -32,8 +32,8 @@ const jwkToPem = require("jwk-to-pem");
     await cas.doPost(url, "", {
         "Content-Type": "application/json"
     }, (res) => {
-        assert(res.data.access_token !== null);
-        assert(res.data.refresh_token !== null);
+        assert(res.data.access_token !== undefined);
+        assert(res.data.refresh_token !== undefined);
     }, (error) => {
         throw `Operation failed: ${error}`;
     });

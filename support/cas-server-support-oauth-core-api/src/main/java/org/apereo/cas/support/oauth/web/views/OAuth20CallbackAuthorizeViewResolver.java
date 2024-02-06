@@ -20,7 +20,7 @@ public interface OAuth20CallbackAuthorizeViewResolver {
      * @param ctx     the ctx
      * @param manager the manager
      * @param url     the url
-     * @return true if the redirect should resume.
+     * @return the model and view
      */
     ModelAndView resolve(WebContext ctx, ProfileManager manager, String url);
 

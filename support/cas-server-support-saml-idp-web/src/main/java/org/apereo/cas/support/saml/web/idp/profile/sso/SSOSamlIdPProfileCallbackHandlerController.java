@@ -8,10 +8,9 @@ import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurati
 import org.apereo.cas.support.saml.web.idp.profile.builders.AuthenticatedAssertionContext;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;
-import org.apereo.cas.web.BrowserSessionStorage;
+import org.apereo.cas.web.BrowserStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -24,10 +23,8 @@ import org.pac4j.jee.context.JEEContext;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.util.Objects;
 import java.util.Optional;
 
@@ -60,9 +57,14 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
         autoConfigureCookiePath(request);
         val properties = configurationContext.getCasProperties();
         val type = properties.getAuthn().getSamlIdp().getCore().getSessionStorageType();
-        if (type == SessionStorageTypes.BROWSER_SESSION_STORAGE
-            && !request.getParameterMap().containsKey(BrowserSessionStorage.KEY_SESSION_STORAGE)) {
-            return new ModelAndView(CasWebflowConstants.VIEW_ID_SESSION_STORAGE_READ);
+        if (type == SessionStorageTypes.BROWSER_STORAGE
+            && !request.getParameterMap().containsKey(BrowserStorage.PARAMETER_BROWSER_STORAGE)) {
+            val context = new JEEContext(request, response);
+            val sessionStorage = configurationContext.getSessionStore()
+                .getTrackableSession(context).map(BrowserStorage.class::cast)
+                .orElseThrow(() -> new IllegalStateException("Unable to determine trackable session for storage"));
+            return new ModelAndView(CasWebflowConstants.VIEW_ID_BROWSER_STORAGE_READ,
+                BrowserStorage.PARAMETER_BROWSER_STORAGE, sessionStorage);
         }
         return handleProfileRequest(response, request);
     }
@@ -73,11 +75,13 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
         autoConfigureCookiePath(request);
         val properties = configurationContext.getCasProperties();
         val type = properties.getAuthn().getSamlIdp().getCore().getSessionStorageType();
-        if (type == SessionStorageTypes.BROWSER_SESSION_STORAGE) {
-            val storage = request.getParameter(BrowserSessionStorage.KEY_SESSION_STORAGE);
-            val context = new JEEContext(request, response);
-            configurationContext.getSessionStore().buildFromTrackableSession(context, storage);
-            return handleProfileRequest(response, request);
+        if (type == SessionStorageTypes.BROWSER_STORAGE) {
+            val storage = WebUtils.getBrowserStoragePayload(request);
+            if (storage.isPresent()) {
+                val context = new JEEContext(request, response);
+                configurationContext.getSessionStore().buildFromTrackableSession(context, storage.get());
+                return handleProfileRequest(response, request);
+            }
         }
         return WebUtils.produceErrorView(new IllegalArgumentException("Unable to build SAML response"));
     }

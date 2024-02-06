@@ -1,4 +1,1 @@
-org.apereo.cas.config.WebAuthnConfiguration
-org.apereo.cas.config.WebAuthnComponentSerializationConfiguration
-org.apereo.cas.config.WebAuthnMultifactorProviderBypassConfiguration
-org.apereo.cas.config.WebAuthnWebflowConfiguration
+org.apereo.cas.config.CasWebAuthnAutoConfiguration

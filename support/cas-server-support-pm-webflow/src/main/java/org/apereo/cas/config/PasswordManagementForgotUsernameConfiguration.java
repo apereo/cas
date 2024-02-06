@@ -26,13 +26,11 @@ import org.apereo.cas.web.flow.InitializeCaptchaAction;
 import org.apereo.cas.web.flow.ValidateCaptchaAction;
 import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.apereo.inspektr.audit.spi.support.SpringWebflowActionExecutionAuditablePrincipalResolver;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -52,14 +50,14 @@ import org.springframework.webflow.execution.Action;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.ForgotUsername)
-@AutoConfiguration
-public class PasswordManagementForgotUsernameConfiguration {
+@Configuration(value = "PasswordManagementForgotUsernameConfiguration", proxyBeanMethods = false)
+class PasswordManagementForgotUsernameConfiguration {
 
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.pm.forgot-username.enabled").isTrue().evenIfMissing();
 
     @Configuration(value = "PasswordManagementForgotUsernameAuditConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class PasswordManagementForgotUsernameAuditConfiguration {
+    static class PasswordManagementForgotUsernameAuditConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "forgotUsernameAuditTrailRecordResolutionPlanConfigurer")
@@ -82,7 +80,7 @@ public class PasswordManagementForgotUsernameConfiguration {
 
     @Configuration(value = "PasswordManagementForgotUsernameWebflowConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class PasswordManagementForgotUsernameWebflowConfiguration {
+    static class PasswordManagementForgotUsernameWebflowConfiguration {
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SEND_FORGOT_USERNAME_INSTRUCTIONS_ACTION)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -139,7 +137,7 @@ public class PasswordManagementForgotUsernameConfiguration {
 
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.ForgotUsername, module = "captcha")
     @Configuration(value = "ForgotUsernameCaptchaConfiguration", proxyBeanMethods = false)
-    public static class ForgotUsernameCaptchaConfiguration {
+    static class ForgotUsernameCaptchaConfiguration {
 
         private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.pm.forgot-username.google-recaptcha.enabled").isTrue();
 

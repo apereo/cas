@@ -1,17 +1,17 @@
 package org.apereo.cas.authentication.handler.support;
 
+import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
+import org.apereo.cas.authentication.metadata.BasicCredentialMetadata;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
-
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
 import javax.security.auth.login.FailedLoginException;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("AuthenticationHandler")
 class HttpBasedServiceCredentialsAuthenticationHandlerTests {
 
-    private HttpBasedServiceCredentialsAuthenticationHandler authenticationHandler;
+    private AuthenticationHandler authenticationHandler;
 
     @BeforeEach
     public void initialize() {
@@ -42,8 +42,11 @@ class HttpBasedServiceCredentialsAuthenticationHandlerTests {
 
     @Test
     void verifyAcceptsProperCertificateCredentials() throws Throwable {
-        assertNotNull(authenticationHandler.authenticate(
-            RegisteredServiceTestUtils.getHttpBasedServiceCredentials(), RegisteredServiceTestUtils.getService()));
+        val credentials = RegisteredServiceTestUtils.getHttpBasedServiceCredentials();
+        credentials.setCredentialMetadata(new BasicCredentialMetadata(new BasicIdentifiableCredential("helloworld")));
+        val result = authenticationHandler.authenticate(credentials, RegisteredServiceTestUtils.getService());
+        assertNotNull(result);
+        assertEquals("helloworld", result.getPrincipal().getId());
     }
 
     @Test

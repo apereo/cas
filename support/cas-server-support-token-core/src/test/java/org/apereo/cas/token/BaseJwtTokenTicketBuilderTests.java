@@ -2,24 +2,17 @@ package org.apereo.cas.token;
 
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
-import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
-import org.apereo.cas.config.CasCoreConfiguration;
-import org.apereo.cas.config.CasCoreHttpConfiguration;
-import org.apereo.cas.config.CasCoreNotificationsConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
-import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
-import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
-import org.apereo.cas.config.CasCoreTicketsConfiguration;
-import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasCoreWebConfiguration;
-import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasCoreAutoConfiguration;
+import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
+import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
-import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.config.TokenCoreComponentSerializationConfiguration;
-import org.apereo.cas.config.TokenCoreConfiguration;
+import org.apereo.cas.config.CasTokenCoreAutoConfiguration;
 import org.apereo.cas.services.BaseRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty;
@@ -27,6 +20,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.validation.TicketValidationResult;
 import org.apereo.cas.validation.TicketValidator;
 import lombok.val;
 import org.springframework.beans.factory.InitializingBean;
@@ -50,24 +44,17 @@ import static org.mockito.Mockito.*;
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
     BaseJwtTokenTicketBuilderTests.TokenTicketBuilderTestConfiguration.class,
-    TokenCoreConfiguration.class,
-    TokenCoreComponentSerializationConfiguration.class,
-    CasCoreTicketsConfiguration.class,
-    CasCoreNotificationsConfiguration.class,
-    CasCoreServicesConfiguration.class,
-    CasCoreUtilConfiguration.class,
+    CasTokenCoreAutoConfiguration.class,
+    CasCoreNotificationsAutoConfiguration.class,
+    CasCoreUtilAutoConfiguration.class,
     CasRegisteredServicesTestConfiguration.class,
-    CasCoreTicketCatalogConfiguration.class,
-    CasCoreTicketsSerializationConfiguration.class,
-    CasCoreTicketIdGeneratorsConfiguration.class,
-    CasCoreHttpConfiguration.class,
-    CasCoreAuthenticationPrincipalConfiguration.class,
-    CasCoreWebConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
-    CasCoreConfiguration.class,
-    CasPersonDirectoryTestConfiguration.class,
-    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-    CasDefaultServiceTicketIdGeneratorsConfiguration.class
+    CasCoreTicketsAutoConfiguration.class,
+    CasCoreAuthenticationAutoConfiguration.class,
+    CasCoreWebAutoConfiguration.class,
+    CasCoreServicesAutoConfiguration.class,
+    CasCoreAutoConfiguration.class,
+    CasCoreLogoutAutoConfiguration.class,
+    CasPersonDirectoryTestConfiguration.class
 })
 public abstract class BaseJwtTokenTicketBuilderTests {
     @Autowired
@@ -79,7 +66,7 @@ public abstract class BaseJwtTokenTicketBuilderTests {
     protected CipherExecutor tokenCipherExecutor;
 
     @Autowired
-    @Qualifier("tokenTicketJwtBuilder")
+    @Qualifier(JwtBuilder.TICKET_JWT_BUILDER_BEAN_NAME)
     protected JwtBuilder tokenTicketJwtBuilder;
 
     @Autowired
@@ -106,7 +93,7 @@ public abstract class BaseJwtTokenTicketBuilderTests {
                 CollectionUtils.wrap("name", List.of("value"),
                     ProtocolAttributeEncoder.encodeAttribute("custom:name"), CollectionUtils.wrapList("custom:value")));
             when(validator.validate(anyString(), anyString()))
-                .thenReturn(TicketValidator.ValidationResult.builder().principal(principal).build());
+                .thenReturn(TicketValidationResult.builder().principal(principal).build());
             return validator;
 
         }

@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMeta
 import org.apereo.cas.authentication.metadata.MultifactorAuthenticationProviderMetadataPopulator;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationHandler;
@@ -25,16 +26,15 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
@@ -45,8 +45,8 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SimpleMFA)
-@AutoConfiguration
-public class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
+@Configuration(value = "CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
+class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = CasSimpleMultifactorAuthenticationService.BEAN_NAME)
     @Bean
@@ -151,7 +151,9 @@ public class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
         @Qualifier("casSimpleMultifactorAuthenticationHandler")
         final AuthenticationHandler casSimpleMultifactorAuthenticationHandler,
         @Qualifier("casSimpleMultifactorAuthenticationMetaDataPopulator")
-        final AuthenticationMetaDataPopulator casSimpleMultifactorAuthenticationMetaDataPopulator) {
+        final AuthenticationMetaDataPopulator casSimpleMultifactorAuthenticationMetaDataPopulator,
+        @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+        final PrincipalResolver principalResolver) {
         return plan -> {
             plan.registerAuthenticationHandler(casSimpleMultifactorAuthenticationHandler);
             plan.registerAuthenticationMetadataPopulator(casSimpleMultifactorAuthenticationMetaDataPopulator);

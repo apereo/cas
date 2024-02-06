@@ -51,7 +51,8 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
     @Serial
     private static final long serialVersionUID = 6546995681334670659L;
 
-    private final String id;
+    @Setter
+    private String id;
 
     private final Authentication authentication;
 
@@ -100,7 +101,7 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
     }
 
     public MockTicketGrantingTicket(final Authentication authentication) {
-        id = FunctionUtils.doUnchecked(() -> ID_GENERATOR.getNewTicketId("TGT"));
+        id = FunctionUtils.doUnchecked(() -> ID_GENERATOR.getNewTicketId(TicketGrantingTicket.PREFIX));
         created = ZonedDateTime.now(ZoneOffset.UTC);
         this.authentication = authentication;
     }
@@ -208,4 +209,6 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
     public int compareTo(final Ticket o) {
         return this.id.compareTo(o.getId());
     }
+
+
 }

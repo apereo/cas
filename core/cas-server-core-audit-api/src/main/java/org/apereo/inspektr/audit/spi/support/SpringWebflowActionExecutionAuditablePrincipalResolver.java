@@ -1,6 +1,7 @@
 package org.apereo.inspektr.audit.spi.support;
 
 import org.apereo.inspektr.common.spi.BaseJoinPointArgumentAuditPrincipalIdProvider;
+import org.apereo.cas.web.support.WebUtils;
 import org.aspectj.lang.JoinPoint;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -33,9 +34,6 @@ public class SpringWebflowActionExecutionAuditablePrincipalResolver
         if (requestContext.getConversationScope().contains(attributeName)) {
             return requestContext.getConversationScope().get(attributeName).toString();
         }
-        if (requestContext.getRequestParameters().contains(attributeName)) {
-            return requestContext.getRequestParameters().getRequired(attributeName);
-        }
-        return UNKNOWN_USER;
+        return WebUtils.getRequestParameterOrAttribute(requestContext, attributeName).orElse(UNKNOWN_USER);
     }
 }

@@ -8,13 +8,12 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationTrustedDeviceProviderAction;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
-import org.apereo.inspektr.common.web.ClientInfo;
-import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.execution.Action;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
@@ -38,6 +37,9 @@ public class DefaultMultifactorAuthenticationTrustedDeviceProviderActionTests {
     @Qualifier("multifactorAuthenticationTrustedDeviceProviderAction")
     private MultifactorAuthenticationTrustedDeviceProviderAction action;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @Test
     void verifyOperation() throws Throwable {
         val context = getMockRequestContext();
@@ -51,12 +53,12 @@ public class DefaultMultifactorAuthenticationTrustedDeviceProviderActionTests {
         assertEquals(1, WebUtils.getMultifactorAuthenticationTrustedDevices(context).size());
     }
 
-    private static MockRequestContext getMockRequestContext() throws Throwable {
-        val context = MockRequestContext.create();
-        context.getHttpServletRequest().setRemoteAddr("123.456.789.123");
-        context.getHttpServletRequest().setLocalAddr("123.456.789.123");
-        context.getHttpServletRequest().addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
-        ClientInfoHolder.setClientInfo(ClientInfo.from(context.getHttpServletRequest()));
+    private MockRequestContext getMockRequestContext() throws Throwable {
+        val context = MockRequestContext.create(applicationContext);
+        context.setRemoteAddr("123.456.789.123");
+        context.setLocalAddr("123.456.789.123");
+        context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
+        context.setClientInfo();
         val authn = RegisteredServiceTestUtils.getAuthentication(UUID.randomUUID().toString());
         WebUtils.putAuthentication(authn, context);
         return context;

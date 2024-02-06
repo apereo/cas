@@ -82,7 +82,9 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
     private Map<String, String> patterns = new LinkedHashMap<>();
 
     private String flattened;
-    
+
+    private boolean singleValue;
+
     private static List<Object> formatValuesWithScope(final String scope, final List<Object> currentValues) {
         return currentValues
             .stream()
@@ -161,7 +163,7 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
             .append(getKey(), o.getKey())
             .build();
     }
-
+    
     @JsonIgnore
     @Override
     public List<Object> resolveAttributeValues(final AttributeDefinitionResolutionContext context) throws Throwable {

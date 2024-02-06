@@ -39,7 +39,7 @@ public class OneTimeTokenAccountSaveRegistrationAction<T extends OneTimeTokenAcc
 
     protected OneTimeTokenAccount buildOneTimeTokenAccount(final RequestContext requestContext) {
         val currentAcct = getCandidateAccountFrom(requestContext);
-        val accountName = requestContext.getRequestParameters().getRequired(REQUEST_PARAMETER_ACCOUNT_NAME);
+        val accountName = WebUtils.getRequestParameterOrAttribute(requestContext, REQUEST_PARAMETER_ACCOUNT_NAME).orElseThrow();
         return OneTimeTokenAccount.builder()
             .username(currentAcct.getUsername())
             .secretKey(currentAcct.getSecretKey())

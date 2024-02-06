@@ -1,15 +1,14 @@
 package org.apereo.cas.util.function;
 
+import org.apereo.cas.util.CompressionUtils;
 import com.google.common.base.Suppliers;
 import lombok.val;
 import org.jooq.lambda.fi.util.function.CheckedFunction;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -132,5 +131,10 @@ class FunctionUtilsTests {
             throw new IllegalArgumentException();
         });
         assertFalse(supplier);
+
+        assertThrows(IllegalArgumentException.class,
+            () -> FunctionUtils.doAndThrowUnchecked(() -> CompressionUtils.compress((byte[]) null), o -> {
+                throw new IllegalArgumentException();
+            }));
     }
 }

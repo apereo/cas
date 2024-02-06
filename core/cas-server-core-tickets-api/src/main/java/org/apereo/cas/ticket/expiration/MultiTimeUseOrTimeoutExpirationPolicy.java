@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.expiration;
 
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -46,6 +47,12 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
         this.numberOfUses = numberOfUses;
         Assert.isTrue(numberOfUses > 0, "numberOfUses must be greater than 0.");
         Assert.isTrue(timeToKillInSeconds > 0, "timeToKillInSeconds must be greater than 0.");
+    }
+
+    @Override
+    public ZonedDateTime toMaximumExpirationTime(final Ticket ticketState) {
+        val creationTime = ticketState.getCreationTime();
+        return creationTime.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
     }
 
     @Override

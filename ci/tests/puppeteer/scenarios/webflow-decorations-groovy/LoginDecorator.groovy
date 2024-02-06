@@ -1,5 +1,3 @@
-import org.apereo.inspektr.common.web.*;
-
 def run(Object... args) {
     def (requestContext, logger) = args
     def clientInfo = ClientInfoHolder.getClientInfo()

@@ -3,11 +3,10 @@ package org.apereo.cas.throttle;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.support.ThrottledSubmission;
 import org.apereo.cas.web.support.ThrottledSubmissionsStore;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
+import org.apache.commons.lang3.BooleanUtils;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Map;
@@ -46,7 +45,7 @@ public abstract class BaseMappableThrottledSubmissionsStore<T extends ThrottledS
      */
     private static double submissionRate(final ZonedDateTime a, final ZonedDateTime b) {
         val rate = SUBMISSION_RATE_DIVIDEND / (a.toInstant().toEpochMilli() - b.toInstant().toEpochMilli());
-        LOGGER.debug("Submitting rate for [{}] and [{}] is [{}]", a, b, rate);
+        LOGGER.debug("Submission rate between [{}] and [{}] is [{}]", a, b, rate);
         return rate;
     }
 
@@ -83,13 +82,43 @@ public abstract class BaseMappableThrottledSubmissionsStore<T extends ThrottledS
     @Override
     public boolean exceedsThreshold(final String key, final double thresholdRate) {
         val submissionEntry = get(key);
-        LOGGER.debug("Last throttling date time for key [{}] is [{}]", key, submissionEntry);
-        return submissionEntry != null && submissionRate(ZonedDateTime.now(ZoneOffset.UTC), submissionEntry.getValue()) > thresholdRate;
+        LOGGER.debug("Last throttling date for key [{}] is [{}]", key, submissionEntry);
+        if (submissionEntry != null) {
+            val now = ZonedDateTime.now(ZoneOffset.UTC);
+            val submissionRate = submissionRate(now, submissionEntry.getValue());
+            val result = submissionRate > thresholdRate;
+            LOGGER.debug("Current time is [{}] and submission date is [{}]. Submission rate between the dates is [{}] and your threshold rate [{}]. "
+                    + "The submission rate is [{}] than the threshold rate, so the request [{}] be throttled.",
+                now, submissionEntry.getValue(), submissionRate, thresholdRate,
+                BooleanUtils.toString(result, "greater", "less"),
+                BooleanUtils.toString(result, "may", "may not"));
+            return result;
+        }
+        return false;
     }
 
     @Override
     public void release(final double thresholdRate) {
         val now = ZonedDateTime.now(ZoneOffset.UTC);
-        removeIf(entry -> submissionRate(now, entry.getValue()) < thresholdRate);
+        LOGGER.debug("Attempting to release throttled records for now [{}]", now);
+        removeIf(entry -> {
+            if (entry.hasExpiredAlready()) {
+                LOGGER.debug("Throttled submission [{}] has expired and will be removed", entry.getKey());
+                return true;
+            }
+            if (entry.isStillInExpirationWindow()) {
+                LOGGER.debug("Throttled submission [{}] has not expired and can only be released at [{}]",
+                    entry.getKey(), entry.getExpiration());
+                return false;
+            }
+            val submissionRate = submissionRate(now, entry.getValue());
+            val result = submissionRate < thresholdRate;
+            LOGGER.trace("Your threshold rate is [{}]. Submission rate between now [{}] and throttled entry [{}] @ [{}] is [{}]. "
+                    + "This is [{}] than the threshold rate so the submission [{}] be released and removed from the store.",
+                thresholdRate, now, entry.getId(), entry.getValue(), submissionRate,
+                BooleanUtils.toString(result, "less", "greater"),
+                BooleanUtils.toString(result, "may", "may not"));
+            return result;
+        });
     }
 }

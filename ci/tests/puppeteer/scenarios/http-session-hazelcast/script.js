@@ -23,9 +23,9 @@ const assert = require("assert");
     await page.waitForTimeout(1000);
     await cas.doGet(`https://localhost:8443/cas/actuator/sessions/${cookieValue}`,
         (res) => {
-            assert(res.data.id !== null);
-            assert(res.data.creationTime !== null);
-            assert(res.data.lastAccessedTime !== null);
+            assert(res.data.id !== undefined);
+            assert(res.data.creationTime !== undefined);
+            assert(res.data.lastAccessedTime !== undefined);
             assert(res.data.attributeNames[0] === "webflowConversationContainer");
         }, (error) => {
             throw error;

@@ -44,7 +44,7 @@ class RemoteAuthenticationNonInteractiveCredentialsActionTests {
         @Test
         void verifyFails() throws Throwable {
             val context = MockRequestContext.create(applicationContext);
-            context.getHttpServletRequest().setRemoteAddr(StringUtils.EMPTY);
+            context.setRemoteAddr(StringUtils.EMPTY);
             assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, remoteAuthenticationCheck.execute(context).getId());
         }
     }

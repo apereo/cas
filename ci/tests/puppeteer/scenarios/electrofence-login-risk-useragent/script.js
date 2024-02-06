@@ -6,7 +6,7 @@ const assert = require("assert");
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     const service = "https://localhost:9859/anything/adaptive";
-    await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
+    await cas.gotoLogin(page, service);
     await page.waitForTimeout(2000);
     await cas.loginWith(page);
     await page.waitForTimeout(2000);
@@ -42,7 +42,7 @@ const assert = require("assert");
     assert(url.includes(service));
     await cas.assertTicketParameter(page);
 
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     await cas.assertCookie(page);
     await cas.click(page, "#auth-tab");
     await page.waitForTimeout(1000);

@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
 
@@ -100,14 +101,17 @@ public interface ProtocolAttributeEncoder {
      * and removed and it is assumed that all will be returned
      * back to the service.
      *
+     * @param model                 the model object that carries data across the validation protocol
      * @param attributes            The attribute collection that is ready to be released
      * @param registeredService     the requesting service for which attributes are to be encoded
      * @param webApplicationService the web application service
      * @return collection of attributes after encryption ready for release.
      * @since 4.1
      */
-    default Map<String, Object> encodeAttributes(final Map<String, Object> attributes,
-                                                 final RegisteredService registeredService, final WebApplicationService webApplicationService) {
+    default Map<String, Object> encodeAttributes(final Map<String, Object> model,
+                                                 final Map<String, Object> attributes,
+                                                 final RegisteredService registeredService,
+                                                 final Service webApplicationService) {
         val finalAttributes = new HashMap<String, Object>(attributes.size());
         attributes.forEach((k, v) -> {
             val attributeName = decodeAttribute(k);

@@ -12,9 +12,9 @@ const cas = require("../../cas.js");
         },
         (res) => {
             cas.log(res.data.authentication.attributes);
-            assert(res.data.authentication.attributes.surrogateUser !== null);
-            assert(res.data.authentication.attributes.surrogateEnabled !== null);
-            assert(res.data.authentication.attributes.surrogatePrincipal !== null);
+            assert(res.data.authentication.attributes.surrogateUser !== undefined);
+            assert(res.data.authentication.attributes.surrogateEnabled !== undefined);
+            assert(res.data.authentication.attributes.surrogatePrincipal !== undefined);
         },
         (error) => {
             throw error;
@@ -28,9 +28,9 @@ const cas = require("../../cas.js");
         },
         (res) => {
             cas.log(res.data.authentication.attributes);
-            assert(res.data.authentication.attributes.surrogateUser !== null);
-            assert(res.data.authentication.attributes.surrogateEnabled !== null);
-            assert(res.data.authentication.attributes.surrogatePrincipal !== null);
+            assert(res.data.authentication.attributes.surrogateUser !== undefined);
+            assert(res.data.authentication.attributes.surrogateEnabled !== undefined);
+            assert(res.data.authentication.attributes.surrogatePrincipal !== undefined);
         },
         (error) => {
             throw error;

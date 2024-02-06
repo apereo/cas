@@ -1,3 +1,3 @@
 org.springframework.cloud.bootstrap.BootstrapConfiguration=\
-  org.apereo.cas.config.CasCoreStandaloneBootstrapConfiguration,\
-  org.apereo.cas.config.CasCoreEnvironmentBootstrapConfiguration
+  org.apereo.cas.config.CasCoreStandaloneBootstrapAutoConfiguration,\
+  org.apereo.cas.config.CasCoreEnvironmentBootstrapAutoConfiguration

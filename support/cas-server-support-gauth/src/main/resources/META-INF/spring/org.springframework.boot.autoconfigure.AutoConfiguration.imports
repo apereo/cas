@@ -1,5 +1,1 @@
-org.apereo.cas.config.GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration
-org.apereo.cas.config.GoogleAuthenticatorConfiguration
-org.apereo.cas.config.GoogleAuthenticatorRestConfiguration
-org.apereo.cas.config.GoogleAuthenticatorAuthenticationComponentSerializationConfiguration
-org.apereo.cas.config.GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfiguration
+org.apereo.cas.config.CasGoogleAuthenticatorAutoConfiguration

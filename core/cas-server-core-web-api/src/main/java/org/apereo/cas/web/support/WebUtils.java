@@ -17,26 +17,30 @@ import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
-import org.apereo.cas.ticket.ServiceTicket;
+import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpRequestUtils;
+import org.apereo.cas.web.BrowserStorage;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.hc.core5.http.NameValuePair;
+import org.apache.hc.core5.net.WWWFormCodec;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.webflow.context.ExternalContext;
@@ -51,8 +55,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -212,7 +218,7 @@ public class WebUtils {
      * @param context the context
      * @param ticket  the ticket value
      */
-    public static void putTicketGrantingTicket(final RequestContext context, final TicketGrantingTicket ticket) {
+    public static void putTicketGrantingTicket(final RequestContext context, final Ticket ticket) {
         context.getFlowScope().put("ticketGrantingTicket", ticket);
     }
 
@@ -222,8 +228,8 @@ public class WebUtils {
      * @param context the context
      * @return the ticket granting ticket
      */
-    public static TicketGrantingTicket getTicketGrantingTicket(final RequestContext context) {
-        return context.getFlowScope().get("ticketGrantingTicket", TicketGrantingTicket.class);
+    public static Ticket getTicketGrantingTicket(final RequestContext context) {
+        return context.getFlowScope().get("ticketGrantingTicket", Ticket.class);
     }
 
     /**
@@ -232,7 +238,8 @@ public class WebUtils {
      * @param context the context
      * @param ticket  the ticket value
      */
-    public static void putTicketGrantingTicketInScopes(final RequestContext context, final TicketGrantingTicket ticket) {
+    public static void putTicketGrantingTicketInScopes(final RequestContext context, final Ticket ticket) {
+        putTicketGrantingTicket(context, ticket);
         val ticketValue = Optional.ofNullable(ticket).map(Ticket::getId).orElse(null);
         putTicketGrantingTicketInScopes(context, ticketValue);
     }
@@ -296,7 +303,7 @@ public class WebUtils {
      * @param context     the context
      * @param ticketValue the ticket value
      */
-    public static void putServiceTicketInRequestScope(final RequestContext context, final ServiceTicket ticketValue) {
+    public static void putServiceTicketInRequestScope(final RequestContext context, final Ticket ticketValue) {
         context.getRequestScope().put(PARAMETER_SERVICE_TICKET_ID, ticketValue.getId());
     }
 
@@ -570,6 +577,18 @@ public class WebUtils {
     }
 
     /**
+     * Put authentication.
+     *
+     * @param ticket         the ticket
+     * @param requestContext the request context
+     */
+    public static void putAuthentication(final Ticket ticket, final RequestContext requestContext) {
+        if (ticket instanceof final AuthenticationAwareTicket aat) {
+            putAuthentication(aat.getAuthentication(), requestContext);
+        }
+    }
+
+    /**
      * Gets authentication from conversation scope.
      *
      * @param ctx the ctx
@@ -779,6 +798,16 @@ public class WebUtils {
     }
 
     /**
+     * Put forgot username enabled into flow scope.
+     *
+     * @param context the context
+     * @param value   the value
+     */
+    public static void putForgotUsernameEnabled(final RequestContext context, final Boolean value) {
+        context.getFlowScope().put("forgotUsernameEnabled", value);
+    }
+
+    /**
      * Put account profile management enabled.
      *
      * @param context the context
@@ -806,6 +835,16 @@ public class WebUtils {
      */
     public static boolean isPasswordManagementEnabled(final RequestContext context) {
         return context.getFlowScope().get("passwordManagementEnabled", Boolean.class);
+    }
+
+    /**
+     * Is forgot username enabled.
+     *
+     * @param context the context
+     * @return true/false
+     */
+    public static boolean isForgotUsernameEnabled(final RequestContext context) {
+        return context.getFlowScope().get("forgotUsernameEnabled", Boolean.class);
     }
 
     /**
@@ -1922,5 +1961,154 @@ public class WebUtils {
         return (String) requestContext.getFlashScope().get("activeFlowId",
             requestContext.getFlowScope().get("activeFlowId",
                 requestContext.getConversationScope().get("activeFlowId")));
+    }
+
+    /**
+     * Gets browser storage context key.
+     *
+     * @param requestContext the request context
+     * @return the browser storage context key
+     */
+    public String getBrowserStorageContextKey(final RequestContext requestContext, final String defaultKey) {
+        return requestContext.getFlowScope().get("browserStorageContextKey", String.class, defaultKey);
+    }
+
+    /**
+     * Put browser storage context key.
+     *
+     * @param requestContext           the request context
+     * @param browserStorageContextKey the browser storage context key
+     */
+    public static void putBrowserStorageContextKey(final RequestContext requestContext, final String browserStorageContextKey) {
+        requestContext.getFlowScope().put("browserStorageContextKey", browserStorageContextKey);
+    }
+
+    /**
+     * Read browser storage from request.
+     *
+     * @param requestContext the request context
+     * @return the optional
+     * @throws Exception the exception
+     */
+    public static Optional<String> getBrowserStoragePayload(final RequestContext requestContext) throws Exception {
+        if (requestContext.getRequestParameters().contains(BrowserStorage.PARAMETER_BROWSER_STORAGE)) {
+            return Optional.of(requestContext.getRequestParameters().getRequired(BrowserStorage.PARAMETER_BROWSER_STORAGE))
+                .stream()
+                .filter(StringUtils::isNotBlank)
+                .findFirst();
+        }
+        val httpServletRequest = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        return getBrowserStoragePayload(httpServletRequest);
+    }
+
+    /**
+     * Gets browser storage.
+     *
+     * @param httpServletRequest the http servlet request
+     * @return the browser storage
+     * @throws Exception the exception
+     */
+    public static Optional<String> getBrowserStoragePayload(final HttpServletRequest httpServletRequest) throws Exception {
+        val parameters = getHttpRequestParametersFromRequestBody(httpServletRequest);
+        FunctionUtils.doIfNotBlank(httpServletRequest.getParameter(BrowserStorage.PARAMETER_BROWSER_STORAGE),
+            value -> parameters.put(BrowserStorage.PARAMETER_BROWSER_STORAGE, value));
+        return parameters
+            .entrySet()
+            .stream()
+            .filter(param -> param.getKey().equalsIgnoreCase(BrowserStorage.PARAMETER_BROWSER_STORAGE))
+            .map(Map.Entry::getValue)
+            .filter(StringUtils::isNotBlank)
+            .findFirst()
+            .or(() -> Optional.ofNullable((String) httpServletRequest.getAttribute(BrowserStorage.PARAMETER_BROWSER_STORAGE)));
+    }
+
+    /**
+     * Put browser storage request.
+     *
+     * @param requestContext the request context
+     * @param browserStorage the browser storage
+     */
+    public static void putBrowserStorage(final RequestContext requestContext, final BrowserStorage browserStorage) {
+        requestContext.getFlowScope().put(BrowserStorage.PARAMETER_BROWSER_STORAGE, browserStorage);
+    }
+
+    /**
+     * Gets browser storage.
+     *
+     * @param requestContext the request context
+     * @return the browser storage
+     */
+    public static BrowserStorage getBrowserStorage(final RequestContext requestContext) {
+        return requestContext.getFlowScope().get(BrowserStorage.PARAMETER_BROWSER_STORAGE, BrowserStorage.class);
+    }
+
+    /**
+     * Put target state.
+     *
+     * @param requestContext the request context
+     * @param id             the id
+     */
+    public static void putTargetState(final RequestContext requestContext, final String id) {
+        requestContext.getFlowScope().put("targetState", id);
+    }
+
+    /**
+     * Gets target state.
+     *
+     * @param requestContext the request context
+     * @return the target state
+     */
+    public static String getTargetState(final RequestContext requestContext) {
+        return requestContext.getFlowScope().get("targetState", String.class);
+    }
+
+    /**
+     * Gets http request parameters.
+     *
+     * @param httpServletRequest the http servlet request
+     * @return the http request parameters from request body
+     */
+    public static Map<String, String> getHttpRequestParametersFromRequestBody(final HttpServletRequest httpServletRequest) {
+        if (HttpMethod.POST.matches(httpServletRequest.getMethod())) {
+            try (val is = httpServletRequest.getInputStream()) {
+                if (!is.isFinished()) {
+                    val requestBody = IOUtils.toString(is, StandardCharsets.UTF_8);
+                    val encodedParams = WWWFormCodec.parse(requestBody, StandardCharsets.UTF_8);
+                    return encodedParams
+                        .stream()
+                        .filter(param -> StringUtils.isNotBlank(param.getValue()))
+                        .peek(param -> httpServletRequest.setAttribute(param.getName(), param.getValue()))
+                        .collect(Collectors.toMap(NameValuePair::getName, NameValuePair::getValue));
+                }
+            } catch (final Exception e) {
+                LoggingUtils.error(LOGGER, e);
+            }
+        }
+        return new HashMap<>();
+    }
+
+    /**
+     * Gets request parameter or attribute.
+     *
+     * @param requestContext the request context
+     * @param name           the name
+     * @return the request parameter or attribute
+     */
+    public Optional<String> getRequestParameterOrAttribute(final RequestContext requestContext, final String name) {
+        val httpServletRequest = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        return getRequestParameterOrAttribute(httpServletRequest, name);
+    }
+
+    /**
+     * Gets request parameter or attribute.
+     *
+     * @param request the request
+     * @param name    the name
+     * @return the request parameter or attribute
+     */
+    public Optional<String> getRequestParameterOrAttribute(final HttpServletRequest request, final String name) {
+        return Optional.ofNullable(request.getParameter(name))
+            .or(() -> Optional.ofNullable((String) request.getAttribute(name)))
+            .filter(StringUtils::isNotBlank);
     }
 }

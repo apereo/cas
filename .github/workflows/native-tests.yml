@@ -10,6 +10,7 @@ env:
   GH_PACKAGE_REGISTRY_TOKEN: ${{ secrets.GH_PACKAGE_REGISTRY_TOKEN }}
   GRADLE_BUILDCACHE_USER: ci
   GRADLE_BUILDCACHE_PSW: ${{ secrets.GRADLE_BUILDCACHE_PSW }}
+  GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
   DUO_SECURITY_ADMIN_SKEY: ${{ secrets.DUO_SECURITY_ADMIN_SKEY }}
   DUO_SECURITY_ADMIN_IKEY: ${{ secrets.DUO_SECURITY_ADMIN_IKEY }}
   DUO_SECURITY_UNIVERSAL_PROMPT_SKEY: ${{ secrets.DUO_SECURITY_UNIVERSAL_PROMPT_SKEY }}
@@ -38,32 +39,28 @@ env:
 on:
 #  push:
 #    branches: [ master ]
+  workflow_dispatch:
   schedule:
     - cron: '0 10 */2 * *'
 
+concurrency:
+  group: "workflow = ${{ github.workflow }}, ref = ${{ github.event.ref }}, pr = ${{ github.event.pull_request.id }}"
+  cancel-in-progress: ${{ github.event_name == 'pull_request' || github.repository != 'apereo/cas' }}
+  
 ##########################################################################
 
 jobs:
-  cancel-previous-runs:
-    runs-on: ubuntu-latest
-    timeout-minutes: 1
-    steps:
-      - uses: styfle/cancel-workflow-action@0.12.0
-        with:
-          access_token: ${{ github.token }}
-  ##########################################################################
   initialize:
-    needs: [cancel-previous-runs]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK
-        uses: actions/setup-java@v4.0.0
+        uses: actions/setup-java@v4
         with:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: ${{ env.JDK_DISTRIBUTION }}
       - name: Setup Gradle Wrapper Cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
@@ -82,13 +79,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK
-        uses: actions/setup-java@v4.0.0
+        uses: actions/setup-java@v4
         with:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: ${{ env.JDK_DISTRIBUTION }}
           cache: 'gradle'
       - name: Setup Gradle Wrapper Cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
@@ -116,7 +113,7 @@ jobs:
       - name: Configure CI
         run: source ./ci/tests/puppeteer/configure-ci.sh ${{matrix.scenario}}
       - name: Setup Gradle Wrapper Cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         if: ${{ env.NATIVE_BUILD_ENABLED == 'true' }}
         with:
           path: ~/.gradle/wrapper
@@ -139,7 +136,7 @@ jobs:
           cache-dependency-path: ./ci/tests/puppeteer/package.json
           check-latest: true
       - name: Build Native Tests
-        uses: nick-fields/retry@v2
+        uses: nick-fields/retry@v3
         if: ${{ env.NATIVE_BUILD_ENABLED == 'true' }}
         with:
           max_attempts: ${{ env.MAX_ATTEMPTS }}
@@ -149,7 +146,7 @@ jobs:
           command: |
             ./ci/tests/puppeteer/run.sh --nb --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
       - name: Run Native Tests
-        uses: nick-fields/retry@v2
+        uses: nick-fields/retry@v3
         if: ${{ env.NATIVE_RUN_ENABLED == 'true' }}
         with:
           max_attempts: ${{ env.MAX_ATTEMPTS }}
@@ -175,7 +172,7 @@ jobs:
       - name: Configure CI
         run: ./ci/tests/puppeteer/configure-ci.sh ${{matrix.scenario}}
       - name: Setup Gradle Wrapper Cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         if: ${{ env.NATIVE_BUILD_ENABLED == 'true' }}
         with:
           path: ~/.gradle/wrapper
@@ -197,7 +194,7 @@ jobs:
           cache: 'npm'
           cache-dependency-path: ./ci/tests/puppeteer/package.json
       - name: Build Native Tests
-        uses: nick-fields/retry@v2
+        uses: nick-fields/retry@v3
         if: ${{ env.NATIVE_BUILD_ENABLED == 'true' }}
         with:
           max_attempts: ${{ env.MAX_ATTEMPTS }}
@@ -208,7 +205,7 @@ jobs:
             export RUNNER_OS=${{ runner.os }}
             ./ci/tests/puppeteer/run.sh --nb --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
       - name: Run Native Tests
-        uses: nick-fields/retry@v2
+        uses: nick-fields/retry@v3
         if: ${{ env.NATIVE_RUN_ENABLED == 'true' }}
         with:
           max_attempts: ${{ env.MAX_ATTEMPTS }}

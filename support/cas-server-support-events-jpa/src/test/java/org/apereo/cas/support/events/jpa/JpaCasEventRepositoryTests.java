@@ -1,10 +1,9 @@
 package org.apereo.cas.support.events.jpa;
 
-import org.apereo.cas.config.CasHibernateJpaConfiguration;
-import org.apereo.cas.config.JpaEventsConfiguration;
+import org.apereo.cas.config.CasHibernateJpaAutoConfiguration;
+import org.apereo.cas.config.CasJpaEventsAutoConfiguration;
 import org.apereo.cas.support.events.AbstractCasEventRepositoryTests;
 import org.apereo.cas.support.events.CasEventRepository;
-
 import lombok.Getter;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -23,8 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
  * @since 5.0.0
  */
 @SpringBootTest(classes = {
-    JpaEventsConfiguration.class,
-    CasHibernateJpaConfiguration.class,
+    CasJpaEventsAutoConfiguration.class,
+    CasHibernateJpaAutoConfiguration.class,
     AopAutoConfiguration.class,
     RefreshAutoConfiguration.class
 },

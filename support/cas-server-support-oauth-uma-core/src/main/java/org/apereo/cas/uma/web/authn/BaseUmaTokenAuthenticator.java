@@ -59,23 +59,9 @@ public abstract class BaseUmaTokenAuthenticator implements Authenticator {
         return Optional.of(credentials);
     }
 
-    /**
-     * Extract access token from token.
-     *
-     * @param token the token
-     * @return the string
-     */
     protected String extractAccessTokenFrom(final String token) {
-        return OAuth20JwtAccessTokenEncoder.builder()
-            .accessTokenJwtBuilder(accessTokenJwtBuilder)
-            .build()
-            .decode(token);
+        return OAuth20JwtAccessTokenEncoder.toDecodableCipher(accessTokenJwtBuilder).decode(token);
     }
 
-    /**
-     * Gets required scope.
-     *
-     * @return the required scope
-     */
     protected abstract String getRequiredScope();
 }

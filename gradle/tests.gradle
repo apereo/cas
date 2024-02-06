@@ -168,11 +168,11 @@ if (rootProject.tasks.findByName("puppeteerScenarios") == null) {
 
 TestCategories.values().each({ testCategory ->
     def sourceTestDirs = project.sourceSets.test.java.srcDirs
-    def jacocoTestExecutionResultsFile = project.layout.buildDirectory.file('jacoco/jacocoTest.exec').get().asFile
     if (hasTestsOfCategory(sourceTestDirs, testCategory.name())) {
         def taskName = "test${testCategory.name()}"
         if (!tasks.getNames().contains(taskName)) {
-            // println "Creating task ${taskName} for ${project.name}"
+            def jacocoTestExecutionResultsFile = project.layout.buildDirectory.file("jacoco/jacoco-${taskName}.exec").get().asFile
+            
             tasks.register(taskName, Test) {
                 description = "Run unit/integration tests to verify the test category: ${testCategory.name()}"
                 group = "CAS Tests"
@@ -188,6 +188,15 @@ TestCategories.values().each({ testCategory ->
                     systemProperty("junit.jupiter.execution.parallel.config.strategy", "dynamic")
                     systemProperty("junit.jupiter.execution.parallel.config.dynamic.factor", "4")
                 }
+
+                if (!project.path.contains(":docs")) {
+                    jacoco {
+                        dumpOnExit = true
+                        excludes = rootProject.excludedFilesFromTestCoverage
+                        destinationFile = jacocoTestExecutionResultsFile
+                        classDumpDir = layout.buildDirectory.dir('jacoco/classpathdumps').get().asFile
+                    }
+                }
             }
         }
     }
@@ -201,10 +210,6 @@ tasks.named('test') {
 }
 
 tasks.withType(Test).configureEach {
-    it.inputs.property("github.repository") {
-        System.getenv("GITHUB_REPOSITORY") ?: "apereo/cas"
-    }
-
     scanForTestClasses = false
     ignoreFailures = providers.systemProperty("ignoreTestFailures").present
     forkEvery = 2000
@@ -212,12 +217,8 @@ tasks.withType(Test).configureEach {
     if (maxParallelForks != 2) {
         logger.info "Maximum number of parallel forks is set to ${maxParallelForks}"
     }
-//    def ci = System.getenv().containsKey("CI")
-//    if (ci) {
-//        outputs.upToDateWhen { false }
-//    }
+
     systemProperty("spring.main.banner-mode", "off")
-    systemProperty("CI", ci)
     
     failFast = true
 
@@ -276,50 +277,14 @@ tasks.withType(Test).configureEach {
         showStandardStreams = verbose
         showExceptions = verbose
         showCauses = verbose
-        /*
-        if (verbose && ci) {
-            def ansi = project.ansi
-            beforeSuite { desc ->
-                if (!desc.parent) {
-                    ansi.cyan "Started running test suite [${desc.displayName}] @ ${new java.util.Date()} "
-                }
-            }
-
-            beforeTest { desc ->
-                ansi.cyan "Started running test [${desc.className}:${desc.displayName}] @ ${new java.util.Date()} "
-            }
-
-            afterTest { desc, result ->
-                ansi.green """
-Results for test [${desc.className}:${desc.displayName}]: ${result.resultType} @ ${new java.util.Date()} 
-(${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)
-"""
-            }
-            afterSuite { desc, result ->
-                if (!desc.parent) {
-                    ansi.green """
-Results for test suite [${desc.displayName}]: ${result.resultType} @ ${new java.util.Date()} 
-(${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)
-"""
-                }
-            }
-        }
-         */
     }
+    
     def skipRetry = providers.systemProperty('skipTestRetry').present
     if (!skipRetry) {
         retry {
             maxRetries = 3
             maxFailures = 5
             failOnPassedAfterRetry = false
-        }
-    }
-    if (!project.path.contains(":docs")) {
-        jacoco {
-            dumpOnExit = true
-            excludes = rootProject.excludedFilesFromTestCoverage
-            destinationFile = layout.buildDirectory.file('jacoco/jacocoTest.exec').get().asFile
-            classDumpDir = layout.buildDirectory.dir('jacoco/classpathdumps').get().asFile
         }
     }
 

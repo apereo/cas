@@ -18,17 +18,17 @@ const assert = require("assert");
             let data = JSON.parse(await cas.innerText(page, "#data"));
             console.dir(data, {depth: null, colors: true});
 
-            assert(data.cas.version !== null);
-            assert(data.cas.java.vendor !== null);
-            assert(data.cas.java.version !== null);
+            assert(data.cas.version !== undefined);
+            assert(data.cas.java.vendor !== undefined);
+            assert(data.cas.java.version !== undefined);
 
             await cas.goto(page, "http://localhost:8444?endpoint=health");
             await page.waitForTimeout(2500);
             data = JSON.parse(await cas.innerText(page, "#data"));
             console.dir(data, {depth: null, colors: true});
 
-            assert(data.status !== null);
-            assert(data.components !== null);
+            assert(data.status !== undefined);
+            assert(data.components !== undefined);
 
             server.close(() => {
                 cas.log("Exiting server...");

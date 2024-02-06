@@ -21,7 +21,7 @@ const path = require("path");
         await cas.waitForElement(page, "body");
         const content = JSON.parse(await cas.innerText(page, "body"));
         await cas.log(content);
-        assert(content.form.SAMLResponse !== null);
+        assert(content.form.SAMLResponse !== undefined);
         await cas.gotoLogout(page);
     }
     await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));

@@ -48,9 +48,10 @@ function publishProjectModules() {
 
 function publishProjectConfiguration() {
   echo "Publishing CAS configuration metadata for CAS version ${casVersion}"
-  ./gradlew :api:cas-server-core-api-configuration-model:generateConfigurationMetadata \
-    --no-configuration-cache --build-cache --configure-on-demand \
-    --no-daemon --parallel -x test -x javadoc -x check
+  /gradlew :api:cas-server-core-api-configuration-model:generateConfigurationMetadata \
+           :api:cas-server-core-api-configuration-model:generateConfigurationMetadata \
+           --no-configuration-cache --build-cache --configure-on-demand \
+           --no-daemon --parallel -x test -x javadoc -x check
   if [ $? -eq 1 ]; then
     echo "Unable to successfully generate metadata for CAS configuration"
     exit 1

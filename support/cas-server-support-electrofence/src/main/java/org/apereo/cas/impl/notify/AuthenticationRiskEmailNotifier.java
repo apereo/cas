@@ -1,5 +1,6 @@
 package org.apereo.cas.impl.notify;
 
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
@@ -10,6 +11,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.context.ApplicationContext;
 import java.util.List;
 
 /**
@@ -22,10 +24,13 @@ import java.util.List;
 public class AuthenticationRiskEmailNotifier extends BaseAuthenticationRiskNotifier {
 
     public AuthenticationRiskEmailNotifier(final CasConfigurationProperties casProperties,
+                                           final ApplicationContext applicationContext,
                                            final CommunicationsManager communicationsManager,
                                            final ServicesManager servicesManager,
+                                           final PrincipalResolver principalResolver,
                                            final CipherExecutor riskVerificationCipherExecutor) {
-        super(casProperties, communicationsManager, servicesManager, riskVerificationCipherExecutor);
+        super(applicationContext, casProperties, communicationsManager,
+            servicesManager, principalResolver, riskVerificationCipherExecutor);
     }
 
     @Override

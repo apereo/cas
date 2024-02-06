@@ -1,7 +1,7 @@
 package org.apereo.cas.acct.provision;
 
 import org.apereo.cas.acct.AccountRegistrationRequest;
-import org.apereo.cas.config.CasAccountManagementWebflowConfiguration;
+import org.apereo.cas.config.CasAccountManagementWebflowAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import lombok.val;
@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.5.0
  */
 @SpringBootTest(classes = {
-    CasAccountManagementWebflowConfiguration.class,
+    CasAccountManagementWebflowAutoConfiguration.class,
     BaseWebflowConfigurerTests.SharedTestConfiguration.class
 }, properties = "cas.account-registration.provisioning.groovy.location=classpath:/groovy-provisioner.groovy")
 @EnableConfigurationProperties(CasConfigurationProperties.class)

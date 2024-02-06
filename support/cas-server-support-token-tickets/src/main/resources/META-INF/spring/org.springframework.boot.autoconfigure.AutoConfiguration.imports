@@ -1,1 +1,1 @@
-org.apereo.cas.config.TokenTicketsConfiguration
+org.apereo.cas.config.CasTokenTicketsAutoConfiguration

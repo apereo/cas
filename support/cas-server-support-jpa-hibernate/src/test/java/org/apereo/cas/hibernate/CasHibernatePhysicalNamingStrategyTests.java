@@ -1,6 +1,6 @@
 package org.apereo.cas.hibernate;
 
-import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import lombok.val;
 import org.hibernate.boot.model.naming.Identifier;
@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasCoreUtilConfiguration.class
+    CasCoreUtilAutoConfiguration.class
 }, properties = {
     "cas.jdbc.physicalTableNames.CasHibernatePhysicalNamingStrategyTests=testtable",
     "cas.jdbc.physicalTableNames.GroovyTable=classpath:GroovyHibernatePhysicalNaming.groovy"

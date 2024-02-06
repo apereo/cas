@@ -7,6 +7,8 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.TestPropertySource;
 import java.util.HashMap;
 import java.util.List;
@@ -28,9 +30,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SCIM")
 @EnabledIfListeningOnPort(port = 9666)
 class PrincipalScimV2ProvisionerActionWithScimServerTests extends BaseScimProvisionerActionTests {
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @Test
     void verifyAction() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
 
         val attributes = new HashMap<String, List<Object>>();
         attributes.put("externalId", List.of(UUID.randomUUID().toString()));

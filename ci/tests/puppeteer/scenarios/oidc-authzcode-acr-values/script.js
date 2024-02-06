@@ -56,7 +56,7 @@ async function exchangeCode(page, code, successHandler) {
         "Content-Type": "application/json"
     }, async (res) => {
         await cas.log(res.data);
-        assert(res.data.access_token !== null);
+        assert(res.data.access_token !== undefined);
 
         accessToken = res.data.access_token;
         await cas.log(`Received access token ${accessToken}`);
@@ -80,7 +80,7 @@ async function exchangeCode(page, code, successHandler) {
     await cas.logg("Fetching code for MFA based on ACR mfa-gauth");
     let code = await fetchCode(page, "mfa-gauth", "login=prompt");
     await exchangeCode(page, code, (idToken) => {
-        assert(idToken.sub !== null);
+        assert(idToken.sub !== undefined);
         assert(idToken.acr === "https://refeds.org/profile/mfa");
         assert(idToken.amr.includes("GoogleAuthenticatorAuthenticationHandler"));
     });
@@ -90,7 +90,7 @@ async function exchangeCode(page, code, successHandler) {
     await cas.logg("Fetching code for MFA based on ACR 1 mapped in configuration to mfa-gauth");
     code = await fetchCode(page, "https://refeds.org/profile/mfa", "login=prompt");
     await exchangeCode(page, code, (idToken) => {
-        assert(idToken.sub !== null);
+        assert(idToken.sub !== undefined);
         assert(idToken.acr === "https://refeds.org/profile/mfa");
         assert(idToken.amr.includes("GoogleAuthenticatorAuthenticationHandler"));
     });
@@ -103,7 +103,7 @@ async function exchangeCode(page, code, successHandler) {
 
     code = await fetchCode(page, "mfa-gauth");
     await exchangeCode(page, code, (idToken) => {
-        assert(idToken.sub !== null);
+        assert(idToken.sub !== undefined);
         assert(idToken.acr === "https://refeds.org/profile/mfa");
         assert(idToken.amr.includes("GoogleAuthenticatorAuthenticationHandler"));
     });

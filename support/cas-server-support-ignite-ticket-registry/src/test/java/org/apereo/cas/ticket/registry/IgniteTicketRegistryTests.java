@@ -1,13 +1,11 @@
 package org.apereo.cas.ticket.registry;
 
-import org.apereo.cas.config.IgniteTicketRegistryConfiguration;
-import org.apereo.cas.config.IgniteTicketRegistryTicketCatalogConfiguration;
+import org.apereo.cas.config.CasIgniteTicketRegistryAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.util.crypto.CipherExecutor;
-
 import lombok.Getter;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -19,11 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.security.KeyStore;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -35,10 +31,7 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @Tag("Ignite")
-@Import({
-    IgniteTicketRegistryConfiguration.class,
-    IgniteTicketRegistryTicketCatalogConfiguration.class
-})
+@Import(CasIgniteTicketRegistryAutoConfiguration.class)
 @TestPropertySource(
     properties = {
         "cas.ticket.registry.ignite.tickets-cache.write-synchronization-mode=FULL_ASYNC",

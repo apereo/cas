@@ -13,7 +13,6 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredSer
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +28,7 @@ import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.metadata.criteria.entity.impl.EvaluableEntityRoleEntityDescriptorCriterion;
 import org.opensaml.saml.saml2.common.TimeBoundSAMLObject;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +36,6 @@ import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -53,19 +52,19 @@ import java.util.stream.StreamSupport;
 @Slf4j
 @RestControllerEndpoint(id = "samlIdPRegisteredServiceMetadataCache", enableByDefault = false)
 public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasActuatorEndpoint {
-    private final SamlRegisteredServiceCachingMetadataResolver cachingMetadataResolver;
+    private final ObjectProvider<SamlRegisteredServiceCachingMetadataResolver> cachingMetadataResolver;
 
-    private final ServicesManager servicesManager;
+    private final ObjectProvider<ServicesManager> servicesManager;
 
-    private final AuditableExecution registeredServiceAccessStrategyEnforcer;
+    private final ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
 
-    private final OpenSamlConfigBean openSamlConfigBean;
+    private final ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
 
     public SamlRegisteredServiceCachedMetadataEndpoint(final CasConfigurationProperties casProperties,
-                                                       final SamlRegisteredServiceCachingMetadataResolver cachingMetadataResolver,
-                                                       final ServicesManager servicesManager,
-                                                       final AuditableExecution registeredServiceAccessStrategyEnforcer,
-                                                       final OpenSamlConfigBean openSamlConfigBean) {
+                                                       final ObjectProvider<SamlRegisteredServiceCachingMetadataResolver> cachingMetadataResolver,
+                                                       final ObjectProvider<ServicesManager> servicesManager,
+                                                       final ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer,
+                                                       final ObjectProvider<OpenSamlConfigBean> openSamlConfigBean) {
         super(casProperties);
         this.cachingMetadataResolver = cachingMetadataResolver;
         this.servicesManager = servicesManager;
@@ -83,22 +82,20 @@ public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasActuator
      */
     @DeleteMapping
     @Operation(summary = "Invalidate SAML2 metadata cache using a service id or entity id. The service id could be the registered service numeric identifier, its name or actual service id. "
-                         + "In case the service definition points to an aggregate, you may also specify an entity id to locate the service provider within that aggregate. "
-                         + "If you do not specify any parameters, all entries in the metadata cache will be invalidated.",
+        + "In case the service definition points to an aggregate, you may also specify an entity id to locate the service provider within that aggregate. "
+        + "If you do not specify any parameters, all entries in the metadata cache will be invalidated.",
         parameters = {
             @Parameter(name = "serviceId"),
             @Parameter(name = "entityId")
         })
     public ResponseEntity invalidate(
         @Nullable
-        @RequestParam(required = false)
-        final String serviceId,
+        @RequestParam(required = false) final String serviceId,
         @Nullable
-        @RequestParam(required = false)
-        final String entityId) throws Throwable {
+        @RequestParam(required = false) final String entityId) throws Throwable {
 
         if (StringUtils.isBlank(serviceId)) {
-            cachingMetadataResolver.invalidate();
+            cachingMetadataResolver.getObject().invalidate();
             LOGGER.info("Cleared SAML2 registered service metadata cache");
             return ResponseEntity.noContent().build();
         }
@@ -107,7 +104,7 @@ public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasActuator
         val effectiveEntityId = StringUtils.defaultIfBlank(entityId, registeredService.getServiceId());
         criteriaSet.add(new EntityIdCriterion(effectiveEntityId));
         criteriaSet.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
-        cachingMetadataResolver.invalidate(registeredService, criteriaSet);
+        cachingMetadataResolver.getObject().invalidate(registeredService, criteriaSet);
         LOGGER.info("Invalidated SAML2 registered service metadata cache entry for [{}]", registeredService);
         return ResponseEntity.noContent()
             .header(registeredService.getClass().getSimpleName(), String.valueOf(registeredService.getId()), registeredService.getName())
@@ -131,19 +128,16 @@ public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasActuator
         MEDIA_TYPE_CAS_YAML
     })
     @Operation(summary = "Get SAML2 cached metadata for a SAML2 registered service. The service id could be the registered service numeric identifier, its name or actual service id. "
-                         + "In case the service definition points to an aggregate, you may also specify an entity id to locate the service provider within that aggregate",
+        + "In case the service definition points to an aggregate, you may also specify an entity id to locate the service provider within that aggregate",
         parameters = {
             @Parameter(name = "serviceId", required = true),
             @Parameter(name = "entityId")
         })
     public ResponseEntity<? extends Map> getCachedMetadataObject(
-        @RequestParam
-        final String serviceId,
+        @RequestParam final String serviceId,
         @Nullable
-        @RequestParam(required = false)
-        final String entityId,
-        @RequestParam(required = false, defaultValue = "true")
-        final boolean force) {
+        @RequestParam(required = false) final String entityId,
+        @RequestParam(required = false, defaultValue = "true") final boolean force) {
 
         return FunctionUtils.doAndHandle(() -> {
             val registeredService = findRegisteredService(serviceId);
@@ -157,8 +151,8 @@ public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasActuator
             }
 
             val metadataResolverResult = force
-                ? Optional.of(cachingMetadataResolver.resolve(registeredService, criteriaSet))
-                : cachingMetadataResolver.getIfPresent(registeredService, criteriaSet);
+                ? Optional.of(cachingMetadataResolver.getObject().resolve(registeredService, criteriaSet))
+                : cachingMetadataResolver.getObject().getIfPresent(registeredService, criteriaSet);
             return metadataResolverResult.map(Unchecked.function(result -> {
                 val iteration = result.getMetadataResolver().resolve(criteriaSet).spliterator();
                 val body = StreamSupport.stream(iteration, false)
@@ -166,7 +160,7 @@ public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasActuator
                     .map(entity -> {
                         val details = CollectionUtils.wrap(
                             "cachedInstant", result.getCachedInstant(),
-                            "metadata", SamlUtils.transformSamlObject(openSamlConfigBean, entity).toString());
+                            "metadata", SamlUtils.transformSamlObject(openSamlConfigBean.getObject(), entity).toString());
                         return Pair.of(entity.getEntityID(), details);
                     })
                     .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
@@ -179,10 +173,10 @@ public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasActuator
         var matchedServices = (Collection<RegisteredService>) null;
         if (NumberUtils.isCreatable(serviceId)) {
             val id = Long.parseLong(serviceId);
-            matchedServices = List.of(servicesManager.findServiceBy(id, SamlRegisteredService.class));
+            matchedServices = List.of(servicesManager.getObject().findServiceBy(id, SamlRegisteredService.class));
         } else {
-            matchedServices = servicesManager.findServiceBy(svc -> svc instanceof SamlRegisteredService
-                                                                   && (svc.getName().equalsIgnoreCase(serviceId) || svc.getServiceId().equalsIgnoreCase(serviceId)));
+            matchedServices = servicesManager.getObject().findServiceBy(svc -> svc instanceof SamlRegisteredService
+                && (svc.getName().equalsIgnoreCase(serviceId) || svc.getServiceId().equalsIgnoreCase(serviceId)));
         }
         if (matchedServices.isEmpty()) {
             throw new IllegalArgumentException("Unable to locate service " + serviceId);
@@ -191,7 +185,7 @@ public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasActuator
         val ctx = AuditableContext.builder()
             .registeredService(registeredService)
             .build();
-        val result = this.registeredServiceAccessStrategyEnforcer.execute(ctx);
+        val result = this.registeredServiceAccessStrategyEnforcer.getObject().execute(ctx);
         result.throwExceptionIfNeeded();
         LOGGER.debug("Located registered service definition [{}]", registeredService);
         return registeredService;

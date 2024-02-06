@@ -1,6 +1,6 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.config.CasCoreMonitorConfiguration;
+import org.apereo.cas.config.CasCoreMonitorAutoConfiguration;
 import org.apereo.cas.util.MockRequestContext;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 @Tag("WebflowConfig")
 @Import({
     CasWebflowMonitoringTests.FlowExecutorTestConfiguration.class,
-    CasCoreMonitorConfiguration.class
+    CasCoreMonitorAutoConfiguration.class
 })
 public class CasWebflowMonitoringTests extends BaseWebflowConfigurerTests {
     @Autowired

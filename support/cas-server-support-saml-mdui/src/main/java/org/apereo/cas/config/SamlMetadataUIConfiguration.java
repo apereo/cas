@@ -12,7 +12,6 @@ import org.apereo.cas.support.saml.mdui.StaticMetadataResolverAdapter;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
 import com.google.common.base.Splitter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -22,15 +21,14 @@ import org.opensaml.saml.metadata.resolver.filter.MetadataFilter;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilterChain;
 import org.opensaml.saml.metadata.resolver.filter.impl.RequiredValidUntilFilter;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.io.Resource;
-
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,8 +44,8 @@ import java.util.Map;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SAML)
-@AutoConfiguration
-public class SamlMetadataUIConfiguration {
+@Configuration(value = "SamlMetadataUIConfiguration", proxyBeanMethods = false)
+class SamlMetadataUIConfiguration {
 
     private static final String DEFAULT_SEPARATOR = "::";
 

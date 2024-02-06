@@ -15,9 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.execution.RequestContextHolder;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,9 +40,6 @@ class FrontChannelLogoutActionTests {
         @Test
         void verifyNoSlo() throws Throwable {
             val context = MockRequestContext.create(applicationContext);
-            RequestContextHolder.setRequestContext(context);
-            ExternalContextHolder.setExternalContext(context.getExternalContext());
-
             val id = UUID.randomUUID().toString();
             val sloReq = DefaultSingleLogoutRequestContext.builder()
                 .registeredService(RegisteredServiceTestUtils.getRegisteredService())

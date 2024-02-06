@@ -26,7 +26,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -54,13 +53,13 @@ import javax.sql.DataSource;
 @EnableTransactionManagement(proxyTargetClass = false)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProviderMetadata, module = "jpa")
-@AutoConfiguration
-public class SamlIdPJpaIdPMetadataConfiguration {
+@Configuration(value = "SamlIdPJpaIdPMetadataConfiguration", proxyBeanMethods = false)
+class SamlIdPJpaIdPMetadataConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.saml-idp.metadata.jpa.idp-metadata-enabled").isTrue();
 
     @Configuration(value = "SamlIdPJpaIdPMetadataEntityConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SamlIdPJpaIdPMetadataEntityConfiguration {
+    static class SamlIdPJpaIdPMetadataEntityConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "jpaSamlMetadataIdPVendorAdapter")
@@ -123,7 +122,7 @@ public class SamlIdPJpaIdPMetadataConfiguration {
 
     @Configuration(value = "SamlIdPJpaIdPMetadataTransactionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SamlIdPJpaIdPMetadataTransactionConfiguration {
+    static class SamlIdPJpaIdPMetadataTransactionConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -145,7 +144,7 @@ public class SamlIdPJpaIdPMetadataConfiguration {
 
     @Configuration(value = "SamlIdPJpaIdPMetadataGeneratorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SamlIdPJpaIdPMetadataGeneratorConfiguration {
+    static class SamlIdPJpaIdPMetadataGeneratorConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlIdPMetadataGenerator samlIdPMetadataGenerator(
@@ -167,7 +166,7 @@ public class SamlIdPJpaIdPMetadataConfiguration {
 
     @Configuration(value = "SamlIdPJpaIdPMetadataBaseConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SamlIdPJpaIdPMetadataBaseConfiguration {
+    static class SamlIdPJpaIdPMetadataBaseConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public CipherExecutor samlIdPMetadataGeneratorCipherExecutor(
@@ -208,7 +207,7 @@ public class SamlIdPJpaIdPMetadataConfiguration {
 
     @Configuration(value = "SamlIdPJpaIdPMetadataDataConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SamlIdPJpaIdPMetadataDataConfiguration {
+    static class SamlIdPJpaIdPMetadataDataConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "dataSourceSamlMetadataIdP")
