@@ -27,7 +27,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
@@ -68,14 +67,14 @@ import java.util.stream.Collectors;
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 @EnableAsync(proxyTargetClass = false)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.ServiceRegistry)
-@AutoConfiguration(after = CasCoreServicesConfiguration.class)
-public class CasServiceRegistryInitializationConfiguration {
+@Configuration(value = "CasServiceRegistryInitializationConfiguration", proxyBeanMethods = false)
+class CasServiceRegistryInitializationConfiguration {
 
     private static final BeanCondition CONDITION = BeanCondition.on("cas.service-registry.core.init-from-json").isTrue();
 
     @Configuration(value = "CasServiceRegistryInitializationEventsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasServiceRegistryInitializationEventsConfiguration {
+    static class CasServiceRegistryInitializationEventsConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Lazy(false)
@@ -93,7 +92,7 @@ public class CasServiceRegistryInitializationConfiguration {
 
     @Configuration(value = "CasServiceRegistryInitializationBaseConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasServiceRegistryInitializationBaseConfiguration {
+    static class CasServiceRegistryInitializationBaseConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Lazy(false)
@@ -116,7 +115,7 @@ public class CasServiceRegistryInitializationConfiguration {
 
     @Configuration(value = "CasServiceRegistryEmbeddedConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasServiceRegistryEmbeddedConfiguration {
+    static class CasServiceRegistryEmbeddedConfiguration {
         private static Resource getServiceRegistryInitializerServicesDirectoryResource(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext) {
@@ -184,7 +183,7 @@ public class CasServiceRegistryInitializationConfiguration {
      * The embedded service registry that processes built-in JSON service files
      * on the classpath.
      */
-    public static class EmbeddedResourceBasedServiceRegistry extends AbstractResourceBasedServiceRegistry {
+    static class EmbeddedResourceBasedServiceRegistry extends AbstractResourceBasedServiceRegistry {
         EmbeddedResourceBasedServiceRegistry(final ConfigurableApplicationContext applicationContext,
                                              final Resource location,
                                              final Collection<ServiceRegistryListener> serviceRegistryListeners,

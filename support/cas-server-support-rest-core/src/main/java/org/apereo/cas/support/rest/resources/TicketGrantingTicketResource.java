@@ -7,9 +7,8 @@ import org.apereo.cas.logout.slo.SingleLogoutRequestExecutor;
 import org.apereo.cas.rest.BadRestRequestException;
 import org.apereo.cas.rest.authentication.RestAuthenticationService;
 import org.apereo.cas.rest.factory.TicketGrantingTicketResourceEntityResponseFactory;
-import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.util.LoggingUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -25,11 +24,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import javax.security.auth.login.FailedLoginException;
-
 import java.util.List;
 
 /**
@@ -87,8 +84,7 @@ public class TicketGrantingTicketResource {
             MediaType.TEXT_HTML_VALUE,
             MediaType.TEXT_PLAIN_VALUE
         })
-    public ResponseEntity<String> createTicketGrantingTicket(@RequestBody(required = false)
-                                                             final MultiValueMap<String, String> requestBody,
+    public ResponseEntity<String> createTicketGrantingTicket(@RequestBody(required = false) final MultiValueMap<String, String> requestBody,
                                                              final HttpServletRequest request,
                                                              final HttpServletResponse response) {
         try {
@@ -122,31 +118,13 @@ public class TicketGrantingTicketResource {
         return new ResponseEntity<>(requests, HttpStatus.OK);
     }
 
-    /**
-     * Create response entity for ticket response entity.
-     *
-     * @param request the request
-     * @param tgtId   the tgt id
-     * @return the response entity
-     * @throws Exception the exception
-     */
-    protected ResponseEntity<String> createResponseEntityForTicket(final HttpServletRequest request,
-                                                                   final TicketGrantingTicket tgtId) throws Exception {
+    protected ResponseEntity<String> createResponseEntityForTicket(final HttpServletRequest request, final Ticket tgtId) throws Throwable {
         return ticketGrantingTicketResourceEntityResponseFactory.build(tgtId, request);
     }
 
-    /**
-     * Create ticket granting ticket for request ticket granting ticket.
-     *
-     * @param requestBody the request body
-     * @param request     the request
-     * @param response    the response
-     * @return the ticket granting ticket
-     * @throws Exception the authentication exception
-     */
-    protected TicketGrantingTicket createTicketGrantingTicketForRequest(final MultiValueMap<String, String> requestBody,
-                                                                        final HttpServletRequest request,
-                                                                        final HttpServletResponse response) throws Throwable {
+    protected Ticket createTicketGrantingTicketForRequest(final MultiValueMap<String, String> requestBody,
+                                                          final HttpServletRequest request,
+                                                          final HttpServletResponse response) throws Throwable {
         val authenticationResult = authenticationService.authenticate(requestBody, request, response);
         val result = authenticationResult.orElseThrow(FailedLoginException::new);
         return centralAuthenticationService.createTicketGrantingTicket(result);

@@ -1,6 +1,6 @@
 package org.apereo.cas.support.sms;
 
-import org.apereo.cas.config.SmsModeSmsConfiguration;
+import org.apereo.cas.config.CasSmsModeSmsAutoConfiguration;
 import org.apereo.cas.notifications.sms.SmsSender;
 import org.apereo.cas.util.MockWebServer;
 import lombok.val;
@@ -25,7 +25,7 @@ import static org.springframework.http.HttpStatus.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    SmsModeSmsConfiguration.class
+    CasSmsModeSmsAutoConfiguration.class
 },
     properties = "cas.sms-provider.sms-mode.url=http://localhost:8099")
 @Tag("SMS")

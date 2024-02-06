@@ -1,6 +1,5 @@
 package org.apereo.cas.gauth.web.flow.account;
 
-import org.apereo.cas.config.CasWebflowAccountProfileConfiguration;
 import org.apereo.cas.gauth.BaseGoogleAuthenticatorTests;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -26,10 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("WebflowMfaConfig")
 @Getter
-@Import({
-    BaseGoogleAuthenticatorTests.SharedTestConfiguration.class,
-    CasWebflowAccountProfileConfiguration.class
-})
+@Import(BaseGoogleAuthenticatorTests.SharedTestConfiguration.class)
 @TestPropertySource(properties = "CasFeatureModule.AccountManagement.enabled=true")
 public class GoogleMultifactorAuthenticationAccountProfileWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Autowired

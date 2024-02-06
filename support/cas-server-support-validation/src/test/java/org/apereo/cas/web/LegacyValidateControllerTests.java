@@ -1,12 +1,11 @@
 package org.apereo.cas.web;
 
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
-import org.apereo.cas.config.CasThymeleafConfiguration;
-import org.apereo.cas.config.CasValidationConfiguration;
+import org.apereo.cas.config.CasThymeleafAutoConfiguration;
+import org.apereo.cas.config.CasValidationAutoConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.DefaultServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.web.v1.LegacyValidateController;
-
 import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -22,8 +21,8 @@ import org.springframework.context.annotation.Import;
  */
 @Import({
     CasPersonDirectoryTestConfiguration.class,
-    CasThymeleafConfiguration.class,
-    CasValidationConfiguration.class
+    CasThymeleafAutoConfiguration.class,
+    CasValidationAutoConfiguration.class
 })
 @Tag("CAS")
 @Getter

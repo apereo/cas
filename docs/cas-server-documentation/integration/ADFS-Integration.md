@@ -63,7 +63,7 @@ you will first need to generate a private/public keypair:
 ```bash
 openssl genrsa -out private.key 1024
 openssl rsa -pubout -in private.key -out public.key -inform PEM -outform DER
-openssl pkcs8 -topk8 -inform PER -outform DER -nocrypt -in private.key -out private.p8
+openssl pkcs8 -topk8 -inform PEM -outform DER -nocrypt -in private.key -out private.p8
 openssl req -new -x509 -key private.key -out x509.pem -days 365
 
 # convert the X509 certificate to DER format

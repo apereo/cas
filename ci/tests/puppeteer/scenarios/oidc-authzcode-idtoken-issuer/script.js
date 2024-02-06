@@ -23,7 +23,7 @@ async function testService(page, clientId, oidc = true) {
     }, (res) => res.data, (error) => {
         throw `Operation failed to obtain access token: ${error}`;
     });
-    assert(payload.access_token !== null);
+    assert(payload.access_token !== undefined);
 
     await cas.log("Decoding access token...");
     const decodedAccessToken = await cas.decodeJwt(payload.access_token);
@@ -31,10 +31,10 @@ async function testService(page, clientId, oidc = true) {
     if (oidc) {
         assert(decodedAccessToken.iss === "https://sso.example.org/cas/oidc");
         await cas.log("Decoding ID token...");
-        assert(payload.id_token !== null);
+        assert(payload.id_token !== undefined);
         const decodedIdToken = await cas.decodeJwt(payload.id_token);
-        assert(decodedIdToken.sub !== null);
-        assert(decodedIdToken.client_id !== null);
+        assert(decodedIdToken.sub !== undefined);
+        assert(decodedIdToken.client_id !== undefined);
         assert(decodedIdToken.iss === "https://sso.example.org/cas/oidc");
     } else {
         assert(decodedAccessToken.grant_type === "authorization_code");

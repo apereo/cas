@@ -13,7 +13,7 @@ async function verifyWithoutService() {
     await page2.goto("https://localhost:8443/cas/login");
     await cas.loginWith(page2, "casuser", "Mellon");
     await cas.assertInnerTextStartsWith(page2, "#loginErrorsPanel p",
-        "You cannot login at this time, since you have another active single sign-on session in progress");
+        "You cannot log in at this time, since you have another active single sign-on session in progress");
     await browser2.close();
 }
 
@@ -29,7 +29,7 @@ async function verifyWithService() {
     await page2.goto("https://localhost:8443/cas/login?service=https://localhost:9859/anything/1");
     await cas.loginWith(page2, "casuser", "Mellon");
     await cas.assertInnerTextStartsWith(page2, "#loginErrorsPanel p",
-        "You cannot login at this time, since you have another active single sign-on session in progress");
+        "You cannot log in at this time, since you have another active single sign-on session in progress");
     await browser2.close();
 }
 

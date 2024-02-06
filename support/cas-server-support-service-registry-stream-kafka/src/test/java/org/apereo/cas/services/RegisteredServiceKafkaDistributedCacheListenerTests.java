@@ -1,7 +1,7 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.config.CasServicesStreamingConfiguration;
-import org.apereo.cas.config.CasServicesStreamingKafkaConfiguration;
+import org.apereo.cas.config.CasServicesStreamingAutoConfiguration;
+import org.apereo.cas.config.CasServicesStreamingKafkaAutoConfiguration;
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.cache.DistributedCacheObject;
@@ -28,8 +28,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasServicesStreamingKafkaConfiguration.class,
-    CasServicesStreamingConfiguration.class
+    CasServicesStreamingKafkaAutoConfiguration.class,
+    CasServicesStreamingAutoConfiguration.class
 }, properties = {
     "cas.service-registry.stream.kafka.bootstrap-address=localhost:9092",
     "cas.service-registry.stream.core.enabled=true"

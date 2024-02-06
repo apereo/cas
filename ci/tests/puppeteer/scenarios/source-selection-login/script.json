@@ -1,6 +1,5 @@
 {
   "dependencies": "generic",
-
   "properties": [
     "--cas.authn.policy.source-selection-enabled=true",
     

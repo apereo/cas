@@ -68,6 +68,7 @@ The following settings can be specified by an attribute definition:
 | `canonicalizationMode` | (Optional) Control transformation of attribute values; allowed values are `UPPER`, `LOWER` or `NONE`.                                                                                                         |
 | `patterns`             | (Optional) A map of regular expression patterns to static/dynamic constructs to build values, in scenarios where the attribute definition is built off of an existing attribute.                              |
 | `flattened`            | (Optional) Indicate whether attribute definitions with multiple values should be flattened into a single value, separated by the assigned delimiter.                                                          |
+| `singleValue`          | (Optional) Default is `false`. Determines if the attribute should be produced as a single-value claim if it has only a single value.                                                                          |
 
 The following operations in the order given should take place, if an attribute definition is to produce values:
 
@@ -146,7 +147,7 @@ The keys can be generated via the following commands:
 ```bash
 openssl genrsa -out private.key 1024
 openssl rsa -pubout -in private.key -out public.key -inform PEM -outform DER
-openssl pkcs8 -topk8 -inform PER -outform DER -nocrypt -in private.key -out private.p8
+openssl pkcs8 -topk8 -inform PEM -outform DER -nocrypt -in private.key -out private.p8
 ```
 {% endtab %}
 

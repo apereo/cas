@@ -15,7 +15,7 @@
         <form th:if="${accountRegistrationEnabled}" method="post" id="accountMgmtSignupForm">
             <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
             <input type="hidden" name="_eventId" value="signup" />
-            <span class="mdi mdi-account-group"></span>
+            <span class="mdi mdi-account-group" aria-hidden="true"></span>
             <a id="accountSignUpLink" th:utext="#{screen.acct.button.signUp}" href="javascript:void(0)"
                onclick="document.getElementById('accountMgmtSignupForm').submit()" />
             <br><br>
@@ -23,22 +23,21 @@
         <form th:if="${passwordManagementEnabled}" method="post" id="passwordManagementForm">
             <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
             <input type="hidden" name="_eventId" value="resetPassword" />
-            <span class="mdi mdi-lock-open"></span>
+            <span class="mdi mdi-lock-open" aria-hidden="true"></span>
             <a id="forgotPasswordLink" th:utext="#{screen.pm.button.resetPassword}" href="javascript:void(0)"
                 onclick="document.getElementById('passwordManagementForm').submit();" />
             <br><br>
         </form>
-        <form th:if="${passwordManagementEnabled}" method="post" id="passwordManagementUserForm">
+        <form th:if="${#bools.isTrue(passwordManagementEnabled) && #bools.isTrue(forgotUsernameEnabled)}" method="post" id="forgotUsernameForm">
             <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
             <input type="hidden" name="_eventId" value="forgotUsername" />
-            <span class="mdi mdi-account-question"></span>
+            <span class="mdi mdi-account-question" aria-hidden="true"></span>
             <a id="forgotUsernameLink" th:utext="#{screen.pm.button.forgotUsername}" href="javascript:void(0)"
-                onclick="document.getElementById('passwordManagementUserForm').submit();" />
+                onclick="document.getElementById('forgotUsernameForm').submit();" />
             <br><br>
         </form>
-        <div th:unless="${passwordManagementEnabled}">
-            <br />
-            <span class="mdi mdi-account-question"></span>
+        <div th:unless="${passwordManagementEnabled}" class="mt-2">
+            <span class="mdi mdi-account-question" aria-hidden="true"></span>
             <span th:utext="#{screen.pm.button.forgotpwd('https://pwd.example.org')}">Forgot your password?</span>
         </div>
     </div>

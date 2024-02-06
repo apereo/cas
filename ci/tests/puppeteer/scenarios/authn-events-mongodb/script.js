@@ -32,7 +32,7 @@ const fs = require("fs");
     await cas.doGet("https://localhost:8443/cas/actuator/events",
         async (res) => {
             const count = Object.keys(res.data[1]).length;
-            cas.log(`Total event records found ${count}`);
+            await cas.log(`Total event records found ${count}`);
             assert(count === totalAttempts + 1);
 
             fs.rmSync(`${__dirname}/events.zip`, {force: true});
@@ -42,7 +42,7 @@ const fs = require("fs");
             });
             archive.pipe(zip);
             res.data[1].forEach((entry) => archive.append(JSON.stringify(entry), { name: `event-${entry.id}.json`}));
-            archive.finalize();
+            await archive.finalize();
 
         }, async (error) => {
             throw error;
@@ -69,7 +69,7 @@ const fs = require("fs");
     await cas.doGet("https://localhost:8443/cas/actuator/events",
         async (res) => {
             const count = Object.keys(res.data[1]).length;
-            cas.log(`Total event records found ${count}`);
+            await cas.log(`Total event records found ${count}`);
             assert(count === totalAttempts + 1);
         }, async (error) => {
             throw error;

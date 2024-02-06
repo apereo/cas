@@ -24,9 +24,9 @@ const cas = require("../../cas.js");
     await cas.doPost(url, "", {
         "Content-Type": "application/json"
     }, (res) => {
-        assert(res.data.access_token !== null);
-        assert(res.data.refresh_token !== null);
-        assert(res.data.id_token !== null);
+        assert(res.data.access_token !== undefined);
+        assert(res.data.refresh_token !== undefined);
+        assert(res.data.id_token !== undefined);
     }, (error) => {
         throw `Operation failed: ${error}`;
     });

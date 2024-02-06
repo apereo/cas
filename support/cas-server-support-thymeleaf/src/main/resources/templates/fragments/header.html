@@ -22,7 +22,7 @@
                             id="drawerButton"
                             data-bs-toggle="offcanvas"
                             data-bs-target="#app-drawer">
-                        <span class="mdi mdi-menu fa fa-bars"></span>
+                        <span class="mdi mdi-menu fa fa-bars" aria-hidden="true"></span>
                         <span class="visually-hidden">menu</span>
                     </button>
                 </section>
@@ -44,7 +44,7 @@
                             aria-label="Bookmark this page"
                             data-bs-toggle="modal"
                             data-bs-target="#cas-notification-dialog">
-                        <span class="mdi mdi-bell-alert fa fa-bell"></span>
+                        <span class="mdi mdi-bell-alert fa fa-bell" aria-hidden="true"></span>
                         <span class="visually-hidden">notifications</span>
                         <i id="notifications-count" class="notifications-count count">2</i>
                     </button>
@@ -56,7 +56,7 @@
                         && ticketGrantingTicketId != null}"
                        class="mdc-icon-button mdc-top-app-bar__action-item"
                        aria-label="User Account">
-                        <span class="mdi mdi-account-group"></span>
+                        <span class="mdi mdi-account-group" aria-hidden="true"></span>
                         <span class="visually-hidden">user account</span>
                     </a>
                 </section>
@@ -84,7 +84,7 @@
                         <h3 class="mdc-typography--headline6 mdi mdi-alert-circle fas fa-exclamation-circle"
                             th:utext="#{screen.defaultauthn.title}"/>
                         <p class="text text-wrap small" th:utext="#{screen.defaultauthn.heading}">
-                            <i class="mdi mdi-google fas fa-google"></i>
+                            <i class="mdi mdi-google fas fa-google" aria-hidden="true"></i>
                             Static AuthN is ONLY useful for demo purposes. It is recommended that you connect CAS to
                             LDAP,
                             JDBC, etc

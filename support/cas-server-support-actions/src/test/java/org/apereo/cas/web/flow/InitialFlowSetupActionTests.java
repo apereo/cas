@@ -8,10 +8,12 @@ import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.configuration.model.core.sso.SingleSignOnProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
+import org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.cookie.CookieGenerationContext;
@@ -30,11 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
 import java.net.URI;
 import java.util.Collections;
@@ -179,20 +177,17 @@ class InitialFlowSetupActionTests {
 
         @Test
         void verifyServiceStrategy() throws Throwable {
-            val response = new MockHttpServletResponse();
-            val request = new MockHttpServletRequest();
-            request.setMethod(HttpMethod.POST.name());
+            val context = MockRequestContext.create(applicationContext);
+            context.setMethod(HttpMethod.POST);
 
             val id = UUID.randomUUID().toString();
             val registeredService = RegisteredServiceTestUtils.getRegisteredService(id);
             val accessStrategy = new DefaultRegisteredServiceAccessStrategy();
             accessStrategy.setUnauthorizedRedirectUrl(new URI("https://apereo.org/cas"));
             registeredService.setAccessStrategy(accessStrategy);
-            request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, id);
+            context.setParameter(CasProtocolConstants.PARAMETER_SERVICE, id);
             getServicesManager().save(registeredService);
 
-            val context = MockRequestContext.create(applicationContext);
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
             val event = action.execute(context);
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
@@ -200,16 +195,11 @@ class InitialFlowSetupActionTests {
 
         @Test
         void verifyTgtNoSso() throws Throwable {
-            val response = new MockHttpServletResponse();
-            val request = new MockHttpServletRequest();
-
+            val context = MockRequestContext.create(applicationContext);
             val tgt = new MockTicketGrantingTicket("casuser");
             getTicketRegistry().addTicket(tgt);
-            getTicketGrantingTicketCookieGenerator().addCookie(response, tgt.getId());
-            request.setCookies(response.getCookies());
-
-            val context = MockRequestContext.create(applicationContext);
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+            getTicketGrantingTicketCookieGenerator().addCookie(context.getHttpServletResponse(), tgt.getId());
+            context.setRequestCookiesFromResponse();
 
             val event = action.execute(context);
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
@@ -218,5 +208,21 @@ class InitialFlowSetupActionTests {
         }
 
 
+        @Test
+        void verifyAuthHandlersSelected() throws Throwable {
+            val context = MockRequestContext.create(applicationContext);
+            val id = UUID.randomUUID().toString();
+            val registeredService = RegisteredServiceTestUtils.getRegisteredService(id);
+            registeredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy());
+            registeredService.setAuthenticationPolicy(new DefaultRegisteredServiceAuthenticationPolicy()
+                .setRequiredAuthenticationHandlers(CollectionUtils.wrapHashSet("handler1", "handler2")));
+            getServicesManager().save(registeredService);
+            context.setParameter(CasProtocolConstants.PARAMETER_SERVICE, id);
+
+            val event = action.execute(context);
+            assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
+            val handlers = WebUtils.getAvailableAuthenticationHandleNames(context);
+            assertTrue(handlers.isEmpty());
+        }
     }
 }

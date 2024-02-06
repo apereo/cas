@@ -76,7 +76,8 @@ proxy for another CAS service, transmitting the user identity.
 Even if the primary goal of the CAS server is to implement the CAS protocol, other protocols are also supported as extensions:
 
 - [OAuth2](../protocol/OAuth-Protocol.html)
-- [SAML](../protocol/SAML-Protocol.html)
+- [SAML1](../protocol/SAML-v1-Protocol.html)
+- [SAML2](../authentication/Configuring-SAML2-Authentication.html)
 - [OpenID Connect](../protocol/OIDC-Protocol.html)
 - [REST](../protocol/REST-Protocol.html)
 - [WsFederation](../protocol/WS-Federation-Protocol.html)

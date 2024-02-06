@@ -8,6 +8,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.MockRequestContext;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
@@ -44,6 +45,7 @@ import org.pac4j.saml.state.SAML2StateGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import java.io.File;
@@ -83,6 +85,9 @@ class DefaultDelegatedClientAuthenticationWebflowManagerTests {
     @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     private JEEContext context;
 
     private MockRequestContext requestContext;
@@ -90,7 +95,7 @@ class DefaultDelegatedClientAuthenticationWebflowManagerTests {
     @BeforeEach
     public void setup() throws Exception {
         val service = RegisteredServiceTestUtils.getService();
-        requestContext = MockRequestContext.create()
+        requestContext = MockRequestContext.create(applicationContext)
             .withUserAgent("Chrome")
             .setParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
         context = new JEEContext(requestContext.getHttpServletRequest(), requestContext.getHttpServletResponse());
@@ -243,7 +248,7 @@ class DefaultDelegatedClientAuthenticationWebflowManagerTests {
 
     private Pair<SAML2Client, SAML2MessageContext> setupTestContextFor(final String spMetadataPath, final String spEntityId) throws Throwable {
         val idpMetadata = new File("src/test/resources/idp-metadata.xml").getCanonicalPath();
-        val keystorePath = new File(FileUtils.getTempDirectory(), "keystore").getCanonicalPath();
+        val keystorePath = new File(FileUtils.getTempDirectory(), "keystore%s".formatted(RandomUtils.randomAlphabetic(4))).getCanonicalPath();
         val saml2ClientConfiguration = new SAML2Configuration(keystorePath, "changeit", "changeit", idpMetadata);
         saml2ClientConfiguration.setServiceProviderEntityId(spEntityId);
         saml2ClientConfiguration.setServiceProviderMetadataPath(spMetadataPath);

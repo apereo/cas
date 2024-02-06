@@ -151,11 +151,6 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         return super.isEnabled() || isEncryptionPossible(this.encryptionKey);
     }
 
-    /**
-     * Configure encryption key from public key resource.
-     *
-     * @param secretKeyToUse the secret key to use
-     */
     protected void configureEncryptionKeyFromPublicKeyResource(final String secretKeyToUse) {
         val object = extractPublicKeyFromResource(secretKeyToUse);
         LOGGER.debug("Located encryption key resource [{}]", secretKeyToUse);
@@ -163,12 +158,6 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         setEncryptionAlgorithm(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
     }
 
-    /**
-     * Is encryption possible?
-     *
-     * @param key the key
-     * @return true /false
-     */
     protected boolean isEncryptionPossible(final Key key) {
         return this.encryptionEnabled && key != null;
     }

@@ -5,7 +5,7 @@
   "serviceId" : "^https://localhost:8082/cas/.*",
   "name": "Sample",
   "id": 1,
-  "generateRefreshToken": "true",
+  "generateRefreshToken": true,
   "supportedGrantTypes": [ "java.util.HashSet", [ "client_credentials" ] ],
   "scopes" : [ "java.util.HashSet", ["openid"]]
 }

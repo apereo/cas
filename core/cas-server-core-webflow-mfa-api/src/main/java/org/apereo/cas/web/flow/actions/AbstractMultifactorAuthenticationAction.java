@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.springframework.beans.factory.BeanFactoryUtils;
@@ -45,6 +46,7 @@ public abstract class AbstractMultifactorAuthenticationAction<T extends Multifac
         AnnotationAwareOrderComparator.sort(resolvers);
         return resolvers
             .stream()
+            .filter(BeanSupplier::isNotProxy)
             .filter(resolver -> resolver.supports(principal))
             .findFirst()
             .map(r -> r.resolve(principal))

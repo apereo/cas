@@ -80,7 +80,9 @@ public class TicketRegistryProperties implements Serializable {
 
     /**
      * Memcached registry settings.
+     * @deprecated Since 6.2
      */
+    @Deprecated(since = "6.2.0")
     @NestedConfigurationProperty
     private MemcachedTicketRegistryProperties memcached = new MemcachedTicketRegistryProperties();
 
@@ -101,6 +103,12 @@ public class TicketRegistryProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private InMemoryTicketRegistryProperties inMemory = new InMemoryTicketRegistryProperties();
+
+    /**
+     * Settings relevant for the default stateless ticket registry.
+     */
+    @NestedConfigurationProperty
+    private StatelessTicketRegistryProperties stateless = new StatelessTicketRegistryProperties();
 
     /**
      * Ticket registry cleaner settings.

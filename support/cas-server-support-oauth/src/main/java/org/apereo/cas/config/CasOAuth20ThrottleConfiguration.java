@@ -24,7 +24,6 @@ import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.engine.DefaultSecurityLogic;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -52,12 +51,12 @@ import static org.apereo.cas.support.oauth.OAuth20Constants.*;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OAuth)
-@AutoConfiguration
-public class CasOAuth20ThrottleConfiguration {
+@Configuration(value = "CasOAuth20ThrottleConfiguration", proxyBeanMethods = false)
+class CasOAuth20ThrottleConfiguration {
     @Configuration(value = "CasOAuth20ThrottlePlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
-    public static class CasOAuth20ThrottlePlanConfiguration {
+    static class CasOAuth20ThrottlePlanConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "oauthThrottleWebMvcConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -80,7 +79,7 @@ public class CasOAuth20ThrottleConfiguration {
 
     @Configuration(value = "CasOAuth20ThrottleMvcConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasOAuth20ThrottleMvcConfiguration {
+    static class CasOAuth20ThrottleMvcConfiguration {
 
         @ConditionalOnMissingBean(name = "oauthHandlerInterceptorAdapter")
         @Bean
@@ -124,7 +123,7 @@ public class CasOAuth20ThrottleConfiguration {
 
     @Configuration(value = "CasOAuth20ThrottleInterceptorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasOAuth20ThrottleInterceptorConfiguration {
+    static class CasOAuth20ThrottleInterceptorConfiguration {
         @ConditionalOnMissingBean(name = "requiresAuthenticationAuthorizeInterceptor")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

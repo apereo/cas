@@ -1,0 +1,11 @@
+{
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
+  "serviceId" : "^https://localhost:9859/anything/postmethod",
+  "name": "Sample",
+  "id" : 2,
+  "multifactorPolicy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
+    "multifactorAuthenticationProviders" : [ "java.util.LinkedHashSet", [ "mfa-duo" ] ],
+    "failureMode" : "CLOSED"
+  }
+}

@@ -11,7 +11,6 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.token.JwtBuilder;
@@ -35,24 +34,12 @@ import java.util.Map;
 @Getter
 public class OAuth20DefaultAccessTokenFactory implements OAuth20AccessTokenFactory {
 
-    /**
-     * Default instance for the ticket id generator.
-     */
     protected final UniqueTicketIdGenerator accessTokenIdGenerator;
 
-    /**
-     * ExpirationPolicy for refresh tokens.
-     */
     protected final ExpirationPolicyBuilder<OAuth20AccessToken> expirationPolicyBuilder;
 
-    /**
-     * JWT builder instance.
-     */
     protected final JwtBuilder jwtBuilder;
 
-    /**
-     * Services manager.
-     */
     protected final ServicesManager servicesManager;
 
     protected final TicketTrackingPolicy descendantTicketsTrackingPolicy;
@@ -67,7 +54,7 @@ public class OAuth20DefaultAccessTokenFactory implements OAuth20AccessTokenFacto
     @Override
     public OAuth20AccessToken create(final Service service,
                                      final Authentication authentication,
-                                     final TicketGrantingTicket ticketGrantingTicket,
+                                     final Ticket ticketGrantingTicket,
                                      final Collection<String> scopes,
                                      final String token,
                                      final String clientId,
@@ -77,14 +64,11 @@ public class OAuth20DefaultAccessTokenFactory implements OAuth20AccessTokenFacto
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(jwtBuilder.getServicesManager(), clientId);
         val expirationPolicyToUse = determineExpirationPolicyForService(registeredService);
         val accessTokenId = generateAccessTokenId(service, authentication);
-
-        val at = new OAuth20DefaultAccessToken(accessTokenId, service, authentication,
+        val accessToken = new OAuth20DefaultAccessToken(accessTokenId, service, authentication,
             expirationPolicyToUse, ticketGrantingTicket, token, scopes,
             clientId, requestClaims, responseType, grantType);
-
-        descendantTicketsTrackingPolicy.trackTicket(ticketGrantingTicket, at);
-
-        return at;
+        descendantTicketsTrackingPolicy.trackTicket(ticketGrantingTicket, accessToken);
+        return accessToken;
     }
 
     protected String generateAccessTokenId(final Service service, final Authentication authentication) throws Throwable {

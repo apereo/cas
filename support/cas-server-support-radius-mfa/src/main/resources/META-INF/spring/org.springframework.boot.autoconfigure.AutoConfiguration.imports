@@ -1,4 +1,1 @@
-org.apereo.cas.config.RadiusTokenAuthenticationEventExecutionPlanConfiguration
-org.apereo.cas.config.RadiusMultifactorConfiguration
-org.apereo.cas.config.RadiusTokenAuthenticationComponentSerializationConfiguration
-org.apereo.cas.config.RadiusTokenAuthenticationMultifactorProviderBypassConfiguration
+org.apereo.cas.config.CasRadiusMultifactorAuthenticationAutoConfiguration

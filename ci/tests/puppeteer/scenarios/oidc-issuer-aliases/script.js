@@ -6,7 +6,7 @@ const assert = require("assert");
     await cas.doGet("https://localhost:8443/cas/oidc/.well-known/openid-configuration",
         (res) => {
             assert(res.status === 200);
-            assert(res.data.issuer !== null);
+            assert(res.data.issuer !== undefined);
         }, (error) => {
             throw `Operation failed ${error}`;
         });
@@ -15,7 +15,7 @@ const assert = require("assert");
     await cas.doGet("http://localhost:8282/cas/oidc/.well-known/openid-configuration",
         (res) => {
             assert(res.status === 200);
-            assert(res.data.issuer !== null);
+            assert(res.data.issuer !== undefined);
         }, (error) => {
             throw `Operation failed ${error}`;
         });

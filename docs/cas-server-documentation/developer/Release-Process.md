@@ -110,8 +110,8 @@ The script will prompt for the appropriate Sonatype username and password (or us
 mode by specifying the credentials beforehand as environment variables:
 
 ```json
-export REPOSITORY_USERNAME="..."
-export REPOSITORY_PASSWORD="..."
+export REPOSITORY_USER="..."
+export REPOSITORY_PWD="..."
 ```
 
 Do not use your actual password and instead create a a user token. This is a form of credential for the user 

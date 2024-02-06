@@ -8,6 +8,7 @@
   "jwtAccessToken": "true",
   "supportedGrantTypes": [ "java.util.HashSet", [ "password" ] ],
   "scopes" : [ "java.util.HashSet", ["openid", "profile", "MyCustomScope", "eduPerson"]],
+  "generateRefreshToken": true,
   "attributeReleasePolicy": {
     "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
     "policies": [

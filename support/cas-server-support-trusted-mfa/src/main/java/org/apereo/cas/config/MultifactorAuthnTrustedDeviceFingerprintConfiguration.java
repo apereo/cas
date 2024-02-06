@@ -30,7 +30,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -54,12 +53,12 @@ import java.util.stream.Collectors;
 @Slf4j
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthenticationTrustedDevices)
-@AutoConfiguration
-public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
+@Configuration(value = "MultifactorAuthnTrustedDeviceFingerprintConfiguration", proxyBeanMethods = false)
+class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
 
     @Configuration(value = "MultifactorAuthnTrustedDeviceFingerprintComponentConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class MultifactorAuthnTrustedDeviceFingerprintComponentConfiguration {
+    static class MultifactorAuthnTrustedDeviceFingerprintComponentConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "deviceFingerprintUserAgentComponentExtractor")
@@ -121,7 +120,7 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
 
     @Configuration(value = "MultifactorAuthnTrustedDeviceFingerprintStrategyConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class MultifactorAuthnTrustedDeviceFingerprintStrategyConfiguration {
+    static class MultifactorAuthnTrustedDeviceFingerprintStrategyConfiguration {
 
         @ConditionalOnMissingBean(name = DeviceFingerprintStrategy.DEFAULT_BEAN_NAME)
         @Bean(DeviceFingerprintStrategy.DEFAULT_BEAN_NAME)
@@ -137,7 +136,7 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
 
     @Configuration(value = "MultifactorAuthnTrustedDeviceFingerprintCookieConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class MultifactorAuthnTrustedDeviceFingerprintCookieConfiguration {
+    static class MultifactorAuthnTrustedDeviceFingerprintCookieConfiguration {
         @ConditionalOnMissingBean(name = "deviceFingerprintCookieGenerator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -200,7 +199,7 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
     @ConditionalOnBean(name = GeoLocationService.BEAN_NAME)
     @Configuration(value = "MultifactorAuthnTrustedDeviceGeoLocationConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class MultifactorAuthnTrustedDeviceGeoLocationConfiguration {
+    static class MultifactorAuthnTrustedDeviceGeoLocationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "deviceFingerprintGeoLocationComponentExtractor")

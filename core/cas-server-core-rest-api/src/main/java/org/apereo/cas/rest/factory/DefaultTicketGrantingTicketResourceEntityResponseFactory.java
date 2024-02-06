@@ -3,7 +3,7 @@ package org.apereo.cas.rest.factory;
 import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
-import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.Ticket;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -37,8 +37,9 @@ public class DefaultTicketGrantingTicketResourceEntityResponseFactory implements
     private static final String REST_OF_THE_FORM_AND_CLOSING_TAGS = "\" method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\"><br><input "
                                                                     + "type=\"submit\" value=\"Submit\"></form></body></html>";
 
-    private static String getResponse(final TicketGrantingTicket ticketGrantingTicket,
-                                      final HttpServletRequest request, final URI ticketReference,
+    private static String getResponse(final Ticket ticketGrantingTicket,
+                                      final HttpServletRequest request,
+                                      final URI ticketReference,
                                       final HttpHeaders headers) {
         if (isDefaultContentType(request)) {
             headers.setContentType(MediaType.TEXT_HTML);
@@ -62,7 +63,7 @@ public class DefaultTicketGrantingTicketResourceEntityResponseFactory implements
         resourceResolverName = AuditResourceResolvers.REST_API_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER)
     @Override
     @SuppressWarnings("JdkObsolete")
-    public ResponseEntity<String> build(final TicketGrantingTicket ticketGrantingTicket, final HttpServletRequest request) throws Exception {
+    public ResponseEntity<String> build(final Ticket ticketGrantingTicket, final HttpServletRequest request) throws Throwable {
         val ticketReference = new URI(request.getRequestURL().toString() + '/' + ticketGrantingTicket.getId());
         val headers = new HttpHeaders();
         headers.setLocation(ticketReference);

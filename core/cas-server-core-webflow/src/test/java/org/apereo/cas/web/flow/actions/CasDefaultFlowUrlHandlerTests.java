@@ -5,7 +5,9 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.webflow.context.servlet.FlowUrlHandler;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
+import java.nio.charset.StandardCharsets;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -15,9 +17,19 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Webflow")
 class CasDefaultFlowUrlHandlerTests {
 
-    private final CasDefaultFlowUrlHandler urlHandler = new CasDefaultFlowUrlHandler();
+    private final FlowUrlHandler urlHandler = new CasDefaultFlowUrlHandler();
 
     private final MockHttpServletRequest request = new MockHttpServletRequest();
+
+    @Test
+    void verifyFlowExecutionKeyInRequestBody() throws Throwable {
+        setupRequest("/cas", "/app", "/foo");
+        request.setMethod("POST");
+        request.setContent("execution=continue".getBytes(StandardCharsets.UTF_8));
+        val executionKey = urlHandler.getFlowExecutionKey(request);
+        assertEquals("continue", executionKey);
+        assertEquals("continue", request.getAttribute(CasDefaultFlowUrlHandler.DEFAULT_FLOW_EXECUTION_KEY_PARAMETER));
+    }
 
     @Test
     void verifyCreateFlowExecutionUrlWithSingleValuedAttributes() throws Throwable {

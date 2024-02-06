@@ -1,1 +1,1 @@
-org.apereo.cas.config.JpaWebAuthnConfiguration
+org.apereo.cas.config.CasJpaWebAuthnAutoConfiguration

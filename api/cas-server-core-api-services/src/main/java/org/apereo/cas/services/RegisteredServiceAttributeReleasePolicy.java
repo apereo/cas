@@ -106,4 +106,13 @@ public interface RegisteredServiceAttributeReleasePolicy extends Serializable, O
     default String getName() {
         return getClass().getSimpleName();
     }
+
+    /**
+     * Gets condition that controls whether this policy should be activated.
+     *
+     * @return the condition
+     */
+    default RegisteredServiceAttributeReleaseActivationCriteria getActivationCriteria() {
+        return null;
+    }
 }

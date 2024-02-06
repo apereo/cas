@@ -38,7 +38,7 @@ class DelegatedClientAuthenticationCredentialSelectionActionTests {
     @Test
     void verifyOperation() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
-        context.getHttpServletRequest().addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
+        context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
         assertEquals(CasWebflowConstants.TRANSITION_ID_SELECT, action.execute(context).getId());
         val profile = DelegatedAuthenticationCandidateProfile.builder()
             .attributes(CoreAuthenticationTestUtils.getAttributes())

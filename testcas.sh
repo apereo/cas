@@ -45,7 +45,7 @@ parallel="--parallel "
 dryRun=""
 info=""
 gradleCmd="./gradlew"
-flags="--stacktrace --no-daemon --configure-on-demand --build-cache -x javadoc -x check -DskipNestedConfigMetadataGen=true -Dverbose=true "
+flags="-no-daemon --configure-on-demand --build-cache -x javadoc -x check -Dverbose=true "
 coverageTask=""
 
 while (( "$#" )); do
@@ -66,10 +66,10 @@ while (( "$#" )); do
         currentDir=`pwd`
         case "${currentDir}" in
             *api*|*core*|*support*|*webapp*)
-                coverageTask="jacocoTestReport "
+                coverageTask="jacocoTestReport"
                 ;;
             *)
-                coverageTask="jacocoRootReport "
+                coverageTask="jacocoRootReport"
                 ;;
         esac
         shift
@@ -491,8 +491,12 @@ while (( "$#" )); do
     esac
 done
 
-if [[ -z "$task" ]]
-then
+if [[ -n "$coverageTask" ]]; then
+  task=""
+  printf "${GREEN}Running code coverage task [${coverageTask}]will disable all other task executions. Make sure all test tasks that generate code coverage data have already executed.${ENDCOLOR}\n"
+fi
+
+if [[ -z "$task" ]] && [[ -z "$coverageTask" ]]; then
   printHelp
   exit 1
 fi
@@ -509,6 +513,7 @@ echo -e "***********************************************************************
 
 if [ $retVal == 0 ]; then
     printf "${GREEN}Gradle build finished successfully.${ENDCOLOR}\n"
+    exit 0
 else
     printf "${RED}Gradle build did NOT finish successfully.${ENDCOLOR}"
     exit $retVal

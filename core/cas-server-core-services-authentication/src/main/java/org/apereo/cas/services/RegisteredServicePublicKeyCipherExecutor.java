@@ -20,19 +20,15 @@ import java.util.Optional;
  */
 @Slf4j
 public class RegisteredServicePublicKeyCipherExecutor implements RegisteredServiceCipherExecutor {
+    /**
+     * Instantiates a new registered service cipher executor.
+     */
+    public static final RegisteredServiceCipherExecutor INSTANCE = new RegisteredServicePublicKeyCipherExecutor();
+
     static {
         Security.addProvider(new BouncyCastleProvider());
     }
 
-    /**
-     * Encode internally, meant to be called by extensions.
-     * Default behavior will encode the data based on the
-     * registered service public key's algorithm using {@link javax.crypto.Cipher}.
-     *
-     * @param data              the data
-     * @param registeredService the registered service
-     * @return a byte[] that contains the encrypted result
-     */
     protected static byte[] encodeInternal(final String data, final RegisteredService registeredService) {
         val publicKey = registeredService.getPublicKey();
         if (publicKey == null) {
@@ -48,14 +44,6 @@ public class RegisteredServicePublicKeyCipherExecutor implements RegisteredServi
         return null;
     }
 
-    /**
-     * Encrypt using the given cipher associated with the service,
-     * and encode the data in base 64.
-     *
-     * @param data    the data
-     * @param service the registered service
-     * @return the encoded piece of data in base64
-     */
     @Override
     public String encode(final String data, final Optional<RegisteredService> service) {
         try {

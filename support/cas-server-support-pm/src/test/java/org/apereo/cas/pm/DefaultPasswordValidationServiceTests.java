@@ -1,17 +1,15 @@
 package org.apereo.cas.pm;
 
-import org.apereo.cas.config.CasCoreAuditConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
-import org.apereo.cas.config.CasCoreConfiguration;
-import org.apereo.cas.config.CasCoreNotificationsConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
-import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
-import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
-import org.apereo.cas.config.CasCoreTicketsConfiguration;
-import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasCoreWebConfiguration;
-import org.apereo.cas.config.PasswordManagementConfiguration;
+import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasCoreAutoConfiguration;
+import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
+import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
+import org.apereo.cas.config.CasPasswordManagementAutoConfiguration;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -32,19 +30,17 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    PasswordManagementConfiguration.class,
+    CasPasswordManagementAutoConfiguration.class,
     MailSenderAutoConfiguration.class,
-    CasCoreConfiguration.class,
-    CasCoreAuthenticationPrincipalConfiguration.class,
-    CasCoreNotificationsConfiguration.class,
-    CasCoreTicketsConfiguration.class,
-    CasCoreTicketCatalogConfiguration.class,
-    CasCoreTicketIdGeneratorsConfiguration.class,
-    CasCoreTicketsSerializationConfiguration.class,
-    CasCoreServicesConfiguration.class,
-    CasCoreWebConfiguration.class,
-    CasCoreAuditConfiguration.class,
-    CasCoreUtilConfiguration.class
+    CasCoreAutoConfiguration.class,
+    CasCoreAuthenticationAutoConfiguration.class,
+    CasCoreNotificationsAutoConfiguration.class,
+    CasCoreTicketsAutoConfiguration.class,
+    CasCoreServicesAutoConfiguration.class,
+    CasCoreWebAutoConfiguration.class,
+    CasCoreAuditAutoConfiguration.class,
+    CasCoreLogoutAutoConfiguration.class,
+    CasCoreUtilAutoConfiguration.class
 }, properties = {
     "cas.authn.pm.core.enabled=true",
     "cas.authn.pm.history.core.enabled=true",

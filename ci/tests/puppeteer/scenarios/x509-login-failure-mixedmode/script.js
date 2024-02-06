@@ -1,5 +1,4 @@
 const puppeteer = require("puppeteer");
-const assert = require("assert");
 const cas = require("../../cas.js");
 const fs = require("fs");
 const request = require("request");
@@ -11,7 +10,7 @@ const request = require("request");
     await page.setRequestInterception(true);
     const args = process.argv.slice(2);
     const config = JSON.parse(fs.readFileSync(args[0]));
-    assert(config !== null);
+
 
     await cas.log(`Certificate file: ${config.trustStoreCertificateFile}`);
     await cas.log(`Private key file: ${config.trustStorePrivateKeyFile}`);

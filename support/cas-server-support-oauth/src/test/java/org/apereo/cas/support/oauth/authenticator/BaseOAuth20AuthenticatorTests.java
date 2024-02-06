@@ -6,32 +6,17 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
-import org.apereo.cas.config.CasCookieConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
-import org.apereo.cas.config.CasCoreConfiguration;
-import org.apereo.cas.config.CasCoreHttpConfiguration;
-import org.apereo.cas.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.config.CasCoreNotificationsConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
-import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
-import org.apereo.cas.config.CasCoreTicketComponentSerializationConfiguration;
-import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
-import org.apereo.cas.config.CasCoreTicketsConfiguration;
-import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasCoreWebConfiguration;
-import org.apereo.cas.config.CasOAuth20AuthenticationServiceSelectionStrategyConfiguration;
-import org.apereo.cas.config.CasOAuth20ComponentSerializationConfiguration;
-import org.apereo.cas.config.CasOAuth20Configuration;
-import org.apereo.cas.config.CasOAuth20EndpointsConfiguration;
-import org.apereo.cas.config.CasOAuth20ServicesConfiguration;
-import org.apereo.cas.config.CasOAuth20TicketSerializationConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasCoreAutoConfiguration;
+import org.apereo.cas.config.CasCoreCookieAutoConfiguration;
+import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
+import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
+import org.apereo.cas.config.CasOAuth20AutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
-import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider;
@@ -51,7 +36,6 @@ import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import lombok.val;
-import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 import org.junit.jupiter.api.BeforeEach;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,7 +86,7 @@ public abstract class BaseOAuth20AuthenticatorTests {
     protected OAuth20RequestParameterResolver oauthRequestParameterResolver;
 
     @Autowired
-    @Qualifier("webApplicationServiceFactory")
+    @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
     protected ServiceFactory<WebApplicationService> serviceFactory;
 
     @Autowired
@@ -180,7 +164,7 @@ public abstract class BaseOAuth20AuthenticatorTests {
         serviceWithAttributesMapping.setClientId("serviceWithAttributesMapping");
 
         val provider = new DefaultRegisteredServiceUsernameProvider();
-        provider.setCanonicalizationMode(CaseCanonicalizationMode.LOWER.name());
+        provider.setCanonicalizationMode("LOWER");
         serviceWithAttributesMapping.setUsernameAttributeProvider(provider);
         serviceWithAttributesMapping.setAttributeReleasePolicy(
             new ReturnAllowedAttributeReleasePolicy(List.of("eduPersonAffiliation")));
@@ -196,35 +180,20 @@ public abstract class BaseOAuth20AuthenticatorTests {
     })
     @SpringBootConfiguration
     @Import({
-        CasCoreHttpConfiguration.class,
-        CasCoreUtilConfiguration.class,
+        CasCoreUtilAutoConfiguration.class,
         CasPersonDirectoryTestConfiguration.class,
-        CasCoreNotificationsConfiguration.class,
-        CasCoreServicesConfiguration.class,
-        CasCoreAuthenticationConfiguration.class,
-        CasCoreAuthenticationPolicyConfiguration.class,
-        CasCoreAuthenticationPrincipalConfiguration.class,
-        CasCoreAuthenticationSupportConfiguration.class,
-        CasCoreAuthenticationHandlersConfiguration.class,
-        CasCoreTicketIdGeneratorsConfiguration.class,
-        CasCoreTicketCatalogConfiguration.class,
-        CasCoreTicketsSerializationConfiguration.class,
-        CasCoreTicketsConfiguration.class,
-        CasCoreTicketComponentSerializationConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
-        CasCoreLogoutConfiguration.class,
-        CasCoreWebConfiguration.class,
-        CasCookieConfiguration.class,
-        CasCoreConfiguration.class,
+        CasCoreNotificationsAutoConfiguration.class,
+        CasCoreServicesAutoConfiguration.class,
+        CasCoreAuthenticationAutoConfiguration.class,
+        CasCoreTicketsAutoConfiguration.class,
+        CasCoreLogoutAutoConfiguration.class,
+        CasCoreWebAutoConfiguration.class,
+        CasCoreCookieAutoConfiguration.class,
+        CasCoreAutoConfiguration.class,
         CasAuthenticationEventExecutionPlanTestConfiguration.class,
-        CasOAuth20AuthenticationServiceSelectionStrategyConfiguration.class,
-        CasOAuth20ComponentSerializationConfiguration.class,
-        CasOAuth20Configuration.class,
-        CasOAuth20EndpointsConfiguration.class,
-        CasOAuth20ServicesConfiguration.class,
-        CasOAuth20TicketSerializationConfiguration.class
+        CasOAuth20AutoConfiguration.class
     })
-    static class SharedTestConfiguration {
+    public static class SharedTestConfiguration {
     }
 
     protected static OAuth20AccessToken getAccessToken() {

@@ -1,0 +1,13 @@
+{
+  "casuser": {
+    "firstName": [
+      "Bob"
+    ],
+    "employeeNumber": [
+      "123456"
+    ],
+    "lastName": [
+      "Johnson"
+    ]
+  }
+}

@@ -179,8 +179,8 @@ policy may be used to release a collection of allowed attributes to entity ids g
   "attributeReleasePolicy": {
     "@class": "org.apereo.cas.support.saml.services.PatternMatchingEntityIdAttributeReleasePolicy",
     "allowedAttributes" : [ "java.util.ArrayList", [ "cn", "mail", "sn" ] ],
-    "fullMatch" : "true",
-    "reverseMatch" : "false",
+    "fullMatch" : true,
+    "reverseMatch" : false,
     "entityIds" : "entityId1|entityId2|somewhere.+"
   }
 }

@@ -20,13 +20,13 @@
                         <h4 class="d-flex align-items-center">
                             <ul style="list-style: none">
                                 <code>
-                                <li><i class="mdi mdi-laptop fas fa-laptop me-2"></i>
+                                <li><i class="mdi mdi-laptop fas fa-laptop me-2" aria-hidden="true"></i>
                                     <span th:id="${'name-' + device.name}" th:utext="${device.name}">Device Name</span>
                                 </li>
-                                <li><i class="mdi mdi-account-clock fas fa-user-clock me-2"></i>
+                                <li><i class="mdi mdi-account-clock fas fa-user-clock me-2" aria-hidden="true"></i>
                                     <span th:utext="${device.registrationDate}">Device Date</span>
                                 </li>
-                                <li><i class="mdi mdi-account-details fas fa-user-tag me-2"></i>
+                                <li><i class="mdi mdi-account-details fas fa-user-tag me-2" aria-hidden="true"></i>
                                     <span th:id="${'id-' + device.id}" th:utext="${device.id}">Device Id</span>
                                 </li>
                                 </code>

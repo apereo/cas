@@ -25,24 +25,26 @@ const path = require("path");
     }, (res) => {
         cas.log(`Found ${res.data.length} audit records`);
         assert(res.data.length >= 4);
-        assert(res.data[0].principal !== null);
-        assert(res.data[0].actionPerformed !== null);
-        assert(res.data[0].applicationCode !== null);
-        assert(res.data[0].clientIpAddress !== null);
-        assert(res.data[0].serverIpAddress !== null);
-        assert(res.data[0].resourceOperatedUpon !== null);
+        assert(res.data[0].principal !== undefined);
+        assert(res.data[0].actionPerformed !== undefined);
+        assert(res.data[0].applicationCode !== undefined);
+        assert(res.data[0].auditableResource !== undefined);
+        assert(res.data[0].whenActionWasPerformed !== undefined);
+        assert(res.data[0].clientInfo.clientIpAddress !== undefined);
+        assert(res.data[0].clientInfo.serverIpAddress !== undefined);
+        assert(res.data[0].clientInfo.userAgent !== undefined);
+        assert(res.data[0].clientInfo.locale !== undefined);
     }, (error) => {
         throw(error);
     });
 
     await cas.doGet("https://localhost:8443/cas/actuator/auditevents",
         async (res) => {
-            cas.log(`Found ${res.data.events.length} audit records`);
+            await cas.log(`Found ${res.data.events.length} audit records`);
             assert(res.data.events.length >= 4);
-            assert(res.data.events[0].principal !== null);
-            assert(res.data.events[0].timestamp !== null);
-            assert(res.data.events[0].type !== null);
-            assert(res.data.events[0].data.source !== null);
+            assert(res.data.events[0].principal !== undefined);
+            assert(res.data.events[0].timestamp !== undefined);
+            assert(res.data.events[0].type !== undefined);
         }, async (err) => {
             throw(err);
         });

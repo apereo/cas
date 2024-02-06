@@ -13,7 +13,7 @@ const assert = require("assert");
 
     await cas.log("Starting out with acceptable usage policy feature disabled...");
     await cas.goto(page, "https://localhost:8443/cas/logout");
-    await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
+    await cas.gotoLogin(page, service);
     await cas.loginWith(page);
     await page.waitForTimeout(2000);
     await cas.assertTicketParameter(page);
@@ -29,7 +29,7 @@ const assert = require("assert");
 
     await cas.log("Starting out with acceptable usage policy feature enabled...");
     await cas.goto(page, "https://localhost:8443/cas/logout");
-    await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
+    await cas.gotoLogin(page, service);
     await cas.loginWith(page);
     await cas.assertTextContent(page, "#main-content #login #fm1 h3", "Acceptable Usage Policy");
     await cas.assertVisibility(page, "button[name=submit]");

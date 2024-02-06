@@ -1,16 +1,14 @@
 package org.apereo.cas.jmx;
 
-import org.apereo.cas.config.CasCoreHttpConfiguration;
-import org.apereo.cas.config.CasCoreNotificationsConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
-import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
-import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
-import org.apereo.cas.config.CasCoreTicketsConfiguration;
-import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasCoreWebConfiguration;
-import org.apereo.cas.config.CasJmxConfiguration;
-import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasCoreAutoConfiguration;
+import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
+import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
+import org.apereo.cas.config.CasJmxAutoConfiguration;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -33,17 +31,15 @@ public abstract class BaseCasJmxTests {
     })
     @SpringBootConfiguration
     @Import({
-        CasJmxConfiguration.class,
-        CasCoreServicesConfiguration.class,
-        CasCoreTicketIdGeneratorsConfiguration.class,
-        CasCoreTicketCatalogConfiguration.class,
-        CasCoreTicketsSerializationConfiguration.class,
-        CasCoreTicketsConfiguration.class,
-        CasCoreHttpConfiguration.class,
-        CasCoreNotificationsConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
-        CasCoreWebConfiguration.class,
-        CasCoreUtilConfiguration.class
+        CasJmxAutoConfiguration.class,
+        CasCoreServicesAutoConfiguration.class,
+        CasCoreTicketsAutoConfiguration.class,
+        CasCoreNotificationsAutoConfiguration.class,
+        CasCoreAuthenticationAutoConfiguration.class,
+        CasCoreWebAutoConfiguration.class,
+        CasCoreLogoutAutoConfiguration.class,
+        CasCoreAutoConfiguration.class,
+        CasCoreUtilAutoConfiguration.class
     })
     public static class SharedTestConfiguration {
     }

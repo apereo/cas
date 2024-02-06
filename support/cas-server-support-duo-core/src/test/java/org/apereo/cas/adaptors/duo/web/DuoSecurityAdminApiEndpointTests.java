@@ -1,8 +1,10 @@
 package org.apereo.cas.adaptors.duo.web;
 
+import org.apereo.cas.adaptors.duo.DuoSecurityUserAccount;
+import org.apereo.cas.adaptors.duo.DuoSecurityUserAccountStatus;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.duo.authn.UniversalPromptDuoSecurityAuthenticationService;
-import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.util.CollectionUtils;
@@ -45,7 +47,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasCoreHttpConfiguration.class
+    CasCoreWebAutoConfiguration.class
 },
     properties = "cas.http-client.host-name-verifier=none")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -119,6 +121,19 @@ class DuoSecurityAdminApiEndpointTests {
             webServer.start();
             val result = endpoint.createBypassCodes(null, DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER, "mghfytgdq");
             assertFalse(result.isEmpty());
+        }
+    }
+
+    @Test
+    void verifyUserUpdates() throws Throwable {
+        val endpoint = new DuoSecurityAdminApiEndpoint(casProperties, this.applicationContext);
+        try (val webServer = new MockWebServer(8443)) {
+            webServer.responseBodySupplier(() -> new ClassPathResource("duoAdminApiResponse-user.json"));
+            webServer.start();
+            val responseEntity = endpoint.updateUser("casuser", DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER,
+                new DuoSecurityUserAccount().setStatus(DuoSecurityUserAccountStatus.AUTH));
+            assertTrue(responseEntity.hasBody());
+            assertTrue(responseEntity.getStatusCode().is2xxSuccessful());
         }
     }
 }

@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
+import org.apereo.cas.authentication.AuthenticationHandlerResolver;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationResultBuilderFactory;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -13,6 +14,7 @@ import org.apereo.cas.authentication.DefaultAuthenticationManager;
 import org.apereo.cas.authentication.DefaultAuthenticationResultBuilderFactory;
 import org.apereo.cas.authentication.DefaultAuthenticationTransactionFactory;
 import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
+import org.apereo.cas.authentication.handler.DefaultAuthenticationHandlerResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.TriStateBoolean;
@@ -25,7 +27,6 @@ import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -49,12 +50,12 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Authentication)
-@AutoConfiguration(after = CasCoreServicesConfiguration.class)
-public class CasCoreAuthenticationConfiguration {
+@Configuration(value = "CasCoreAuthenticationConfiguration", proxyBeanMethods = false)
+class CasCoreAuthenticationConfiguration {
 
     @Configuration(value = "CasCoreAuthenticationBaseConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreAuthenticationBaseConfiguration {
+    static class CasCoreAuthenticationBaseConfiguration {
 
         @ConditionalOnMissingBean(name = "authenticationResultBuilderFactory")
         @Bean
@@ -89,7 +90,7 @@ public class CasCoreAuthenticationConfiguration {
 
     @Configuration(value = "CasCoreAuthenticationManagerConfiguration", proxyBeanMethods = false)
     @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
-    public static class CasCoreAuthenticationManagerConfiguration {
+    static class CasCoreAuthenticationManagerConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "authenticationTransactionManager")
@@ -116,14 +117,18 @@ public class CasCoreAuthenticationConfiguration {
 
     @Configuration(value = "CasCoreAuthenticationPlanConfiguration", proxyBeanMethods = false)
     @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
-    public static class CasCoreAuthenticationPlanConfiguration {
+    static class CasCoreAuthenticationPlanConfiguration {
         @ConditionalOnMissingBean(name = AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlan authenticationEventExecutionPlan(
+            @Qualifier("defaultAuthenticationHandlerResolver")
+            final AuthenticationHandlerResolver defaultAuthenticationHandlerResolver,
             final List<AuthenticationEventExecutionPlanConfigurer> configurers) {
 
             val plan = new DefaultAuthenticationEventExecutionPlan();
+            plan.setDefaultAuthenticationHandlerResolver(defaultAuthenticationHandlerResolver);
+            
             val sortedConfigurers = new ArrayList<>(configurers);
             sortedConfigurers.removeIf(BeanSupplier::isProxy);
             AnnotationAwareOrderComparator.sortIfNecessary(sortedConfigurers);
@@ -135,6 +140,13 @@ public class CasCoreAuthenticationConfiguration {
                     configurer.configureAuthenticationExecutionPlan(plan);
                 }));
             return plan;
+        }
+
+        @ConditionalOnMissingBean(name = "defaultAuthenticationHandlerResolver")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public AuthenticationHandlerResolver defaultAuthenticationHandlerResolver() {
+            return new DefaultAuthenticationHandlerResolver();
         }
     }
 }

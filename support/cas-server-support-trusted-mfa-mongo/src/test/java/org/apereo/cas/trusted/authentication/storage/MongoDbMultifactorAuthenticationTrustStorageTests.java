@@ -1,10 +1,9 @@
 package org.apereo.cas.trusted.authentication.storage;
 
-import org.apereo.cas.config.MongoDbMultifactorAuthenticationTrustConfiguration;
+import org.apereo.cas.config.CasMongoDbMultifactorAuthenticationTrustAutoConfiguration;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,11 +11,9 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
-
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -26,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("MongoDbMFA")
-@Import(MongoDbMultifactorAuthenticationTrustConfiguration.class)
+@Import(CasMongoDbMultifactorAuthenticationTrustAutoConfiguration.class)
 @TestPropertySource(
     properties = {
         "cas.authn.mfa.trusted.mongo.database-name=mfa-trusted",

@@ -111,6 +111,9 @@ Needless to say, you are going to need:
 [Beyond Compare](http://www.scootersoftware.com/), etc.
 2. A decent intelligent text editor, such as [Sublime](http://www.sublimetext.com),
 [Visual Studio Code](https://code.visualstudio.com/) or a full blown IDE such as [IntelliJ IDEA](https://www.jetbrains.com/idea/).
+             
+More recent and modern version of the [CAS overlay](../installation/WAR-Overlay-Installation.html)
+allow built-in support for upgrades. To learn more, please see [this guide](../installation/OpenRewrite-Upgrade-Recipes.html).
 
 ## Document Changes
 

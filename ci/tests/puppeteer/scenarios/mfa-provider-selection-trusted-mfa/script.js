@@ -29,8 +29,8 @@ const assert = require("assert");
     const response = await cas.doRequest(baseUrl);
     const record = JSON.parse(response)[0];
     console.dir(record, {depth: null, colors: true});
-    assert(record.id !== null);
-    assert(record.name !== null);
+    assert(record.id !== undefined);
+    assert(record.name !== undefined);
     await cas.gotoLogout(page);
 
     await cas.gotoLogin(page, "https://example.com");

@@ -5,8 +5,6 @@
     "docker": "true"
   },
   "properties": [
-
-
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=*",
     "--management.endpoints.enabled-by-default=true",

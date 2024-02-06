@@ -34,30 +34,20 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @SpringBootTest(classes = {
-    CasCoreMultifactorAuthenticationConfiguration.class,
-    CasMultifactorAuthenticationWebflowConfiguration.class,
-    CasWebflowContextConfiguration.class,
-    CasCoreWebflowConfiguration.class,
+    CasCoreMultifactorAuthenticationAutoConfiguration.class,
+    CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
+    CasCoreWebflowAutoConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
-    RadiusConfiguration.class,
-    CasCoreConfiguration.class,
-    CasCoreLogoutConfiguration.class,
-    CasCoreNotificationsConfiguration.class,
-    CasCoreServicesConfiguration.class,
-    CasCoreTicketsConfiguration.class,
-    CasCoreUtilConfiguration.class,
-    CasCoreWebConfiguration.class,
-    CasCoreHttpConfiguration.class,
-    CasCoreAuthenticationConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
-    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-    CasCoreTicketIdGeneratorsConfiguration.class,
-    CasCoreTicketCatalogConfiguration.class,
-    CasCoreTicketsSerializationConfiguration.class,
-    CasCoreAuthenticationSupportConfiguration.class,
-    CasCoreAuthenticationMetadataConfiguration.class,
-    CasCoreAuthenticationPrincipalConfiguration.class,
-    CasCookieConfiguration.class,
+    CasRadiusAutoConfiguration.class,
+    CasCoreAutoConfiguration.class,
+    CasCoreLogoutAutoConfiguration.class,
+    CasCoreNotificationsAutoConfiguration.class,
+    CasCoreTicketsAutoConfiguration.class,
+    CasCoreUtilAutoConfiguration.class,
+    CasCoreWebAutoConfiguration.class,
+    CasCoreServicesAutoConfiguration.class,
+    CasCoreAuthenticationAutoConfiguration.class,
+    CasCoreCookieAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
     RefreshAutoConfiguration.class
 },
@@ -90,7 +80,7 @@ class RadiusConfigurationTests {
     void emptyAddress() {
         val clientProperties = new RadiusClientProperties();
         clientProperties.setInetAddress("  ");
-        val ips = RadiusConfiguration.getClientIps(clientProperties);
+        val ips = CasRadiusAutoConfiguration.getClientIps(clientProperties);
         assertEquals(0, ips.size());
     }
 
@@ -98,7 +88,7 @@ class RadiusConfigurationTests {
     void someAddressesWithSpaces() {
         val clientProperties = new RadiusClientProperties();
         clientProperties.setInetAddress("localhost,  localguest  ");
-        val ips = RadiusConfiguration.getClientIps(clientProperties);
+        val ips = CasRadiusAutoConfiguration.getClientIps(clientProperties);
         assertEquals(2, ips.size());
         assertTrue(ips.contains("localhost"));
         assertTrue(ips.contains("localguest"));

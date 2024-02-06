@@ -37,7 +37,7 @@ import static org.mockito.Mockito.*;
  * @since 3.5.0
  */
 @Tag("Metrics")
-@SpringBootTest(classes = CasCoreMonitorConfigurationTests.SharedTestConfiguration.class,
+@SpringBootTest(classes = CasCoreMonitorAutoConfigurationTests.SharedTestConfiguration.class,
     properties = "cas.ticket.tgt.core.only-track-most-recent-session=true")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class SessionHealthIndicatorTests {

@@ -1,8 +1,14 @@
 package org.apereo.cas.web.security;
 
-import org.apereo.cas.config.CasCoreWebConfiguration;
-import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.config.CasWebSecurityConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasCoreAutoConfiguration;
+import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
+import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
+import org.apereo.cas.config.CasWebAppAutoConfiguration;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.actuate.autoconfigure.beans.BeansEndpointAutoConfiguration;
 import org.springframework.boot.actuate.autoconfigure.condition.ConditionsReportEndpointAutoConfiguration;
@@ -49,9 +55,15 @@ public abstract class BaseWebSecurityTests {
     })
     @SpringBootConfiguration
     @Import({
-        CasWebApplicationServiceFactoryConfiguration.class,
-        CasCoreWebConfiguration.class,
-        CasWebSecurityConfiguration.class
+        CasCoreServicesAutoConfiguration.class,
+        CasCoreWebAutoConfiguration.class,
+        CasCoreAuthenticationAutoConfiguration.class,
+        CasCoreNotificationsAutoConfiguration.class,
+        CasPersonDirectoryAutoConfiguration.class,
+        CasCoreAutoConfiguration.class,
+        CasCoreTicketsAutoConfiguration.class,
+        CasCoreLogoutAutoConfiguration.class,
+        CasWebAppAutoConfiguration.class
     })
     public static class SharedTestConfiguration {
     }

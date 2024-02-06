@@ -22,7 +22,6 @@ import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurat
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -48,8 +47,8 @@ import org.springframework.webflow.execution.Action;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication, module = "inwebo")
-@AutoConfiguration
-public class InweboWebflowConfiguration {
+@Configuration(value = "InweboWebflowConfiguration", proxyBeanMethods = false)
+class InweboWebflowConfiguration {
     private static final int WEBFLOW_CONFIGURER_ORDER = 100;
 
     @ConditionalOnMissingBean(name = "inweboMultifactorWebflowConfigurer")
@@ -85,7 +84,7 @@ public class InweboWebflowConfiguration {
 
     @Configuration(value = "InweboWebflowRegistryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class InweboWebflowRegistryConfiguration {
+    static class InweboWebflowRegistryConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public FlowDefinitionRegistry inweboFlowRegistry(
@@ -103,7 +102,7 @@ public class InweboWebflowConfiguration {
 
     @Configuration(value = "InweboWebflowExecutionPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class InweboWebflowExecutionPlanConfiguration {
+    static class InweboWebflowExecutionPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "inweboCasWebflowExecutionPlanConfigurer")
@@ -116,7 +115,7 @@ public class InweboWebflowConfiguration {
 
     @Configuration(value = "InweboWebflowActionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class InweboWebflowActionConfiguration {
+    static class InweboWebflowActionConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_INWEBO_PUSH_AUTHENTICATION)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -171,7 +170,7 @@ public class InweboWebflowConfiguration {
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthenticationTrustedDevices, module = "inwebo")
     @Configuration(value = "InweboMultifactorTrustConfiguration", proxyBeanMethods = false)
     @DependsOn("inweboMultifactorWebflowConfigurer")
-    public static class InweboMultifactorTrustConfiguration {
+    static class InweboMultifactorTrustConfiguration {
         private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.mfa.inwebo.trusted-device-enabled")
             .isTrue().evenIfMissing();
 

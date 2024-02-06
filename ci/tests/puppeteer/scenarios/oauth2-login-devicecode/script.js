@@ -7,16 +7,15 @@ const puppeteer = require("puppeteer");
     await cas.doPost(url, "", {
         "Content-Type": "application/json"
     }, (res) => {
-        // await cas.log(res.data);
-        assert(res.data.device_code !== null);
-        assert(res.data.user_code !== null);
-        assert(res.data.verification_uri !== null);
-        assert(res.data.interval !== null);
-        assert(res.data.expires_in !== null);
+        assert(res.data.device_code !== undefined);
+        assert(res.data.user_code !== undefined);
+        assert(res.data.verification_uri !== undefined);
+        assert(res.data.interval !== undefined);
+        assert(res.data.expires_in !== undefined);
 
         verifyDeviceCode(res.data);
     }, (error) => {
-        throw `Operation failed to obtain access token: ${error}`;
+        throw `Operation failed to obtain device token: ${error}`;
     });
 })();
 
@@ -59,10 +58,11 @@ async function verifyDeviceCode(data) {
     await cas.doPost(url, "", {
         "Content-Type": "application/json"
     }, (res) => {
-        assert(res.data.access_token !== null);
-        assert(res.data.token_type !== null);
-        assert(res.data.expires !== null);
-        assert(res.data.refresh_token !== null);
+        assert(res.data.access_token !== undefined);
+        assert(res.data.token_type !== undefined);
+        assert(res.data.expires_in !== undefined);
+        assert(res.data.scope === undefined);
+        assert(res.data.refresh_token !== undefined);
     }, (error) => {
         throw `Operation failed ${error}`;
     });

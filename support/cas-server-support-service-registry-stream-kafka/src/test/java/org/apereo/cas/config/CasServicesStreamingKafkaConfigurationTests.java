@@ -36,8 +36,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasServicesStreamingKafkaConfiguration.class,
-    CasServicesStreamingConfiguration.class
+    CasServicesStreamingKafkaAutoConfiguration.class,
+    CasServicesStreamingAutoConfiguration.class
 }, properties = {
     "cas.service-registry.stream.kafka.bootstrap-address=localhost:9092",
     "cas.service-registry.stream.core.enabled=true"

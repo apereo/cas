@@ -18,7 +18,6 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
 import org.springframework.boot.actuate.endpoint.web.PathMappedEndpoints;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
@@ -58,10 +57,10 @@ import java.util.List;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.WebApplication)
-@AutoConfiguration
+@Configuration(value = "CasWebSecurityConfiguration", proxyBeanMethods = false)
 @EnableMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 @EnableWebSecurity
-public class CasWebSecurityConfiguration {
+class CasWebSecurityConfiguration {
 
     @Bean
     @Lazy(false)
@@ -71,7 +70,7 @@ public class CasWebSecurityConfiguration {
 
     @Configuration(value = "CasWebAppSecurityMvcConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasWebAppSecurityMvcConfiguration {
+    static class CasWebAppSecurityMvcConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "casWebAppSecurityWebMvcConfigurer")
         public WebMvcConfigurer casWebAppSecurityWebMvcConfigurer(final CasConfigurationProperties casProperties) {
@@ -90,7 +89,7 @@ public class CasWebSecurityConfiguration {
 
     @Configuration(value = "CasWebappCoreSecurityConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasWebappCoreSecurityConfiguration {
+    static class CasWebappCoreSecurityConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "securityContextRepository")
@@ -169,7 +168,7 @@ public class CasWebSecurityConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @ConditionalOnProperty(name = "cas.monitor.endpoints.jdbc.query")
     @SuppressWarnings("ConditionalOnProperty")
-    public static class CasWebAppSecurityJdbcConfiguration {
+    static class CasWebAppSecurityJdbcConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "jdbcUserDetailsPasswordEncoder")
         public static PasswordEncoder jdbcUserDetailsPasswordEncoder(

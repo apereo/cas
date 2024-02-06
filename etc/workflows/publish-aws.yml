@@ -28,15 +28,12 @@ on:
 ##########################################################################
 
 jobs:
-
-  ##########################################################################
-
   initialize:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK
-        uses: actions/setup-java@v4.0.0
+        uses: actions/setup-java@v4
         with:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: "zulu"
@@ -51,7 +48,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK
-        uses: actions/setup-java@v4.0.0
+        uses: actions/setup-java@v4
         with:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: "zulu"
@@ -60,7 +57,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Download Dependencies
         run: ./gradlew --build-cache --configure-on-demand --no-daemon downloadDependencies --parallel --refresh-dependencies
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
@@ -79,13 +76,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK
-        uses: actions/setup-java@v4.0.0
+        uses: actions/setup-java@v4
         with:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: "zulu"
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}

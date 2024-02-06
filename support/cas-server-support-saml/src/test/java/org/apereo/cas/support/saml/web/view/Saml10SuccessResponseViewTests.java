@@ -12,6 +12,7 @@ import org.apereo.cas.authentication.support.NoOpProtocolAttributeEncoder;
 import org.apereo.cas.services.DefaultServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServicePublicKeyCipherExecutor;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManagerConfigurationContext;
 import org.apereo.cas.services.mgmt.DefaultServicesManager;
@@ -81,7 +82,8 @@ class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         val mgmr = new DefaultServicesManager(context);
         mgmr.load();
 
-        val protocolAttributeEncoder = new DefaultCasProtocolAttributeEncoder(mgmr, CipherExecutor.noOpOfStringToString());
+        val protocolAttributeEncoder = new DefaultCasProtocolAttributeEncoder(mgmr,
+            RegisteredServicePublicKeyCipherExecutor.INSTANCE, CipherExecutor.noOpOfStringToString());
         val builder = new Saml10ObjectBuilder(configBean);
         val samlResponseBuilder = new SamlResponseBuilder(builder, "testIssuer",
             "whatever", "PT1000S", "PT30S",
@@ -92,7 +94,7 @@ class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
             new DefaultAuthenticationAttributeReleasePolicy("attribute"),
             new DefaultAuthenticationServiceSelectionPlan(),
             NoOpProtocolAttributesRenderer.INSTANCE,
-            samlResponseBuilder);
+            samlResponseBuilder, attributeDefinitionStore);
     }
 
     @Test

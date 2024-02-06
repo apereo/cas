@@ -1,1 +1,1 @@
-org.apereo.cas.config.MongoSessionConfiguration
+org.apereo.cas.config.CasMongoSessionAutoConfiguration

@@ -51,7 +51,7 @@ public interface AuthenticationRiskNotifier extends Runnable {
      * Build risk token.
      *
      * @return the string
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
-    String createRiskToken() throws Exception;
+    String createRiskToken() throws Throwable;
 }

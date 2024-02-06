@@ -34,7 +34,6 @@ import com.yubico.core.RegistrationStorage;
 import com.yubico.core.SessionManager;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -61,8 +60,8 @@ import org.springframework.webflow.execution.Action;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.WebAuthn)
-@AutoConfiguration
-public class WebAuthnWebflowConfiguration {
+@Configuration(value = "WebAuthnWebflowConfiguration", proxyBeanMethods = false)
+class WebAuthnWebflowConfiguration {
     private static final int WEBFLOW_CONFIGURER_ORDER = 100;
 
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.mfa.web-authn.core.enabled")
@@ -70,7 +69,7 @@ public class WebAuthnWebflowConfiguration {
 
     @Configuration(value = "WebAuthnWebflowRegistryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class WebAuthnWebflowRegistryConfiguration {
+    static class WebAuthnWebflowRegistryConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "webAuthnFlowRegistry")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -92,7 +91,7 @@ public class WebAuthnWebflowConfiguration {
 
     @Configuration(value = "WebAuthnWebflowBaseConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class WebAuthnWebflowBaseConfiguration {
+    static class WebAuthnWebflowBaseConfiguration {
         @ConditionalOnMissingBean(name = "webAuthnMultifactorWebflowConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -119,7 +118,7 @@ public class WebAuthnWebflowConfiguration {
 
     @Configuration(value = "WebAuthnWebflowEventResolutionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class WebAuthnWebflowEventResolutionConfiguration {
+    static class WebAuthnWebflowEventResolutionConfiguration {
         @ConditionalOnMissingBean(name = "webAuthnAuthenticationWebflowEventResolver")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -137,7 +136,7 @@ public class WebAuthnWebflowConfiguration {
 
     @Configuration(value = "WebAuthnWebflowExecutionPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class WebAuthnWebflowExecutionPlanConfiguration {
+    static class WebAuthnWebflowExecutionPlanConfiguration {
         @ConditionalOnMissingBean(name = "webAuthnCasWebflowExecutionPlanConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -157,7 +156,7 @@ public class WebAuthnWebflowConfiguration {
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthenticationTrustedDevices, module = "webauthn")
     @Configuration(value = "WebAuthnMultifactorTrustConfiguration", proxyBeanMethods = false)
     @DependsOn("webAuthnMultifactorWebflowConfigurer")
-    public static class WebAuthnMultifactorTrustConfiguration {
+    static class WebAuthnMultifactorTrustConfiguration {
         private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.mfa.web-authn.trusted-device-enabled")
             .isTrue().evenIfMissing();
 
@@ -204,7 +203,7 @@ public class WebAuthnWebflowConfiguration {
 
     @Configuration(value = "WebAuthnWebflowActionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class WebAuthnWebflowActionConfiguration {
+    static class WebAuthnWebflowActionConfiguration {
 
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_WEBAUTHN_POPULATE_CSRF_TOKEN)
         @Bean
@@ -306,7 +305,7 @@ public class WebAuthnWebflowConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AccountManagement, enabledByDefault = false)
     @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
-    public static class WebAuthnAccountProfileWebflowConfiguration {
+    static class WebAuthnAccountProfileWebflowConfiguration {
         @ConditionalOnMissingBean(name = "webAuthnAccountProfileWebflowConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

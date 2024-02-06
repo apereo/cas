@@ -10,9 +10,8 @@ import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.pac4j.BrowserWebStorageSessionStore;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.web.BrowserSessionStorage;
+import org.apereo.cas.web.BrowserStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.AbstractMultifactorAuthenticationAction;
 import org.apereo.cas.web.support.WebUtils;
@@ -40,9 +39,9 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 public class DuoSecurityUniversalPromptPrepareLoginAction extends AbstractMultifactorAuthenticationAction<DuoSecurityMultifactorAuthenticationProvider> {
-    private final CipherExecutor webflowCipherExecutor;
-
     private final ConfigurableApplicationContext applicationContext;
+
+    private final BrowserWebStorageSessionStore duoUniversalPromptSessionStore;
 
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
@@ -88,13 +87,13 @@ public class DuoSecurityUniversalPromptPrepareLoginAction extends AbstractMultif
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         val context = new JEEContext(request, response);
-        val sessionStorage = new BrowserWebStorageSessionStore(webflowCipherExecutor)
-            .setSessionAttributes(properties)
+        val sessionStorage = duoUniversalPromptSessionStore
+            .withSessionAttributes(context, properties)
             .getTrackableSession(context)
-            .map(BrowserSessionStorage.class::cast)
+            .map(BrowserStorage.class::cast)
             .orElseThrow(() -> new IllegalStateException("Unable to determine trackable session for storage"));
         sessionStorage.setDestinationUrl(authUrl);
-        requestContext.getFlowScope().put(BrowserSessionStorage.KEY_SESSION_STORAGE, sessionStorage);
+        WebUtils.putBrowserStorage(requestContext, sessionStorage);
 
         LOGGER.debug("Redirecting to Duo Security url at [{}]", authUrl);
         return success(sessionStorage);

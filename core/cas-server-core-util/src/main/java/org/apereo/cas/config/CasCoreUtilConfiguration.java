@@ -24,8 +24,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -34,7 +32,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.core.Ordered;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.convert.converter.ConverterRegistry;
 import org.springframework.core.convert.support.DefaultConversionService;
@@ -54,12 +51,11 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 @EnableScheduling
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Core)
-@AutoConfiguration
-public class CasCoreUtilConfiguration {
+@Configuration(value = "CasCoreUtilConfiguration", proxyBeanMethods = false)
+class CasCoreUtilConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -70,7 +66,7 @@ public class CasCoreUtilConfiguration {
 
     @Configuration(value = "CasCoreUtilContextConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreUtilContextConfiguration {
+    static class CasCoreUtilContextConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Lazy(false)
@@ -90,7 +86,7 @@ public class CasCoreUtilConfiguration {
     @Configuration(value = "CasCoreUtilConverterConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @Lazy(false)
-    public static class CasCoreUtilConverterConfiguration {
+    static class CasCoreUtilConverterConfiguration {
         @Bean
         public static MessageInterpolator messageInterpolator() {
             return new SpringAwareMessageMessageInterpolator();
@@ -116,7 +112,7 @@ public class CasCoreUtilConfiguration {
     @Configuration(value = "CasCoreUtilEssentialConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @Lazy(false)
-    public static class CasCoreUtilEssentialConfiguration {
+    static class CasCoreUtilEssentialConfiguration {
 
         /**
          * Create casBeanValidationPostProcessor bean.
@@ -147,7 +143,7 @@ public class CasCoreUtilConfiguration {
 
     @Configuration(value = "CasCoreMessageSanitationConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreMessageSanitationConfiguration {
+    static class CasCoreMessageSanitationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "ticketCatalogMessageSanitationContributor")

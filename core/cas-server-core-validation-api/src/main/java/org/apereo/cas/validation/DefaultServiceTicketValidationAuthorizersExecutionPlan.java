@@ -16,7 +16,7 @@ public class DefaultServiceTicketValidationAuthorizersExecutionPlan implements S
     private final List<ServiceTicketValidationAuthorizer> authorizers = new ArrayList<>(0);
 
     @Override
-    public void registerAuthorizer(final ServiceTicketValidationAuthorizer authz) {
-        authorizers.add(authz);
+    public void registerAuthorizer(final ServiceTicketValidationAuthorizer authorizer) {
+        authorizers.add(authorizer);
     }
 }

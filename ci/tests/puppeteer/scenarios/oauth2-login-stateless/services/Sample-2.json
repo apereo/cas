@@ -1,0 +1,19 @@
+{
+  "@class" : "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
+  "clientId": "client2",
+  "clientSecret": "secret2",
+  "serviceId" : "^http://localhost:9889/anything/jwtat.*",
+  "bypassApprovalPrompt": true,
+  "name" : "Sample",
+  "id" : 2,
+  "jwtAccessToken": true,
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "excludeDefaultAttributes": true,
+    "authorizedToReleaseAuthenticationAttributes": false,
+    "allowedAttributes" : [ "java.util.ArrayList", [ "email", "organization" ] ]
+  },
+  "generateRefreshToken": true,
+  "supportedGrantTypes": [ "java.util.HashSet", [ "authorization_code", "refresh_token" ] ],
+  "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ]
+}

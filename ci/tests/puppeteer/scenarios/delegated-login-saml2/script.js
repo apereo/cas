@@ -27,7 +27,7 @@ const assert = require("assert");
     await cas.screenshot(page);
 
     const service = "https://localhost:9859/anything/sample1";
-    await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
+    await cas.gotoLogin(page, service);
     const ticket = await cas.assertTicketParameter(page);
     const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
     await cas.log(body);

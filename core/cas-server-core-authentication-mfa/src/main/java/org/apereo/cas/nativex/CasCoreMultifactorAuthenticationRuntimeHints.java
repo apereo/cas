@@ -4,9 +4,7 @@ import org.apereo.cas.authentication.ChainingMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 
-import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -20,15 +18,5 @@ public class CasCoreMultifactorAuthenticationRuntimeHints implements CasRuntimeH
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
         registerProxyHints(hints, MultifactorAuthenticationTrigger.class, ChainingMultifactorAuthenticationProvider.class);
         registerReflectionHints(hints, List.of(ChainingMultifactorAuthenticationProvider.class));
-    }
-
-    private static void registerReflectionHints(final RuntimeHints hints, final Collection entries) {
-        entries.forEach(el -> hints.reflection().registerType((Class) el,
-            MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
-            MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
-            MemberCategory.INVOKE_DECLARED_METHODS,
-            MemberCategory.INVOKE_PUBLIC_METHODS,
-            MemberCategory.DECLARED_FIELDS,
-            MemberCategory.PUBLIC_FIELDS));
     }
 }

@@ -21,7 +21,6 @@ import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurat
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -46,13 +45,13 @@ import org.springframework.webflow.execution.Action;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.YubiKey)
-@AutoConfiguration
-public class YubiKeyAuthenticationWebflowConfiguration {
+@Configuration(value = "YubiKeyAuthenticationWebflowConfiguration", proxyBeanMethods = false)
+class YubiKeyAuthenticationWebflowConfiguration {
     private static final int WEBFLOW_CONFIGURER_ORDER = 100;
 
     @Configuration(value = "YubiKeyAuthenticationWebflowPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class YubiKeyAuthenticationWebflowPlanConfiguration {
+    static class YubiKeyAuthenticationWebflowPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "yubikeyCasWebflowExecutionPlanConfigurer")
@@ -65,7 +64,7 @@ public class YubiKeyAuthenticationWebflowConfiguration {
 
     @Configuration(value = "YubiKeyAuthenticationWebflowCoreConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class YubiKeyAuthenticationWebflowCoreConfiguration {
+    static class YubiKeyAuthenticationWebflowCoreConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "yubikeyFlowRegistry")
@@ -114,7 +113,7 @@ public class YubiKeyAuthenticationWebflowConfiguration {
 
     @Configuration(value = "YubiKeyAuthenticationWebflowActionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class YubiKeyAuthenticationWebflowActionConfiguration {
+    static class YubiKeyAuthenticationWebflowActionConfiguration {
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
@@ -155,7 +154,7 @@ public class YubiKeyAuthenticationWebflowConfiguration {
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthenticationTrustedDevices, module = "yubikey")
     @Configuration(value = "YubiMultifactorTrustConfiguration", proxyBeanMethods = false)
     @DependsOn("yubikeyMultifactorWebflowConfigurer")
-    public static class YubiKeyMultifactorTrustConfiguration {
+    static class YubiKeyMultifactorTrustConfiguration {
         private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.mfa.yubikey.trusted-device-enabled")
             .isTrue().evenIfMissing();
 

@@ -68,6 +68,8 @@ public abstract class AbstractWebApplicationServiceResponseBuilder implements Re
         val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
         val methodRequest = Optional.ofNullable(request)
             .map(httpServletRequest -> httpServletRequest.getParameter(CasProtocolConstants.PARAMETER_METHOD))
+            .or(() -> CollectionUtils.firstElement(finalService.getAttributes().get(CasProtocolConstants.PARAMETER_METHOD)).map(Object::toString))
+            .filter(StringUtils::isNotBlank)
             .orElse(null);
         val func = FunctionUtils.doIf(StringUtils::isBlank,
             __ -> {

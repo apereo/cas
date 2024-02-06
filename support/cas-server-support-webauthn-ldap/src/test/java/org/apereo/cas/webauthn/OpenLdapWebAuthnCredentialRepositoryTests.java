@@ -1,7 +1,7 @@
 package org.apereo.cas.webauthn;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
-import org.apereo.cas.config.LdapWebAuthnConfiguration;
+import org.apereo.cas.config.CasLdapWebAuthnAutoConfiguration;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.webauthn.storage.BaseWebAuthnCredentialRepositoryTests;
 import com.unboundid.ldap.sdk.LDAPConnection;
@@ -35,7 +35,7 @@ import java.nio.charset.StandardCharsets;
 @Tag("LdapRepository")
 @EnabledIfListeningOnPort(port = 11636)
 @Getter
-@Import(LdapWebAuthnConfiguration.class)
+@Import(CasLdapWebAuthnAutoConfiguration.class)
 class OpenLdapWebAuthnCredentialRepositoryTests extends BaseWebAuthnCredentialRepositoryTests {
 
     @Override

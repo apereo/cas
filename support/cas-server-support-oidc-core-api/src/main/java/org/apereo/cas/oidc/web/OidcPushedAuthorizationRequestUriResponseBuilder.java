@@ -10,6 +10,7 @@ import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequest;
 import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequestFactory;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.response.OAuth20AuthorizationRequest;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
@@ -53,7 +54,7 @@ public class OidcPushedAuthorizationRequestUriResponseBuilder extends BaseOAuth2
         LOGGER.debug("Generated pushed authorization URI code: [{}]", uri);
         configurationContext.getTicketRegistry().addTicket(uri);
         val parameters = new HashMap<String, String>();
-        parameters.put(OidcConstants.EXPIRES_IN, String.valueOf(uri.getExpirationPolicy().getTimeToLive()));
+        parameters.put(OAuth20Constants.EXPIRES_IN, String.valueOf(uri.getExpirationPolicy().getTimeToLive()));
         parameters.put(OidcConstants.REQUEST_URI, uri.getId());
         LOGGER.debug("Pushed authorization request verification successful for client [{}] with redirect uri [{}]", holder.getClientId(), holder.getRedirectUri());
         return authorizationModelAndViewBuilder.build(holder.getRegisteredService(), holder.getResponseMode(),

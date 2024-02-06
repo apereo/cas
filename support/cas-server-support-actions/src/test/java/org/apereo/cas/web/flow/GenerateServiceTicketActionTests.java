@@ -7,6 +7,7 @@ import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ReturnMappedAttributeReleasePolicy;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.support.WebUtils;
@@ -35,7 +36,7 @@ class GenerateServiceTicketActionTests extends AbstractWebflowActionsTests {
     @Qualifier(CasWebflowConstants.ACTION_ID_GENERATE_SERVICE_TICKET)
     private Action action;
     
-    private TicketGrantingTicket ticketGrantingTicket;
+    private Ticket ticketGrantingTicket;
 
     private Service service;
 
@@ -173,6 +174,4 @@ class GenerateServiceTicketActionTests extends AbstractWebflowActionsTests {
         WebUtils.putTicketGrantingTicketInScopes(context, ticketGrantingTicket);
         assertEquals(CasWebflowConstants.STATE_ID_WARN, action.execute(context).getId());
     }
-
-
 }

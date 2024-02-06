@@ -1,9 +1,7 @@
 package org.apereo.cas.support.saml.mdui.web.flow;
 
-import org.apereo.cas.config.CasCoreWebflowConfiguration;
-import org.apereo.cas.config.CasWebflowContextConfiguration;
-import org.apereo.cas.config.SamlMetadataUIConfiguration;
-import org.apereo.cas.config.SamlMetadataUIWebflowConfiguration;
+import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
+import org.apereo.cas.config.CasSamlMetadataUIAutoConfiguration;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.mdui.SamlMetadataUIInfo;
@@ -26,10 +24,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.1.0
  */
 @SpringBootTest(classes = {
-    CasCoreWebflowConfiguration.class,
-    CasWebflowContextConfiguration.class,
-    SamlMetadataUIConfiguration.class,
-    SamlMetadataUIWebflowConfiguration.class,
+    CasCoreWebflowAutoConfiguration.class,
+    CasSamlMetadataUIAutoConfiguration.class,
     AbstractOpenSamlTests.SharedTestConfiguration.class
 }, properties = {
     "spring.main.allow-bean-definition-overriding=true",

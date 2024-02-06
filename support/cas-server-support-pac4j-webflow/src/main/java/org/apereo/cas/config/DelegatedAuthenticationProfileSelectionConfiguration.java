@@ -14,13 +14,13 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.ldaptive.ConnectionFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
@@ -31,10 +31,10 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.DelegatedAuthentication)
-@AutoConfiguration
+@Configuration(value = "DelegatedAuthenticationProfileSelectionConfiguration", proxyBeanMethods = false)
 @Slf4j
 @ConditionalOnClass(ConnectionFactory.class)
-public class DelegatedAuthenticationProfileSelectionConfiguration {
+class DelegatedAuthenticationProfileSelectionConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "ldapDelegatedClientAuthenticationCredentialResolver")

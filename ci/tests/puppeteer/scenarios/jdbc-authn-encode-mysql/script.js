@@ -16,9 +16,9 @@ const assert = require("assert");
     await cas.log(body);
     const json = JSON.parse(body);
     const authenticationSuccess = json.serviceResponse.authenticationSuccess;
-    assert(authenticationSuccess.attributes["first-name"] !== null);
-    assert(authenticationSuccess.attributes["last-name"] !== null);
-    assert(authenticationSuccess.attributes["phonenumber"] !== null);
+    assert(authenticationSuccess.attributes["first-name"] !== undefined);
+    assert(authenticationSuccess.attributes["last-name"] !== undefined);
+    assert(authenticationSuccess.attributes["phonenumber"] !== undefined);
 
     await browser.close();
 })();

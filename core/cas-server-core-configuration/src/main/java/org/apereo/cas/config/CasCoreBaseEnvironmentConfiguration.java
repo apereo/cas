@@ -28,14 +28,14 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration(proxyBeanMethods = false)
+@Configuration(value = "CasCoreBaseEnvironmentConfiguration", proxyBeanMethods = false)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.CasConfiguration)
-public class CasCoreBaseEnvironmentConfiguration {
+class CasCoreBaseEnvironmentConfiguration {
 
     @Configuration(value = "CasCoreEnvironmentManagerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @Lazy(false)
-    public static class CasCoreEnvironmentManagerConfiguration {
+    static class CasCoreEnvironmentManagerConfiguration {
         @ConditionalOnMissingBean(name = CasConfigurationPropertiesEnvironmentManager.BEAN_NAME)
         @Bean
         public static CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager(
@@ -47,7 +47,7 @@ public class CasCoreBaseEnvironmentConfiguration {
     @Configuration(value = "CasCoreEnvironmentFactoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @Lazy(false)
-    public static class CasCoreEnvironmentFactoryConfiguration {
+    static class CasCoreEnvironmentFactoryConfiguration {
         @ConfigurationPropertiesBinding
         @Bean
         public Converter<String, List<Class<? extends Throwable>>> commaSeparatedStringToThrowablesCollection() {
@@ -74,7 +74,7 @@ public class CasCoreBaseEnvironmentConfiguration {
     @Configuration(value = "CasCoreEnvironmentLocatorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @Lazy(false)
-    public static class CasCoreEnvironmentLocatorConfiguration {
+    static class CasCoreEnvironmentLocatorConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "standaloneConfigurationFilePropertiesSourceLocator")
         public static CasConfigurationPropertiesSourceLocator standaloneConfigurationFilePropertiesSourceLocator(

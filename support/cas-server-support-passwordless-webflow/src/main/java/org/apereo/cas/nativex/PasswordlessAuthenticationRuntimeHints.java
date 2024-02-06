@@ -2,9 +2,7 @@ package org.apereo.cas.nativex;
 
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
-import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -20,17 +18,4 @@ public class PasswordlessAuthenticationRuntimeHints implements CasRuntimeHintsRe
         registerSerializationHints(hints, List.of(PasswordlessUserAccount.class));
     }
 
-    private static void registerSerializationHints(final RuntimeHints hints, final Collection<Class> subclassesInPackage) {
-        subclassesInPackage.forEach(clazz -> hints.serialization().registerType(clazz));
-    }
-
-    private static void registerReflectionHints(final RuntimeHints hints, final Collection entries) {
-        entries.forEach(el -> hints.reflection().registerType((Class) el,
-            MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
-            MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
-            MemberCategory.INVOKE_DECLARED_METHODS,
-            MemberCategory.INVOKE_PUBLIC_METHODS,
-            MemberCategory.DECLARED_FIELDS,
-            MemberCategory.PUBLIC_FIELDS));
-    }
 }

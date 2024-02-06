@@ -1,7 +1,6 @@
 package org.apereo.cas.configuration.features;
 
 import org.apereo.cas.configuration.support.RequiredProperty;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
@@ -10,7 +9,6 @@ import org.jooq.lambda.Unchecked;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
-
 import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.HashSet;
@@ -27,8 +25,8 @@ import java.util.TreeSet;
 public interface CasFeatureModule {
     private static String getMethodName(final Field field, final String prefix) {
         return prefix
-               + field.getName().substring(0, 1).toUpperCase(Locale.ENGLISH)
-               + field.getName().substring(1);
+            + field.getName().substring(0, 1).toUpperCase(Locale.ENGLISH)
+            + field.getName().substring(1);
     }
 
     /**
@@ -157,7 +155,7 @@ public interface CasFeatureModule {
          */
         Thymeleaf,
         /**
-         * Token & JWT management.
+         * Token and JWT management.
          */
         Tokens,
         /**
@@ -354,7 +352,7 @@ public interface CasFeatureModule {
         private static final Set<String> PRESENT_FEATURES = Collections.synchronizedSet(new TreeSet<>());
 
         public static Set<String> getRegisteredFeatures() {
-            return Set.copyOf(PRESENT_FEATURES);
+            return new TreeSet<>(PRESENT_FEATURES);
         }
 
         /**
@@ -370,11 +368,7 @@ public interface CasFeatureModule {
          * @param module the module
          */
         public void register(final String module) {
-            var featureName = name();
-            if (StringUtils.isNotBlank(module)) {
-                featureName += '.' + module;
-            }
-            PRESENT_FEATURES.add(featureName);
+            PRESENT_FEATURES.add(toFullFeatureName(module));
         }
 
         /**
@@ -384,11 +378,7 @@ public interface CasFeatureModule {
          * @return true/false
          */
         public boolean isRegistered(final String module) {
-            var featureName = name();
-            if (StringUtils.isNotBlank(module)) {
-                featureName += '.' + module;
-            }
-            return PRESENT_FEATURES.contains(featureName);
+            return PRESENT_FEATURES.contains(toFullFeatureName(module));
         }
 
         /**
@@ -407,13 +397,42 @@ public interface CasFeatureModule {
          * @return the string
          */
         public String toProperty(final String module) {
+            return toFullFeatureName(module) + ".enabled";
+        }
+
+        private String toFullFeatureName(final String module) {
             var propertyName = CasFeatureModule.class.getSimpleName() + '.' + name();
             if (StringUtils.isNotBlank(module)) {
                 propertyName += '.' + module;
             }
-            propertyName += ".enabled";
             return propertyName;
         }
+    }
 
+    /**
+     * Baseline set of features that must be enabled and present.
+     *
+     * @return the set
+     */
+    static Set<FeatureCatalog> baseline() {
+        return Set.of(
+            FeatureCatalog.ApacheTomcat,
+            FeatureCatalog.Audit,
+            FeatureCatalog.Authentication,
+            FeatureCatalog.CasConfiguration,
+            FeatureCatalog.Core,
+            FeatureCatalog.Logout,
+            FeatureCatalog.Monitoring,
+            FeatureCatalog.MultifactorAuthentication,
+            FeatureCatalog.Notifications,
+            FeatureCatalog.PasswordManagement,
+            FeatureCatalog.PersonDirectory,
+            FeatureCatalog.ServiceRegistry,
+            FeatureCatalog.Thymeleaf,
+            FeatureCatalog.TicketRegistry,
+            FeatureCatalog.Validation,
+            FeatureCatalog.WebApplication,
+            FeatureCatalog.Webflow
+        );
     }
 }

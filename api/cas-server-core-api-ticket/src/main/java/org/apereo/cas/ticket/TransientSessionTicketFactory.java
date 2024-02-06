@@ -2,6 +2,8 @@ package org.apereo.cas.ticket;
 
 import org.apereo.cas.authentication.principal.Service;
 
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -21,7 +23,8 @@ public interface TransientSessionTicketFactory<T extends TransientSessionTicket>
      * @return the string
      */
     static String normalizeTicketId(final String id) {
-        return TransientSessionTicket.PREFIX + '-' + id;
+        val prefix = TransientSessionTicket.PREFIX + '-';
+        return StringUtils.prependIfMissingIgnoreCase(id, prefix);
     }
 
     /**

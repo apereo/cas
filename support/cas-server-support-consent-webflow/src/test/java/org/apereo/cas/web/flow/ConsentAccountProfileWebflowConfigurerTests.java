@@ -1,9 +1,7 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.config.CasConsentCoreConfiguration;
-import org.apereo.cas.config.CasConsentWebflowConfiguration;
-import org.apereo.cas.config.CasWebflowAccountProfileConfiguration;
-
+import org.apereo.cas.config.CasConsentCoreAutoConfiguration;
+import org.apereo.cas.config.CasConsentWebflowAutoConfiguration;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -14,7 +12,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.ViewState;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -24,9 +21,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.6.0
  */
 @Import({
-    CasConsentCoreConfiguration.class,
-    CasConsentWebflowConfiguration.class,
-    CasWebflowAccountProfileConfiguration.class
+    CasConsentCoreAutoConfiguration.class,
+    CasConsentWebflowAutoConfiguration.class
 })
 @Tag("WebflowConfig")
 @TestPropertySource(properties = "CasFeatureModule.AccountManagement.enabled=true")

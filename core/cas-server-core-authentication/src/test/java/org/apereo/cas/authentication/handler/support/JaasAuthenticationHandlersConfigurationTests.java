@@ -5,21 +5,16 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
-import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
-import org.apereo.cas.config.CasCoreHttpConfiguration;
-import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
-import org.apereo.cas.config.CasCoreTicketsConfiguration;
-import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasCoreWebConfiguration;
-import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
+import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
+import org.apereo.cas.services.ChainingServicesManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.spring.beans.BeanContainer;
-
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -37,13 +32,11 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ClassPathResource;
-
 import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Set;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -57,19 +50,14 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    JaasAuthenticationHandlersConfigurationTests.JaasAuthenticationHandlersConfigurationTestConfiguration.class,
-    CasCoreWebConfiguration.class,
-    CasCoreHttpConfiguration.class,
-    CasCoreUtilConfiguration.class,
-    CasCoreTicketCatalogConfiguration.class,
-    CasCoreTicketsSerializationConfiguration.class,
-    CasCoreTicketsConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
-    CasCoreAuthenticationPrincipalConfiguration.class,
-    CasCoreAuthenticationHandlersConfiguration.class,
-    CasCoreAuthenticationPolicyConfiguration.class,
-    CasCoreAuthenticationSupportConfiguration.class,
-    CasCoreAuthenticationConfiguration.class
+    JaasAuthenticationHandlersConfigurationTests.JaasAuthenticationTestConfiguration.class,
+    CasCoreWebAutoConfiguration.class,
+    CasCoreUtilAutoConfiguration.class,
+    CasCoreTicketsAutoConfiguration.class,
+    CasCoreServicesAutoConfiguration.class,
+    CasCoreNotificationsAutoConfiguration.class,
+    CasCoreLogoutAutoConfiguration.class,
+    CasCoreAuthenticationAutoConfiguration.class
 }, properties = {
     "cas.authn.accept.users=casuser::Mellon,casuser2::Mellon",
     "cas.authn.jaas[0].realm=CAS",
@@ -105,8 +93,8 @@ class JaasAuthenticationHandlersConfigurationTests {
         }
     }
 
-    @TestConfiguration(value = "JaasAuthenticationHandlersConfigurationTestConfiguration", proxyBeanMethods = false)
-    static class JaasAuthenticationHandlersConfigurationTestConfiguration {
+    @TestConfiguration(value = "JaasAuthenticationTestConfiguration", proxyBeanMethods = false)
+    static class JaasAuthenticationTestConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
@@ -122,8 +110,8 @@ class JaasAuthenticationHandlersConfigurationTests {
 
         @Bean
         @ConditionalOnMissingBean(name = ServicesManager.BEAN_NAME)
-        public ServicesManager servicesManager() {
-            return mock(ServicesManager.class);
+        public ChainingServicesManager servicesManager() {
+            return mock(ChainingServicesManager.class);
         }
 
         @Bean

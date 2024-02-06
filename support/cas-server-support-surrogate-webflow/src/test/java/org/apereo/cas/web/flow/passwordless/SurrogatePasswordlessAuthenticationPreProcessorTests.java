@@ -8,20 +8,17 @@ import org.apereo.cas.authentication.SurrogatePrincipal;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.principal.SimplePrincipal;
 import org.apereo.cas.authentication.surrogate.SurrogateCredentialTrait;
-import org.apereo.cas.config.SurrogateAuthenticationPasswordlessConfiguration;
+import org.apereo.cas.config.CasSurrogateAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.impl.token.PasswordlessAuthenticationToken;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.web.flow.action.BaseSurrogateAuthenticationTests;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-
 import java.util.ArrayList;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -31,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @SpringBootTest(classes = {
-    SurrogateAuthenticationPasswordlessConfiguration.class,
+    CasSurrogateAuthenticationWebflowAutoConfiguration.class,
     BaseSurrogateAuthenticationTests.SharedTestConfiguration.class
 },
     properties = "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate")

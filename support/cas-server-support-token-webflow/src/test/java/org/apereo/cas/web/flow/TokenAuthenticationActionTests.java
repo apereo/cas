@@ -2,8 +2,8 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.BaseCasCoreTests;
-import org.apereo.cas.config.TokenAuthenticationConfiguration;
-import org.apereo.cas.config.TokenAuthenticationWebflowConfiguration;
+import org.apereo.cas.config.CasTokenAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasTokenAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -40,8 +40,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     BaseCasCoreTests.SharedTestConfiguration.class,
-    TokenAuthenticationConfiguration.class,
-    TokenAuthenticationWebflowConfiguration.class
+    CasTokenAuthenticationAutoConfiguration.class,
+    CasTokenAuthenticationWebflowAutoConfiguration.class
 })
 @Tag("WebflowAuthenticationActions")
 class TokenAuthenticationActionTests extends AbstractCentralAuthenticationServiceTests {

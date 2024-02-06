@@ -61,7 +61,7 @@ class OAuth20DeviceUserCodeApprovalEndpointControllerTests extends AbstractOAuth
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val devCode = defaultDeviceTokenFactory.createDeviceCode(RegisteredServiceTestUtils.getService());
-        val uc = defaultDeviceUserCodeFactory.createDeviceUserCode(devCode);
+        val uc = defaultDeviceUserCodeFactory.createDeviceUserCode(devCode.getService());
         ticketRegistry.addTicket(uc);
         request.setParameter(OAuth20DeviceUserCodeApprovalEndpointController.PARAMETER_USER_CODE, uc.getId());
         var mv = callbackAuthorizeController.handlePostRequest(request, response);

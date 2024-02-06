@@ -1,6 +1,7 @@
 package org.apereo.cas.audit.spi.principal;
 
 import org.apereo.cas.audit.AuditableContext;
+import org.apereo.cas.audit.AuditableEntity;
 import org.apereo.cas.audit.spi.BaseAuditConfigurationTests;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -124,6 +125,9 @@ public class DefaultAuditPrincipalResolverTests {
         val assertion = mock(Assertion.class);
         when(assertion.getPrimaryAuthentication()).thenReturn(authentication);
 
+        val auditableEntity = mock(AuditableEntity.class);
+        when(auditableEntity.getAuditablePrincipal()).thenReturn(authentication.getPrincipal().getId());
+
         return Stream.of(
             arguments(context, null),
             arguments(sloRequest, null),
@@ -132,7 +136,8 @@ public class DefaultAuditPrincipalResolverTests {
             arguments(authenticationResult, null),
             arguments(auditableContext, null),
             arguments(authentication, null),
-            arguments(assertion, null)
+            arguments(assertion, null),
+            arguments(auditableEntity, null)
         );
     }
 

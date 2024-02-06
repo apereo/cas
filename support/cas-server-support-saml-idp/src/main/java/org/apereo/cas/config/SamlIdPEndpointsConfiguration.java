@@ -86,7 +86,6 @@ import org.pac4j.jee.context.session.JEESessionStore;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -109,14 +108,14 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProvider)
-@AutoConfiguration
-public class SamlIdPEndpointsConfiguration {
+@Configuration(value = "SamlIdPEndpointsConfiguration", proxyBeanMethods = false)
+class SamlIdPEndpointsConfiguration {
 
     private static final String SAML_SERVER_SUPPORT_PREFIX = "SamlServerSupport";
 
     @Configuration(value = "SamlIdPEndpointCryptoConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SamlIdPEndpointCryptoConfiguration {
+    static class SamlIdPEndpointCryptoConfiguration {
 
         @ConditionalOnMissingBean(name = "samlIdPObjectSignatureValidator")
         @Bean
@@ -144,7 +143,7 @@ public class SamlIdPEndpointsConfiguration {
 
     @Configuration(value = "SamlIdPEndpointControllersConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SamlIdPEndpointControllersConfiguration {
+    static class SamlIdPEndpointControllersConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -248,7 +247,7 @@ public class SamlIdPEndpointsConfiguration {
 
     @Configuration(value = "SamlIdPEndpointDecoderConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SamlIdPEndpointDecoderConfiguration {
+    static class SamlIdPEndpointDecoderConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "ssoPostProfileHandlerDecoders")
@@ -298,7 +297,7 @@ public class SamlIdPEndpointsConfiguration {
 
     @Configuration(value = "SamlIdPEndpointsLogoutResponseConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SamlIdPEndpointsLogoutResponseConfiguration {
+    static class SamlIdPEndpointsLogoutResponseConfiguration {
         @ConditionalOnMissingBean(name = "samlIdPSingleLogoutRedirectionStrategy")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -311,7 +310,7 @@ public class SamlIdPEndpointsConfiguration {
 
     @Configuration(value = "SamlIdPEndpointLogoutConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SamlIdPEndpointLogoutConfiguration {
+    static class SamlIdPEndpointLogoutConfiguration {
         @ConditionalOnMissingBean(name = "samlLogoutBuilder")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -368,7 +367,7 @@ public class SamlIdPEndpointsConfiguration {
 
     @Configuration(value = "SamlIdPEndpointsLogoutExecutionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SamlIdPEndpointsLogoutExecutionConfiguration {
+    static class SamlIdPEndpointsLogoutExecutionConfiguration {
         @ConditionalOnMissingBean(name = "casSamlIdPLogoutExecutionPlanConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -386,7 +385,7 @@ public class SamlIdPEndpointsConfiguration {
 
     @Configuration(value = "SamlIdPServicesConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SamlIdPServicesConfiguration {
+    static class SamlIdPServicesConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Service samlIdPCallbackService(
@@ -432,7 +431,7 @@ public class SamlIdPEndpointsConfiguration {
 
     @Configuration(value = "SamlIdPEndpointCoreConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SamlIdPEndpointCoreConfiguration {
+    static class SamlIdPEndpointCoreConfiguration {
 
         @ConditionalOnMissingBean(name = "ssoSamlHttpRequestExtractor")
         @Bean
@@ -532,8 +531,8 @@ public class SamlIdPEndpointsConfiguration {
             switch (type) {
                 case TICKET_REGISTRY:
                     return new TicketRegistrySessionStore(ticketRegistry, ticketFactory, samlIdPDistributedSessionCookieGenerator);
-                case BROWSER_SESSION_STORAGE:
-                    return new BrowserWebStorageSessionStore(webflowCipherExecutor);
+                case BROWSER_STORAGE:
+                    return new BrowserWebStorageSessionStore(webflowCipherExecutor, "SamlIdPSessionStore");
                 default:
                     val jeeSessionStore = new JEESessionStore();
                     jeeSessionStore.setPrefix(SAML_SERVER_SUPPORT_PREFIX);
@@ -544,7 +543,7 @@ public class SamlIdPEndpointsConfiguration {
 
     @Configuration(value = "SamlIdPExecutionContextConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SamlIdPExecutionContextConfiguration {
+    static class SamlIdPExecutionContextConfiguration {
         @Bean
         @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

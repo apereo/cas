@@ -23,30 +23,17 @@ public abstract class BaseSamlConfigurationTests {
     })
     @SpringBootConfiguration
     @Import({
-        CasCoreAuthenticationConfiguration.class,
-        CasCoreWebConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
-        CasCoreServicesAuthenticationConfiguration.class,
-        CasCoreAuthenticationPrincipalConfiguration.class,
-        CasCoreAuthenticationPolicyConfiguration.class,
-        CasCoreAuthenticationMetadataConfiguration.class,
-        CasCoreAuthenticationSupportConfiguration.class,
-        CasCoreAuthenticationHandlersConfiguration.class,
-        CasCoreTicketIdGeneratorsConfiguration.class,
-        CasCoreAuditConfiguration.class,
-        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-        CasCoreHttpConfiguration.class,
-        CasCoreUtilConfiguration.class,
-        CoreSamlConfiguration.class,
-        CasCoreTicketCatalogConfiguration.class,
-        CasCoreTicketsSerializationConfiguration.class,
-        CasCoreTicketsConfiguration.class,
-        CasPersonDirectoryConfiguration.class,
-        CasPersonDirectoryStubConfiguration.class,
-        CasCoreNotificationsConfiguration.class,
-        CasCoreServicesConfiguration.class,
-        CasCoreLogoutConfiguration.class,
-        CasCoreConfiguration.class
+        CasCoreWebAutoConfiguration.class,
+        CasCoreServicesAutoConfiguration.class,
+        CasCoreAuthenticationAutoConfiguration.class,
+        CasCoreTicketsAutoConfiguration.class,
+        CasCoreAuditAutoConfiguration.class,
+        CasCoreUtilAutoConfiguration.class,
+        CasCoreSamlAutoConfiguration.class,
+        CasPersonDirectoryAutoConfiguration.class,
+        CasCoreNotificationsAutoConfiguration.class,
+        CasCoreLogoutAutoConfiguration.class,
+        CasCoreAutoConfiguration.class
     })
     public static class SharedTestConfiguration {
     }

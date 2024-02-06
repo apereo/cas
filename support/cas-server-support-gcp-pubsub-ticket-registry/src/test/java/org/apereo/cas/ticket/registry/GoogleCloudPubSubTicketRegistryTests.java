@@ -1,7 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.config.GoogleCloudPubSubTicketRegistryConfiguration;
+import org.apereo.cas.config.CasGoogleCloudPubSubTicketRegistryAutoConfiguration;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.registry.pubsub.commands.AddTicketMessageQueueCommand;
@@ -9,7 +9,6 @@ import org.apereo.cas.ticket.registry.pubsub.commands.BaseMessageQueueCommand;
 import org.apereo.cas.ticket.registry.pubsub.queue.QueueableTicketRegistryMessageReceiver;
 import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import com.google.api.gax.core.NoCredentialsProvider;
 import com.google.api.gax.grpc.GrpcTransportChannel;
 import com.google.api.gax.rpc.FixedTransportChannelProvider;
@@ -36,11 +35,9 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
-
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -55,7 +52,7 @@ import static org.mockito.Mockito.*;
     GoogleCloudPubSubTicketRegistryTests.GoogleCloudTestConfiguration.class,
     GcpContextAutoConfiguration.class,
     GcpPubSubAutoConfiguration.class,
-    GoogleCloudPubSubTicketRegistryConfiguration.class
+    CasGoogleCloudPubSubTicketRegistryAutoConfiguration.class
 })
 @Getter
 @TestPropertySource(properties = {

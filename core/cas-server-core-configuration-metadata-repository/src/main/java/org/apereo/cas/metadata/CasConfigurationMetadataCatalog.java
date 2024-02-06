@@ -65,7 +65,18 @@ public class CasConfigurationMetadataCatalog {
      * @return the cas properties container
      */
     public static CasPropertiesContainer query(final ConfigurationMetadataCatalogQuery query) {
-        val repo = new CasConfigurationMetadataRepository();
+        return query(query, new CasConfigurationMetadataRepository());
+    }
+
+    /**
+     * Query cas properties.
+     *
+     * @param query the query
+     * @param repo  the repo
+     * @return the cas properties container
+     */
+    public static CasPropertiesContainer query(final ConfigurationMetadataCatalogQuery query,
+                                               final CasConfigurationMetadataRepository repo) {
         val allProperties = repo.getRepository()
             .getAllProperties()
             .entrySet()
@@ -87,6 +98,7 @@ public class CasConfigurationMetadataCatalog {
             .map(Map.Entry::getValue)
             .map(property -> collectReferenceProperty(property, repo.getRepository()))
             .filter(Objects::nonNull)
+            .filter(property -> query.getRequiredPropertiesOnly() == null || query.getRequiredPropertiesOnly().equals(property.isRequired()))
             .sorted(Comparator.comparing(CasReferenceProperty::getName))
             .collect(Collectors.toCollection(TreeSet::new));
         return new CasPropertiesContainer(properties);

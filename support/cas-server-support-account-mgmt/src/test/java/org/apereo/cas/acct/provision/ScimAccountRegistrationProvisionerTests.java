@@ -1,9 +1,8 @@
 package org.apereo.cas.acct.provision;
 
 import org.apereo.cas.acct.AccountRegistrationRequest;
-import org.apereo.cas.config.CasAccountManagementWebflowConfiguration;
-import org.apereo.cas.config.CasCoreHttpConfiguration;
-import org.apereo.cas.config.CasScimConfiguration;
+import org.apereo.cas.config.CasAccountManagementWebflowAutoConfiguration;
+import org.apereo.cas.config.CasScimAutoConfiguration;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
@@ -30,10 +29,9 @@ import static org.junit.jupiter.api.Assertions.*;
     classes = {
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
-        CasAccountManagementWebflowConfiguration.class,
+        CasAccountManagementWebflowAutoConfiguration.class,
         BaseWebflowConfigurerTests.SharedTestConfiguration.class,
-        CasCoreHttpConfiguration.class,
-        CasScimConfiguration.class
+        CasScimAutoConfiguration.class
     },
     properties = {
         "cas.scim.target=http://localhost:9666/scim/v2",

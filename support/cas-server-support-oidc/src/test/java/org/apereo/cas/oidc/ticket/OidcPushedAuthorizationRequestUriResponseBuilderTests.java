@@ -4,6 +4,7 @@ import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.web.response.OAuth20AuthorizationRequest;
@@ -72,7 +73,7 @@ class OidcPushedAuthorizationRequestUriResponseBuilderTests extends AbstractOidc
 
         assertTrue(oidcPushedAuthorizationRequestResponseBuilder.supports(authzRequest));
         val mv = oidcPushedAuthorizationRequestResponseBuilder.build(holder);
-        assertTrue(mv.getModel().containsKey(OidcConstants.EXPIRES_IN));
+        assertTrue(mv.getModel().containsKey(OAuth20Constants.EXPIRES_IN));
         val uri = mv.getModel().get(OidcConstants.REQUEST_URI).toString();
         var ticket = ticketRegistry.getTicket(uri, OidcPushedAuthorizationRequest.class);
         assertNotNull(ticket);

@@ -181,7 +181,7 @@ The following command-line options are supported for test execution:
 | `--hbo`                                   | A combination of `--headless` and `--build` and Gradle's `--offline` flag.               |
 | `--hbod`                                  | A combination of `--hbo` and Gradle's `--offline` flag.                                  |
 | `--bo`                                    | A combination of `--build` and Gradle's `--offline` flag.                                |
-| `--hr`                                    | A combination of `--headless` and `--resume`.                                            |
+| `--hr`                                    | A combination of `--headless` and `--resume`. Disables the linter automatically.         |
 | `--ho`                                    | A combination of `--headless` and Gradle's `--offline` flag.                             |
 | `--hd`                                    | A combination of `--headless` and `--debug`.                                             |
 | `--hb`                                    | A combination of `--headless` and `--build`.                                             |
@@ -192,7 +192,8 @@ The following command-line options are supported for test execution:
 | `--native`, `--graalvm`, `--nb`           | Build the test scenario and produce a native-image as the final build artifact.          |
 | `--nr`, `--native-run`                    | Run the test scenario as a native-image. Requires a native build via `--nb`.             |
 | `--nbr`                                   | A combination of `--nb` and `--nr` flags.                                                |
-| `--no-lint`                               | Disable the linter that validates scenario scripts.                                      |
+| `--no-lint`, `--nol`                      | Disable the linter that validates scenario scripts.                                      |
+| `--hol`                                   | A combination of `--headless` and `--offline` flags with linter disabled.                |
 
 For example, the `login-success` test scenario with a remote debugger may be run using: 
 

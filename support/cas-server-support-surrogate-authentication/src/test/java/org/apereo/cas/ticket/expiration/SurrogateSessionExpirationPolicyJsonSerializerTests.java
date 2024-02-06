@@ -34,6 +34,10 @@ class SurrogateSessionExpirationPolicyJsonSerializerTests {
         @Serial
         private static final long serialVersionUID = -7883370764375218898L;
 
+        SurrogateSessionExpirationPolicyJsonSerializer() {
+            super(MINIMAL_PRETTY_PRINTER);
+        }
+
         @Override
         public Class<ExpirationPolicy> getTypeToSerialize() {
             return ExpirationPolicy.class;

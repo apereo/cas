@@ -28,7 +28,7 @@ class DefaultTicketRegistryCleanerTests {
     @Test
     void verifyAction() throws Throwable {
         val logoutManager = mock(LogoutManager.class);
-        val ticketRegistry = new DefaultTicketRegistry(mock(TicketSerializationManager.class), new DefaultTicketCatalog());
+        val ticketRegistry = newTicketRegistry();
         val tgt = new MockTicketGrantingTicket("casuser");
         tgt.setExpirationPolicy(new HardTimeoutExpirationPolicy(1));
         ticketRegistry.addTicket(tgt);
@@ -39,20 +39,31 @@ class DefaultTicketRegistryCleanerTests {
         assertEquals(0, ticketRegistry.sessionCount());
     }
 
+    @Test
+    void verifyLogoutFail() throws Throwable {
+        val logoutManager = mock(LogoutManager.class);
+        val ticketRegistry = newTicketRegistry();
+        val tgt = new MockTicketGrantingTicket("casuser");
+        tgt.setExpirationPolicy(new HardTimeoutExpirationPolicy(1));
+        ticketRegistry.addTicket(tgt);
+        when(logoutManager.performLogout(any())).thenThrow(IllegalArgumentException.class);
+        val cleaner = new DefaultTicketRegistryCleaner(LockRepository.noOp(), logoutManager, ticketRegistry);
+        assertEquals(1, cleaner.cleanTicket(tgt));
+    }
 
     @Test
     void verifyCleanFail() throws Throwable {
         val logoutManager = mock(LogoutManager.class);
         val ticketRegistry = mock(TicketRegistry.class);
         when(ticketRegistry.stream()).thenThrow(IllegalArgumentException.class);
-        val c = new DefaultTicketRegistryCleaner(LockRepository.noOp(), logoutManager, ticketRegistry);
-        assertEquals(0, c.clean());
+        val cleaner = new DefaultTicketRegistryCleaner(LockRepository.noOp(), logoutManager, ticketRegistry);
+        assertEquals(0, cleaner.clean());
     }
 
     @Test
     void verifyNoCleaner() throws Throwable {
         val logoutManager = mock(LogoutManager.class);
-        val ticketRegistry = new DefaultTicketRegistry(mock(TicketSerializationManager.class), new DefaultTicketCatalog());
+        val ticketRegistry = newTicketRegistry();
         val cleaner = new DefaultTicketRegistryCleaner(LockRepository.noOp(), logoutManager, ticketRegistry) {
             @Override
             protected boolean isCleanerSupported() {
@@ -61,4 +72,9 @@ class DefaultTicketRegistryCleanerTests {
         };
         assertEquals(0, cleaner.clean());
     }
+
+    private static TicketRegistry newTicketRegistry() {
+        return new DefaultTicketRegistry(mock(TicketSerializationManager.class), new DefaultTicketCatalog());
+    }
+
 }

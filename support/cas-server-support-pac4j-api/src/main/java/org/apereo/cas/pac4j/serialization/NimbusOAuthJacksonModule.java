@@ -11,7 +11,6 @@ import com.nimbusds.oauth2.sdk.token.BearerAccessToken;
 import com.nimbusds.oauth2.sdk.token.RefreshToken;
 import com.nimbusds.oauth2.sdk.token.Token;
 import net.minidev.json.JSONObject;
-
 import java.io.Serial;
 import java.util.HashSet;
 import java.util.Set;
@@ -22,6 +21,7 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
+@SuppressWarnings("UnusedVariable")
 public class NimbusOAuthJacksonModule extends SimpleModule {
     @Serial
     private static final long serialVersionUID = 4380897174293794761L;
@@ -38,8 +38,7 @@ public class NimbusOAuthJacksonModule extends SimpleModule {
     private static final class AccessTokenTypeMixin {
         @JsonCreator
         AccessTokenTypeMixin(
-            @JsonProperty("value")
-            final String value) {
+            @JsonProperty("value") final String value) {
         }
     }
 
@@ -49,8 +48,7 @@ public class NimbusOAuthJacksonModule extends SimpleModule {
 
         @JsonCreator
         ScopeValueMixin(
-            @JsonProperty("value")
-            final String value) {
+            @JsonProperty("value") final String value) {
             super(value);
         }
     }
@@ -61,8 +59,7 @@ public class NimbusOAuthJacksonModule extends SimpleModule {
 
         @JsonCreator
         ScopeMixin(
-            @JsonProperty("values")
-            final String... values) {
+            @JsonProperty("values") final String... values) {
             super(values);
         }
     }
@@ -73,8 +70,7 @@ public class NimbusOAuthJacksonModule extends SimpleModule {
 
         @JsonCreator
         RefreshTokenMixin(
-            @JsonProperty("value")
-            final String value) {
+            @JsonProperty("value") final String value) {
         }
 
         @Override
@@ -96,12 +92,9 @@ public class NimbusOAuthJacksonModule extends SimpleModule {
 
         @JsonCreator
         BearerAccessTokenMixin(
-            @JsonProperty("value")
-            final String value,
-            @JsonProperty("lifetime")
-            final long lifetime,
-            @JsonProperty("scope")
-            final Scope scope) {
+            @JsonProperty("value") final String value,
+            @JsonProperty("lifetime") final long lifetime,
+            @JsonProperty("scope") final Scope scope) {
             super(value, lifetime, scope);
         }
 
@@ -118,8 +111,7 @@ public class NimbusOAuthJacksonModule extends SimpleModule {
 
         @JsonCreator
         CodeVerifierMixin(
-            @JsonProperty("value")
-            final String value) {
+            @JsonProperty("value") final String value) {
             super(value);
         }
 

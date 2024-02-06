@@ -5,7 +5,7 @@ import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.EncodingUtils;
-import org.apereo.cas.web.BrowserSessionStorage;
+import org.apereo.cas.web.BrowserStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import lombok.val;
@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestPropertySource(properties = {
     "cas.authn.saml-idp.metadata.file-system.location=file:src/test/resources/metadata",
-    "cas.authn.saml-idp.core.session-storage-type=BROWSER_SESSION_STORAGE"
+    "cas.authn.saml-idp.core.session-storage-type=BROWSER_STORAGE"
 })
 class SSOSamlIdPPostProfileHandlerControllerWithBrowserStorageTests extends BaseSamlIdPConfigurationTests {
     @Autowired
@@ -61,8 +61,8 @@ class SSOSamlIdPPostProfileHandlerControllerWithBrowserStorageTests extends Base
         val xml = SamlUtils.transformSamlObject(openSamlConfigBean, getAuthnRequest()).toString();
         request.addParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST, EncodingUtils.encodeBase64(xml));
         val mv = controller.handleSaml2ProfileSsoPostRequest(response, request);
-        assertEquals(CasWebflowConstants.VIEW_ID_SESSION_STORAGE_WRITE, mv.getViewName());
-        assertTrue(mv.getModel().containsKey(BrowserSessionStorage.KEY_SESSION_STORAGE));
+        assertEquals(CasWebflowConstants.VIEW_ID_BROWSER_STORAGE_WRITE, mv.getViewName());
+        assertTrue(mv.getModel().containsKey(BrowserStorage.PARAMETER_BROWSER_STORAGE));
     }
 
     @Test

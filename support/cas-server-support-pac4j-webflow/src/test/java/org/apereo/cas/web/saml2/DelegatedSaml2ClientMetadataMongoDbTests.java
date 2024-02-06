@@ -1,17 +1,15 @@
 package org.apereo.cas.web.saml2;
 
-import org.apereo.cas.config.DelegatedAuthenticationSAMLConfiguration;
+import org.apereo.cas.config.CasDelegatedAuthenticationAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
-
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -21,10 +19,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @SpringBootTest(classes = {
-    DelegatedAuthenticationSAMLConfiguration.class,
+    CasDelegatedAuthenticationAutoConfiguration.class,
     BaseDelegatedAuthenticationTests.SharedTestConfiguration.class
 },
     properties = {
+        "spring.main.allow-bean-definition-overriding=true",
+        
         "CasFeatureModule.DelegatedAuthentication.saml-mongodb.enabled=true",
         
         "cas.authn.pac4j.saml[0].metadata.service-provider.mongo.host=localhost",

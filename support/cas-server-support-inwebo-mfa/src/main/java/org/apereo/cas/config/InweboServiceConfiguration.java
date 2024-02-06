@@ -12,11 +12,11 @@ import org.apereo.cas.util.ssl.SSLUtils;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -35,8 +35,8 @@ import java.security.KeyStore;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication, module = "inwebo")
-@AutoConfiguration
-public class InweboServiceConfiguration {
+@Configuration(value = "InweboServiceConfiguration", proxyBeanMethods = false)
+class InweboServiceConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "inweboConsoleAdmin")

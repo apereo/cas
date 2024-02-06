@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<body id="cas">
+<main class="container mt-3 mb-3">
+    <div layout:fragment="content" id="login">
+        <span th:remove="tag" th:if="${'true' == #strings.defaultString(#themes.code('cas.browser-storage.show-progress'), 'true')}">
+            <div id="mainPanel" class="mdc-card p-4 m-auto w-lg-50">
+                <h2 th:utext="#{screen.processing.title}"></h2>
+                <p th:utext="#{screen.processing.text}"></p>
+                <div role="progressbar" class="mdc-linear-progress mdc-linear-progress--indeterminate">
+                    <div class="mdc-linear-progress__buffer">
+                        <div class="mdc-linear-progress__buffer-bar"></div>
+                        <div class="mdc-linear-progress__buffer-dots"></div>
+                    </div>
+                    <div class="mdc-linear-progress__bar mdc-linear-progress__primary-bar">
+                        <span class="mdc-linear-progress__bar-inner"></span>
+                    </div>
+                    <div class="mdc-linear-progress__bar mdc-linear-progress__secondary-bar">
+                        <span class="mdc-linear-progress__bar-inner"></span>
+                    </div>
+                </div>
+            </div>
+            <script>new mdc.linearProgress.MDCLinearProgress(document.querySelector('.mdc-linear-progress'));</script>
+        </span>
+        <span th:remove="tag" th:if="${'false' == #strings.defaultString(#themes.code('cas.browser-storage.show-progress'), 'true')}">
+           <style type="text/css">body {display:none;}</style>
+        </span>
+        
+        <form method="post" id="fm1">
+            <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
+            <input type="hidden" name="_eventId" value="continue" />
+            <input type="submit" style="display: none" />
+        </form>
+
+        <script th:inline="javascript">
+            /*<![CDATA[*/
+
+            const browserStorage = /*[[${browserStorage}]]*/ ;
+            let payload;
+            if (browserStorage.storageType === 'SESSION') {
+                payload = writeToSessionStorage(browserStorage);
+            } else {
+                payload = writeToLocalStorage(browserStorage);
+            }
+            let url = browserStorage.destinationUrl;
+            if (url !== undefined && url !== "" && url !== null) {
+                window.location.href = url;
+            } else {
+                document.getElementById("fm1").submit();
+            }
+            /*]]>*/
+        </script>
+
+        <noscript>
+            <p>
+                <style type="text/css">
+                    #mainPanel {display:none;}
+                </style>
+                <div class="mdc-card p-4 m-auto w-lg-50 banner banner-danger alert alert-danger">
+                    <h2 th:utext="#{screen.browser.js.disabled.title}"></h2>
+                    <p class="intro" th:utext="#{screen.browser.js.disabled.text}"></p>
+                </div>
+            </p>
+        </noscript>
+    </div>
+</main>
+</body>
+</html>

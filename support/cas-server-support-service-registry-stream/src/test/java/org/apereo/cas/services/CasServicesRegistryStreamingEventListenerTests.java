@@ -1,6 +1,6 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.config.CasServicesStreamingConfiguration;
+import org.apereo.cas.config.CasServicesStreamingAutoConfiguration;
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasServicesStreamingConfiguration.class
+    CasServicesStreamingAutoConfiguration.class
 }, properties = "cas.service-registry.stream.core.enabled=true")
 @Tag("RegisteredService")
 class CasServicesRegistryStreamingEventListenerTests {

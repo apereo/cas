@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.adaptors.jdbc.JdbcAuthenticationUtils;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -9,17 +8,18 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.jdbc.JdbcAuthenticationUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import java.util.Collection;
 import java.util.HashSet;
@@ -34,14 +34,15 @@ import java.util.HashSet;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Authentication, module = "jdbc")
-@AutoConfiguration
-public class CasJdbcAuthenticationConfiguration {
+@Configuration(value = "CasJdbcAuthenticationConfiguration", proxyBeanMethods = false)
+class CasJdbcAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "queryAndEncodeDatabaseAuthenticationHandlers")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public Collection<AuthenticationHandler> queryAndEncodeDatabaseAuthenticationHandlers(
-        @Qualifier("queryAndEncodePasswordPolicyConfiguration") final PasswordPolicyContext queryAndEncodePasswordPolicyConfiguration,
+        @Qualifier("queryAndEncodePasswordPolicyConfiguration")
+        final PasswordPolicyContext queryAndEncodePasswordPolicyConfiguration,
         final ConfigurableApplicationContext applicationContext,
         @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
         @Qualifier("jdbcPrincipalFactory") final PrincipalFactory jdbcPrincipalFactory,
@@ -60,7 +61,8 @@ public class CasJdbcAuthenticationConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public Collection<AuthenticationHandler> bindModeSearchDatabaseAuthenticationHandlers(
-        @Qualifier("bindSearchPasswordPolicyConfiguration") final PasswordPolicyContext bindSearchPasswordPolicyConfiguration,
+        @Qualifier("bindSearchPasswordPolicyConfiguration")
+        final PasswordPolicyContext bindSearchPasswordPolicyConfiguration,
         final ConfigurableApplicationContext applicationContext,
         @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
         @Qualifier("jdbcPrincipalFactory") final PrincipalFactory jdbcPrincipalFactory,
@@ -98,7 +100,8 @@ public class CasJdbcAuthenticationConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public Collection<AuthenticationHandler> searchModeSearchDatabaseAuthenticationHandlers(
-        @Qualifier("searchModePasswordPolicyConfiguration") final PasswordPolicyContext searchModePasswordPolicyConfiguration,
+        @Qualifier("searchModePasswordPolicyConfiguration")
+        final PasswordPolicyContext searchModePasswordPolicyConfiguration,
         final ConfigurableApplicationContext applicationContext,
         @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
         @Qualifier("jdbcPrincipalFactory") final PrincipalFactory jdbcPrincipalFactory,
@@ -117,10 +120,14 @@ public class CasJdbcAuthenticationConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public Collection<AuthenticationHandler> jdbcAuthenticationHandlers(
-        @Qualifier("queryAndEncodeDatabaseAuthenticationHandlers") final Collection<AuthenticationHandler> queryAndEncodeDatabaseAuthenticationHandlers,
-        @Qualifier("bindModeSearchDatabaseAuthenticationHandlers") final Collection<AuthenticationHandler> bindModeSearchDatabaseAuthenticationHandlers,
-        @Qualifier("queryDatabaseAuthenticationHandlers") final Collection<AuthenticationHandler> queryDatabaseAuthenticationHandlers,
-        @Qualifier("searchModeSearchDatabaseAuthenticationHandlers") final Collection<AuthenticationHandler> searchModeSearchDatabaseAuthenticationHandlers) {
+        @Qualifier("queryAndEncodeDatabaseAuthenticationHandlers")
+        final Collection<AuthenticationHandler> queryAndEncodeDatabaseAuthenticationHandlers,
+        @Qualifier("bindModeSearchDatabaseAuthenticationHandlers")
+        final Collection<AuthenticationHandler> bindModeSearchDatabaseAuthenticationHandlers,
+        @Qualifier("queryDatabaseAuthenticationHandlers")
+        final Collection<AuthenticationHandler> queryDatabaseAuthenticationHandlers,
+        @Qualifier("searchModeSearchDatabaseAuthenticationHandlers")
+        final Collection<AuthenticationHandler> searchModeSearchDatabaseAuthenticationHandlers) {
         val handlers = new HashSet<AuthenticationHandler>();
         handlers.addAll(bindModeSearchDatabaseAuthenticationHandlers);
         handlers.addAll(queryAndEncodeDatabaseAuthenticationHandlers);

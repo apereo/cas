@@ -1,4 +1,1 @@
-org.apereo.cas.config.FileAuthenticationEventExecutionPlanConfiguration
-org.apereo.cas.config.RejectUsersAuthenticationEventExecutionPlanConfiguration
-org.apereo.cas.config.JsonResourceAuthenticationEventExecutionPlanConfiguration
-org.apereo.cas.config.GroovyAuthenticationEventExecutionPlanConfiguration
+org.apereo.cas.config.CasGenericAuthenticationAutoConfiguration

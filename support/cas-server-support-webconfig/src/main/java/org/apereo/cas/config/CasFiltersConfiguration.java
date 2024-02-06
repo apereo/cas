@@ -20,7 +20,6 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -44,11 +43,11 @@ import java.util.HashMap;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.WebApplication)
-@AutoConfiguration
-public class CasFiltersConfiguration {
+@Configuration(value = "CasFiltersConfiguration", proxyBeanMethods = false)
+class CasFiltersConfiguration {
     @Configuration(value = "CasFiltersEncodingConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasFiltersBaseConfiguration {
+    static class CasFiltersBaseConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public FilterRegistrationBean<CharacterEncodingFilter> characterEncodingFilter(
@@ -65,8 +64,8 @@ public class CasFiltersConfiguration {
 
     @Configuration(value = "CasFiltersResponseHeadersConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    @AutoConfigureAfter(CasCoreServicesConfiguration.class)
-    public static class CasFiltersResponseHeadersConfiguration {
+    @AutoConfigureAfter(CasCoreServicesAutoConfiguration.class)
+    static class CasFiltersResponseHeadersConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public FilterRegistrationBean<AddResponseHeadersFilter> responseHeadersFilter(final CasConfigurationProperties casProperties) {
@@ -152,7 +151,7 @@ public class CasFiltersConfiguration {
     }
 
     @Configuration(value = "CasFiltersCorsConfiguration", proxyBeanMethods = false)
-    public static class CasFiltersCorsConfiguration {
+    static class CasFiltersCorsConfiguration {
         private static final BeanCondition CONDITION = BeanCondition.on("cas.http-web-request.cors.enabled").isTrue();
 
         @Bean

@@ -23,7 +23,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.PropertiesFactoryBean;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorViewResolver;
@@ -42,6 +41,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
+import org.springframework.webflow.conversation.NoSuchConversationException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -51,19 +51,19 @@ import java.util.Properties;
 import java.util.stream.Collectors;
 
 /**
- * This is {@link CasCoreWebConfiguration}.
+ * This is {@link CasCoreWebAutoConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Core)
-@AutoConfiguration
-public class CasCoreWebConfiguration {
+@Configuration(value = "CasCoreWebConfiguration", proxyBeanMethods = false)
+class CasCoreWebConfiguration {
 
     @Configuration(value = "CasCoreWebMessageSourceConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreWebMessageSourceConfiguration {
+    static class CasCoreWebMessageSourceConfiguration {
         /**
          * Load property files containing non-i18n fallback values
          * that should be exposed to Thyme templates.
@@ -111,14 +111,14 @@ public class CasCoreWebConfiguration {
 
     @Configuration(value = "CasCoreWebRequestsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreWebRequestsConfiguration {
+    static class CasCoreWebRequestsConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = ArgumentExtractor.BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ArgumentExtractor argumentExtractor(final List<ServiceFactoryConfigurer> configurers) {
             AnnotationAwareOrderComparator.sortIfNecessary(configurers);
             val serviceFactoryList = configurers.stream()
-                .flatMap(c -> c.buildServiceFactories().stream())
+                .flatMap(configurer -> configurer.buildServiceFactories().stream())
                 .collect(Collectors.toCollection(ArrayList::new));
             return new DefaultArgumentExtractor(serviceFactoryList);
         }
@@ -148,18 +148,25 @@ public class CasCoreWebConfiguration {
         public ErrorViewResolver defaultMappedExceptionErrorViewResolver(
             final WebProperties webProperties,
             final ConfigurableApplicationContext applicationContext) {
-            val mv = new ModelAndView();
-            mv.setStatus(HttpStatusCode.valueOf(HttpStatus.FORBIDDEN.value()));
-            mv.setViewName(CasWebflowConstants.VIEW_ID_SERVICE_ERROR);
-            val mappings = Map.<Class<? extends Throwable>, ModelAndView>of(UnauthorizedServiceException.class, mv);
+            val mappings = Map.<Class<? extends Throwable>, ModelAndView>of(
+                UnauthorizedServiceException.class, getModelAndView(HttpStatus.FORBIDDEN, CasWebflowConstants.VIEW_ID_SERVICE_ERROR),
+                NoSuchConversationException.class, getModelAndView(HttpStatus.UNPROCESSABLE_ENTITY, "error/%s".formatted(HttpStatus.UNPROCESSABLE_ENTITY.value()))
+            );
             return new MappedExceptionErrorViewResolver(applicationContext,
                 webProperties.getResources(), mappings, errorContext -> Optional.empty());
+        }
+
+        private static ModelAndView getModelAndView(final HttpStatus status, final String viewName) {
+            val mv = new ModelAndView();
+            mv.setStatus(HttpStatusCode.valueOf(status.value()));
+            mv.setViewName(viewName);
+            return mv;
         }
     }
 
     @Configuration(value = "CasCoreWebViewsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreWebViewsConfiguration {
+    static class CasCoreWebViewsConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.VIEW_ID_DYNAMIC_HTML)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -173,7 +180,7 @@ public class CasCoreWebConfiguration {
 
     @Configuration(value = "CasCoreWebEndpointsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreWebEndpointsConfiguration {
+    static class CasCoreWebEndpointsConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "casProtocolEndpointConfigurer")

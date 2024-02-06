@@ -53,10 +53,10 @@ const assert = require("assert");
     }, (res) => res.data, (error) => {
         throw `Operation failed to obtain access token: ${error}`;
     });
-    assert(payload.access_token !== null);
-    assert(payload.token_type !== null);
-    assert(payload.expires_in !== null);
-    assert(payload.scope !== null);
+    assert(payload.access_token !== undefined);
+    assert(payload.token_type !== undefined);
+    assert(payload.expires_in !== undefined);
+    assert(payload.scope !== undefined);
 
     const decoded = await cas.decodeJwt(payload.id_token);
     assert(decoded["sub"] === "casuser");
@@ -67,9 +67,9 @@ const assert = require("assert");
     assert(decoded["common-name"] === undefined);
     assert(decoded["lastname"] === undefined);
     
-    assert(decoded["cn"] !== null);
-    assert(decoded["family_name"] !== null);
-    assert(decoded["name"] !== null);
+    assert(decoded["cn"] !== undefined);
+    assert(decoded["family_name"] !== undefined);
+    assert(decoded["name"] !== undefined);
 
     const profileUrl = `https://localhost:8443/cas/oidc/profile?access_token=${payload.access_token }`;
     await cas.log(`Calling user profile ${profileUrl}`);
@@ -80,10 +80,10 @@ const assert = require("assert");
         assert(decoded["common-name"] === undefined);
         assert(decoded["lastname"] === undefined);
 
-        assert(res.data["cn"] !== null);
-        assert(res.data["name"] !== null);
-        assert(res.data["family_name"] !== null);
-        assert(res.data.sub !== null);
+        assert(res.data["cn"] !== undefined);
+        assert(res.data["name"] !== undefined);
+        assert(res.data["family_name"] !== undefined);
+        assert(res.data.sub !== undefined);
     }, (error) => {
         throw `Operation failed: ${error}`;
     });

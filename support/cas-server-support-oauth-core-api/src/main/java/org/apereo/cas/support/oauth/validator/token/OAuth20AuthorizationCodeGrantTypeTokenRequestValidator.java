@@ -56,17 +56,17 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
         val valid = redirectUri.isPresent() && code.isPresent() && OAuth20Utils.checkCallbackValid(registeredService, redirectUri.get());
 
         if (valid) {
-            val token = FunctionUtils.doAndHandle(() -> {
+            val oauthCode = FunctionUtils.doAndHandle(() -> {
                 val state = getConfigurationContext().getTicketRegistry().getTicket(code.get(), OAuth20Code.class);
                 return state == null || state.isExpired() ? null : state;
             });
             val removeTokens = getConfigurationContext().getCasProperties().getAuthn().getOauth().getCode().isRemoveRelatedAccessTokens();
-            if (token == null || token.isExpired()) {
+            if (oauthCode == null || oauthCode.isExpired()) {
                 if (removeTokens) {
                     LOGGER.debug("Code [{}] is invalid or expired. Attempting to revoke access tokens issued to the code", code.get());
                     val accessTokensByCode = getConfigurationContext().getTicketRegistry().getTickets(ticket ->
-                        ticket instanceof OAuth20AccessToken
-                        && StringUtils.equalsIgnoreCase(((OAuth20AccessToken) ticket).getToken(), code.get()));
+                        ticket instanceof final OAuth20AccessToken accessToken
+                        && StringUtils.equalsIgnoreCase(accessToken.getToken(), code.get()));
                     accessTokensByCode.forEach(Unchecked.consumer(ticket -> {
                         LOGGER.debug("Removing access token [{}] issued via expired/unknown code [{}]", ticket.getId(), code.get());
                         getConfigurationContext().getTicketRegistry().deleteTicket(ticket);
@@ -76,19 +76,20 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
                 return false;
             }
 
-            val id = token.getService().getId();
+            val serviceId = oauthCode.getService().getId();
             val codeRegisteredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
-                getConfigurationContext().getServicesManager(), id);
+                getConfigurationContext().getServicesManager(), serviceId);
 
-            val originalPrincipal = token.getTicketGrantingTicket().getAuthentication().getPrincipal();
+            val authentication = resolveAuthenticationFrom(oauthCode);
+            val originalPrincipal = authentication.getPrincipal();
             val accessStrategyAttributes = CoreAuthenticationUtils.mergeAttributes(originalPrincipal.getAttributes(),
-                token.getAuthentication().getPrincipal().getAttributes());
+                oauthCode.getAuthentication().getPrincipal().getAttributes());
             val accessStrategyPrincipal = getConfigurationContext().getPrincipalFactory()
-                .createPrincipal(token.getAuthentication().getPrincipal().getId(), accessStrategyAttributes);
+                .createPrincipal(oauthCode.getAuthentication().getPrincipal().getId(), accessStrategyAttributes);
             val audit = AuditableContext.builder()
-                .service(token.getService())
+                .service(oauthCode.getService())
                 .registeredService(codeRegisteredService)
-                .authentication(token.getAuthentication())
+                .authentication(oauthCode.getAuthentication())
                 .principal(accessStrategyPrincipal)
                 .build();
             val accessResult = getConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
@@ -96,7 +97,7 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
 
             if (!registeredService.equals(codeRegisteredService)) {
                 LOGGER.warn("OAuth code [{}] issued to service [{}] does not match [{}] provided, given the redirect URI [{}]",
-                    code, id, registeredService.getName(), redirectUri);
+                    code, serviceId, registeredService.getName(), redirectUri);
                 return false;
             }
 
@@ -104,7 +105,6 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
                 LOGGER.warn("Requested grant type [{}] is not authorized by service definition [{}]", grantType, registeredService.getServiceId());
                 return false;
             }
-
             return true;
         }
         LOGGER.warn("Access token request cannot be validated for grant type [{}] and client id [{}] given the redirect URI [{}]", grantType, clientId, redirectUri);

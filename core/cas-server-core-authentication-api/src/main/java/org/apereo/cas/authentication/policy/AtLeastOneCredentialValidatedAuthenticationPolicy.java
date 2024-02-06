@@ -66,7 +66,8 @@ public class AtLeastOneCredentialValidatedAuthenticationPolicy extends BaseAuthe
             LOGGER.debug("Authentication policy is satisfied having found at least one authentication transactions");
             return AuthenticationPolicyExecutionResult.success();
         }
-        LOGGER.warn("Authentication policy has failed to find a successful authentication transaction");
+        LOGGER.warn("Authentication policy failed to find a successful authentication transaction. Successful attempts are [{}]",
+            authn.getSuccesses().keySet());
         return AuthenticationPolicyExecutionResult.failure();
     }
 }

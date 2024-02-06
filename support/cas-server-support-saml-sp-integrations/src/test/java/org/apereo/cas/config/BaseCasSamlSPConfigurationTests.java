@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
     BaseSamlIdPConfigurationTests.SharedTestConfiguration.class,
-    CasSamlServiceProvidersConfiguration.class
+    CasSamlServiceProvidersAutoConfiguration.class
 }, properties = {
     "cas.authn.saml-idp.core.entity-id=https://cas.example.org/idp",
     "cas.authn.saml-idp.metadata.core.require-valid-metadata=false",
@@ -48,7 +48,7 @@ public abstract class BaseCasSamlSPConfigurationTests {
     protected ServicesManager servicesManager;
 
     @Autowired
-    @Qualifier("webApplicationServiceFactory")
+    @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
     protected ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
     @AfterEach

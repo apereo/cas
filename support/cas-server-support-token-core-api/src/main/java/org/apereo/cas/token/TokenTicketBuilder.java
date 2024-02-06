@@ -3,7 +3,7 @@ package org.apereo.cas.token;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -26,9 +26,9 @@ public interface TokenTicketBuilder {
      * @param serviceTicketId the ticket id
      * @param service         the service
      * @return the token identifier
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
-    String build(String serviceTicketId, WebApplicationService service) throws Exception;
+    String build(String serviceTicketId, WebApplicationService service) throws Throwable;
 
     /**
      * Build token for a ticket-granting ticket.
@@ -36,9 +36,9 @@ public interface TokenTicketBuilder {
      * @param ticketGrantingTicket the ticket granting ticket
      * @param claims               the claims
      * @return the string
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
-    default String build(final TicketGrantingTicket ticketGrantingTicket, final Map<String, List<Object>> claims) throws Exception {
+    default String build(final AuthenticationAwareTicket ticketGrantingTicket, final Map<String, List<Object>> claims) throws Throwable {
         return build(ticketGrantingTicket.getAuthentication(), null, ticketGrantingTicket.getId(), claims);
     }
 
@@ -48,9 +48,9 @@ public interface TokenTicketBuilder {
      *
      * @param authentication the authentication
      * @return the string
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
-    default String build(final Authentication authentication) throws Exception {
+    default String build(final Authentication authentication) throws Throwable {
         return build(authentication, null);
     }
 
@@ -60,9 +60,9 @@ public interface TokenTicketBuilder {
      * @param authentication    the authentication
      * @param registeredService the registered service
      * @return the string
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
-    default String build(final Authentication authentication, final RegisteredService registeredService) throws Exception {
+    default String build(final Authentication authentication, final RegisteredService registeredService) throws Throwable {
         return build(authentication, registeredService, UUID.randomUUID().toString(), Map.of());
     }
 
@@ -75,10 +75,10 @@ public interface TokenTicketBuilder {
      * @param jwtIdentifier     the jwt identifier
      * @param claims            the claims
      * @return the token
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
     String build(Authentication authentication,
                  RegisteredService registeredService,
                  String jwtIdentifier,
-                 Map<String, List<Object>> claims) throws Exception;
+                 Map<String, List<Object>> claims) throws Throwable;
 }

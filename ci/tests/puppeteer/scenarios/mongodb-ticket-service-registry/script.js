@@ -17,21 +17,21 @@ const cas = require("../../cas.js");
     
     await cas.doGet("https://localhost:8443/cas/actuator/health",
         async (res) => {
-            assert(res.data.components.mongo !== null);
-            assert(res.data.components.memory !== null);
-            assert(res.data.components.ping !== null);
+            assert(res.data.components.mongo !== undefined);
+            assert(res.data.components.memory !== undefined);
+            assert(res.data.components.ping !== undefined);
 
-            assert(res.data.components.mongo.status !== null);
-            assert(res.data.components.mongo.details !== null);
+            assert(res.data.components.mongo.status !== undefined);
+            assert(res.data.components.mongo.details !== undefined);
 
 
             let details = res.data.components.mongo.details["MongoDbHealthIndicator-ticket-registry"];
             assert(details.name === "MongoDbHealthIndicator-ticket-registry");
-            assert(details.proxyGrantingTicketsCache !== null);
-            assert(details.ticketGrantingTicketsCache !== null);
-            assert(details.proxyTicketsCache !== null);
-            assert(details.serviceTicketsCache !== null);
-            assert(details.transientSessionTicketsCache !== null);
+            assert(details.proxyGrantingTicketsCollection !== undefined);
+            assert(details.ticketGrantingTicketsCollection !== undefined);
+            assert(details.proxyTicketsCollection !== undefined);
+            assert(details.serviceTicketsCollection !== undefined);
+            assert(details.transientSessionTicketsCollection !== undefined);
 
             details = res.data.components.mongo.details["MongoDbHealthIndicator-service-registry"];
             assert(details.name === "MongoDbHealthIndicator-service-registry");
@@ -51,16 +51,4 @@ const cas = require("../../cas.js");
         "Accept": "application/json",
         "Content-Type": "application/x-www-form-urlencoded"
     });
-
-    // await cas.logg("Querying registry for all decoded ticket-granting tickets");
-    // await cas.doGet(`${baseUrl}/ticketRegistry/query?prefix=TGT&decode=true`, async res => {
-    //     assert(res.status === 200);
-    //     assert(res.data.length === 1);
-    // }, async err => {
-    //     throw err;
-    // }, {
-    //     'Accept': 'application/json',
-    //     'Content-Type': "application/x-www-form-urlencoded"
-    // });
-
 })();

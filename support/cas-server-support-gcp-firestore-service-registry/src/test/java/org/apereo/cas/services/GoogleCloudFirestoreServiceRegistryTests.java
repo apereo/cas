@@ -1,12 +1,6 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
-import org.apereo.cas.config.CasCoreNotificationsConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasCoreWebConfiguration;
-import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.config.GoogleCloudFirestoreServiceRegistryConfiguration;
+import org.apereo.cas.config.CasGoogleCloudFirestoreServiceRegistryAutoConfiguration;
 import com.google.api.gax.grpc.InstantiatingGrpcChannelProvider;
 import com.google.cloud.firestore.FirestoreOptions;
 import com.google.cloud.spring.autoconfigure.core.GcpContextAutoConfiguration;
@@ -18,11 +12,8 @@ import lombok.Getter;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import java.util.UUID;
@@ -38,18 +29,8 @@ import static org.mockito.Mockito.*;
 @Tag("GCP")
 @SpringBootTest(classes = {
     GoogleCloudFirestoreServiceRegistryTests.GoogleCloudFirestoreTestConfiguration.class,
-    GoogleCloudFirestoreServiceRegistryConfiguration.class,
-
-    CasCoreServicesConfiguration.class,
-    CasCoreNotificationsConfiguration.class,
-    CasCoreUtilConfiguration.class,
-    CasCoreWebConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
-    CasCoreAuthenticationMetadataConfiguration.class,
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
-    MailSenderAutoConfiguration.class,
-    
+    CasGoogleCloudFirestoreServiceRegistryAutoConfiguration.class,
+    AbstractServiceRegistryTests.SharedTestConfiguration.class,
     GcpFirestoreAutoConfiguration.class,
     GcpContextAutoConfiguration.class
 }, properties = {
@@ -66,7 +47,6 @@ class GoogleCloudFirestoreServiceRegistryTests extends AbstractServiceRegistryTe
     @Autowired
     @Qualifier(ServiceRegistry.BEAN_NAME)
     private ServiceRegistry newServiceRegistry;
-
 
     @TestConfiguration(value = "GoogleCloudFirestoreTestConfiguration", proxyBeanMethods = false)
     static class GoogleCloudFirestoreTestConfiguration {

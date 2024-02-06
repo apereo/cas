@@ -36,7 +36,7 @@ const assert = require("assert");
         "Content-Type": "application/json"
     }, async (res) => {
         await cas.log(res.data);
-        assert(res.data.access_token !== null);
+        assert(res.data.access_token !== undefined);
 
         accessToken = res.data.access_token;
         await cas.log(`Received access token ${accessToken}`);
@@ -46,12 +46,12 @@ const assert = require("assert");
         assert(decoded.sub === "casuser");
         assert(decoded.jti.startsWith("TGT-"));
         assert(decoded.aud === "client");
-        assert(decoded.jti !== null);
-        assert(decoded.iat !== null);
-        assert(decoded.sid !== null);
+        assert(decoded.jti !== undefined);
+        assert(decoded.iat !== undefined);
+        assert(decoded.sid !== undefined);
         assert(decoded.iss === "https://localhost:8443/cas/oidc");
         assert(decoded.client_id === "client");
-        assert(decoded.auth_time !== null);
+        assert(decoded.auth_time !== undefined);
         assert(decoded.preferred_username === "casuser");
         assert(decoded.amr[0] === "Static Credentials");
     }, (error) => {

@@ -2,6 +2,8 @@ package org.apereo.cas.uma.web.controllers;
 
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.uma.UmaConfigurationContext;
 import org.apereo.cas.uma.ticket.resource.InvalidResourceSetException;
 import org.apereo.cas.uma.ticket.resource.ResourceSet;
@@ -65,6 +67,9 @@ public abstract class BaseUmaEndpointController {
             "message", message);
     }
 
+    protected OAuth20AccessToken resolveAccessToken(final Ticket token) {
+        return (OAuth20AccessToken) (token.isStateless() ? umaConfigurationContext.getTicketRegistry().getTicket(token.getId()) : token);
+    }
 
     protected String getResourceSetUriLocation(final ResourceSet saved) {
         return getUmaConfigurationContext().getCasProperties()

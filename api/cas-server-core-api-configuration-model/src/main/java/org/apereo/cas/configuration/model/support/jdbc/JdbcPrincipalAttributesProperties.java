@@ -4,14 +4,10 @@ import org.apereo.cas.configuration.model.core.authentication.AttributeRepositor
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.apereo.services.persondir.support.QueryType;
-import org.apereo.services.persondir.util.CaseCanonicalizationMode;
-
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -68,7 +64,7 @@ public class JdbcPrincipalAttributesProperties extends AbstractJpaProperties {
      * <li>{@code NONE}: Do nothing.</li>
      * </ul>
      */
-    private String caseCanonicalization = CaseCanonicalizationMode.NONE.name();
+    private String caseCanonicalization = "NONE";
 
     /**
      * Indicates how multiple attributes in a query should be concatenated together.
@@ -78,7 +74,7 @@ public class JdbcPrincipalAttributesProperties extends AbstractJpaProperties {
      * <li>{@code OR}: Concatenate attributes in the query using an OR-clause.</li>
      * </ul>
      */
-    private String queryType = QueryType.AND.name();
+    private String queryType = "AND";
 
     /**
      * Used only when there is a mapping of many rows to one user.

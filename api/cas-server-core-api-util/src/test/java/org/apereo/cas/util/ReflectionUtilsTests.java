@@ -6,6 +6,7 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
+import java.time.Clock;
 import java.util.Set;
 import static org.assertj.core.api.Assertions.*;
 
@@ -38,5 +39,12 @@ class ReflectionUtilsTests {
         val applicationContext = ReflectionUtils.findClassBySimpleNameInPackage(ApplicationContext.class.getSimpleName(), "org.springframework");
         assertThat(applicationContext).isPresent();
         assertThat(applicationContext).contains(ApplicationContext.class);
+    }
+
+    @Test
+    void findSystemClasses() {
+        val utilClasses = ReflectionUtils.findSubclassesInPackage(Clock.class, Clock.class.getPackageName());
+        assertThat(utilClasses).doesNotContain(Clock.class);
+        assertThat(utilClasses).hasSizeGreaterThanOrEqualTo(5);
     }
 }

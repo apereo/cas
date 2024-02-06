@@ -1,6 +1,1 @@
-org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration
-org.apereo.cas.config.CasCoreServicesConfiguration
-org.apereo.cas.config.CasCoreServicesComponentSerializationConfiguration
-org.apereo.cas.config.CasServiceRegistryInitializationConfiguration
-org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration
-org.apereo.cas.config.CasCoreServicesMonitoringConfiguration
+org.apereo.cas.config.CasCoreServicesAutoConfiguration

@@ -9,7 +9,7 @@ async function callRegisteredServices() {
     const baseUrl = "https://localhost:8443/cas/actuator/registeredServices";
     await cas.doGet(baseUrl, async (res) => {
         assert(res.status === 200);
-        cas.log(`Services found: ${res.data[1].length}`);
+        await cas.log(`Services found: ${res.data[1].length}`);
     }, async (err) => {
         throw err;
     }, {

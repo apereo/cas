@@ -1,1 +1,1 @@
-org.apereo.cas.config.X509CertificateExtractorConfiguration
+org.apereo.cas.config.CasX509CertificateExtractorAutoConfiguration

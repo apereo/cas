@@ -34,7 +34,7 @@ class SpnegoCredentialsActionTests extends AbstractSpnegoTests {
     @Test
     void verifyOperation() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
-        context.getHttpServletRequest().addHeader(SpnegoConstants.HEADER_AUTHORIZATION,
+        context.addHeader(SpnegoConstants.HEADER_AUTHORIZATION,
             SpnegoConstants.NEGOTIATE + ' ' + EncodingUtils.encodeBase64("credential"));
         spnegoAction.execute(context);
         assertNotNull(context.getHttpServletResponse().getHeader(SpnegoConstants.HEADER_AUTHENTICATE));
@@ -49,7 +49,7 @@ class SpnegoCredentialsActionTests extends AbstractSpnegoTests {
     @Test
     void verifyErrorWithBadCredential() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
-        context.getHttpServletRequest().addHeader(SpnegoConstants.HEADER_AUTHORIZATION,
+        context.addHeader(SpnegoConstants.HEADER_AUTHORIZATION,
             SpnegoConstants.NEGOTIATE + ' ' + EncodingUtils.encodeBase64("credential"));
         val stResolver = mock(CasWebflowEventResolver.class);
         val err = new EventFactorySupport().error(this);
@@ -64,7 +64,7 @@ class SpnegoCredentialsActionTests extends AbstractSpnegoTests {
     @Test
     void verifyBadAuthorizationHeader() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
-        context.getHttpServletRequest().addHeader(SpnegoConstants.HEADER_AUTHORIZATION, "XYZ");
+        context.addHeader(SpnegoConstants.HEADER_AUTHORIZATION, "XYZ");
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, spnegoAction.execute(context).getId());
     }
 

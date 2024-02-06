@@ -6,6 +6,7 @@ import org.apereo.cas.ticket.ExpirationPolicy;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.Serial;
 
@@ -23,6 +24,7 @@ public class OAuth20DefaultDeviceToken extends AbstractTicket implements OAuth20
 
     private final Service service;
 
+    @Setter
     private String userCode;
 
     public OAuth20DefaultDeviceToken(final String id, final Service service,
@@ -34,10 +36,5 @@ public class OAuth20DefaultDeviceToken extends AbstractTicket implements OAuth20
     @Override
     public String getPrefix() {
         return OAuth20DeviceToken.PREFIX;
-    }
-
-    @Override
-    public void assignUserCode(final OAuth20DeviceUserCode userCode) {
-        this.userCode = userCode.getId();
     }
 }

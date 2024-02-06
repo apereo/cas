@@ -13,6 +13,6 @@ import org.springframework.aot.hint.RuntimeHints;
 public class WsFederationAuthenticationWebflowRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
-        hints.serialization().registerType(WsFedClient.class);
+        registerSerializationHints(hints, WsFedClient.class);
     }
 }

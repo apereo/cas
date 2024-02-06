@@ -12,11 +12,11 @@ import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
@@ -30,8 +30,8 @@ import org.springframework.context.annotation.ScopedProxyMode;
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Audit),
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication)
 })
-@AutoConfiguration
-public class CasCoreMultifactorAuthenticationAuditConfiguration {
+@Configuration(value = "CasCoreMultifactorAuthenticationAuditConfiguration", proxyBeanMethods = false)
+class CasCoreMultifactorAuthenticationAuditConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "casCoreMfaAuditTrailRecordResolutionPlanConfigurer")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

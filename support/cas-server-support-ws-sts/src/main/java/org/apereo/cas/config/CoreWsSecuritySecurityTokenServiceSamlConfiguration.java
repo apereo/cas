@@ -3,7 +3,6 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.wss4j.common.crypto.WSProviderConfig;
@@ -11,8 +10,9 @@ import org.apache.wss4j.common.saml.OpenSAMLUtil;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.util.ReflectionUtils;
 
@@ -25,8 +25,9 @@ import org.springframework.util.ReflectionUtils;
  */
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.WsFederationIdentityProvider)
-@AutoConfiguration(after = CoreSamlConfiguration.class)
-public class CoreWsSecuritySecurityTokenServiceSamlConfiguration {
+@AutoConfigureAfter(CasCoreSamlAutoConfiguration.class)
+@Configuration(value = "CoreWsSecuritySecurityTokenServiceSamlConfiguration", proxyBeanMethods = false)
+class CoreWsSecuritySecurityTokenServiceSamlConfiguration {
     private static void findFieldAndSetValue(final String fieldName, final Object value) {
         LOGGER.trace("Locating field name [{}]", fieldName);
         val field = ReflectionUtils.findField(OpenSAMLUtil.class, fieldName);

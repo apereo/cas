@@ -3,6 +3,7 @@ package org.apereo.cas.impl.notify;
 import org.apereo.cas.api.AuthenticationRiskNotifier;
 import org.apereo.cas.api.AuthenticationRiskScore;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.notifications.CommunicationsManager;
@@ -21,6 +22,7 @@ import lombok.Setter;
 import lombok.val;
 import org.apache.hc.core5.net.URIBuilder;
 import org.apereo.inspektr.common.web.ClientInfo;
+import org.springframework.context.ApplicationContext;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -40,11 +42,15 @@ import java.util.UUID;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class BaseAuthenticationRiskNotifier implements AuthenticationRiskNotifier {
 
+    protected final ApplicationContext applicationContext;
+    
     protected final CasConfigurationProperties casProperties;
 
     protected final CommunicationsManager communicationsManager;
 
     protected final ServicesManager servicesManager;
+    
+    protected final PrincipalResolver principalResolver;
 
     protected final CipherExecutor riskVerificationCipherExecutor;
 
@@ -73,8 +79,9 @@ public abstract class BaseAuthenticationRiskNotifier implements AuthenticationRi
     }
 
     @Override
-    public String createRiskToken() throws Exception {
-        val jwtBuilder = new JwtBuilder(riskVerificationCipherExecutor, servicesManager, casProperties);
+    public String createRiskToken() throws Throwable {
+        val jwtBuilder = new JwtBuilder(riskVerificationCipherExecutor,
+            applicationContext, servicesManager, principalResolver, casProperties);
         val expiration = Beans.newDuration(casProperties.getAuthn().getAdaptive()
             .getRisk().getResponse().getRiskVerificationTokenExpiration());
         val expirationDate = DateTimeUtils.dateOf(LocalDateTime.now(Clock.systemUTC()).plus(expiration));

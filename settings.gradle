@@ -10,6 +10,7 @@ ext.gradleEnterpriseAccessKey = System.getenv("GRADLE_ENTERPRISE_ACCESS_KEY")
 ext.githubPackageRegistryUser = System.getenv("GH_PACKAGE_REGISTRY_USER")
 ext.githubPackageRegistryPassword = System.getenv("GH_PACKAGE_REGISTRY_TOKEN")
 
+/*
 buildCache {
     local {
         enabled = !(buildCachePsw?.trim() && buildCacheUser?.trim())
@@ -23,6 +24,17 @@ buildCache {
             username = buildCacheUser
             password = buildCachePsw
         }
+    }
+}
+*/
+
+buildCache {
+    local { enabled = false }
+    remote(gradleEnterprise.buildCache) {
+        enabled = true
+        // Also check access key to avoid warning logs
+        def accessKey = System.getenv("GRADLE_ENTERPRISE_ACCESS_KEY")
+        push = isCiServer && accessKey != null && !accessKey.isEmpty()
     }
 }
 
@@ -55,8 +67,6 @@ dependencyResolutionManagement {
                 includeModule("org.nodejs", "node")
             }
         }
-
-        mavenLocal()
         mavenCentral()
         maven {
             url "https://build.shibboleth.net/maven/snapshots"
@@ -425,8 +435,6 @@ include "support:cas-server-support-rest-x509"
 include "support:cas-server-support-saml"
 include "support:cas-server-support-saml-core"
 include "support:cas-server-support-saml-core-api"
-include "support:cas-server-support-saml-googleapps"
-include "support:cas-server-support-saml-googleapps-core"
 include "support:cas-server-support-saml-idp"
 include "support:cas-server-support-saml-idp-core"
 include "support:cas-server-support-saml-idp-discovery"
@@ -466,6 +474,7 @@ include "support:cas-server-support-sms-textmagic"
 include "support:cas-server-support-soap-authentication"
 include "support:cas-server-support-spnego"
 include "support:cas-server-support-spnego-webflow"
+include "support:cas-server-support-stateless-ticket-registry"
 include "support:cas-server-support-surrogate-api"
 include "support:cas-server-support-surrogate-core"
 include "support:cas-server-support-surrogate-authentication"

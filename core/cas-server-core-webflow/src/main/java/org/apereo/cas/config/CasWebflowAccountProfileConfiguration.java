@@ -19,12 +19,12 @@ import org.apereo.cas.web.flow.executor.WebflowExecutorFactory;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.web.servlet.HandlerAdapter;
 import org.springframework.web.servlet.HandlerMapping;
@@ -48,8 +48,8 @@ import java.util.List;
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Webflow),
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AccountManagement, enabledByDefault = false)
 })
-@AutoConfiguration
-public class CasWebflowAccountProfileConfiguration {
+@Configuration(value = "CasWebflowAccountProfileConfiguration", proxyBeanMethods = false)
+class CasWebflowAccountProfileConfiguration {
     private static final FlowExecutionListener[] FLOW_EXECUTION_LISTENERS = new FlowExecutionListener[0];
 
     @ConditionalOnMissingBean(name = "accountProfileWebflowConfigurer")

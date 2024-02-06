@@ -1,1 +1,1 @@
-org.apereo.cas.config.CasEmbeddedContainerUndertowConfiguration
+org.apereo.cas.config.CasEmbeddedContainerUndertowAutoConfiguration

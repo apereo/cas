@@ -1,1 +1,1 @@
-org.apereo.cas.config.SoapAuthenticationConfiguration
+org.apereo.cas.config.CasSoapAuthenticationAutoConfiguration

@@ -14,7 +14,7 @@ The following protocols are supported and provided by CAS:
 *   [OAuth](OAuth-Protocol.html)
 *   [OpenID Connect](OIDC-Protocol.html)
 *   [WS Federation](WS-Federation-Protocol.html)
-*   [SAML1](SAML-Protocol.html)
+*   [SAML1](SAML-v1-Protocol.html)
 *   [SAML2](../authentication/Configuring-SAML2-Authentication.html)
 *   [REST Protocol](REST-Protocol.html)
 

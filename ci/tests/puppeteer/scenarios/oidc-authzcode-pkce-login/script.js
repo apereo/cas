@@ -45,23 +45,23 @@ const assert = require("assert");
         "Content-Type": "application/json"
     }, async (res) => {
         await cas.log(res.data);
-        assert(res.data.access_token !== null);
+        assert(res.data.access_token !== undefined);
 
         accessToken = res.data.access_token;
         await cas.log(`Received access token ${accessToken}`);
 
         await cas.log("Decoding ID token...");
         const decoded = await cas.decodeJwt(res.data.id_token);
-        assert(decoded.sub !== null);
-        assert(decoded.aud !== null);
-        assert(decoded.state !== null);
-        assert(decoded.nonce !== null);
-        assert(decoded.client_id !== null);
+        assert(decoded.sub !== undefined);
+        assert(decoded.aud !== undefined);
+        assert(decoded.state !== undefined);
+        assert(decoded.nonce !== undefined);
+        assert(decoded.client_id !== undefined);
         assert(decoded["preferred_username"] === undefined);
     }, (error) => {
         throw `Operation failed to obtain access token: ${error}`;
     });
 
-    assert(accessToken !== null, "Access Token cannot be null");
+    assert(accessToken !== undefined, "Access Token cannot be null");
     await browser.close();
 })();

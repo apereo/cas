@@ -31,14 +31,14 @@ const cas = require("../../cas.js");
         "Content-Type": "application/json"
     }, (res) => {
         cas.log(res.data);
-        assert(res.data.access_token !== null);
+        assert(res.data.access_token !== undefined);
 
         accessToken = res.data.access_token;
     }, (error) => {
         throw `Operation failed to obtain access token: ${error}`;
     });
 
-    assert(accessToken !== null);
+    assert(accessToken !== undefined);
 
     const params = new URLSearchParams();
     params.append("access_token", accessToken);

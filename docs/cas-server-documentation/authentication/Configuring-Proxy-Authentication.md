@@ -119,7 +119,7 @@ Sample instructions to generate the keypair follow:
 ```bash
 openssl genrsa -out private.key 4096
 openssl rsa -pubout -in private.key -out public.key -inform PEM -outform DER
-openssl pkcs8 -topk8 -inform PER -outform DER -nocrypt -in private.key -out private.p8
+openssl pkcs8 -topk8 -inform PEM -outform DER -nocrypt -in private.key -out private.p8
 ```
 
 Note that a large key size of `4096` may be required in order to allow CAS to encrypt

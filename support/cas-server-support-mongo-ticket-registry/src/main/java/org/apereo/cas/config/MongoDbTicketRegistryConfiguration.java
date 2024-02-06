@@ -11,14 +11,13 @@ import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.MongoDbTicketRegistryFacilitator;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.mongodb.core.MongoOperations;
 
@@ -30,8 +29,8 @@ import org.springframework.data.mongodb.core.MongoOperations;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "mongo")
-@AutoConfiguration
-public class MongoDbTicketRegistryConfiguration {
+@Configuration(value = "MongoDbTicketRegistryConfiguration", proxyBeanMethods = false)
+class MongoDbTicketRegistryConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
@@ -45,9 +44,7 @@ public class MongoDbTicketRegistryConfiguration {
         final TicketSerializationManager ticketSerializationManager) {
 
         val mongo = casProperties.getTicket().getRegistry().getMongo();
-        new MongoDbTicketRegistryFacilitator(ticketCatalog, mongoDbTicketRegistryTemplate,
-            mongo.isDropCollection(), mongo.isUpdateIndexes(), mongo.isDropIndexes())
-            .createTicketCollections();
+        new MongoDbTicketRegistryFacilitator(ticketCatalog, mongoDbTicketRegistryTemplate, mongo).createTicketCollections();
 
         val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(mongo.getCrypto(), "mongo");
         return new MongoDbTicketRegistry(cipher, ticketSerializationManager, ticketCatalog, mongoDbTicketRegistryTemplate);

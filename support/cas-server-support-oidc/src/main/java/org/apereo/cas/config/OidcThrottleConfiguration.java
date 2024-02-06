@@ -9,26 +9,19 @@ import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlanConfigurer;
 import org.apereo.cas.throttle.ThrottledRequestFilter;
 import org.apereo.cas.util.spring.RefreshableHandlerInterceptor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
 import lombok.val;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.core.Ordered;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
 import jakarta.annotation.Nonnull;
-
 import java.util.List;
 
 /**
@@ -37,15 +30,16 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
-@ConditionalOnBean(name = AuthenticationThrottlingExecutionPlan.BEAN_NAME)
-@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OpenIDConnect)
-@AutoConfiguration
-public class OidcThrottleConfiguration {
+@ConditionalOnFeatureEnabled(feature = {
+    CasFeatureModule.FeatureCatalog.OpenIDConnect,
+    CasFeatureModule.FeatureCatalog.Throttling
+})
+@Configuration(value = "OidcThrottleConfiguration", proxyBeanMethods = false)
+class OidcThrottleConfiguration {
 
     @Configuration(value = "OidcThrottleWebMvcConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OidcThrottleWebMvcConfiguration {
+    static class OidcThrottleWebMvcConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "oidcThrottleWebMvcConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -54,14 +48,11 @@ public class OidcThrottleConfiguration {
             final ObjectProvider<AuthenticationThrottlingExecutionPlan> authenticationThrottlingExecutionPlan) {
             return new WebMvcConfigurer() {
                 @Override
-                public void addInterceptors(
-                    @Nonnull
-                    final InterceptorRegistry registry) {
-                    val handler = new RefreshableHandlerInterceptor(
-                        () -> authenticationThrottlingExecutionPlan.getObject().getAuthenticationThrottleInterceptors());
-                    registry.addInterceptor(handler)
-                        .order(0)
-                        .addPathPatterns('/' + OidcConstants.BASE_OIDC_URL + "/**");
+                public void addInterceptors(@Nonnull final InterceptorRegistry registry) {
+                    authenticationThrottlingExecutionPlan.ifAvailable(plan -> {
+                        val handler = new RefreshableHandlerInterceptor(plan::getAuthenticationThrottleInterceptors);
+                        registry.addInterceptor(handler).order(0).addPathPatterns('/' + OidcConstants.BASE_OIDC_URL + "/**");
+                    });
                 }
             };
         }
@@ -70,7 +61,7 @@ public class OidcThrottleConfiguration {
 
     @Configuration(value = "OidcThrottleExecutionPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OidcThrottleExecutionPlanConfiguration {
+    static class OidcThrottleExecutionPlanConfiguration {
         @ConditionalOnMissingBean(name = "oidcAuthenticationThrottlingExecutionPlanConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -84,7 +75,7 @@ public class OidcThrottleConfiguration {
 
     @Configuration(value = "OidcThrottleFilterConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OidcThrottleFilterConfiguration {
+    static class OidcThrottleFilterConfiguration {
         private static final List<String> THROTTLED_ENDPOINTS = List.of(
             OidcConstants.ACCESS_TOKEN_URL,
             OidcConstants.AUTHORIZE_URL,
@@ -103,9 +94,7 @@ public class OidcThrottleConfiguration {
             final OidcIssuerService oidcIssuerService) {
             return (request, response) -> {
                 val webContext = new JEEContext(request, response);
-                return THROTTLED_ENDPOINTS
-                    .stream()
-                    .anyMatch(endpoint -> oidcIssuerService.validateIssuer(webContext, endpoint));
+                return THROTTLED_ENDPOINTS.stream().anyMatch(endpoint -> oidcIssuerService.validateIssuer(webContext, endpoint));
             };
         }
     }

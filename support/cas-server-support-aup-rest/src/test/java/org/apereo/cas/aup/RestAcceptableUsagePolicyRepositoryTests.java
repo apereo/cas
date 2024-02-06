@@ -1,6 +1,6 @@
 package org.apereo.cas.aup;
 
-import org.apereo.cas.config.CasAcceptableUsagePolicyRestConfiguration;
+import org.apereo.cas.config.CasAcceptableUsagePolicyRestAutoConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.MockWebServer;
@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("RestfulApi")
 @SpringBootTest(classes = {
-    CasAcceptableUsagePolicyRestConfiguration.class,
+    CasAcceptableUsagePolicyRestAutoConfiguration.class,
     BaseAcceptableUsagePolicyRepositoryTests.SharedTestConfiguration.class
 }, properties = {
     "cas.acceptable-usage-policy.rest.url=http://localhost:9836",

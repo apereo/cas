@@ -14,7 +14,6 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperCustomizer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -30,12 +29,12 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProvider)
-@AutoConfiguration
-public class SamlIdPAuthenticationServiceSelectionStrategyConfiguration {
+@Configuration(value = "SamlIdPAuthenticationServiceSelectionStrategyConfiguration", proxyBeanMethods = false)
+class SamlIdPAuthenticationServiceSelectionStrategyConfiguration {
 
     @Configuration(value = "SamlIdPRegisteredServicesConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SamlIdPRegisteredServicesConfiguration {
+    static class SamlIdPRegisteredServicesConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "samlRegisteredServiceSerializationCustomizer")
@@ -48,7 +47,7 @@ public class SamlIdPAuthenticationServiceSelectionStrategyConfiguration {
 
     @Configuration(value = "SamlIdPAuthenticationServiceSelectionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SamlIdPAuthenticationServiceSelectionConfiguration {
+    static class SamlIdPAuthenticationServiceSelectionConfiguration {
         @ConditionalOnMissingBean(name = "samlIdPEntityIdValidationServiceSelectionStrategy")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -74,7 +73,7 @@ public class SamlIdPAuthenticationServiceSelectionStrategyConfiguration {
 
     @Configuration(value = "SamlIdPAuthenticationServiceFactoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SamlIdPAuthenticationServiceFactoryConfiguration {
+    static class SamlIdPAuthenticationServiceFactoryConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "samlIdPServiceFactory")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

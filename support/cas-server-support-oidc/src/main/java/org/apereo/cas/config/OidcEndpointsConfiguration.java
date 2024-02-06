@@ -65,7 +65,6 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -96,12 +95,12 @@ import java.util.Optional;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OpenIDConnect)
-@AutoConfiguration
-public class OidcEndpointsConfiguration {
+@Configuration(value = "OidcEndpointsConfiguration", proxyBeanMethods = false)
+class OidcEndpointsConfiguration {
 
     @Configuration(value = "OidcEndpointsMultifactorAuthenticationConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OidcEndpointsMultifactorAuthenticationConfiguration {
+    static class OidcEndpointsMultifactorAuthenticationConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -123,7 +122,7 @@ public class OidcEndpointsConfiguration {
 
     @Configuration(value = "OidcEndpointsLogoutConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OidcEndpointsLogoutConfiguration {
+    static class OidcEndpointsLogoutConfiguration {
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
@@ -136,7 +135,7 @@ public class OidcEndpointsConfiguration {
 
     @Configuration(value = "OidcInterceptorsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OidcInterceptorsConfiguration {
+    static class OidcInterceptorsConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public HandlerInterceptor requiresAuthenticationDynamicRegistrationInterceptor(
@@ -193,7 +192,7 @@ public class OidcEndpointsConfiguration {
     @Configuration(value = "OidcEndpointsWebConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @Slf4j
-    public static class OidcEndpointsWebConfiguration {
+    static class OidcEndpointsWebConfiguration {
         private static String getOidcBaseEndpoint(final OidcIssuerService issuerService,
                                                   final CasConfigurationProperties casProperties) {
             val issuer = issuerService.determineIssuer(Optional.empty());
@@ -269,7 +268,7 @@ public class OidcEndpointsConfiguration {
     @Configuration(value = "OidcControllerEndpointsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
-    public static class OidcControllerEndpointsConfiguration {
+    static class OidcControllerEndpointsConfiguration {
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcWellKnownController")
@@ -402,7 +401,7 @@ public class OidcEndpointsConfiguration {
 
     @Configuration(value = "OidcEndpointsWebflowConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OidcEndpointsWebflowConfiguration {
+    static class OidcEndpointsWebflowConfiguration {
 
         @ConditionalOnMissingBean(name = "oidcUnmetAuthenticationRequirementWebflowExceptionHandler")
         @Bean
@@ -489,7 +488,7 @@ public class OidcEndpointsConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @ConditionalOnClass(CasServerProfileCustomizer.class)
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Discovery)
-    public static class OidcCasDiscoveryProfileConfiguration {
+    static class OidcCasDiscoveryProfileConfiguration {
         
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcCasServerProfileCustomizer")

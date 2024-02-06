@@ -17,6 +17,7 @@ import org.junit.jupiter.api.condition.OS;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import javax.security.auth.login.FailedLoginException;
 import java.util.List;
@@ -45,6 +46,9 @@ class RadiusTokenAuthenticationHandlerTests {
     @Qualifier("radiusTokenAuthenticationHandler")
     private AuthenticationHandler authenticationHandler;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @Test
     void verifyOperation() throws Throwable {
         val credential = new RadiusTokenCredential("Mellon");
@@ -52,7 +56,7 @@ class RadiusTokenAuthenticationHandlerTests {
         assertTrue(authenticationHandler.supports(credential));
         assertTrue(authenticationHandler.supports(credential.getClass()));
 
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
 
         assertThrows(FailedLoginException.class, () -> authenticationHandler.authenticate(credential, mock(Service.class)));
 

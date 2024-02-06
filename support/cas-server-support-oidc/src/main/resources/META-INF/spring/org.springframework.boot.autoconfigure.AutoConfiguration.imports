@@ -1,8 +1,1 @@
-org.apereo.cas.config.OidcConfiguration
-org.apereo.cas.config.OidcResponseConfiguration
-org.apereo.cas.config.OidcJwksConfiguration
-org.apereo.cas.config.OidcEndpointsConfiguration
-org.apereo.cas.config.OidcLogoutConfiguration
-org.apereo.cas.config.OidcComponentSerializationConfiguration
-org.apereo.cas.config.OidcThrottleConfiguration
-org.apereo.cas.config.OidcAuditConfiguration
+org.apereo.cas.config.CasOidcAutoConfiguration

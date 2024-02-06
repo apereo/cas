@@ -1,2 +1,1 @@
-org.apereo.cas.config.CassandraTicketRegistryConfiguration
-org.apereo.cas.config.CassandraTicketRegistryTicketCatalogConfiguration
+org.apereo.cas.config.CassandraTicketRegistryAutoConfiguration

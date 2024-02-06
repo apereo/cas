@@ -7,8 +7,11 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.autoconfigure.endpoint.EndpointAutoConfiguration;
+import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,44 +35,31 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.0.0
  */
 @SpringBootTest(classes = {
-    CasFiltersConfiguration.class,
-    CasPropertiesConfiguration.class,
-    CasWebAppConfiguration.class,
-    CasCoreWebflowConfiguration.class,
-    CasWebflowContextConfiguration.class,
-    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-    AcceptUsersAuthenticationEventExecutionPlanConfiguration.class,
-    CasCoreAuthenticationConfiguration.class,
-    CasCoreServicesAuthenticationConfiguration.class,
-    CasCoreAuthenticationPrincipalConfiguration.class,
-    CasCoreAuthenticationPolicyConfiguration.class,
-    CasCoreAuthenticationMetadataConfiguration.class,
-    CasCoreAuthenticationSupportConfiguration.class,
-    CasCoreAuthenticationHandlersConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
-    CasCoreHttpConfiguration.class,
-    CasCoreTicketIdGeneratorsConfiguration.class,
-    CasCoreTicketsSerializationConfiguration.class,
-    CasCoreTicketsConfiguration.class,
-    CasCoreTicketCatalogConfiguration.class,
-    CasThemesConfiguration.class,
-    CasCoreNotificationsConfiguration.class,
-    CasLoggingConfiguration.class,
-    CasCoreServicesConfiguration.class,
-    CasCoreUtilConfiguration.class,
-    CasCoreLogoutConfiguration.class,
-    CasCookieConfiguration.class,
-    CasCoreWebConfiguration.class,
-    CasCoreValidationConfiguration.class,
-    CasCoreMultifactorAuthenticationConfiguration.class,
-    CasMultifactorAuthenticationWebflowConfiguration.class,
-    CasCoreConfiguration.class,
-    CasCoreAuditConfiguration.class,
-    CasPersonDirectoryConfiguration.class,
-    CasPersonDirectoryStubConfiguration.class,
+    CasWebAppAutoConfiguration.class,
+    CasCoreWebflowAutoConfiguration.class,
+    CasCoreAuthenticationAutoConfiguration.class,
+    CasCoreServicesAutoConfiguration.class,
+    CasCoreTicketsAutoConfiguration.class,
+    CasThemesAutoConfiguration.class,
+    CasCoreNotificationsAutoConfiguration.class,
+    CasCoreLoggingAutoConfiguration.class,
+    CasCoreUtilAutoConfiguration.class,
+    CasCoreLogoutAutoConfiguration.class,
+    CasCoreCookieAutoConfiguration.class,
+    CasCoreWebAutoConfiguration.class,
+    CasCoreValidationAutoConfiguration.class,
+    CasCoreMultifactorAuthenticationAutoConfiguration.class,
+    CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
+    CasCoreAutoConfiguration.class,
+    CasCoreAuditAutoConfiguration.class,
+    CasPersonDirectoryAutoConfiguration.class,
+
     WebMvcAutoConfiguration.class,
     AopAutoConfiguration.class,
     MailSenderAutoConfiguration.class,
+    EndpointAutoConfiguration.class,
+    SecurityAutoConfiguration.class,
+    WebEndpointAutoConfiguration.class,
     RefreshAutoConfiguration.class
 }, properties = {
     "spring.main.allow-bean-definition-overriding=true",

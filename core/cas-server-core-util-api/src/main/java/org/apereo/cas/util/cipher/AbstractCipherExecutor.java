@@ -13,6 +13,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -43,6 +44,7 @@ import java.util.Optional;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@Accessors(chain = true)
 public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, R> {
     private static final BigInteger RSA_PUBLIC_KEY_EXPONENT = BigInteger.valueOf(65537);
 
@@ -67,7 +69,7 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
      * @return the private key
      */
     public static PrivateKey extractPrivateKeyFromResource(final String signingSecretKey) {
-        return FunctionUtils.doUnchecked(() -> {
+        return FunctionUtils.doAndThrowUnchecked(() -> {
             LOGGER.debug("Attempting to extract private key...");
             val resource = ResourceUtils.getResourceFrom(signingSecretKey);
             val factory = new PrivateKeyFactoryBean();
@@ -75,7 +77,7 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
             factory.setLocation(resource);
             factory.setSingleton(false);
             return factory.getObject();
-        });
+        }, e -> new IllegalArgumentException("Unable to extract private key from location %s".formatted(signingSecretKey)));
     }
 
     /**
@@ -164,11 +166,6 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
         }
     }
 
-    /**
-     * Configure signing key from private key resource.
-     *
-     * @param signingSecretKey the signing secret key
-     */
     protected void configureSigningKeyFromPrivateKeyResource(final String signingSecretKey) {
         val object = extractPrivateKeyFromResource(signingSecretKey);
         LOGGER.trace("Located signing key resource [{}]", signingSecretKey);

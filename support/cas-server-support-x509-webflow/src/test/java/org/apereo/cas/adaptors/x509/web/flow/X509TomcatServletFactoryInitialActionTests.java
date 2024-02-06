@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.x509.web.flow;
 
-import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.X509TomcatServletFactoryInitialAction;
@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasCoreUtilConfiguration.class
+    CasCoreUtilAutoConfiguration.class
 },
     properties = "cas.authn.x509.webflow.port=9876")
 class X509TomcatServletFactoryInitialActionTests {

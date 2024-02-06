@@ -9,7 +9,7 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.support.oauth.web.response.OAuth20AuthorizationRequest;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
-import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.code.OAuth20CodeFactory;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -42,24 +42,24 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder extends BaseOA
         actionResolverName = AuditActionResolvers.OAUTH2_AUTHORIZATION_RESPONSE_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.OAUTH2_AUTHORIZATION_RESPONSE_RESOURCE_RESOLVER)
     @Override
-    public ModelAndView build(final AccessTokenRequestContext holder) throws Throwable {
-        val authentication = holder.getAuthentication();
+    public ModelAndView build(final AccessTokenRequestContext tokenRequestContext) throws Throwable {
+        val authentication = tokenRequestContext.getAuthentication();
         val factory = (OAuth20CodeFactory) configurationContext.getTicketFactory().get(OAuth20Code.class);
-        val code = factory.create(holder.getService(), authentication,
-            holder.getTicketGrantingTicket(), holder.getScopes(),
-            holder.getCodeChallenge(), holder.getCodeChallengeMethod(),
-            holder.getClientId(), holder.getClaims(),
-            holder.getResponseType(), holder.getGrantType());
+        val code = factory.create(tokenRequestContext.getService(), authentication,
+            tokenRequestContext.getTicketGrantingTicket(), tokenRequestContext.getScopes(),
+            tokenRequestContext.getCodeChallenge(), tokenRequestContext.getCodeChallengeMethod(),
+            tokenRequestContext.getClientId(), tokenRequestContext.getClaims(),
+            tokenRequestContext.getResponseType(), tokenRequestContext.getGrantType());
         LOGGER.debug("Generated OAuth code: [{}]", code);
-        configurationContext.getTicketRegistry().addTicket(code);
-        val ticketGrantingTicket = holder.getTicketGrantingTicket();
+        val addedCode = configurationContext.getTicketRegistry().addTicket(code);
+        val ticketGrantingTicket = tokenRequestContext.getTicketGrantingTicket();
         Optional.ofNullable(ticketGrantingTicket).ifPresent(tgt -> FunctionUtils.doAndHandle(ticket -> {
             configurationContext.getTicketRegistry().updateTicket(ticket);
-        }, (CheckedFunction<Throwable, TicketGrantingTicket>) throwable -> {
+        }, (CheckedFunction<Throwable, Ticket>) throwable -> {
             LOGGER.error("Unable to update ticket-granting-ticket [{}]", ticketGrantingTicket, throwable);
             return null;
         }).accept(tgt));
-        return buildCallbackViewViaRedirectUri(holder, code);
+        return buildCallbackViewViaRedirectUri(tokenRequestContext, addedCode);
     }
 
     @Override
@@ -67,15 +67,8 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder extends BaseOA
         return StringUtils.equalsIgnoreCase(context.getResponseType(), OAuth20ResponseTypes.CODE.getType());
     }
 
-    /**
-     * Build callback view via redirect uri model and view.
-     *
-     * @param code the code
-     * @return the model and view
-     * @throws Exception the exception
-     */
     protected ModelAndView buildCallbackViewViaRedirectUri(final AccessTokenRequestContext holder,
-                                                           final OAuth20Code code) throws Exception {
+                                                           final Ticket code) throws Exception {
         val attributes = holder.getAuthentication().getAttributes();
         val state = attributes.get(OAuth20Constants.STATE).getFirst().toString();
         val nonce = attributes.get(OAuth20Constants.NONCE).getFirst().toString();

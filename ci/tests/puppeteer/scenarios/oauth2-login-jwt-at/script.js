@@ -16,11 +16,7 @@ async function executeFlow(browser, redirectUri, clientId, accessTokenSecret) {
     const code = await cas.assertParameter(page, "code");
     await cas.log(`OAuth code ${code}`);
 
-    let accessTokenParams = `client_id=${clientId}&`;
-    accessTokenParams += "client_secret=secret&";
-    accessTokenParams += "grant_type=authorization_code&";
-    accessTokenParams += `redirect_uri=${encodeURIComponent(redirectUri)}`;
-
+    const accessTokenParams = `client_id=${clientId}&client_secret=secret&grant_type=authorization_code&redirect_uri=${encodeURIComponent(redirectUri)}`;
     const accessTokenUrl = `https://localhost:8443/cas/oauth2.0/token?${accessTokenParams}&code=${code}`;
     await cas.log(`Calling ${accessTokenUrl}`);
 
@@ -29,14 +25,14 @@ async function executeFlow(browser, redirectUri, clientId, accessTokenSecret) {
         "Content-Type": "application/json"
     }, (res) => {
         cas.log(res.data);
-        assert(res.data.access_token !== null);
+        assert(res.data.access_token !== undefined);
 
         accessToken = res.data.access_token;
     }, (error) => {
         throw `Operation failed to obtain access token: ${error}`;
     });
 
-    assert(accessToken !== null);
+    assert(accessToken !== undefined);
 
     if (clientId === "client") {
         await cas.verifyJwt(accessToken, accessTokenSecret, {
@@ -58,7 +54,7 @@ async function executeFlow(browser, redirectUri, clientId, accessTokenSecret) {
             const result = res.data;
             assert(result.id === "casuser");
             assert(result.client_id === clientId);
-            assert(result.service === "https://apereo.github.io");
+            assert(result.service === redirectUri);
         }, (error) => {
             throw error;
         });
@@ -92,7 +88,7 @@ async function executeFlow(browser, redirectUri, clientId, accessTokenSecret) {
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
-    await executeFlow(browser, "https://apereo.github.io","client", process.env.OAUTH_ACCESS_TOKEN_SIGNING_KEY);
-    await executeFlow(browser, "https://apereo.github.io","client2", process.env.OAUTH_ACCESS_TOKEN_ENCRYPTION_KEY);
+    await executeFlow(browser, "http://localhost:9889/anything/app1","client", process.env.OAUTH_ACCESS_TOKEN_SIGNING_KEY);
+    await executeFlow(browser, "http://localhost:9889/anything/app2","client2", process.env.OAUTH_ACCESS_TOKEN_ENCRYPTION_KEY);
     await browser.close();
 })();

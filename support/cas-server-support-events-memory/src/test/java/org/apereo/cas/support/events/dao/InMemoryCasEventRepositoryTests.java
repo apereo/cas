@@ -1,6 +1,6 @@
 package org.apereo.cas.support.events.dao;
 
-import org.apereo.cas.config.CasEventsInMemoryRepositoryConfiguration;
+import org.apereo.cas.config.CasEventsInMemoryRepositoryAutoConfiguration;
 import org.apereo.cas.support.events.AbstractCasEventRepositoryTests;
 import org.apereo.cas.support.events.CasEventRepository;
 import lombok.Getter;
@@ -22,7 +22,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasEventsInMemoryRepositoryConfiguration.class
+    CasEventsInMemoryRepositoryAutoConfiguration.class
 })
 @Getter
 @Tag("Events")

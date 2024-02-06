@@ -12,7 +12,7 @@ CAS does allow for attributes to be retrieved from a variety of SQL databases.
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-jpa-util" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-jdbc" %}
 
 To learn how to configure database drivers, [please see this guide](../installation/JDBC-Drivers.html).
 

@@ -8,7 +8,7 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.credential.OneTimePasswordCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.config.CasMultifactorTestAuthenticationEventExecutionPlanConfiguration;
+import org.apereo.cas.config.CasMultifactorAuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import lombok.val;
@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.policy.any.try-all=true",
     "cas.ticket.st.time-to-kill-in-seconds=30"
 })
-@Import(CasMultifactorTestAuthenticationEventExecutionPlanConfiguration.class)
+@Import(CasMultifactorAuthenticationEventExecutionPlanTestConfiguration.class)
 @Tag("MFA")
 class MultifactorAuthenticationTests extends BaseCasWebflowMultifactorAuthenticationTests {
 

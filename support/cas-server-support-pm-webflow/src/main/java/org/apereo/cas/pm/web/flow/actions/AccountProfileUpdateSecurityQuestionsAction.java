@@ -3,6 +3,7 @@ package org.apereo.cas.pm.web.flow.actions;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.PasswordManagementService;
+import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
@@ -66,19 +67,21 @@ public class AccountProfileUpdateSecurityQuestionsAction extends BaseCasWebflowA
             FunctionUtils.throwIf(securityQuestions.isEmpty(),
                 () -> new IllegalArgumentException("Security questions cannot be empty or unspecified"));
             val tgt = WebUtils.getTicketGrantingTicket(requestContext);
-            val principal = tgt.getAuthentication().getPrincipal();
-            val query = PasswordManagementQuery.builder()
-                .username(principal.getId())
-                .securityQuestions(securityQuestions)
-                .build();
-            LOGGER.debug("Updating security questions for [{}]", query);
-            passwordManagementService.updateSecurityQuestions(query);
-            messages.addMessage(new MessageBuilder().info().code(CODE_SUCCESS).build());
-            return success();
+            if (tgt instanceof final AuthenticationAwareTicket aat) {
+                val principal = aat.getAuthentication().getPrincipal();
+                val query = PasswordManagementQuery.builder()
+                    .username(principal.getId())
+                    .securityQuestions(securityQuestions)
+                    .build();
+                LOGGER.debug("Updating security questions for [{}]", query);
+                passwordManagementService.updateSecurityQuestions(query);
+                messages.addMessage(new MessageBuilder().info().code(CODE_SUCCESS).build());
+                return success();
+            }
         } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
             messages.addMessage(new MessageBuilder().error().code(CODE_FAILURE).build());
-            return error();
         }
+        return error();
     }
 }

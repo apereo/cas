@@ -30,7 +30,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class OidcAccessTokenResponseGeneratorTests extends AbstractOidcTests {
     @Test
     void verifyAccessTokenResponseAsCode() throws Throwable {
-        val token = OAuth20TokenGeneratedResult.builder()
+        val token = OAuth20TokenGeneratedResult
+            .builder()
             .accessToken(getAccessToken())
             .refreshToken(getRefreshToken())
             .registeredService(getOidcRegisteredService())
@@ -56,9 +57,9 @@ class OidcAccessTokenResponseGeneratorTests extends AbstractOidcTests {
             .userProfile(profile)
             .build();
 
-        val mv = oidcAccessTokenResponseGenerator.generate(result);
-        assertNotNull(mv);
-        val modelMap = mv.getModelMap();
+        val modelAndView = oidcAccessTokenResponseGenerator.generate(result);
+        assertNotNull(modelAndView);
+        val modelMap = modelAndView.getModelMap();
         assertTrue(modelMap.containsKey(OAuth20Constants.ACCESS_TOKEN));
         assertTrue(modelMap.containsKey(OAuth20Constants.SCOPE));
         assertTrue(modelMap.containsKey(OAuth20Constants.EXPIRES_IN));
@@ -73,7 +74,7 @@ class OidcAccessTokenResponseGeneratorTests extends AbstractOidcTests {
             .registeredService(getOidcRegisteredService())
             .responseType(OAuth20ResponseTypes.DEVICE_CODE)
             .deviceCode(devCode.getId())
-            .userCode(deviceUserCodeFactory.createDeviceUserCode(devCode).getId())
+            .userCode(deviceUserCodeFactory.createDeviceUserCode(devCode.getService()).getId())
             .build();
 
         val request = new MockHttpServletRequest();

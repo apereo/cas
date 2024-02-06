@@ -1,17 +1,12 @@
 package org.apereo.cas.acct.webflow;
 
-import org.apereo.cas.config.CasAccountManagementWebflowConfiguration;
-import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
-import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
-import org.apereo.cas.config.CasCoreTicketsConfiguration;
-import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
+import org.apereo.cas.config.CasAccountManagementWebflowAutoConfiguration;
+import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import lombok.val;
-import org.apereo.inspektr.common.web.ClientInfo;
-import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,11 +25,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Mail")
 @EnabledIfListeningOnPort(port = 25000)
 @Import({
-    CasCoreTicketsConfiguration.class,
-    CasCoreTicketsSerializationConfiguration.class,
-    CasCoreTicketCatalogConfiguration.class,
-    CasCoreTicketIdGeneratorsConfiguration.class,
-    CasAccountManagementWebflowConfiguration.class
+    CasCoreTicketsAutoConfiguration.class,
+    CasAccountManagementWebflowAutoConfiguration.class
 })
 @TestPropertySource(properties = {
     "spring.mail.host=localhost",
@@ -55,9 +47,9 @@ class SubmitAccountRegistrationActionTests extends BaseWebflowConfigurerTests {
         context.setParameter("username", "casuser");
         context.setParameter("email", "cas@example.org");
         context.setParameter("phone", "3477465432");
-        context.getHttpServletRequest().setRemoteAddr("127.0.0.1");
-        context.getHttpServletRequest().setLocalAddr("127.0.0.1");
-        ClientInfoHolder.setClientInfo(ClientInfo.from(context.getHttpServletRequest()));
+        context.setRemoteAddr("127.0.0.1");
+        context.setLocalAddr("127.0.0.1");
+        context.setClientInfo();
         val results = submitAccountRegistrationAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, results.getId());
     }

@@ -18,7 +18,6 @@ import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.expr.BooleanLiteralExpr;
 import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.LiteralStringValueExpr;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ClassUtils;
@@ -61,7 +60,6 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RequiredArgsConstructor
 @Slf4j
 public class ConfigurationMetadataGenerator {
     private static final ObjectMapper MAPPER = new ObjectMapper()
@@ -82,9 +80,17 @@ public class ConfigurationMetadataGenerator {
 
     private static final Pattern NESTED_CLASS_PATTERN = Pattern.compile("(.+)\\$(\\w+)");
 
-    private final String buildDir;
+    private final File inputSpringConfigurationMetadata;
+    private final File outputSpringConfigurationMetadata;
+    private final File projectDirectory;
 
-    private final String sourcePath;
+    public ConfigurationMetadataGenerator(final File inputSpringConfigurationMetadata,
+                                          final File outputSpringConfigurationMetadata) {
+        this.inputSpringConfigurationMetadata = inputSpringConfigurationMetadata;
+        this.outputSpringConfigurationMetadata = outputSpringConfigurationMetadata;
+        this.projectDirectory = inputSpringConfigurationMetadata.getParentFile().getParentFile()
+            .getParentFile().getParentFile().getParentFile().getParentFile();
+    }
 
     /**
      * Main.
@@ -93,10 +99,42 @@ public class ConfigurationMetadataGenerator {
      * @throws Exception the exception
      */
     public static void main(final String[] args) throws Exception {
-        val buildDir = args[0];
-        val projectDir = args[1];
-        val generator = new ConfigurationMetadataGenerator(buildDir, projectDir);
+        if (args.length != 2) {
+            throw new IllegalArgumentException("Usage: ConfigurationMetadataGenerator <input-file> <output-file>");
+        }
+        val inputSpringConfigurationMetadata = new File(args[0]);
+        val outputSpringConfigurationMetadata = new File(args[1]);
+        LOGGER.info("Input configuration file: [{}], Output configuration file [{}]", inputSpringConfigurationMetadata, outputSpringConfigurationMetadata);
+        val generator = new ConfigurationMetadataGenerator(inputSpringConfigurationMetadata, outputSpringConfigurationMetadata);
         generator.adjustConfigurationMetadata();
+    }
+
+    protected void adjustConfigurationMetadata() throws Exception {
+        if (!inputSpringConfigurationMetadata.exists()) {
+            throw new RuntimeException("Could not locate file " + inputSpringConfigurationMetadata.getCanonicalPath());
+        }
+        LOGGER.info("Project directory [{}]", projectDirectory);
+        val values = new TypeReference<Map<String, Set<ConfigurationMetadataProperty>>>() {
+        };
+        final Map<String, Set> jsonMap = (Map) MAPPER.readValue(inputSpringConfigurationMetadata, values);
+        final Set<ConfigurationMetadataProperty> properties = jsonMap.get("properties");
+        final Set<ConfigurationMetadataProperty> groups = jsonMap.get("groups");
+
+        processMappableProperties(properties, groups);
+        processNestedTypes(properties, groups);
+
+        val hints = processHints(properties, groups);
+        processNestedEnumProperties(properties, groups);
+        processDeprecatedProperties(properties);
+        processTopLevelEnumTypes(properties);
+
+        removeNestedConfigurationPropertyGroups(properties, groups);
+
+        jsonMap.put("properties", properties.parallelStream().sorted(Comparator.comparing(ConfigurationMetadataProperty::getName)).collect(Collectors.toCollection(LinkedHashSet::new)));
+        jsonMap.put("groups", groups.parallelStream().sorted(Comparator.comparing(ConfigurationMetadataProperty::getName)).collect(Collectors.toCollection(LinkedHashSet::new)));
+        jsonMap.put("hints", hints.parallelStream().sorted(Comparator.comparing(ConfigurationMetadataHint::getName)).collect(Collectors.toCollection(LinkedHashSet::new)));
+
+        MAPPER.writerWithDefaultPrettyPrinter().writeValue(outputSpringConfigurationMetadata, jsonMap);
     }
 
     protected static Set<ConfigurationMetadataHint> processHints(final Collection<ConfigurationMetadataProperty> props,
@@ -105,7 +143,7 @@ public class ConfigurationMetadataGenerator {
         var hints = new LinkedHashSet<ConfigurationMetadataHint>(0);
         val allValidProps = props.stream()
             .filter(p -> p.getDeprecation() == null
-                         || !Deprecation.Level.ERROR.equals(p.getDeprecation().getLevel())).toList();
+                || Deprecation.Level.ERROR != p.getDeprecation().getLevel()).toList();
 
         for (val entry : allValidProps) {
             val propName = StringUtils.substringAfterLast(entry.getName(), ".");
@@ -196,7 +234,7 @@ public class ConfigurationMetadataGenerator {
     }
 
     protected static void removeNestedConfigurationPropertyGroups(final Set<ConfigurationMetadataProperty> properties,
-                                                                final Set<ConfigurationMetadataProperty> groups) {
+                                                                  final Set<ConfigurationMetadataProperty> groups) {
         var it = properties.iterator();
         while (it.hasNext()) {
             var entry = it.next();
@@ -232,22 +270,26 @@ public class ConfigurationMetadataGenerator {
         val collectedGroups = new HashSet<ConfigurationMetadataProperty>(0);
 
         properties.forEach(property -> {
-            val matcher = MAP_TYPE_STRING_KEY_OBJECT_PATTERN.matcher(property.getType());
-            if (matcher.matches()) {
-                val valueType = matcher.group(1);
+            try {
+                val matcher = MAP_TYPE_STRING_KEY_OBJECT_PATTERN.matcher(property.getType());
+                if (matcher.matches()) {
+                    val valueType = matcher.group(1);
 
-                val typePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(this.sourcePath, valueType);
-                val typeFile = new File(typePath);
+                    val typePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(projectDirectory.getCanonicalPath(), valueType);
+                    val typeFile = new File(typePath);
 
-                if (typeFile.exists()) {
-                    val parser = new ConfigurationMetadataUnitParser(this.sourcePath);
-                    property.setName(property.getName().concat(".[key]"));
-                    property.setId(property.getName());
-                    parser.parseCompilationUnit(collectedProps, collectedGroups, property, typePath,
-                        valueType, false);
-                } else {
-                    throw new RuntimeException(typePath + " does not exist");
+                    if (typeFile.exists()) {
+                        val parser = new ConfigurationMetadataUnitParser(projectDirectory.getCanonicalPath());
+                        property.setName(property.getName().concat(".[key]"));
+                        property.setId(property.getName());
+                        parser.parseCompilationUnit(collectedProps, collectedGroups, property, typePath,
+                            valueType, false);
+                    } else {
+                        throw new RuntimeException(typePath + " does not exist");
+                    }
                 }
+            } catch (final Exception e) {
+                throw new RuntimeException(e);
             }
         });
         properties.addAll(collectedProps);
@@ -255,7 +297,7 @@ public class ConfigurationMetadataGenerator {
     }
 
     protected void processNestedEnumProperties(final Set<ConfigurationMetadataProperty> properties,
-                                               final Set<ConfigurationMetadataProperty> groups) {
+                                               final Set<ConfigurationMetadataProperty> groups) throws Exception {
         val propertiesToProcess = properties.stream()
             .filter(e -> {
                 val matcher = NESTED_CLASS_PATTERN.matcher(e.getType());
@@ -272,7 +314,7 @@ public class ConfigurationMetadataGenerator {
 
             val parent = matcher.group(1);
             val innerType = matcher.group(2);
-            var typePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(this.sourcePath, parent);
+            var typePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(projectDirectory.getCanonicalPath(), parent);
 
             try {
                 TypeDeclaration<?> primaryType = null;
@@ -364,44 +406,15 @@ public class ConfigurationMetadataGenerator {
         }
     }
 
-    protected void adjustConfigurationMetadata() throws Exception {
-        val jsonFile = new File(buildDir, "classes/java/main/META-INF/spring-configuration-metadata.json");
-        if (!jsonFile.exists()) {
-            throw new RuntimeException("Could not locate file " + jsonFile.getCanonicalPath());
-        }
-        val values = new TypeReference<Map<String, Set<ConfigurationMetadataProperty>>>() {
-        };
-        final Map<String, Set> jsonMap = (Map) MAPPER.readValue(jsonFile, values);
-        final Set<ConfigurationMetadataProperty> properties = jsonMap.get("properties");
-        final Set<ConfigurationMetadataProperty> groups = jsonMap.get("groups");
-
-        processMappableProperties(properties, groups);
-        processNestedTypes(properties, groups);
-
-        val hints = processHints(properties, groups);
-        processNestedEnumProperties(properties, groups);
-        processDeprecatedProperties(properties);
-        processTopLevelEnumTypes(properties);
-
-        removeNestedConfigurationPropertyGroups(properties, groups);
-
-        jsonMap.put("properties", properties.parallelStream().sorted(Comparator.comparing(ConfigurationMetadataProperty::getName)).collect(Collectors.toCollection(LinkedHashSet::new)));
-        jsonMap.put("groups", groups.parallelStream().sorted(Comparator.comparing(ConfigurationMetadataProperty::getName)).collect(Collectors.toCollection(LinkedHashSet::new)));
-        jsonMap.put("hints", hints.parallelStream().sorted(Comparator.comparing(ConfigurationMetadataHint::getName)).collect(Collectors.toCollection(LinkedHashSet::new)));
-        
-        val destinationFile = new File(buildDir, "generated/spring-configuration-metadata/META-INF/spring-configuration-metadata.json");
-        destinationFile.getParentFile().mkdirs();
-        MAPPER.writerWithDefaultPrettyPrinter().writeValue(destinationFile, jsonMap);
-    }
 
     protected void processTopLevelEnumTypes(final Set<ConfigurationMetadataProperty> properties) throws Exception {
         for (val property : properties) {
-            var typePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(this.sourcePath, property.getType());
+            var typePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(projectDirectory.getCanonicalPath(), property.getType());
             var typeFile = new File(typePath);
             if (!typeFile.exists() && !property.getType().contains(".")) {
                 val clazz = ConfigurationMetadataClassSourceLocator.findClassBySimpleNameInPackage(property.getType(), "org.apereo.cas");
                 if (clazz.isPresent()) {
-                    typePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(this.sourcePath, clazz.get().getName());
+                    typePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(projectDirectory.getCanonicalPath(), clazz.get().getName());
                     typeFile = new File(typePath);
                 }
             }
@@ -444,9 +457,9 @@ public class ConfigurationMetadataGenerator {
                 }
 
                 if (!typeName.isEmpty()) {
-                    val typePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(this.sourcePath, typeName);
+                    val typePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(projectDirectory.getCanonicalPath(), typeName);
                     LOGGER.debug("Matched Type [{}], Property [{}], Type: [{}], Path [{}]", typeName, p.getName(), p.getType(), typePath);
-                    val parser = new ConfigurationMetadataUnitParser(this.sourcePath);
+                    val parser = new ConfigurationMetadataUnitParser(projectDirectory.getCanonicalPath());
                     parser.parseCompilationUnit(collectedProps, collectedGroups, p, typePath, typeName, indexBrackets);
                 }
             }));

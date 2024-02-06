@@ -62,7 +62,7 @@ public class MemcachedTicketRegistry extends AbstractTicketRegistry implements D
     }
 
     @Override
-    public void addTicketInternal(final Ticket ticketToAdd) {
+    public Ticket addSingleTicket(final Ticket ticketToAdd) {
         val clientFromPool = getClientFromPool();
         try {
             val ticket = encodeTicket(ticketToAdd);
@@ -74,6 +74,7 @@ public class MemcachedTicketRegistry extends AbstractTicketRegistry implements D
         } finally {
             returnClientToPool(clientFromPool);
         }
+        return ticketToAdd;
     }
 
     @Override

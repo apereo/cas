@@ -6,11 +6,11 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
@@ -21,8 +21,8 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.DelegatedAuthentication)
-@AutoConfiguration
-public class DelegatedAuthenticationSerializationConfiguration {
+@Configuration(value = "DelegatedAuthenticationSerializationConfiguration", proxyBeanMethods = false)
+class DelegatedAuthenticationSerializationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "pac4jComponentSerializationPlanConfigurer")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

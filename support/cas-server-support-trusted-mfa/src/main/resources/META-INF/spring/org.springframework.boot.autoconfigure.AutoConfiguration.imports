@@ -1,3 +1,2 @@
-org.apereo.cas.config.MultifactorAuthnTrustConfiguration
-org.apereo.cas.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration
-org.apereo.cas.config.MultifactorAuthnTrustWebflowConfiguration
+org.apereo.cas.config.CasMultifactorAuthnTrustAutoConfiguration
+

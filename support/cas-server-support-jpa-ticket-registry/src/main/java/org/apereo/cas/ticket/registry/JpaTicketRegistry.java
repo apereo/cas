@@ -71,7 +71,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public void addTicketInternal(final Ticket ticket) {
+    public Ticket addSingleTicket(final Ticket ticket) {
         transactionTemplate.executeWithoutResult(Unchecked.consumer(status -> {
             val ticketEntity = getTicketEntityFrom(ticket);
             if (ticket instanceof final TicketGrantingTicketAwareTicket grantingTicketAware && grantingTicketAware.getTicketGrantingTicket() != null) {
@@ -81,6 +81,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
             entityManager.persist(ticketEntity);
             LOGGER.debug("Added ticket [{}] to registry.", ticketEntity.getId());
         }));
+        return ticket;
     }
 
     protected BaseTicketEntity getTicketEntityFrom(final Ticket ticket) {

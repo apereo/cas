@@ -1,13 +1,7 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.config.CasCoreNotificationsConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasCoreWebConfiguration;
-import org.apereo.cas.config.CasHibernateJpaConfiguration;
-import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.config.JpaServiceRegistryConfiguration;
-import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.config.CasHibernateJpaAutoConfiguration;
+import org.apereo.cas.config.CasJpaServiceRegistryAutoConfiguration;
 import lombok.Getter;
 import lombok.val;
 import org.apache.commons.lang3.time.StopWatch;
@@ -15,10 +9,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
@@ -31,16 +22,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.1.0
  */
 @SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
-    AopAutoConfiguration.class,
-    CasCoreUtilConfiguration.class,
-    CasCoreWebConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
-    CasCoreNotificationsConfiguration.class,
-    JpaServiceRegistryConfiguration.class,
-    CasHibernateJpaConfiguration.class,
-    CasCoreServicesConfiguration.class
+    AbstractServiceRegistryTests.SharedTestConfiguration.class,
+    CasJpaServiceRegistryAutoConfiguration.class,
+    CasHibernateJpaAutoConfiguration.class
 },
     properties = "cas.jdbc.show-sql=false")
 @Tag("JDBC")
@@ -68,28 +52,6 @@ class JpaServiceRegistryTests extends AbstractServiceRegistryTests {
         assertEquals(newServiceRegistry.size(), newServiceRegistry.load().size());
         stopwatch.stop();
         assertTrue(stopwatch.getTime(TimeUnit.SECONDS) <= 10);
-    }
-
-    @Test
-    void verifyCompatibilityWithRegex() throws Throwable {
-        val service = new RegexRegisteredService();
-        service.setId(2020);
-        service.setServiceId("http://localhost:8080");
-        service.setName("Testing");
-        service.setDescription("Testing Application");
-        service.setTheme("theme");
-        service.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
-        val accessStrategy = new DefaultRegisteredServiceAccessStrategy();
-        accessStrategy.setDelegatedAuthenticationPolicy(new DefaultRegisteredServiceDelegatedAuthenticationPolicy()
-            .setAllowedProviders(CollectionUtils.wrapList("one", "two"))
-            .setPermitUndefined(false)
-            .setExclusive(false));
-        service.setMultifactorAuthenticationPolicy(new DefaultRegisteredServiceMultifactorPolicy()
-            .setMultifactorAuthenticationProviders(CollectionUtils.wrapSet("one", "two")));
-        service.setAccessStrategy(accessStrategy);
-        newServiceRegistry.save(service);
-        val services = newServiceRegistry.load();
-        assertEquals(1, services.size());
     }
 
     @Test

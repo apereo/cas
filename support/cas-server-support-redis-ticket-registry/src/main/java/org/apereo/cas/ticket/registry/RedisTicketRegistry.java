@@ -38,7 +38,6 @@ import org.springframework.data.redis.core.convert.KeyspaceConfiguration;
 import org.springframework.data.redis.core.convert.MappingConfiguration;
 import org.springframework.data.redis.core.index.IndexConfiguration;
 import org.springframework.data.redis.core.mapping.RedisMappingContext;
-import org.springframework.util.Assert;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.time.Clock;
@@ -145,18 +144,19 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
     }
 
     @Override
-    public void addTicket(final Stream<? extends Ticket> toSave) {
-        casRedisTemplates.getTicketsRedisTemplate().executePipelined((RedisCallback<Object>) connection -> {
-            toSave.forEach(this::addTicketInternal);
+    public List<? extends Ticket> addTicket(final Stream<? extends Ticket> toSave) {
+        return (List) casRedisTemplates.getTicketsRedisTemplate().executePipelined((RedisCallback) connection -> {
+            toSave.forEach(this::addSingleTicket);
             return null;
         });
     }
 
     @Override
-    public void addTicketInternal(final Ticket ticket) {
+    public Ticket addSingleTicket(final Ticket ticket) {
         LOGGER.debug("Adding ticket [{}]", ticket);
         addOrUpdateTicket(ticket);
         messagePublisher.add(ticket);
+        return ticket;
     }
 
     @Override
@@ -201,7 +201,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
             })
             .filter(Objects::nonNull)
             .map(RedisTicketDocument.class::cast)
-            .map(this::deserializeAsTicket)
+            .map(document -> deserializeTicket(document.getJson(), document.getType()))
             .map(this::decodeTicket)
             .filter(Objects::nonNull)
             .peek(ticket -> {
@@ -284,7 +284,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
                     .map(RedisTicketDocument::from)
                     .filter(document -> StringUtils.isNotBlank(document.getJson()))
                     .map(redisDoc -> {
-                        val ticket = deserializeAsTicket(redisDoc);
+                        val ticket = deserializeTicket(redisDoc.getJson(), redisDoc.getType());
                         return decodeTicket(ticket);
                     })
                     .filter(ticket -> !ticket.isExpired());
@@ -306,7 +306,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
                             val adapter = buildRedisKeyValueAdapter(key);
                             return Stream.ofNullable(adapter.get(key, key, RedisTicketDocument.class))
                                 .filter(Objects::nonNull)
-                                .map(this::deserializeAsTicket)
+                                .map(document -> deserializeTicket(document.getJson(), document.getType()))
                                 .filter(Objects::nonNull)
                                 .findFirst()
                                 .orElse(null);
@@ -389,7 +389,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
                     return adapter.get(key, key, RedisTicketDocument.class);
                 })
                 .filter(Objects::nonNull)
-                .map(this::deserializeAsTicket)
+                .map(document -> deserializeTicket(document.getJson(), document.getType()))
                 .map(this::decodeTicket)
                 .filter(predicate)
                 .findFirst()
@@ -426,7 +426,6 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
                 val ops = casRedisTemplates.getSessionsRedisTemplate().boundSetOps(redisPrincipalPattern);
                 if (onlyTrackMostRecentSession) {
                     ops.expireAt(Instant.now(Clock.systemUTC()));
-                    Assert.isTrue(ops.members().isEmpty(), "Member count must be zero");
                 }
                 ops.add(digestedId);
                 ops.expire(timeout, TimeUnit.SECONDS);
@@ -472,10 +471,6 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
                 command.ftCreate(SEARCH_INDEX_NAME, options, indexFields.toArray(new Field[]{}));
             }
         });
-    }
-
-    protected Ticket deserializeAsTicket(final RedisTicketDocument document) {
-        return ticketSerializationManager.deserializeTicket(document.getJson(), document.getType());
     }
 
     @Data

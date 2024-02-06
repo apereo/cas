@@ -1,13 +1,11 @@
 package org.apereo.cas.configuration.support;
 
 import org.apereo.cas.configuration.features.CasFeatureModule;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -24,6 +22,7 @@ class CasFeatureModuleTests {
         assertTrue(clazz.isDefined());
         clazz.setEnabled(false);
         assertFalse(clazz.isDefined());
+        assertFalse(CasFeatureModule.baseline().isEmpty());
     }
 
     @Getter

@@ -24,6 +24,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -34,6 +35,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -44,31 +46,31 @@ import java.util.Optional;
  */
 @RestControllerEndpoint(id = "samlValidate", enableByDefault = false)
 public class SamlValidateEndpoint extends BaseCasActuatorEndpoint {
-    private final ServicesManager servicesManager;
+    private final ObjectProvider<ServicesManager> servicesManager;
 
-    private final AuthenticationSystemSupport authenticationSystemSupport;
+    private final ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
 
-    private final ServiceFactory<WebApplicationService> serviceFactory;
+    private final ObjectProvider<ServiceFactory<WebApplicationService>> serviceFactory;
 
-    private final PrincipalFactory principalFactory;
+    private final ObjectProvider<PrincipalFactory> principalFactory;
 
-    private final SamlResponseBuilder samlResponseBuilder;
+    private final ObjectProvider<SamlResponseBuilder> samlResponseBuilder;
 
-    private final OpenSamlConfigBean openSamlConfigBean;
+    private final ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
 
-    private final AuditableExecution registeredServiceAccessStrategyEnforcer;
+    private final ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
 
-    private final PrincipalResolver principalResolver;
+    private final ObjectProvider<PrincipalResolver> principalResolver;
 
     public SamlValidateEndpoint(final CasConfigurationProperties casProperties,
-                                final ServicesManager servicesManager,
-                                final AuthenticationSystemSupport authenticationSystemSupport,
-                                final ServiceFactory<WebApplicationService> serviceFactory,
-                                final PrincipalFactory principalFactory,
-                                final SamlResponseBuilder samlResponseBuilder,
-                                final OpenSamlConfigBean openSamlConfigBean,
-                                final AuditableExecution registeredServiceAccessStrategyEnforcer,
-                                final PrincipalResolver principalResolver) {
+                                final ObjectProvider<ServicesManager> servicesManager,
+                                final ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport,
+                                final ObjectProvider<ServiceFactory<WebApplicationService>> serviceFactory,
+                                final ObjectProvider<PrincipalFactory> principalFactory,
+                                final ObjectProvider<SamlResponseBuilder> samlResponseBuilder,
+                                final ObjectProvider<OpenSamlConfigBean> openSamlConfigBean,
+                                final ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer,
+                                final ObjectProvider<PrincipalResolver> principalResolver) {
         super(casProperties);
         this.servicesManager = servicesManager;
         this.authenticationSystemSupport = authenticationSystemSupport;
@@ -110,16 +112,16 @@ public class SamlValidateEndpoint extends BaseCasActuatorEndpoint {
         final String username,
         @RequestParam(required = false) final String password,
         final String service) throws Throwable {
-        val selectedService = serviceFactory.createService(service);
+        val selectedService = serviceFactory.getObject().createService(service);
         val authentication = buildAuthentication(username, password, selectedService);
 
-        val registeredService = servicesManager.findServiceBy(selectedService);
+        val registeredService = servicesManager.getObject().findServiceBy(selectedService);
         val audit = AuditableContext.builder()
             .service(selectedService)
             .authentication(authentication)
             .registeredService(registeredService)
             .build();
-        val accessResult = registeredServiceAccessStrategyEnforcer.execute(audit);
+        val accessResult = registeredServiceAccessStrategyEnforcer.getObject().execute(audit);
         accessResult.throwExceptionIfNeeded();
 
         val principal = authentication.getPrincipal();
@@ -129,7 +131,7 @@ public class SamlValidateEndpoint extends BaseCasActuatorEndpoint {
             .registeredService(registeredService)
             .service(selectedService)
             .principal(principal)
-            .applicationContext(openSamlConfigBean.getApplicationContext())
+            .applicationContext(openSamlConfigBean.getObject().getApplicationContext())
             .build();
         val attributesToRelease = registeredService.getAttributeReleasePolicy().getAttributes(context);
 
@@ -138,20 +140,20 @@ public class SamlValidateEndpoint extends BaseCasActuatorEndpoint {
             .registeredService(registeredService)
             .service(selectedService)
             .principal(principal)
-            .applicationContext(openSamlConfigBean.getApplicationContext())
+            .applicationContext(openSamlConfigBean.getObject().getApplicationContext())
             .build();
         val principalId = registeredService.getUsernameAttributeProvider().resolveUsername(usernameContext);
 
-        val modifiedPrincipal = principalFactory.createPrincipal(principalId, attributesToRelease);
+        val modifiedPrincipal = principalFactory.getObject().createPrincipal(principalId, attributesToRelease);
         val builder = DefaultAuthenticationBuilder.newInstance(authentication);
         builder.setPrincipal(modifiedPrincipal);
         val finalAuthentication = builder.build();
 
-        val samlResponse = samlResponseBuilder.createResponse(selectedService.getId(), selectedService);
-        samlResponseBuilder.prepareSuccessfulResponse(samlResponse, selectedService, finalAuthentication, principal,
+        val samlResponse = samlResponseBuilder.getObject().createResponse(selectedService.getId(), selectedService);
+        samlResponseBuilder.getObject().prepareSuccessfulResponse(Map.of(), samlResponse, selectedService, finalAuthentication, principal,
             finalAuthentication.getAttributes(), principal.getAttributes());
 
-        val encoded = SamlUtils.transformSamlObject(openSamlConfigBean, samlResponse).toString();
+        val encoded = SamlUtils.transformSamlObject(openSamlConfigBean.getObject(), samlResponse).toString();
 
         val contentType = StringUtils.defaultIfBlank(request.getHeader(HttpHeaders.CONTENT_TYPE), MediaType.APPLICATION_JSON_VALUE);
         if (MediaType.APPLICATION_XML_VALUE.equals(contentType) || MediaType.TEXT_XML_VALUE.equals(contentType)) {
@@ -173,11 +175,11 @@ public class SamlValidateEndpoint extends BaseCasActuatorEndpoint {
                                                final WebApplicationService selectedService) throws Throwable {
         if (StringUtils.isNotBlank(password)) {
             val credential = new UsernamePasswordCredential(username, password);
-            val result = authenticationSystemSupport.finalizeAuthenticationTransaction(selectedService, credential);
+            val result = authenticationSystemSupport.getObject().finalizeAuthenticationTransaction(selectedService, credential);
             return result.getAuthentication();
         }
-        val principal = principalResolver.resolve(new BasicIdentifiableCredential(username),
-            Optional.of(principalFactory.createPrincipal(username)),
+        val principal = principalResolver.getObject().resolve(new BasicIdentifiableCredential(username),
+            Optional.of(principalFactory.getObject().createPrincipal(username)),
             Optional.empty(), Optional.of(selectedService));
         return DefaultAuthenticationBuilder.newInstance().setPrincipal(principal).build();
     }

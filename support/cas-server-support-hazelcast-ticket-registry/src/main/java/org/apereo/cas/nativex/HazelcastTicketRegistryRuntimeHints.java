@@ -71,10 +71,8 @@ import com.hazelcast.shaded.org.apache.calcite.schema.Table;
 import com.hazelcast.sql.SqlService;
 import com.hazelcast.sql.impl.type.converter.Converter;
 import lombok.val;
-import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 import java.util.AbstractQueue;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -209,22 +207,4 @@ public class HazelcastTicketRegistryRuntimeHints implements CasRuntimeHintsRegis
             .registerPattern("META-INF/services/com.hazelcast.sql.Connectors");
     }
 
-    private static void registerSerializationHints(final RuntimeHints hints, final Collection<Class> entries) {
-        entries.forEach(el -> hints.serialization().registerType(el));
-    }
-
-    private static void registerReflectionHints(final RuntimeHints hints, final Collection entries) {
-        val memberCategories = new MemberCategory[]{
-            MemberCategory.INTROSPECT_DECLARED_CONSTRUCTORS,
-            MemberCategory.INTROSPECT_PUBLIC_CONSTRUCTORS,
-            MemberCategory.INTROSPECT_DECLARED_METHODS,
-            MemberCategory.INTROSPECT_PUBLIC_METHODS,
-            MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
-            MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
-            MemberCategory.INVOKE_DECLARED_METHODS,
-            MemberCategory.INVOKE_PUBLIC_METHODS,
-            MemberCategory.DECLARED_FIELDS,
-            MemberCategory.PUBLIC_FIELDS};
-        entries.forEach(el -> hints.reflection().registerType((Class) el, memberCategories));
-    }
 }

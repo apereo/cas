@@ -11,10 +11,8 @@ import org.apereo.cas.oidc.web.response.OidcJwtResponseModeCipherExecutor;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import lombok.val;
-import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.beans.factory.DisposableBean;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -49,18 +47,5 @@ public class OidcRuntimeHints implements CasRuntimeHintsRegistrar {
         registerSpringProxy(hints, OidcJsonWebKeystoreGeneratorService.class, DisposableBean.class);
     }
 
-    private static void registerSerializationHints(final RuntimeHints hints, final Collection<Class> entries) {
-        entries.forEach(el -> hints.serialization().registerType(el));
-    }
-
-    private static void registerReflectionHints(final RuntimeHints hints, final Collection entries) {
-        entries.forEach(el -> hints.reflection().registerType((Class) el,
-            MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
-            MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
-            MemberCategory.INVOKE_DECLARED_METHODS,
-            MemberCategory.INVOKE_PUBLIC_METHODS,
-            MemberCategory.DECLARED_FIELDS,
-            MemberCategory.PUBLIC_FIELDS));
-    }
 }
 

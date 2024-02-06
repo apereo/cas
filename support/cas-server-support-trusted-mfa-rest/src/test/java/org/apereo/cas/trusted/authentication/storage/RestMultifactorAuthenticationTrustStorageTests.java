@@ -1,17 +1,16 @@
 package org.apereo.cas.trusted.authentication.storage;
 
-import org.apereo.cas.config.CasCoreAuditConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
-import org.apereo.cas.config.CasCoreConfiguration;
-import org.apereo.cas.config.CasCoreNotificationsConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
-import org.apereo.cas.config.CasCoreTicketsConfiguration;
-import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasCoreWebConfiguration;
-import org.apereo.cas.config.MultifactorAuthnTrustConfiguration;
-import org.apereo.cas.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration;
-import org.apereo.cas.config.RestMultifactorAuthenticationTrustConfiguration;
+import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasCoreAutoConfiguration;
+import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
+import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
+import org.apereo.cas.config.CasMultifactorAuthnTrustAutoConfiguration;
+import org.apereo.cas.config.CasRestMultifactorAuthenticationTrustAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
@@ -20,7 +19,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -37,13 +35,11 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
-
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -54,18 +50,17 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("RestfulApiAuthentication")
 @SpringBootTest(classes = {
-    RestMultifactorAuthenticationTrustConfiguration.class,
-    MultifactorAuthnTrustedDeviceFingerprintConfiguration.class,
-    MultifactorAuthnTrustConfiguration.class,
-    CasCoreAuditConfiguration.class,
-    CasCoreUtilConfiguration.class,
-    CasCoreConfiguration.class,
-    CasCoreServicesConfiguration.class,
-    CasCoreTicketsConfiguration.class,
-    CasCoreTicketsSerializationConfiguration.class,
-    CasCoreAuthenticationPrincipalConfiguration.class,
-    CasCoreWebConfiguration.class,
-    CasCoreNotificationsConfiguration.class,
+    CasRestMultifactorAuthenticationTrustAutoConfiguration.class,
+    CasMultifactorAuthnTrustAutoConfiguration.class,
+    CasCoreAuditAutoConfiguration.class,
+    CasCoreUtilAutoConfiguration.class,
+    CasCoreAutoConfiguration.class,
+    CasCoreServicesAutoConfiguration.class,
+    CasCoreTicketsAutoConfiguration.class,
+    CasCoreAuthenticationAutoConfiguration.class,
+    CasCoreWebAutoConfiguration.class,
+    CasCoreNotificationsAutoConfiguration.class,
+    CasCoreLogoutAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
     RefreshAutoConfiguration.class
 },

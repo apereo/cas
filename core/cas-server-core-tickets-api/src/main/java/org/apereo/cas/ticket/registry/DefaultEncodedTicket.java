@@ -8,15 +8,17 @@ import org.apereo.cas.util.EncodingUtils;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ArrayUtils;
 
 import java.io.Serial;
-import java.time.ZonedDateTime;
 
 /**
  * Ticket implementation that encodes a source ticket and stores the encoded
@@ -28,19 +30,24 @@ import java.time.ZonedDateTime;
 @Slf4j
 @ToString(of = "id")
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 @EqualsAndHashCode(of = "id")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DefaultEncodedTicket implements EncodedTicket {
 
     @Serial
     private static final long serialVersionUID = -7078771807487764116L;
 
-    private String id;
+    private final String id;
 
-    private byte[] encodedTicket;
+    private final byte[] encodedTicket;
 
-    private String prefix;
+    private final String prefix;
+
+    private boolean stateless;
+
+    @Setter
+    private ExpirationPolicy expirationPolicy;
 
     @JsonCreator
     public DefaultEncodedTicket(@JsonProperty("encoded") final String encodedTicket,
@@ -51,54 +58,11 @@ public class DefaultEncodedTicket implements EncodedTicket {
         this.prefix = prefix;
     }
 
-    @Override
-    @JsonIgnore
-    public ZonedDateTime getCreationTime() {
-        getOpNotSupportedMessage("getCreationTime");
-        return null;
-    }
-
-    @JsonIgnore
-    @Override
-    public int getCountOfUses() {
-        getOpNotSupportedMessage("getCountOfUses");
-        return 0;
-    }
-
-    @Override
-    @JsonIgnore
-    public boolean isExpired() {
-        getOpNotSupportedMessage("getExpirationPolicy");
-        return false;
-    }
-
-    @Override
-    @JsonIgnore
-    public ExpirationPolicy getExpirationPolicy() {
-        getOpNotSupportedMessage("getExpirationPolicy");
-        return null;
-    }
-
-    @Override
-    @JsonIgnore
-    public void markTicketExpired() {
-    }
-
-    @Override
-    @JsonIgnore
-    public ZonedDateTime getLastTimeUsed() {
-        return null;
-    }
-
-    @Override
-    @JsonIgnore
-    public ZonedDateTime getPreviousTimeUsed() {
-        return null;
-    }
-
-    @Override
-    @JsonIgnore
-    public void update() {
+    public DefaultEncodedTicket(@JsonProperty("encoded") final String encodedTicket,
+                                @JsonProperty("prefix") final String prefix) {
+        this.id = encodedTicket;
+        this.prefix = prefix;
+        this.encodedTicket = ArrayUtils.EMPTY_BYTE_ARRAY;
     }
 
     @Override
@@ -107,8 +71,10 @@ public class DefaultEncodedTicket implements EncodedTicket {
         return getId().compareTo(o.getId());
     }
 
-    private void getOpNotSupportedMessage(final String op) {
-        LOGGER.trace("[{}] operation not supported on a [{}].", op, getClass().getSimpleName());
+    @Override
+    @CanIgnoreReturnValue
+    public Ticket markTicketStateless() {
+        stateless = true;
+        return this;
     }
-
 }

@@ -36,6 +36,11 @@ public class ThrottleCoreProperties implements Serializable {
     private String usernameParameter;
 
     /**
+     * Request header name to use in order to extract a header value from the request.
+     */
+    private String headerName;
+
+    /**
      * Application code used to identify this application in the audit logs.
      */
     private String appCode = DEFAULT_APPLICATION_CODE;

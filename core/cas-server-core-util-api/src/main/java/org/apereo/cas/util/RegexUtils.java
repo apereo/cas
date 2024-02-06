@@ -179,7 +179,7 @@ public class RegexUtils {
      *
      * @param pattern    the pattern
      * @param remoteAddr the remote addr
-     * @return the boolean
+     * @return true or false
      */
     public static boolean matchesIpAddress(final String pattern, final String remoteAddr) {
         try {

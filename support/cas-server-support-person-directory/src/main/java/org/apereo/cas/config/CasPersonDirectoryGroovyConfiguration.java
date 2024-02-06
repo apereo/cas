@@ -11,13 +11,11 @@ import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.util.spring.boot.ConditionalOnMissingGraalVMNativeImage;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.GroovyPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -25,7 +23,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
-
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
@@ -39,13 +36,13 @@ import java.util.stream.Collectors;
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.PersonDirectory)
 @ConditionalOnMissingGraalVMNativeImage
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@AutoConfiguration
-public class CasPersonDirectoryGroovyConfiguration {
+@Configuration(value = "CasPersonDirectoryGroovyConfiguration", proxyBeanMethods = false)
+class CasPersonDirectoryGroovyConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.attribute-repository.groovy[0].location").exists();
 
     @Configuration(value = "GroovyAttributeRepositoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class GroovyAttributeRepositoryConfiguration {
+    static class GroovyAttributeRepositoryConfiguration {
         @ConditionalOnMissingBean(name = "groovyAttributeRepositories")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -79,7 +76,7 @@ public class CasPersonDirectoryGroovyConfiguration {
 
     @Configuration(value = "GroovyAttributeRepositoryPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class GroovyAttributeRepositoryPlanConfiguration {
+    static class GroovyAttributeRepositoryPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "groovyPersonDirectoryAttributeRepositoryPlanConfigurer")

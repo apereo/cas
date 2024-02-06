@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.val;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import java.io.Serial;
@@ -30,6 +31,7 @@ import java.util.Map;
 @Getter
 @EqualsAndHashCode
 @AllArgsConstructor
+@ToString(of = {"principal", "authenticationDate", "attributes"})
 public class DefaultAuthentication implements Authentication {
     @Serial
     private static final long serialVersionUID = 3206127526058061391L;

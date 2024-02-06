@@ -28,7 +28,7 @@ const assert = require("assert");
     }, (res) => res.data, (error) => {
         throw `Operation failed to obtain access token: ${error}`;
     });
-    assert(payload.access_token !== null);
+    assert(payload.access_token !== undefined);
     const decoded = await cas.decodeJwt(payload.id_token);
     assert(decoded["family_name"] !== undefined);
     assert(decoded["given_name"] !== undefined);

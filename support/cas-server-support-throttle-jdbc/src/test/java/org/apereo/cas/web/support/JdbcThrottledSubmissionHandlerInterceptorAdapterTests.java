@@ -1,8 +1,8 @@
 package org.apereo.cas.web.support;
 
-import org.apereo.cas.config.CasHibernateJpaConfiguration;
-import org.apereo.cas.config.CasJdbcAuditConfiguration;
-import org.apereo.cas.config.CasJdbcThrottlingConfiguration;
+import org.apereo.cas.config.CasHibernateJpaAutoConfiguration;
+import org.apereo.cas.config.CasJdbcAuditAutoConfiguration;
+import org.apereo.cas.config.CasJdbcThrottlingAutoConfiguration;
 import lombok.Getter;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
@@ -22,9 +22,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.0.0
  */
 @SpringBootTest(classes = {
-    CasJdbcThrottlingConfiguration.class,
-    CasJdbcAuditConfiguration.class,
-    CasHibernateJpaConfiguration.class,
+    CasJdbcThrottlingAutoConfiguration.class,
+    CasJdbcAuditAutoConfiguration.class,
+    CasHibernateJpaAutoConfiguration.class,
     BaseThrottledSubmissionHandlerInterceptorAdapterTests.SharedTestConfiguration.class
 }, properties = {
     "cas.authn.throttle.core.username-parameter=username",

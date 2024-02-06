@@ -2,8 +2,7 @@ const assert = require("assert");
 const cas = require("../../cas.js");
 
 async function throttleTokenEndpoint() {
-    let params = "grant_type=client_credentials&";
-    params += "scope=openid";
+    const params = "grant_type=client_credentials&scope=openid";
     const url = `https://localhost:8443/cas/oidc/token?${params}`;
 
     await cas.log(`Log in attempt: #1 ${new Date().toISOString()}`);
@@ -37,10 +36,10 @@ async function submitRequest(url, status) {
     await cas.doPost(url, "", {
         "Content-Type": "application/json",
         "Authorization": `Basic ${btoa("unknown:unknown")}`
-    }, (res) => {
+    }, async (res) => {
         throw `Operation should not have passed: ${res}`;
-    }, (error) => {
-        cas.log(`Expecting ${status}, Current status: ${error.response.status}`);
+    }, async (error) => {
+        await cas.log(`Expecting ${status}, Current status: ${error.response.status}`);
         assert(status === error.response.status);
     });
 }

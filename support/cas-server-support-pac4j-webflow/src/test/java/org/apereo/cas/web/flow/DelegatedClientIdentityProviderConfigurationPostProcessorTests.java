@@ -10,8 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.webflow.context.ExternalContextHolder;
-import org.springframework.webflow.execution.RequestContextHolder;
 
 import java.util.Set;
 
@@ -38,8 +36,6 @@ class DelegatedClientIdentityProviderConfigurationPostProcessorTests {
         assertNotNull(delegatedClientIdentityProviderConfigurationPostProcessor);
         assertDoesNotThrow(() -> {
             val context = MockRequestContext.create(applicationContext);
-            RequestContextHolder.setRequestContext(context);
-            ExternalContextHolder.setExternalContext(context.getExternalContext());
             delegatedClientIdentityProviderConfigurationPostProcessor.process(context, Set.of());
             delegatedClientIdentityProviderConfigurationPostProcessor.destroy();
         });

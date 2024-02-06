@@ -1,1 +1,1 @@
-org.apereo.cas.config.RestServicesConfiguration
+org.apereo.cas.config.CasRestServicesAutoConfiguration

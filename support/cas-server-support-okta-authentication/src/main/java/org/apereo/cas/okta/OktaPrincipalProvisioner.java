@@ -1,11 +1,9 @@
 package org.apereo.cas.okta;
 
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalProvisioner;
 import org.apereo.cas.configuration.model.support.okta.OktaPrincipalProvisioningProperties;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import com.okta.sdk.client.Client;
 import com.okta.sdk.resource.user.CreateUserRequest;
@@ -28,12 +26,6 @@ import java.util.function.Consumer;
 public class OktaPrincipalProvisioner implements PrincipalProvisioner {
     private final Client oktaClient;
     private final OktaPrincipalProvisioningProperties properties;
-
-    @Override
-    public boolean provision(final Authentication authentication, final Credential credential,
-                             final RegisteredService registeredService) {
-        return provision(authentication.getPrincipal(), credential);
-    }
 
     @Override
     public boolean provision(final Principal principal, final Credential credential) {

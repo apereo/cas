@@ -4,8 +4,8 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import java.util.Collection;
 import java.util.Map;
@@ -36,7 +36,7 @@ public interface OAuth20CodeFactory extends TicketFactory {
      */
     OAuth20Code create(Service service,
                        Authentication authentication,
-                       TicketGrantingTicket ticketGrantingTicket,
+                       Ticket ticketGrantingTicket,
                        Collection<String> scopes,
                        String codeChallenge,
                        String codeChallengeMethod,

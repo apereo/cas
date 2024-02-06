@@ -30,11 +30,11 @@ import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.validation.ValidationResponseType;
 
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 import javax.security.auth.login.AccountExpiredException;
@@ -48,8 +48,8 @@ import javax.security.auth.login.AccountLockedException;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Authentication)
-@AutoConfiguration
-public class CasCoreAuthenticationComponentSerializationConfiguration {
+@Configuration(value = "CasCoreAuthenticationComponentSerializationConfiguration", proxyBeanMethods = false)
+class CasCoreAuthenticationComponentSerializationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "casCoreAuthenticationComponentSerializationPlanConfigurer")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

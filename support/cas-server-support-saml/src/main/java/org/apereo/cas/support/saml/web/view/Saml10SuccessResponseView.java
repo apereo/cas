@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.web.view;
 
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.authentication.SamlResponseBuilder;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
@@ -35,9 +36,10 @@ public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
                                      final AuthenticationAttributeReleasePolicy authAttrReleasePolicy,
                                      final AuthenticationServiceSelectionPlan serviceSelectionStrategy,
                                      final CasProtocolAttributesRenderer attributesRenderer,
-                                     final SamlResponseBuilder samlResponseBuilder) {
+                                     final SamlResponseBuilder samlResponseBuilder,
+                                     final AttributeDefinitionStore attributeDefinitionStore) {
         super(true, protocolAttributeEncoder, servicesManager, samlArgumentExtractor,
-            authAttrReleasePolicy, serviceSelectionStrategy, attributesRenderer, samlResponseBuilder);
+            authAttrReleasePolicy, serviceSelectionStrategy, attributesRenderer, samlResponseBuilder, attributeDefinitionStore);
     }
 
     @Override
@@ -45,10 +47,10 @@ public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
         val service = getAssertionFrom(model).getService();
         val authentication = getPrimaryAuthenticationFrom(model);
         val principal = getPrincipal(model);
-        val registeredService = this.servicesManager.findServiceBy(service);
+        val registeredService = servicesManager.findServiceBy(service);
         val authnAttributes = getCasProtocolAuthenticationAttributes(model, registeredService);
         val principalAttributes = getPrincipalAttributesAsMultiValuedAttributes(model);
-        samlResponseBuilder.prepareSuccessfulResponse(response, service, authentication,
+        samlResponseBuilder.prepareSuccessfulResponse(model, response, service, authentication,
             principal, authnAttributes, principalAttributes);
     }
 }

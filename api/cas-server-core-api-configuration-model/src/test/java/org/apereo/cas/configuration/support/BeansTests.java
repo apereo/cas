@@ -1,11 +1,7 @@
 package org.apereo.cas.configuration.support;
 
-import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesProperties;
-
-import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -16,15 +12,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Simple")
 class BeansTests {
-
-    @Test
-    void verifyOperation() throws Throwable {
-        val props = new PrincipalAttributesProperties();
-        props.getStub().setId("helloworld");
-        props.getStub().getAttributes().put("name", "true");
-        val input = Beans.newStubAttributeRepository(props);
-        assertNotNull(input);
-    }
 
     @Test
     void verifyDurations() throws Throwable {

@@ -39,4 +39,13 @@ public interface DuoSecurityAdminApiService {
      * @throws Exception the exception
      */
     List<Long> createDuoSecurityBypassCodesFor(String userIdentifier) throws Exception;
+
+    /**
+     * Modify duo security user account optional.
+     *
+     * @param newAccount the new account
+     * @return the optional
+     * @throws Exception the exception
+     */
+    Optional<DuoSecurityUserAccount> modifyDuoSecurityUserAccount(DuoSecurityUserAccount newAccount) throws Exception;
 }

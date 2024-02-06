@@ -23,12 +23,16 @@ dependencies {
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-webflow")
+    testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-audit")
     testImplementation project(":core:cas-server-core-audit-api")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-configuration")
+
     testImplementation project(":support:cas-server-support-person-directory")
+    testImplementation project(":support:cas-server-support-consent-core")
     
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")

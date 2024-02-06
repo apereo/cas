@@ -48,13 +48,14 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
         val requestedScopes = getConfigurationContext().getRequestParameterResolver().resolveRequestScopes(context);
         LOGGER.debug("Requested scopes are [{}]", requestedScopes);
         val token = getOAuthTokenFromRequest(context);
-        ensureTicketGrantingTicketIsNotExpired(token);
+        ensureTokenIsValid(token);
 
         val scopes = extractRequestedScopesByToken(requestedScopes, token, context);
         val service = getConfigurationContext().getWebApplicationServiceServiceFactory().createService(redirectUri);
 
         val generateRefreshToken = isAllowedToGenerateRefreshToken() && registeredService.isGenerateRefreshToken();
-        val builder = AccessTokenRequestContext.builder()
+        val builder = AccessTokenRequestContext
+            .builder()
             .scopes(scopes)
             .service(service)
             .authentication(token.getAuthentication())
@@ -64,7 +65,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
             .token(token)
             .claims(token.getClaims())
             .ticketGrantingTicket(token.getTicketGrantingTicket());
-        return extractInternal(context, builder);
+        return extractInternal(context, builder.build());
     }
 
     @Override
@@ -84,25 +85,12 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
         return OAuth20ResponseTypes.NONE;
     }
 
-    /**
-     * Ensure that the ticket-granting-ticket is not expired by retrieving it.
-     *
-     * @param token the token
-     * @return true/false
-     */
-    protected boolean ensureTicketGrantingTicketIsNotExpired(final OAuth20Token token) {
-        return token.isCode() && getConfigurationContext().getTicketRegistry()
-                                     .getTicket(token.getTicketGrantingTicket().getId()) != null;
+    protected boolean ensureTokenIsValid(final OAuth20Token token) {
+        val validStatefulTicket = !token.isStateless() && token.isCode()
+            && getConfigurationContext().getTicketRegistry().getTicket(token.getTicketGrantingTicket().getId()) != null;
+        return validStatefulTicket || (token.isStateless() && token.getAuthentication() != null && !token.isExpired());
     }
 
-    /**
-     * Filter requested scopes by token and return final set.
-     *
-     * @param requestedScopes the requested scopes
-     * @param token           the token
-     * @param context         the context
-     * @return the set
-     */
     protected Set<String> extractRequestedScopesByToken(final Set<String> requestedScopes,
                                                         final OAuth20Token token,
                                                         final WebContext context) {
@@ -111,25 +99,12 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
         return scopes;
     }
 
-    /**
-     * Extract internal access token request.
-     *
-     * @param context the context
-     * @param builder the builder
-     * @return the access token request data holder
-     */
     protected AccessTokenRequestContext extractInternal(
         final WebContext context,
-        final AccessTokenRequestContext.AccessTokenRequestContextBuilder builder) {
-        return builder.build();
+        final AccessTokenRequestContext tokenRequestContext) {
+        return tokenRequestContext;
     }
 
-    /**
-     * Gets registered service identifier from request.
-     *
-     * @param context the context
-     * @return the registered service identifier from request
-     */
     protected String getRegisteredServiceIdentifierFromRequest(final WebContext context) {
         return getConfigurationContext().getRequestParameterResolver()
             .resolveRequestParameter(context, OAuth20Constants.REDIRECT_URI).orElse(StringUtils.EMPTY);
@@ -139,36 +114,16 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
         return OAuth20Constants.CODE;
     }
 
-    /**
-     * Gets OAuth parameter.
-     *
-     * @param context the context
-     * @return the OAuth parameter
-     */
     protected String getOAuthParameter(final WebContext context) {
         return getConfigurationContext().getRequestParameterResolver()
             .resolveRequestParameter(context, getOAuthParameterName()).orElse(StringUtils.EMPTY);
     }
 
-    /**
-     * Return the OAuth token.
-     *
-     * @param context the context
-     * @return the OAuth token
-     */
     protected OAuth20Token getOAuthTokenFromRequest(final WebContext context) {
         val id = getOAuthParameter(context);
         return getConfigurationContext().getTicketRegistry().getTicket(id, OAuth20Token.class);
     }
 
-    /**
-     * Gets oauth registered service from the context.
-     * Implementation attempts to locate the redirect uri from request and
-     * check with service registry to find a matching oauth service.
-     *
-     * @param context the context
-     * @return the registered service
-     */
     protected OAuthRegisteredService getOAuthRegisteredServiceBy(final WebContext context) {
         val callContext = new CallContext(context, getConfigurationContext().getSessionStore());
         val clientId = getConfigurationContext().getRequestParameterResolver()

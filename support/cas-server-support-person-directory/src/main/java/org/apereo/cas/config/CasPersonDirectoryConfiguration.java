@@ -18,6 +18,7 @@ import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.apereo.cas.web.report.CasPersonDirectoryEndpoint;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -29,8 +30,9 @@ import org.apereo.services.persondir.support.MergingPersonAttributeDaoImpl;
 import org.apereo.services.persondir.support.merger.IAttributeMerger;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -58,12 +60,25 @@ import java.util.stream.Collectors;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.PersonDirectory)
-@AutoConfiguration
-public class CasPersonDirectoryConfiguration {
+@Configuration(value = "CasPersonDirectoryConfiguration", proxyBeanMethods = false)
+class CasPersonDirectoryConfiguration {
 
     @Configuration(value = "CasPersonDirectoryPrincipalResolutionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasPersonDirectoryPrincipalResolutionConfiguration {
+    static class CasPersonDirectoryPrincipalResolutionConfiguration {
+
+        @Bean
+        @ConditionalOnAvailableEndpoint
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public CasPersonDirectoryEndpoint casPersonDirectoryEndpoint(
+            @Autowired
+            @Qualifier("cachingAttributeRepository")
+            final ObjectProvider<IPersonAttributeDao> cachingAttributeRepository,
+            final CasConfigurationProperties casProperties) {
+            return new CasPersonDirectoryEndpoint(casProperties, cachingAttributeRepository);
+        }
+
+        
         @ConditionalOnMissingBean(name = "personDirectoryPrincipalFactory")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -117,7 +132,7 @@ public class CasPersonDirectoryConfiguration {
 
     @Configuration(value = "CasPersonDirectoryAttributeRepositoryPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasPersonDirectoryAttributeRepositoryPlanConfiguration {
+    static class CasPersonDirectoryAttributeRepositoryPlanConfiguration {
         @ConditionalOnMissingBean(name = "personDirectoryAttributeRepositoryPlan")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -135,7 +150,7 @@ public class CasPersonDirectoryConfiguration {
 
     @Configuration(value = "CasPersonDirectoryAttributeRepositoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasPersonDirectoryAttributeRepositoryConfiguration {
+    static class CasPersonDirectoryAttributeRepositoryConfiguration {
         private static AbstractAggregatingDefaultQueryPersonAttributeDao getAggregateAttributeRepository(
             final CasConfigurationProperties casProperties) {
             val properties = casProperties.getAuthn().getAttributeRepository();
@@ -239,4 +254,5 @@ public class CasPersonDirectoryConfiguration {
             }).accept(null);
         }
     }
+
 }

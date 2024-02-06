@@ -265,6 +265,7 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
         val action = new ConsumerExecutionAction(context -> {
             WebUtils.putAccountProfileManagementEnabled(context, applicationContext.containsBean(CasWebflowConstants.BEAN_NAME_ACCOUNT_PROFILE_FLOW_DEFINITION_REGISTRY));
             WebUtils.putPasswordManagementEnabled(context, casProperties.getAuthn().getPm().getCore().isEnabled());
+            WebUtils.putForgotUsernameEnabled(context, casProperties.getAuthn().getPm().getForgotUsername().isEnabled());
         });
         flow.getStartActionList().add(action);
     }

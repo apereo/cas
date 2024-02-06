@@ -17,7 +17,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    MongoSessionConfiguration.class
+    CasMongoSessionAutoConfiguration.class
 }, properties = {
     "spring.session.store-type=MONGODB",
     "spring.session.mongodb.collection-name=MongoDbSessionRepository",

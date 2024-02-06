@@ -16,6 +16,7 @@ dependencies {
     implementation project(":core:cas-server-core-cookie-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-services-api")
+
     implementation project(":support:cas-server-support-saml-core")
     implementation project(":support:cas-server-support-saml-core-api")
     implementation project(":support:cas-server-support-saml-mdui-core")
@@ -41,6 +42,8 @@ dependencies {
     testImplementation project(":core:cas-server-core-validation-api")
     testImplementation project(":core:cas-server-core-webflow")
     testImplementation project(":core:cas-server-core-monitor")
+
+    testImplementation project(":support:cas-server-support-consent-core")
     testImplementation project(":support:cas-server-support-person-directory")
 
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")

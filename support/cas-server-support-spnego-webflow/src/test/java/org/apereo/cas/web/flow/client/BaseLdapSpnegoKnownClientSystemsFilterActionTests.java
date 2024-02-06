@@ -26,7 +26,7 @@ public abstract class BaseLdapSpnegoKnownClientSystemsFilterActionTests extends 
     @Test
     void ensureLdapAttributeShouldDoSpnego() throws Exception {
         val context = MockRequestContext.create(applicationContext);
-        context.getHttpServletRequest().setRemoteAddr("localhost");
+        context.setRemoteAddr("localhost");
         val ev = ldapSpnegoClientAction.execute(context);
         assertEquals(new EventFactorySupport().yes(this).getId(), ev.getId());
     }

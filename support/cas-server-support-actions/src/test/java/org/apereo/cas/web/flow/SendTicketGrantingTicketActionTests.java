@@ -7,8 +7,6 @@ import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
-import org.apereo.inspektr.common.web.ClientInfo;
-import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -36,19 +34,20 @@ class SendTicketGrantingTicketActionTests {
         @Test
         void verifyTgtMismatch() throws Throwable {
             val context = MockRequestContext.create(applicationContext);
-            context.getHttpServletRequest().setRemoteAddr(LOCALHOST_IP);
-            context.getHttpServletRequest().setLocalAddr(LOCALHOST_IP);
+            context.setRemoteAddr(LOCALHOST_IP);
+            context.setLocalAddr(LOCALHOST_IP);
             context.getHttpServletRequest().addParameter(CasWebflowConstants.ATTRIBUTE_PUBLIC_WORKSTATION, "true");
-            ClientInfoHolder.setClientInfo(ClientInfo.from(context.getHttpServletRequest()));
+            context.setClientInfo();
 
             context.addHeader("User-Agent", "Test");
 
             val tgt1 = new MockTicketGrantingTicket(UUID.randomUUID().toString());
-
+            getTicketRegistry().addTicket(tgt1);
             WebUtils.putPublicWorkstationToFlowIfRequestParameterPresent(context);
             WebUtils.putTicketGrantingTicketIntoMap(context.getRequestScope(), tgt1.getId());
 
             val tgt2 = new MockTicketGrantingTicket(UUID.randomUUID().toString());
+            getTicketRegistry().addTicket(tgt2);
             WebUtils.putTicketGrantingTicketIntoMap(context.getFlowScope(), tgt2.getId());
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
         }
@@ -71,12 +70,13 @@ class SendTicketGrantingTicketActionTests {
         @Test
         void verifyTgtToSet() throws Throwable {
             val context = MockRequestContext.create(applicationContext);
-            context.getHttpServletRequest().setRemoteAddr(LOCALHOST_IP);
-            context.getHttpServletRequest().setLocalAddr(LOCALHOST_IP);
-            ClientInfoHolder.setClientInfo(ClientInfo.from(context.getHttpServletRequest()));
+            context.setRemoteAddr(LOCALHOST_IP);
+            context.setLocalAddr(LOCALHOST_IP);
+            context.setClientInfo();
 
             context.addHeader("User-Agent", "Test");
             val tgt = new MockTicketGrantingTicket(UUID.randomUUID().toString());
+            getTicketRegistry().addTicket(tgt);
             WebUtils.putTicketGrantingTicketInScopes(context, tgt);
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
             context.setRequestCookiesFromResponse();
@@ -86,13 +86,14 @@ class SendTicketGrantingTicketActionTests {
         @Test
         void verifyTgtToSetRemovingOldTgt() throws Throwable {
             val context = MockRequestContext.create(applicationContext);
-            context.getHttpServletRequest().setRemoteAddr(LOCALHOST_IP);
-            context.getHttpServletRequest().setLocalAddr(LOCALHOST_IP);
-            ClientInfoHolder.setClientInfo(ClientInfo.from(context.getHttpServletRequest()));
+            context.setRemoteAddr(LOCALHOST_IP);
+            context.setLocalAddr(LOCALHOST_IP);
+            context.setClientInfo();
 
             context.addHeader("User-Agent", "Test");
 
             val tgt = new MockTicketGrantingTicket(UUID.randomUUID().toString());
+            getTicketRegistry().addTicket(tgt);
             context.getHttpServletRequest().setCookies(new Cookie("TGT", "test5"));
             WebUtils.putTicketGrantingTicketInScopes(context, tgt);
 
@@ -114,10 +115,10 @@ class SendTicketGrantingTicketActionTests {
             val context = MockRequestContext.create(applicationContext);
             
             context.setParameter(CasProtocolConstants.PARAMETER_RENEW, "true");
-            context.getHttpServletRequest().setRemoteAddr(LOCALHOST_IP);
-            context.getHttpServletRequest().setLocalAddr(LOCALHOST_IP);
+            context.setRemoteAddr(LOCALHOST_IP);
+            context.setLocalAddr(LOCALHOST_IP);
             context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
-            ClientInfoHolder.setClientInfo(ClientInfo.from(context.getHttpServletRequest()));
+            context.setClientInfo();
 
             val tgt = new MockTicketGrantingTicket(UUID.randomUUID().toString());
             context.getHttpServletRequest().setCookies(new Cookie("TGT", "test5"));
@@ -130,10 +131,10 @@ class SendTicketGrantingTicketActionTests {
         void verifySsoSessionCookieOnServiceSsoDisallowed() throws Throwable {
             val context = MockRequestContext.create(applicationContext);
 
-            context.getHttpServletRequest().setRemoteAddr(LOCALHOST_IP);
-            context.getHttpServletRequest().setLocalAddr(LOCALHOST_IP);
+            context.setRemoteAddr(LOCALHOST_IP);
+            context.setLocalAddr(LOCALHOST_IP);
             context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
-            ClientInfoHolder.setClientInfo(ClientInfo.from(context.getHttpServletRequest()));
+            context.setClientInfo();
 
             val svc = mock(WebApplicationService.class);
             when(svc.getId()).thenReturn("TestSsoFalse");

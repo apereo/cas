@@ -10,9 +10,9 @@ const cas = require("../../cas.js");
         "Authorization": `Basic ${btoa("client:secret")}`
     }, (res) => {
         cas.log(res.data);
-        assert(res.data.access_token !== null);
+        assert(res.data.access_token !== undefined);
         cas.decodeJwt(res.data.access_token, true).then((decoded) => {
-            assert(decoded !== null);
+            assert(decoded !== undefined);
             assert(decoded.payload["sub"] === "client");
             assert(decoded.payload.client_id === "client");
             assert(decoded.payload.grant_type === "client_credentials");

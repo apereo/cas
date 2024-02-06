@@ -7,21 +7,18 @@ import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.GrouperPersonAttributeDao;
 import org.apereo.services.persondir.support.SimpleUsernameAttributeProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
-
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
@@ -34,15 +31,16 @@ import java.util.stream.Collectors;
 @Slf4j
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.PersonDirectory, module = "grouper")
-@AutoConfiguration
-public class CasPersonDirectoryGrouperConfiguration {
+@Configuration(value = "CasPersonDirectoryGrouperConfiguration", proxyBeanMethods = false)
+class CasPersonDirectoryGrouperConfiguration {
     @Configuration(value = "GrouperAttributeRepositoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class GrouperAttributeRepositoryConfiguration {
+    static class GrouperAttributeRepositoryConfiguration {
         @ConditionalOnMissingBean(name = "grouperAttributeRepositories")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public BeanContainer<IPersonAttributeDao> grouperAttributeRepositories(final CasConfigurationProperties casProperties) {
+        public BeanContainer<IPersonAttributeDao> grouperAttributeRepositories(
+            final CasConfigurationProperties casProperties) {
             val list = new ArrayList<IPersonAttributeDao>();
             val gp = casProperties.getAuthn().getAttributeRepository().getGrouper();
             val dao = new GrouperPersonAttributeDao();
@@ -62,7 +60,7 @@ public class CasPersonDirectoryGrouperConfiguration {
 
     @Configuration(value = "GrouperAttributeRepositoryPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class GrouperAttributeRepositoryPlanConfiguration {
+    static class GrouperAttributeRepositoryPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "grouperPersonDirectoryAttributeRepositoryPlanConfigurer")

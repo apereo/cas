@@ -144,7 +144,8 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
         scopes.add(OAuth20Constants.UMA_AUTHORIZATION_SCOPE);
         scopes.addAll(permissionTicket.getResourceSet().getScopes());
         
-        val holder = AccessTokenRequestContext.builder()
+        val tokenRequestContext = AccessTokenRequestContext
+            .builder()
             .authentication(currentAat.getAuthentication())
             .ticketGrantingTicket(currentAat.getTicketGrantingTicket())
             .grantType(OAuth20GrantTypes.UMA_TICKET)
@@ -155,18 +156,14 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
             .service(currentAat.getService())
             .build();
 
-        val result = getUmaConfigurationContext().getAccessTokenGenerator().generate(holder);
-        val accessToken = result.getAccessToken().get();
+        val result = getUmaConfigurationContext().getAccessTokenGenerator().generate(tokenRequestContext);
 
-        val encodedAccessToken = OAuth20JwtAccessTokenEncoder.builder()
-            .accessToken(accessToken)
-            .registeredService(holder.getRegisteredService())
-            .service(holder.getService())
-            .accessTokenJwtBuilder(getUmaConfigurationContext().getAccessTokenJwtBuilder())
-            .casProperties(getUmaConfigurationContext().getCasProperties())
-            .build()
-            .encode(accessToken.getId());
-        
+        val givenAccessToken = result.getAccessToken().orElseThrow();
+        val accessToken = resolveAccessToken(givenAccessToken);
+
+        val cipher = OAuth20JwtAccessTokenEncoder.toEncodableCipher(getUmaConfigurationContext().getAccessTokenJwtBuilder(),
+            registeredService, accessToken, accessToken.getService(), getUmaConfigurationContext().getCasProperties());
+        val encodedAccessToken = cipher.encode(accessToken.getId());
         val userProfile = OAuth20Utils.getAuthenticatedUserProfile(new JEEContext(request, response),
             getUmaConfigurationContext().getSessionStore());
         userProfile.addAttribute(UmaPermissionTicket.class.getName(), permissionTicket);
@@ -175,12 +172,12 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
         val idToken = getUmaConfigurationContext().getRequestingPartyTokenGenerator()
             .generate(accessToken, userProfile, OAuth20ResponseTypes.CODE, OAuth20GrantTypes.UMA_TICKET, registeredService);
         accessToken.setIdToken(idToken.token());
-        getUmaConfigurationContext().getTicketRegistry().updateTicket(accessToken);
-
-        if (StringUtils.isNotBlank(umaRequest.getRpt())) {
-            getUmaConfigurationContext().getTicketRegistry().deleteTicket(umaRequest.getRpt());
+        if (!accessToken.isStateless()) {
+            getUmaConfigurationContext().getTicketRegistry().updateTicket(accessToken);
+            if (StringUtils.isNotBlank(umaRequest.getRpt())) {
+                getUmaConfigurationContext().getTicketRegistry().deleteTicket(umaRequest.getRpt());
+            }
         }
-
         val model = CollectionUtils.wrap("rpt", encodedAccessToken, "code", HttpStatus.CREATED);
         return new ResponseEntity<>(model, HttpStatus.OK);
     }

@@ -6,7 +6,6 @@ import org.apereo.cas.util.spring.ApplicationContextProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
@@ -59,7 +58,7 @@ class DefaultRegisteredServiceUsernameProviderTests {
     @Test
     void verifyRegServiceUsernameUpper() throws Throwable {
         val provider = new DefaultRegisteredServiceUsernameProvider();
-        provider.setCanonicalizationMode(CaseCanonicalizationMode.UPPER.name());
+        provider.setCanonicalizationMode("UPPER");
         val principal = RegisteredServiceTestUtils.getPrincipal("id");
 
         val applicationContext = new StaticApplicationContext();
@@ -78,7 +77,7 @@ class DefaultRegisteredServiceUsernameProviderTests {
     @Test
     void verifyPatternRemoval() throws Throwable {
         val provider = new DefaultRegisteredServiceUsernameProvider();
-        provider.setCanonicalizationMode(CaseCanonicalizationMode.UPPER.name());
+        provider.setCanonicalizationMode("UPPER");
         provider.setRemovePattern("@.+");
         val principal = RegisteredServiceTestUtils.getPrincipal("casuser@example.org");
 
@@ -98,7 +97,7 @@ class DefaultRegisteredServiceUsernameProviderTests {
     @Test
     void verifyScopedUsername() throws Throwable {
         val provider = new DefaultRegisteredServiceUsernameProvider();
-        provider.setCanonicalizationMode(CaseCanonicalizationMode.UPPER.name());
+        provider.setCanonicalizationMode("UPPER");
         provider.setScope("example.org");
         val principal = RegisteredServiceTestUtils.getPrincipal("id");
 

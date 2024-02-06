@@ -37,7 +37,7 @@ class OAuth20DefaultRefreshTokenFactoryTests extends AbstractOAuth20Tests {
             registeredService.setRefreshTokenExpirationPolicy(
                 new DefaultRegisteredServiceOAuthRefreshTokenExpirationPolicy("PT100S"));
             servicesManager.save(registeredService);
-            val token = oAuthRefreshTokenFactory.create(RegisteredServiceTestUtils.getService("https://rt.oauth.org"),
+            val token = defaultRefreshTokenFactory.create(RegisteredServiceTestUtils.getService("https://rt.oauth.org"),
                 RegisteredServiceTestUtils.getAuthentication(),
                 new MockTicketGrantingTicket("casuser"),
                 Set.of("Scope1", "Scope2"), "clientid-rt",
@@ -58,7 +58,7 @@ class OAuth20DefaultRefreshTokenFactoryTests extends AbstractOAuth20Tests {
             registeredService.setRefreshTokenExpirationPolicy(
                 new DefaultRegisteredServiceOAuthRefreshTokenExpirationPolicy("PT100S"));
             servicesManager.save(registeredService);
-            val token = oAuthRefreshTokenFactory.create(RegisteredServiceTestUtils.getService("https://rt.oauth.org"),
+            val token = defaultRefreshTokenFactory.create(RegisteredServiceTestUtils.getService("https://rt.oauth.org"),
                 RegisteredServiceTestUtils.getAuthentication(),
                 new MockTicketGrantingTicket("casuser"),
                 Set.of("Scope1", "Scope2"), "clientid-rt",

@@ -41,16 +41,11 @@ public class CasSimpleMultifactorAuthenticationTicketImpl extends AbstractTicket
      */
     private Service service;
 
-    /**
-     * The Properties.
-     */
-    private Map<String, Object> properties = new HashMap<>(0);
-
     public CasSimpleMultifactorAuthenticationTicketImpl(final String id, final ExpirationPolicy expirationPolicy,
                                                         final Service service, final Map<String, Serializable> properties) {
         super(id, expirationPolicy);
         this.service = service;
-        this.properties = new HashMap<>(properties);
+        setProperties(new HashMap<>(properties));
     }
 
     @Override

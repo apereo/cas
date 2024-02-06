@@ -1,2 +1,2 @@
-org.apereo.cas.config.SamlIdPRedisRegisteredServiceMetadataConfiguration
-org.apereo.cas.config.SamlIdPRedisIdPMetadataConfiguration
+org.apereo.cas.config.CasSamlIdPRedisIdPMetadataAutoConfiguration
+

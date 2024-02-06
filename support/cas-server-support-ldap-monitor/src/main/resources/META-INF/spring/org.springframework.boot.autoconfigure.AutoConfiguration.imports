@@ -1,1 +1,1 @@
-org.apereo.cas.config.LdapMonitorConfiguration
+org.apereo.cas.config.CasLdapMonitorAutoConfiguration

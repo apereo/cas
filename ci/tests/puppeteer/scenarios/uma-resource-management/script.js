@@ -4,11 +4,11 @@ const cas = require("../../cas.js");
 (async () => {
     let url = "https://localhost:8443/cas/oauth2.0/.well-known/uma-configuration";
     await cas.doGet(url, async (res) => {
-        assert(res.data.issuer !== null);
-        assert(res.data.rpt_endpoint !== null);
-        assert(res.data.permission_registration_endpoint !== null);
-        assert(res.data.resource_set_registration_endpoint !== null);
-        assert(res.data.requesting_party_claims_endpoint !== null);
+        assert(res.data.issuer !== undefined);
+        assert(res.data.rpt_endpoint !== undefined);
+        assert(res.data.permission_registration_endpoint !== undefined);
+        assert(res.data.resource_set_registration_endpoint !== undefined);
+        assert(res.data.requesting_party_claims_endpoint !== undefined);
     }, async (error) => {
         throw `Operation failed: ${error}`;
     });
@@ -48,15 +48,15 @@ const cas = require("../../cas.js");
             "Content-Type": "application/json"
         }, 200, resourceRequest));
     await cas.log(resource);
-    assert(resource.entity.id !== null);
-    assert(resource.entity.name !== null);
-    assert(resource.entity.uri !== null);
-    assert(resource.entity.type !== null);
-    assert(resource.entity.owner !== null);
-    assert(resource.entity.clientId !== null);
-    assert(resource.code !== null);
-    assert(resource.location !== null);
-    assert(resource.resourceId !== null);
+    assert(resource.entity.id !== undefined);
+    assert(resource.entity.name !== undefined);
+    assert(resource.entity.uri !== undefined);
+    assert(resource.entity.type !== undefined);
+    assert(resource.entity.owner !== undefined);
+    assert(resource.entity.clientId !== undefined);
+    assert(resource.code !== undefined);
+    assert(resource.location !== undefined);
+    assert(resource.resourceId !== undefined);
 
     await cas.log("Checking for all available resources");
     let result = JSON.parse(await cas.doRequest(resourceUrl, "GET",

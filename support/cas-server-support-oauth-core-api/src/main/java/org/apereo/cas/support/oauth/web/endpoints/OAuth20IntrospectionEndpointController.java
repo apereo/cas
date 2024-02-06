@@ -108,25 +108,25 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
                 return validationError.get();
             }
 
-            val accessTokenId = StringUtils.defaultIfBlank(request.getParameter(OAuth20Constants.TOKEN),
+            val tokenId = StringUtils.defaultIfBlank(request.getParameter(OAuth20Constants.TOKEN),
                 request.getParameter(OAuth20Constants.ACCESS_TOKEN));
 
-            LOGGER.debug("Located access token [{}] in the request", accessTokenId);
+            LOGGER.debug("Located access token [{}] in the request", tokenId);
 
             val protocolMap = CollectionUtils.<String, Object>wrap(
-                "Token", accessTokenId,
+                "Token", tokenId,
                 "Client ID", registeredService.getClientId(),
                 "Service", registeredService.getName());
             LoggingUtils.protocolMessage("OpenID Connect Introspection Request", protocolMap);
 
-            val accessToken = fetchAccessTokenFromRegistry(accessTokenId);
+            val accessToken = fetchTokenFromRegistry(tokenId);
             val introspect = getConfigurationContext()
                 .getIntrospectionResponseGenerator()
                 .stream()
                 .filter(generator -> generator.supports(accessToken))
                 .findFirst()
                 .orElseThrow()
-                .generate(accessTokenId, accessToken);
+                .generate(tokenId, accessToken);
             return buildIntrospectionEntityResponse(context, introspect);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
@@ -134,7 +134,7 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
         return buildBadRequestResponseEntity(OAuth20Constants.INVALID_REQUEST);
     }
 
-    private OAuth20Token fetchAccessTokenFromRegistry(final String accessTokenId) {
+    private OAuth20Token fetchTokenFromRegistry(final String accessTokenId) {
         try {
             val token = extractAccessTokenFrom(accessTokenId);
             return getConfigurationContext().getTicketRegistry().getTicket(token, OAuth20Token.class);

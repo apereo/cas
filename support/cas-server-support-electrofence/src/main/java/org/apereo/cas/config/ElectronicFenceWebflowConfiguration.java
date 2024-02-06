@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.api.AuthenticationRiskEvaluator;
 import org.apereo.cas.api.AuthenticationRiskMitigator;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.impl.plans.RiskyAuthenticationException;
@@ -33,7 +34,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -63,11 +63,11 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Electrofence)
-@AutoConfiguration
-public class ElectronicFenceWebflowConfiguration {
+@Configuration(value = "ElectronicFenceWebflowConfiguration", proxyBeanMethods = false)
+class ElectronicFenceWebflowConfiguration {
 
     @Configuration(value = "RiskAuthenticationCoreConfiguration", proxyBeanMethods = false)
-    public static class RiskAuthenticationCoreConfiguration {
+    static class RiskAuthenticationCoreConfiguration {
         @ConditionalOnMissingBean(name = "riskAwareCasWebflowExceptionConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -112,13 +112,14 @@ public class ElectronicFenceWebflowConfiguration {
     }
 
     @Configuration(value = "RiskAuthenticationVerificationConfiguration", proxyBeanMethods = false)
-    public static class RiskAuthenticationVerificationConfiguration {
+    static class RiskAuthenticationVerificationConfiguration {
         private static final FlowExecutionListener[] FLOW_EXECUTION_LISTENERS = new FlowExecutionListener[0];
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_RISK_AUTHENTICATION_TOKEN_CHECK)
         public Action riskAuthenticationCheckTokenAction(
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER) final PrincipalResolver principalResolver,
             @Qualifier(GeoLocationService.BEAN_NAME) final ObjectProvider<GeoLocationService> geoLocationService,
             @Qualifier(CasEventRepository.BEAN_NAME) final CasEventRepository casEventRepository,
             @Qualifier("cookieCipherExecutor") final CipherExecutor cookieCipherExecutor,
@@ -130,7 +131,7 @@ public class ElectronicFenceWebflowConfiguration {
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
                 .withAction(() -> new RiskAuthenticationCheckTokenAction(casEventRepository, communicationsManager, servicesManager,
-                    cookieCipherExecutor, geoLocationService, casProperties))
+                    principalResolver, cookieCipherExecutor, geoLocationService, casProperties))
                 .withId(CasWebflowConstants.ACTION_ID_RISK_AUTHENTICATION_TOKEN_CHECK)
                 .build()
                 .get();

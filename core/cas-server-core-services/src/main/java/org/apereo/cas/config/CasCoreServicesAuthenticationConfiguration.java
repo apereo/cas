@@ -11,11 +11,11 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.scheduling.annotation.EnableAsync;
 
@@ -28,8 +28,8 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAsync(proxyTargetClass = false)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.ServiceRegistry)
-@AutoConfiguration(after = CasCoreServicesConfiguration.class)
-public class CasCoreServicesAuthenticationConfiguration {
+@Configuration(value = "CasCoreServicesAuthenticationConfiguration", proxyBeanMethods = false)
+class CasCoreServicesAuthenticationConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

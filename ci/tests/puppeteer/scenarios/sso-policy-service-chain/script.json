@@ -1,0 +1,16 @@
+{
+  "dependencies": "stateless-ticket-registry",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=https://localhost:8443/cas",
+    "--cas.audit.slf4j.use-single-line=true",
+
+    "--cas.authn.attribute-repository.stub.attributes.cn=9/9/9",
+    "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
+
+    "--cas.authn.accept.users=casuser::Mellon,casblock::Mellon",
+    
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
+  ]
+}

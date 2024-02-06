@@ -22,7 +22,6 @@ import org.apereo.cas.web.flow.authentication.CasWebflowExceptionCatalog;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -45,12 +44,12 @@ import org.springframework.webflow.execution.Action;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SurrogateAuthentication)
-@AutoConfiguration
-public class SurrogateAuthenticationWebflowConfiguration {
+@Configuration(value = "SurrogateAuthenticationWebflowConfiguration", proxyBeanMethods = false)
+class SurrogateAuthenticationWebflowConfiguration {
 
     @Configuration(value = "SurrogateAuthenticationWebflowBaseConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SurrogateAuthenticationWebflowBaseConfiguration {
+    static class SurrogateAuthenticationWebflowBaseConfiguration {
         @ConditionalOnMissingBean(name = "surrogateWebflowConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -68,7 +67,7 @@ public class SurrogateAuthenticationWebflowConfiguration {
 
     @Configuration(value = "SurrogateAuthenticationWebflowActionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SurrogateAuthenticationWebflowActionConfiguration {
+    static class SurrogateAuthenticationWebflowActionConfiguration {
 
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SELECT_SURROGATE_ACTION)
         @Bean
@@ -141,7 +140,7 @@ public class SurrogateAuthenticationWebflowConfiguration {
 
     @Configuration(value = "SurrogateAuthenticationInitializerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SurrogateAuthenticationInitializerConfiguration {
+    static class SurrogateAuthenticationInitializerConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Lazy(false)
@@ -154,7 +153,7 @@ public class SurrogateAuthenticationWebflowConfiguration {
 
     @Configuration(value = "SurrogateAuthenticationWebflowPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SurrogateAuthenticationWebflowPlanConfiguration {
+    static class SurrogateAuthenticationWebflowPlanConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "surrogateCasWebflowExecutionPlanConfigurer")

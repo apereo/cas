@@ -1,1 +1,1 @@
-org.apereo.cas.config.GoogleAuthenticatorDynamoDbConfiguration
+org.apereo.cas.config.CasGoogleAuthenticatorDynamoDbAutoConfiguration

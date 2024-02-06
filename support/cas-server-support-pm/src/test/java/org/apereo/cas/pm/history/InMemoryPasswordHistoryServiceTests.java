@@ -1,17 +1,15 @@
 package org.apereo.cas.pm.history;
 
-import org.apereo.cas.config.CasCoreAuditConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
-import org.apereo.cas.config.CasCoreConfiguration;
-import org.apereo.cas.config.CasCoreNotificationsConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
-import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
-import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
-import org.apereo.cas.config.CasCoreTicketsConfiguration;
-import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasCoreWebConfiguration;
-import org.apereo.cas.config.PasswordManagementConfiguration;
+import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasCoreAutoConfiguration;
+import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
+import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
+import org.apereo.cas.config.CasPasswordManagementAutoConfiguration;
 import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordHistoryService;
 import lombok.val;
@@ -33,18 +31,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    PasswordManagementConfiguration.class,
-    CasCoreTicketsConfiguration.class,
-    CasCoreTicketCatalogConfiguration.class,
-    CasCoreTicketIdGeneratorsConfiguration.class,
-    CasCoreTicketsSerializationConfiguration.class,
-    CasCoreServicesConfiguration.class,
-    CasCoreWebConfiguration.class,
-    CasCoreNotificationsConfiguration.class,
-    CasCoreAuditConfiguration.class,
-    CasCoreConfiguration.class,
-    CasCoreAuthenticationPrincipalConfiguration.class,
-    CasCoreUtilConfiguration.class
+    CasPasswordManagementAutoConfiguration.class,
+    CasCoreTicketsAutoConfiguration.class,
+    CasCoreServicesAutoConfiguration.class,
+    CasCoreWebAutoConfiguration.class,
+    CasCoreNotificationsAutoConfiguration.class,
+    CasCoreAuditAutoConfiguration.class,
+    CasCoreAutoConfiguration.class,
+    CasCoreAuthenticationAutoConfiguration.class,
+    CasCoreLogoutAutoConfiguration.class,
+    CasCoreUtilAutoConfiguration.class
 }, properties = {
     "cas.authn.pm.core.enabled=true",
     "cas.authn.pm.history.core.enabled=true"
@@ -60,7 +56,8 @@ class InMemoryPasswordHistoryServiceTests {
         passwordHistoryService.removeAll();
         assertTrue(passwordHistoryService.fetchAll().isEmpty());
 
-        val request = new PasswordChangeRequest("casuser", "current-psw".toCharArray(), "123456".toCharArray(), "123456".toCharArray());
+        val request = new PasswordChangeRequest("casuser", "current-psw".toCharArray(),
+            "123456".toCharArray(), "123456".toCharArray());
         assertFalse(passwordHistoryService.exists(request));
         assertTrue(passwordHistoryService.store(request));
         assertTrue(passwordHistoryService.exists(request));

@@ -14,9 +14,9 @@ public interface OAuth20TokenGenerator {
     /**
      * Generate access token and add it to the registry.
      *
-     * @param responseHolder the response holder
+     * @param tokenRequestContext the response holder
      * @return the token result
      * @throws Throwable the throwable
      */
-    OAuth20TokenGeneratedResult generate(AccessTokenRequestContext responseHolder) throws Throwable;
+    OAuth20TokenGeneratedResult generate(AccessTokenRequestContext tokenRequestContext) throws Throwable;
 }

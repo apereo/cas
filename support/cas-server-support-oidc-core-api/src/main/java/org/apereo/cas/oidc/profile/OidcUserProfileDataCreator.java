@@ -7,6 +7,7 @@ import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfileDataCreator;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
+import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -51,8 +52,9 @@ public class OidcUserProfileDataCreator extends DefaultOAuth20UserProfileDataCre
         super.finalizeProfileResponse(accessToken, modelAttributes, principal, registeredService);
         if (registeredService instanceof OidcRegisteredService) {
             if (accessToken.getClaims().isEmpty()) {
-                modelAttributes.put(OidcConstants.CLAIM_AUTH_TIME,
-                    accessToken.getTicketGrantingTicket().getAuthentication().getAuthenticationDate().toEpochSecond());
+                if (accessToken.getTicketGrantingTicket() instanceof final AuthenticationAwareTicket aat) {
+                    modelAttributes.put(OidcConstants.CLAIM_AUTH_TIME, aat.getAuthentication().getAuthenticationDate().toEpochSecond());
+                }
             } else {
                 modelAttributes.keySet().retainAll(CollectionUtils.wrapList(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ATTRIBUTES));
             }

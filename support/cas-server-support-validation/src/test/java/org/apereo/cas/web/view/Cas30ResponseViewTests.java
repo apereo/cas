@@ -8,8 +8,9 @@ import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.support.DefaultCasProtocolAttributeEncoder;
-import org.apereo.cas.config.CasThymeleafConfiguration;
-import org.apereo.cas.config.CasValidationConfiguration;
+import org.apereo.cas.config.CasThymeleafAutoConfiguration;
+import org.apereo.cas.config.CasValidationAutoConfiguration;
+import org.apereo.cas.services.RegisteredServicePublicKeyCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.view.AbstractCasView;
 import org.apereo.cas.util.CollectionUtils;
@@ -59,8 +60,8 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.clearpass.crypto.enabled=false"
 })
 @Import({
-    CasThymeleafConfiguration.class,
-    CasValidationConfiguration.class
+    CasThymeleafAutoConfiguration.class,
+    CasValidationAutoConfiguration.class
 })
 @Tag("CAS")
 class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
@@ -156,6 +157,7 @@ class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
         assertTrue(attributes.containsKey(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET));
 
         val encodedPgt = (String) attributes.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET);
+        assertNotNull(encodedPgt);
         val pgt = decryptCredential(encodedPgt);
         assertNotNull(pgt);
     }
@@ -175,7 +177,8 @@ class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
         val req = new MockHttpServletRequest(new MockServletContext());
         req.setAttribute(RequestContext.WEB_APPLICATION_CONTEXT_ATTRIBUTE, new GenericWebApplicationContext(req.getServletContext()));
 
-        val encoder = new DefaultCasProtocolAttributeEncoder(this.servicesManager, CipherExecutor.noOpOfStringToString());
+        val encoder = new DefaultCasProtocolAttributeEncoder(this.servicesManager,
+            RegisteredServicePublicKeyCipherExecutor.INSTANCE, CipherExecutor.noOpOfStringToString());
         val view = getCasViewToRender(encoder, getDelegatedView());
         val resp = new MockHttpServletResponse();
         view.render(modelAndView.getModel(), req, resp);
@@ -190,6 +193,6 @@ class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
         return new Cas30ResponseView(true, encoder, servicesManager,
             viewDelegated, new DefaultAuthenticationAttributeReleasePolicy("attribute"),
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()),
-            new DefaultCas30ProtocolAttributesRenderer());
+            new DefaultCas30ProtocolAttributesRenderer(), getAttributeDefinitionStore());
     }
 }

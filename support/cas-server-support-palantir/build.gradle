@@ -48,7 +48,8 @@ dependencies {
     testImplementation libraries.springboottomcat
 
     testImplementation project(":support:cas-server-support-themes")
-
+    testImplementation project(":support:cas-server-support-person-directory")
+    
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-util")
@@ -71,7 +72,6 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
 }
 
-
 node {
     version = "${nodeVersion}"
     yarnVersion = ''
@@ -80,27 +80,15 @@ node {
     nodeProjectDir = new File("${project.projectDir}", "client")
 }
 
-tasks.named("yarn", YarnTask) {
-    args = ['--network-timeout', '600000']
-    outputs.cacheIf { true }
-    inputs.files(
-        'client/package.json',
-        'client/vite.config.js'
-    )
-    inputs.file('client/yarn.lock')
-    outputs.dir(file("client/node_modules"))
-}
-
 tasks.register("build-ui", NpxTask) {
+    dependsOn("npmInstall")
     outputs.cacheIf { true }
+    outputs.dir(file("build/generated/assets"))
     command = "vite"
-    args = [ "build", "--outDir", "../src/main/resources/static/assets"]
-    dependsOn(tasks.named("yarn"))
-    inputs.files(
-        'client/package.json',
-        'client/vite.config.js'
-    )
-    outputs.dir(new File(project.projectDir, "src/main/resources/static/assets"))
-    environment = ["BUILD_PATH": "${project.layout.buildDirectory.getAsFile().get().path}"]
+    args = ["build", "--emptyOutDir", "--outDir", "../build/generated/assets" ]
+    inputs.files('client/package.json','client/vite.config.js')
+            .withPropertyName('uiBuildConfig')
+            .withPathSensitivity(PathSensitivity.RELATIVE)
+    environment = ["BUILD_PATH": "build"]
 }
-[processResources, resourcesJar].each {it.dependsOn(tasks.named("build-ui")) }
+build.dependsOn(tasks.named("build-ui"))

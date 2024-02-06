@@ -1,2 +1,1 @@
-org.apereo.cas.config.SamlIdPMongoDbRegisteredServiceMetadataConfiguration
-org.apereo.cas.config.SamlIdPMongoDbIdPMetadataConfiguration
+org.apereo.cas.config.CasSamlIdPMongoDbAutoConfiguration

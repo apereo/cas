@@ -1,8 +1,8 @@
 package org.apereo.cas.acct.provision;
 
 import org.apereo.cas.acct.AccountRegistrationRequest;
-import org.apereo.cas.config.CasAccountManagementWebflowConfiguration;
-import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasAccountManagementWebflowAutoConfiguration;
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.MockWebServer;
@@ -30,9 +30,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasAccountManagementWebflowConfiguration.class,
+    CasAccountManagementWebflowAutoConfiguration.class,
     BaseWebflowConfigurerTests.SharedTestConfiguration.class,
-    CasCoreHttpConfiguration.class
+    CasCoreWebAutoConfiguration.class
 }, properties = "cas.account-registration.provisioning.rest.url=http://localhost:5002")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("RestfulApi")

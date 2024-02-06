@@ -22,9 +22,11 @@ class DefaultEncodedTicketTests {
     void verifyDefaults() throws Throwable {
         val id = UUID.randomUUID().toString();
         val ticket1 = new DefaultEncodedTicket(UUID.randomUUID().toString(),
-            id, TicketGrantingTicket.PREFIX);
+            id, TicketGrantingTicket.PREFIX).markTicketStateless();
+        assertTrue(ticket1.isStateless());
         val ticket2 = new DefaultEncodedTicket(UUID.randomUUID().toString(),
-            id, TicketGrantingTicket.PREFIX);
+            id, TicketGrantingTicket.PREFIX).markTicketStateless();
+        assertTrue(ticket2.isStateless());
 
         assertNull(ticket1.getCreationTime());
         assertNull(ticket1.getExpirationPolicy());

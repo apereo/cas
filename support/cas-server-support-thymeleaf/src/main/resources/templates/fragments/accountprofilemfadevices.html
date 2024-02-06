@@ -56,7 +56,7 @@
              class="profile-content w-100"
              style="display: none;">
             <h2>
-                <i class="mdi mdi-account-reactivate fas fa-door-open"></i>
+                <i class="mdi mdi-account-reactivate fas fa-door-open" aria-hidden="true"></i>
                 <span th:utext="#{screen.account.mfadevices.title}">MFA Devices</span>
             </h2>
             <p th:utext="#{screen.account.mfadevices.subtitle}">MFA Devices are listed here</p>
@@ -76,8 +76,8 @@
                     <tr th:each="entry : ${multifactorRegisteredAccounts}" class="mdc-data-table__row">
                         <td class="mdc-data-table__cell">
                             <span th:switch="${entry.source}">
-                                <span th:case="'Google Authenticator'"><i class="mdi mdi-google"></i></span>
-                                <span th:case="'Web Authn'"><i class="mdi mdi-fingerprint"></i></span>
+                                <span th:case="'Google Authenticator'"><i class="mdi mdi-google" aria-hidden="true"></i></span>
+                                <span th:case="'Web Authn'"><i class="mdi mdi-fingerprint" aria-hidden="true"></i></span>
                                 <span th:case="*"></span>
                             </span>
                             <span th:utext="${entry.source}"/>
@@ -92,7 +92,7 @@
                             th:utext="*{entry.number}?: 'N/A'">Value</td>
                         <td class="mdc-data-table__cell">
                             <button type="button" name="viewMfaDeviceDetails" href="#" th:if="${entry.payload}" class="btn btn-link">
-                            <i class="mdi mdi-account-details fas fa-eye"></i>
+                            <i class="mdi mdi-account-details fas fa-eye" aria-hidden="true"></i>
                             <span style="display: none" th:utext="${entry.payload}"/>
                             </button>
                         </td>
@@ -102,7 +102,7 @@
 
             <div th:if="${#bools.isTrue(gauthAccountProfileRegistrationEnabled) || #bools.isTrue(webauthnAccountProfileRegistrationEnabled)}">
                 <hr>
-                
+
                 <p th:utext="#{screen.authentication.gauth.reganotherdevice}"></p>
                 <div id="toolbar" class="mdc-menu-surface--anchor">
                     <button id="register" name="register" accesskey="r" value="Register" type="button"
@@ -117,12 +117,12 @@
                             <ul class="mdc-list" role="menu" aria-hidden="true" aria-orientation="vertical" tabindex="-1">
                                 <li class="mdc-list-item" role="menuitem" th:if="${gauthAccountProfileRegistrationEnabled}">
                                     <span class="mdc-list-item__ripple"></span>
-                                    <i class="mdi mdi-google fas fa-google" style="margin-top: 2px;"></i>
+                                    <i class="mdi mdi-google fas fa-google" style="margin-top: 2px;" aria-hidden="true"></i>
                                     <div class="text-justify">
                                         <h4 th:utext="#{cas.mfa.providerselection.mfa-gauth}"/>
                                         <span th:text="#{cas.mfa.providerselection.mfa-gauth.notes}"/>
                                         <p></p>
-                                        <i class="mdi mdi-arrow-right"></i>
+                                        <i class="mdi mdi-arrow-right" aria-hidden="true"></i>
                                         <a id="gauthRegistrationLink"
                                            href="#" th:utext="#{screen.welcome.button.register}"
                                            onclick="submitRegistrationRequest('gauth');"/>
@@ -130,13 +130,13 @@
                                 </li>
                                 <li class="mdc-list-item" role="menuitem" style="margin-top: 10px;" th:if="${webauthnAccountProfileRegistrationEnabled}">
                                     <span class="mdc-list-item__ripple"></span>
-                                    <i class="mdi mdi-fingerprint"></i>
+                                    <i class="mdi mdi-fingerprint" aria-hidden="true"></i>
                                     <div class="text-justify">
                                         <h4 th:utext="#{cas.mfa.providerselection.mfa-webauthn}"
                                             style="margin-top: 2px;"/>
                                         <span th:text="#{cas.mfa.providerselection.mfa-webauthn.notes}"/>
                                             <p></p>
-                                            <i class="mdi mdi-arrow-right"></i>
+                                            <i class="mdi mdi-arrow-right" aria-hidden="true"></i>
                                             <a id="webauthnRegistrationLink"
                                                href="#" th:utext="#{screen.welcome.button.register}"
                                                onclick="submitRegistrationRequest('webauthn');"/>

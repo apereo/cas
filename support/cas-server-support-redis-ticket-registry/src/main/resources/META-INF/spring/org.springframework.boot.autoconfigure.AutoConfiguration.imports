@@ -1,1 +1,1 @@
-org.apereo.cas.config.RedisTicketRegistryConfiguration
+org.apereo.cas.config.CasRedisTicketRegistryAutoConfiguration

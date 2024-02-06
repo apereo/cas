@@ -1,24 +1,19 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.config.CasWebflowAccountProfileConfiguration;
 import org.apereo.cas.consent.ConsentDecisionBuilder;
 import org.apereo.cas.consent.ConsentRepository;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.execution.Action;
-
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -28,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.6.0
  */
 @Tag("WebflowAccountActions")
-@Import(CasWebflowAccountProfileConfiguration.class)
 @TestPropertySource(properties = "CasFeatureModule.AccountManagement.enabled=true")
 class ConsentAccountProfilePrepareActionTests extends BaseConsentActionTests {
     @Autowired
@@ -42,7 +36,7 @@ class ConsentAccountProfilePrepareActionTests extends BaseConsentActionTests {
     @Autowired
     @Qualifier(ConsentRepository.BEAN_NAME)
     private ConsentRepository consentRepository;
-    
+
     @Test
     void verifyOperation() throws Throwable {
         val uid = UUID.randomUUID().toString();

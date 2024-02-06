@@ -1,6 +1,11 @@
 #!/bin/bash
 
-# while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &
+# Generate redis certificate via:
+# openssl x509 -req -in redis.csr -signkey redis.key -out redis.crt -days 5000
+#
+# Check expiration date via:
+# openssl x509 -noout -enddate -in redis.crt
+
 export REDIS_VERSION=${1:-7.2.0-v6}
 export REDIS_SENTINEL_VERSION=${1:-7.2.3}
 

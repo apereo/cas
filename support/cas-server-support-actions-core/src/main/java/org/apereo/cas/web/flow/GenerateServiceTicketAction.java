@@ -20,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
@@ -140,24 +139,10 @@ public class GenerateServiceTicketAction extends BaseCasWebflowAction {
             });
     }
 
-    /**
-     * Checks if {@code gateway} is present in the request params.
-     *
-     * @param context the context
-     * @return true, if gateway present
-     */
     protected boolean isGatewayPresent(final RequestContext context) {
-        val requestParameterMap = context.getExternalContext().getRequestParameterMap();
-        return StringUtils.hasText(requestParameterMap.get(CasProtocolConstants.PARAMETER_GATEWAY));
+        return WebUtils.getRequestParameterOrAttribute(context, CasProtocolConstants.PARAMETER_GATEWAY).isPresent();
     }
 
-    /**
-     * New event based on the id, which contains an error attribute referring to the exception occurred.
-     *
-     * @param id    the id
-     * @param error the error
-     * @return the event
-     */
     private Event newEvent(final String id, final Throwable error) {
         return new EventFactorySupport().event(this, id, new LocalAttributeMap<>("error", error));
     }

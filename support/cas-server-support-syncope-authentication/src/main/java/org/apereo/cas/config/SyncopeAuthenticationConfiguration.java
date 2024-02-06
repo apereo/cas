@@ -20,12 +20,12 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import com.google.common.base.Splitter;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.stream.Collectors;
@@ -38,8 +38,8 @@ import java.util.stream.Collectors;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Authentication, module = "syncope")
-@AutoConfiguration
-public class SyncopeAuthenticationConfiguration {
+@Configuration(value = "SyncopeAuthenticationConfiguration", proxyBeanMethods = false)
+class SyncopeAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "syncopePrincipalFactory")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

@@ -22,36 +22,33 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    HazelcastTicketRegistryConfiguration.class,
-    HazelcastTicketRegistryTicketCatalogConfiguration.class,
-    CasCoreHttpConfiguration.class,
-    CasCoreWebConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
-    CasCoreUtilConfiguration.class,
-    CasCoreNotificationsConfiguration.class,
-    CasCoreServicesConfiguration.class,
-    CasCoreTicketsConfiguration.class,
-    CasCoreTicketCatalogConfiguration.class,
-    CasCoreTicketsSerializationConfiguration.class,
-    CasCoreTicketIdGeneratorsConfiguration.class,
-    CasHazelcastThrottlingConfiguration.class
+    CasHazelcastTicketRegistryAutoConfiguration.class,
+    CasCoreWebAutoConfiguration.class,
+    CasCoreAutoConfiguration.class,
+    CasCoreLogoutAutoConfiguration.class,
+    CasCoreAuthenticationAutoConfiguration.class,
+    CasCoreServicesAutoConfiguration.class,
+    CasCoreUtilAutoConfiguration.class,
+    CasCoreNotificationsAutoConfiguration.class,
+    CasCoreTicketsAutoConfiguration.class,
+    CasHazelcastThrottlingAutoConfiguration.class
 })
 @Tag("Hazelcast")
 class CasHazelcastThrottlingConfigurationTests {
 
     @Autowired
     @Qualifier(ThrottledSubmissionsStore.BEAN_NAME)
-    private ThrottledSubmissionsStore<ThrottledSubmission> throttleSubmissionMap;
+    private ThrottledSubmissionsStore<ThrottledSubmission> throttleSubmissionStore;
 
     @Test
     void verifyOperation() throws Throwable {
-        assertNotNull(throttleSubmissionMap);
+        assertNotNull(throttleSubmissionStore);
         val submission = ThrottledSubmission.builder().key(UUID.randomUUID().toString()).build();
-        throttleSubmissionMap.put(submission);
-        assertNotNull(throttleSubmissionMap.get(submission.getKey()));
-        assertNotEquals(0, throttleSubmissionMap.entries().count());
-        throttleSubmissionMap.removeIf(entry -> entry.getKey().equals(submission.getKey()));
-        throttleSubmissionMap.remove(submission.getKey());
-        assertEquals(0, throttleSubmissionMap.entries().count());
+        throttleSubmissionStore.put(submission);
+        assertNotNull(throttleSubmissionStore.get(submission.getKey()));
+        assertNotEquals(0, throttleSubmissionStore.entries().count());
+        throttleSubmissionStore.removeIf(entry -> entry.getKey().equals(submission.getKey()));
+        throttleSubmissionStore.remove(submission.getKey());
+        assertEquals(0, throttleSubmissionStore.entries().count());
     }
 }

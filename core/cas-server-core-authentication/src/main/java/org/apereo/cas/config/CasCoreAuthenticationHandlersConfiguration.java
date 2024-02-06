@@ -30,8 +30,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -56,12 +56,12 @@ import java.util.stream.Stream;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Authentication)
-@AutoConfiguration
-public class CasCoreAuthenticationHandlersConfiguration {
+@Configuration(value = "CasCoreAuthenticationHandlersConfiguration", proxyBeanMethods = false)
+class CasCoreAuthenticationHandlersConfiguration {
 
     @Configuration(value = "CasCoreAuthenticationHandlersProxyConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreAuthenticationHandlersProxyConfiguration {
+    static class CasCoreAuthenticationHandlersProxyConfiguration {
         private static final BeanCondition CONDITION = BeanCondition.on("cas.sso.proxy-authn-enabled").isTrue().evenIfMissing();
 
         @Bean
@@ -122,7 +122,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
 
     @Configuration(value = "CasCoreAuthenticationHandlersAcceptConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreAuthenticationHandlersAcceptConfiguration {
+    static class CasCoreAuthenticationHandlersAcceptConfiguration {
 
         private static Map<String, String> getParsedUsers(final CasConfigurationProperties casProperties) {
             val accept = casProperties.getAuthn().getAccept();
@@ -185,7 +185,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
 
     @Configuration(value = "CasCoreAuthenticationHandlersJaasConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreAuthenticationHandlersJaasConfiguration {
+    static class CasCoreAuthenticationHandlersJaasConfiguration {
 
         @ConditionalOnMissingBean(name = "jaasPasswordPolicyConfiguration")
         @Bean
@@ -211,10 +211,12 @@ public class CasCoreAuthenticationHandlersConfiguration {
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             final CasConfigurationProperties casProperties,
-            @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY) final IPersonAttributeDao attributeRepository,
-            @Qualifier("jaasPrincipalFactory") final PrincipalFactory jaasPrincipalFactory,
+            @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
+            final ObjectProvider<IPersonAttributeDao> attributeRepository,
+            @Qualifier("jaasPrincipalFactory")
+            final PrincipalFactory jaasPrincipalFactory,
             @Qualifier(AttributeRepositoryResolver.BEAN_NAME)
-            final AttributeRepositoryResolver attributeRepositoryResolver) {
+            final ObjectProvider<AttributeRepositoryResolver> attributeRepositoryResolver) {
             val personDirectory = casProperties.getPersonDirectory();
             return BeanContainer.of(casProperties.getAuthn().getJaas()
                 .stream()
@@ -223,8 +225,8 @@ public class CasCoreAuthenticationHandlersConfiguration {
                     val jaasPrincipal = jaas.getPrincipal();
                     var attributeMerger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
                     return PersonDirectoryPrincipalResolver.newPersonDirectoryPrincipalResolver(applicationContext, jaasPrincipalFactory,
-                        attributeRepository, attributeMerger, servicesManager, attributeDefinitionStore,
-                        attributeRepositoryResolver, jaasPrincipal, personDirectory);
+                        attributeRepository.getObject(), attributeMerger, servicesManager, attributeDefinitionStore,
+                        attributeRepositoryResolver.getObject(), jaasPrincipal, personDirectory);
                 })
                 .collect(Collectors.toList()));
         }

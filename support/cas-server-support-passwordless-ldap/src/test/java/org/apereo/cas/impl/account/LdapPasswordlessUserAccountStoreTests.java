@@ -2,10 +2,9 @@ package org.apereo.cas.impl.account;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
-import org.apereo.cas.config.LdapPasswordlessAuthenticationConfiguration;
+import org.apereo.cas.config.CasLdapPasswordlessAuthenticationAutoConfiguration;
 import org.apereo.cas.impl.BasePasswordlessUserAccountStoreTests;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.Cleanup;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +16,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.TestPropertySource;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -36,10 +34,11 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.passwordless.accounts.ldap.bind-credential=password",
     "cas.authn.passwordless.accounts.ldap.email-attribute=mail",
     "cas.authn.passwordless.accounts.ldap.phone-attribute=telephoneNumber",
+    "cas.authn.passwordless.accounts.ldap.username-attribute=mail",
     "cas.authn.passwordless.accounts.ldap.request-password-attribute=description"
 })
 @Slf4j
-@Import(LdapPasswordlessAuthenticationConfiguration.class)
+@Import(CasLdapPasswordlessAuthenticationAutoConfiguration.class)
 class LdapPasswordlessUserAccountStoreTests extends BasePasswordlessUserAccountStoreTests {
     @Autowired
     @Qualifier(PasswordlessUserAccountStore.BEAN_NAME)
@@ -56,6 +55,7 @@ class LdapPasswordlessUserAccountStoreTests extends BasePasswordlessUserAccountS
         assertTrue(user.isPresent());
         assertEquals("passwordlessuser@example.org", user.get().getEmail());
         assertEquals("123456789", user.get().getPhone());
+        assertEquals("passwordlessuser@example.org", user.get().getUsername());
         assertTrue(user.get().isRequestPassword());
     }
 }

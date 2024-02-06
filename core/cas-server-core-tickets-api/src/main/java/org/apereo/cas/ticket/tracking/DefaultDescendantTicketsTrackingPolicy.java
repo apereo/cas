@@ -11,9 +11,9 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
  */
 public class DefaultDescendantTicketsTrackingPolicy implements TicketTrackingPolicy {
     @Override
-    public void trackTicket(final TicketGrantingTicket ownerTicket, final Ticket ticket) {
-        if (ownerTicket != null) {
-            ownerTicket.getDescendantTickets().add(ticket.getId());
+    public void trackTicket(final Ticket ownerTicket, final Ticket ticket) {
+        if (ownerTicket instanceof final TicketGrantingTicket tgt) {
+            tgt.getDescendantTickets().add(ticket.getId());
         }
     }
 }

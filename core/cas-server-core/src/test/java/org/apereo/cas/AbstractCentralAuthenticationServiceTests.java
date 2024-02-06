@@ -2,6 +2,7 @@ package org.apereo.cas;
 
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -12,7 +13,6 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.ArgumentExtractor;
-
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +63,7 @@ public abstract class AbstractCentralAuthenticationServiceTests extends BaseCasC
     private TicketRegistrySupport ticketRegistrySupport;
 
     @Autowired
-    @Qualifier("webApplicationServiceFactory")
+    @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
     private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
     @Autowired
@@ -77,4 +77,8 @@ public abstract class AbstractCentralAuthenticationServiceTests extends BaseCasC
     @Autowired
     @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
     private PrincipalResolver defaultPrincipalResolver;
+
+    @Autowired
+    @Qualifier(AttributeDefinitionStore.BEAN_NAME)
+    private AttributeDefinitionStore attributeDefinitionStore;
 }

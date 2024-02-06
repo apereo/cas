@@ -68,7 +68,9 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
 
     private int order;
 
-    private String canonicalizationMode = CaseCanonicalizationMode.NONE.name();
+    private String canonicalizationMode = "NONE";
+
+    private RegisteredServiceAttributeReleaseActivationCriteria activationCriteria;
 
     /**
      * Post load, after having loaded the bean via JPA, etc.
@@ -81,7 +83,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
         if (consentPolicy == null) {
             this.consentPolicy = new DefaultRegisteredServiceConsentPolicy();
         }
-        canonicalizationMode = StringUtils.defaultIfBlank(canonicalizationMode, CaseCanonicalizationMode.NONE.name());
+        canonicalizationMode = StringUtils.defaultIfBlank(canonicalizationMode, "NONE");
     }
 
     @Override
@@ -188,7 +190,8 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
         Map<String, List<Object>> attributes) throws Throwable;
 
     protected boolean supports(final RegisteredServiceAttributeReleasePolicyContext context) {
-        return true;
+        val criteria = getActivationCriteria();
+        return criteria == null || criteria.shouldActivate(context);
     }
 
     protected Map<String, List<Object>> resolveAttributesFromAttributeDefinitionStore(

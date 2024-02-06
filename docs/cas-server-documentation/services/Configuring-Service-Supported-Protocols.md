@@ -34,7 +34,7 @@ Accepted values are as follows:
 
 | Storage | Description                                       |
 |---------|---------------------------------------------------|
-| `SAML1` | [See this guide](../protocol/SAML-Protocol.html). |
+| `SAML1` | [See this guide](../protocol/SAML-v1-Protocol.html). |
 | `CAS10` | [See this guide](../protocol/CAS-Protocol.html).  |
 | `CAS20` | [See this guide](../protocol/CAS-Protocol.html).  |
 | `CAS30` | [See this guide](../protocol/CAS-Protocol.html).  |

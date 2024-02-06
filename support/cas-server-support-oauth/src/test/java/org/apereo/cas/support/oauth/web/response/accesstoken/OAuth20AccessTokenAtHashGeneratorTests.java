@@ -30,16 +30,10 @@ class OAuth20AccessTokenAtHashGeneratorTests extends AbstractOAuth20Tests {
         val accessToken = getAccessToken();
         val registeredService = getRegisteredService("example", "secret", new LinkedHashSet<>());
 
-        val encodedAccessToken = OAuth20JwtAccessTokenEncoder.builder()
-            .accessToken(accessToken)
-            .registeredService(registeredService)
-            .service(accessToken.getService())
-            .casProperties(casProperties)
-            .accessTokenJwtBuilder(accessTokenJwtBuilder)
-            .build()
-            .encode(accessToken.getId());
-
-        return OAuth20AccessTokenAtHashGenerator.builder()
+        val encodedAccessToken = OAuth20JwtAccessTokenEncoder.toEncodableCipher(accessTokenJwtBuilder, registeredService,
+            accessToken, accessToken.getService(), casProperties).encode(accessToken.getId());
+        return OAuth20AccessTokenAtHashGenerator
+            .builder()
             .algorithm(alg)
             .registeredService(registeredService)
             .encodedAccessToken(encodedAccessToken)

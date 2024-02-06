@@ -4,15 +4,12 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.ticket.catalog.CasTicketCatalogConfigurationValuesProvider;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
-
 import java.util.function.Function;
 
 /**
@@ -23,12 +20,12 @@ import java.util.function.Function;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "mongo")
-@AutoConfiguration
-public class MongoDbTicketRegistryTicketCatalogConfiguration {
+@Configuration(value = "MongoDbTicketRegistryTicketCatalogConfiguration", proxyBeanMethods = false)
+class MongoDbTicketRegistryTicketCatalogConfiguration {
 
     @Configuration(value = "MongoDbTicketRegistryTicketCatalogProviderConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class MongoDbTicketRegistryTicketCatalogProviderConfiguration {
+    static class MongoDbTicketRegistryTicketCatalogProviderConfiguration {
         @ConditionalOnMissingBean(name = "mongoDbTicketCatalogConfigurationValuesProvider")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
