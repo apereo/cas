@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow.actions;
 
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.DelegatedAuthenticationCandidateProfile;
 import org.apereo.cas.authentication.principal.DelegatedClientAuthenticationCredentialResolver;
@@ -134,6 +135,9 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
                     throw client.processLogout(callContext, clientCredential.get().getCredentials());
                 }
                 return finalizeDelegatedClientAuthentication(context, clientCredential.get());
+            }
+            else if(StringUtils.isNotBlank(clientName)) {
+                throw new AuthenticationException();
             }
         } catch (final HttpAction e) {
             FunctionUtils.doIf(LOGGER.isDebugEnabled(),
