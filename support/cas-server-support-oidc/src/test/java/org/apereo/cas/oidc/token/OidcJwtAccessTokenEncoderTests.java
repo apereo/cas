@@ -37,7 +37,7 @@ class OidcJwtAccessTokenEncoderTests extends AbstractOidcTests {
     private EncodableCipher<String, String> getAccessTokenEncodingCipher(final OAuth20AccessToken accessToken,
                                                                          final RegisteredService registeredService) {
         return OAuth20JwtAccessTokenEncoder.toEncodableCipher(oidcAccessTokenJwtBuilder,
-            registeredService, accessToken, accessToken.getService(), casProperties);
+            registeredService, accessToken, accessToken.getService(), casProperties, false);
     }
 
     private DecodableCipher<String, String> getAccessTokenDecodingCipher(final RegisteredService registeredService) {

@@ -357,24 +357,63 @@ public abstract class AbstractOAuth20Tests {
         };
     }
 
-    protected static OAuth20AccessToken getAccessToken() {
+    protected static OAuth20RefreshToken getRefreshToken(final String serviceId, final String clientId) {
+        val tgt = new MockTicketGrantingTicket(clientId);
+        val refreshToken = mock(OAuth20RefreshToken.class);
+        val service = RegisteredServiceTestUtils.getService(serviceId);
+        when(refreshToken.getService()).thenReturn(service);
+        service.getAttributes().put(OAuth20Constants.CLIENT_ID, List.of(clientId));
+        when(refreshToken.getCreationTime()).thenReturn(ZonedDateTime.now(Clock.systemUTC()));
+        val ticketId = OAuth20RefreshToken.PREFIX + "-%s".formatted(UUID.randomUUID().toString());
+        when(refreshToken.getId()).thenReturn(ticketId);
+        when(refreshToken.getTicketGrantingTicket()).thenReturn(tgt);
+        when(refreshToken.getAuthentication()).thenReturn(tgt.getAuthentication());
+        when(refreshToken.getClientId()).thenReturn(clientId);
+        when(refreshToken.getExpirationPolicy()).thenReturn(NeverExpiresExpirationPolicy.INSTANCE);
+        when(refreshToken.toString()).thenReturn(ticketId);
+        return refreshToken;
+    }
+
+    protected static OAuth20RefreshToken getRefreshToken() {
+        return getRefreshToken(RegisteredServiceTestUtils.CONST_TEST_URL, UUID.randomUUID().toString());
+    }
+
+    protected static OAuth20AccessToken getAccessToken(final String id, final String serviceId, final String clientId) {
         val tgt = new MockTicketGrantingTicket("casuser");
-        val service = RegisteredServiceTestUtils.getService();
-        val clientId = UUID.randomUUID().toString();
+        val service = RegisteredServiceTestUtils.getService(serviceId);
+        service.getAttributes().put(OAuth20Constants.CLIENT_ID, List.of(clientId));
         val accessToken = mock(OAuth20AccessToken.class);
-        when(accessToken.getId()).thenReturn(OAuth20AccessToken.PREFIX + "-123456");
+        val ticketId = OAuth20AccessToken.PREFIX + "-%s".formatted(id);
+        when(accessToken.getId()).thenReturn(ticketId);
         when(accessToken.getTicketGrantingTicket()).thenReturn(tgt);
         when(accessToken.getAuthentication()).thenReturn(tgt.getAuthentication());
         when(accessToken.getService()).thenReturn(service);
         when(accessToken.getClientId()).thenReturn(clientId);
         when(accessToken.getExpirationPolicy()).thenReturn(NeverExpiresExpirationPolicy.INSTANCE);
         when(accessToken.getCreationTime()).thenReturn(ZonedDateTime.now(Clock.systemUTC()));
+        when(accessToken.toString()).thenReturn(ticketId);
         return accessToken;
     }
 
-    protected static OAuthRegisteredService getRegisteredService(final OAuth20GrantTypes... grantTypes) {
+    protected static OAuth20AccessToken getAccessToken(final String serviceId, final String clientId) {
+        return getAccessToken("123456", serviceId, clientId);
+    }
+
+    protected static OAuth20AccessToken getAccessToken(final String serviceId) {
+        return getAccessToken(serviceId, UUID.randomUUID().toString());
+    }
+
+    protected static OAuth20AccessToken getAccessToken() {
+        return getAccessToken(RegisteredServiceTestUtils.CONST_TEST_URL, UUID.randomUUID().toString());
+    }
+
+    protected static OAuthRegisteredService getRegisteredService(final String clientId, final OAuth20GrantTypes... grantTypes) {
         return getRegisteredService("https://oauth-%s.example.org".formatted(RandomUtils.randomAlphabetic(6)),
-            UUID.randomUUID().toString(), UUID.randomUUID().toString(), Set.of(grantTypes));
+            clientId, UUID.randomUUID().toString(), Set.of(grantTypes));
+    }
+
+    protected static OAuthRegisteredService getRegisteredService(final OAuth20GrantTypes... grantTypes) {
+        return getRegisteredService(UUID.randomUUID().toString(), grantTypes);
     }
 
     protected static OAuthRegisteredService getRegisteredService(final String clientId, final String secret) {
@@ -448,6 +487,14 @@ public abstract class AbstractOAuth20Tests {
         return registeredService;
     }
 
+    protected OAuthRegisteredService addRegisteredService(final Set<OAuth20GrantTypes> grantTypes,
+                                                          final String clientId,
+                                                          final String redirectUri) {
+        val registeredService = getRegisteredService(redirectUri, clientId, UUID.randomUUID().toString(), grantTypes);
+        servicesManager.save(registeredService);
+        return registeredService;
+    }
+
     protected OAuthRegisteredService addRegisteredService(final String redirectUri, final String clientSecret) {
         val registeredService = getRegisteredService(redirectUri, clientSecret, EnumSet.allOf(OAuth20GrantTypes.class));
         registeredService.setGenerateRefreshToken(true);
@@ -461,11 +508,6 @@ public abstract class AbstractOAuth20Tests {
 
     protected OAuthRegisteredService addRegisteredService() {
         return addRegisteredService(false, EnumSet.noneOf(OAuth20GrantTypes.class));
-    }
-
-    protected void clearAllServices() {
-        servicesManager.deleteAll();
-        servicesManager.load();
     }
 
     protected Pair<String, String> assertClientOK(final OAuthRegisteredService service,

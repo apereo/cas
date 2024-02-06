@@ -59,6 +59,7 @@ import org.apereo.cas.support.oauth.validator.token.OAuth20DeviceCodeResponseTyp
 import org.apereo.cas.support.oauth.validator.token.OAuth20PasswordGrantTypeTokenRequestValidator;
 import org.apereo.cas.support.oauth.validator.token.OAuth20RefreshTokenGrantTypeTokenRequestValidator;
 import org.apereo.cas.support.oauth.validator.token.OAuth20RevocationRequestValidator;
+import org.apereo.cas.support.oauth.validator.token.OAuth20TokenExchangeGrantTypeTokenRequestValidator;
 import org.apereo.cas.support.oauth.validator.token.OAuth20TokenRequestValidator;
 import org.apereo.cas.support.oauth.web.DefaultOAuth20RequestParameterResolver;
 import org.apereo.cas.support.oauth.web.OAuth20CasCallbackUrlResolver;
@@ -81,6 +82,7 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGran
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenPasswordGrantRequestExtractor;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtractor;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRefreshTokenGrantRequestExtractor;
+import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenTokenExchangeGrantRequestExtractor;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20DefaultAccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenCipherExecutor;
@@ -586,6 +588,13 @@ class CasOAuth20Configuration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public AccessTokenGrantRequestExtractor accessTokenTokenExchangeGrantRequestExtractor(
+            @Qualifier("oauth20ConfigurationContext") final OAuth20ConfigurationContext context) {
+            return new AccessTokenTokenExchangeGrantRequestExtractor(context);
+        }
+        
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AccessTokenGrantRequestExtractor accessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtractor(
             @Qualifier("oauth20ConfigurationContext") final OAuth20ConfigurationContext context) {
             return new AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtractor(context);
@@ -940,11 +949,28 @@ class CasOAuth20Configuration {
         }
 
         @Bean
+        @ConditionalOnMissingBean(name = "oauthTokenExchangeGrantTypeTokenRequestValidator")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public OAuth20TokenRequestValidator oauthTokenExchangeGrantTypeTokenRequestValidator(
+            @Qualifier("oauth20ConfigurationContext")
+            final OAuth20ConfigurationContext oauth20ConfigurationContext) {
+            val grantTypesSupported = oauth20ConfigurationContext.getCasProperties()
+                .getAuthn().getOidc().getDiscovery().getGrantTypesSupported();
+            return BeanSupplier.of(OAuth20TokenRequestValidator.class)
+                .when(grantTypesSupported.contains(OAuth20GrantTypes.TOKEN_EXCHANGE.getType()))
+                .supply(() -> new OAuth20TokenExchangeGrantTypeTokenRequestValidator(oauth20ConfigurationContext))
+                .otherwiseProxy()
+                .get();
+        }
+        
+        @Bean
         @ConditionalOnMissingBean(name = "oauthPasswordGrantTypeTokenRequestValidator")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20TokenRequestValidator oauthPasswordGrantTypeTokenRequestValidator(
-            @Qualifier("oauth20ConfigurationContext") final OAuth20ConfigurationContext oauth20ConfigurationContext) {
-            val grantTypesSupported = oauth20ConfigurationContext.getCasProperties().getAuthn().getOidc().getDiscovery().getGrantTypesSupported();
+            @Qualifier("oauth20ConfigurationContext")
+            final OAuth20ConfigurationContext oauth20ConfigurationContext) {
+            val grantTypesSupported = oauth20ConfigurationContext.getCasProperties()
+                .getAuthn().getOidc().getDiscovery().getGrantTypesSupported();
             return BeanSupplier.of(OAuth20TokenRequestValidator.class)
                 .when(grantTypesSupported.contains(OAuth20GrantTypes.PASSWORD.getType()))
                 .supply(() -> new OAuth20PasswordGrantTypeTokenRequestValidator(oauth20ConfigurationContext))

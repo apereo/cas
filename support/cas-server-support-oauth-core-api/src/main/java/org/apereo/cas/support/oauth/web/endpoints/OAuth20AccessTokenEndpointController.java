@@ -165,6 +165,9 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
             .generatedToken(result)
             .grantType(result.getGrantType().orElse(OAuth20GrantTypes.NONE))
             .userProfile(tokenRequestContext.getUserProfile())
+            .requestedTokenType(tokenRequestContext.getRequestedTokenType())
+            .tokenExchangeAudience(tokenRequestContext.getTokenExchangeAudience())
+            .tokenExchangeResource(tokenRequestContext.getTokenExchangeResource())
             .build();
         val generatedTokenResult = getConfigurationContext().getAccessTokenResponseGenerator().generate(tokenResult);
 

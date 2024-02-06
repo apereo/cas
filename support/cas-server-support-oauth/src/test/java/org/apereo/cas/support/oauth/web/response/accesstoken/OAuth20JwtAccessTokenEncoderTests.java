@@ -139,7 +139,8 @@ class OAuth20JwtAccessTokenEncoderTests extends AbstractOAuth20Tests {
     private EncodableCipher<String, String> getAccessTokenEncodingCipher(final OAuth20AccessToken accessToken,
                                                                          final OAuth20JwtBuilder builder,
                                                                          final RegisteredService registeredService) {
-        return OAuth20JwtAccessTokenEncoder.toEncodableCipher(builder, registeredService, accessToken, accessToken.getService(), casProperties);
+        return OAuth20JwtAccessTokenEncoder.toEncodableCipher(builder, registeredService,
+            accessToken, accessToken.getService(), casProperties, false);
     }
 
     private static DecodableCipher<String, String> getAccessTokenDecodingCipher(final OAuth20JwtBuilder builder) {

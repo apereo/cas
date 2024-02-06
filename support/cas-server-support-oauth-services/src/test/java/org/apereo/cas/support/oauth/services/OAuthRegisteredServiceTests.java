@@ -7,18 +7,16 @@ import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingSt
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.io.WatcherService;
-
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.core.io.ClassPathResource;
-
 import java.io.File;
 import java.util.ArrayList;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -31,9 +29,10 @@ class OAuthRegisteredServiceTests {
 
     private static final ClassPathResource RESOURCE = new ClassPathResource("services");
 
-    private final ServiceRegistry dao;
+    private ServiceRegistry dao;
 
-    OAuthRegisteredServiceTests() throws Exception {
+    @BeforeEach
+    void setup() throws Exception {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         this.dao = new JsonServiceRegistry(RESOURCE, WatcherService.noOp(),
@@ -78,6 +77,7 @@ class OAuthRegisteredServiceTests {
         serviceWritten.setBypassApprovalPrompt(true);
         serviceWritten.setSupportedGrantTypes(CollectionUtils.wrapHashSet("something"));
         serviceWritten.setSupportedResponseTypes(CollectionUtils.wrapHashSet("something"));
+        serviceWritten.setTokenExchangePolicy(new DefaultRegisteredServiceOAuthTokenExchangePolicy());
 
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();

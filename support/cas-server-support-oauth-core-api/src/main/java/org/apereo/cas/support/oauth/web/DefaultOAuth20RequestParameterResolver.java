@@ -119,7 +119,7 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
         return FunctionUtils.doUnchecked(() -> resolveJwtRequestParameter(jwtRequest, service, name, clazz));
     }
     @Override
-    public Map<String, Object> resolveRequestParameters(final Collection<String> attributes,
+    public Map<String, Set<String>> resolveRequestParameters(final Collection<String> attributes,
                                                         final WebContext context) {
         return attributes
             .stream()
@@ -132,6 +132,7 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
             })
             .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
     }
+    
     @Override
     public Optional<String> resolveRequestParameter(final WebContext context,
                                                     final String name) {
