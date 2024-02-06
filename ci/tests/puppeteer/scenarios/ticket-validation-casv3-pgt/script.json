@@ -1,5 +1,8 @@
 {
   "dependencies": "core",
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
@@ -12,5 +15,6 @@
     "--cas.ticket.st.time-to-kill-in-seconds=60",
 
     "--cas.authn.accept.name=STATIC"
-  ]
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }

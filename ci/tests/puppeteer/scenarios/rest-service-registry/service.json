@@ -1,7 +1,7 @@
 [ "java.util.ArrayList", [
   {
     "@class" : "org.apereo.cas.services.CasRegisteredService",
-    "serviceId" : "^https://github.com/apereo/cas",
+    "serviceId": "^https://localhost:9859/anything/cas.*",
     "name" : "CAS-GitHub",
     "id" : 1,
     "contacts": [
@@ -18,7 +18,7 @@
   },
   {
     "@class" : "org.apereo.cas.services.CasRegisteredService",
-    "serviceId" : "^https://apereo.github.io",
+    "serviceId": "^https://localhost:9859/anything/sample.*",
     "name" : "CAS-Blog",
     "id" : 2,
     "accessStrategy" : {
