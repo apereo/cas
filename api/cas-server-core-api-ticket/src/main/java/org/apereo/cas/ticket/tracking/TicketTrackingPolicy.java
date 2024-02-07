@@ -54,11 +54,23 @@ public interface TicketTrackingPolicy {
     }
 
     /**
+     * Count tickets.
+     *
+     * @param ticketGrantingTicket the ticket granting ticket
+     * @param ticketId             the ticket id
+     * @return the long
+     */
+    default long countTickets(final Ticket ticketGrantingTicket, final String ticketId) {
+        return 0;
+    }
+
+    /**
      * No op ticket tracking policy.
      *
      * @return the ticket tracking policy
      */
     static TicketTrackingPolicy noOp() {
-        return new TicketTrackingPolicy() {};
+        return new TicketTrackingPolicy() {
+        };
     }
 }
