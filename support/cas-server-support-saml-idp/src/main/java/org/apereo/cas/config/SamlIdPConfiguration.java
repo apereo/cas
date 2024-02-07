@@ -56,11 +56,9 @@ import org.apereo.cas.ticket.query.SamlAttributeQueryTicketExpirationPolicyBuild
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
-
 import lombok.val;
 import org.apache.velocity.app.VelocityEngine;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
@@ -90,7 +88,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.io.ClassPathResource;
-
 import java.security.Security;
 import java.time.Duration;
 
@@ -592,12 +589,7 @@ class SamlIdPConfiguration {
         @ConditionalOnMissingBean(name = "samlIdPAttributeDefinitionStoreConfigurer")
         public AttributeDefinitionStoreConfigurer samlIdPAttributeDefinitionStoreConfigurer(
             final CasConfigurationProperties casProperties) {
-            return store -> FunctionUtils.doUnchecked(__ -> {
-                try (val samlStore = new DefaultAttributeDefinitionStore(new ClassPathResource("samlidp-attribute-definitions.json"))) {
-                    samlStore.setScope(casProperties.getServer().getScope());
-                    store.importStore(samlStore);
-                }
-            });
+            return () -> DefaultAttributeDefinitionStore.from(new ClassPathResource("samlidp-attribute-definitions.json"));
         }
     }
 }

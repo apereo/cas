@@ -124,8 +124,7 @@ class CasCoreAuthenticationPrincipalConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PrincipalElectionStrategyConfigurer defaultPrincipalElectionStrategyConfigurer(
-            @Qualifier(PrincipalElectionStrategyConflictResolver.BEAN_NAME)
-            final PrincipalElectionStrategyConflictResolver defaultPrincipalElectionStrategyConflictResolver,
+            @Qualifier(PrincipalElectionStrategyConflictResolver.BEAN_NAME) final PrincipalElectionStrategyConflictResolver defaultPrincipalElectionStrategyConflictResolver,
             @Qualifier("principalElectionAttributeMerger") final IAttributeMerger attributeMerger,
             final CasConfigurationProperties casProperties,
             @Qualifier(PrincipalFactory.BEAN_NAME) final PrincipalFactory principalFactory) {
@@ -172,15 +171,18 @@ class CasCoreAuthenticationPrincipalConfiguration {
         public AttributeDefinitionStore attributeDefinitionStore(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) throws Exception {
-            val resource = casProperties.getAuthn().getAttributeRepository().getAttributeDefinitionStore().getJson().getLocation();
-            val store = new DefaultAttributeDefinitionStore(resource);
-            store.setScope(casProperties.getServer().getScope());
             val builders = applicationContext.getBeansOfType(AttributeDefinitionStoreConfigurer.class).values();
+            val store = new DefaultAttributeDefinitionStore();
+            store.setScope(casProperties.getServer().getScope());
             builders
                 .stream()
                 .filter(BeanSupplier::isNotProxy)
                 .sorted(AnnotationAwareOrderComparator.INSTANCE)
-                .forEach(cfg -> cfg.configure(store));
+                .map(AttributeDefinitionStoreConfigurer::load)
+                .forEach(store::registerAttributeDefinitions);
+            val resource = casProperties.getAuthn().getAttributeRepository().getAttributeDefinitionStore().getJson().getLocation();
+            store.importStore(resource);
+            store.watchStore(resource);
             return store;
         }
     }

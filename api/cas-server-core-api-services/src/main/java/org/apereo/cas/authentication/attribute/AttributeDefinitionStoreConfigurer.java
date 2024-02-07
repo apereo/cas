@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.attribute;
 
+import java.util.Map;
+
 /**
  * This is {@link AttributeDefinitionStoreConfigurer}.
  *
@@ -11,7 +13,7 @@ public interface AttributeDefinitionStoreConfigurer {
     /**
      * Configure.
      *
-     * @param store the store
+     * @return the list
      */
-    void configure(AttributeDefinitionStore store);
+    Map<String, AttributeDefinition> load();
 }
