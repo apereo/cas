@@ -10,9 +10,11 @@ import org.apereo.cas.logout.DefaultLogoutExecutionPlan;
 import org.apereo.cas.logout.DefaultLogoutManager;
 import org.apereo.cas.logout.DefaultLogoutRedirectionStrategy;
 import org.apereo.cas.logout.DefaultSingleLogoutMessageCreator;
+import org.apereo.cas.logout.DescendantTicketsLogoutPostProcessor;
 import org.apereo.cas.logout.LogoutExecutionPlan;
 import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
 import org.apereo.cas.logout.LogoutManager;
+import org.apereo.cas.logout.LogoutPostProcessor;
 import org.apereo.cas.logout.LogoutRedirectionStrategy;
 import org.apereo.cas.logout.LogoutWebApplicationServiceFactory;
 import org.apereo.cas.logout.slo.ChainingSingleLogoutServiceLogoutUrlBuilder;
@@ -26,8 +28,10 @@ import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilderConfigurer;
 import org.apereo.cas.logout.slo.SingleLogoutServiceMessageHandler;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.UrlValidator;
@@ -35,7 +39,6 @@ import org.apereo.cas.web.support.ArgumentExtractor;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
@@ -178,6 +181,8 @@ public class CasCoreLogoutAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "casCoreLogoutExecutionPlanConfigurer")
         public LogoutExecutionPlanConfigurer casCoreLogoutExecutionPlanConfigurer(
+            @Qualifier("descendantTicketsLogoutPostProcessor")
+            final LogoutPostProcessor descendantTicketsLogoutPostProcessor,
             final CasConfigurationProperties casProperties,
             @Qualifier("defaultSingleLogoutServiceMessageHandler")
             final SingleLogoutServiceMessageHandler defaultSingleLogoutServiceMessageHandler,
@@ -188,15 +193,26 @@ public class CasCoreLogoutAutoConfiguration {
             return plan -> {
                 plan.registerSingleLogoutServiceMessageHandler(defaultSingleLogoutServiceMessageHandler);
                 plan.registerLogoutRedirectionStrategy(defaultLogoutRedirectionStrategy);
-
-                if (casProperties.getTicket().isTrackDescendantTickets()) {
-                    LOGGER.debug("CAS is configured to track and remove descendant tickets of the ticket-granting tickets");
-                    plan.registerLogoutPostProcessor(tgt -> tgt.getDescendantTickets().forEach(Unchecked.consumer(t -> {
-                        LOGGER.debug("Deleting ticket [{}] from the registry as a descendant of [{}]", t, tgt.getId());
-                        ticketRegistry.deleteTicket(t);
-                    })));
-                }
+                BeanSupplier.ifNotProxy(descendantTicketsLogoutPostProcessor, plan::registerLogoutPostProcessor);
             };
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "descendantTicketsLogoutPostProcessor")
+        public LogoutPostProcessor descendantTicketsLogoutPostProcessor(
+            @Qualifier(TicketTrackingPolicy.BEAN_NAME_DESCENDANT_TICKET_TRACKING)
+            final TicketTrackingPolicy descendantTicketsTrackingPolicy,
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry) {
+            return BeanSupplier.of(LogoutPostProcessor.class)
+                .when(BeanCondition.on("cas.ticket.track-descendant-tickets").isTrue()
+                .given(applicationContext.getEnvironment()))
+                .supply(() -> new DescendantTicketsLogoutPostProcessor(ticketRegistry, descendantTicketsTrackingPolicy))
+                .otherwiseProxy()
+                .get();
         }
     }
 
@@ -208,9 +224,9 @@ public class CasCoreLogoutAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public LogoutExecutionPlan logoutExecutionPlan(final List<LogoutExecutionPlanConfigurer> configurers) {
             val plan = new DefaultLogoutExecutionPlan();
-            configurers.forEach(c -> {
-                LOGGER.trace("Configuring logout execution plan [{}]", c.getName());
-                c.configureLogoutExecutionPlan(plan);
+            configurers.forEach(cfg -> {
+                LOGGER.trace("Configuring logout execution plan [{}]", cfg.getName());
+                cfg.configureLogoutExecutionPlan(plan);
             });
             return plan;
         }

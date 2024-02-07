@@ -8,7 +8,7 @@
     "--cas.server.prefix=${cas.server.name}/cas",
 
     "--logging.level.org.apereo.cas=info",
-
+    "--cas.audit.slf4j.use-single-line=true",
     "--cas.audit.engine.enabled=true",
 
     "--cas.authn.attribute-repository.stub.attributes.common-name=casuser",
@@ -28,7 +28,9 @@
     "--cas.authn.oidc.core.claims-map.family_name=lastname",
 
     "--cas.authn.oauth.core.user-profile-view-type=FLAT",
-    
+
+    "--cas.ticket.track-descendant-tickets=true",
+
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
   ],

@@ -56,11 +56,7 @@ class UniquePrincipalAuthenticationPolicyTests {
     @Autowired
     @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry ticketRegistry;
-
-    @Autowired
-    @Qualifier(SingleSignOnParticipationStrategy.BEAN_NAME)
-    private SingleSignOnParticipationStrategy singleSignOnParticipationStrategy;
-
+    
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 

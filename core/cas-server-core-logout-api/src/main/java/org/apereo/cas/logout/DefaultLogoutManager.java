@@ -58,9 +58,9 @@ public class DefaultLogoutManager implements LogoutManager {
             return new ArrayList<>(0);
         }
         val logoutRequests = performLogoutForTicket(context);
-        logoutExecutionPlan.getLogoutPostProcessors().forEach(h -> {
-            LOGGER.debug("Invoking logout handler [{}] to process ticket [{}]", h.getClass().getSimpleName(), ticket.getId());
-            h.handle(ticket);
+        logoutExecutionPlan.getLogoutPostProcessors().forEach(postProcessor -> {
+            LOGGER.debug("Invoking logout handler [{}] to process ticket [{}]", postProcessor.getClass().getSimpleName(), ticket.getId());
+            postProcessor.handle(ticket);
         });
         LOGGER.info("[{}] logout requests were processed", logoutRequests.size());
         return logoutRequests;

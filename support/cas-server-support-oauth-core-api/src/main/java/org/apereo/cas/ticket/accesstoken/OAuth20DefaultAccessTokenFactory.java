@@ -7,6 +7,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.services.RegisteredServiceOAuthAccessTokenExpirationPolicy;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
@@ -15,6 +16,7 @@ import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Default OAuth access token factory.
@@ -62,6 +65,13 @@ public class OAuth20DefaultAccessTokenFactory implements OAuth20AccessTokenFacto
                                      final OAuth20ResponseTypes responseType,
                                      final OAuth20GrantTypes grantType) throws Throwable {
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(jwtBuilder.getServicesManager(), clientId);
+        val limitReached = Optional.ofNullable(registeredService)
+            .map(OAuthRegisteredService::getAccessTokenExpirationPolicy)
+            .map(RegisteredServiceOAuthAccessTokenExpirationPolicy::getMaxActiveTokens)
+            .filter(count -> count > 0 && ticketGrantingTicket != null)
+            .stream()
+            .anyMatch(count -> count <= descendantTicketsTrackingPolicy.countTicketsFor(ticketGrantingTicket, service));
+        FunctionUtils.throwIf(limitReached, () -> new IllegalArgumentException("Access token limit for %s is reached".formatted(service.getId())));
         val expirationPolicyToUse = determineExpirationPolicyForService(registeredService);
         val accessTokenId = generateAccessTokenId(service, authentication);
         val accessToken = new OAuth20DefaultAccessToken(accessTokenId, service, authentication,
