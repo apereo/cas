@@ -1,9 +1,11 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.EncodedTicket;
 import org.apereo.cas.ticket.InvalidTicketException;
+import org.apereo.cas.ticket.ServiceAwareTicket;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
@@ -211,6 +213,15 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
             .map(Object::toString)
             .map(this::digestIdentifier)
             .collect(Collectors.toList());
+    }
+
+    @Override
+    public long countTicketsFor(final Service service) {
+        return stream()
+            .map(this::decodeTicket)
+            .filter(ticket -> !ticket.isExpired())
+            .filter(ticket -> ticket instanceof final ServiceAwareTicket sat && sat.getService().equals(service))
+            .count();
     }
 
     @Override

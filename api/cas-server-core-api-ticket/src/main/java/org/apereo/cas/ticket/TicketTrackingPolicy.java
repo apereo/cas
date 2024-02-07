@@ -20,5 +20,6 @@ public interface TicketTrackingPolicy {
      * @param ownerTicket the owner ticket
      * @param ticket      the tracked ticket
      */
-    default void trackTicket(final TicketGrantingTicket ownerTicket, final Ticket ticket) {}
+    default void trackTicket(final TicketGrantingTicket ownerTicket, final Ticket ticket) {
+    }
 }
