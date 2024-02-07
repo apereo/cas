@@ -6,7 +6,7 @@ const assert = require("assert");
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     const url = "https://localhost:8443/cas/oidc/oidcAuthorize?response_type=code"
-        + "&client_id=client&scope=openid%20profile%20MyCustomScope&"
+        + `&client_id=client&scope=${encodeURIComponent("openid profile MyCustomScope")}&`
         + "redirect_uri=https://apereo.github.io";
 
     await cas.goto(page, url);
