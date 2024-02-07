@@ -6,9 +6,7 @@ const jose = require("jose");
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
-    const url = "https://localhost:8443/cas/oidc/authorize?response_type=code"
-        + "&client_id=client&scope=openid%20profile&"
-        + "redirect_uri=https://apereo.github.io";
+    const url = "https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=client&scope=openid profile&redirect_uri=https://apereo.github.io";
 
     await cas.goto(page, url);
     await page.waitForTimeout(1000);

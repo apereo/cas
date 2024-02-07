@@ -5,7 +5,7 @@ const assert = require("assert");
 async function testService(page, clientId, oidc = true) {
     await cas.log(`Testing application with client id ${clientId}`);
     const redirectUrl = "https://localhost:9859/anything/cas";
-    const url = `https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=${clientId}&scope=openid%20profile&redirect_uri=${redirectUrl}`;
+    const url = `https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=${clientId}&scope=${encodeURIComponent("openid profile")}&redirect_uri=${redirectUrl}`;
     await cas.goto(page, url);
     await page.waitForTimeout(1000);
     await cas.loginWith(page);

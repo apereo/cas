@@ -8,7 +8,7 @@ async function verifyAccessTokenIsLimited(context) {
     const redirectUri = "http://localhost:9889/anything/limitedaccesstoken";
     await cas.log(`Trying service ${redirectUri} with limited access tokens`);
     const url = "https://localhost:8443/cas/oidc/oidcAuthorize?response_type=code"
-        + "&client_id=client3&scope=openid%20profile&"
+        + `&client_id=client3&scope=${encodeURIComponent("openid profile")}&`
         + `redirect_uri=${redirectUri}&nonce=3d3a7457f9ad3`;
     await cas.goto(page, url);
     await page.waitForTimeout(1000);
@@ -45,8 +45,7 @@ async function verifyAccessTokenIsNeverReceived(context) {
     const page = await cas.newPage(context);
     const redirectUri = "http://localhost:9889/anything/noaccesstoken";
     await cas.log(`Trying service ${redirectUri} that would never receive an access token`);
-    const url = "https://localhost:8443/cas/oidc/oidcAuthorize?response_type=code"
-        + "&client_id=client2&scope=openid%20profile&"
+    const url = `https://localhost:8443/cas/oidc/oidcAuthorize?response_type=code&client_id=client2&scope=${encodeURIComponent("openid profile")}&`
         + `redirect_uri=${redirectUri}&nonce=3d3a7457f9ad3`;
     await cas.goto(page, url);
     await page.waitForTimeout(1000);
@@ -78,7 +77,7 @@ async function verifyAccessTokenAndProfile(context) {
     const page = await cas.newPage(context);
     const redirectUri = "http://localhost:9889/anything/app1";
     const url = "https://localhost:8443/cas/oidc/oidcAuthorize?response_type=code"
-        + "&client_id=client&scope=openid%20profile%20MyCustomScope&"
+        + `&client_id=client&scope=${encodeURIComponent("openid profile MyCustomScope")}&`
         + `redirect_uri=${redirectUri}&nonce=3d3a7457f9ad3&`
         + "state=1735fd6c43c14&claims=%7B%22userinfo%22%3A%20%7B%20%22name%22%3A%20%7B%22essential"
         + "%22%3A%20true%7D%2C%22phone_number%22%3A%20%7B%22essential%22%3A%20true%7D%7D%7D";
