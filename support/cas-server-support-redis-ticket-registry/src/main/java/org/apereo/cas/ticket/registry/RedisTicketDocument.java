@@ -55,6 +55,11 @@ public class RedisTicketDocument implements Serializable {
     public static final String FIELD_NAME_PRINCIPAL = "principal";
 
     /**
+     * Field name to hold the service/application URL, if any.
+     */
+    public static final String FIELD_NAME_SERVICE = "service";
+
+    /**
      * Field name to hold the principal/authentication attribute names.
      */
     public static final String FIELD_NAME_ATTRIBUTES = "attributes";
@@ -79,6 +84,9 @@ public class RedisTicketDocument implements Serializable {
     private String prefix;
 
     @JsonProperty
+    private String service;
+
+    @JsonProperty
     private String attributes;
 
     /**
@@ -95,6 +103,7 @@ public class RedisTicketDocument implements Serializable {
             .prefix(document.get(FIELD_NAME_PREFIX))
             .principal(document.get(FIELD_NAME_PRINCIPAL))
             .attributes(document.get(FIELD_NAME_ATTRIBUTES))
+            .service(document.get(FIELD_NAME_SERVICE))
             .build();
     }
 }
