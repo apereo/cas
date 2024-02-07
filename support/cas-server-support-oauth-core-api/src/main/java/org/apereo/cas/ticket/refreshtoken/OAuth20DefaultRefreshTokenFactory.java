@@ -2,9 +2,12 @@ package org.apereo.cas.ticket.refreshtoken;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.services.RegisteredServiceOAuthRefreshTokenExpirationPolicy;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
@@ -12,11 +15,13 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
+import org.apereo.cas.util.function.FunctionUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Default OAuth refresh token factory.
@@ -53,17 +58,26 @@ public class OAuth20DefaultRefreshTokenFactory implements OAuth20RefreshTokenFac
                                       final Map<String, Map<String, Object>> requestClaims,
                                       final OAuth20ResponseTypes responseType,
                                       final OAuth20GrantTypes grantType) throws Throwable {
+        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId);
+        
+        val limitReached = Optional.ofNullable(registeredService)
+            .map(OAuthRegisteredService::getRefreshTokenExpirationPolicy)
+            .map(RegisteredServiceOAuthRefreshTokenExpirationPolicy::getMaxActiveTokens)
+            .filter(count -> count > 0 && ticketGrantingTicket != null)
+            .stream()
+            .anyMatch(count -> count <= descendantTicketsTrackingPolicy.countTicketsFor(ticketGrantingTicket, service));
+        FunctionUtils.throwIf(limitReached, () -> new IllegalArgumentException("Access token limit for %s is reached".formatted(service.getId())));
+        
         val codeId = refreshTokenIdGenerator.getNewTicketId(OAuth20RefreshToken.PREFIX);
-        val expirationPolicyToUse = determineExpirationPolicyForService(clientId);
-        val rt = new OAuth20DefaultRefreshToken(codeId, service, authentication,
+        val expirationPolicyToUse = determineExpirationPolicyForService(registeredService);
+        val refreshToken = new OAuth20DefaultRefreshToken(codeId, service, authentication,
             expirationPolicyToUse, ticketGrantingTicket,
             scopes, clientId, accessToken, requestClaims, responseType, grantType);
-        descendantTicketsTrackingPolicy.trackTicket(ticketGrantingTicket, rt);
-        return rt;
+        descendantTicketsTrackingPolicy.trackTicket(ticketGrantingTicket, refreshToken);
+        return refreshToken;
     }
 
-    private ExpirationPolicy determineExpirationPolicyForService(final String clientId) {
-        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId);
+    protected ExpirationPolicy determineExpirationPolicyForService(final RegisteredService registeredService) {
         return expirationPolicyBuilder.buildTicketExpirationPolicyFor(registeredService);
     }
 

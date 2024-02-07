@@ -1,0 +1,24 @@
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "client3",
+  "clientSecret": "secret3",
+  "serviceId": "^http://localhost:9889/anything/limitedaccesstoken.*",
+  "name": "Sample",
+  "id": 3,
+  "bypassApprovalPrompt": true,
+  "generateRefreshToken": false,
+  "description": "This service will receive a limited number of access tokens",
+  "evaluationOrder": 10000,
+  "scopes" : [ "java.util.HashSet", [ "openid", "profile" ] ],
+  "supportedGrantTypes": [ "java.util.HashSet", [ "authorization_code" ] ],
+  "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ],
+  "codeExpirationPolicy": {
+    "@class": "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthCodeExpirationPolicy",
+    "numberOfUses": 10,
+    "timeToLive": "PT30S"
+  },
+  "accessTokenExpirationPolicy": {
+    "@class": "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthAccessTokenExpirationPolicy",
+    "maxActiveTokens": 2
+  }
+}

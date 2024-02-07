@@ -99,13 +99,15 @@ You can see the [build scan results here](https://develocity.apereo.org/).
 A number of notable changes are listed here:
 
 - CAS may not generate and track access tokens if the expiration policy of tokens is set to be `0`. This is useful in scenarios where the relying party does only care about ID tokens (in the case of OpenID Connect) and has no need for access tokens.
-- CAS will no longer create and track an access token for `id_token` grant types.
-- CAS will no longer generate an ID token for OpenID connect authentication request that do not specify the `openid` scope.
+- CAS will not create and track an access token for `id_token` grant types.
+- CAS will not generate an ID token for OpenID connect authentication request that do not specify the `openid` scope.
+- CAS will not create access and refresh tokens if the total number of current access/refresh tokens issued for a service exceeds the limit specified in the application's expiration policy. This limit at the moment is exercised for authorization code flows and will eventually cover other grant types.
+- Initial basic support for [OAuth Token Exchange](../authentication/OAuth-ProtocolFlow-TokenExchange.html) protocol is now available.
 
 ## Other Stuff
 
 - Internal cleanup and refactoring efforts to remove duplicate code, when it comes to grouping `@AutoConfiguration` components.
-- 
+- Internal cleanup and refactoring efforts to remove duplicate code for [Puppeteer integration tests](../../developer/Test-Process.html).
 - Proxy ticket validation should now correctly resolve and determine the authenticated principal id.
 - Cleaning of [throttled authentication attempts](../authentication/Configuring-Authentication-Throttling.html) should now take submission expirations dates into account.
 - CAS user interface is now instructed to remove the ["Forgot Your Username?"](../password_management/Password-Management-ForgotUsername.html) feature when the feature is disabled.
@@ -133,6 +135,7 @@ A number of notable changes are listed here:
 - Slack
 - Ldaptive
 - Node
+- Slf4j
 - Amazon SDK
 - Jetty
 - Apache Groovy

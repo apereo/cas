@@ -38,4 +38,6 @@ public class DefaultRegisteredServiceOAuthAccessTokenExpirationPolicy implements
 
     @DurationCapable
     private String timeToKill;
+
+    private long maxActiveTokens;
 }

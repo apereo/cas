@@ -189,6 +189,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
                                                  final Authentication authentication) throws Throwable {
         val clientId = Optional.ofNullable(tokenRequestContext.getRegisteredService())
             .map(OAuthRegisteredService::getClientId).orElse(StringUtils.EMPTY);
+
         return accessTokenFactory.create(tokenRequestContext.getService(),
             authentication, tokenRequestContext.getTicketGrantingTicket(), tokenRequestContext.getScopes(),
             Optional.ofNullable(tokenRequestContext.getToken()).map(Ticket::getId).orElse(null),
@@ -200,8 +201,8 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
 
     private OAuth20AccessToken exchangeTokenForAccessToken(final Service service, final OAuth20AccessToken accessToken,
                                                            final AccessTokenRequestContext tokenRequestContext) throws Throwable {
-        return accessTokenFactory.create(service,
-            accessToken.getAuthentication(), accessToken.getTicketGrantingTicket(), tokenRequestContext.getScopes(),
+        return accessTokenFactory.create(service, accessToken.getAuthentication(),
+            accessToken.getTicketGrantingTicket(), tokenRequestContext.getScopes(),
             accessToken.getId(), accessToken.getClientId(), accessToken.getClaims(),
             tokenRequestContext.getResponseType(), tokenRequestContext.getGrantType());
     }

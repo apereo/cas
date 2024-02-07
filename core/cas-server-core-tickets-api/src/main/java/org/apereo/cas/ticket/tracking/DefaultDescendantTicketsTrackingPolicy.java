@@ -1,7 +1,10 @@
 package org.apereo.cas.ticket.tracking;
 
+import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.ticket.ServiceAwareTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * This is the default tracking policy for descendant tickets.
@@ -10,10 +13,40 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
  * @since 7.0.0
  */
 public class DefaultDescendantTicketsTrackingPolicy implements TicketTrackingPolicy {
+    private static final char DELIMITER = ',';
+
     @Override
-    public void trackTicket(final Ticket ownerTicket, final Ticket ticket) {
+    public String trackTicket(final Ticket ownerTicket, final Ticket ticket) {
         if (ownerTicket instanceof final TicketGrantingTicket tgt) {
-            tgt.getDescendantTickets().add(ticket.getId());
+            var trackedEntry = ticket.getId();
+            if (ticket instanceof final ServiceAwareTicket sat) {
+                trackedEntry += DELIMITER + sat.getService().getId();
+            }
+            tgt.getDescendantTickets().add(trackedEntry);
+            return trackedEntry;
         }
+        return TicketTrackingPolicy.super.trackTicket(ownerTicket, ticket);
+    }
+
+    @Override
+    public String extractTicket(final String entry) {
+        return StringUtils.substringBefore(entry, DELIMITER);
+    }
+
+    protected String extractService(final String entry) {
+        return StringUtils.substringAfter(entry, DELIMITER);
+    }
+
+    @Override
+    public long countTicketsFor(final Ticket ticketGrantingTicket, final Service service) {
+        if (ticketGrantingTicket instanceof final TicketGrantingTicket tgt) {
+            return tgt.getDescendantTickets()
+                .stream()
+                .map(this::extractService)
+                .filter(StringUtils::isNotBlank)
+                .filter(id -> id.equals(service.getId()))
+                .count();
+        }
+        return 0;
     }
 }

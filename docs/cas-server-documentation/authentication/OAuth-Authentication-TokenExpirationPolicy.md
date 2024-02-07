@@ -75,7 +75,8 @@ The expiration policy of access tokens can be defined on a per application basis
   "accessTokenExpirationPolicy": {
     "@class": "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthAccessTokenExpirationPolicy",
     "maxTimeToLive": "PT1000S",
-    "timeToKill": "PT100S"
+    "timeToKill": "PT100S",
+    "maxActiveTokens": 0
   }
 }
 ```
@@ -117,7 +118,8 @@ The expiration policy of refresh tokens can be defined on a per application basi
   "id" : 100,
   "refreshTokenExpirationPolicy": {
     "@class": "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthRefreshTokenExpirationPolicy",
-    "timeToKill": "PT100S"
+    "timeToKill": "PT100S",
+    "maxActiveTokens": 0
   }
 }
 ```
