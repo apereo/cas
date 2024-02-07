@@ -62,18 +62,22 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
 
     public DefaultAttributeDefinitionStore(final Resource resource) throws Exception {
         if (ResourceUtils.doesResourceExist(resource)) {
-            loadAttributeDefinitionsFromInputStream(resource);
-
-            if (ResourceUtils.isFile(resource)) {
-                this.storeWatcherService = new FileWatcherService(resource.getFile(),
-                    Unchecked.consumer(file -> loadAttributeDefinitionsFromInputStream(new FileSystemResource(file))));
-                this.storeWatcherService.start(getClass().getSimpleName());
-            }
+            importStore(resource);
+            watchStore(resource);
         }
     }
 
     public DefaultAttributeDefinitionStore(final AttributeDefinition... definitions) {
         Arrays.stream(definitions).forEach(this::registerAttributeDefinition);
+    }
+
+    /**
+     * Register attribute definitions.
+     *
+     * @param entries the entries
+     */
+    public void registerAttributeDefinitions(final Map<String, AttributeDefinition> entries) {
+        entries.forEach(this::registerAttributeDefinition);
     }
 
     private static String getAttributeDefinitionKey(final String key, final AttributeDefinition definition) {
@@ -243,6 +247,20 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
         return this;
     }
 
+    /**
+     * Import store.
+     *
+     * @param resource the resource
+     */
+    public void importStore(final Resource resource) {
+        try {
+            val map = from(resource);
+            map.forEach(this::registerAttributeDefinition);
+        } finally {
+            LOGGER.debug("Loaded [{}] attribute definition(s).", attributeDefinitions.size());
+        }
+    }
+
     @Override
     public void close() {
         if (this.storeWatcherService != null) {
@@ -264,19 +282,37 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
         }
         return new ArrayList<>(0);
     }
-    
-    private void loadAttributeDefinitionsFromInputStream(final Resource resource) {
+
+    /**
+     * Watch store.
+     *
+     * @param resource the resource
+     * @throws Exception the exception
+     */
+    public void watchStore(final Resource resource) throws Exception {
+        if (ResourceUtils.isFile(resource)) {
+            this.storeWatcherService = new FileWatcherService(resource.getFile(),
+                Unchecked.consumer(file -> importStore(new FileSystemResource(file))));
+            this.storeWatcherService.start(getClass().getSimpleName());
+        }
+    }
+
+    /**
+     * From resource.
+     *
+     * @param resource the resource
+     * @return the map
+     */
+    public static Map<String, AttributeDefinition> from(final Resource resource) {
         try {
             LOGGER.trace("Loading attribute definitions from [{}]", resource);
             val json = new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
             LOGGER.trace("Loaded attribute definitions [{}] from [{}]", json, resource);
-            val map = MAPPER.readValue(JsonValue.readHjson(json).toString(), new TypeReference<Map<String, AttributeDefinition>>() {
+            return MAPPER.readValue(JsonValue.readHjson(json).toString(), new TypeReference<>() {
             });
-            map.forEach(this::registerAttributeDefinition);
         } catch (final Exception e) {
             LoggingUtils.warn(LOGGER, e);
-        } finally {
-            LOGGER.debug("Loaded [{}] attribute definition(s).", attributeDefinitions.size());
         }
+        return Map.of();
     }
 }
