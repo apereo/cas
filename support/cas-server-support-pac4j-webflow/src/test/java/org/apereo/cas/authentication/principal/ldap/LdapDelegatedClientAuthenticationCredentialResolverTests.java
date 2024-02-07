@@ -42,13 +42,13 @@ import static org.junit.jupiter.api.Assertions.*;
     BaseDelegatedAuthenticationTests.SharedTestConfiguration.class
 }, properties = {
     "spring.main.allow-bean-definition-overriding=true",
-    "cas.authn.pac4j.profile-selection.ldap.ldap-url=ldap://localhost:10389",
-    "cas.authn.pac4j.profile-selection.ldap.base-dn=ou=people,dc=example,dc=org",
-    "cas.authn.pac4j.profile-selection.ldap.search-filter=uid={0}",
-    "cas.authn.pac4j.profile-selection.ldap.bind-dn=cn=Directory Manager",
-    "cas.authn.pac4j.profile-selection.ldap.bind-credential=password",
-    "cas.authn.pac4j.profile-selection.ldap.profile-id-attribute=cn",
-    "cas.authn.pac4j.profile-selection.ldap.attributes=sn,givenName,uid,mail,cn"
+    "cas.authn.pac4j.profile-selection.ldap[0].ldap-url=ldap://localhost:10389",
+    "cas.authn.pac4j.profile-selection.ldap[0].base-dn=ou=people,dc=example,dc=org",
+    "cas.authn.pac4j.profile-selection.ldap[0].search-filter=uid={0}",
+    "cas.authn.pac4j.profile-selection.ldap[0].bind-dn=cn=Directory Manager",
+    "cas.authn.pac4j.profile-selection.ldap[0].bind-credential=password",
+    "cas.authn.pac4j.profile-selection.ldap[0].profile-id-attribute=cn",
+    "cas.authn.pac4j.profile-selection.ldap[0].attributes=sn,givenName,uid,mail,cn"
 })
 class LdapDelegatedClientAuthenticationCredentialResolverTests {
     private static final String USER = RandomUtils.randomAlphabetic(10);
