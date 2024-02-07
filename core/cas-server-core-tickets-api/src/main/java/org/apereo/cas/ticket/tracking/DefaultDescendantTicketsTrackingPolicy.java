@@ -38,6 +38,19 @@ public class DefaultDescendantTicketsTrackingPolicy implements TicketTrackingPol
     }
 
     @Override
+    public long countTickets(final Ticket ticketGrantingTicket, final String ticketId) {
+        if (ticketGrantingTicket instanceof final TicketGrantingTicket tgt) {
+            return tgt.getDescendantTickets()
+                .stream()
+                .map(this::extractTicket)
+                .filter(StringUtils::isNotBlank)
+                .filter(id -> id.equals(ticketId))
+                .count();
+        }
+        return TicketTrackingPolicy.super.countTickets(ticketGrantingTicket, ticketId);
+    }
+
+    @Override
     public long countTicketsFor(final Ticket ticketGrantingTicket, final Service service) {
         if (ticketGrantingTicket instanceof final TicketGrantingTicket tgt) {
             return tgt.getDescendantTickets()
@@ -47,6 +60,6 @@ public class DefaultDescendantTicketsTrackingPolicy implements TicketTrackingPol
                 .filter(id -> id.equals(service.getId()))
                 .count();
         }
-        return 0;
+        return TicketTrackingPolicy.super.countTicketsFor(ticketGrantingTicket, service);
     }
 }
