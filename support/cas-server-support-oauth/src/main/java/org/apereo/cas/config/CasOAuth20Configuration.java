@@ -1199,7 +1199,7 @@ class CasOAuth20Configuration {
                 final TicketTrackingPolicy descendantTicketsTrackingPolicy,
                 final CasConfigurationProperties casProperties) {
             return new OAuth20DefaultRefreshTokenFactory(refreshTokenIdGenerator,
-                refreshTokenExpirationPolicy, servicesManager, descendantTicketsTrackingPolicy);
+                refreshTokenExpirationPolicy, servicesManager, descendantTicketsTrackingPolicy, casProperties);
         }
 
         @Bean
