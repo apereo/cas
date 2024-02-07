@@ -117,10 +117,10 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
      * @return the grant type
      */
     protected abstract OAuth20GrantTypes getGrantType();
-    }
 
     protected boolean validateClientSecretInRequestIfAny(final WebContext webContext) {
         val requestParameterResolver = getConfigurationContext().getRequestParameterResolver();
         val httpMethod = HttpMethod.valueOf(webContext.getRequestMethod().toUpperCase(Locale.ROOT));
         return httpMethod.equals(HttpMethod.POST) || !requestParameterResolver.isParameterOnQueryString(webContext, OAuth20Constants.CLIENT_SECRET);
+    }
 }
