@@ -4,14 +4,11 @@ import org.apereo.cas.authentication.principal.DelegatedClientAuthenticationCred
 import org.apereo.cas.authentication.principal.ldap.LdapDelegatedClientAuthenticationCredentialResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext;
-
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.ldaptive.ConnectionFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -44,14 +41,9 @@ class DelegatedAuthenticationProfileSelectionConfiguration {
         @Qualifier(DelegatedClientAuthenticationConfigurationContext.BEAN_NAME)
         final DelegatedClientAuthenticationConfigurationContext configContext) {
         return BeanSupplier.of(DelegatedClientAuthenticationCredentialResolver.class)
-            .when(BeanCondition.on("cas.authn.pac4j.profile-selection.ldap.ldap-url")
+            .when(BeanCondition.on("cas.authn.pac4j.profile-selection.ldap[0].ldap-url")
                 .given(applicationContext.getEnvironment()))
-            .supply(() -> {
-                val ldap = casProperties.getAuthn().getPac4j().getProfileSelection().getLdap();
-                val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
-                LOGGER.debug("Configured LDAP delegated authentication profile selection via [{}]", ldap.getLdapUrl());
-                return new LdapDelegatedClientAuthenticationCredentialResolver(configContext, connectionFactory);
-            })
+            .supply(() -> new LdapDelegatedClientAuthenticationCredentialResolver(configContext))
             .otherwiseProxy()
             .get();
     }
