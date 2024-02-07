@@ -2,6 +2,8 @@ const assert = require("assert");
 const cas = require("../../cas.js");
 
 (async () => {
+    const redirectUrl = "https://localhost:9859/anything/cas";
+
     let params = "client_id=client&";
     params += "client_secret=secret&";
     params += "scope=uma_protection&";
@@ -96,7 +98,7 @@ const cas = require("../../cas.js");
 
 
     await cas.log("Checking for claims");
-    params = `client_id=client&ticket=${result.ticket}&state=12345&redirect_uri=https://apereo.github.io`;
+    params = `client_id=client&ticket=${result.ticket}&state=12345&redirect_uri=${redirectUrl}`;
     await cas.doRequest(`https://localhost:8443/cas/oauth2.0/rqpClaims?${params}`, "GET",
         {
             "Authorization": `Bearer ${at}`,

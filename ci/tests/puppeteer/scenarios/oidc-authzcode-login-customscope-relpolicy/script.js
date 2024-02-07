@@ -5,9 +5,11 @@ const assert = require("assert");
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
+
+    const redirectUrl = "https://localhost:9859/anything/cas";
     const url = "https://localhost:8443/cas/oidc/oidcAuthorize?response_type=code"
         + `&client_id=client&scope=${encodeURIComponent("openid profile MyCustomScope")}&`
-        + "redirect_uri=https://apereo.github.io";
+        + `redirect_uri=${redirectUrl}`;
 
     await cas.goto(page, url);
     await page.waitForTimeout(1000);
@@ -21,7 +23,7 @@ const assert = require("assert");
     const code = await cas.assertParameter(page, "code");
     await cas.log(`Current code is ${code}`);
     const accessTokenUrl = "https://localhost:8443/cas/oidc/token?grant_type=authorization_code"
-        + `&client_id=client&client_secret=secret&redirect_uri=https://apereo.github.io&code=${code}`;
+        + `&client_id=client&client_secret=secret&redirect_uri=${redirectUrl}&code=${code}`;
     const payload = await cas.doPost(accessTokenUrl, "", {
         "Content-Type": "application/json"
     }, (res) => res.data, (error) => {
