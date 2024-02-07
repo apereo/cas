@@ -17,7 +17,7 @@ import org.apereo.cas.ticket.accesstoken.OAuth20DefaultAccessTokenFactory;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.code.OAuth20DefaultOAuthCodeFactory;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
-import org.apereo.cas.ticket.refreshtoken.OAuth20DefaultRefreshTokenFactory;
+import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshTokenFactory;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CollectionUtils;
@@ -77,7 +77,7 @@ class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -93,6 +93,10 @@ class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
     @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
     private PrincipalResolver principalResolver;
 
+    @Autowired
+    @Qualifier("defaultRefreshTokenFactory")
+    private OAuth20RefreshTokenFactory defaultRefreshTokenFactory;
+
     @RepeatedTest(2)
     void verifyOAuthCodeCanBeAdded() throws Throwable {
         val code = createOAuthCode();
@@ -107,7 +111,7 @@ class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
         val jwtBuilder = new JwtBuilder(CipherExecutor.noOpOfSerializableToString(),
             applicationContext, servicesManager, principalResolver, RegisteredServiceCipherExecutor.noOp(), casProperties);
         val token = new OAuth20DefaultAccessTokenFactory(neverExpiresExpirationPolicyBuilder(), jwtBuilder,
-                servicesManager, TicketTrackingPolicy.noOp())
+            servicesManager, TicketTrackingPolicy.noOp())
             .create(RegisteredServiceTestUtils.getService(),
                 RegisteredServiceTestUtils.getAuthentication(), new MockTicketGrantingTicket("casuser"),
                 CollectionUtils.wrapSet("1", "2"), code.getId(), "clientId1234567", new HashMap<>(),
@@ -119,13 +123,11 @@ class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
 
     @RepeatedTest(2)
     void verifyRefreshTokenCanBeAdded() throws Throwable {
-        val token = new OAuth20DefaultRefreshTokenFactory(neverExpiresExpirationPolicyBuilder(),
-                servicesManager, TicketTrackingPolicy.noOp())
-            .create(RegisteredServiceTestUtils.getService(),
-                RegisteredServiceTestUtils.getAuthentication(), new MockTicketGrantingTicket("casuser"),
-                CollectionUtils.wrapSet("1", "2"),
-                "clientId1234567", StringUtils.EMPTY, new HashMap<>(),
-                OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
+        val token = defaultRefreshTokenFactory.create(RegisteredServiceTestUtils.getService(),
+            RegisteredServiceTestUtils.getAuthentication(), new MockTicketGrantingTicket("casuser"),
+            CollectionUtils.wrapSet("1", "2"),
+            "clientId1234567", StringUtils.EMPTY, new HashMap<>(),
+            OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         newTicketRegistry.addTicket(token);
         assertSame(1, newTicketRegistry.deleteTicket(token.getId()), "Wrong ticket count");
         assertNull(newTicketRegistry.getTicket(token.getId()));
