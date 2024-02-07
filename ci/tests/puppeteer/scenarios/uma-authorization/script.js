@@ -149,7 +149,7 @@ const cas = require("../../cas.js");
         }, 302, undefined,
         (res) =>
             assert(res.headers.location.includes(
-                "https://apereo.github.io?authorization_state=claims_submitted&state=12345")));
+                `${redirectUri}?authorization_state=claims_submitted&state=12345`)));
 
     await cas.log(`After claim collection, asking for relying party token (RPT) based on ${authorizationToken}`);
     authzObject = {

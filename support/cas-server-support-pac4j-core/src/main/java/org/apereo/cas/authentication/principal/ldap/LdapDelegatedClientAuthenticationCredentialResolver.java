@@ -75,9 +75,8 @@ public class LdapDelegatedClientAuthenticationCredentialResolver extends BaseDel
                         .key(UUID.randomUUID().toString())
                         .linkedId(profile.getId())
                         .build();
-                }).collect(Collectors.toList());
-        } finally {
-            connectionFactory.close();
+                })
+                .collect(Collectors.toList());
         }
     }
 

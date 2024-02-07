@@ -230,7 +230,6 @@ if [[ $cloneRepository == "true" ]]; then
 
   printgreen "Copying new docs to $branchVersion...\n"
   mv "$PWD/docs-latest/Gemfile" "$PWD/gh-pages"
-  mv "$PWD/docs-latest/Demos.md" "$PWD/gh-pages"
   mv "$PWD/docs-latest/Support.md" "$PWD/gh-pages"
   mv "$PWD/docs-latest/404.md" "$PWD/gh-pages"
   mv "$PWD/docs-latest/_config.yml" "$PWD/gh-pages"

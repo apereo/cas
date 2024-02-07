@@ -114,6 +114,7 @@ A number of notable changes are listed here:
 - [External/delegated authentication](../integration/Delegate-Authentication.html) flows are improved to better handle throttled authentication requests.
 - A new `serviceAccess` [actuator endpoint](../services/Configuring-Service-Access-Strategy.html), allowing one to check CAS authorization decisions for a given service and user.
 - [JDBC](../integration/Attribute-Resolution-JDBC.html) and [LDAP](../integration/Attribute-Resolution-LDAP.html) attribute repositories are relocated to their own respective modules and moved away from the person directory module. 
+- JSON [attribute definitions](../integration/Attribute-Definitions.html) defined externally are now able to override definitions that might ship with CAS.
 
 ## Library Upgrades
 

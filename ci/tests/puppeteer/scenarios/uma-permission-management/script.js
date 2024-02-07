@@ -2,8 +2,6 @@ const assert = require("assert");
 const cas = require("../../cas.js");
 
 (async () => {
-    const redirectUrl = "https://localhost:9859/anything/cas";
-
     let params = "client_id=client&";
     params += "client_secret=secret&";
     params += "scope=uma_protection&";
@@ -98,6 +96,8 @@ const cas = require("../../cas.js");
 
 
     await cas.log("Checking for claims");
+
+    const redirectUrl = "https://localhost:9859/anything/cas";
     params = `client_id=client&ticket=${result.ticket}&state=12345&redirect_uri=${redirectUrl}`;
     await cas.doRequest(`https://localhost:8443/cas/oauth2.0/rqpClaims?${params}`, "GET",
         {
@@ -108,6 +108,6 @@ const cas = require("../../cas.js");
         (res) => {
             cas.log(res.headers);
             assert(res.headers.location.includes(
-                "https://apereo.github.io?authorization_state=claims_submitted&state=12345"));
+                `${redirectUrl}?authorization_state=claims_submitted&state=12345`));
         });
 })();
