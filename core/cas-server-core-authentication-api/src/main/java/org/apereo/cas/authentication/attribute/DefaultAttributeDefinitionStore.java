@@ -101,7 +101,7 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
     public AttributeDefinitionStore registerAttributeDefinition(final String key, final AttributeDefinition definition) {
         LOGGER.trace("Registering attribute definition [{}] by key [{}]", definition, key);
         val keyToUse = getAttributeDefinitionKey(key, definition);
-        attributeDefinitions.putIfAbsent(keyToUse, definition);
+        attributeDefinitions.put(keyToUse, definition);
         return this;
     }
 
@@ -203,8 +203,10 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
                 }
             }
         }, () -> {
-            LOGGER.trace("Using already-resolved attribute name/value, as no attribute definition was found for [{}]", entry);
-            finalAttributes.put(entry, availableAttributes.get(entry));
+            if (availableAttributes.containsKey(entry)) {
+                LOGGER.trace("Using already-resolved attribute name/value, as no attribute definition was found for [{}]", entry);
+                finalAttributes.put(entry, availableAttributes.get(entry));
+            }
         }));
         LOGGER.trace("Final collection of attributes resolved from attribute definition store is [{}]", finalAttributes);
         return finalAttributes;

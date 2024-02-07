@@ -158,8 +158,3 @@ based on the newly-released version.
 
 Update the [Maintenance Policy](https://github.com/apereo/cas/edit/gh-pages/developer/Maintenance-Policy.md/) to note 
 the release schedule and EOL timeline.
-
-## Update Demos
-
-(Optional) A number of CAS demos today run on Heroku and are tracked in dedicated 
-branches inside the codebase. Take a pass and update each, when relevant.

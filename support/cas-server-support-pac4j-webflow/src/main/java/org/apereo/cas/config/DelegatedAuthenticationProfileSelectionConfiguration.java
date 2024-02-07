@@ -41,8 +41,7 @@ class DelegatedAuthenticationProfileSelectionConfiguration {
         @Qualifier(DelegatedClientAuthenticationConfigurationContext.BEAN_NAME)
         final DelegatedClientAuthenticationConfigurationContext configContext) {
         return BeanSupplier.of(DelegatedClientAuthenticationCredentialResolver.class)
-            .when(BeanCondition.on("cas.authn.pac4j.profile-selection.ldap[0].ldap-url")
-                .given(applicationContext.getEnvironment()))
+            .when(BeanCondition.on("cas.authn.pac4j.profile-selection.ldap[0].ldap-url").given(applicationContext.getEnvironment()))
             .supply(() -> new LdapDelegatedClientAuthenticationCredentialResolver(configContext))
             .otherwiseProxy()
             .get();

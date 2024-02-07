@@ -39,7 +39,7 @@ attribute value `http://id.incommon.org/category/research-and-scholarship`:
 }
 ```
 
-Attributes authorized for release are set to be `eduPersonPrincipalName`, `eduPersonTargetedID`, `email`, `displayName`,
+Attributes authorized for release are set to be `eduPersonPrincipalName`, `eduPersonTargetedID`, `mail`, `displayName`,
 `givenName`, `surname`, `eduPersonScopedAffiliation`.
 
 {% endtab %}
