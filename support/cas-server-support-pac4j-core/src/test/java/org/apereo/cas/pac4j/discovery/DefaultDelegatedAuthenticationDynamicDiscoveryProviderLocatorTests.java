@@ -10,7 +10,6 @@ import org.apereo.cas.pac4j.client.DelegatedIdentityProviderFactory;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.pac4j.authentication.clients.RefreshableDelegatedIdentityProviders;
 import org.apereo.cas.web.flow.DelegatedClientIdentityProviderConfigurationProducer;
-
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -18,16 +17,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.pac4j.saml.client.SAML2Client;
 import org.springframework.core.io.ClassPathResource;
-
 import java.util.List;
 import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link DefaultDelegatedAuthenticationDynamicDiscoveryProviderLocatorTests}.
@@ -37,7 +30,6 @@ import static org.mockito.Mockito.when;
  */
 @Tag("Delegation")
 class DefaultDelegatedAuthenticationDynamicDiscoveryProviderLocatorTests {
-
     private CasConfigurationProperties properties;
 
     @BeforeEach
