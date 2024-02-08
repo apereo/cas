@@ -136,9 +136,9 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
                 }
                 return finalizeDelegatedClientAuthentication(context, clientCredential.get());
             } else if(StringUtils.isNotBlank(clientName)) {
-                // If there are no credentials at this point, it means that the
-                // client failed to validate them, so we throw an AuthenticationException
-                throw new AuthenticationException();
+                val msg = "Client " + clientName + " failed to validate credentials";
+                LOGGER.error(msg);
+                return stopWebflow(new AuthenticationException(msg), context);
             }
         } catch (final HttpAction e) {
             FunctionUtils.doIf(LOGGER.isDebugEnabled(),
