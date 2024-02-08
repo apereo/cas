@@ -1,6 +1,5 @@
 package org.apereo.cas.pac4j.discovery;
 
-import lombok.val;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -11,6 +10,8 @@ import org.apereo.cas.pac4j.client.DelegatedIdentityProviderFactory;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.pac4j.authentication.clients.RefreshableDelegatedIdentityProviders;
 import org.apereo.cas.web.flow.DelegatedClientIdentityProviderConfigurationProducer;
+
+import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -45,7 +46,7 @@ class DefaultDelegatedAuthenticationDynamicDiscoveryProviderLocatorTests {
     }
 
     private DelegatedAuthenticationDynamicDiscoveryProviderLocator getLocator(final Principal principal, final List<PrincipalResolver> principalResolvers)
-            throws Throwable {
+        throws Throwable {
         val producer = mock(DelegatedClientIdentityProviderConfigurationProducer.class);
 
         val electionStrategy = mock(PrincipalElectionStrategy.class);
@@ -56,7 +57,7 @@ class DefaultDelegatedAuthenticationDynamicDiscoveryProviderLocatorTests {
 
         val client = new SAML2Client();
         val refreshableClients = new RefreshableDelegatedIdentityProviders("http://localhost:8080/cas",
-                DelegatedIdentityProviderFactory.withClients(List.of(client)));
+            DelegatedIdentityProviderFactory.withClients(List.of(client)));
         val locator = new DefaultDelegatedAuthenticationDynamicDiscoveryProviderLocator(producer, refreshableClients, resolver, properties);
         assertNotNull(locator.getProviderProducer());
         assertNotNull(locator.getProperties());
@@ -70,9 +71,9 @@ class DefaultDelegatedAuthenticationDynamicDiscoveryProviderLocatorTests {
         val principal = RegisteredServiceTestUtils.getPrincipal("cas@example.org");
         val locator = getLocator(principal, List.of(new EchoingPrincipalResolver()));
         val request = DelegatedAuthenticationDynamicDiscoveryProviderLocator.DynamicDiscoveryProviderRequest
-                .builder()
-                .userId(principal.getId())
-                .build();
+            .builder()
+            .userId(principal.getId())
+            .build();
         val result = locator.locate(request);
         assertFalse(result.isPresent());
     }
@@ -85,9 +86,9 @@ class DefaultDelegatedAuthenticationDynamicDiscoveryProviderLocatorTests {
         val json = properties.getAuthn().getPac4j().getCore().getDiscoverySelection().getJson();
         json.setLocation(new ClassPathResource("delegated-discovery.json"));
         val request = DelegatedAuthenticationDynamicDiscoveryProviderLocator.DynamicDiscoveryProviderRequest
-                .builder()
-                .userId(principal.getId())
-                .build();
+            .builder()
+            .userId(principal.getId())
+            .build();
         val result = locator.locate(request);
         assertTrue(result.isPresent());
     }
@@ -100,9 +101,9 @@ class DefaultDelegatedAuthenticationDynamicDiscoveryProviderLocatorTests {
         json.setLocation(new ClassPathResource("delegated-discovery.json"));
         json.setPrincipalAttribute("email");
         val request = DelegatedAuthenticationDynamicDiscoveryProviderLocator.DynamicDiscoveryProviderRequest
-                .builder()
-                .userId(principal.getId())
-                .build();
+            .builder()
+            .userId(principal.getId())
+            .build();
         val result = locator.locate(request);
         assertTrue(result.isPresent());
     }
