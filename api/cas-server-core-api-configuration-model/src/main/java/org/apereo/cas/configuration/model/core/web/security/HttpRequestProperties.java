@@ -43,7 +43,7 @@ public class HttpRequestProperties implements Serializable {
     private String onlyPostParams = "username,password";
 
     /**
-     * Parameters to sanitize and cross-check in incoming requests.
+     * Parameters to sanitize and cross-check in incoming requests.  Separate parameter names by a comma.
      * The special value * instructs the Filter to check all parameters.
      */
     private String paramsToCheck = "ticket,service,renew,gateway,warn,method,target,SAMLart," + "pgtUrl,pgt,pgtId,pgtIou,targetService,entityId,token";
