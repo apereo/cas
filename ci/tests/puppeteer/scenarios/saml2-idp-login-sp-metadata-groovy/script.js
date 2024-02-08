@@ -30,10 +30,6 @@ async function getActuatorEndpoint(entityId, password = "Mellon") {
     await browser.close();
 
     let endpoint = await getActuatorEndpoint(entityId);
-    await cas.log("===================================");
-    await cas.log(`Trying ${endpoint} via GET`);
-    await cas.log(await cas.doRequest(endpoint, "GET", {}, 200));
-    await cas.log("===================================");
     await cas.log(`Trying ${endpoint} via POST`);
     await cas.log(await cas.doRequest(endpoint, "POST", {}, 200));
     await cas.log("===================================");

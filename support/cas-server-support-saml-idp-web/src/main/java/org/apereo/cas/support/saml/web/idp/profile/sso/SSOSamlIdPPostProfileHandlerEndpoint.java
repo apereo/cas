@@ -64,7 +64,6 @@ import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEn
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -129,28 +128,6 @@ public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasActuatorEndpoin
         this.saml20ObjectBuilder = saml20ObjectBuilder;
         this.principalResolver = principalResolver;
         this.samlIdPMetadataResolver = samlIdPMetadataResolver;
-    }
-
-    /**
-     * Produce response entity.
-     *
-     * @param request     the request
-     * @param response    the response
-     * @param samlRequest the saml request
-     * @return the response entity
-     */
-    @GetMapping(produces = MediaType.APPLICATION_XML_VALUE)
-    @ResponseBody
-    @Operation(summary = "Produce SAML2 response entity", parameters = {
-        @Parameter(name = "username", required = true),
-        @Parameter(name = "password", required = true),
-        @Parameter(name = SamlProtocolConstants.PARAMETER_ENTITY_ID, required = true),
-        @Parameter(name = "encrypt")
-    })
-    public ResponseEntity<Object> produceGet(final HttpServletRequest request, final HttpServletResponse response,
-                                             @ModelAttribute
-                                             final SamlRequest samlRequest) {
-        return produce(request, response, samlRequest);
     }
 
     /**
