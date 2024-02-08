@@ -1,7 +1,9 @@
 package org.apereo.cas.pac4j.discovery;
 
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
+import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
@@ -53,7 +55,7 @@ public class DefaultDelegatedAuthenticationDynamicDiscoveryProviderLocator imple
                 new TypeReference<Map<String, DelegatedAuthenticationDynamicDiscoveryProvider>>() {
                 });
 
-            val principal = principalResolver.resolve(new BasicIdentifiableCredential(request.getUserId()));
+            val principal = getPrincipal(request);
             LOGGER.debug("Resolved principal to be [{}]", principal);
 
             return mappings
@@ -72,12 +74,24 @@ public class DefaultDelegatedAuthenticationDynamicDiscoveryProviderLocator imple
         return Optional.empty();
     }
 
+    private Principal getPrincipal(final DynamicDiscoveryProviderRequest request) throws Throwable {
+        val userId = request.getUserId();
+        val resolvedPrincipal = principalResolver.resolve(new BasicIdentifiableCredential(userId));
+
+        if (resolvedPrincipal instanceof NullPrincipal) {
+            LOGGER.debug("No principal was resolved. Falling back to the username [{}] from the credentials.", userId);
+            return PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(userId);
+        }
+
+        return resolvedPrincipal;
+    }
+
     protected DelegatedAuthenticationDynamicDiscoveryProvider getMatchingProvider(
         final Principal principal,
         final String keyPattern,
         final DelegatedAuthenticationDynamicDiscoveryProvider provider) {
         val attrName = properties.getAuthn().getPac4j().getCore().getDiscoverySelection().getJson().getPrincipalAttribute();
-        if (StringUtils.isNotBlank(attrName)) {
+        if (StringUtils.isNotBlank(attrName) && principal.getAttributes().containsKey(attrName)) {
             val attrValues = principal.getAttributes().get(attrName);
             LOGGER.debug("Checking attribute values [{}] against [{}]", attrValues, keyPattern);
             return attrValues.stream().anyMatch(value -> RegexUtils.find(keyPattern, value.toString())) ? provider : null;
