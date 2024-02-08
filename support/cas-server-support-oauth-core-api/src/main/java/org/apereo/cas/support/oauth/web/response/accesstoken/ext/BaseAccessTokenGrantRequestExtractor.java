@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
+import org.pac4j.core.profile.UserProfile;
+import java.util.Optional;
 
 /**
  * This is {@link BaseAccessTokenGrantRequestExtractor}.
@@ -23,7 +25,7 @@ public abstract class BaseAccessTokenGrantRequestExtractor implements AccessToke
     @Override
     public AccessTokenRequestContext extract(final WebContext webContext) throws Throwable {
         val tokenRequestContext = extractRequest(webContext);
-        new ProfileManager(webContext, configurationContext.getSessionStore()).getProfile().ifPresent(profile -> {
+        extractUserProfile(webContext).ifPresent(profile -> {
             if (profile.containsAttribute(OAuth20Constants.DPOP_CONFIRMATION)) {
                 tokenRequestContext.setDpopConfirmation(profile.getAttribute(OAuth20Constants.DPOP_CONFIRMATION).toString());
             }
@@ -33,6 +35,10 @@ public abstract class BaseAccessTokenGrantRequestExtractor implements AccessToke
             tokenRequestContext.setUserProfile(profile);
         });
         return tokenRequestContext;
+    }
+
+    protected Optional<UserProfile> extractUserProfile(final WebContext webContext) {
+        return new ProfileManager(webContext, configurationContext.getSessionStore()).getProfile();
     }
 
     protected abstract AccessTokenRequestContext extractRequest(WebContext webContext) throws Throwable;

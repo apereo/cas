@@ -16,9 +16,7 @@ const cas = require("../../cas.js");
     }, privateKey, "HS512");
 
     let params = "client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer&";
-    params += `client_assertion=${jwt}&client_id=client&`;
-    params += "grant_type=client_credentials&";
-    params += "scope=openid";
+    params += `client_assertion=${jwt}&client_id=client&grant_type=client_credentials&scope=openid`;
 
     const url = `https://localhost:8443/cas/oidc/token?${params}`;
     await cas.doPost(url, "", {

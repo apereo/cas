@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -214,5 +215,16 @@ public interface TicketRegistry {
      */
     default List<? extends Serializable> query(final TicketRegistryQueryCriteria criteria) {
         return new ArrayList<>();
+    }
+
+    /**
+     * Count the number of tickets, given a type or prefix
+     * that might have been issued for given application.
+     *
+     * @param service the service
+     * @return total count
+     */
+    default long countTicketsFor(final Service service) {
+        return 0;
     }
 }

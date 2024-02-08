@@ -17,7 +17,6 @@ import org.springframework.data.annotation.Id;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Table;
 import java.io.Serial;
 import java.io.Serializable;
@@ -47,7 +46,6 @@ public class YubiKeyRegisteredDevice implements Serializable, Cloneable {
     private static final long serialVersionUID = 221869140885521905L;
 
     @Id
-    @GeneratedValue
     @JsonProperty
     private long id;
 

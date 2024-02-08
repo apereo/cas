@@ -16,7 +16,6 @@ import com.nimbusds.oauth2.sdk.dpop.verifiers.DPoPIssuer;
 import com.nimbusds.oauth2.sdk.dpop.verifiers.DPoPTokenRequestVerifier;
 import com.nimbusds.oauth2.sdk.id.ClientID;
 import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
@@ -40,11 +39,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OAuth")
 class OAuth20DefaultAccessTokenResponseGeneratorTests extends AbstractOAuth20Tests {
-
-    @BeforeEach
-    public void initialize() {
-        clearAllServices();
-    }
 
     @Test
     void verifyAccessTokenAsDefault() throws Throwable {

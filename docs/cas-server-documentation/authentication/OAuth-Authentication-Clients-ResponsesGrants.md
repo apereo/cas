@@ -32,14 +32,15 @@ grant/response types for each profile be declared in the service definition imme
          
 The following grant types are supported by CAS:
 
-| Grant Type                                     |
-|------------------------------------------------|
-| `urn:ietf:params:oauth:grant-type:device_code` |
-| `authorization_code`                           |
-| `password`                                     |
-| `client_credentials`                           |
-| `refresh_token`                                |
-| `urn:ietf:params:oauth:grant-type:uma-ticket`  |
+| Grant Type                                        |
+|---------------------------------------------------|
+| `urn:ietf:params:oauth:grant-type:device_code`    |
+| `authorization_code`                              |
+| `password`                                        |
+| `client_credentials`                              |
+| `refresh_token`                                   |
+| `urn:ietf:params:oauth:grant-type:uma-ticket`     |
+| `urn:ietf:params:oauth:grant-type:token-exchange` |
 
 ## Supported Response Types
 

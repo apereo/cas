@@ -60,7 +60,6 @@ class OAuth20LogoutReplicateSessionTests {
         val tgt = mock(TicketGrantingTicket.class);
         val processor = processors.iterator().next();
         processor.handle(tgt);
-
         verify(OAuthDistributedSessionTestConfiguration.SESSION_STORE).destroySession(any(JEEContext.class));
     }
 

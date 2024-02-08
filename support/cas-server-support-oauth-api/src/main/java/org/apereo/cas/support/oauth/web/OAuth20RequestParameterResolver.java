@@ -42,6 +42,20 @@ public interface OAuth20RequestParameterResolver {
      */
     static boolean isAuthorizedGrantTypeForService(final String grantType,
                                                    final OAuthRegisteredService registeredService) {
+        return isAuthorizedGrantTypeForService(grantType, registeredService, false);
+    }
+
+    /**
+     * Is authorized grant type for service?
+     *
+     * @param grantType         the grant type
+     * @param registeredService the registered service
+     * @param rejectUndefined   the reject undefined
+     * @return true /false
+     */
+    static boolean isAuthorizedGrantTypeForService(final String grantType,
+                                                   final OAuthRegisteredService registeredService,
+                                                   final boolean rejectUndefined) {
         if (registeredService.getSupportedGrantTypes() != null && !registeredService.getSupportedGrantTypes().isEmpty()) {
             LOGGER.debug("Checking grant type [{}] against supported grant types [{}]", grantType, registeredService.getSupportedGrantTypes());
             return registeredService.getSupportedGrantTypes().stream().anyMatch(s -> s.equalsIgnoreCase(grantType));
@@ -50,7 +64,7 @@ public interface OAuth20RequestParameterResolver {
         LOGGER.warn("Registered service [{}] does not define any authorized/supported grant types. "
                     + "It is STRONGLY recommended that you authorize and assign grant types to the service definition. "
                     + "While just a warning for now, this behavior will be enforced by CAS in future versions.", registeredService.getName());
-        return true;
+        return !rejectUndefined;
     }
 
     /**
@@ -121,7 +135,7 @@ public interface OAuth20RequestParameterResolver {
      * @param context    the context
      * @return the map
      */
-    Map<String, Object> resolveRequestParameters(Collection<String> attributes,
+    Map<String, Set<String>> resolveRequestParameters(Collection<String> attributes,
                                                  WebContext context);
 
     /**

@@ -50,6 +50,7 @@ The following protocol flows, response and grant types are supported.
 | Authorization Code / PKCE | [See this page](OAuth-ProtocolFlow-AuthorizationCode.html).   |
 | Client Credentials        | [See this page](OAuth-ProtocolFlow-ClientCredentials.html).   |
 | Device Authorization      | [See this page](OAuth-ProtocolFlow-DeviceAuthorization.html). |
+| Token Exchange            | [See this page](OAuth-ProtocolFlow-TokenExchange.html).       |
 | Token / Implicit          | [See this page](OAuth-ProtocolFlow-Implicit.html).            |
 | Refresh Token             | [See this page](OAuth-ProtocolFlow-RefreshToken.html).        |
 | Resource Owner            | [See this page](OAuth-ProtocolFlow-ResourceOwner.html).       |

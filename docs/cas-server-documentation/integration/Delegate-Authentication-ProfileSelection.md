@@ -24,7 +24,7 @@ specific attributes from LDAP for each profile and the ability to specify the at
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-ldap-core" %}
 
-{% include_cached casproperties.html properties="cas.authn.pac4j.profile-selection.ldap" %}
+{% include_cached casproperties.html properties="cas.authn.pac4j.profile-selection.ldap[]" %}
 
 {% endtab %}
 

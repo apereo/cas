@@ -1,6 +1,8 @@
 {
   "dependencies": "x509-webflow,json-service-registry",
-
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
@@ -30,5 +32,6 @@
     "--cas.authn.attribute-repository.groovy[0].order=2",
     "--cas.authn.attribute-repository.groovy[0].case-insensitive=false"
   ],
-  "trustStoreCertificateFile": "./ci/tests/puppeteer/scenarios/x509-login-cert-in-header/cert.pem"
+  "trustStoreCertificateFile": "./ci/tests/puppeteer/scenarios/x509-login-cert-in-header/cert.pem",
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }

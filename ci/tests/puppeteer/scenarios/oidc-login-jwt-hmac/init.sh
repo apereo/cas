@@ -5,3 +5,5 @@ if [[ -z $TMPDIR ]]; then
 fi
 echo "Removing previous keystore at ${TMPDIR}/keystore.jwks"
 rm -f "${TMPDIR}/keystore.jwks"
+
+${PWD}/ci/tests/httpbin/run-httpbin-server.sh

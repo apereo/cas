@@ -5,12 +5,12 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.OAuth20TokenExchangeTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,7 +21,6 @@ import lombok.experimental.SuperBuilder;
 import lombok.extern.jackson.Jacksonized;
 import net.minidev.json.annotate.JsonIgnore;
 import org.pac4j.core.profile.UserProfile;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
@@ -81,6 +80,16 @@ public class AccessTokenRequestContext implements Serializable {
     private final String deviceCode;
 
     private final String codeChallenge;
+
+    private final OAuth20TokenExchangeTypes subjectTokenType;
+
+    private final OAuth20TokenExchangeTypes requestedTokenType;
+
+    private final Serializable subjectToken;
+
+    private final Service tokenExchangeResource;
+
+    private final String tokenExchangeAudience;
 
     @Builder.Default
     private final String codeChallengeMethod = "plain";

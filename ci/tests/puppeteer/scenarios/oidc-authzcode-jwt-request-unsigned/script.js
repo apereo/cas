@@ -6,11 +6,8 @@ const assert = require("assert");
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
 
-    const redirectUrl = "https://apereo.github.io";
-    const request = "eyJhbGciOiJub25lIn0.eyJzY29wZSI6Im9wZW5pZCIsInJlc3BvbnNlX3R5cGUiOiJj"
-        + "b2RlIiwicmVkaXJlY3RfdXJpIjoiaHR0cHM6XC9cL2FwZXJlby5naXRod"
-        + "WIuaW8iLCJzdGF0ZSI6InZJTjFiMFk0Q2siLCJub25jZSI6IjFOOW1xUE"
-        + "85ZnQiLCJjbGllbnRfaWQiOiJjbGllbnQifQ.";
+    const redirectUrl = "https://localhost:9859/anything/cas";
+    const request = "eyJhbGciOiJub25lIn0.eyJyZXNwb25zZV90eXBlIjoiY29kZSIsInJlZGlyZWN0X3VyaSI6Imh0dHBzOi8vbG9jYWxob3N0Ojk4NTkvYW55dGhpbmcvY2FzIiwic3RhdGUiOiJ2SU4xYjBZNENrIiwibm9uY2UiOiIxTjltcVBPOWZ0IiwiY2xpZW50X2lkIjoiY2xpZW50Iiwic2NvcGUiOiJvcGVuaWQifQ.";
     const url = `https://localhost:8443/cas/oidc/authorize?request=${request}&scope=openid`;
 
     await cas.log(`Navigating to ${url}`);

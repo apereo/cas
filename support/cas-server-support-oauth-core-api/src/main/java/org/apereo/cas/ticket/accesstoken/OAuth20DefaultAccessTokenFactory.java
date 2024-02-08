@@ -7,6 +7,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.services.RegisteredServiceOAuthAccessTokenExpirationPolicy;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
@@ -15,14 +16,14 @@ import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
-
+import org.apereo.cas.util.function.FunctionUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Default OAuth access token factory.
@@ -56,23 +57,37 @@ public class OAuth20DefaultAccessTokenFactory implements OAuth20AccessTokenFacto
                                      final Authentication authentication,
                                      final Ticket ticketGrantingTicket,
                                      final Collection<String> scopes,
-                                     final String token,
+                                     final String exchangedToken,
                                      final String clientId,
                                      final Map<String, Map<String, Object>> requestClaims,
                                      final OAuth20ResponseTypes responseType,
                                      final OAuth20GrantTypes grantType) throws Throwable {
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(jwtBuilder.getServicesManager(), clientId);
+        var limitReached = false;
+        if (ticketGrantingTicket != null) {
+            val maxNumberOfAccessTokensAllowed = getMaxNumberOfAccessTokensAllowed(registeredService);
+            limitReached = maxNumberOfAccessTokensAllowed > 0
+                && maxNumberOfAccessTokensAllowed <= descendantTicketsTrackingPolicy.countTicketsFor(ticketGrantingTicket, service);
+        }
+        FunctionUtils.throwIf(limitReached, () -> new IllegalArgumentException("Access token limit for %s is reached".formatted(service.getId())));
         val expirationPolicyToUse = determineExpirationPolicyForService(registeredService);
         val accessTokenId = generateAccessTokenId(service, authentication);
         val accessToken = new OAuth20DefaultAccessToken(accessTokenId, service, authentication,
-            expirationPolicyToUse, ticketGrantingTicket, token, scopes,
+            expirationPolicyToUse, ticketGrantingTicket, exchangedToken, scopes,
             clientId, requestClaims, responseType, grantType);
         descendantTicketsTrackingPolicy.trackTicket(ticketGrantingTicket, accessToken);
         return accessToken;
     }
 
+    private long getMaxNumberOfAccessTokensAllowed(final OAuthRegisteredService registeredService) {
+        return Optional.ofNullable(registeredService)
+            .map(OAuthRegisteredService::getAccessTokenExpirationPolicy)
+            .map(RegisteredServiceOAuthAccessTokenExpirationPolicy::getMaxActiveTokens)
+            .orElseGet(() -> jwtBuilder.getCasProperties().getAuthn().getOauth().getAccessToken().getMaxActiveTokensAllowed());
+    }
+
     protected String generateAccessTokenId(final Service service, final Authentication authentication) throws Throwable {
-        return this.accessTokenIdGenerator.getNewTicketId(OAuth20AccessToken.PREFIX);
+        return accessTokenIdGenerator.getNewTicketId(OAuth20AccessToken.PREFIX);
     }
 
     @Override
@@ -80,12 +95,6 @@ public class OAuth20DefaultAccessTokenFactory implements OAuth20AccessTokenFacto
         return OAuth20AccessToken.class;
     }
 
-    /**
-     * Determine the expiration policy for the registered service.
-     *
-     * @param registeredService the registered service
-     * @return the expiration policy
-     */
     protected ExpirationPolicy determineExpirationPolicyForService(final OAuthRegisteredService registeredService) {
         if (registeredService != null && registeredService.getAccessTokenExpirationPolicy() != null) {
             val policy = registeredService.getAccessTokenExpirationPolicy();
@@ -97,6 +106,6 @@ public class OAuth20DefaultAccessTokenFactory implements OAuth20AccessTokenFacto
                     Beans.newDuration(ttl).getSeconds());
             }
         }
-        return this.expirationPolicyBuilder.buildTicketExpirationPolicy();
+        return expirationPolicyBuilder.buildTicketExpirationPolicy();
     }
 }

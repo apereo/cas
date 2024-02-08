@@ -6,9 +6,9 @@ const jose = require("jose");
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
-    const url = "https://localhost:8443/cas/oidc/authorize?response_type=code"
-        + "&client_id=client&scope=openid%20profile&"
-        + "redirect_uri=https://apereo.github.io";
+
+    const redirectUrl = "https://localhost:9859/anything/cas";
+    const url = `https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=client&scope=${encodeURIComponent("openid profile")}&redirect_uri=${redirectUrl}`;
 
     await cas.goto(page, url);
     await page.waitForTimeout(1000);
@@ -48,7 +48,7 @@ const jose = require("jose");
     const code = await cas.assertParameter(page, "code");
     await cas.log(`Current code is ${code}`);
     const accessTokenUrl = "https://localhost:8443/cas/oidc/token";
-    const params = `grant_type=authorization_code&client_id=client&redirect_uri=https://apereo.github.io&code=${code}`;
+    const params = `grant_type=authorization_code&client_id=client&redirect_uri=${redirectUrl}&code=${code}`;
 
     let accessToken = null;
     await cas.doPost(accessTokenUrl, params, {

@@ -11,7 +11,7 @@ async function validateTicket(service, ticket, format = "JSON") {
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
-    const service = "https://apereo.github.io";
+    const service = "https://localhost:9859/anything/cas";
 
     await cas.gotoLogin(page, service);
     await cas.loginWith(page);

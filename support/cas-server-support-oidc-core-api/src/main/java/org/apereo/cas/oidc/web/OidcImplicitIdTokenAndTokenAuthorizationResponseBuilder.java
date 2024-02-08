@@ -46,8 +46,10 @@ public class OidcImplicitIdTokenAndTokenAuthorizationResponseBuilder<T extends O
         val idToken = configurationContext.getIdTokenGeneratorService().generate(accessToken,
             tokenRequestContext.getUserProfile(), OAuth20ResponseTypes.IDTOKEN_TOKEN, tokenRequestContext.getGrantType(),
             tokenRequestContext.getRegisteredService());
-        LOGGER.debug("Generated id token [{}]", idToken);
-        parameters.add(new BasicNameValuePair(OidcConstants.ID_TOKEN, idToken.token()));
+        if (idToken != null) {
+            LOGGER.debug("Generated id token [{}]", idToken);
+            parameters.add(new BasicNameValuePair(OidcConstants.ID_TOKEN, idToken.token()));
+        }
         return super.buildCallbackUrlResponseType(tokenRequestContext, accessToken, givenRefreshToken, parameters);
     }
 }

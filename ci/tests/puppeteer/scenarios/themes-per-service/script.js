@@ -1,12 +1,12 @@
 const puppeteer = require("puppeteer");
 const assert = require("assert");
-
 const cas = require("../../cas.js");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
-    await cas.gotoLogin(page, "https://github.com/apereo/cas");
+    const service = "https://localhost:9859/anything/cas";
+    await cas.gotoLogin(page, service);
     await page.waitForTimeout(1000);
 
     await cas.assertVisibility(page, "#twitter-link");
@@ -18,7 +18,7 @@ const cas = require("../../cas.js");
     assert(logo === "/cas/themes/example/images/logo.png");
 
     await cas.log("Logging out...");
-    await cas.goto(page, "https://localhost:8443/cas/logout?service=https://github.com/apereo/cas");
+    await cas.goto(page, `https://localhost:8443/cas/logout?service=${service}`);
     await page.waitForTimeout(1000);
 
     await cas.assertVisibility(page, "#twitter-link");

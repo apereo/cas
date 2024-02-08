@@ -6,6 +6,8 @@ import org.apereo.cas.util.MockWebServer;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
@@ -31,11 +33,12 @@ import static org.springframework.http.HttpStatus.*;
     "cas.sms-provider.clickatell.token=DEMO_TOKEN"
 })
 @Tag("SMS")
+@Execution(ExecutionMode.SAME_THREAD)
 class ClickatellSmsSenderTests {
     @Autowired
     @Qualifier(SmsSender.BEAN_NAME)
     private SmsSender smsSender;
-
+    
     @Test
     void verifySmsSender() throws Throwable {
         val data = '{'

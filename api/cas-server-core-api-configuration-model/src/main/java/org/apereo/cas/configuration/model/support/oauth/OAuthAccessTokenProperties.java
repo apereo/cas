@@ -54,6 +54,13 @@ public class OAuthAccessTokenProperties implements Serializable {
     private String storageName = "oauthAccessTokensCache";
 
     /**
+     * Maximum number of active access tokens that an application
+     * can receive. If the application requests more that this limit,
+     * the request will be denied and the access token will not be issued.
+     */
+    private long maxActiveTokensAllowed;
+
+    /**
      * Crypto settings.
      */
     @NestedConfigurationProperty

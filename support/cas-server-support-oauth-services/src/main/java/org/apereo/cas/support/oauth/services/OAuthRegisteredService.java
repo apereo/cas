@@ -55,6 +55,8 @@ public class OAuthRegisteredService extends BaseWebBasedRegisteredService {
 
     private RegisteredServiceOAuthDeviceTokenExpirationPolicy deviceTokenExpirationPolicy;
 
+    private RegisteredServiceOAuthTokenExchangePolicy tokenExchangePolicy;
+
     private Set<String> supportedGrantTypes = new HashSet<>(0);
 
     private Set<String> supportedResponseTypes = new HashSet<>(0);

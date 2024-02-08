@@ -65,5 +65,5 @@
     "--cas.authn.attribute-repository.groovy[0].case-insensitive=false"
   ],
   "trustStoreCertificateFile": "./ci/tests/puppeteer/scenarios/x509-login-ldap-cert-in-header/cert.pem",
-  "initScript": "${PWD}/ci/tests/ldap/run-ad-server.sh"
+  "initScript": "${PWD}/ci/tests/ldap/run-ad-server.sh,${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }

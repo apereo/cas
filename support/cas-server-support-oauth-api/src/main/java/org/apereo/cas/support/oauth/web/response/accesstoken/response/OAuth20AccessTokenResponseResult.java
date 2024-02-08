@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.OAuth20TokenExchangeTypes;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGeneratedResult;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
@@ -50,6 +51,12 @@ public class OAuth20AccessTokenResponseResult implements Serializable, Auditable
     private final long deviceRefreshInterval;
 
     private final UserProfile userProfile;
+
+    private final OAuth20TokenExchangeTypes requestedTokenType;
+
+    private final Service tokenExchangeResource;
+
+    private final String tokenExchangeAudience;
 
     @Override
     @JsonIgnore

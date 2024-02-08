@@ -7,6 +7,7 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthAccessTokenExpirationPolicy;
 import org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthCodeExpirationPolicy;
 import org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthRefreshTokenExpirationPolicy;
+import org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthTokenExchangePolicy;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenExpirationPolicy;
 import org.apereo.cas.ticket.accesstoken.OAuth20DefaultAccessToken;
@@ -53,6 +54,7 @@ class CasOAuth20ComponentSerializationConfiguration {
             plan.registerSerializableClass(DefaultRegisteredServiceOAuthCodeExpirationPolicy.class);
             plan.registerSerializableClass(DefaultRegisteredServiceOAuthAccessTokenExpirationPolicy.class);
             plan.registerSerializableClass(DefaultRegisteredServiceOAuthRefreshTokenExpirationPolicy.class);
+            plan.registerSerializableClass(DefaultRegisteredServiceOAuthTokenExchangePolicy.class);
 
             plan.registerSerializableClass(OAuth20DefaultCode.class);
             plan.registerSerializableClass(OAuth20DefaultAccessToken.class);

@@ -5,6 +5,8 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.OAuth20TokenExchangeTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.OAuth20Token;
@@ -23,6 +25,8 @@ import com.nimbusds.oauth2.sdk.auth.X509CertificateConfirmation;
 import com.nimbusds.oauth2.sdk.dpop.JWKThumbprintConfirmation;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -83,7 +87,7 @@ public class OAuth20JwtAccessTokenEncoder {
                                                                     final String issuer,
                                                                     final CasConfigurationProperties casProperties) {
         return new OAuth20JwtAccessTokenEncodableCipher(registeredService, accessTokenJwtBuilder,
-            accessToken, service, issuer, casProperties);
+            accessToken, service, issuer, casProperties, false);
     }
 
     /**
@@ -100,9 +104,36 @@ public class OAuth20JwtAccessTokenEncoder {
                                                                     final RegisteredService registeredService,
                                                                     final OAuth20AccessToken accessToken,
                                                                     final Service service,
-                                                                    final CasConfigurationProperties casProperties) {
+                                                                    final CasConfigurationProperties casProperties,
+                                                                    final boolean forceEncodeAsJwt) {
         return new OAuth20JwtAccessTokenEncodableCipher(registeredService, accessTokenJwtBuilder,
-            accessToken, service, casProperties.getServer().getPrefix(), casProperties);
+            accessToken, service, casProperties.getServer().getPrefix(), casProperties, forceEncodeAsJwt);
+    }
+
+    /**
+     * To encodable cipher.
+     *
+     * @param accessTokenJwtBuilder the access token jwt builder
+     * @param tokenResult           the token result
+     * @param accessToken           the access token
+     * @param casProperties         the cas properties
+     * @return the encodable cipher
+     */
+    public static EncodableCipher<String, String> toEncodableCipher(final JwtBuilder accessTokenJwtBuilder,
+                                                                    final OAuth20AccessTokenResponseResult tokenResult,
+                                                                    final OAuth20AccessToken accessToken,
+                                                                    final CasConfigurationProperties casProperties) {
+
+        val cipher = new OAuth20JwtAccessTokenEncodableCipher(tokenResult.getRegisteredService(), accessTokenJwtBuilder,
+            accessToken, tokenResult.getService(), casProperties.getServer().getPrefix(), casProperties,
+            tokenResult.getRequestedTokenType() == OAuth20TokenExchangeTypes.JWT);
+        if (tokenResult.getGrantType() == OAuth20GrantTypes.TOKEN_EXCHANGE && tokenResult.getRequestedTokenType() == OAuth20TokenExchangeTypes.JWT) {
+            var audience = Optional.ofNullable(tokenResult.getTokenExchangeAudience())
+                .or(() -> Optional.ofNullable(tokenResult.getTokenExchangeResource()).map(Service::getId))
+                .orElse(StringUtils.EMPTY);
+            cipher.setTokenAudience(audience);
+        }
+        return cipher;
     }
 
     @Slf4j
@@ -153,6 +184,8 @@ public class OAuth20JwtAccessTokenEncoder {
 
     @Slf4j
     @RequiredArgsConstructor
+    @Setter
+    @Accessors(chain = true)
     static class OAuth20JwtAccessTokenEncodableCipher implements EncodableCipher<String, String> {
         private final RegisteredService registeredService;
         private final JwtBuilder accessTokenJwtBuilder;
@@ -160,6 +193,8 @@ public class OAuth20JwtAccessTokenEncoder {
         private final Service service;
         private final String issuer;
         private final CasConfigurationProperties casProperties;
+        private final boolean forceEncodeAsJwt;
+        private String tokenAudience;
 
         @Override
         public String encode(final String value, final Object[] parameters) {
@@ -225,6 +260,9 @@ public class OAuth20JwtAccessTokenEncoder {
 
         protected Set<String> determineServiceAudience(final OAuthRegisteredService registeredService,
                                                        final AuthenticationAwareTicket accessToken) {
+            if (StringUtils.isNotBlank(tokenAudience)) {
+                return Set.of(tokenAudience);
+            }
             if (registeredService.getAudience().isEmpty()) {
                 return Set.of(((OAuth20Token) accessToken).getClientId());
             }
@@ -233,10 +271,10 @@ public class OAuth20JwtAccessTokenEncoder {
 
         protected boolean shouldEncodeAsJwt(final OAuthRegisteredService oAuthRegisteredService,
                                             final Ticket accessToken) {
-            return casProperties.getAuthn().getOauth().getAccessToken().isCreateAsJwt()
-                || (oAuthRegisteredService != null && oAuthRegisteredService.isJwtAccessToken())
-                || (accessToken instanceof final AuthenticationAwareTicket aat
-                && aat.getAuthentication().containsAttribute(OAuth20Constants.DPOP));
+            val serviceRequiresJwt = oAuthRegisteredService != null && oAuthRegisteredService.isJwtAccessToken();
+            val dpopRequest = accessToken instanceof final AuthenticationAwareTicket aat
+                && aat.getAuthentication().containsAttribute(OAuth20Constants.DPOP);
+            return casProperties.getAuthn().getOauth().getAccessToken().isCreateAsJwt() || this.forceEncodeAsJwt || serviceRequiresJwt || dpopRequest;
         }
 
     }

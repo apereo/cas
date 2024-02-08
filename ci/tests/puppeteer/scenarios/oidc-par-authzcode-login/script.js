@@ -8,12 +8,13 @@ const assert = require("assert");
 
     await page.setRequestInterception(true);
 
+    const redirectUrl = "https://localhost:9859/anything/cas";
     page.once("request", (interceptedRequest) =>
         interceptedRequest.continue({
             "method": "POST",
             "postData": "response_type=code&"
-                + "client_id=client&scope=openid%20profile%20MyCustomScope&"
-                + "redirect_uri=https://apereo.github.io&nonce=3d3a7457f9ad3&"
+                + `client_id=client&scope=${encodeURIComponent("openid profile MyCustomScope")}&`
+                + `redirect_uri=${redirectUrl}&nonce=3d3a7457f9ad3&`
                 + "state=1735fd6c43c14&claims=%7B%22userinfo%22%3A%20%7B%20%22name%22%3A%20%7B%22essential"
                 + "%22%3A%20true%7D%2C%22phone_number%22%3A%20%7B%22essential%22%3A%20true%7D%7D%7D&"
                 + "client_secret=secret",
@@ -47,7 +48,7 @@ const assert = require("assert");
     const code = await cas.assertParameter(page, "code");
     await cas.log(`Current code is ${code}`);
     const accessTokenUrl = "https://localhost:8443/cas/oidc/token?grant_type=authorization_code"
-        + `&client_id=client&client_secret=secret&redirect_uri=https://apereo.github.io&code=${code}`;
+        + `&client_id=client&client_secret=secret&redirect_uri=${redirectUrl}&code=${code}`;
     const payload = await cas.doPost(accessTokenUrl, "", {
         "Content-Type": "application/json"
     }, (res) => res.data, (error) => {

@@ -40,7 +40,6 @@ import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
 import org.pac4j.core.profile.UserProfile;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.util.Assert;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -84,7 +83,12 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
                                 final OAuthRegisteredService registeredService) throws Throwable {
         Assert.isAssignable(OidcRegisteredService.class, registeredService.getClass(),
             "Registered service instance is not an OIDC service");
-
+        if (!accessToken.getScopes().contains(OidcConstants.StandardScopes.OPENID.getScope())) {
+            LOGGER.warn("Authentication request does not include the [{}] scope. "
+                + "Including this scope is a MUST for OpenID Connect and CAS will not produce an ID token without this scope.",
+                OidcConstants.StandardScopes.OPENID.getScope());
+            return null;
+        }
         val oidcRegisteredService = (OidcRegisteredService) registeredService;
         LOGGER.trace("Attempting to produce claims for the id token [{}]", accessToken);
         val claims = buildJwtClaims(accessToken, oidcRegisteredService, responseType, grantType);
@@ -253,10 +257,8 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
             handleMappedClaimOrDefault(OidcConstants.CLAIM_PREFERRED_USERNAME,
                 registeredService, principal, claims, principal.getId());
         }
-
-        val collectors = new ArrayList<>(getConfigurationContext().getIdTokenClaimCollectors());
-        AnnotationAwareOrderComparator.sortIfNecessary(collectors);
-        collectors.forEach(collector -> collector.conclude(claims));
+        getConfigurationContext().getIdTokenClaimCollectors()
+            .forEach(collector -> collector.conclude(claims));
     }
 
     private boolean isClaimSupportedForRelease(final String claimName, final RegisteredService registeredService) {

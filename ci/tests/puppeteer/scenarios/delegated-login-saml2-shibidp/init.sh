@@ -5,6 +5,7 @@ docker rm $(docker container ls -aq) >/dev/null 2>&1 || true
 
 chmod +x ${PWD}/ci/tests/cas/run-cas-server.sh
 ${PWD}/ci/tests/cas/run-cas-server.sh
+${PWD}/ci/tests/httpbin/run-httpbin-server.sh
 
 VERSION="4.3.1"
 BASE_URL="https://github.com/Unicon/shib-cas-authn/releases/download/${VERSION}"

@@ -5,7 +5,6 @@ import org.apereo.cas.config.CasCoreSamlAutoConfiguration;
 import org.apereo.cas.config.CasHibernateJpaAutoConfiguration;
 import org.apereo.cas.config.CasJpaTicketRegistryAutoConfiguration;
 import org.apereo.cas.config.CasOAuth20AutoConfiguration;
-import org.apereo.cas.config.CasOAuth20TicketsAutoConfiguration;
 import org.apereo.cas.config.CasWsSecuritySecurityTokenAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.CloseableDataSource;
@@ -147,8 +146,7 @@ public abstract class BaseJpaTicketRegistryTests extends BaseTicketRegistryTests
         BaseTicketRegistryTests.SharedTestConfiguration.class,
         CasWsSecuritySecurityTokenAutoConfiguration.class,
         CasCoreSamlAutoConfiguration.class,
-        CasOAuth20AutoConfiguration.class,
-        CasOAuth20TicketsAutoConfiguration.class
+        CasOAuth20AutoConfiguration.class
     })
     public static class SharedTestConfiguration {
     }

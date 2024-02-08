@@ -8,7 +8,7 @@ const assert = require("assert");
 
     await cas.goto(page, "https://localhost:8444/cas/logout");
     await cas.log("Checking for page URL redirecting based on service policy...");
-    await cas.gotoLogin(page, "https://apereo.github.io");
+    await cas.gotoLogin(page, "https://localhost:9859/anything/cas");
     await page.waitForTimeout(2000);
     await cas.logPage(page);
     let url = await page.url();
@@ -37,7 +37,7 @@ const assert = require("assert");
     await cas.assertCookie(page, true, "TGCEXT");
 
     await cas.log("Attempting to login based on existing SSO session");
-    await cas.gotoLogin(page, "https://apereo.github.io");
+    await cas.gotoLogin(page, "https://localhost:9859/anything/cas");
     url = await page.url();
     await cas.log(url);
     await page.waitForTimeout(1000);
@@ -47,7 +47,7 @@ const assert = require("assert");
     await cas.gotoLogout(page);
 
     await cas.log("Attempting to login for a different 2nd service");
-    await cas.gotoLogin(page, "https://github.com/apereo/cas");
+    await cas.gotoLogin(page, "https://localhost:9859/anything/sample");
     await cas.log("Checking for page URL...");
     url = await page.url();
     await cas.log(url);

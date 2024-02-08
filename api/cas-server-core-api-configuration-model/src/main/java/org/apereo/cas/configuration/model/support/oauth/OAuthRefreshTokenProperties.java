@@ -39,4 +39,11 @@ public class OAuthRefreshTokenProperties implements Serializable {
      */
     private String storageName = "oauthRefreshTokensCache";
 
+    /**
+     * Maximum number of active refresh tokens that an application
+     * can receive. If the application requests more that this limit,
+     * the request will be denied and the access token will not be issued.
+     */
+    private long maxActiveTokensAllowed;
+
 }

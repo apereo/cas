@@ -43,7 +43,8 @@
     "--cas.authn.wsfed[0].auto-redirect-type=SERVER",
 
     "--cas.authn.wsfed[0].attribute-mutator-script.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/WsFedAttrs.groovy"
-  ]
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }
 
 

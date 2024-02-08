@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -64,6 +65,18 @@ public interface BeanSupplier<T> extends Supplier<T> {
      */
     static boolean isNotProxy(final Object result) {
         return result != null && !isProxy(result);
+    }
+
+    /**
+     * If not proxy, then do.
+     *
+     * @param object   the object
+     * @param consumer the consumer
+     */
+    static <T> void ifNotProxy(final T object, final Consumer<T> consumer) {
+        if (isNotProxy(object)) {
+            consumer.accept(object);
+        }
     }
 
     @Override
@@ -263,4 +276,6 @@ public interface BeanSupplier<T> extends Supplier<T> {
                     }));
         }
     }
+
+
 }

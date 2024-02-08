@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationPolicyExecutionResult;
 import org.apereo.cas.authentication.exceptions.UniquePrincipalRequiredException;
+import org.apereo.cas.configuration.model.core.authentication.policy.UniquePrincipalAuthenticationPolicyProperties;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.validation.Assertion;
@@ -49,6 +50,8 @@ public class UniquePrincipalAuthenticationPolicy extends BaseAuthenticationPolic
 
     private final ObjectProvider<SingleSignOnParticipationStrategy> singleSignOnParticipationStrategy;
 
+    private final UniquePrincipalAuthenticationPolicyProperties properties;
+
     @Override
     public AuthenticationPolicyExecutionResult isSatisfiedBy(final Authentication authentication,
                                                              final Set<AuthenticationHandler> authenticationHandlers,
@@ -63,7 +66,7 @@ public class UniquePrincipalAuthenticationPolicy extends BaseAuthenticationPolic
         if (!context.containsKey(Assertion.class.getName()) && ssoParticipation) {
             val authPrincipal = authentication.getPrincipal();
             val count = ticketRegistry.countSessionsFor(authPrincipal.getId());
-            if (count > 0) {
+            if (count > properties.getMaximumAllowedSessions()) {
                 LOGGER.warn("[{}] cannot be satisfied for [{}]; [{}] sessions currently exist",
                     getName(), authPrincipal.getId(), count);
                 throw new UniquePrincipalRequiredException();

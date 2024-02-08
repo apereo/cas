@@ -21,7 +21,6 @@ import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasOAuth20AutoConfiguration;
-import org.apereo.cas.config.CasOAuth20TicketsAutoConfiguration;
 import org.apereo.cas.config.CasOidcAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
@@ -112,7 +111,6 @@ import java.io.Serializable;
 import java.time.Duration;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -483,7 +481,6 @@ public abstract class AbstractOidcTests {
         return accessToken;
     }
 
-
     protected OAuth20Code addCode(final Principal principal,
                                   final OAuthRegisteredService registeredService) throws Throwable {
         val tgt = new MockTicketGrantingTicket("casuser");
@@ -491,8 +488,8 @@ public abstract class AbstractOidcTests {
         val factory = new WebApplicationServiceFactory();
         val service = factory.createService(registeredService.getClientId());
         val code = defaultOAuthCodeFactory.create(service, authentication,
-            tgt, new ArrayList<>(),
-            null, null, "clientid", new HashMap<>(),
+            tgt, List.of(OidcConstants.StandardScopes.OPENID.getScope()),
+            null, null, registeredService.getClientId(), new HashMap<>(),
             OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         this.ticketRegistry.addTicket(code);
         return code;
@@ -529,7 +526,6 @@ public abstract class AbstractOidcTests {
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasOidcAutoConfiguration.class,
-        CasOAuth20TicketsAutoConfiguration.class,
         CasOAuth20AutoConfiguration.class,
         CasWebAppAutoConfiguration.class
     })

@@ -1,9 +1,11 @@
 {
   "dependencies": "oidc,jpa-ticket-registry",
-
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
     "--cas.audit.engine.enabled=true",
-    
+    "--cas.audit.slf4j.use-single-line=true",
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
 
@@ -37,7 +39,7 @@
     "--cas.ticket.registry.jpa.password=password",
     "--cas.ticket.registry.jpa.url=jdbc:postgresql://localhost:5432/tickets"
   ],
-  "initScript": "${PWD}/ci/tests/postgres/run-postgres-server.sh"
+  "initScript": "${PWD}/ci/tests/postgres/run-postgres-server.sh,${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }
 
 

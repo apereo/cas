@@ -5,13 +5,7 @@ const assert = require("assert");
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
-
-    // await login(page, "mfa-duo");
-    // await page.waitForTimeout(1000)
-    // await login(page, "mfa-duo-alt");
-    // await page.waitForTimeout(1000)
-
-    await login(page, "mfa-duo", "https://apereo.github.io");
+    await login(page, "mfa-duo", "https://localhost:9859/anything/cas");
     await page.waitForTimeout(1000);
 
     await browser.close();
