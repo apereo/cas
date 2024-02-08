@@ -3,7 +3,6 @@ package org.apereo.cas.authentication.attribute;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.io.FileWatcherService;
@@ -306,15 +305,13 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
      * @return the map
      */
     public static Map<String, AttributeDefinition> from(final Resource resource) {
-        try {
-            LOGGER.trace("Loading attribute definitions from [{}]", resource);
-            val json = new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
-            LOGGER.trace("Loaded attribute definitions [{}] from [{}]", json, resource);
-            return MAPPER.readValue(JsonValue.readHjson(json).toString(), new TypeReference<>() {
-            });
-        } catch (final Exception e) {
-            LoggingUtils.warn(LOGGER, e);
-        }
-        return Map.of();
+        return FunctionUtils.doIfNotNull(resource,
+            () -> {
+                LOGGER.trace("Loading attribute definitions from [{}]", resource);
+                val json = new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+                LOGGER.trace("Loaded attribute definitions [{}] from [{}]", json, resource);
+                return MAPPER.readValue(JsonValue.readHjson(json).toString(), new TypeReference<>() {
+                });
+            }, Map::<String, AttributeDefinition>of).get();
     }
 }
