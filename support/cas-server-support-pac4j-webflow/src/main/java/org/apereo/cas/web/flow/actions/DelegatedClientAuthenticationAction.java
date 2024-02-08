@@ -135,8 +135,9 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
                     throw client.processLogout(callContext, clientCredential.get().getCredentials());
                 }
                 return finalizeDelegatedClientAuthentication(context, clientCredential.get());
-            }
-            else if(StringUtils.isNotBlank(clientName)) {
+            } else if(StringUtils.isNotBlank(clientName)) {
+                // If there are no credentials at this point, it means that the
+                // client failed to validate them, so we throw an AuthenticationException
                 throw new AuthenticationException();
             }
         } catch (final HttpAction e) {
