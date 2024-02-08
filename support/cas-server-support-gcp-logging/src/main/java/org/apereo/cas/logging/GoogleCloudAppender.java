@@ -5,7 +5,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.text.MessageSanitizer;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.cloud.spring.core.DefaultGcpProjectIdProvider;
 import com.google.cloud.spring.logging.StackdriverTraceConstants;
@@ -23,10 +22,10 @@ import org.apache.logging.log4j.core.config.plugins.PluginConfiguration;
 import org.apache.logging.log4j.core.config.plugins.PluginElement;
 import org.apache.logging.log4j.core.config.plugins.PluginFactory;
 import org.apache.logging.log4j.core.layout.JsonLayout;
+import org.apache.logging.log4j.message.Message;
 import org.apache.logging.log4j.message.ObjectMessage;
 import org.apache.logging.log4j.util.SortedArrayStringMap;
 import org.apache.logging.log4j.util.StringMap;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -54,9 +53,12 @@ public class GoogleCloudAppender extends AbstractAppender {
      */
     private final String projectId;
 
+    private final Boolean flattenMessage;
+
     public GoogleCloudAppender(final String name, final Configuration config,
                                final AppenderRef appenderRef,
-                               final Filter filter, final String projectId) {
+                               final Filter filter, final String projectId,
+                               final Boolean flattenMessage) {
         super(name, filter, JsonLayout.createDefaultLayout(), false, Property.EMPTY_ARRAY);
         this.configuration = config;
         this.appenderRef = appenderRef;
@@ -64,31 +66,35 @@ public class GoogleCloudAppender extends AbstractAppender {
             val projectIdProvider = new DefaultGcpProjectIdProvider();
             return projectIdProvider.getProjectId();
         }, () -> projectId).get();
+        this.flattenMessage = flattenMessage;
     }
 
     /**
      * Build google cloud appender.
      *
-     * @param name        the name
-     * @param appenderRef the appender ref
-     * @param filter      the filter
-     * @param config      the config
+     * @param name           the name
+     * @param projectId      the project id
+     * @param flattenMessage the flatten message
+     * @param appenderRef    the appender ref
+     * @param filter         the filter
+     * @param config         the config
      * @return the google cloud appender
      */
     @PluginFactory
     public static GoogleCloudAppender build(
         @PluginAttribute("name")
         final String name,
-        @PluginAttribute("projectId")
+        @PluginAttribute(value = "projectId", sensitive = true)
         final String projectId,
+        @PluginAttribute(value = "flattenMessage", defaultBoolean = false, sensitive = false)
+        final Boolean flattenMessage,
         @PluginElement("AppenderRef")
         final AppenderRef appenderRef,
         @PluginElement("Filter")
         final Filter filter,
         @PluginConfiguration
         final Configuration config) {
-        return new GoogleCloudAppender(name, config,
-            appenderRef, filter, projectId);
+        return new GoogleCloudAppender(name, config, appenderRef, filter, projectId, flattenMessage);
     }
 
     @Override
@@ -147,23 +153,27 @@ public class GoogleCloudAppender extends AbstractAppender {
         }
     }
 
-    protected ObjectMessage buildLogMessage(final LogEvent logEvent,
-                                            final Map<Object, Object> messagePayload) {
+    protected Message buildLogMessage(final LogEvent logEvent,
+                                      final Map<Object, Object> messagePayload) {
         val buildMessage = logEvent.getMarker() == null
                            || !logEvent.getMarker().getName().equals(AsciiArtUtils.ASCII_ART_LOGGER_MARKER.getName());
         if (buildMessage) {
-            val messagSanitizer = ApplicationContextProvider.getMessageSanitizer().orElseGet(MessageSanitizer::disabled);
-            messagePayload.put("text", messagSanitizer.sanitize(logEvent.getMessage().getFormattedMessage()));
+            val messageSanitizer = ApplicationContextProvider.getMessageSanitizer().orElseGet(MessageSanitizer::disabled);
+            val formattedMessage = messageSanitizer.sanitize(logEvent.getMessage().getFormattedMessage());
+            if (flattenMessage) {
+                return new ObjectMessage(formattedMessage);
+            }
+            messagePayload.put("text", formattedMessage);
             if (logEvent.getMessage() instanceof final ObjectMessage objectMessage) {
                 if (objectMessage.getParameter() instanceof final Map parameters) {
-                    collectMessageParameters(messagePayload, messagSanitizer, parameters);
+                    collectMessageParameters(messagePayload, messageSanitizer, parameters);
                 } else {
                     try {
                         val parameters = MAPPER.convertValue(objectMessage.getParameter(), Map.class);
-                        collectMessageParameters(messagePayload, messagSanitizer, parameters);
+                        collectMessageParameters(messagePayload, messageSanitizer, parameters);
                     } catch (final Exception e) {
                         val parameters = Map.of("payload", objectMessage.getParameter().toString());
-                        collectMessageParameters(messagePayload, messagSanitizer, parameters);
+                        collectMessageParameters(messagePayload, messageSanitizer, parameters);
                     }
                 }
             }
@@ -172,19 +182,11 @@ public class GoogleCloudAppender extends AbstractAppender {
     }
 
     private static void collectMessageParameters(final Map<Object, Object> messagePayload,
-                                                 final MessageSanitizer messagSanitizer,
+                                                 final MessageSanitizer messageSanitizer,
                                                  final Map parameters) {
-        parameters.forEach((key, value) -> messagePayload.put(key, messagSanitizer.sanitize(value.toString())));
+        parameters.forEach((key, value) -> messagePayload.put(key, messageSanitizer.sanitize(value.toString())));
     }
 
-    /**
-     * Format trace id.
-     * Trace IDs are either 64-bit or 128-bit, which is 16-digit hex, or 32-digit hex.
-     * If traceId is 64-bit (16-digit hex), then we need to prepend 0's to make a 32-digit hex.
-     *
-     * @param traceId the trace id
-     * @return the string
-     */
     protected String formatTraceId(final String traceId) {
         if (traceId != null && traceId.length() == TRACE_ID_64_BIT_LENGTH) {
             return "0000000000000000" + traceId;

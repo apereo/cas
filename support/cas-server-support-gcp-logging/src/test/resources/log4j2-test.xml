@@ -9,7 +9,7 @@
         <Console name="Console" target="SYSTEM_OUT">
             <JsonLayout locationInfo="false"
                         includeStacktrace="true"
-                        objectMessageAsJsonObject="true"
+                        objectMessageAsJsonObject="false"
                         compact="false"
                         properties="false"
                         eventEol="true"
@@ -52,11 +52,15 @@
         <GoogleCloudAppender name="GoogleCloudAppender" projectId="5fdd7897-4c01-483c-93c1-d00dc28112c0">
             <AppenderRef ref="Console"/>
         </GoogleCloudAppender>
+        <GoogleCloudAppender name="GoogleCloudAppenderFlat" projectId="1fdd7897-4c01-483c-93c1-d00dc28112c0" flattenMessage="true">
+            <AppenderRef ref="Console"/>
+        </GoogleCloudAppender>
     </Appenders>
 
     <Loggers>
         <Logger name="org.apereo.cas.logging" includeLocation="true" level="INFO" additivity="false">
             <AppenderRef ref="GoogleCloudAppender"/>
+            <AppenderRef ref="GoogleCloudAppenderFlat"/>
         </Logger>
 
         <Root level="WARN" includeLocation="true">
