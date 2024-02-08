@@ -53,10 +53,10 @@ class CasPersonDirectoryStubConfiguration {
             return BeanContainer.of(list);
         }
 
-        private static IPersonAttributeDao newStubAttributeRepository(final PrincipalAttributesProperties p) {
+        private static IPersonAttributeDao newStubAttributeRepository(final PrincipalAttributesProperties properties) {
             val dao = new NamedStubPersonAttributeDao();
             val backingMap = new LinkedHashMap<String, List<Object>>();
-            val stub = p.getStub();
+            val stub = properties.getStub();
             stub.getAttributes().forEach((key, value) -> {
                 val vals = StringUtils.commaDelimitedListToStringArray(value);
                 backingMap.put(key, Arrays.stream(vals)
