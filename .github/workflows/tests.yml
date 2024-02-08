@@ -24,7 +24,7 @@ env:
   JDK_CURRENT: 21
   JDK_DISTRIBUTION: "corretto"
   RETRY_ATTEMPTS: 3
-  RETRY_MINUTES: 180
+  RETRY_MINUTES: 35
   CATEGORY_REGEX: ".*"
 ##########################################################################
 
@@ -106,7 +106,7 @@ jobs:
         with:
           max_attempts: ${{ env.RETRY_ATTEMPTS }}
           retry_on: error
-          retry_wait_seconds: 10
+          retry_wait_seconds: 5
           timeout_minutes: ${{ env.RETRY_MINUTES }}
           shell: bash
           command: |

@@ -203,7 +203,7 @@ TestCategories.values().each({ testCategory ->
                     systemProperty("junit.jupiter.execution.parallel.mode.default", "concurrent")
                     systemProperty("junit.jupiter.execution.parallel.mode.classes.default", "concurrent")
                     systemProperty("junit.jupiter.execution.parallel.config.strategy", "dynamic")
-                    systemProperty("junit.jupiter.execution.parallel.config.dynamic.factor", "4")
+                    systemProperty("junit.jupiter.execution.parallel.config.dynamic.factor", "8")
                 }
 
                 if (!project.path.contains(":docs")) {
