@@ -1,6 +1,5 @@
 {
   "dependencies": "reports,configuration-metadata-repository,events,monitor",
-
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",

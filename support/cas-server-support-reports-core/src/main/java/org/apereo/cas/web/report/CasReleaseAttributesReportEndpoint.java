@@ -18,7 +18,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.DefaultAssertionBuilder;
 import org.apereo.cas.validation.ImmutableAssertion;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.val;
@@ -26,11 +25,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
-import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.WriteOperation;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.lang.Nullable;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -71,26 +68,9 @@ public class CasReleaseAttributesReportEndpoint extends BaseCasActuatorEndpoint 
         this.principalResolver = principalResolver;
     }
 
-    /**
-     * Release principal attributes map.
-     *
-     * @param username the username
-     * @param password the password; this may be optional.
-     * @param service  the service
-     * @return the map
-     * @throws Throwable the throwable
-     */
-    @ReadOperation
-    @Operation(summary = "Get collection of released attributes for the user and application",
-        parameters = {
-            @Parameter(name = "username", required = true),
-            @Parameter(name = "password", required = false),
-            @Parameter(name = "service", required = true, description = "May be the service id or its numeric identifier")
-        })
-    public Map<String, Object> releasePrincipalAttributes(
+    protected Map<String, Object> releasePrincipalAttributes(
         final String username,
-        @Nullable
-        final String password,
+        @Nullable final String password,
         final String service) throws Throwable {
 
         val selectedService = serviceFactory.getObject().createService(service);
@@ -98,7 +78,7 @@ public class CasReleaseAttributesReportEndpoint extends BaseCasActuatorEndpoint 
             ? servicesManager.getObject().findServiceBy(Long.parseLong(service))
             : servicesManager.getObject().findServiceBy(selectedService);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(selectedService, registeredService);
-        
+
         val authentication = buildAuthentication(username, password, selectedService);
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)

@@ -43,7 +43,7 @@ public class RegisteredServiceAccessEndpointTests extends AbstractCasEndpointTes
 
     @Test
     void verifyForbiddenOperation() throws Throwable {
-        mockMvc.perform(get("/actuator/serviceAccess")
+        mockMvc.perform(post("/actuator/serviceAccess")
             .param("service", "https://unknown.example.edu")
             .param("username", "casuser")
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -57,7 +57,7 @@ public class RegisteredServiceAccessEndpointTests extends AbstractCasEndpointTes
         registeredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy()
             .setRequiredAttributes(Map.of("phone", Set.of("123456789"))));
         servicesManager.save(registeredService);
-        mockMvc.perform(get("/actuator/serviceAccess")
+        mockMvc.perform(post("/actuator/serviceAccess")
             .param("service", "https://canvas.example.edu")
             .param("username", "casuser")
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -71,7 +71,7 @@ public class RegisteredServiceAccessEndpointTests extends AbstractCasEndpointTes
         registeredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy()
             .setRequiredAttributes(Map.of("givenName", Set.of("apereo.+"))));
         servicesManager.save(registeredService);
-        mockMvc.perform(get("/actuator/serviceAccess")
+        mockMvc.perform(post("/actuator/serviceAccess")
             .param("service", "https://psw.example.edu")
             .param("username", "casuser")
             .param("password", "casuser")
@@ -86,7 +86,7 @@ public class RegisteredServiceAccessEndpointTests extends AbstractCasEndpointTes
         registeredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy()
             .setRequiredAttributes(Map.of("givenName", Set.of("apereo.+"))));
         servicesManager.save(registeredService);
-        mockMvc.perform(get("/actuator/serviceAccess")
+        mockMvc.perform(post("/actuator/serviceAccess")
             .param("service", "https://valid.example.edu")
             .param("username", "casuser")
             .param("password", "bad-password")

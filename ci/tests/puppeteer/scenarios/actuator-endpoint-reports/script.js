@@ -50,7 +50,9 @@ const cas = require("../../cas.js");
         const url = baseUrl + endpoints[i];
         await cas.log("===================================");
         await cas.log(`Trying ${url}`);
-        const body = await cas.doRequest(url, "GET", {
+
+        const method = url.includes("serviceAccess?") || url.includes("releaseAttributes?") ? "POST" : "GET";
+        const body = await cas.doRequest(url, method, {
             "Accept": "application/json",
             "Content-Type": "application/json",
             "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36"

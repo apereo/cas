@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.web.security;
 
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -87,6 +88,7 @@ public class HttpHeadersRequestProperties implements Serializable {
      * Header value is made up of one or more directives.
      * Multiple directives are separated with a semicolon.
      */
+    @ExpressionLanguageCapable
     private String contentSecurityPolicy = "script-src 'self' 'unsafe-inline' 'unsafe-eval'; object-src 'none';";
 
     /**

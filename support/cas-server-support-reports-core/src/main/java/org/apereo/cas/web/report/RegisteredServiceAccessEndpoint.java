@@ -29,7 +29,7 @@ import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEn
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.Optional;
@@ -76,7 +76,7 @@ public class RegisteredServiceAccessEndpoint extends BaseCasActuatorEndpoint {
      * @param request the request
      * @return the response entity
      */
-    @GetMapping(
+    @PostMapping(
         consumes = {
             MediaType.APPLICATION_FORM_URLENCODED_VALUE,
             MediaType.APPLICATION_JSON_VALUE

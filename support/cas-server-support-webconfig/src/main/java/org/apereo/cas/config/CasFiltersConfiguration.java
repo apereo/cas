@@ -8,6 +8,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.support.RegisteredServiceCorsConfigurationSource;
 import org.apereo.cas.services.web.support.RegisteredServiceResponseHeadersEnforcementFilter;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -103,7 +104,8 @@ class CasFiltersConfiguration {
             initParams.put(ResponseHeadersEnforcementFilter.INIT_PARAM_XSS_PROTECTION, header.getXssOptions());
             initParams.put(ResponseHeadersEnforcementFilter.INIT_PARAM_CACHE_CONTROL_STATIC_RESOURCES, header.getCacheControlStaticResources());
             if (StringUtils.isNotBlank(header.getContentSecurityPolicy())) {
-                initParams.put(ResponseHeadersEnforcementFilter.INIT_PARAM_CONTENT_SECURITY_POLICY, header.getContentSecurityPolicy());
+                initParams.put(ResponseHeadersEnforcementFilter.INIT_PARAM_CONTENT_SECURITY_POLICY,
+                    SpringExpressionLanguageValueResolver.getInstance().resolve(header.getContentSecurityPolicy()));
             }
             val bean = new FilterRegistrationBean<RegisteredServiceResponseHeadersEnforcementFilter>();
             val filter = new RegisteredServiceResponseHeadersEnforcementFilter(servicesManager,
