@@ -23,8 +23,8 @@ env:
   AZURE_AD_DOMAIN: ${{ secrets.AZURE_AD_DOMAIN }}
   JDK_CURRENT: 21
   JDK_DISTRIBUTION: "corretto"
-  RETRY_ATTEMPTS: 3
-  RETRY_MINUTES: 35
+  RETRY_ATTEMPTS: 2
+  RETRY_MINUTES: 20
   CATEGORY_REGEX: ".*"
 ##########################################################################
 
