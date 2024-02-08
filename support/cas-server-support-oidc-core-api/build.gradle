@@ -49,7 +49,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-services")
 
     testImplementation project(":support:cas-server-support-mongo-core")
-    testImplementation project(":support:cas-server-support-oauth-core")
+
     testImplementation project(":support:cas-server-support-themes")
     testImplementation project(":support:cas-server-support-throttle")
 

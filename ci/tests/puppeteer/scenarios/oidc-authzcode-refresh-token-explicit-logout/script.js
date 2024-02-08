@@ -72,13 +72,13 @@ async function exchangeToken(refreshToken, clientId, successHandler, errorHandle
     const page = await cas.newPage(browser);
 
     await cas.logg("Fetching first refresh token");
-    const redirectUrl1 = "https://github.com/apereo/cas";
+    const redirectUrl1 = "https://localhost:9859/anything/cas";
     const refreshToken1 = await fetchRefreshToken(page, "client", redirectUrl1);
 
     await cas.log("**********************************************");
     
     await cas.logg("Fetching second refresh token");
-    const redirectUrl2 = "https://apereo.github.io";
+    const redirectUrl2 = "https://localhost:9859/anything/sample";
     const refreshToken2 = await fetchRefreshToken(page, "client2", redirectUrl2);
 
     await cas.logg(`Refresh Token 1: ${refreshToken1}`);

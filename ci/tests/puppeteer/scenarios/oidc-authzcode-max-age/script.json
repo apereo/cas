@@ -1,9 +1,11 @@
 {
   "dependencies": "oidc",
-
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
     "--cas.audit.engine.enabled=true",
-    
+    "--cas.audit.slf4j.use-single-line=true",
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
 
@@ -18,7 +20,8 @@
 
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
-  ]
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }
 
 

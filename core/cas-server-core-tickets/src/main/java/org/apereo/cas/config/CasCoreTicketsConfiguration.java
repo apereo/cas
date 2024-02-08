@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
+import org.apereo.cas.authentication.AuthenticationPolicy;
 import org.apereo.cas.authentication.policy.UniquePrincipalAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
@@ -138,20 +139,30 @@ class CasCoreTicketsConfiguration {
     static class CasCoreTicketsAuthenticationPlanConfiguration {
         private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.policy.unique-principal.enabled").isTrue();
         
-        @ConditionalOnMissingBean(name = "ticketAuthenticationPolicyExecutionPlanConfigurer")
+        @ConditionalOnMissingBean(name = "uniqueAuthenticationPolicy")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public AuthenticationEventExecutionPlanConfigurer ticketAuthenticationPolicyExecutionPlanConfigurer(
-            final ConfigurableApplicationContext applicationContext,
+        public AuthenticationPolicy uniqueAuthenticationPolicy(
             @Qualifier(SingleSignOnParticipationStrategy.BEAN_NAME)
             final ObjectProvider<SingleSignOnParticipationStrategy> singleSignOnParticipationStrategy,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             final CasConfigurationProperties casProperties) {
+            return new UniquePrincipalAuthenticationPolicy(ticketRegistry,
+                singleSignOnParticipationStrategy,
+                casProperties.getAuthn().getPolicy().getUniquePrincipal());
+        }
+
+        @ConditionalOnMissingBean(name = "ticketAuthenticationPolicyExecutionPlanConfigurer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public AuthenticationEventExecutionPlanConfigurer ticketAuthenticationPolicyExecutionPlanConfigurer(
+            @Qualifier("uniqueAuthenticationPolicy")
+            final AuthenticationPolicy uniqueAuthenticationPolicy,
+            final ConfigurableApplicationContext applicationContext) {
             return BeanSupplier.of(AuthenticationEventExecutionPlanConfigurer.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> plan -> plan.registerAuthenticationPolicy(
-                    new UniquePrincipalAuthenticationPolicy(ticketRegistry, singleSignOnParticipationStrategy)))
+                .supply(() -> plan -> plan.registerAuthenticationPolicy(uniqueAuthenticationPolicy))
                 .otherwiseProxy()
                 .get();
         }

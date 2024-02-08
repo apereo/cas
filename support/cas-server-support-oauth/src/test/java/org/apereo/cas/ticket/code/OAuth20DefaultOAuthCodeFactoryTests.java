@@ -10,17 +10,14 @@ import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.tracking.DefaultDescendantTicketsTrackingPolicy;
 import org.apereo.cas.util.crypto.CipherExecutor;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.TestPropertySource;
-
 import java.util.Map;
 import java.util.Set;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -66,19 +63,20 @@ class OAuth20DefaultOAuthCodeFactoryTests extends AbstractOAuth20Tests {
     void verifyOperationWithExpPolicyRemoveDescendantTickets() throws Throwable {
         val registeredService = getRegisteredService("https://code.oauth.org", "clientid-code", "secret-at");
         registeredService.setCodeExpirationPolicy(
-                new DefaultRegisteredServiceOAuthCodeExpirationPolicy(10, "PT10S"));
+            new DefaultRegisteredServiceOAuthCodeExpirationPolicy(10, "PT10S"));
         servicesManager.save(registeredService);
         val tgt = new MockTicketGrantingTicket("casuser");
+        val trackingPolicy = new DefaultDescendantTicketsTrackingPolicy();
         val newOAuthCodeFactory = new OAuth20DefaultOAuthCodeFactory(oAuthCodeIdGenerator, oAuthCodeExpirationPolicy,
-                servicesManager, protocolTicketCipherExecutor, new DefaultDescendantTicketsTrackingPolicy());
+            servicesManager, protocolTicketCipherExecutor, trackingPolicy);
         val token = newOAuthCodeFactory.create(RegisteredServiceTestUtils.getService("https://code.oauth.org"),
-                RegisteredServiceTestUtils.getAuthentication(),
-                tgt,
-                Set.of("Scope1", "Scope2"), "code-challenge", "plain",
-                "clientid-code", Map.of(),
-                OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
+            RegisteredServiceTestUtils.getAuthentication(),
+            tgt,
+            Set.of("Scope1", "Scope2"), "code-challenge", "plain",
+            "clientid-code", Map.of(),
+            OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         assertNotNull(token);
-        assertTrue(tgt.getDescendantTickets().stream().anyMatch(t -> t.equalsIgnoreCase(token.getId())));
+        assertTrue(trackingPolicy.countTickets(tgt, token.getId()) > 0);
     }
 
     @Test

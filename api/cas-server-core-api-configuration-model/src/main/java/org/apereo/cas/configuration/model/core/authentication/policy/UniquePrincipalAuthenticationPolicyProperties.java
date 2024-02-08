@@ -17,4 +17,12 @@ import java.io.Serial;
 public class UniquePrincipalAuthenticationPolicyProperties extends BaseAuthenticationPolicyProperties {
     @Serial
     private static final long serialVersionUID = -4930217087310738715L;
+
+    /**
+     * Total number of allowed sessions
+     * that users can use simultaneously.
+     * Default is {@code 0}, which means
+     * user can only have one session.
+     */
+    private int maximumAllowedSessions;
 }

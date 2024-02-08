@@ -1,9 +1,9 @@
 {
   "dependencies": "duo",
   "conditions": {
+    "docker": "true",
     "env": "DUO_SECURITY_ADMIN_SKEY,DUO_SECURITY_ADMIN_IKEY,DUO_SECURITY_UNIVERSAL_PROMPT_SKEY,DUO_SECURITY_UNIVERSAL_PROMPT_IKEY,DUO_SECURITY_API_HOST"
   },
-
   "properties": [
     "--logging.level.org.apereo.cas=info",
     "--logging.level.org.springframework.webflow=warn",
@@ -40,5 +40,6 @@
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=duoAdmin",
     "--management.endpoints.enabled-by-default=true"
-  ]
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }

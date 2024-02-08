@@ -138,9 +138,9 @@ const cas = require("../../cas.js");
     assert(result.error_details.requesting_party_claims.required_claims !== undefined);
     assert(result.error_details.requesting_party_claims.required_scopes === undefined);
 
-
     await cas.log("Executing claim collection...");
-    params = `client_id=client&ticket=${permissionTicket}&state=12345&redirect_uri=https://apereo.github.io`;
+    const redirectUri = "https://localhost:9859/anything/cas";
+    params = `client_id=client&ticket=${permissionTicket}&state=12345&redirect_uri=${redirectUri}`;
     await cas.doRequest(`https://localhost:8443/cas/oauth2.0/rqpClaims?${params}`, "GET",
         {
             "Authorization": `Bearer ${protectionToken}`,
@@ -149,7 +149,7 @@ const cas = require("../../cas.js");
         }, 302, undefined,
         (res) =>
             assert(res.headers.location.includes(
-                "https://apereo.github.io?authorization_state=claims_submitted&state=12345")));
+                `${redirectUri}?authorization_state=claims_submitted&state=12345`)));
 
     await cas.log(`After claim collection, asking for relying party token (RPT) based on ${authorizationToken}`);
     authzObject = {

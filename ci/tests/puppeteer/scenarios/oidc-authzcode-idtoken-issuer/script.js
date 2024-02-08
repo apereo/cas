@@ -4,7 +4,8 @@ const assert = require("assert");
 
 async function testService(page, clientId, oidc = true) {
     await cas.log(`Testing application with client id ${clientId}`);
-    const url = `https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=${clientId}&scope=openid%20profile&redirect_uri=https://apereo.github.io`;
+    const redirectUrl = "https://localhost:9859/anything/cas";
+    const url = `https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=${clientId}&scope=${encodeURIComponent("openid profile")}&redirect_uri=${redirectUrl}`;
     await cas.goto(page, url);
     await page.waitForTimeout(1000);
     await cas.loginWith(page);
@@ -17,7 +18,7 @@ async function testService(page, clientId, oidc = true) {
 
     const code = await cas.assertParameter(page, "code");
     await cas.log(`Current code is ${code}`);
-    const accessTokenUrl = `https://localhost:8443/cas/oidc/token?grant_type=authorization_code&client_id=${clientId}&client_secret=secret&redirect_uri=https://apereo.github.io&code=${code}`;
+    const accessTokenUrl = `https://localhost:8443/cas/oidc/token?grant_type=authorization_code&client_id=${clientId}&client_secret=secret&redirect_uri=${redirectUrl}&code=${code}`;
     const payload = await cas.doPost(accessTokenUrl, "", {
         "Content-Type": "application/json"
     }, (res) => res.data, (error) => {

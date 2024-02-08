@@ -54,17 +54,13 @@ jobs:
         with:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: "zulu"
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - uses: actions/checkout@v4
       - name: Download Dependencies
         run: ./gradlew --build-cache --configure-on-demand --no-daemon downloadDependencies --parallel --refresh-dependencies
-      - uses: actions/cache@v4
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
             
 ##########################################################################
 
@@ -82,14 +78,10 @@ jobs:
         with:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: "zulu"
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
-      - uses: actions/cache@v4
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
       - name: Output Config
         run: echo "username=${GITHUB_ACTOR} releaseRepositoryUrl=https://maven.pkg.github.com/${GITHUB_REPOSITORY} on tag ${{ github.ref }} Token Length is [$(echo -n $GITHUB_TOKEN | wc -c)] Tag is ${GITHUB_REF/refs\/tags\//}"
         env:

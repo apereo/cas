@@ -13,7 +13,7 @@ const cas = require("../../cas.js");
     await cas.assertInnerTextContains(page, "#attribute-tab-0 table#attributesTable tbody", "grouperGroups");
     await cas.assertInnerTextContains(page, "#attribute-tab-0 table#attributesTable tbody", "etc:grouperUi:grouperUiUserData");
     await cas.assertCookie(page);
-    await cas.gotoLogin(page, "https://apereo.github.io");
+    await cas.gotoLogin(page, "https://localhost:9859/anything/cas");
     await cas.assertTicketParameter(page);
     await browser.close();
 })();

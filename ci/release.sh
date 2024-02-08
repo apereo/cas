@@ -59,10 +59,8 @@ function publish {
 
     ./gradlew createOpenRewriteRecipe
     git diff --quiet
-    if [ $? -ne 0 ]; then
-      git status
-      git add "**/rewrite/*.yml" && git commit -m "Generated OpenRewrite recipe for ${casVersion}"
-    fi
+    git status
+    git add "**/rewrite/*.yml" && git commit -m "Generated OpenRewrite recipe for ${casVersion}"
 
     printgreen "Publishing CAS releases. This might take a while..."
     ./gradlew publishToSonatype closeAndReleaseStagingRepository \

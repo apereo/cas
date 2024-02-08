@@ -11,7 +11,7 @@ cert=$(cat "${metadataDirectory}"/idp-encryption.crt | sed 's/-----BEGIN CERTIFI
 export IDP_ENCRYPTION_CERTIFICATE=$cert
 echo -e "Using encryption certificate:\n$IDP_ENCRYPTION_CERTIFICATE"
 
-export SP_ACS_SERVICE="https://localhost:8443/cas/login?service=https://apereo.github.io&client_name=SAML2Client"
+export SP_ACS_SERVICE="https://localhost:8443/cas/login?service=https://localhost:9859/anything/cas&client_name=SAML2Client"
 
 chmod +x "${PWD}/ci/tests/saml2/run-saml-server.sh"
 "${PWD}/ci/tests/saml2/run-saml-server.sh"

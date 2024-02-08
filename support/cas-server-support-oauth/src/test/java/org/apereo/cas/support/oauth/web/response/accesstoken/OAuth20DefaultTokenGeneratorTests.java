@@ -15,7 +15,6 @@ import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 
 import lombok.val;
 import org.jose4j.jwt.JwtClaims;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.jee.context.JEEContext;
@@ -43,12 +42,6 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.oauth.device-token.refresh-interval=PT1S"
 })
 class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
-
-    @BeforeEach
-    public void initialize() {
-        clearAllServices();
-    }
-
     @Test
     void verifyRequestedClaims() throws Throwable {
         val registeredService = getRegisteredService(UUID.randomUUID().toString(), "secret", new LinkedHashSet<>());

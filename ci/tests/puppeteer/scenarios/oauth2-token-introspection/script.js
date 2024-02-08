@@ -2,7 +2,6 @@ const assert = require("assert");
 const cas = require("../../cas.js");
 
 (async () => {
-
     let params = "grant_type=client_credentials&";
     params += "scope=openid";
 

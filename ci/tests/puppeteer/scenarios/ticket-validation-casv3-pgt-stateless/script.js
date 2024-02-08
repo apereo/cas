@@ -2,7 +2,7 @@ const puppeteer = require("puppeteer");
 const assert = require("assert");
 const cas = require("../../cas.js");
 
-const PROXIED_SERVICE = "https://github.com/apereo/cas";
+const PROXIED_SERVICE = "https://localhost:9859/anything/sample";
 
 async function proxyValidateTicket(service, ticket, format = "JSON") {
     const body = await cas.doRequest(`https://localhost:8443/cas/p3/proxyValidate?service=${service}&ticket=${ticket}&format=${format}&pgtUrl=${PROXIED_SERVICE}`);
@@ -25,7 +25,7 @@ async function getProxyTicket(service, ticket) {
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
-    const service = "https://apereo.github.io";
+    const service = "https://localhost:9859/anything/cas";
 
     await cas.gotoLogin(page, service);
     await cas.loginWith(page);

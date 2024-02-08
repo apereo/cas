@@ -14,7 +14,7 @@ def run(Object[] args) {
 
     providers.forEach(provider -> {
         logger.info("Checking provider ${provider.name} for service ${service?.id}...")
-        if (service != null && service.id.startsWith("https://github.com/apereo/cas")) {
+        if (service != null && service.id.startsWith("https://localhost:9859/anything/sample")) {
             provider.autoRedirectType = DelegationAutoRedirectTypes.CLIENT
             logger.info("Selected primary provider ${provider.name}")
             return provider

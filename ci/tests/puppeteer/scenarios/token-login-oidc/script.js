@@ -10,7 +10,7 @@ const assert = require("assert");
     const page = await cas.newPage(browser);
 
     await cas.gotoLogout(page);
-    const url = `https://localhost:8443/cas/oidc/oidcAuthorize?token=${token}&response_type=code&client_id=client1&scope=openid%20profile%20ssotoken%20email&redirect_uri=${service}`;
+    const url = `https://localhost:8443/cas/oidc/oidcAuthorize?token=${token}&response_type=code&client_id=client1&scope=${encodeURIComponent("openid profile ssotoken email")}&redirect_uri=${service}`;
 
     await cas.goto(page, url);
     await page.waitForTimeout(2000);

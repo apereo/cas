@@ -117,8 +117,10 @@ public class OidcDiscoveryProperties implements Serializable {
     /**
      * Supported grant types.
      */
-    private List<String> grantTypesSupported = Stream.of("authorization_code", "password",
+    private List<String> grantTypesSupported = Stream.of(
+        "authorization_code", "password",
         "client_credentials", "refresh_token",
+        "urn:ietf:params:oauth:grant-type:token-exchange",
         "urn:ietf:params:oauth:grant-type:device_code",
         "urn:ietf:params:oauth:grant-type:uma-ticket").toList();
 

@@ -1,7 +1,6 @@
 package org.apereo.cas.support.oauth.services;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
 import java.io.Serializable;
 
 /**
@@ -26,4 +25,13 @@ public interface RegisteredServiceOAuthAccessTokenExpirationPolicy extends Seria
      * @return the time to live
      */
     String getTimeToKill();
+
+    /**
+     * Maximum number of active access tokens that an application
+     * can receive. If the application requests more that this limit,
+     * the request will be denied and the access token will not be issued.
+     *
+     * @return number of tokens
+     */
+    long getMaxActiveTokens();
 }

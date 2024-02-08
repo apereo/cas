@@ -408,6 +408,34 @@ public interface OAuth20Constants {
      */
     String DPOP = "DPoP";
 
+    /**
+     * resource parameter.
+     */
+    String RESOURCE = "resource";
+
+    /**
+     * audience parameter.
+     */
+    String AUDIENCE = "audience";
+
+    /**
+     * requested_token_type parameter.
+     */
+    String REQUESTED_TOKEN_TYPE = "requested_token_type";
+
+    /**
+     * subject_token parameter.
+     */
+    String SUBJECT_TOKEN = "subject_token";
+
+    /**
+     * subject_token_type parameter.
+     */
+    String SUBJECT_TOKEN_TYPE = "subject_token_type";
+    /**
+     * issued_token_type parameter.
+     */
+    String ISSUED_TOKEN_TYPE = "issued_token_type";
 
     /**
      * DPoP confirmation that is put inside access token as an attribute.

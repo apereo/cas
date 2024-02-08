@@ -33,7 +33,7 @@ enum TestCategories {
     GroovyAuthentication(true),
     GroovyMfa(true),
     GroovyServices(true),
-    Grouper,
+    Grouper(true),
     Hazelcast,
     Hibernate,
     Ignite,
@@ -87,7 +87,7 @@ enum TestCategories {
     SCIM(true),
     SHELL(true),
     Simple(true),
-    SMS,
+    SMS(true),
     Spnego(true),
     Syncope(true),
     Tickets,
@@ -109,13 +109,20 @@ enum TestCategories {
     ZooKeeper(true)
 
     boolean parallelEnabled;
-
+    private ptsEnabled;
+    
     TestCategories() {
         parallelEnabled = false
+        ptsEnabled = false
     }
 
     TestCategories(boolean parallelEnabled) {
         this.parallelEnabled = parallelEnabled
+    }
+
+    TestCategories(boolean parallelEnabled, boolean ptsEnabled) {
+        this.parallelEnabled = parallelEnabled
+        this.ptsEnabled = ptsEnabled
     }
 }
 
@@ -178,15 +185,25 @@ TestCategories.values().each({ testCategory ->
                 group = "CAS Tests"
                 enabled = shouldTest(sourceTestDirs, testCategory.name())
                 outputs.file(jacocoTestExecutionResultsFile)
+
                 useJUnitPlatform {
                     includeTags testCategory.name()
                 }
+
+                if (testCategory.ptsEnabled) {
+                    predictiveSelection {
+                        enabled = true
+                        mode = RELEVANT_TESTS
+                        profile = STANDARD
+                    }
+                }
+
                 if (testCategory.parallelEnabled) {
                     systemProperty("junit.jupiter.execution.parallel.enabled", true)
                     systemProperty("junit.jupiter.execution.parallel.mode.default", "concurrent")
                     systemProperty("junit.jupiter.execution.parallel.mode.classes.default", "concurrent")
                     systemProperty("junit.jupiter.execution.parallel.config.strategy", "dynamic")
-                    systemProperty("junit.jupiter.execution.parallel.config.dynamic.factor", "4")
+                    systemProperty("junit.jupiter.execution.parallel.config.dynamic.factor", "8")
                 }
 
                 if (!project.path.contains(":docs")) {
@@ -197,6 +214,7 @@ TestCategories.values().each({ testCategory ->
                         classDumpDir = layout.buildDirectory.dir('jacoco/classpathdumps').get().asFile
                     }
                 }
+
             }
         }
     }

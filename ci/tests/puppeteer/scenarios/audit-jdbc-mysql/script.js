@@ -52,7 +52,7 @@ async function callAuditLog() {
     await cas.log("Testing authentication after refresh...");
     browser = await puppeteer.launch(cas.browserOptions());
     page = await cas.newPage(browser);
-    await cas.gotoLogin(page, "https://apereo.github.io");
+    await cas.gotoLogin(page, "https://localhost:9859/anything/cas");
     await cas.loginWith(page);
     await cas.assertTicketParameter(page);
 

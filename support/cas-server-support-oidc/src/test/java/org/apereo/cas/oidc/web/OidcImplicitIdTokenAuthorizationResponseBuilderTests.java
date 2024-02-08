@@ -58,7 +58,7 @@ class OidcImplicitIdTokenAuthorizationResponseBuilderTests extends AbstractOidcT
         profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
         profile.setId("casuser");
 
-        val holder = AccessTokenRequestContext.builder()
+        val tokenRequestContext = AccessTokenRequestContext.builder()
             .clientId(registeredService.getClientId())
             .service(CoreAuthenticationTestUtils.getService())
             .authentication(authentication)
@@ -69,10 +69,11 @@ class OidcImplicitIdTokenAuthorizationResponseBuilderTests extends AbstractOidcT
             .token(code)
             .userProfile(profile)
             .redirectUri("https://oauth.example.org")
+            .scopes(code.getScopes())
             .build();
 
         servicesManager.save(registeredService);
-        val modelAndView = oidcImplicitIdTokenCallbackUrlBuilder.build(holder);
+        val modelAndView = oidcImplicitIdTokenCallbackUrlBuilder.build(tokenRequestContext);
         assertNotNull(modelAndView);
         val redirectUrl = ((AbstractUrlBasedView) modelAndView.getView()).getUrl();
         assertNotNull(redirectUrl);

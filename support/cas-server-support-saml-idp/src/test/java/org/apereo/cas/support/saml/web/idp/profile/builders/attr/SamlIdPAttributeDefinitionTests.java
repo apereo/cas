@@ -37,6 +37,7 @@ class SamlIdPAttributeDefinitionTests extends BaseSamlIdPConfigurationTests {
         assertTrue(attributeDefinitionStore.locateAttributeDefinition("eduPersonScopedAffiliation").isPresent());
         assertTrue(attributeDefinitionStore.locateAttributeDefinition("mail").isPresent());
         assertTrue(attributeDefinitionStore.locateAttributeDefinition("givenName").isPresent());
+        assertFalse(attributeDefinitionStore.locateAttributeDefinition("email").isPresent());
     }
 
     @Test

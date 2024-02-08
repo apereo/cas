@@ -14,8 +14,7 @@ async function assertFailure(page) {
 
     const args = process.argv.slice(2);
     const config = JSON.parse(fs.readFileSync(args[0]));
-
-
+    
     await cas.log(`Certificate file: ${config.trustStoreCertificateFile}`);
 
     const certBuffer = fs.readFileSync(config.trustStoreCertificateFile);
@@ -40,7 +39,7 @@ async function assertFailure(page) {
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
     await cas.assertInnerTextContains(page, "#content div p", "CN=mmoayyed, OU=dev, O=bft, L=mt, C=world");
 
-    await cas.gotoLogin(page, "https://github.com");
+    await cas.gotoLogin(page, "https://localhost:9859/anything/cas");
     await page.waitForTimeout(5000);
     await assertFailure(page);
     await browser.close();

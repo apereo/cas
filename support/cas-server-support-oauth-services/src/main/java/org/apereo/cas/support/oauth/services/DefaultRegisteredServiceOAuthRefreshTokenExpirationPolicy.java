@@ -35,4 +35,6 @@ public class DefaultRegisteredServiceOAuthRefreshTokenExpirationPolicy implement
 
     @DurationCapable
     private String timeToKill;
+
+    private long maxActiveTokens;
 }

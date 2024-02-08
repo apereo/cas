@@ -27,11 +27,16 @@ const assert = require("assert");
     assert(decoded.sub === "ABCDEFG@APEREO.ORG");
     assert(decoded["preferred_username"] === "ABCDEFG@APEREO.ORG");
 
+    await cas.logg(`Trying with URL ${url1} but without the openid scope`);
+    payload = await getPayload(page, url1, "client1", "secret1", "profile email");
+    assert(payload.id_token === undefined);
+    
     await browser.close();
 })();
 
-async function getPayload(page, redirectUri, clientId, clientSecret) {
-    const url = `https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=${clientId}&scope=openid%20profile%20email&redirect_uri=${redirectUri}`;
+async function getPayload(page, redirectUri, clientId, clientSecret, scopes = "openid profile email") {
+    const encodedScopes = encodeURIComponent(scopes);
+    const url = `https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=${clientId}&scope=${encodedScopes}&redirect_uri=${redirectUri}`;
     await cas.goto(page, url);
     await cas.logPage(page);
     await page.waitForTimeout(1000);

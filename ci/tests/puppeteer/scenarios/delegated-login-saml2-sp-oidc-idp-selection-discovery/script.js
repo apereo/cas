@@ -12,7 +12,7 @@ const assert = require("assert");
 })();
 
 async function startWithCasSp(page) {
-    const service = "https://apereo.github.io";
+    const service = "https://localhost:9859/anything/cas";
     await cas.gotoLogout(page);
     await page.waitForTimeout(1000);
     await cas.gotoLogin(page, service);

@@ -5,7 +5,6 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,11 +32,6 @@ class OAuth20RevocationEndpointControllerTests extends AbstractOAuth20Tests {
     @Autowired
     @Qualifier("oauthRevocationController")
     private OAuth20RevocationEndpointController oAuth20RevocationController;
-
-    @BeforeEach
-    public void initialize() {
-        clearAllServices();
-    }
 
     @Test
     void verifyNoGivenToken() throws Throwable {
