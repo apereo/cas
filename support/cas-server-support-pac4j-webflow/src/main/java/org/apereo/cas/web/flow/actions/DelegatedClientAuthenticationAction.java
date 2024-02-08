@@ -135,9 +135,9 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
                     throw client.processLogout(callContext, clientCredential.get().getCredentials());
                 }
                 return finalizeDelegatedClientAuthentication(context, clientCredential.get());
-            } else if(StringUtils.isNotBlank(clientName)) {
-                val msg = "Client " + clientName + " failed to validate credentials";
-                LOGGER.error(msg);
+            } else if (StringUtils.isNotBlank(clientName)) {
+                val msg = "Client %s failed to validate credentials".formatted(clientName);
+                LoggingUtils.error(LOGGER, msg);
                 return stopWebflow(new AuthenticationException(msg), context);
             }
         } catch (final HttpAction e) {
