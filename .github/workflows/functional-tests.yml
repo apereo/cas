@@ -47,6 +47,7 @@ on:
     types: [ labeled ]
     branches:
       - master
+      - 'pr-*'
       - '!**.**.**'
 
 concurrency:

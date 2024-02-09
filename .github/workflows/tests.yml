@@ -34,7 +34,7 @@ on:
     branches: [ master, pr-* ]
   pull_request:
     types: [ labeled ]
-    branches: [ master ]
+    branches: [ master, pr-* ]
 
 concurrency:
   group: "workflow = ${{ github.workflow }}, ref = ${{ github.event.ref }}, pr = ${{ github.event.pull_request.id }}"
