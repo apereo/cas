@@ -90,7 +90,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
                 .timeToLive(ttl)
                 .ticket(encTicket)
                 .prefix(metadata.getPrefix())
-                .service(ticket instanceof final ServiceAwareTicket sat ? sat.getService().getId() : null)
+                .service(ticket instanceof final ServiceAwareTicket sat && Objects.nonNull(sat.getService()) ? sat.getService().getId() : null)
                 .attributes(collectAndDigestTicketAttributes(ticket))
                 .build();
             ticketMap.set(encTicket.getId(), holder, ttl, TimeUnit.SECONDS);

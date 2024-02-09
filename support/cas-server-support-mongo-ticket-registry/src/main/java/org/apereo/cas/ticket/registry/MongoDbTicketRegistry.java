@@ -332,7 +332,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             .ticketId(encTicket.getId())
             .json(json)
             .principal(digestIdentifier(principal))
-            .service(ticket instanceof final ServiceAwareTicket sat ? sat.getService().getId() : null)
+            .service(ticket instanceof final ServiceAwareTicket sat && Objects.nonNull(sat.getService()) ? sat.getService().getId() : null)
             .attributes(collectAndDigestTicketAttributes(ticket))
             .build();
     }

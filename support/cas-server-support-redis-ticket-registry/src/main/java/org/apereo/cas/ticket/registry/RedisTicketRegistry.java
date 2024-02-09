@@ -399,7 +399,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
                 .prefix(ticket.getPrefix())
                 .principal(digestIdentifier(principal))
                 .attributes(attributesEncoded)
-                .service(ticket instanceof final ServiceAwareTicket sat ? sat.getService().getId() : null)
+                .service(ticket instanceof final ServiceAwareTicket sat && Objects.nonNull(sat.getService()) ? sat.getService().getId() : null)
                 .build();
         });
     }

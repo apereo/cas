@@ -118,7 +118,7 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
             .encodedTicket(encTicket)
             .principal(principal)
             .attributes(collectAndDigestTicketAttributes(ticket))
-            .service(ticket instanceof final ServiceAwareTicket sat ? sat.getService().getId() : StringUtils.EMPTY)
+            .service(ticket instanceof final ServiceAwareTicket sat && Objects.nonNull(sat.getService()) ? sat.getService().getId() : StringUtils.EMPTY)
             .build();
     }
 
