@@ -20,9 +20,12 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.io.IOUtils;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.client.RestTemplate;
 import java.io.StringReader;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -68,6 +71,30 @@ public class MonitoredRepository {
     public Workflows getSuccessfulWorkflowRunsFor(final Base base, final Commit first) {
         return gitHub.getWorkflowRuns(base.getRepository().getOwner().getLogin(),
             base.getRepository().getName(), first, Workflows.WorkflowRunStatus.SUCCESS);
+    }
+
+    public void verifyPullRequest(final PullRequest pullRequest) {
+        try {
+            removeAllCommentsFrom(pullRequest, "apereocas-bot");
+            val mostRecentCommit = getPullRequestCommits(pullRequest)
+                .stream()
+                .filter(c -> !c.getCommit().isMergeCommit())
+                .toList()
+                .getFirst();
+            val workflowRuns = getSuccessfulWorkflowRunsFor(pullRequest.getHead(), mostRecentCommit);
+            if (workflowRuns.getCount() <= 0) {
+                var template = IOUtils.toString(new ClassPathResource("template-run-tests.md").getInputStream(), StandardCharsets.UTF_8);
+                template = template.replace("${commitId}", mostRecentCommit.getSha());
+                template = template.replace("${forkedRepository}", pullRequest.getHead().getRepository().getUrl());
+                template = template.replace("${link}", Memes.NO_TESTS.select());
+                template = template.replace("${branch}", pullRequest.getHead().getRef());
+                labelPullRequestAs(pullRequest, CasLabels.LABEL_PENDING_NEEDS_TESTS);
+                labelPullRequestAs(pullRequest, CasLabels.LABEL_WIP);
+                addComment(pullRequest, template);
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
     }
 
     private static Predicate<Label> getLabelPredicateByName(final CasLabels name) {
@@ -226,6 +253,24 @@ public class MonitoredRepository {
         return pr;
     }
 
+    public void removeAllCommentsFrom(final PullRequest pr, final String login) {
+        val comments = getAllCommentsFor(pr).stream().filter(comment -> comment.getUser().getLogin().equalsIgnoreCase(login)).toList();
+        comments.forEach(comment -> {
+            gitHub.removeComment(getOrganization(), getName(), comment.getId());
+        });
+    }
+
+    private List<Comment> getAllCommentsFor(final PullRequest pr) {
+        var allComments = new ArrayList<Comment>();
+        var pages = this.gitHub.getComments(pr);
+        while (pages != null) {
+            allComments.addAll(pages.getContent());
+            pages = pages.next();
+        }
+        allComments.sort(Collections.reverseOrder(Comparator.comparing(Comment::getUpdatedTime)));
+        return allComments;
+    }
+
     public void addComment(final PullRequest pr, final String comment) {
         this.gitHub.addComment(pr, comment);
     }
@@ -362,18 +407,8 @@ public class MonitoredRepository {
     }
 
     public boolean shouldResumeCiBuild(final PullRequest pr) {
-        var allComments = new ArrayList<Comment>();
-        try {
-            var comments = gitHub.getComments(getOrganization(), getName(), pr.getNumber());
-            while (comments != null) {
-                allComments.addAll(comments.getContent());
-                comments = comments.next();
-            }
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-        }
+        var allComments = getAllCommentsFor(pr);
         if (!allComments.isEmpty()) {
-            allComments.sort(Collections.reverseOrder(Comparator.comparing(Comment::getUpdatedTime)));
             for (final Comment lastComment : allComments) {
                 var body = lastComment.getBody().trim();
                 val runci = body.equals("@apereocas-bot runci");

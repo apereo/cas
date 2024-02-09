@@ -51,24 +51,21 @@ public class RepositoryController {
         if (pullRequest == null) {
             return ResponseEntity.notFound().build();
         }
-        val mostRecentCommit = repository.getPullRequestCommits(pullRequest)
-            .stream()
-            .filter(c -> !c.getCommit().isMergeCommit())
-            .toList()
-            .getFirst();
-        val workflowRuns = repository.getSuccessfulWorkflowRunsFor(pullRequest.getHead(), mostRecentCommit);
-        if (workflowRuns.getCount() <= 0) {
-            var template = IOUtils.toString(new ClassPathResource("template-run-tests.md").getInputStream(), StandardCharsets.UTF_8);
-            template = template.replace("${commitId}", mostRecentCommit.getSha());
-            template = template.replace("${forkedRepository}", pullRequest.getHead().getRepository().getUrl());
-            template = template.replace("${link}", Memes.NO_TESTS.select());
-            template = template.replace("${branch}", pullRequest.getHead().getRef());
-            repository.labelPullRequestAs(pullRequest, CasLabels.LABEL_PENDING_NEEDS_TESTS);
-            repository.labelPullRequestAs(pullRequest, CasLabels.LABEL_WIP);
-//            repository.addComment(pullRequest, template);
-        }
-        return ResponseEntity.ok(workflowRuns);
+        repository.verifyPullRequest(pullRequest);
+        return ResponseEntity.ok(pullRequest);
     }
+
+    @GetMapping(value = "/repo/pulls/{prNumber}/comments/clean", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Secured({"ROLE_ADMIN"})
+    public ResponseEntity cleanComments(@PathVariable final String prNumber) throws Exception {
+        val pullRequest = repository.getPullRequest(prNumber);
+        if (pullRequest == null) {
+            return ResponseEntity.notFound().build();
+        }
+        repository.removeAllCommentsFrom(pullRequest, "apereocas-bot");
+        return ResponseEntity.ok().build();
+    }
+
 
     @GetMapping(value = "/repo/pulls", produces = MediaType.APPLICATION_JSON_VALUE)
     @Secured({"ROLE_ADMIN"})

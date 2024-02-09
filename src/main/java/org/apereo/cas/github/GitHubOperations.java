@@ -29,6 +29,8 @@ public interface GitHubOperations {
 
     Page<Comment> getComments(Issue issue);
 
+    Page<Comment> getComments(PullRequest issue);
+
     Issue addLabel(Issue issue, String label);
 
     PullRequest addLabel(PullRequest pr, String label);

@@ -2,15 +2,11 @@ Thank you very much for submitting this pull request! You are off to a very good
 
 # What happened?
 
-Your pull request is currently at commit id `${commitId}`. We looked at your [forked repository](${forkedRepository}) to find this commit
-id to verify if there are any *GitHub Actions workflow runs* on your forked repository that are run for this commit id, so we can
-determine if the test suite has in fact run prior to the submission here.
+Your pull request is currently at commit id `${commitId}`. We looked at your [forked repository](${forkedRepository}) to find this commit id to verify if there are any *GitHub Actions workflow runs* on your forked repository that are run for this commit id, so we can determine if the test suite has in fact run prior to the submission here.
 
 Just in case: you do not have to wait for the CAS project or its members to run tests for you here. You can do them yourself.
 
-We have not found any successful workflow runs on your forked repository that would show passing tests for this commit id. Our decision 
-at this point is that the CAS test suite has not run (successfully) on your fork to verify how your changes affect all CAS functionality. They might
-indeed verify the particular functionality you have worked on, but we need to ensure that the changes do not break other parts of CAS.
+We have not found any successful workflow runs on your forked repository that would show passing tests for this commit id. Our decision at this point is that the CAS test suite has not run (successfully) on your fork to verify how your changes affect all CAS functionality. They might indeed verify the particular functionality you have worked on, but we need to ensure that the changes do not break other parts of CAS.
 
 ![image](${link})
 
@@ -21,14 +17,9 @@ indeed verify the particular functionality you have worked on, but we need to en
 
 # What's next?
 
-The CAS project runs its test suite via [GitHub Actions](https://github.com/apereo/cas/actions). Our subscription to GitHub Actions is 
-now paid for and sponsored by Apereo foundation members and can no longer be run freely. To proceed, you should activate GitHub Actions
-for your [forked repository](${forkedRepository}) and allow it to run the CAS test suite for you. Once tests and workflows pass for your most recent commit, please post a note here
-and we can resume with the review proceed.
+The CAS project runs its test suite via [GitHub Actions](https://github.com/apereo/cas/actions). Our subscription to GitHub Actions is now paid for and sponsored by Apereo foundation members and can no longer be run freely. To proceed, you should activate GitHub Actions for your [forked repository](${forkedRepository}) and allow it to run the CAS test suite for you. Once tests and workflows pass for your most recent commit, please post a note here and we can resume with the review proceed.
          
-Furthermore, your current changeset starts off with the branch `${branch}`. To activate GitHub Actions and workflow runs for your forked repository,
-it would be best if you rename your branch to match `pr-${branch}`. Your branch name essentially should start with `pr-` and then followed by the name of your branch.
-This allows the right jobs and runs to trigger correctly.
+Furthermore, your current changeset starts off with the branch `${branch}`. To activate GitHub Actions and workflow runs for your forked repository, it would be best if you rename your branch to match `pr-${branch}`. Your branch name essentially should start with `pr-` and then followed by the name of your branch. This allows the right jobs and runs to trigger correctly.
 
 If you have done so already, please ignore the digital dust here and move on.
 

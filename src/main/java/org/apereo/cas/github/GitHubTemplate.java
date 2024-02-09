@@ -146,6 +146,11 @@ public class GitHubTemplate implements GitHubOperations {
     }
 
     @Override
+    public Page<Comment> getComments(final PullRequest pr) {
+        return getPage(pr.getCommentsUrl(), Comment[].class);
+    }
+
+    @Override
     public Page<Event> getEvents(final Issue issue) {
         return getPage(issue.getEventsUrl(), Event[].class);
     }
