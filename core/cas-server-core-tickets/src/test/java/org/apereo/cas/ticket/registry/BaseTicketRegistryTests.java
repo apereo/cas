@@ -138,7 +138,7 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @BeforeEach
-    public void initialize(final TestInfo info, final RepetitionInfo repetitionInfo) {
+    public void initialize(final TestInfo info, final RepetitionInfo repetitionInfo) throws Throwable {
         this.ticketGrantingTicketId = TICKET_GRANTING_TICKET_ID_GENERATOR.getNewTicketId(TicketGrantingTicket.PREFIX);
         this.serviceTicketId = new ServiceTicketIdGenerator(10, StringUtils.EMPTY)
             .getNewTicketId(ServiceTicket.PREFIX);
@@ -501,7 +501,7 @@ public abstract class BaseTicketRegistryTests {
     @RepeatedTest(2)
     void verifyDeleteTicketWithChildren() throws Throwable {
         assumeTrue(canTicketRegistryDelete());
-        val addedTicket = ticketRegistry.addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId + '1', CoreAuthenticationTestUtils.getAuthentication(),
+        val addedTicket = ticketRegistry.addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId, CoreAuthenticationTestUtils.getAuthentication(),
             NeverExpiresExpirationPolicy.INSTANCE));
         val tgt = ticketRegistry.getTicket(addedTicket.getId(), TicketGrantingTicket.class);
 
@@ -518,7 +518,7 @@ public abstract class BaseTicketRegistryTests {
         ticketRegistry.addTicket(st2);
         ticketRegistry.addTicket(st3);
 
-        assertNotNull(ticketRegistry.getTicket(ticketGrantingTicketId + '1', TicketGrantingTicket.class));
+        assertNotNull(ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class));
         assertNotNull(ticketRegistry.getTicket("ST-11", ServiceTicket.class));
         assertNotNull(ticketRegistry.getTicket("ST-21", ServiceTicket.class));
         assertNotNull(ticketRegistry.getTicket("ST-31", ServiceTicket.class));
@@ -527,7 +527,7 @@ public abstract class BaseTicketRegistryTests {
 
         assertSame(4, ticketRegistry.deleteTicket(tgt.getId()));
 
-        assertThrows(InvalidTicketException.class, () -> ticketRegistry.getTicket(ticketGrantingTicketId + '1', TicketGrantingTicket.class));
+        assertThrows(InvalidTicketException.class, () -> ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class));
         assertThrows(InvalidTicketException.class, () -> ticketRegistry.getTicket("ST-11", ServiceTicket.class));
         assertThrows(InvalidTicketException.class, () -> ticketRegistry.getTicket("ST-21", ServiceTicket.class));
         assertThrows(InvalidTicketException.class, () -> ticketRegistry.getTicket("ST-31", ServiceTicket.class));

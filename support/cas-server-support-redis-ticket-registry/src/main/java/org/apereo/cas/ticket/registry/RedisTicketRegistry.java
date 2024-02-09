@@ -81,6 +81,8 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
 
     private final CasConfigurationProperties casProperties;
 
+    private final CipherExecutor protocolTicketCipherExecutor;
+
     public RedisTicketRegistry(final CipherExecutor cipherExecutor,
                                final TicketSerializationManager ticketSerializationManager,
                                final TicketCatalog ticketCatalog,
@@ -89,7 +91,8 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
                                final RedisTicketRegistryMessagePublisher messagePublisher,
                                final Optional<RedisModulesCommands> redisModuleCommands,
                                final RedisKeyGeneratorFactory redisKeyGeneratorFactory,
-                               final CasConfigurationProperties casProperties) {
+                               final CasConfigurationProperties casProperties,
+                               final CipherExecutor protocolTicketCipherExecutor) {
         super(cipherExecutor, ticketSerializationManager, ticketCatalog);
 
         this.casRedisTemplates = casRedisTemplates;
@@ -98,6 +101,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
         this.redisModuleCommands = redisModuleCommands;
         this.redisKeyGeneratorFactory = redisKeyGeneratorFactory;
         this.casProperties = casProperties;
+        this.protocolTicketCipherExecutor = protocolTicketCipherExecutor;
         createIndexesIfNecessary();
     }
 
@@ -172,7 +176,12 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
     @Override
     public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
         return FunctionUtils.doAndHandle(() -> {
-            val ticketPrefix = StringUtils.substring(ticketId, 0, ticketId.indexOf(UniqueTicketIdGenerator.SEPARATOR));
+            var decodedTicketId = ticketId;
+            val posSeparator = ticketId.indexOf(UniqueTicketIdGenerator.SEPARATOR);
+            if (posSeparator < 0 || posSeparator >= 10) {
+                decodedTicketId = (String) protocolTicketCipherExecutor.decode(ticketId);
+            }
+            val ticketPrefix = StringUtils.substring(decodedTicketId, 0, decodedTicketId.indexOf(UniqueTicketIdGenerator.SEPARATOR));
             val redisTicketsKey = redisKeyGeneratorFactory.getRedisKeyGenerator(Ticket.class.getName())
                 .orElseThrow().forEntry(ticketPrefix, digestIdentifier(ticketId));
             return getTicketFromRedisByKey(predicate, redisTicketsKey);

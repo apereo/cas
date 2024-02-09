@@ -24,6 +24,7 @@ import org.apereo.cas.ticket.registry.sub.DefaultRedisTicketRegistryMessageListe
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.PublisherIdentifier;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.lock.DefaultLockRepository;
 import org.apereo.cas.util.lock.LockRepository;
@@ -235,7 +236,9 @@ public class CasRedisTicketRegistryAutoConfiguration {
             @Qualifier("redisTicketRegistryMessagePublisher")
             final RedisTicketRegistryMessagePublisher redisTicketRegistryMessagePublisher,
             final ConfigurableApplicationContext applicationContext,
-            final CasConfigurationProperties casProperties) {
+            final CasConfigurationProperties casProperties,
+            @Qualifier("protocolTicketCipherExecutor")
+            final CipherExecutor protocolTicketCipherExecutor) {
             return BeanSupplier.of(TicketRegistry.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(Unchecked.supplier(() -> {
@@ -246,7 +249,7 @@ public class CasRedisTicketRegistryAutoConfiguration {
                         : Optional.<RedisModulesCommands>empty();
                     return new RedisTicketRegistry(cipher, ticketSerializationManager, ticketCatalog,
                         casRedisTemplates, redisTicketRegistryCache, redisTicketRegistryMessagePublisher,
-                        searchCommands, redisKeyGeneratorFactory, casProperties);
+                        searchCommands, redisKeyGeneratorFactory, casProperties, protocolTicketCipherExecutor);
                 }))
                 .otherwise(() -> new DefaultTicketRegistry(ticketSerializationManager, ticketCatalog))
                 .get();

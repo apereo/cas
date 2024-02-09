@@ -7,7 +7,10 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.TicketGrantingTicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.apereo.cas.ticket.TransientSessionTicket;
+import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.util.ServiceTicketIdGenerator;
 import org.apereo.cas.util.TicketGrantingTicketIdGenerator;
@@ -20,10 +23,13 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.jooq.lambda.Unchecked;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.RepetitionInfo;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -132,6 +138,32 @@ class RedisServerTicketRegistryTests {
         "cas.ticket.registry.redis.crypto.signing.key=cAPyoHMrOMWrwydOXzBA-ufZQM-TilnLjbRgMQWlUlwFmy07bOtAgCIdNBma3c5P4ae_JV6n1OpOAYqSh2NkmQ"
     })
     class WithoutRedisModulesTests extends BaseRedisSentinelTicketRegistryTests {
+
+    }
+
+    @Nested
+    @TestPropertySource(properties = {
+            "cas.ticket.registry.redis.queue-identifier=cas-node-100",
+            "cas.ticket.registry.redis.host=localhost",
+            "cas.ticket.registry.redis.port=6379",
+            "cas.ticket.registry.redis.enable-redis-search=false",
+            "cas.ticket.registry.redis.crypto.enabled=false",
+            "cas.ticket.crypto.enabled=true"
+    })
+    class WithEncryptedIdentifiersTests extends BaseRedisSentinelTicketRegistryTests {
+
+        @Override
+        @BeforeEach
+        public void initialize(final TestInfo info, final RepetitionInfo repetitionInfo) throws Throwable {
+            super.initialize(info, repetitionInfo);
+
+            val tgtFactory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
+            this.ticketGrantingTicketId = tgtFactory.create(CoreAuthenticationTestUtils.getAuthentication(), null,
+                    TicketGrantingTicket.class).getId();
+
+            val transientFactory = (TransientSessionTicketFactory) ticketFactory.get(TransientSessionTicket.class);
+            this.transientSessionTicketId = transientFactory.create(null).getId();
+        }
 
     }
 
