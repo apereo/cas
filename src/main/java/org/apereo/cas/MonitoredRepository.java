@@ -91,6 +91,10 @@ public class MonitoredRepository {
                 labelPullRequestAs(pullRequest, CasLabels.LABEL_PENDING_NEEDS_TESTS);
                 labelPullRequestAs(pullRequest, CasLabels.LABEL_WIP);
                 addComment(pullRequest, template);
+            } else {
+                removeLabelFrom(pullRequest, CasLabels.LABEL_PENDING_NEEDS_TESTS);
+                removeLabelFrom(pullRequest, CasLabels.LABEL_WIP);
+                addComment(pullRequest, "Pull request is now verified. Nicely done! :thumbsup: :rocket: ");
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
