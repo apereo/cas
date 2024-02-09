@@ -223,6 +223,28 @@ class DelegatedClientAuthenticationActionTests {
         }
 
         @Test
+        void verifyStopWebflowOnCredentialFailure() throws Throwable {
+            val context = MockRequestContext.create(applicationContext);
+
+            context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome");
+            context.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "BadCredentialsClient");
+
+            context.setParameter(ThemeChangeInterceptor.DEFAULT_PARAM_NAME, "theme");
+            context.setParameter(LocaleChangeInterceptor.DEFAULT_PARAM_NAME, Locale.getDefault().getCountry());
+            context.setParameter(CasProtocolConstants.PARAMETER_METHOD, HttpMethod.POST.name());
+            val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
+            servicesManager.save(RegisteredServiceTestUtils.getRegisteredService(service.getId(), Map.of()));
+            context.setParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
+
+            val client = identityProviders.findClient("BadCredentialsClient").get();
+            val webContext = new JEEContext(context.getHttpServletRequest(), context.getHttpServletResponse());
+            val ticket = delegatedClientAuthenticationWebflowManager.store(context, webContext, client);
+            context.setParameter(DelegatedClientAuthenticationWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
+
+            assertEquals(CasWebflowConstants.TRANSITION_ID_STOP, delegatedAuthenticationAction.execute(context).getId());
+        }
+
+        @Test
         void verifyFailedAuthentication() throws Throwable {
             val context = MockRequestContext.create(applicationContext);
 
