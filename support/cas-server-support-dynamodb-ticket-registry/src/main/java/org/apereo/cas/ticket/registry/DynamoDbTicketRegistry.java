@@ -1,6 +1,8 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.monitor.Monitorable;
+import org.apereo.cas.ticket.ServiceAwareTicket;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
@@ -81,6 +83,15 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
+    public long countTicketsFor(final Service service) {
+        return dbTableService.getTicketCatalog()
+            .findAll()
+            .stream()
+            .mapToLong(ticketDefinition -> dbTableService.countTicketsFor(ticketDefinition.getProperties().getStorageName(), service))
+            .sum();
+    }
+
+    @Override
     public List<? extends Ticket> addTicket(final Stream<? extends Ticket> toSave) throws Exception {
         val initialList = toSave.toList();
         val toPut = initialList.stream().map(Unchecked.function(this::toTicketPayload));
@@ -107,6 +118,7 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
             .encodedTicket(encTicket)
             .principal(principal)
             .attributes(collectAndDigestTicketAttributes(ticket))
+            .service(ticket instanceof final ServiceAwareTicket sat ? sat.getService().getId() : StringUtils.EMPTY)
             .build();
     }
 

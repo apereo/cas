@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbTicketRegistryProperties;
 import org.apereo.cas.dynamodb.DynamoDbQueryBuilder;
 import org.apereo.cas.dynamodb.DynamoDbTableUtils;
@@ -8,7 +9,6 @@ import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
-
 import com.google.common.collect.Streams;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,7 +33,6 @@ import software.amazon.awssdk.services.dynamodb.model.PutRequest;
 import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
 import software.amazon.awssdk.services.dynamodb.model.ScanRequest;
 import software.amazon.awssdk.services.dynamodb.model.WriteRequest;
-
 import java.nio.ByteBuffer;
 import java.time.chrono.ChronoZonedDateTime;
 import java.util.ArrayList;
@@ -241,9 +240,24 @@ public class DynamoDbTicketRegistryFacilitator {
     public Stream<? extends Ticket> getSessionsWithAttributes(final String filterExpression,
                                                               final Map<String, String> attributeNames,
                                                               final Map<String, AttributeValue> attributeValues) {
+        return getEntitiesWithAttributes(dynamoDbProperties.getTicketGrantingTicketsTableName(),
+            filterExpression, attributeNames, attributeValues);
+    }
 
-        val scanResponse = DynamoDbTableUtils.scan(amazonDynamoDBClient,
-            dynamoDbProperties.getTicketGrantingTicketsTableName(),
+    /**
+     * Gets entities with attributes.
+     *
+     * @param tableName        the table name
+     * @param filterExpression the filter expression
+     * @param attributeNames   the attribute names
+     * @param attributeValues  the attribute values
+     * @return the entities with attributes
+     */
+    public Stream<Ticket> getEntitiesWithAttributes(final String tableName,
+                                                    final String filterExpression,
+                                                    final Map<String, String> attributeNames,
+                                                    final Map<String, AttributeValue> attributeValues) {
+        val scanResponse = DynamoDbTableUtils.scan(amazonDynamoDBClient, tableName,
             filterExpression, attributeNames, attributeValues);
         return scanResponse
             .items()
@@ -314,6 +328,8 @@ public class DynamoDbTicketRegistryFacilitator {
             AttributeValue.builder().s(payload.getEncodedTicket().getId()).build());
         values.put(ColumnNames.PRINCIPAL.getColumnName(),
             AttributeValue.builder().s(payload.getPrincipal()).build());
+        values.put(ColumnNames.SERVICE.getColumnName(),
+            AttributeValue.builder().s(payload.getService()).build());
         values.put(ColumnNames.PREFIX.getColumnName(),
             AttributeValue.builder().s(payload.getOriginalTicket().getPrefix()).build());
         values.put(ColumnNames.CREATION_TIME.getColumnName(), AttributeValue.builder().
@@ -361,6 +377,26 @@ public class DynamoDbTicketRegistryFacilitator {
     }
 
     /**
+     * Count tickets for.
+     *
+     * @param tableName the table name
+     * @param service   the service
+     * @return the long
+     */
+    public long countTicketsFor(final String tableName, final Service service) {
+        val keys = List.<DynamoDbQueryBuilder>of(
+            DynamoDbQueryBuilder.builder()
+                .key(ColumnNames.SERVICE.getColumnName())
+                .attributeValue(List.of(AttributeValue.builder().s(service.getId()).build()))
+                .operator(ComparisonOperator.EQ)
+                .build());
+        return DynamoDbTableUtils.getRecordsByKeys(amazonDynamoDBClient,
+                tableName, keys, DynamoDbTicketRegistryFacilitator::deserializeTicket)
+            .filter(ticket -> !ticket.isExpired())
+            .count();
+    }
+
+    /**
      * Count tickets and return value.
      *
      * @param ticketType the ticket type
@@ -395,6 +431,10 @@ public class DynamoDbTicketRegistryFacilitator {
          * principal column.
          */
         PRINCIPAL("principal"),
+        /**
+         * service column.
+         */
+        SERVICE("service"),
         /**
          * attributes column.
          */
@@ -439,6 +479,8 @@ public class DynamoDbTicketRegistryFacilitator {
         private final Ticket encodedTicket;
 
         private final String principal;
+
+        private final String service;
 
         @Builder.Default
         private final Map<String, List<Object>> attributes = new HashMap<>();
