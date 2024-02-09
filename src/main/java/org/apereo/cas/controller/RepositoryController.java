@@ -1,10 +1,13 @@
 package org.apereo.cas.controller;
 
 import org.apereo.cas.CasLabels;
+import org.apereo.cas.Memes;
 import org.apereo.cas.MonitoredRepository;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,21 +44,31 @@ public class RepositoryController {
         return map;
     }
 
-//    @GetMapping(value = "/repo/pulls/{prNumber}/commits", produces = MediaType.APPLICATION_JSON_VALUE)
-//    @Secured({"ROLE_ADMIN"})
-//    public ResponseEntity listPullRequestCommits(@PathVariable final String prNumber) {
-//        val pullRequest = repository.getPullRequest(prNumber);
-//        if (pullRequest == null) {
-//            return ResponseEntity.notFound().build();
-//        }
-//        val mostRecentCommit = repository.getPullRequestCommits(pullRequest)
-//            .stream()
-//            .filter(c -> !c.getCommit().isMergeCommit())
-//            .toList()
-//            .getFirst();
-//        val workflowRuns = repository.getSuccessfulWorkflowRunsFor(pullRequest.getHead(), mostRecentCommit);
-//        return ResponseEntity.ok(workflowRuns);
-//    }
+    @GetMapping(value = "/repo/pulls/{prNumber}/verify", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Secured({"ROLE_ADMIN"})
+    public ResponseEntity listPullRequestCommits(@PathVariable final String prNumber) throws Exception {
+        val pullRequest = repository.getPullRequest(prNumber);
+        if (pullRequest == null) {
+            return ResponseEntity.notFound().build();
+        }
+        val mostRecentCommit = repository.getPullRequestCommits(pullRequest)
+            .stream()
+            .filter(c -> !c.getCommit().isMergeCommit())
+            .toList()
+            .getFirst();
+        val workflowRuns = repository.getSuccessfulWorkflowRunsFor(pullRequest.getHead(), mostRecentCommit);
+        if (workflowRuns.getCount() <= 0) {
+            var template = IOUtils.toString(new ClassPathResource("template-run-tests.md").getInputStream(), StandardCharsets.UTF_8);
+            template = template.replace("${commitId}", mostRecentCommit.getSha());
+            template = template.replace("${forkedRepository}", pullRequest.getHead().getRepository().getUrl());
+            template = template.replace("${link}", Memes.NO_TESTS.select());
+            template = template.replace("${branch}", pullRequest.getHead().getRef());
+            repository.labelPullRequestAs(pullRequest, CasLabels.LABEL_PENDING_NEEDS_TESTS);
+            repository.labelPullRequestAs(pullRequest, CasLabels.LABEL_WIP);
+//            repository.addComment(pullRequest, template);
+        }
+        return ResponseEntity.ok(workflowRuns);
+    }
 
     @GetMapping(value = "/repo/pulls", produces = MediaType.APPLICATION_JSON_VALUE)
     @Secured({"ROLE_ADMIN"})

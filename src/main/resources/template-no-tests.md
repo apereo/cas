@@ -29,7 +29,7 @@ Furthermore,
 
 If you believe this message to be an error, please post your explanation here as a comment and it will be reviewed.
 
-# support
+# Support
 
 If you are seeking assistance or have a question about your CAS deployment, please visit [support options](https://apereo.github.io/cas/Support.html) to learn more.
 
