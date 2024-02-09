@@ -42,7 +42,7 @@ It's more work. You also get to make progress quicker and you are in control of 
  
 # Is this better?
 
-Quite so. As discussed, your progress is that much quicker and is challenged with only a few dependencies and roadblocks. It is true that the Apereo CAS test suite that runs here is the most comprehensive of them all, and not all tests can comprehensively run on a forked repository as some require special configuration, settings and tokens. However, the majority of the tests can run on your forked repository and getting them to pass a major milestone.
+Quite so. As discussed, your progress is that much quicker and is challenged with only a few dependencies and roadblocks. It is true that the Apereo CAS test suite that runs here is the most comprehensive of them all, and not all tests can comprehensively run on a forked repository as some require special configuration, settings and tokens. However, the majority of the tests can run on your forked repository and getting them to pass is a major milestone.
 
 More tests simply equal more confidence and a better project.
 
