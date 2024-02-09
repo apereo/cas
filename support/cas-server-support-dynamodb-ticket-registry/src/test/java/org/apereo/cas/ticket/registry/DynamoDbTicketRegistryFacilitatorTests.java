@@ -2,6 +2,7 @@ package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.val;
@@ -37,6 +38,7 @@ class DynamoDbTicketRegistryFacilitatorTests {
                     .originalTicket(ticket)
                     .encodedTicket(ticket)
                     .principal("casuser")
+                    .service(RegisteredServiceTestUtils.CONST_TEST_URL)
                     .build());
             assertFalse(map.isEmpty());
             Arrays.stream(DynamoDbTicketRegistryFacilitator.ColumnNames.values())
@@ -54,6 +56,7 @@ class DynamoDbTicketRegistryFacilitatorTests {
                     .originalTicket(ticket)
                     .encodedTicket(ticket)
                     .principal("casuser")
+                    .service(RegisteredServiceTestUtils.CONST_TEST_URL)
                     .build());
             val col = dynamoDbTicketRegistryFacilitator.getAll();
             assertFalse(col.isEmpty());

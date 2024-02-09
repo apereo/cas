@@ -375,6 +375,7 @@ public abstract class BaseTicketRegistryTests {
 
     @RepeatedTest(2)
     void verifyCountingTicketsForService() throws Throwable {
+        assumeTrue(canTicketRegistryIterate());
         val authentication = CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString());
         for (var i = 0; i < 10; i++) {
             val tgt = new TicketGrantingTicketImpl(
