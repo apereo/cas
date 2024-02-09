@@ -73,7 +73,7 @@ public class MonitoredRepository {
             base.getRepository().getName(), first, Workflows.WorkflowRunStatus.SUCCESS);
     }
 
-    public void verifyPullRequest(final PullRequest pullRequest) {
+    public Boolean verifyPullRequest(final PullRequest pullRequest) {
         try {
             removeAllCommentsFrom(pullRequest, "apereocas-bot");
             val mostRecentCommit = getPullRequestCommits(pullRequest)
@@ -85,20 +85,22 @@ public class MonitoredRepository {
             if (workflowRuns.getCount() <= 0) {
                 var template = IOUtils.toString(new ClassPathResource("template-run-tests.md").getInputStream(), StandardCharsets.UTF_8);
                 template = template.replace("${commitId}", mostRecentCommit.getSha());
-                template = template.replace("${forkedRepository}", pullRequest.getHead().getRepository().getUrl());
+                template = template.replace("${forkedRepository}", pullRequest.getHead().getRepository().getHtmlUrl());
                 template = template.replace("${link}", Memes.NO_TESTS.select());
                 template = template.replace("${branch}", pullRequest.getHead().getRef());
                 labelPullRequestAs(pullRequest, CasLabels.LABEL_PENDING_NEEDS_TESTS);
                 labelPullRequestAs(pullRequest, CasLabels.LABEL_WIP);
                 addComment(pullRequest, template);
-            } else {
-                removeLabelFrom(pullRequest, CasLabels.LABEL_PENDING_NEEDS_TESTS);
-                removeLabelFrom(pullRequest, CasLabels.LABEL_WIP);
-                addComment(pullRequest, "Pull request is now verified. Nicely done! :thumbsup: :rocket: ");
+                return false;
             }
+            removeLabelFrom(pullRequest, CasLabels.LABEL_PENDING_NEEDS_TESTS);
+            removeLabelFrom(pullRequest, CasLabels.LABEL_WIP);
+            addComment(pullRequest, "Pull request is now verified. Nicely done! :thumbsup: :rocket: ");
+            return true;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
+        return false;
     }
 
     private static Predicate<Label> getLabelPredicateByName(final CasLabels name) {

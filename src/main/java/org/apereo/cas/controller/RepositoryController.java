@@ -51,8 +51,8 @@ public class RepositoryController {
         if (pullRequest == null) {
             return ResponseEntity.notFound().build();
         }
-        repository.verifyPullRequest(pullRequest);
-        return ResponseEntity.ok(pullRequest);
+        val verified = repository.verifyPullRequest(pullRequest);
+        return ResponseEntity.ok(Map.of("verified", verified));
     }
 
     @GetMapping(value = "/repo/pulls/{prNumber}/comments/clean", produces = MediaType.APPLICATION_JSON_VALUE)

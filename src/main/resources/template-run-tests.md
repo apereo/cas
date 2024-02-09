@@ -2,7 +2,7 @@ Thank you very much for submitting this pull request! You are off to a very good
 
 # What happened?
 
-Your pull request is currently at commit id `${commitId}`. We looked at your [forked repository](${forkedRepository}) to find this commit id to verify if there are any *GitHub Actions workflow runs* on your forked repository that are run for this commit id, so we can determine if the test suite has in fact run prior to the submission here.
+Your pull request is currently at commit id `${commitId}`. We looked at your [forked repository](${forkedRepository}) to find this commit id to verify if there are any [*GitHub Actions workflow runs*](${forkedRepository}/actions) on your forked repository that are run for this commit id, so we can determine if the test suite has in fact run prior to the submission here.
 
 Just in case: you do not have to wait for the CAS project or its members to run tests for you here. You can do them yourself.
 
