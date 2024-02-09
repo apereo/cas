@@ -11,10 +11,10 @@ import lombok.val;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-public class MapAttributeValueExtractor implements ValueExtractor<HazelcastTicketHolder, String> {
+public class MapAttributeValueExtractor implements ValueExtractor<HazelcastTicketDocument, String> {
 
     @Override
-    public void extract(final HazelcastTicketHolder ticketHolder,
+    public void extract(final HazelcastTicketDocument ticketHolder,
                         final String attributeName,
                         final ValueCollector valueCollector) {
         val values = ticketHolder.getAttributes().get(attributeName);

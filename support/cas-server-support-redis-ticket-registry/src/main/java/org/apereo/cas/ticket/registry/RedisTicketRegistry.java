@@ -1,9 +1,11 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.redis.core.CasRedisTemplate;
+import org.apereo.cas.ticket.ServiceAwareTicket;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
@@ -39,6 +41,7 @@ import org.springframework.data.redis.core.convert.MappingConfiguration;
 import org.springframework.data.redis.core.index.IndexConfiguration;
 import org.springframework.data.redis.core.mapping.RedisMappingContext;
 import java.io.Serializable;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.time.Clock;
 import java.time.Instant;
@@ -292,6 +295,29 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
             .orElseGet(() -> (Stream<Ticket>) super.getSessionsWithAttributes(queryAttributes));
     }
 
+    @Override
+    public long countTicketsFor(final Service service) {
+        return redisModuleCommands
+            .map(command -> {
+                val originalUrl = URI.create(service.getOriginalUrl());
+                val host = String.format("%s?//%s", originalUrl.getScheme(), originalUrl.getHost());
+                val query = String.format("@%s:\"%s\"", RedisTicketDocument.FIELD_NAME_SERVICE, host);
+                val results = (SearchResults<String, Document>) command.ftSearch(SEARCH_INDEX_NAME, query);
+                return results
+                    .stream()
+                    .map(Document.class::cast)
+                    .filter(document -> !document.isEmpty())
+                    .map(RedisTicketDocument::from)
+                    .filter(document -> StringUtils.isNotBlank(document.getJson()))
+                    .map(redisDoc -> {
+                        val ticket = deserializeTicket(redisDoc.getJson(), redisDoc.getType());
+                        return decodeTicket(ticket);
+                    })
+                    .filter(ticket -> !ticket.isExpired())
+                    .count();
+            })
+            .orElseGet(() -> super.countTicketsFor(service));
+    }
 
     @Override
     public List<? extends Serializable> query(final TicketRegistryQueryCriteria queryCriteria) {
@@ -365,13 +391,15 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
                 })
                 .collect(Collectors.joining(","));
 
-            return RedisTicketDocument.builder()
+            return RedisTicketDocument
+                .builder()
                 .type(encTicket.getClass().getName())
                 .ticketId(encTicket.getId())
                 .json(json)
                 .prefix(ticket.getPrefix())
                 .principal(digestIdentifier(principal))
                 .attributes(attributesEncoded)
+                .service(ticket instanceof final ServiceAwareTicket sat ? sat.getService().getId() : null)
                 .build();
         });
     }
@@ -467,6 +495,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
                     Field.text(RedisTicketDocument.FIELD_NAME_ATTRIBUTES).build(),
                     Field.text(RedisTicketDocument.FIELD_NAME_PRINCIPAL).build(),
                     Field.text(RedisTicketDocument.FIELD_NAME_TYPE).build(),
+                    Field.text(RedisTicketDocument.FIELD_NAME_SERVICE).build(),
                     Field.text(RedisTicketDocument.FIELD_NAME_PREFIX).build());
                 command.ftCreate(SEARCH_INDEX_NAME, options, indexFields.toArray(new Field[]{}));
             }

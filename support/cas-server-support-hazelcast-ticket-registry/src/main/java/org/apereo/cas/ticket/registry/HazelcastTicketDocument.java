@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This is {@link HazelcastTicketHolder}.
+ * This is {@link HazelcastTicketDocument}.
  *
  * @author Misagh Moayyed
  * @since 6.6.0
@@ -22,7 +22,7 @@ import java.util.Map;
 @Getter
 @Setter
 @SuperBuilder
-public class HazelcastTicketHolder implements Serializable {
+public class HazelcastTicketDocument implements Serializable {
     @Serial
     private static final long serialVersionUID = -4741536838543052903L;
 
@@ -31,6 +31,8 @@ public class HazelcastTicketHolder implements Serializable {
     private String type;
 
     private String principal;
+
+    private String service;
 
     private Ticket ticket;
 

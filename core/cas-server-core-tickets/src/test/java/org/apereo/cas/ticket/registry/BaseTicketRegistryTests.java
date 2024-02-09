@@ -37,6 +37,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.ProxyGrantingTicketIdGenerator;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.ServiceTicketIdGenerator;
 import org.apereo.cas.util.TicketGrantingTicketIdGenerator;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -145,7 +146,7 @@ public abstract class BaseTicketRegistryTests {
         this.proxyGrantingTicketId = new ProxyGrantingTicketIdGenerator(10, StringUtils.EMPTY)
             .getNewTicketId(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX);
         this.transientSessionTicketId = new DefaultUniqueTicketIdGenerator().getNewTicketId(TransientSessionTicket.PREFIX);
-        
+
         if (info.getTags().contains("TicketRegistryTestWithEncryption")) {
             useEncryption = true;
         } else if (info.getTags().contains("TicketRegistryTestWithoutEncryption")) {
@@ -362,7 +363,7 @@ public abstract class BaseTicketRegistryTests {
         val service = RegisteredServiceTestUtils.getService("TGT_UPDATE_TEST");
         val serviceTicket = tgt.grantServiceTicket("ST-1", service, NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy);
         assertNotNull(serviceTicket);
-        
+
         val updatedTgt = ticketRegistry.updateTicket(tgt);
         val tgtResult = updatedTgt.isStateless()
             ? ticketRegistry.getTicket(updatedTgt.getId(), TicketGrantingTicket.class)
@@ -370,6 +371,27 @@ public abstract class BaseTicketRegistryTests {
         assertInstanceOf(TicketGrantingTicket.class, tgtResult);
         services = tgtResult.getServices();
         assertEquals(Collections.singleton("ST-1"), services.keySet());
+    }
+
+    @RepeatedTest(2)
+    void verifyCountingTicketsForService() throws Throwable {
+        val authentication = CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString());
+        for (var i = 0; i < 10; i++) {
+            val tgt = new TicketGrantingTicketImpl(
+                TICKET_GRANTING_TICKET_ID_GENERATOR.getNewTicketId(TicketGrantingTicket.PREFIX),
+                authentication,
+                NeverExpiresExpirationPolicy.INSTANCE);
+            val addedTicket = ticketRegistry.addTicket(tgt);
+            val foundTgt = ticketRegistry.getTicket(addedTicket.getId(), TicketGrantingTicket.class);
+            assertNotNull(foundTgt);
+
+            val service = i % 2 == 0 ? RegisteredServiceTestUtils.getService() : RegisteredServiceTestUtils.getService2();
+            val serviceTicket = foundTgt.grantServiceTicket("ST-%s".formatted(RandomUtils.generateSecureRandomId()),
+                service, NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy);
+            ticketRegistry.updateTicket(foundTgt);
+            ticketRegistry.addTicket(serviceTicket);
+        }
+        assertEquals(5, ticketRegistry.countTicketsFor(RegisteredServiceTestUtils.getService()));
     }
 
     @RepeatedTest(2)
