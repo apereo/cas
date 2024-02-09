@@ -168,7 +168,7 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
             return new ArrayList<>(0);
         }
         val supported = jwtBuilder.getCasProperties().getAuthn().getOidc().getDiscovery().getScopes();
-        val results = new LinkedHashSet<>((Collection<String>) map.get(OAuth20Constants.SCOPE));
+        val results = new LinkedHashSet<>(map.get(OAuth20Constants.SCOPE));
         results.retainAll(supported);
         return results;
     }
