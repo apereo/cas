@@ -11,18 +11,11 @@ ext.githubPackageRegistryUser = System.getenv("GH_PACKAGE_REGISTRY_USER")
 ext.githubPackageRegistryPassword = System.getenv("GH_PACKAGE_REGISTRY_TOKEN")
 
 buildCache {
-    local {
-        enabled = !(buildCachePsw?.trim() && buildCacheUser?.trim())
-    }
-    remote(HttpBuildCache) {
-        enabled = (buildCachePsw?.trim() && buildCacheUser?.trim())
-        url = 'https://cas-gradle-buildcache.herokuapp.com/cache/'
-        push = isCiServer
-
-        credentials {
-            username = buildCacheUser
-            password = buildCachePsw
-        }
+    local { enabled = false }
+    remote(gradleEnterprise.buildCache) {
+        enabled = true
+        def accessKey = System.getenv("GRADLE_ENTERPRISE_ACCESS_KEY")
+        push = isCiServer && accessKey != null && !accessKey.isEmpty()
     }
 }
 
