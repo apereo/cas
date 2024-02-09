@@ -197,8 +197,8 @@ class RequestParameterPolicyEnforcementFilterTests {
     }
 
     @Test
-    void verifyParsesWhiteSpaceDelimitedStringToSet() throws Throwable {
-        val parameterValue = "service renew gateway";
+    void verifyParsesCommaDelimitedStringToSet() throws Throwable {
+        val parameterValue = "service,renew, gateway";
         val expectedSet = new HashSet<String>();
         expectedSet.add("service");
         expectedSet.add("renew");
@@ -262,8 +262,11 @@ class RequestParameterPolicyEnforcementFilterTests {
         expected.add('*');
         expected.add('#');
         expected.add('@');
+        expected.add('\u0000');
+        expected.add('\u0010');
+        expected.add('\u0001');
 
-        val actual = RequestParameterPolicyEnforcementFilter.parseCharactersToForbid("& % * # @");
+        val actual = RequestParameterPolicyEnforcementFilter.parseCharactersToForbid("& % * # @ \u0000 \u0010 \u0001");
         assertEquals(expected, actual);
     }
 
