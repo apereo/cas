@@ -45,4 +45,10 @@ The following items are new improvements and enhancements presented in this rele
 ## Other Stuff
 
 ## Library Upgrades
-
+           
+- AWS SDK
+- Slack
+- Twilio
+- Commons Codec
+- Spring Cloud CosmosDb
+- Spring Data CosmosDb
