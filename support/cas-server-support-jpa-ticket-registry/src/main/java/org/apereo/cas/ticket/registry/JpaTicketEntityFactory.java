@@ -23,6 +23,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import jakarta.persistence.Table;
 import java.time.Clock;
 import java.time.ZonedDateTime;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -79,7 +80,7 @@ public class JpaTicketEntityFactory extends AbstractJpaEntityFactory<BaseTicketE
             .setParentId(Optional.ofNullable(parentTicket).map(Ticket::getId).orElse(null))
             .setBody(jsonBody)
             .setType(encodedTicket.getClass().getName())
-            .setService(realTicket instanceof final ServiceAwareTicket sat ? sat.getService().getId() : null)
+            .setService(realTicket instanceof final ServiceAwareTicket sat && Objects.nonNull(sat.getService()) ? sat.getService().getId() : null)
             .setPrincipalId(Optional.ofNullable(authentication)
                 .map(Authentication::getPrincipal)
                 .map(Principal::getId)
