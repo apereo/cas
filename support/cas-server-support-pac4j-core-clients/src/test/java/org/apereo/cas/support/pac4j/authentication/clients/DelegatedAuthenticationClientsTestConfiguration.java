@@ -16,6 +16,7 @@ import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.credentials.SessionKeyCredentials;
+import org.pac4j.core.exception.TechnicalException;
 import org.pac4j.core.exception.http.AutomaticFormPostAction;
 import org.pac4j.core.exception.http.OkAction;
 import org.pac4j.core.logout.LogoutType;
@@ -133,8 +134,12 @@ public class DelegatedAuthenticationClientsTestConfiguration {
         doThrow(new IllegalArgumentException("Unable to init")).when(failingClient).init();
         customizers.forEach(customizer -> customizer.customize(failingClient));
 
+        val badCredentialsClient = mock(IndirectClient.class);
+        when(badCredentialsClient.getName()).thenReturn("BadCredentialsClient");
+        when(badCredentialsClient.getCredentials(any())).thenThrow(new TechnicalException("Client failed to validate credentials"));
+
         val clients = List.of(saml2Client, casClient, facebookClient,
-            oidcClient, logoutClient, logoutPostClient, failingClient, saml2PostClient);
+            oidcClient, logoutClient, logoutPostClient, failingClient, saml2PostClient, badCredentialsClient);
         return new RefreshableDelegatedIdentityProviders("https://cas.login.com", DelegatedIdentityProviderFactory.withClients(clients));
     }
 
