@@ -518,3 +518,4 @@ else
     printf "${RED}Gradle build did NOT finish successfully.${ENDCOLOR}"
     exit $retVal
 fi
+
