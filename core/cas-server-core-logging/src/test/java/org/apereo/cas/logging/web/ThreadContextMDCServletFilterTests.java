@@ -8,6 +8,7 @@ import org.apereo.cas.web.cookie.CasCookieBuilder;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.slf4j.MDC;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -41,8 +42,12 @@ class ThreadContextMDCServletFilterTests {
         request.setQueryString("queryString");
         request.setMethod("method");
         request.setParameter("p1", "v1");
+        request.setParameter("password", "123456");
+        request.setParameter("confirmedPassword", "123456");
         request.setAttribute("a1", "v1");
         request.addHeader("h1", "v1");
+        request.addHeader("authorization", "Basic xyz");
+        request.addHeader("cookie", "TGC = 12345; SESSION=12345667");
 
         val response = new MockHttpServletResponse();
         val filterChain = new MockFilterChain();
@@ -56,6 +61,13 @@ class ThreadContextMDCServletFilterTests {
             new DirectObjectProvider<>(cookieBuilder));
         filter.init(mock(FilterConfig.class));
         filter.doFilter(request, response, filterChain);
+
+        val mdcElements = MDC.getCopyOfContextMap();
         assertEquals(HttpStatus.OK.value(), response.getStatus());
+        assertFalse(mdcElements.containsKey("password"));
+        assertFalse(mdcElements.containsKey("confirmedPassword"));
+        assertFalse(mdcElements.containsKey("cookie"));
+        assertFalse(mdcElements.containsKey("authorization"));
+
     }
 }
