@@ -42,7 +42,7 @@ on:
     branches:
       - master
       - '!**.**.**'
-      - 'pr-*'
+      - '!heroku-*'
   pull_request:
     types: [ labeled ]
     branches:

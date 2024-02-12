@@ -18,7 +18,10 @@ env:
 on:
   workflow_dispatch:
   push:
-    branches: [ master, pr-* ]
+    branches:
+      - master
+      - '!**.**.**'
+      - '!heroku-*'
   pull_request:
     types: [ labeled ]
     branches: [ master, pr-* ]
