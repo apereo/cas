@@ -109,7 +109,7 @@ Needless to say, you are going to need:
 
 1. A decent diff tool, such as [KDiff3](https://github.com/KDE/kdiff3), [WinDiff](http://winmerge.org), 
 [Beyond Compare](http://www.scootersoftware.com/), etc.
-2. A decent intelligent text editor, such as [Sublime](http://www.sublimetext.com),
+2. A decent intelligent text editor, such as [Sublime](http://www.sublimetext.com), [CodeLobster](https://codelobster.com),
 [Visual Studio Code](https://code.visualstudio.com/) or a full blown IDE such as [IntelliJ IDEA](https://www.jetbrains.com/idea/).
              
 More recent and modern version of the [CAS overlay](../installation/WAR-Overlay-Installation.html)
