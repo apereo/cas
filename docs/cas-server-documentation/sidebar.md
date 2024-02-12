@@ -654,6 +654,7 @@ layout: null
         *   [SQS](/cas/{{ version }}/logging/Logging-SQS.html)
         *   [Loggly](/cas/{{ version }}/logging/Logging-Loggly.html)
         *   [Google Cloud](/cas/{{ version }}/logging/Logging-GoogleCloud.html)
+        *   [Elastic Search](/cas/{{ version }}/logging/Logging-ElasticSearch.html)
         *   [Logstash](/cas/{{ version }}/logging/Logging-Logstash.html)
         *   [MDC](/cas/{{ version }}/logging/Logging-MDC.html)
         *   [Papertrail](/cas/{{ version }}/logging/Logging-Papertrail.html)
