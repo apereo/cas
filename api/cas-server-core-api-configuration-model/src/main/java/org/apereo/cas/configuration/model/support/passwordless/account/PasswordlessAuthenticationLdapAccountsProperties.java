@@ -2,12 +2,10 @@ package org.apereo.cas.configuration.model.support.passwordless.account;
 
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
 import java.io.Serial;
 
 /**

@@ -137,7 +137,11 @@ if (rootProject.tasks.findByName("testCategories") == null) {
                     .toSorted({ o1, o2 ->
                         o1.name().compareTo(o2.name())
                     })
-                    .collect { it.name().toLowerCase(Locale.ENGLISH) }
+                    .collectEntries{[it.name, it.val]}
+                    .collect {
+                        def tuple = new Tuple(it.name().toLowerCase(Locale.ENGLISH))
+
+                    }
             println(groovy.json.JsonOutput.toJson(result))
         }
     }

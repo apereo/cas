@@ -7,17 +7,18 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapConnectionFactory;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.LoggingUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.ldaptive.LdapAttribute;
-
+import org.ldaptive.LdapEntry;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -48,25 +49,19 @@ public class LdapPasswordlessUserAccountStore implements PasswordlessUserAccount
                 val entry = response.getEntry();
                 val acctBuilder = PasswordlessUserAccount.builder().username(username).name(username);
 
-                if (entry.getAttribute(ldapProperties.getUsernameAttribute()) != null) {
-                    acctBuilder.username(entry.getAttribute(ldapProperties.getUsernameAttribute()).getStringValue());
-                }
-                if (entry.getAttribute(ldapProperties.getNameAttribute()) != null) {
-                    acctBuilder.name(entry.getAttribute(ldapProperties.getNameAttribute()).getStringValue());
-                }
-                if (entry.getAttribute(ldapProperties.getEmailAttribute()) != null) {
-                    acctBuilder.email(entry.getAttribute(ldapProperties.getEmailAttribute()).getStringValue());
-                }
-                if (entry.getAttribute(ldapProperties.getPhoneAttribute()) != null) {
-                    acctBuilder.phone(entry.getAttribute(ldapProperties.getPhoneAttribute()).getStringValue());
-                }
-                if (entry.getAttribute(ldapProperties.getRequestPasswordAttribute()) != null) {
-                    val value = entry.getAttribute(ldapProperties.getRequestPasswordAttribute()).getStringValue();
-                    acctBuilder.requestPassword(BooleanUtils.toBoolean(value));
-                }
-                val attributes = entry.getAttributes().stream()
-                    .collect(Collectors.toMap(LdapAttribute::getName, attr -> new ArrayList<>(attr.getStringValues()), (__, b) -> b,
+                setAttribute(entry, ldapProperties::getUsernameAttribute, acctBuilder::username);
+                setAttribute(entry, ldapProperties::getNameAttribute, acctBuilder::name);
+                setAttribute(entry, ldapProperties::getEmailAttribute, acctBuilder::email);
+                setAttribute(entry, ldapProperties::getPhoneAttribute, acctBuilder::phone);
+                setAttribute(entry, ldapProperties::getRequestPasswordAttribute,
+                    value -> acctBuilder.requestPassword(BooleanUtils.toBoolean(value)));
+
+                val attributes = entry.getAttributes()
+                    .stream()
+                    .collect(Collectors.toMap(LdapAttribute::getName,
+                        attr -> new ArrayList<>(attr.getStringValues()), (__, b) -> b,
                         () -> new LinkedHashMap<String, List<String>>(entry.getAttributes().size())));
+                
                 val acct = acctBuilder.attributes(attributes).build();
                 LOGGER.debug("Final passwordless account is [{}]", acct);
                 return Optional.of(acct);
@@ -75,5 +70,14 @@ public class LdapPasswordlessUserAccountStore implements PasswordlessUserAccount
             LoggingUtils.error(LOGGER, e);
         }
         return Optional.empty();
+    }
+
+    protected void setAttribute(final LdapEntry entry, final Supplier<String> attribute,
+                                final Consumer<String> attributeSetter) {
+        val attributeName = attribute.get();
+        if (entry.getAttribute(attributeName) != null) {
+            val attributeValue = entry.getAttribute(attributeName).getStringValue();
+            attributeSetter.accept(attributeValue);
+        }
     }
 }
