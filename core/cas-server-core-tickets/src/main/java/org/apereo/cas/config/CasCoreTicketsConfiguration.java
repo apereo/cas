@@ -153,7 +153,8 @@ public class CasCoreTicketsConfiguration {
             return BeanSupplier.of(AuthenticationEventExecutionPlanConfigurer.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> plan -> plan.registerAuthenticationPolicy(
-                    new UniquePrincipalAuthenticationPolicy(ticketRegistry, singleSignOnParticipationStrategy)))
+                    new UniquePrincipalAuthenticationPolicy(ticketRegistry, singleSignOnParticipationStrategy,
+                            casProperties.getAuthn().getPolicy().getUniquePrincipal())))
                 .otherwiseProxy()
                 .get();
         }

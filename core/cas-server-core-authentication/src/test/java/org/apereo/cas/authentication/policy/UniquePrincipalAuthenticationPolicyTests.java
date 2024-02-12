@@ -14,6 +14,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.configuration.model.core.authentication.policy.UniquePrincipalAuthenticationPolicyProperties;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -93,7 +94,8 @@ class UniquePrincipalAuthenticationPolicyTests {
     }
 
     private AuthenticationPolicy getPolicy() {
-        return new UniquePrincipalAuthenticationPolicy(ticketRegistry, new DirectObjectProvider<>(singleSignOnParticipationStrategy));
+        return new UniquePrincipalAuthenticationPolicy(ticketRegistry, new DirectObjectProvider<>(singleSignOnParticipationStrategy),
+                new UniquePrincipalAuthenticationPolicyProperties());
     }
 
     @TestConfiguration(value = "AuthenticationPolicyTestConfiguration", proxyBeanMethods = false)
