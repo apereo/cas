@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.logging.web.LoggingConfigurationEndpoint;
 import org.apereo.cas.logging.web.ThreadContextMDCServletFilter;
-import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -16,7 +15,6 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -28,7 +26,6 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
-import java.util.HashMap;
 
 /**
  * This is {@link CasCoreLoggingAutoConfiguration}.
@@ -41,23 +38,24 @@ import java.util.HashMap;
 @AutoConfiguration
 public class CasCoreLoggingAutoConfiguration {
 
-    @ConditionalOnBean(TicketRegistry.class)
+    @Configuration(value = "CasMdcLoggingConfiguration", proxyBeanMethods = false)
     static class CasMdcLoggingConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public FilterRegistrationBean<ThreadContextMDCServletFilter> threadContextMDCServletFilter(
             final CasConfigurationProperties casProperties,
-            @Qualifier(TicketRegistrySupport.BEAN_NAME) final ObjectProvider<TicketRegistrySupport> ticketRegistrySupport,
-            @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER) final ObjectProvider<CasCookieBuilder> ticketGrantingTicketCookieGenerator) {
-            val filter = new ThreadContextMDCServletFilter(ticketRegistrySupport, ticketGrantingTicketCookieGenerator);
-            val initParams = new HashMap<String, String>();
+            @Qualifier(TicketRegistrySupport.BEAN_NAME)
+            final ObjectProvider<TicketRegistrySupport> ticketRegistrySupport,
+            @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
+            final ObjectProvider<CasCookieBuilder> ticketGrantingTicketCookieGenerator) {
+            val filter = new ThreadContextMDCServletFilter(ticketRegistrySupport,
+                ticketGrantingTicketCookieGenerator, casProperties);
             val bean = new FilterRegistrationBean<ThreadContextMDCServletFilter>();
             bean.setFilter(filter);
             bean.setUrlPatterns(CollectionUtils.wrap("/*"));
-            bean.setInitParameters(initParams);
             bean.setName("threadContextMDCServletFilter");
             bean.setOrder(Ordered.HIGHEST_PRECEDENCE + 1);
-            bean.setEnabled(casProperties.getLogging().isMdcEnabled());
+            bean.setEnabled(casProperties.getLogging().getMdc().isEnabled());
             return bean;
         }
     }
