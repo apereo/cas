@@ -32,6 +32,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ThreadContextMDCServletFilter implements Filter {
 
+    private static final String[] EXCLUDED_HEADER_NAMES = new String[]{"cookie", "authorization"};
+
     private final ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
 
     private final ObjectProvider<CasCookieBuilder> ticketGrantingTicketCookieGenerator;
@@ -77,7 +79,7 @@ public class ThreadContextMDCServletFilter implements Filter {
             val params = request.getParameterMap();
             params.keySet()
                 .stream()
-                .filter(parameterName -> !"password".equalsIgnoreCase(parameterName))
+                .filter(parameterName -> !StringUtils.containsIgnoreCase(parameterName, "password"))
                 .forEach(parameterName -> {
                     val values = params.get(parameterName);
                     addContextAttribute(parameterName, Arrays.toString(values));
@@ -86,7 +88,10 @@ public class ThreadContextMDCServletFilter implements Filter {
             Collections.list(request.getAttributeNames()).forEach(a -> addContextAttribute(a, request.getAttribute(a)));
             val requestHeaderNames = request.getHeaderNames();
             FunctionUtils.doIfNotNull(requestHeaderNames,
-                __ -> Collections.list(requestHeaderNames).forEach(h -> addContextAttribute(h, request.getHeader(h))));
+                __ -> Collections.list(requestHeaderNames)
+                    .stream()
+                    .filter(h -> !StringUtils.containsAnyIgnoreCase(h, EXCLUDED_HEADER_NAMES))
+                    .forEach(h -> addContextAttribute(h, request.getHeader(h))));
             val cookieValue = ticketGrantingTicketCookieGenerator.getObject().retrieveCookieValue(request);
             if (StringUtils.isNotBlank(cookieValue)) {
                 val p = ticketRegistrySupport.getObject().getAuthenticatedPrincipalFrom(cookieValue);
