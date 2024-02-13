@@ -7,10 +7,12 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapConnectionFactory;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.RegexUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import java.util.ArrayList;
@@ -61,9 +63,19 @@ public class LdapPasswordlessUserAccountStore implements PasswordlessUserAccount
                     .collect(Collectors.toMap(LdapAttribute::getName,
                         attr -> new ArrayList<>(attr.getStringValues()), (__, b) -> b,
                         () -> new LinkedHashMap<String, List<String>>(entry.getAttributes().size())));
-                
+
                 val acct = acctBuilder.attributes(attributes).build();
                 LOGGER.debug("Final passwordless account is [{}]", acct);
+
+                if (StringUtils.isNotBlank(ldapProperties.getRequiredAttribute())
+                    && StringUtils.isNotBlank(ldapProperties.getRequiredAttributeValue())) {
+                    val attributeValues = acct.getAttributes().getOrDefault(ldapProperties.getRequiredAttribute(), List.of());
+                    if (attributeValues.stream().noneMatch(value -> RegexUtils.find(ldapProperties.getRequiredAttributeValue(), value))) {
+                        LOGGER.warn("Passwordless account [{}] does not have the required attribute [{}] with value pattern [{}]",
+                            acct, ldapProperties.getRequiredAttribute(), ldapProperties.getRequiredAttributeValue());
+                        return Optional.empty();
+                    }
+                }
                 return Optional.of(acct);
             }
         } catch (final Exception e) {
