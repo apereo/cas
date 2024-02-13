@@ -94,11 +94,14 @@ public class ThreadContextMDCServletFilter implements Filter {
                     .stream()
                     .filter(header -> mdc.getHeadersToExclude().stream().noneMatch(excludedHeader -> RegexUtils.find(header, excludedHeader)))
                     .forEach(h -> addContextAttribute(h, request.getHeader(h))));
-            val cookieValue = ticketGrantingTicketCookieGenerator.getObject().retrieveCookieValue(request);
-            if (StringUtils.isNotBlank(cookieValue)) {
-                val principal = ticketRegistrySupport.getObject().getAuthenticatedPrincipalFrom(cookieValue);
-                FunctionUtils.doIfNotNull(principal, __ -> addContextAttribute("principal", principal.getId()));
-            }
+
+            ticketGrantingTicketCookieGenerator.ifAvailable(builder -> {
+                val cookieValue = builder.retrieveCookieValue(request);
+                if (StringUtils.isNotBlank(cookieValue)) {
+                    val principal = ticketRegistrySupport.getObject().getAuthenticatedPrincipalFrom(cookieValue);
+                    FunctionUtils.doIfNotNull(principal, __ -> addContextAttribute("principal", principal.getId()));
+                }
+            });
             filterChain.doFilter(servletRequest, servletResponse);
         } finally {
             MDC.clear();
