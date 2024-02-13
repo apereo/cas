@@ -41,7 +41,7 @@ class DefaultTicketRegistryTests extends BaseTicketRegistryTests {
     }
 
     @RepeatedTest(1)
-    void verifyCountForPrincipal() throws Throwable {
+    void verifyRegistryQuery() throws Throwable {
         val user = UUID.randomUUID().toString();
         val tgt = new MockTicketGrantingTicket(user);
         val st = new MockServiceTicket("ST-123456", RegisteredServiceTestUtils.getService(), tgt);

@@ -309,8 +309,28 @@ public class DynamoDbTableUtils {
                                               final String tableName,
                                               final List<DynamoDbQueryBuilder> keys,
                                               final Function<Map<String, AttributeValue>, T> itemMapper) {
+        return scanPaginator(amazonDynamoDBClient, tableName, 0L, keys, itemMapper);
+    }
+
+    /**
+     * Scan paginator and return stream.
+     *
+     * @param <T>                  the type parameter
+     * @param amazonDynamoDBClient the amazon dynamo db client
+     * @param tableName            the table name
+     * @param limit                the limit
+     * @param keys                 the keys
+     * @param itemMapper           the item mapper
+     * @return the stream
+     */
+    public static <T> Stream<T> scanPaginator(final DynamoDbClient amazonDynamoDBClient,
+                                              final String tableName,
+                                              final Long limit,
+                                              final List<DynamoDbQueryBuilder> keys,
+                                              final Function<Map<String, AttributeValue>, T> itemMapper) {
         val scanRequest = ScanRequest.builder()
             .tableName(tableName)
+            .limit(limit > 0 ? limit.intValue() : Integer.MAX_VALUE)
             .scanFilter(DynamoDbTableUtils.buildRequestQueryFilter(keys))
             .build();
         LOGGER.debug("Scanning table with scan request [{}]", scanRequest);
