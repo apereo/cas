@@ -143,7 +143,7 @@ public abstract class BaseJpaTicketRegistryTests extends BaseTicketRegistryTests
 
     @RepeatedTest(2)
     @Transactional(transactionManager = "ticketTransactionManager", readOnly = false)
-    void verifyCountForPrincipal() throws Throwable {
+    void verifyRegistryQuery() throws Throwable {
         val tgt = new TicketGrantingTicketImpl("TGT-335500",
             CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
         val registry = getNewTicketRegistry();

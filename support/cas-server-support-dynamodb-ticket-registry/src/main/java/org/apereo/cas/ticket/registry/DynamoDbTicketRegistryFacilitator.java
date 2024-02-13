@@ -137,12 +137,31 @@ public class DynamoDbTicketRegistryFacilitator {
     }
 
     /**
+     * Query the storage name.
+     *
+     * @param criteria the criteria
+     * @return the stream
+     */
+    public Stream<Ticket> query(final TicketRegistryQueryCriteria criteria) {
+        val definition = ticketCatalog.find(criteria.getType());
+        val keys = List.<DynamoDbQueryBuilder>of(
+            DynamoDbQueryBuilder.builder()
+                .key(ColumnNames.PREFIX.getColumnName())
+                .attributeValue(List.of(AttributeValue.builder().s(definition.getPrefix()).build()))
+                .operator(ComparisonOperator.EQ)
+                .build());
+        return DynamoDbTableUtils.scanPaginator(amazonDynamoDBClient,
+            definition.getProperties().getStorageName(), criteria.getCount(),
+            keys, DynamoDbTicketRegistryFacilitator::deserializeTicket);
+    }
+
+    /**
      * Gets all.
      *
      * @return the all
      */
     public Collection<Ticket> getAll() {
-        val metadata = this.ticketCatalog.findAll();
+        val metadata = ticketCatalog.findAll();
         val tickets = new ArrayList<Ticket>(metadata.size());
         metadata.forEach(r -> {
             val scan = ScanRequest.builder().tableName(r.getProperties().getStorageName()).build();

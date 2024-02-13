@@ -135,6 +135,16 @@ class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
+    void verifyRegistryQuery() throws Throwable {
+        val tgt = new TicketGrantingTicketImpl("TGT-115500",
+            CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
+        val registry = getNewTicketRegistry();
+        registry.addTicket(tgt);
+        assertEquals(1, registry.query(TicketRegistryQueryCriteria.builder()
+            .count(1L).type(TicketGrantingTicket.PREFIX).decode(true).build()).size());
+    }
+
+    @RepeatedTest(2)
     void verifyLargeDataset() throws Throwable {
         val ticketGrantingTicketToAdd = Stream.generate(() -> {
                 val tgtId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)

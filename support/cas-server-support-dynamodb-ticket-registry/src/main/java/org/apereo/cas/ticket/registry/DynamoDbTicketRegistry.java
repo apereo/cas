@@ -15,6 +15,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -109,19 +111,6 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
         return ticket;
     }
 
-    private DynamoDbTicketRegistryFacilitator.TicketPayload toTicketPayload(final Ticket ticket) throws Exception {
-        val encTicket = encodeTicket(ticket);
-        val principal = digestIdentifier(getPrincipalIdFrom(ticket));
-        return DynamoDbTicketRegistryFacilitator.TicketPayload
-            .builder()
-            .originalTicket(ticket)
-            .encodedTicket(encTicket)
-            .principal(principal)
-            .attributes(collectAndDigestTicketAttributes(ticket))
-            .service(ticket instanceof final ServiceAwareTicket sat && Objects.nonNull(sat.getService()) ? sat.getService().getId() : StringUtils.EMPTY)
-            .build();
-    }
-
     @Override
     public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
         val encTicketId = digestIdentifier(ticketId);
@@ -172,5 +161,27 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
     @Override
     public long serviceTicketCount() {
         return dbTableService.countTickets(ServiceTicket.class, ServiceTicket.PREFIX);
+    }
+
+    @Override
+    public List<? extends Serializable> query(final TicketRegistryQueryCriteria criteria) {
+        return dbTableService
+            .query(criteria)
+            .map(ticket -> criteria.getDecode() ? decodeTicket(ticket) : ticket)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
+    }
+
+    private DynamoDbTicketRegistryFacilitator.TicketPayload toTicketPayload(final Ticket ticket) throws Exception {
+        val encTicket = encodeTicket(ticket);
+        val principal = digestIdentifier(getPrincipalIdFrom(ticket));
+        return DynamoDbTicketRegistryFacilitator.TicketPayload
+            .builder()
+            .originalTicket(ticket)
+            .encodedTicket(encTicket)
+            .principal(principal)
+            .attributes(collectAndDigestTicketAttributes(ticket))
+            .service(ticket instanceof final ServiceAwareTicket sat && Objects.nonNull(sat.getService()) ? sat.getService().getId() : StringUtils.EMPTY)
+            .build();
     }
 }
