@@ -322,14 +322,12 @@ class RedisServerTicketRegistryTests {
             assertEquals(1, ticketRegistry.countSessionsFor(principalId));
         }
 
-        @SneakyThrows
-        private void addTicketAndWait(final String principalId) {
+        private void addTicketAndWait(final String principalId) throws Throwable {
             val authentication = CoreAuthenticationTestUtils.getAuthentication(principalId);
             val tgtId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
                     .getNewTicketId(TicketGrantingTicket.PREFIX);
             val tgt = new TicketGrantingTicketImpl(tgtId, authentication, new HardTimeoutExpirationPolicy(2));
             ticketRegistry.addTicket(tgt);
-
             Thread.sleep(1000);
         }
     }
