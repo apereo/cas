@@ -91,6 +91,15 @@
                         <span class="mdc-list-item__text">Attribute Consent</span>
                     </a>
 
+                    <a class="mdc-list-item list-group-item list-group-item-action"
+                       onclick="showPanel('#divOidcAccessTokens');"
+                       id="linkOidcAccessTokens"
+                       th:if="${!#lists.isEmpty(oidcAccessTokens)}"
+                       href="#divOidcAccessTokens">
+                        <i class="mdi mdi-cloud-key-outline fa fa-key" aria-hidden="true"></i>&nbsp;
+                        <span class="mdc-list-item__text">Access Tokens</span>
+                    </a>
+
                     <hr align="left" width="85%">
                     <form method="post" id="fmChangePsw" name="fmChangePsw">
                         <a class="mdc-list-item list-group-item list-group-item-action"

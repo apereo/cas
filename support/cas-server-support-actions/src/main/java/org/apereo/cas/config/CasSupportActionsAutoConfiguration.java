@@ -32,7 +32,7 @@ import org.apereo.cas.web.flow.GenerateServiceTicketAction;
 import org.apereo.cas.web.flow.PopulateSpringSecurityContextAction;
 import org.apereo.cas.web.flow.ServiceAuthorizationCheckAction;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
-import org.apereo.cas.web.flow.account.AccountProfileRemoveSingleSignOnSession;
+import org.apereo.cas.web.flow.account.AccountProfileRemoveSingleSignOnSessionAction;
 import org.apereo.cas.web.flow.account.PrepareAccountProfileViewAction;
 import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
 import org.apereo.cas.web.flow.actions.FetchTicketGrantingTicketAction;
@@ -660,7 +660,7 @@ public class CasSupportActionsAutoConfiguration {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
-                .withAction(() -> new AccountProfileRemoveSingleSignOnSession(ticketRegistry))
+                .withAction(() -> new AccountProfileRemoveSingleSignOnSessionAction(ticketRegistry))
                 .withId(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_REMOVE_SINGLE_SIGNON_SESSION)
                 .build()
                 .get();

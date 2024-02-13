@@ -16,7 +16,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 import com.mongodb.client.MongoCollection;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
@@ -271,12 +270,14 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             .stream()
             .map(this::getTicketCollectionInstanceByMetadata)
             .flatMap(map -> {
-                val limit = criteria.getCount() != null ? Limit.of(criteria.getCount().intValue()) : Limit.unlimited();
+                val limit = criteria.getCount() > 0 ? Limit.of(Long.valueOf(criteria.getCount()).intValue()) : Limit.unlimited();
                 val query = new Query().limit(limit);
                 return mongoTemplate.stream(query, MongoDbTicketDocument.class, map);
             })
+            .filter(document -> StringUtils.isBlank(criteria.getPrincipal())
+                || StringUtils.equalsIgnoreCase(criteria.getPrincipal(), document.getPrincipal()))
             .map(document -> {
-                if (BooleanUtils.isTrue(criteria.getDecode())) {
+                if (criteria.isDecode()) {
                     val ticket = decodeTicket(deserializeTicket(document.getJson(), document.getType()));
                     return ticket != null ? !ticket.isExpired() : null;
                 }
@@ -289,7 +290,8 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public long countTicketsFor(final Service service) {
-        return ticketCatalog.findAll()
+        return ticketCatalog
+            .findAll()
             .stream()
             .map(this::getTicketCollectionInstanceByMetadata)
             .flatMap(map -> {

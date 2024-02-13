@@ -24,7 +24,8 @@ import org.springframework.context.annotation.Import;
     OidcLogoutConfiguration.class,
     OidcComponentSerializationConfiguration.class,
     OidcThrottleConfiguration.class,
-    OidcAuditConfiguration.class
+    OidcAuditConfiguration.class,
+    OidcWebflowConfiguration.class
 })
 public class CasOidcAutoConfiguration {
 }

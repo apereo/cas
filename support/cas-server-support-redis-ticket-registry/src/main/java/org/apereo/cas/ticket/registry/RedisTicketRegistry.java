@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.redis.core.CasRedisTemplate;
+import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.ServiceAwareTicket;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
@@ -324,7 +325,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
         val redisKeyGenerator = redisKeyGeneratorFactory.getRedisKeyGenerator(Ticket.class.getName()).orElseThrow();
         val redisTicketsKey = redisKeyGenerator.forEntryType(queryCriteria.getType());
 
-        if (BooleanUtils.isTrue(queryCriteria.getDecode())) {
+        if (queryCriteria.isDecode()) {
             try (val scanResults = casRedisTemplates.getTicketsRedisTemplate().scan(redisTicketsKey, queryCriteria.getCount())) {
                 return scanResults
                     .map(key -> Optional.ofNullable(ticketCache.getIfPresent(redisKeyGenerator.rawKey(key)))
@@ -339,6 +340,9 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
                         }))
                     .filter(Objects::nonNull)
                     .map(this::decodeTicket)
+                    .filter(ticket -> StringUtils.isBlank(queryCriteria.getPrincipal())
+                        || (ticket instanceof final AuthenticationAwareTicket aat
+                        && StringUtils.equalsIgnoreCase(queryCriteria.getPrincipal(), aat.getAuthentication().getPrincipal().getId())))
                     .filter(ticket -> !ticket.isExpired())
                     .peek(ticket -> {
                         val cacheKey = redisKeyGenerator.forEntry(ticket.getPrefix(), digestIdentifier(ticket.getId()));
@@ -348,7 +352,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
             }
         }
         val keys = fetchKeysForTickets(redisTicketsKey);
-        return (queryCriteria.getCount() != null ? keys.limit(queryCriteria.getCount()) : keys).collect(Collectors.toList());
+        return (queryCriteria.getCount() > 0 ? keys.limit(queryCriteria.getCount()) : keys).collect(Collectors.toList());
     }
 
     @Override

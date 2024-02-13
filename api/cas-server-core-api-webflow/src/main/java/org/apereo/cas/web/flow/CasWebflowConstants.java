@@ -1610,7 +1610,6 @@ public interface CasWebflowConstants {
      */
     String ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_LOGOUT = "delegatedAuthenticationClientLogoutAction";
 
-
     /**
      * Action id `delegatedAuthenticationClientFinishLogoutAction`.
      */
@@ -1803,6 +1802,11 @@ public interface CasWebflowConstants {
      * Action id 'webAuthnPopulateCsrfTokenAction .
      */
     String ACTION_ID_WEBAUTHN_POPULATE_CSRF_TOKEN = "webAuthnPopulateCsrfTokenAction";
+
+    /**
+     * Action id `oidcAccountProfileAccessTokensAction`.
+     */
+    String ACTION_ID_ACCOUNT_PROFILE_ACCESS_TOKENS = "oidcAccountProfileAccessTokensAction";
 
     /**
      * Action id 'webAuthnAccountProfileRegistrationAction .

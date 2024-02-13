@@ -148,7 +148,7 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
             stateMap.put("isRedirect", viewState.getRedirect());
 
             acts = StreamSupport.stream(viewState.getRenderActionList().spliterator(), false)
-                .map(Object::toString)
+                .map(SpringWebflowEndpoint::convertActionToString)
                 .collect(Collectors.toList());
 
             if (!acts.isEmpty()) {

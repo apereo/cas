@@ -41,8 +41,9 @@ such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicit
 
 The following items are new improvements and enhancements presented in this release.
 
-
 ## Other Stuff
+           
+- Internal enhancements to allow a few more ticket registries to support more advanced querying operations.
 
 ## Library Upgrades
            
