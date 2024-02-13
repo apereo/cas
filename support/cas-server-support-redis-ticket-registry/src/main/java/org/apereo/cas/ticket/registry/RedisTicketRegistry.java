@@ -219,7 +219,8 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
             .map(generator -> {
                 val userId = digestIdentifier(principalId);
                 val redisPrincipalKey = generator.forEntry(userId);
-                val members = casRedisTemplates.getSessionsRedisTemplate().boundSetOps(redisPrincipalKey).members();
+                val members = casRedisTemplates.getSessionsRedisTemplate().boundZSetOps(redisPrincipalKey)
+                        .range(0, (long) Double.MAX_VALUE);
                 val redisKeyGenerator = redisKeyGeneratorFactory.getRedisKeyGenerator(Ticket.class.getName()).orElseThrow();
 
                 return Objects.requireNonNull(members)
@@ -423,11 +424,14 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
             val userId = digestIdentifier(getPrincipalIdFrom(ticket));
             if (StringUtils.isNotBlank(userId) && ticket instanceof TicketGrantingTicket) {
                 val redisPrincipalPattern = generator.forEntry(userId);
-                val ops = casRedisTemplates.getSessionsRedisTemplate().boundSetOps(redisPrincipalPattern);
+                val ops = casRedisTemplates.getSessionsRedisTemplate().boundZSetOps(redisPrincipalPattern);
+                val now = Instant.now(Clock.systemUTC());
                 if (onlyTrackMostRecentSession) {
-                    ops.expireAt(Instant.now(Clock.systemUTC()));
+                    ops.expireAt(now);
+                } else {
+                    ops.removeRangeByScore(0, Long.valueOf(now.getEpochSecond()).doubleValue() + 1);
                 }
-                ops.add(digestedId);
+                ops.add(digestedId, Long.valueOf(now.getEpochSecond() + timeout).doubleValue());
                 ops.expire(timeout, TimeUnit.SECONDS);
             }
         });
