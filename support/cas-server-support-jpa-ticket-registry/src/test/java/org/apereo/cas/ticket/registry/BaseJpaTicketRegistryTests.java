@@ -34,6 +34,7 @@ import org.springframework.boot.autoconfigure.integration.IntegrationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.transaction.annotation.Transactional;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
@@ -139,7 +140,18 @@ public abstract class BaseJpaTicketRegistryTests extends BaseTicketRegistryTests
         this.newTicketRegistry.deleteTicket(tgt.getId());
         assertNull(this.newTicketRegistry.getTicket(oAuthCode.getId()));
     }
-    
+
+    @RepeatedTest(2)
+    @Transactional(transactionManager = "ticketTransactionManager", readOnly = false)
+    void verifyCountForPrincipal() throws Throwable {
+        val tgt = new TicketGrantingTicketImpl("TGT-335500",
+            CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
+        val registry = getNewTicketRegistry();
+        registry.addTicket(tgt);
+        assertEquals(1, registry.query(TicketRegistryQueryCriteria.builder()
+            .count(1L).type(TicketGrantingTicket.PREFIX).decode(true).build()).size());
+    }
+
     @Import({
         CasJpaTicketRegistryAutoConfiguration.class,
         CasHibernateJpaAutoConfiguration.class,

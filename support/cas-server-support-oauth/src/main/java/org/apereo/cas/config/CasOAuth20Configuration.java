@@ -1208,10 +1208,11 @@ class CasOAuth20Configuration {
                 @Qualifier("refreshTokenIdGenerator") final UniqueTicketIdGenerator refreshTokenIdGenerator,
                 @Qualifier("refreshTokenExpirationPolicy") final ExpirationPolicyBuilder refreshTokenExpirationPolicy,
                 @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
+                @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry,
                 @Qualifier(TicketTrackingPolicy.BEAN_NAME_DESCENDANT_TICKET_TRACKING)
                 final TicketTrackingPolicy descendantTicketsTrackingPolicy,
                 final CasConfigurationProperties casProperties) {
-            return new OAuth20DefaultRefreshTokenFactory(refreshTokenIdGenerator,
+            return new OAuth20DefaultRefreshTokenFactory(refreshTokenIdGenerator, ticketRegistry,
                 refreshTokenExpirationPolicy, servicesManager, descendantTicketsTrackingPolicy, casProperties);
         }
 
