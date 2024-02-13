@@ -26,6 +26,7 @@ import jakarta.persistence.LockModeType;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -192,6 +193,27 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
             .map(factory::toTicket)
             .map(this::decodeTicket)
             .filter(ticket -> !ticket.isExpired());
+    }
+
+    @Override
+    public List<? extends Serializable> query(final TicketRegistryQueryCriteria criteria) {
+        val factory = getJpaTicketEntityFactory();
+        val sql = String.format("SELECT t FROM %s t WHERE t.type=:type", factory.getEntityName());
+        val definition = ticketCatalog.find(criteria.getType());
+        val query = entityManager.createQuery(sql, factory.getType())
+            .setParameter("type", getTicketTypeName(definition.getApiClass()));
+        if (criteria.getCount() > 0) {
+            query.setMaxResults(criteria.getCount().intValue());
+        }
+        query.setLockMode(LockModeType.NONE);
+
+        return jpaBeanFactory
+            .streamQuery(query)
+            .map(BaseTicketEntity.class::cast)
+            .map(factory::toTicket)
+            .map(ticket -> criteria.getDecode() ? decodeTicket(ticket) : ticket)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
     }
 
     @Override
