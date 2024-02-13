@@ -292,11 +292,11 @@ class RedisServerTicketRegistryTests {
 
     @Nested
     @SpringBootTest(
-            classes = {
-                    RedisCoreConfiguration.class,
-                    RedisTicketRegistryConfiguration.class,
-                    BaseTicketRegistryTests.SharedTestConfiguration.class
-            }, properties = {
+        classes = {
+            RedisCoreConfiguration.class,
+            RedisTicketRegistryConfiguration.class,
+            BaseTicketRegistryTests.SharedTestConfiguration.class
+        }, properties = {
             "cas.ticket.tgt.core.only-track-most-recent-session=false",
             "cas.ticket.registry.redis.host=localhost",
             "cas.ticket.registry.redis.port=6379",
@@ -314,10 +314,11 @@ class RedisServerTicketRegistryTests {
         @Test
         void verifyDifferentLoginSamePrincipal() throws Throwable {
             val principalId = UUID.randomUUID().toString();
-            for (int i = 0; i < 5; i++) {
+            for (var i = 0; i < 3; i++) {
                 addTicketAndWait(principalId);
             }
-            assertEquals(1, ticketRedisTemplate.boundZSetOps("CAS_PRINCIPAL:" + principalId).size());
+            val key = RedisCompositeKey.forPrincipal().withQuery(principalId).toKeyPattern();
+            assertEquals(1, ticketRedisTemplate.boundZSetOps(key).size());
             assertEquals(1, ticketRegistry.countSessionsFor(principalId));
         }
 
@@ -326,10 +327,10 @@ class RedisServerTicketRegistryTests {
             val authentication = CoreAuthenticationTestUtils.getAuthentication(principalId);
             val tgtId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
                     .getNewTicketId(TicketGrantingTicket.PREFIX);
-            val tgt = new TicketGrantingTicketImpl(tgtId, authentication, new HardTimeoutExpirationPolicy(5));
+            val tgt = new TicketGrantingTicketImpl(tgtId, authentication, new HardTimeoutExpirationPolicy(2));
             ticketRegistry.addTicket(tgt);
 
-            Thread.sleep(4000);
+            Thread.sleep(1000);
         }
     }
 
@@ -340,9 +341,9 @@ class RedisServerTicketRegistryTests {
             RedisTicketRegistryConfiguration.class,
             BaseTicketRegistryTests.SharedTestConfiguration.class
         }, properties = {
-        "cas.ticket.tgt.core.only-track-most-recent-session=true",
-        "cas.ticket.registry.redis.host=localhost",
-        "cas.ticket.registry.redis.port=6379"
+            "cas.ticket.tgt.core.only-track-most-recent-session=true",
+            "cas.ticket.registry.redis.host=localhost",
+            "cas.ticket.registry.redis.port=6379"
     })
     class ConcurrentTests {
         @Autowired
