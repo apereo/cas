@@ -48,6 +48,10 @@ public class GoogleCloudFirestoreTicketDocument implements Serializable {
     private String type;
 
     @JsonProperty
+    @PropertyName("service")
+    private String service;
+
+    @JsonProperty
     @PropertyName("principal")
     private String principal;
 
@@ -65,7 +69,10 @@ public class GoogleCloudFirestoreTicketDocument implements Serializable {
      * @return the map
      */
     public Map<String, Object> asUpdatableMap() {
-        return CollectionUtils.wrap("json", this.json,
-            "principal", this.principal, "attributes", this.attributes);
+        return CollectionUtils.wrap(
+            "service", this.service,
+            "json", this.json,
+            "principal", this.principal,
+            "attributes", this.attributes);
     }
 }
