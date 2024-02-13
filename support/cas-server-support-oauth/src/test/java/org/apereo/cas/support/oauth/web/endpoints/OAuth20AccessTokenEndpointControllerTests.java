@@ -852,7 +852,8 @@ class OAuth20AccessTokenEndpointControllerTests {
             val factory = new WebApplicationServiceFactory();
             val service = factory.createService(registeredService.getServiceId());
             val expiringRefreshTokenFactory = new OAuth20DefaultRefreshTokenFactory(
-                alwaysExpiresExpirationPolicyBuilder(), servicesManager, descendantTicketsTrackingPolicy, casProperties);
+                alwaysExpiresExpirationPolicyBuilder(), ticketRegistry,
+                servicesManager, descendantTicketsTrackingPolicy, casProperties);
             val refreshToken = expiringRefreshTokenFactory.create(service, authentication,
                 new MockTicketGrantingTicket("casuser"), new ArrayList<>(), registeredService.getClientId(), StringUtils.EMPTY, new HashMap<>(),
                 OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
