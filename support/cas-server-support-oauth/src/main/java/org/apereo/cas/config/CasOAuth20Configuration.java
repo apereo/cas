@@ -1223,10 +1223,12 @@ class CasOAuth20Configuration {
             @Qualifier("accessTokenExpirationPolicy") final ExpirationPolicyBuilder accessTokenExpirationPolicy,
             @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
             @Qualifier("accessTokenJwtBuilder") final JwtBuilder accessTokenJwtBuilder,
+            @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry,
             @Qualifier(TicketTrackingPolicy.BEAN_NAME_DESCENDANT_TICKET_TRACKING)
             final TicketTrackingPolicy descendantTicketsTrackingPolicy) {
             return new OAuth20DefaultAccessTokenFactory(accessTokenIdGenerator,
-                accessTokenExpirationPolicy, accessTokenJwtBuilder, servicesManager, descendantTicketsTrackingPolicy);
+                ticketRegistry, accessTokenExpirationPolicy, accessTokenJwtBuilder,
+                servicesManager, descendantTicketsTrackingPolicy);
         }
 
         @Bean

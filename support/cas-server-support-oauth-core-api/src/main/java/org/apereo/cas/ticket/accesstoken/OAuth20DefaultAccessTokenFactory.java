@@ -13,6 +13,7 @@ import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
@@ -37,6 +38,8 @@ public class OAuth20DefaultAccessTokenFactory implements OAuth20AccessTokenFacto
 
     protected final UniqueTicketIdGenerator accessTokenIdGenerator;
 
+    protected final TicketRegistry ticketRegistry;
+
     protected final ExpirationPolicyBuilder<OAuth20AccessToken> expirationPolicyBuilder;
 
     protected final JwtBuilder jwtBuilder;
@@ -45,11 +48,14 @@ public class OAuth20DefaultAccessTokenFactory implements OAuth20AccessTokenFacto
 
     protected final TicketTrackingPolicy descendantTicketsTrackingPolicy;
 
-    public OAuth20DefaultAccessTokenFactory(final ExpirationPolicyBuilder<OAuth20AccessToken> expirationPolicyBuilder,
-                                            final JwtBuilder jwtBuilder,
-                                            final ServicesManager servicesManager,
-                                            final TicketTrackingPolicy descendantTicketsTrackingPolicy) {
-        this(new DefaultUniqueTicketIdGenerator(), expirationPolicyBuilder, jwtBuilder, servicesManager, descendantTicketsTrackingPolicy);
+    public OAuth20DefaultAccessTokenFactory(
+        final TicketRegistry ticketRegistry,
+        final ExpirationPolicyBuilder<OAuth20AccessToken> expirationPolicyBuilder,
+        final JwtBuilder jwtBuilder,
+        final ServicesManager servicesManager,
+        final TicketTrackingPolicy descendantTicketsTrackingPolicy) {
+        this(new DefaultUniqueTicketIdGenerator(), ticketRegistry, expirationPolicyBuilder,
+            jwtBuilder, servicesManager, descendantTicketsTrackingPolicy);
     }
 
     @Override
@@ -65,11 +71,13 @@ public class OAuth20DefaultAccessTokenFactory implements OAuth20AccessTokenFacto
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(jwtBuilder.getServicesManager(), clientId);
         var limitReached = false;
         if (ticketGrantingTicket != null) {
-            val maxNumberOfAccessTokensAllowed = getMaxNumberOfAccessTokensAllowed(registeredService);
-            limitReached = maxNumberOfAccessTokensAllowed > 0
-                && maxNumberOfAccessTokensAllowed <= descendantTicketsTrackingPolicy.countTicketsFor(ticketGrantingTicket, service);
+            val maxNumberOfTokensAllowed = getMaxNumberOfAccessTokensAllowed(registeredService);
+            if (maxNumberOfTokensAllowed > 0) {
+                limitReached = descendantTicketsTrackingPolicy.countTicketsFor(ticketGrantingTicket, service) >= maxNumberOfTokensAllowed
+                    || ticketRegistry.countTicketsFor(service) >= maxNumberOfTokensAllowed;
+            }
+            FunctionUtils.throwIf(limitReached, () -> new IllegalArgumentException("Access token limit for %s is reached".formatted(service.getId())));
         }
-        FunctionUtils.throwIf(limitReached, () -> new IllegalArgumentException("Access token limit for %s is reached".formatted(service.getId())));
         val expirationPolicyToUse = determineExpirationPolicyForService(registeredService);
         val accessTokenId = generateAccessTokenId(service, authentication);
         val accessToken = new OAuth20DefaultAccessToken(accessTokenId, service, authentication,

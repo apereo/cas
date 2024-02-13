@@ -110,7 +110,8 @@ class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
         val code = createOAuthCode();
         val jwtBuilder = new JwtBuilder(CipherExecutor.noOpOfSerializableToString(),
             applicationContext, servicesManager, principalResolver, RegisteredServiceCipherExecutor.noOp(), casProperties);
-        val token = new OAuth20DefaultAccessTokenFactory(neverExpiresExpirationPolicyBuilder(), jwtBuilder,
+        val token = new OAuth20DefaultAccessTokenFactory(
+            newTicketRegistry, neverExpiresExpirationPolicyBuilder(), jwtBuilder,
             servicesManager, TicketTrackingPolicy.noOp())
             .create(RegisteredServiceTestUtils.getService(),
                 RegisteredServiceTestUtils.getAuthentication(), new MockTicketGrantingTicket("casuser"),
