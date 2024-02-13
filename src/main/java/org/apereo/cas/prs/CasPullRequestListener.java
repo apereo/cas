@@ -265,6 +265,7 @@ public class CasPullRequestListener implements PullRequestListener {
                 repository.labelPullRequestAs(pr, CasLabels.LABEL_SEE_CONTRIBUTOR_GUIDELINES);
 
                 var template = IOUtils.toString(new ClassPathResource("template-large-patch.md").getInputStream(), StandardCharsets.UTF_8);
+                repository.removeAllCommentsFrom(pr, "apereocas-bot");
                 repository.addComment(pr, template);
                 repository.close(pr);
                 return true;
@@ -276,6 +277,7 @@ public class CasPullRequestListener implements PullRequestListener {
             repository.labelPullRequestAs(pr, CasLabels.LABEL_PROPOSAL_DECLINED);
             repository.labelPullRequestAs(pr, CasLabels.LABEL_SEE_CONTRIBUTOR_GUIDELINES);
             var template = IOUtils.toString(new ClassPathResource("template-no-description.md").getInputStream(), StandardCharsets.UTF_8);
+            repository.removeAllCommentsFrom(pr, "apereocas-bot");
             repository.addComment(pr, template);
             repository.close(pr);
             return true;
@@ -369,6 +371,7 @@ public class CasPullRequestListener implements PullRequestListener {
 
             if (!pr.isDraft() && !pr.isWorkInProgress() && StringUtils.hasText(pr.getBody())
                 && !pr.getBody().contains("master: https://github.com/apereo/cas/pull/")) {
+                repository.removeAllCommentsFrom(pr, "apereocas-bot");
                 repository.labelPullRequestAs(pr, CasLabels.LABEL_SEE_CONTRIBUTOR_GUIDELINES);
                 var template = IOUtils.toString(new ClassPathResource("template-port-forward.md").getInputStream(), StandardCharsets.UTF_8);
                 repository.addComment(pr, template);
