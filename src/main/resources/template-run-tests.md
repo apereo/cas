@@ -8,6 +8,8 @@ Just in case: you do not have to wait for the CAS project or its members to run 
 
 We have not found any successful workflow runs on your forked repository that would show passing tests for this commit id. Our decision at this point is that the CAS test suite has not run (successfully) on your fork to verify how your changes affect all CAS functionality. They might indeed verify the particular functionality you have worked on, but we need to ensure that the changes do not break other parts of CAS.
 
+The following [*GitHub Actions workflow runs*](${forkedRepository}/actions) are missing on your fork: `${missingRuns}`.
+
 ![image](${link})
 
 # Remember

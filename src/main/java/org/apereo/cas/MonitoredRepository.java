@@ -82,12 +82,33 @@ public class MonitoredRepository {
                 .toList()
                 .getFirst();
             val workflowRuns = getSuccessfulWorkflowRunsFor(pullRequest.getHead(), mostRecentCommit);
-            if (workflowRuns.getCount() <= 0) {
+            var matchFound = true;
+            var missingRuns = new ArrayList<String>();
+            if (workflowRuns.getRuns().stream().noneMatch(run -> run.getName().equalsIgnoreCase(WorkflowRuns.CODE_ANALYSIS.getName()))) {
+                matchFound = false;
+                missingRuns.add(WorkflowRuns.CODE_ANALYSIS.getName());
+            }
+            if (workflowRuns.getRuns().stream().noneMatch(run -> run.getName().equalsIgnoreCase(WorkflowRuns.VALIDATION.getName()))) {
+                matchFound = false;
+                missingRuns.add(WorkflowRuns.VALIDATION.getName());
+            }
+            if (workflowRuns.getRuns().stream().noneMatch(run -> run.getName().equalsIgnoreCase(WorkflowRuns.FUNCTIONAL_TESTS.getName()))) {
+                matchFound = false;
+                missingRuns.add(WorkflowRuns.FUNCTIONAL_TESTS.getName());
+            }
+            if (workflowRuns.getRuns().stream().noneMatch(run -> run.getName().equalsIgnoreCase(WorkflowRuns.UNIT_TESTS.getName()))) {
+                matchFound = false;
+                missingRuns.add(WorkflowRuns.UNIT_TESTS.getName());
+            }
+            
+            if (!matchFound) {
                 var template = IOUtils.toString(new ClassPathResource("template-run-tests.md").getInputStream(), StandardCharsets.UTF_8);
                 template = template.replace("${commitId}", mostRecentCommit.getSha());
                 template = template.replace("${forkedRepository}", pullRequest.getHead().getRepository().getHtmlUrl());
                 template = template.replace("${link}", Memes.NO_TESTS.select());
                 template = template.replace("${branch}", pullRequest.getHead().getRef());
+                template = template.replace("${missingRuns}", String.join(",", missingRuns));
+                
                 labelPullRequestAs(pullRequest, CasLabels.LABEL_PENDING_NEEDS_TESTS);
                 labelPullRequestAs(pullRequest, CasLabels.LABEL_WIP);
                 addComment(pullRequest, template);
