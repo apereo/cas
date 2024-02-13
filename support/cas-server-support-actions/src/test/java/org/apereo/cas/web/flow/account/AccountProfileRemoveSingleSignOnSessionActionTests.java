@@ -21,7 +21,7 @@ import org.springframework.webflow.execution.Action;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link AccountProfileRemoveSingleSignOnSessionTests}.
+ * This is {@link AccountProfileRemoveSingleSignOnSessionActionTests}.
  *
  * @author Misagh Moayyed
  * @since 7.0.0
@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreWebflowAutoConfiguration.class,
     CasCoreAuditAutoConfiguration.class
 })
-class AccountProfileRemoveSingleSignOnSessionTests extends AbstractWebflowActionsTests {
+class AccountProfileRemoveSingleSignOnSessionActionTests extends AbstractWebflowActionsTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_REMOVE_SINGLE_SIGNON_SESSION)
     private Action removeSessionAction;

@@ -72,7 +72,7 @@ class PrepareAccountProfileViewActionTests extends AbstractWebflowActionsTests {
         assertTrue(list.indexOf(registeredService1) > list.indexOf(registeredService2));
         assertNotNull(WebUtils.getAuthentication(context));
 
-        val session = (PrepareAccountProfileViewAction.SingleSignOnSession) WebUtils.getSingleSignOnSessions(context).getFirst();
+        val session = (AccountSingleSignOnSession) WebUtils.getSingleSignOnSessions(context).getFirst();
         assertNotNull(session.getAuthenticationDate());
         assertNotNull(session.getPayload());
         assertNotNull(session.getPrincipal());

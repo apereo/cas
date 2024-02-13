@@ -1,7 +1,6 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.audit.AuditableExecution;
-import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderResolver;
 import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -30,11 +29,7 @@ import org.apereo.cas.oidc.web.controllers.logout.OidcPostLogoutRedirectUrlMatch
 import org.apereo.cas.oidc.web.controllers.profile.OidcUserProfileEndpointController;
 import org.apereo.cas.oidc.web.controllers.token.OidcAccessTokenEndpointController;
 import org.apereo.cas.oidc.web.controllers.token.OidcRevocationEndpointController;
-import org.apereo.cas.oidc.web.flow.OidcCasWebflowLoginContextProvider;
 import org.apereo.cas.oidc.web.flow.OidcMultifactorAuthenticationTrigger;
-import org.apereo.cas.oidc.web.flow.OidcRegisteredServiceUIAction;
-import org.apereo.cas.oidc.web.flow.OidcUnmetAuthenticationRequirementWebflowExceptionHandler;
-import org.apereo.cas.oidc.web.flow.OidcWebflowConfigurer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
@@ -46,15 +41,6 @@ import org.apereo.cas.validation.CasProtocolViewFactory;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apereo.cas.web.SecurityLogicInterceptor;
 import org.apereo.cas.web.UrlValidator;
-import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
-import org.apereo.cas.web.flow.CasWebflowLoginContextProvider;
-import org.apereo.cas.web.flow.authentication.CasWebflowExceptionHandler;
-import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
-import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
-import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
-import org.apereo.cas.web.flow.resolver.impl.mfa.DefaultMultifactorAuthenticationProviderWebflowEventResolver;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -73,16 +59,12 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
-import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
-import org.springframework.webflow.execution.Action;
 import jakarta.annotation.Nonnull;
 import java.util.List;
 import java.util.Optional;
@@ -396,91 +378,6 @@ class OidcEndpointsConfiguration {
             @Qualifier("oidcJsonWebKeystoreRotationService")
             final ObjectProvider<OidcJsonWebKeystoreRotationService> oidcJsonWebKeystoreRotationService) {
             return new OidcJwksRotationEndpoint(casProperties, oidcJsonWebKeystoreRotationService);
-        }
-    }
-
-    @Configuration(value = "OidcEndpointsWebflowConfiguration", proxyBeanMethods = false)
-    @EnableConfigurationProperties(CasConfigurationProperties.class)
-    static class OidcEndpointsWebflowConfiguration {
-
-        @ConditionalOnMissingBean(name = "oidcUnmetAuthenticationRequirementWebflowExceptionHandler")
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public CasWebflowExceptionHandler oidcUnmetAuthenticationRequirementWebflowExceptionHandler(
-            @Qualifier(OidcConfigurationContext.BEAN_NAME)
-            final OidcConfigurationContext oidcConfigurationContext) {
-            return new OidcUnmetAuthenticationRequirementWebflowExceptionHandler(oidcConfigurationContext);
-        }
-
-        @ConditionalOnMissingBean(name = "oidcCasWebflowExecutionPlanConfigurer")
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public CasWebflowExecutionPlanConfigurer oidcCasWebflowExecutionPlanConfigurer(
-            @Qualifier("oidcWebflowConfigurer")
-            final CasWebflowConfigurer oidcWebflowConfigurer,
-            @Qualifier("oidcLocaleChangeInterceptor")
-            final HandlerInterceptor oidcLocaleChangeInterceptor,
-            @Qualifier("oidcCasWebflowLoginContextProvider")
-            final CasWebflowLoginContextProvider oidcCasWebflowLoginContextProvider) {
-            return plan -> {
-                plan.registerWebflowConfigurer(oidcWebflowConfigurer);
-                plan.registerWebflowInterceptor(oidcLocaleChangeInterceptor);
-                plan.registerWebflowLoginContextProvider(oidcCasWebflowLoginContextProvider);
-            };
-        }
-
-        @Bean
-        @ConditionalOnMissingBean(name = "oidcCasWebflowLoginContextProvider")
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public CasWebflowLoginContextProvider oidcCasWebflowLoginContextProvider(
-            @Qualifier(ArgumentExtractor.BEAN_NAME)
-            final ArgumentExtractor argumentExtractor) {
-            return new OidcCasWebflowLoginContextProvider(argumentExtractor);
-        }
-
-
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Bean
-        @Lazy(false)
-        public CasWebflowEventResolver oidcAuthenticationContextWebflowEventResolver(
-            @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
-            final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
-            @Qualifier("casWebflowConfigurationContext")
-            final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext,
-            @Qualifier("oidcMultifactorAuthenticationTrigger")
-            final MultifactorAuthenticationTrigger oidcMultifactorAuthenticationTrigger) {
-            val r = new DefaultMultifactorAuthenticationProviderWebflowEventResolver(
-                casWebflowConfigurationContext, oidcMultifactorAuthenticationTrigger);
-            initialAuthenticationAttemptWebflowEventResolver.addDelegate(r);
-            return r;
-        }
-
-        @ConditionalOnMissingBean(name = "oidcWebflowConfigurer")
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public CasWebflowConfigurer oidcWebflowConfigurer(
-            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGOUT_FLOW_DEFINITION_REGISTRY)
-            final FlowDefinitionRegistry logoutFlowDefinitionRegistry,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
-            final FlowBuilderServices flowBuilderServices,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-            final ConfigurableApplicationContext applicationContext,
-            final CasConfigurationProperties casProperties) {
-            val cfg = new OidcWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
-            cfg.setLogoutFlowDefinitionRegistry(logoutFlowDefinitionRegistry);
-            return cfg;
-        }
-
-        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_OIDC_REGSTERED_SERVICE_UI)
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public Action oidcRegisteredServiceUIAction(
-            @Qualifier("oauth20AuthenticationRequestServiceSelectionStrategy")
-            final AuthenticationServiceSelectionStrategy oauth20AuthenticationServiceSelectionStrategy,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) {
-            return new OidcRegisteredServiceUIAction(servicesManager, oauth20AuthenticationServiceSelectionStrategy);
         }
     }
 

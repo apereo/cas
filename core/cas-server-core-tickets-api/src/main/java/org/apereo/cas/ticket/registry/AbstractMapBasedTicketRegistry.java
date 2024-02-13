@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.registry.pubsub.QueueableTicketRegistry;
@@ -11,14 +12,15 @@ import org.apereo.cas.ticket.registry.pubsub.queue.QueueableTicketRegistryMessag
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.crypto.CipherExecutor;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-
+import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link AbstractMapBasedTicketRegistry}.
@@ -91,7 +93,7 @@ public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegis
 
     @Override
     public long deleteSingleTicket(final Ticket ticket) {
-        val result = ticket != null ? deleteTicketFromQueue(ticket.getId()): 0;
+        val result = ticket != null ? deleteTicketFromQueue(ticket.getId()) : 0;
         if (ticketPublisher.isEnabled()) {
             LOGGER.trace("Publishing delete command for id [{}] and ticket [{}]", publisherIdentifier, ticket.getId());
             ticketPublisher.publishMessageToQueue(new DeleteTicketMessageQueueCommand(publisherIdentifier, ticket.getId()));
@@ -136,6 +138,20 @@ public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegis
         val size = getMapInstance().size();
         getMapInstance().clear();
         return size;
+    }
+
+    @Override
+    public List<? extends Serializable> query(final TicketRegistryQueryCriteria criteria) {
+        return getMapInstance()
+            .values()
+            .stream()
+            .filter(ticket -> criteria.getType().equals(ticket.getPrefix()))
+            .map(ticket -> criteria.isDecode() ? decodeTicket(ticket) : ticket)
+            .filter(ticket -> StringUtils.isBlank(criteria.getPrincipal())
+                || (ticket instanceof final AuthenticationAwareTicket aat
+                    && StringUtils.equalsIgnoreCase(criteria.getPrincipal(), aat.getAuthentication().getPrincipal().getId())))
+            .limit(criteria.getCount() > 0 ? criteria.getCount() : Long.MAX_VALUE)
+            .collect(Collectors.toList());
     }
 
     /**

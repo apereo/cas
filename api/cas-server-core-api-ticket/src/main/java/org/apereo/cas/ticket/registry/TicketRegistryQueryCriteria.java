@@ -31,7 +31,9 @@ public class TicketRegistryQueryCriteria implements Serializable {
 
     private String type;
 
-    private Boolean decode;
+    private String principal;
 
-    private Long count;
+    private boolean decode;
+
+    private long count;
 }

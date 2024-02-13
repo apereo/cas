@@ -2,6 +2,7 @@ package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.monitor.Monitorable;
+import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.ServiceAwareTicket;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
@@ -167,8 +168,11 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
     public List<? extends Serializable> query(final TicketRegistryQueryCriteria criteria) {
         return dbTableService
             .query(criteria)
-            .map(ticket -> criteria.getDecode() ? decodeTicket(ticket) : ticket)
+            .map(ticket -> criteria.isDecode() ? decodeTicket(ticket) : ticket)
             .filter(Objects::nonNull)
+            .filter(ticket -> StringUtils.isBlank(criteria.getPrincipal())
+                || (ticket instanceof final AuthenticationAwareTicket aat
+                && StringUtils.equalsIgnoreCase(criteria.getPrincipal(), aat.getAuthentication().getPrincipal().getId())))
             .collect(Collectors.toList());
     }
 

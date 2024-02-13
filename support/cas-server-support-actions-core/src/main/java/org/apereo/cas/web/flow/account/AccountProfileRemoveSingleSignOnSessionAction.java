@@ -11,13 +11,13 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- * This is {@link AccountProfileRemoveSingleSignOnSession}.
+ * This is {@link AccountProfileRemoveSingleSignOnSessionAction}.
  *
  * @author Misagh Moayyed
  * @since 7.0.0
  */
 @RequiredArgsConstructor
-public class AccountProfileRemoveSingleSignOnSession extends BaseCasWebflowAction {
+public class AccountProfileRemoveSingleSignOnSessionAction extends BaseCasWebflowAction {
     private final TicketRegistry ticketRegistry;
 
     @Override

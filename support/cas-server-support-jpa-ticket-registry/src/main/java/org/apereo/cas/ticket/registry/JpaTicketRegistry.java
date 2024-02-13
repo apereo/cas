@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.jpa.JpaBeanFactory;
 import org.apereo.cas.monitor.Monitorable;
+import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
@@ -203,7 +204,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         val query = entityManager.createQuery(sql, factory.getType())
             .setParameter("type", getTicketTypeName(definition.getApiClass()));
         if (criteria.getCount() > 0) {
-            query.setMaxResults(criteria.getCount().intValue());
+            query.setMaxResults(Long.valueOf(criteria.getCount()).intValue());
         }
         query.setLockMode(LockModeType.NONE);
 
@@ -211,7 +212,10 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
             .streamQuery(query)
             .map(BaseTicketEntity.class::cast)
             .map(factory::toTicket)
-            .map(ticket -> criteria.getDecode() ? decodeTicket(ticket) : ticket)
+            .map(ticket -> criteria.isDecode() ? decodeTicket(ticket) : ticket)
+            .filter(ticket -> StringUtils.isBlank(criteria.getPrincipal())
+                || (ticket instanceof final AuthenticationAwareTicket aat
+                && StringUtils.equalsIgnoreCase(criteria.getPrincipal(), aat.getAuthentication().getPrincipal().getId())))
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
     }
