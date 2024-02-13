@@ -222,6 +222,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
             .filter(ServiceAwareTicket.class::isInstance)
             .filter(ticket -> !ticket.isExpired())
             .map(ServiceAwareTicket.class::cast)
+            .filter(ticket -> Objects.nonNull(ticket.getService()))
             .filter(ticket -> ticket.getService().getId().equals(service.getId()))
             .count();
     }
