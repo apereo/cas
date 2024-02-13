@@ -70,7 +70,7 @@ public class OAuth20DefaultRefreshTokenFactory implements OAuth20RefreshTokenFac
             limitReached = maxNumberOfTokensAllowed > 0
                 && maxNumberOfTokensAllowed <= descendantTicketsTrackingPolicy.countTicketsFor(ticketGrantingTicket, service);
         }
-        FunctionUtils.throwIf(limitReached, () -> new IllegalArgumentException("Access token limit for %s is reached".formatted(service.getId())));
+        FunctionUtils.throwIf(limitReached, () -> new IllegalArgumentException("Refresh token limit for %s is reached".formatted(service.getId())));
         
         val codeId = refreshTokenIdGenerator.getNewTicketId(OAuth20RefreshToken.PREFIX);
         val expirationPolicyToUse = determineExpirationPolicyForService(registeredService);
