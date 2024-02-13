@@ -178,7 +178,10 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
         return FunctionUtils.doAndHandle(() -> {
             var decodedTicketId = ticketId;
             val posSeparator = ticketId.indexOf(UniqueTicketIdGenerator.SEPARATOR);
-            if (posSeparator < 0 || posSeparator >= 10) {
+            val separatorNotFound = posSeparator < 0;
+            val separatorFoundAfterPrefix = posSeparator >= 10;
+            val isIdentifierEncoded = separatorNotFound || separatorFoundAfterPrefix;
+            if (isIdentifierEncoded) {
                 decodedTicketId = (String) protocolTicketCipherExecutor.decode(ticketId);
             }
             val ticketPrefix = StringUtils.substring(decodedTicketId, 0, decodedTicketId.indexOf(UniqueTicketIdGenerator.SEPARATOR));
