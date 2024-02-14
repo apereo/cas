@@ -972,6 +972,11 @@ public interface CasWebflowConstants {
     String STATE_ID_INTERRUPT_VIEW = "interruptView";
 
     /**
+     * The state id 'oidcRevokeAccessToken'.
+     */
+    String STATE_ID_REVOKE_OIDC_ACCESS_TOKEN = "oidcRevokeAccessToken";
+
+    /**
      * The state id 'startSpnegoAuthenticate'.
      */
     String STATE_ID_START_SPNEGO_AUTHENTICATE = "startSpnegoAuthenticate";
@@ -1465,6 +1470,12 @@ public interface CasWebflowConstants {
      * Action id 'readBrowserStorageAction'.
      */
     String ACTION_ID_READ_BROWSER_STORAGE = "readBrowserStorageAction";
+
+    /**
+     * Action id 'accountProfileOidcRemoveAccessTokenAction'.
+     */
+    String ACTION_ID_ACCOUNT_PROFILE_REMOVE_OIDC_ACCESS_TOKEN = "accountProfileOidcRemoveAccessTokenAction";
+
     /**
      * Action id 'putBrowserStorageAction'.
      */
@@ -2067,7 +2078,7 @@ public interface CasWebflowConstants {
     /**
      * Action id 'oidcRegisteredServiceUIAction'.
      */
-    String ACTION_ID_OIDC_REGSTERED_SERVICE_UI = "oidcRegisteredServiceUIAction";
+    String ACTION_ID_OIDC_REGISTERED_SERVICE_UI = "oidcRegisteredServiceUIAction";
 
     /**
      * Action id 'oauth20RegisteredServiceUIAction'.

@@ -10,6 +10,7 @@ import org.apereo.cas.oidc.web.flow.OidcRegisteredServiceUIAction;
 import org.apereo.cas.oidc.web.flow.OidcUnmetAuthenticationRequirementWebflowExceptionHandler;
 import org.apereo.cas.oidc.web.flow.OidcWebflowConfigurer;
 import org.apereo.cas.oidc.web.flow.account.OidcAccountProfileAccessTokenAction;
+import org.apereo.cas.oidc.web.flow.account.OidcAccountProfileRemoveAccessTokenAction;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -109,7 +110,7 @@ public class OidcWebflowConfiguration {
         return cfg;
     }
 
-    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_OIDC_REGSTERED_SERVICE_UI)
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_OIDC_REGISTERED_SERVICE_UI)
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public Action oidcRegisteredServiceUIAction(
@@ -125,5 +126,13 @@ public class OidcWebflowConfiguration {
     public Action oidcAccountProfileAccessTokensAction(
         @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry) {
         return new OidcAccountProfileAccessTokenAction(ticketRegistry);
+    }
+
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_REMOVE_OIDC_ACCESS_TOKEN)
+    public Action accountProfileOidcRemoveAccessTokenAction(
+        @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry) {
+        return new OidcAccountProfileRemoveAccessTokenAction(ticketRegistry);
     }
 }
