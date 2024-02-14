@@ -43,7 +43,10 @@ public class TicketProperties implements Serializable {
 
     /**
      * Properties and settings related to ticket encryption.
+     *
+     * @deprecated since 7.1.0.
      */
+    @Deprecated(since = "7.1.0")
     @NestedConfigurationProperty
     private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
 
