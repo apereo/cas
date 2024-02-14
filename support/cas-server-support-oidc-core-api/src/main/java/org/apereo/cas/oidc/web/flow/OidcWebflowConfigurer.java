@@ -35,7 +35,7 @@ public class OidcWebflowConfigurer extends AbstractCasWebflowConfigurer {
         val loginFlow = getLoginFlow();
         if (loginFlow != null) {
             val state = getTransitionableState(loginFlow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM, ViewState.class);
-            state.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_OIDC_REGSTERED_SERVICE_UI));
+            state.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_OIDC_REGISTERED_SERVICE_UI));
         }
     }
 

@@ -280,7 +280,7 @@ public abstract class AbstractOidcTests {
     protected AuditableExecution registeredServiceAccessStrategyEnforcer;
 
     @Autowired
-    @Qualifier(CasWebflowConstants.ACTION_ID_OIDC_REGSTERED_SERVICE_UI)
+    @Qualifier(CasWebflowConstants.ACTION_ID_OIDC_REGISTERED_SERVICE_UI)
     protected Action oidcRegisteredServiceUIAction;
 
     @Autowired
