@@ -436,6 +436,14 @@ public interface OAuth20Constants {
      * issued_token_type parameter.
      */
     String ISSUED_TOKEN_TYPE = "issued_token_type";
+    /**
+     * actor_token parameter.
+     */
+    String ACTOR_TOKEN = "actor_token";
+    /**
+     * actor_token_type parameter.
+     */
+    String ACTOR_TOKEN_TYPE = "actor_token_type";
 
     /**
      * DPoP confirmation that is put inside access token as an attribute.

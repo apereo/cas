@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import java.io.Serial;
 import java.util.Set;
@@ -30,6 +31,7 @@ import java.util.Set;
 @ToString
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @Accessors(chain = true)
+@Slf4j
 public class DefaultRegisteredServiceOAuthTokenExchangePolicy implements RegisteredServiceOAuthTokenExchangePolicy {
     @Serial
     private static final long serialVersionUID = 1415436756392637729L;
@@ -43,9 +45,14 @@ public class DefaultRegisteredServiceOAuthTokenExchangePolicy implements Registe
     @Override
     public boolean isTokenExchangeAllowed(final RegisteredService registeredService, final Set<String> resources,
                                           final Set<String> audience, final String requestedType) {
-        val resourceAllowed = allowedResources == null || allowedResources.stream().anyMatch(resource -> RegexUtils.find(resource, requestedType));
-        val audienceAllowed = allowedAudience == null || allowedAudience.stream().anyMatch(aud -> RegexUtils.find(aud, requestedType));
+        val resourceAllowed = allowedResources == null || allowedResources.stream().anyMatch(resource -> RegexUtils.findFirst(resource, resources).isPresent());
+        val audienceAllowed = allowedAudience == null || allowedAudience.stream().anyMatch(aud -> RegexUtils.findFirst(aud, audience).isPresent());
         val tokenTypeAllowed = allowedTokenTypes == null || allowedTokenTypes.stream().anyMatch(type -> RegexUtils.find(type, requestedType));
-        return resourceAllowed && audienceAllowed && tokenTypeAllowed;
+        val allowedExchange = resourceAllowed && audienceAllowed && tokenTypeAllowed;
+        if (!allowedExchange) {
+            LOGGER.warn("Token exchange is not allowed for service [{}] for resource [{}], audience [{}] or requested token type[{}]",
+                registeredService.getName(), resources, audience, requestedType);
+        }
+        return allowedExchange;
     }
 }

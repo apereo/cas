@@ -152,7 +152,7 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
                                        final OAuthRegisteredService registeredService,
                                        final CallContext callContext) {
         if (!clientSecretValidator.validate(registeredService, credentials.getPassword())) {
-            throw new CredentialsException("Invalid client credentials provided registered service: " + registeredService.getName());
+            throw new CredentialsException("Invalid client credentials provided for registered service: " + registeredService.getName());
         }
     }
 

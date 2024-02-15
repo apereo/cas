@@ -8,6 +8,8 @@ import org.apereo.cas.oidc.web.controllers.profile.OidcUserProfileEndpointContro
 import org.apereo.cas.support.oauth.OAuth20ClientAuthenticationMethods;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.OAuth20TokenExchangeTypes;
+import org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthTokenExchangePolicy;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.crypto.CertUtils;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -115,7 +117,6 @@ class OidcAccessTokenEndpointControllerTests {
                     .secure(true)
                     .param(OAuth20Constants.CLIENT_ID, registeredService.getClientId())
                     .param(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecret())
-                    .queryParam(OAuth20Constants.CLIENT_ID, registeredService.getClientId())
                     .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.CLIENT_CREDENTIALS.name()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.access_token").exists())
@@ -135,9 +136,39 @@ class OidcAccessTokenEndpointControllerTests {
                     .secure(true)
                     .queryParam(OAuth20Constants.CLIENT_ID, registeredService.getClientId())
                     .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.CLIENT_CREDENTIALS.name())
-                    .requestAttr("jakarta.servlet.request.X509Certificate", new X509Certificate[] {certificate}))
+                    .requestAttr("jakarta.servlet.request.X509Certificate", new X509Certificate[]{certificate}))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.access_token").exists())
+                .andReturn();
+        }
+
+        @Test
+        void verifyExchangeAccessTokenWithIdToken() throws Throwable {
+            val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+            registeredService.setSupportedGrantTypes(Set.of(OAuth20GrantTypes.TOKEN_EXCHANGE.getType()));
+            val tokenExchangePolicy = new DefaultRegisteredServiceOAuthTokenExchangePolicy()
+                .setAllowedTokenTypes(Set.of(OAuth20TokenExchangeTypes.ID_TOKEN.getType()));
+            registeredService.setTokenExchangePolicy(tokenExchangePolicy);
+            servicesManager.save(registeredService);
+
+            val accessToken = getAccessToken(registeredService.getClientId());
+            ticketRegistry.addTicket(accessToken);
+
+            val resource = "https://api.example.org/%s".formatted(UUID.randomUUID().toString());
+            mvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.TOKEN_URL)
+                    .secure(true)
+                    .param(OAuth20Constants.CLIENT_ID, registeredService.getClientId())
+                    .param(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecret())
+                    .queryParam(OAuth20Constants.RESOURCE, resource)
+                    .queryParam(OAuth20Constants.SUBJECT_TOKEN, accessToken.getId())
+                    .queryParam(OAuth20Constants.SCOPE, OidcConstants.StandardScopes.OPENID.getScope()
+                        + ' ' + OidcConstants.StandardScopes.EMAIL.getScope())
+                    .queryParam(OAuth20Constants.SUBJECT_TOKEN_TYPE, OAuth20TokenExchangeTypes.ACCESS_TOKEN.getType())
+                    .queryParam(OAuth20Constants.REQUESTED_TOKEN_TYPE, OAuth20TokenExchangeTypes.ID_TOKEN.getType())
+                    .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.TOKEN_EXCHANGE.getType()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id_token").exists())
+                .andExpect(jsonPath("$.access_token").doesNotExist())
                 .andReturn();
         }
     }

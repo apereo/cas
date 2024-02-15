@@ -92,8 +92,6 @@ class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
 
     @Test
     void verifySlowDown() throws Throwable {
-        val generator = new OAuth20DefaultTokenGenerator(defaultAccessTokenFactory, defaultDeviceTokenFactory,
-            defaultDeviceUserCodeFactory, defaultRefreshTokenFactory, ticketRegistry, casProperties);
         val token = defaultDeviceTokenFactory.createDeviceCode(RegisteredServiceTestUtils.getService("https://device.oauth.org"));
         ticketRegistry.addTicket(token);
         val userCode = defaultDeviceUserCodeFactory.createDeviceUserCode(token.getService());
@@ -105,13 +103,11 @@ class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
             .authentication(RegisteredServiceTestUtils.getAuthentication())
             .registeredService(getRegisteredService(UUID.randomUUID().toString(), "secret"))
             .build();
-        assertThrows(ThrottledOAuth20DeviceUserCodeApprovalException.class, () -> generator.generate(tokenRequestContext));
+        assertThrows(ThrottledOAuth20DeviceUserCodeApprovalException.class, () -> oauthTokenGenerator.generate(tokenRequestContext));
     }
 
     @Test
     void verifyUnapproved() throws Throwable {
-        val generator = new OAuth20DefaultTokenGenerator(defaultAccessTokenFactory, defaultDeviceTokenFactory,
-            defaultDeviceUserCodeFactory, defaultRefreshTokenFactory, ticketRegistry, casProperties);
         val token = defaultDeviceTokenFactory.createDeviceCode(
             RegisteredServiceTestUtils.getService("https://device.oauth.org"));
         ticketRegistry.addTicket(token);
@@ -126,13 +122,11 @@ class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
             .authentication(RegisteredServiceTestUtils.getAuthentication())
             .registeredService(getRegisteredService(UUID.randomUUID().toString(), "secret"))
             .build();
-        assertThrows(UnapprovedOAuth20DeviceUserCodeException.class, () -> generator.generate(tokenRequestContext));
+        assertThrows(UnapprovedOAuth20DeviceUserCodeException.class, () -> oauthTokenGenerator.generate(tokenRequestContext));
     }
 
     @Test
     void verifyExpiredUserCode() throws Throwable {
-        val generator = new OAuth20DefaultTokenGenerator(defaultAccessTokenFactory, defaultDeviceTokenFactory,
-            defaultDeviceUserCodeFactory, defaultRefreshTokenFactory, ticketRegistry, casProperties);
         val token = defaultDeviceTokenFactory.createDeviceCode(
             RegisteredServiceTestUtils.getService("https://device.oauth.org"));
         ticketRegistry.addTicket(token);
@@ -148,13 +142,11 @@ class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
             .registeredService(getRegisteredService(UUID.randomUUID().toString(), "secret"))
             .build();
         userCode.markTicketExpired();
-        assertThrows(InvalidOAuth20DeviceTokenException.class, () -> generator.generate(holder));
+        assertThrows(InvalidOAuth20DeviceTokenException.class, () -> oauthTokenGenerator.generate(holder));
     }
 
     @Test
     void verifyDeviceCodeExpired() throws Throwable {
-        val generator = new OAuth20DefaultTokenGenerator(defaultAccessTokenFactory, defaultDeviceTokenFactory,
-            defaultDeviceUserCodeFactory, defaultRefreshTokenFactory, ticketRegistry, casProperties);
         val token = defaultDeviceTokenFactory.createDeviceCode(
             RegisteredServiceTestUtils.getService("https://device.oauth.org"));
         ticketRegistry.addTicket(token);
@@ -169,7 +161,7 @@ class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
             .registeredService(getRegisteredService(UUID.randomUUID().toString(), "secret"))
             .build();
         token.markTicketExpired();
-        assertThrows(InvalidOAuth20DeviceTokenException.class, () -> generator.generate(holder));
+        assertThrows(InvalidOAuth20DeviceTokenException.class, () -> oauthTokenGenerator.generate(holder));
     }
 
     @Test

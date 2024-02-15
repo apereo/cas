@@ -183,6 +183,7 @@ public class JwtBuilder {
             .entrySet()
             .stream()
             .filter(entry -> !entry.getKey().startsWith(CentralAuthenticationService.NAMESPACE))
+            .filter(entry -> !entry.getValue().isEmpty())
             .forEach(entry -> {
                 val value = entry.getValue();
                 var claimValue = value.size() == 1 ? CollectionUtils.firstElement(value).get() : value;

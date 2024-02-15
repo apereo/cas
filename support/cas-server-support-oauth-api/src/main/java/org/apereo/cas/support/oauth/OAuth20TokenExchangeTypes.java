@@ -14,12 +14,18 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public enum OAuth20TokenExchangeTypes {
     /**
-     * This enum represents the token type identifiers defined for OAuth token exchange.
+     * The token type identifier for an access token in OAuth token exchange.
      */
     ACCESS_TOKEN("urn:ietf:params:oauth:token-type:access_token"),
+
+    /**
+     * The token type identifier for an id token in OAuth token exchange.
+     */
+    ID_TOKEN("urn:ietf:params:oauth:token-type:id_token"),
     /**
      * The token type identifier for a JSON Web Token (JWT) in OAuth token exchange.
-     * CAS does not support signed or encrypted JWTs; there is no standard way to obtain the key to verify the signature of a JWT with.
+     * CAS does not support signed or encrypted JWTs; there is no standard way to
+     * obtain the key to verify the signature of a JWT with.
      */
     JWT("urn:ietf:params:oauth:token-type:jwt");
 
