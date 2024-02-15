@@ -73,6 +73,33 @@ public class OAuth20JwtAccessTokenEncoder {
      * To encodable cipher.
      *
      * @param accessTokenJwtBuilder the access token jwt builder
+     * @param tokenResult           the token result
+     * @param accessToken           the access token
+     * @param issuer                the issuer
+     * @param casProperties         the cas properties
+     * @return the encodable cipher
+     */
+    public static EncodableCipher<String, String> toEncodableCipher(final JwtBuilder accessTokenJwtBuilder,
+                                                                    final OAuth20AccessTokenResponseResult tokenResult,
+                                                                    final OAuth20AccessToken accessToken,
+                                                                    final String issuer,
+                                                                    final CasConfigurationProperties casProperties) {
+        val cipher = new OAuth20JwtAccessTokenEncodableCipher(tokenResult.getRegisteredService(), accessTokenJwtBuilder,
+            accessToken, tokenResult.getService(), issuer, casProperties,
+            tokenResult.getRequestedTokenType() == OAuth20TokenExchangeTypes.JWT);
+        if (tokenResult.getGrantType() == OAuth20GrantTypes.TOKEN_EXCHANGE && tokenResult.getRequestedTokenType() == OAuth20TokenExchangeTypes.JWT) {
+            var audience = Optional.ofNullable(tokenResult.getTokenExchangeAudience())
+                .or(() -> Optional.ofNullable(tokenResult.getTokenExchangeResource()).map(Service::getId))
+                .orElse(StringUtils.EMPTY);
+            cipher.setTokenAudience(audience);
+        }
+        return cipher;
+    }
+
+    /**
+     * To encodable cipher.
+     *
+     * @param accessTokenJwtBuilder the access token jwt builder
      * @param registeredService     the registered service
      * @param accessToken           the access token
      * @param service               the service
@@ -89,6 +116,7 @@ public class OAuth20JwtAccessTokenEncoder {
         return new OAuth20JwtAccessTokenEncodableCipher(registeredService, accessTokenJwtBuilder,
             accessToken, service, issuer, casProperties, false);
     }
+    
 
     /**
      * To encodable cipher.
@@ -228,8 +256,8 @@ public class OAuth20JwtAccessTokenEncoder {
                 .build();
         }
 
-        protected Map<String, List<Object>> collectAttributes(final AuthenticationAwareTicket aat) {
-            val authentication = aat.getAuthentication();
+        protected Map<String, List<Object>> collectAttributes(final OAuth20AccessToken accessToken) {
+            val authentication = accessToken.getAuthentication();
             val attributes = new HashMap<>(authentication.getAttributes());
             attributes.putAll(authentication.getPrincipal().getAttributes());
 

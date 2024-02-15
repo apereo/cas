@@ -22,9 +22,9 @@ import org.springframework.context.ConfigurableApplicationContext;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * This is {@link OidcProfileScopeToAttributesFilter}.
@@ -45,38 +45,41 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
     private final ConfigurableApplicationContext applicationContext;
 
     @Override
-    public Principal filter(final Service service, final Principal profile,
+    public Principal filter(final Service service,
+                            final Principal givenPrincipal,
                             final RegisteredService registeredService,
+                            final Set<String> scopes,
                             final OAuth20AccessToken accessToken) throws Throwable {
-        val principal = super.filter(service, profile, registeredService, accessToken);
+        val principal = super.filter(service, givenPrincipal, registeredService, scopes, accessToken);
         if (registeredService instanceof final OidcRegisteredService oidcService) {
-            return filterClaimsForOidcService(service, profile, accessToken, principal, oidcService);
+            return filterClaimsForOidcService(service, givenPrincipal, accessToken, principal, scopes, oidcService);
         }
         return principal;
     }
 
-    protected Principal filterClaimsForOidcService(final Service service, final Principal profile,
+    protected Principal filterClaimsForOidcService(final Service service,
+                                                   final Principal givenPrincipal,
                                                    final OAuth20AccessToken accessToken,
-                                                   final Principal principal,
+                                                   final Principal filteredPrincipal,
+                                                   final Set<String> scopes,
                                                    final OidcRegisteredService oidcService) throws Throwable {
-        val scopes = new LinkedHashSet<>(accessToken.getScopes());
         if (!scopes.contains(OidcConstants.StandardScopes.OPENID.getScope())) {
             LOGGER.warn("Access token scopes [{}] cannot identify an OpenID Connect request with [{}] scope(s). "
                     + "This is a REQUIRED scope for OpenID Connect that MUST be present in the request. Given its absence, "
                     + "CAS will not process any attribute claims and will return the authenticated principal as is.",
                 OidcConstants.StandardScopes.OPENID.getScope(), scopes.isEmpty() ? "empty" : scopes);
-            return principalFactory.createPrincipal(profile.getId());
+            return principalFactory.createPrincipal(givenPrincipal.getId());
         }
 
         scopes.retainAll(casProperties.getAuthn().getOidc().getDiscovery().getScopes());
         LOGGER.debug("Collection of scopes filtered based on discovery settings are [{}]", scopes);
 
-        val attributes = getAttributesAllowedForService(scopes, principal, service, oidcService, accessToken);
+        val attributes = getAttributesAllowedForService(scopes, filteredPrincipal, service, oidcService, accessToken);
         LOGGER.debug("Collection of claims filtered by scopes [{}] are [{}]", scopes, attributes);
 
-        filterAttributesByAccessTokenRequestedClaims(oidcService, accessToken, principal, attributes);
+        filterAttributesByAccessTokenRequestedClaims(oidcService, accessToken, filteredPrincipal, attributes);
         LOGGER.debug("Final collection of claims are [{}]", attributes);
-        return principalFactory.createPrincipal(profile.getId(), attributes);
+        return principalFactory.createPrincipal(givenPrincipal.getId(), attributes);
     }
 
     protected void filterAttributesByAccessTokenRequestedClaims(final OidcRegisteredService oidcService,

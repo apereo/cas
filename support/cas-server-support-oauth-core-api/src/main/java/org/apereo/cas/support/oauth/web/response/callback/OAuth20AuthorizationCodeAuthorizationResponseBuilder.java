@@ -12,6 +12,7 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequ
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.code.OAuth20CodeFactory;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -70,19 +71,11 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder extends BaseOA
     protected ModelAndView buildCallbackViewViaRedirectUri(final AccessTokenRequestContext holder,
                                                            final Ticket code) throws Exception {
         val attributes = holder.getAuthentication().getAttributes();
-        val state = attributes.get(OAuth20Constants.STATE).getFirst().toString();
-        val nonce = attributes.get(OAuth20Constants.NONCE).getFirst().toString();
-
         LOGGER.debug("Authorize request successful for client [{}] with redirect uri [{}]", holder.getClientId(), holder.getRedirectUri());
-
         val params = new LinkedHashMap<String, String>();
         params.put(OAuth20Constants.CODE, code.getId());
-        if (StringUtils.isNotBlank(state)) {
-            params.put(OAuth20Constants.STATE, state);
-        }
-        if (StringUtils.isNotBlank(nonce)) {
-            params.put(OAuth20Constants.NONCE, nonce);
-        }
+        CollectionUtils.firstElement(attributes.get(OAuth20Constants.STATE)).ifPresent(state -> params.put(OAuth20Constants.STATE, state.toString()));
+        CollectionUtils.firstElement(attributes.get(OAuth20Constants.NONCE)).ifPresent(nonce -> params.put(OAuth20Constants.NONCE, nonce.toString()));
         LOGGER.debug("Redirecting to URL [{}] with params [{}] for clientId [{}]", holder.getRedirectUri(), params.keySet(), holder.getClientId());
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(configurationContext.getServicesManager(), holder.getClientId());
         return build(registeredService, holder.getResponseMode(), holder.getRedirectUri(), params);

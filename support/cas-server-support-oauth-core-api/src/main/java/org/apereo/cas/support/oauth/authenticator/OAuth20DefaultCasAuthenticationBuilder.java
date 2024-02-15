@@ -16,6 +16,7 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -107,9 +108,9 @@ public class OAuth20DefaultCasAuthenticationBuilder implements OAuth20CasAuthent
         if (!scopes.isEmpty()) {
             builder.addAttribute(OAuth20Constants.SCOPE, scopes);
         }
+        FunctionUtils.doIfNotBlank(state, __ -> builder.addAttribute(OAuth20Constants.STATE, state));
+        FunctionUtils.doIfNotBlank(nonce, __ -> builder.addAttribute(OAuth20Constants.NONCE, nonce));
         builder
-            .addAttribute(OAuth20Constants.STATE, state)
-            .addAttribute(OAuth20Constants.NONCE, nonce)
             .addAttribute(OAuth20Constants.CLIENT_ID, registeredService.getClientId())
             .addCredential(credential)
             .setPrincipal(newPrincipal)

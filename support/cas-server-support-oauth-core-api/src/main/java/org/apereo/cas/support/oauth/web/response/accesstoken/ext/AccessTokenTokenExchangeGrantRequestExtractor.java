@@ -61,7 +61,7 @@ public class AccessTokenTokenExchangeGrantRequestExtractor extends BaseAccessTok
             .orElseThrow(() -> new IllegalArgumentException("Subject token cannot be undefined"));
         val resource = requestParameterResolver.resolveRequestParameter(webContext, OAuth20Constants.RESOURCE);
         val audience = requestParameterResolver.resolveRequestParameter(webContext, OAuth20Constants.AUDIENCE).orElse(null);
-
+        
         val extractedRequest = switch (subjectTokenType) {
             case ACCESS_TOKEN -> {
                 val token = getConfigurationContext().getTicketRegistry().getTicket(subjectToken, OAuth20Token.class);
@@ -77,6 +77,7 @@ public class AccessTokenTokenExchangeGrantRequestExtractor extends BaseAccessTok
                     .build(extractUserProfile(webContext).orElseThrow(), registeredService, webContext, service);
                 yield new ExtractedRequest(claimSet, service, registeredService, authentication);
             }
+            default -> throw new IllegalArgumentException("Subject token type %s is not supported".formatted(subjectTokenType));
         };
 
         val resourceService = resource

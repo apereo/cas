@@ -88,31 +88,32 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
     protected Map<String, Object> getAccessTokenResponseModel(final OAuth20AccessTokenResponseResult result) {
         val model = new LinkedHashMap<String, Object>();
         val generatedToken = result.getGeneratedToken();
-        generatedToken.getAccessToken().ifPresent(token -> {
-            val accessToken = resolveAccessToken(token);
-            if (accessToken.getExpiresIn() > 0) {
-                val encodedAccessTokenId = encodeAccessToken(accessToken, result);
-                if (StringUtils.equals(encodedAccessTokenId, accessToken.getId()) && token.isStateless()) {
-                    model.put(OAuth20Constants.ACCESS_TOKEN, token.getId());
-                } else {
-                    model.put(OAuth20Constants.ACCESS_TOKEN, encodedAccessTokenId);
-                }
+        generatedToken.getAccessToken()
+            .ifPresent(token -> {
+                val accessToken = resolveAccessToken(token);
+                if (accessToken.getExpiresIn() > 0) {
+                    val encodedAccessTokenId = encodeAccessToken(accessToken, result);
+                    if (StringUtils.equals(encodedAccessTokenId, accessToken.getId()) && token.isStateless()) {
+                        model.put(OAuth20Constants.ACCESS_TOKEN, token.getId());
+                    } else {
+                        model.put(OAuth20Constants.ACCESS_TOKEN, encodedAccessTokenId);
+                    }
 
-                if (!accessToken.getScopes().isEmpty()) {
-                    model.put(OAuth20Constants.SCOPE, String.join(" ", accessToken.getScopes()));
+                    if (!accessToken.getScopes().isEmpty()) {
+                        model.put(OAuth20Constants.SCOPE, String.join(" ", accessToken.getScopes()));
+                    }
+                    model.put(OAuth20Constants.EXPIRES_IN, accessToken.getExpiresIn());
+                    val authentication = accessToken.getAuthentication();
+                    model.put(OAuth20Constants.TOKEN_TYPE, authentication.containsAttribute(OAuth20Constants.DPOP_CONFIRMATION)
+                        ? OAuth20Constants.TOKEN_TYPE_DPOP : OAuth20Constants.TOKEN_TYPE_BEARER);
+                    if (result.getUserProfile() != null) {
+                        result.getUserProfile().addAttribute(Principal.class.getName(), authentication.getPrincipal());
+                    }
+                    if (result.getGrantType() == OAuth20GrantTypes.TOKEN_EXCHANGE) {
+                        model.put(OAuth20Constants.ISSUED_TOKEN_TYPE, result.getRequestedTokenType().getType());
+                    }
                 }
-                model.put(OAuth20Constants.EXPIRES_IN, accessToken.getExpiresIn());
-                val authentication = accessToken.getAuthentication();
-                model.put(OAuth20Constants.TOKEN_TYPE, authentication.containsAttribute(OAuth20Constants.DPOP_CONFIRMATION)
-                    ? OAuth20Constants.TOKEN_TYPE_DPOP : OAuth20Constants.TOKEN_TYPE_BEARER);
-                if (result.getUserProfile() != null) {
-                    result.getUserProfile().addAttribute(Principal.class.getName(), authentication.getPrincipal());
-                }
-                if (result.getGrantType() == OAuth20GrantTypes.TOKEN_EXCHANGE) {
-                    model.put(OAuth20Constants.ISSUED_TOKEN_TYPE, result.getRequestedTokenType().getType());
-                }
-            }
-        });
+            });
         generatedToken.getRefreshToken().ifPresent(rt -> model.put(OAuth20Constants.REFRESH_TOKEN, rt.getId()));
         return model;
     }
