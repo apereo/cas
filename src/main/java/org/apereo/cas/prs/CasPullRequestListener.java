@@ -98,8 +98,7 @@ public class CasPullRequestListener implements PullRequestListener {
     private boolean shouldDisregardPullRequest(final PullRequest pr) {
         return processDependencyUpgradesPullRequests(pr)
             || processLabelSeeMaintenancePolicy(pr)
-            || processInvalidPullRequest(pr)
-            || pr.isUnderReview();
+            || processInvalidPullRequest(pr);
     }
 
     @SneakyThrows
@@ -320,6 +319,7 @@ public class CasPullRequestListener implements PullRequestListener {
             && !pr.isWorkInProgress()
             && !pr.isDraft()
             && !pr.isRenovateBot()
+            && !pr.isUnderReview()
             && !pr.isTargetedAtMasterBranch()) {
 
             var matcher = PATTERN_REVIEWED_BY.matcher(pr.getBody());
@@ -348,7 +348,7 @@ public class CasPullRequestListener implements PullRequestListener {
     @SneakyThrows
     private boolean processLabelSeeMaintenancePolicy(final PullRequest pr) {
         if (!pr.isTargetedAtMasterBranch() && !pr.isLabeledAs(CasLabels.LABEL_SEE_MAINTENANCE_POLICY)
-            && !pr.isTargetBranchOnHeroku() && !pr.isWorkInProgress()) {
+            && !pr.isTargetBranchOnHeroku() && !pr.isWorkInProgress() && !pr.isUnderReview()) {
             var milestones = repository.getActiveMilestones();
             val milestone = MonitoredRepository.getMilestoneForBranch(milestones, pr.getBase().getRef());
             if (milestone.isEmpty()) {
