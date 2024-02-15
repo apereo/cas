@@ -187,6 +187,11 @@ public class CasPullRequestListener implements PullRequestListener {
             return;
         }
 
+        if (pr.isChore()) {
+            log.info("Pull request {} fixes a super small minor problem and does not require test cases", pr);
+            return;
+        }
+
 
         val files = repository.getPullRequestFiles(pr);
 

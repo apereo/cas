@@ -129,6 +129,10 @@ public class PullRequest {
         return isLabeledAs(CasLabels.LABEL_WIP) || this.title.startsWith("WIP ");
     }
 
+    public boolean isChore() {
+        return this.title.startsWith("chore:") || this.title.startsWith("typo:");
+    }
+
     public boolean isUnderReview() {
         return isLabeledAs(CasLabels.LABEL_UNDER_REVIEW) || this.title.startsWith("WIP ");
     }
