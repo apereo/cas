@@ -122,6 +122,7 @@ public interface GitHubOperations {
     Commit getCommit(String organization, String repository, String branchOrSha);
 
     void closePullRequest(String organization, String repository, String number);
+    void openPullRequest(String organization, String repository, String number);
 
     CheckRun getCheckRunsFor(String organization, String repository, String ref,
                              String checkName, String status, String filter);

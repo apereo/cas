@@ -310,6 +310,10 @@ public class MonitoredRepository {
         this.gitHub.closePullRequest(this.getOrganization(), getName(), pr.getNumber());
     }
 
+    public void open(final PullRequest pr) {
+        this.gitHub.openPullRequest(this.getOrganization(), getName(), pr.getNumber());
+    }
+
     public List<PullRequestFile> getPullRequestFiles(final PullRequest pr) {
         return getPullRequestFiles(pr.getNumber());
     }

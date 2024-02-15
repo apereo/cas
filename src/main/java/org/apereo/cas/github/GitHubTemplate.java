@@ -141,6 +141,18 @@ public class GitHubTemplate implements GitHubOperations {
     }
 
     @Override
+    public void openPullRequest(final String organization, final String repository, final String number) {
+        val url = "https://api.github.com/repos/" + organization + '/' + repository + "/pulls/" + number;
+        var uri = URI.create(url);
+        final Map<String, String> body = new HashMap<>();
+        body.put("state", "open");
+        var response = this.rest.exchange(new RequestEntity(body, HttpMethod.PATCH, uri), PullRequest.class);
+        if (response.getStatusCode() != HttpStatus.OK) {
+            log.warn("Failed to open to pull request. Response status: " + response.getStatusCode());
+        }
+    }
+
+    @Override
     public Page<Comment> getComments(final Issue issue) {
         return getPage(issue.getCommentsUrl(), Comment[].class);
     }

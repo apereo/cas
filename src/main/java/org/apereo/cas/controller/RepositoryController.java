@@ -44,7 +44,7 @@ public class RepositoryController {
         return map;
     }
 
-    @GetMapping(value = "/repo/pulls/{prNumber}/verify", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/repo/pulls/{prNumber}/verify", produces = MediaType.APPLICATION_JSON_VALUE)
     @Secured({"ROLE_ADMIN"})
     public ResponseEntity listPullRequestCommits(@PathVariable final String prNumber) throws Exception {
         val pullRequest = repository.getPullRequest(prNumber);
@@ -55,7 +55,24 @@ public class RepositoryController {
         return ResponseEntity.ok(Map.of("verified", verified));
     }
 
-    @GetMapping(value = "/repo/pulls/{prNumber}/comments/clean", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/repo/pulls/{prNumber}/merge", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Secured({"ROLE_ADMIN"})
+    public ResponseEntity mergePullRequest(@PathVariable final String prNumber) throws Exception {
+        val pullRequest = repository.getPullRequest(prNumber);
+        if (pullRequest == null) {
+            return ResponseEntity.notFound().build();
+        }
+        repository.removeAllCommentsFrom(pullRequest, "apereocas-bot");
+        repository.removeLabelFrom(pullRequest, CasLabels.LABEL_PENDING_PORT_FORWARD);
+        repository.removeLabelFrom(pullRequest, CasLabels.LABEL_SEE_CONTRIBUTOR_GUIDELINES);
+        repository.removeLabelFrom(pullRequest, CasLabels.LABEL_PROPOSAL_DECLINED);
+        repository.labelPullRequestAs(pullRequest, CasLabels.LABEL_AUTO_MERGE);
+        repository.labelPullRequestAs(pullRequest, CasLabels.LABEL_UNDER_REVIEW);
+        repository.open(pullRequest);
+        return ResponseEntity.ok(pullRequest);
+    }
+
+    @PostMapping(value = "/repo/pulls/{prNumber}/comments/clean", produces = MediaType.APPLICATION_JSON_VALUE)
     @Secured({"ROLE_ADMIN"})
     public ResponseEntity cleanComments(@PathVariable final String prNumber) throws Exception {
         val pullRequest = repository.getPullRequest(prNumber);

@@ -98,7 +98,8 @@ public class CasPullRequestListener implements PullRequestListener {
     private boolean shouldDisregardPullRequest(final PullRequest pr) {
         return processDependencyUpgradesPullRequests(pr)
             || processLabelSeeMaintenancePolicy(pr)
-            || processInvalidPullRequest(pr);
+            || processInvalidPullRequest(pr)
+            || pr.isUnderReview();
     }
 
     @SneakyThrows
@@ -363,6 +364,11 @@ public class CasPullRequestListener implements PullRequestListener {
 
     @SneakyThrows
     private void processLabelPendingPortForward(final PullRequest pr) {
+        if (pr.isUnderReview()) {
+            log.info("Pull request {} is being reviewed", pr);
+            return;
+        }
+
         if (!pr.isTargetBranchOnHeroku() && !pr.getBase().isRefMaster()) {
             log.info("{} is targeted at a branch {} and should be ported forward to the master branch", pr, pr.getBase());
             if (!pr.isLabeledAs(CasLabels.LABEL_PENDING_PORT_FORWARD)) {
