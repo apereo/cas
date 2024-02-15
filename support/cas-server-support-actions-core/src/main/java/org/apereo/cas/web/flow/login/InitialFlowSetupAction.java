@@ -95,7 +95,9 @@ public class InitialFlowSetupAction extends BaseCasWebflowAction {
     protected String configureWebflowForTicketGrantingTicket(final RequestContext context) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         val ticketGrantingTicketId = ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
+        LOGGER.debug("ticketGrantingTicketId: [{}]", ticketGrantingTicketId);
         val ticket = ticketRegistrySupport.getTicketGrantingTicket(ticketGrantingTicketId);
+        LOGGER.debug("ticket: [{}]", ticket);
         if (ticket != null) {
             WebUtils.putTicketGrantingTicketInScopes(context, ticket.getId());
             return ticket.getId();
