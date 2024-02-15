@@ -55,22 +55,6 @@ public class RepositoryController {
         return ResponseEntity.ok(Map.of("verified", verified));
     }
 
-    @PostMapping(value = "/repo/pulls/{prNumber}/merge", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Secured({"ROLE_ADMIN"})
-    public ResponseEntity mergePullRequest(@PathVariable final String prNumber) throws Exception {
-        val pullRequest = repository.getPullRequest(prNumber);
-        if (pullRequest == null) {
-            return ResponseEntity.notFound().build();
-        }
-        repository.removeAllCommentsFrom(pullRequest, "apereocas-bot");
-        repository.removeLabelFrom(pullRequest, CasLabels.LABEL_PENDING_PORT_FORWARD);
-        repository.removeLabelFrom(pullRequest, CasLabels.LABEL_SEE_CONTRIBUTOR_GUIDELINES);
-        repository.removeLabelFrom(pullRequest, CasLabels.LABEL_PROPOSAL_DECLINED);
-        repository.labelPullRequestAs(pullRequest, CasLabels.LABEL_AUTO_MERGE);
-        repository.labelPullRequestAs(pullRequest, CasLabels.LABEL_UNDER_REVIEW);
-        repository.open(pullRequest);
-        return ResponseEntity.ok(pullRequest);
-    }
 
     @PostMapping(value = "/repo/pulls/{prNumber}/comments/clean", produces = MediaType.APPLICATION_JSON_VALUE)
     @Secured({"ROLE_ADMIN"})
@@ -107,14 +91,16 @@ public class RepositoryController {
         if (pullRequest == null) {
             return ResponseEntity.notFound().build();
         }
-
         if (pullRequest.isLocked()) {
             return ResponseEntity.status(HttpStatus.LOCKED).build();
         }
-
-        if (!pullRequest.isLabeledAs(CasLabels.LABEL_AUTO_MERGE)) {
-            repository.labelPullRequestAs(pullRequest, CasLabels.LABEL_AUTO_MERGE);
-        }
+        repository.open(pullRequest);
+        repository.removeAllCommentsFrom(pullRequest, "apereocas-bot");
+        repository.removeLabelFrom(pullRequest, CasLabels.LABEL_PENDING_PORT_FORWARD);
+        repository.removeLabelFrom(pullRequest, CasLabels.LABEL_SEE_CONTRIBUTOR_GUIDELINES);
+        repository.removeLabelFrom(pullRequest, CasLabels.LABEL_PROPOSAL_DECLINED);
+        repository.labelPullRequestAs(pullRequest, CasLabels.LABEL_AUTO_MERGE);
+        repository.labelPullRequestAs(pullRequest, CasLabels.LABEL_UNDER_REVIEW);
         return ResponseEntity.ok().build();
     }
 
