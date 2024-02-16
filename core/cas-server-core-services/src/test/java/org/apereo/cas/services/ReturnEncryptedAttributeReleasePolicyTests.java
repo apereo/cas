@@ -3,11 +3,11 @@ package org.apereo.cas.services;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
-import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +16,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.security.PublicKey;
 import java.util.ArrayList;
 
@@ -34,8 +34,6 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class ReturnEncryptedAttributeReleasePolicyTests {
-    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "EncryptingAttributeReleasePolicyTests.json");
-
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
@@ -44,11 +42,12 @@ class ReturnEncryptedAttributeReleasePolicyTests {
     
     @Test
     void verifySerialization() throws IOException {
+        val jsonFile = Files.createTempFile(RandomUtils.randomAlphabetic(8), ".json").toFile();
         val allowedAttributes = new ArrayList<String>();
         allowedAttributes.add("attributeOne");
         val policyWritten = new ReturnEncryptedAttributeReleasePolicy(allowedAttributes);
-        MAPPER.writeValue(JSON_FILE, policyWritten);
-        val policyRead = MAPPER.readValue(JSON_FILE, ReturnEncryptedAttributeReleasePolicy.class);
+        MAPPER.writeValue(jsonFile, policyWritten);
+        val policyRead = MAPPER.readValue(jsonFile, ReturnEncryptedAttributeReleasePolicy.class);
         assertEquals(policyWritten, policyRead);
         assertNotNull(policyWritten.toString());
     }

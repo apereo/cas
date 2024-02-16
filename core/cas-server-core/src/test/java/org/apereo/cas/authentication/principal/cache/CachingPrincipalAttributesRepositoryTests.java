@@ -7,11 +7,11 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
-import org.apache.commons.io.FileUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.apereo.services.persondir.IPersonAttributes;
@@ -25,7 +25,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
-import java.io.File;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -81,8 +81,6 @@ class CachingPrincipalAttributesRepositoryTests {
         CachingPrincipalAttributesRepositoryTests.CacheTestConfiguration.class
     })
     public class MergingTests {
-        private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "cachingPrincipalAttributesRepository.json");
-
         private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
             .defaultTypingEnabled(true).build().toObjectMapper();
 
@@ -92,11 +90,11 @@ class CachingPrincipalAttributesRepositoryTests {
 
         @Test
         void verifySerializeACachingPrincipalAttributesRepositoryToJson() throws Throwable {
-
+            val jsonFile = Files.createTempFile(RandomUtils.randomAlphabetic(8), ".json").toFile();
             val repositoryWritten = getPrincipalAttributesRepository(TimeUnit.MILLISECONDS.toString(), 1);
             repositoryWritten.setAttributeRepositoryIds(CollectionUtils.wrapSet("1", "2", "3"));
-            MAPPER.writeValue(JSON_FILE, repositoryWritten);
-            val repositoryRead = MAPPER.readValue(JSON_FILE, CachingPrincipalAttributesRepository.class);
+            MAPPER.writeValue(jsonFile, repositoryWritten);
+            val repositoryRead = MAPPER.readValue(jsonFile, CachingPrincipalAttributesRepository.class);
             assertEquals(repositoryWritten, repositoryRead);
         }
 

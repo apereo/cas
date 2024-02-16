@@ -2,17 +2,17 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.util.MockWebServer;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
-import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -26,13 +26,12 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("RegisteredService")
 class CerbosRegisteredServiceAccessStrategyTests {
-    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "CerbosRegisteredServiceAccessStrategy.json");
-
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
     void verifySerializeToJson() throws IOException {
+        val jsonFile = Files.createTempFile(RandomUtils.randomAlphabetic(8), ".json").toFile();
         val strategyWritten = new CerbosRegisteredServiceAccessStrategy();
         strategyWritten.setApiUrl("https://localhost:8080");
         strategyWritten.setActions(List.of("read", "write", "view"));
@@ -41,8 +40,8 @@ class CerbosRegisteredServiceAccessStrategyTests {
         strategyWritten.setRolesAttribute("memberOf");
         strategyWritten.setScope("scope1");
         strategyWritten.setKind("kind1");
-        MAPPER.writeValue(JSON_FILE, strategyWritten);
-        val read = MAPPER.readValue(JSON_FILE, CerbosRegisteredServiceAccessStrategy.class);
+        MAPPER.writeValue(jsonFile, strategyWritten);
+        val read = MAPPER.readValue(jsonFile, CerbosRegisteredServiceAccessStrategy.class);
         assertEquals(strategyWritten, read);
     }
 

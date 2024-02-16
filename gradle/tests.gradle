@@ -35,7 +35,7 @@ enum TestCategories {
     GroovyServices(true),
     Grouper(true),
     Hazelcast,
-    Hibernate,
+    Hibernate(true),
     Ignite,
     Impersonation(true),
     InfluxDb(true),
@@ -72,7 +72,7 @@ enum TestCategories {
     Postgres,
     Radius,
     Redis,
-    RegisteredService,
+    RegisteredService(true),
     RestfulApi,
     RestfulApiAuthentication,
     SAML(true),
@@ -167,7 +167,6 @@ if (rootProject.tasks.findByName("puppeteerScenarios") == null) {
                     toScenario = scenarios.size()
                 scenarios = scenarios.subList(fromScenario, toScenario)
             }
-//            println scenarios.size()
             println(groovy.json.JsonOutput.toJson(scenarios))
         }
     }
@@ -190,11 +189,13 @@ TestCategories.values().each({ testCategory ->
                     includeTags testCategory.name()
                 }
 
-                if (testCategory.ptsEnabled) {
+                def ptsEnabled = testCategory.ptsEnabled && Boolean.valueOf(providers.systemProperty("ptsEnabled").getOrElse("true")) && !rootProject.publishReleases
+                if (ptsEnabled) {
+                    ansi.green "Predictive test selection is enabled for test category ${testCategory.name()} and task ${taskName}"
                     predictiveSelection {
                         enabled = true
-                        mode = RELEVANT_TESTS
-                        profile = STANDARD
+                        mode = providers.systemProperty("ptsMode").getOrElse("RELEVANT_TESTS")
+                        profile = providers.systemProperty("ptsProfile").getOrElse("STANDARD")
                     }
                 }
 

@@ -1,16 +1,16 @@
 package org.apereo.cas.authentication.principal;
 
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
-import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
 
@@ -23,8 +23,6 @@ import static org.mockito.Mockito.*;
  */
 @Tag("RegisteredService")
 class ShibbolethCompatiblePersistentIdGeneratorTests {
-
-    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "shibbolethCompatiblePersistentIdGenerator.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
@@ -69,9 +67,10 @@ class ShibbolethCompatiblePersistentIdGeneratorTests {
 
     @Test
     void verifyJson() throws IOException {
+        val jsonFile = Files.createTempFile(RandomUtils.randomAlphabetic(8), ".json").toFile();
         val generatorWritten = new ShibbolethCompatiblePersistentIdGenerator("scottssalt");
-        MAPPER.writeValue(JSON_FILE, generatorWritten);
-        val credentialRead = MAPPER.readValue(JSON_FILE, ShibbolethCompatiblePersistentIdGenerator.class);
+        MAPPER.writeValue(jsonFile, generatorWritten);
+        val credentialRead = MAPPER.readValue(jsonFile, ShibbolethCompatiblePersistentIdGenerator.class);
         assertEquals(generatorWritten, credentialRead);
     }
 }

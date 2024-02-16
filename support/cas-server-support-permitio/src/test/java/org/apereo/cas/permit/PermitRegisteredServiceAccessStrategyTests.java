@@ -2,15 +2,15 @@ package org.apereo.cas.permit;
 
 import org.apereo.cas.services.RegisteredServiceAccessStrategyRequest;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
-import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -24,20 +24,19 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("RegisteredService")
 public class PermitRegisteredServiceAccessStrategyTests {
-    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "PermitRegisteredServiceAccessStrategy.json");
-
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
     
     @Test
     void verifySerializeToJson() throws IOException {
+        val jsonFile = Files.createTempFile(RandomUtils.randomAlphabetic(8), ".json").toFile();
         val strategyWritten = new PermitRegisteredServiceAccessStrategy();
         strategyWritten.setAction(UUID.randomUUID().toString());
         strategyWritten.setApiKey(UUID.randomUUID().toString());
         strategyWritten.setResource(UUID.randomUUID().toString());
         strategyWritten.setTenant(UUID.randomUUID().toString());
-        MAPPER.writeValue(JSON_FILE, strategyWritten);
-        val read = MAPPER.readValue(JSON_FILE, PermitRegisteredServiceAccessStrategy.class);
+        MAPPER.writeValue(jsonFile, strategyWritten);
+        val read = MAPPER.readValue(jsonFile, PermitRegisteredServiceAccessStrategy.class);
         assertEquals(strategyWritten, read);
     }
     

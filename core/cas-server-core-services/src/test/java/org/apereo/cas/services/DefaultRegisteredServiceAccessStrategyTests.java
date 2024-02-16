@@ -1,16 +1,16 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
-import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.Serial;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -31,8 +31,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("RegisteredService")
 class DefaultRegisteredServiceAccessStrategyTests {
-
-    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "DefaultRegisteredServiceAccessStrategyTests.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
@@ -339,8 +337,9 @@ class DefaultRegisteredServiceAccessStrategyTests {
         strategyWritten.setRequiredAttributes(reqs);
         strategyWritten.setRejectedAttributes(getRejectedAttributes());
 
-        MAPPER.writeValue(JSON_FILE, strategyWritten);
-        val strategyRead = MAPPER.readValue(JSON_FILE, DefaultRegisteredServiceAccessStrategy.class);
+        val jsonFile = Files.createTempFile(RandomUtils.randomAlphabetic(8), ".json").toFile();
+        MAPPER.writeValue(jsonFile, strategyWritten);
+        val strategyRead = MAPPER.readValue(jsonFile, DefaultRegisteredServiceAccessStrategy.class);
         assertEquals(strategyWritten, strategyRead);
     }
 

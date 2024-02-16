@@ -15,10 +15,10 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
-import org.apache.commons.io.FileUtils;
 import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Nested;
@@ -43,9 +43,9 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import java.io.File;
 import java.io.IOException;
 import java.io.Serial;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -62,8 +62,6 @@ import static org.mockito.Mockito.*;
 @Tag("Attributes")
 @Execution(ExecutionMode.SAME_THREAD)
 class ReturnAllowedAttributeReleasePolicyTests {
-    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "returnAllowedAttributeReleasePolicy.json");
-
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
@@ -168,13 +166,14 @@ class ReturnAllowedAttributeReleasePolicyTests {
 
         @Test
         void verifySerialization() throws IOException {
+            val jsonFile = Files.createTempFile(RandomUtils.randomAlphabetic(8), ".json").toFile();
             val allowedAttributes = new ArrayList<String>();
             allowedAttributes.add("attributeOne");
             val policyWritten = new ReturnAllowedAttributeReleasePolicy(allowedAttributes);
             policyWritten.setCanonicalizationMode(CaseCanonicalizationMode.UPPER.name());
             policyWritten.setPrincipalIdAttribute("principalId");
-            MAPPER.writeValue(JSON_FILE, policyWritten);
-            val policyRead = MAPPER.readValue(JSON_FILE, ReturnAllowedAttributeReleasePolicy.class);
+            MAPPER.writeValue(jsonFile, policyWritten);
+            val policyRead = MAPPER.readValue(jsonFile, ReturnAllowedAttributeReleasePolicy.class);
             assertEquals(policyWritten, policyRead);
         }
 
