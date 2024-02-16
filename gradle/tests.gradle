@@ -190,13 +190,13 @@ TestCategories.values().each({ testCategory ->
                     includeTags testCategory.name()
                 }
 
-                def ptsEnabled = testCategory.ptsEnabled && Boolean.valueOf(providers.systemProperty("ptsEnabled").getOrElse("true")) && !rootProject.publishReleases
+                def ptsEnabled = testCategory.ptsEnabled && Boolean.valueOf(System.getenv("PTS_ENABLED") ?: "true") && !rootProject.publishReleases
                 if (ptsEnabled) {
                     ansi.green "Predictive test selection is enabled for test category ${testCategory.name()} and task ${taskName}"
                     predictiveSelection {
                         enabled = true
-                        mode = PredictiveTestSelectionMode.valueOf(providers.systemProperty("ptsMode").getOrElse("RELEVANT_TESTS"))
-                        profile = PredictiveTestSelectionProfile.valueOf(providers.systemProperty("ptsProfile").getOrElse("STANDARD"))
+                        mode = PredictiveTestSelectionMode.valueOf(System.getenv("PTS_MODE") ?: "RELEVANT_TESTS")
+                        profile = PredictiveTestSelectionProfile.valueOf(System.getenv("PTS_PROFILE") ?: "STANDARD")
                     }
                 }
 
