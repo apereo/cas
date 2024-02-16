@@ -1,6 +1,6 @@
 description = "Apereo CAS Redis Ticket Registry"
 ext {
-    maxParallelForksForTests = 1
+
     publishMetadata = true
     projectMetadata = [
             category: "Ticket Registries",

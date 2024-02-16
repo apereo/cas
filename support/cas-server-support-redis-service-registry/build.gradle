@@ -1,6 +1,6 @@
 description = "Apereo CAS Redis Service Registry Support"
 ext {
-    maxParallelForksForTests = 1
+
     publishMetadata = true
     projectMetadata = [
             category: "Service Registries",

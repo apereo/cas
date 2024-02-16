@@ -1,7 +1,7 @@
 description = "Apereo CAS DynamoDb Audit Log Support"
 
 ext {
-    maxParallelForksForTests = 1
+
     publishMetadata = true
     projectMetadata = [
             category: "Audits",

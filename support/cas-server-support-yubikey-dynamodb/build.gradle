@@ -1,7 +1,7 @@
 description = "Apereo CAS YubiKey DynamoDb Support"
 
 ext {
-    maxParallelForksForTests = 1
+
     publishMetadata = true
     projectMetadata = [
             category: "YubiKey Multifactor Authentication",

@@ -1,6 +1,6 @@
 description = "Apereo CAS JPA Ticket Registry Support"
 ext {
-    maxParallelForksForTests = 1
+
     publishMetadata = true
     projectMetadata = [
             category: "Ticket Registries",

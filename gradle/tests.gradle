@@ -233,11 +233,8 @@ tasks.withType(Test).configureEach {
     scanForTestClasses = false
     ignoreFailures = providers.systemProperty("ignoreTestFailures").present
     forkEvery = 2000
-    maxParallelForks = project.ext.properties.get("maxParallelForksForTests", 8)
-    if (maxParallelForks != 2) {
-        logger.info "Maximum number of parallel forks is set to ${maxParallelForks}"
-    }
-
+    maxParallelForks = 8
+    
     systemProperty("spring.main.banner-mode", "off")
     
     failFast = true
