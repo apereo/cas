@@ -21,7 +21,9 @@ options = {
     :connecttimeout => 20,
     :timeout => 60,
     :ssl_verifypeer => false,
-    :ssl_verifyhost => 0
+    :ssl_verifyhost => 0,
+    :cookiefile => ".cookies",
+    :cookiejar => ".cookies"
   },
   :disable_external => false,
   :allow_hash_href => true,
@@ -30,7 +32,7 @@ options = {
   :check_external_hash => false,
   # :only_4xx => true,
   :empty_alt_ignore => true,
-  :ignore_status_codes => [0,401,429,301,302,502],
+  :ignore_status_codes => [0,401,429,301,302,502,504],
   :parallel => { :in_processes => 8},
   :enforce_https => false,
   :swap_urls => {
