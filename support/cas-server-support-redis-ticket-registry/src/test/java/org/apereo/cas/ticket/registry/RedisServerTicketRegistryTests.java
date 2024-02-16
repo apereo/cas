@@ -244,6 +244,7 @@ class RedisServerTicketRegistryTests {
 
         @RepeatedTest(1)
         void verifyFailure() throws Throwable {
+            val ticketGrantingTicketId = TestTicketIdentifiers.generate().ticketGrantingTicketId();
             val originalAuthn = CoreAuthenticationTestUtils.getAuthentication();
             getNewTicketRegistry().addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId,
                 originalAuthn, NeverExpiresExpirationPolicy.INSTANCE));

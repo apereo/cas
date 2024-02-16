@@ -109,6 +109,7 @@ public abstract class BaseJpaTicketRegistryTests extends BaseTicketRegistryTests
             neverExpiresExpirationPolicyBuilder());
 
         val originalAuthn = CoreAuthenticationTestUtils.getAuthentication();
+        val ticketGrantingTicketId = TestTicketIdentifiers.generate().ticketGrantingTicketId();
         val tgt = new TicketGrantingTicketImpl(ticketGrantingTicketId,
             originalAuthn, NeverExpiresExpirationPolicy.INSTANCE);
         this.newTicketRegistry.addTicket(tgt);
