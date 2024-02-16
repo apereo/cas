@@ -1,6 +1,6 @@
 description = "Apereo CAS Azure Cosmos DB Service Registry"
 ext {
-    maxParallelForksForTests = 1
+
     publishMetadata = true
     projectMetadata = [
             category: "Service Registries",

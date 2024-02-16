@@ -1,6 +1,6 @@
 description = "Apereo CAS AUP Redis Support"
 ext {
-    maxParallelForksForTests = 1
+
     publishMetadata = true
     projectMetadata = [
             title: "Acceptable Usage Policy via Redis",

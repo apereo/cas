@@ -1,7 +1,7 @@
 description = "Apereo CAS DynamoDb Ticket Registry"
 
 ext {
-    maxParallelForksForTests = 1
+
     publishMetadata = true
     projectMetadata = [
             category: "Ticket Registries",

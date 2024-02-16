@@ -1,6 +1,6 @@
 description = "Apereo CAS AUP LDAP Support"
 ext {
-    maxParallelForksForTests = 1
+
     publishMetadata = true
     projectMetadata = [
             title: "Acceptable Usage Policy via LDAP & Active Directory",
