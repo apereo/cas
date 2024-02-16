@@ -480,6 +480,7 @@ public abstract class AbstractOidcTests {
         when(accessToken.getToken()).thenReturn(code.getId());
         when(accessToken.getIdToken()).thenReturn(idToken);
         when(accessToken.getExpiresIn()).thenReturn(Duration.ofDays(365 * 5).toSeconds());
+        when(accessToken.getGrantType()).thenReturn(OAuth20GrantTypes.AUTHORIZATION_CODE);
         return accessToken;
     }
 

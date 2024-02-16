@@ -79,6 +79,8 @@ public class StatelessTicketRegistryTests extends BaseTicketRegistryTests {
 
         val principal = RegisteredServiceTestUtils.getPrincipal(UUID.randomUUID().toString(), attributes);
         val originalAuthn = RegisteredServiceTestUtils.getAuthentication(principal, attributes);
+
+        val ticketGrantingTicketId = TestTicketIdentifiers.generate().ticketGrantingTicketId();
         val tgt = new TicketGrantingTicketImpl(ticketGrantingTicketId, originalAuthn, expirationPolicy);
         val addedTicketGrantingTicket = newTicketRegistry.addTicket(tgt);
         assertNotNull(addedTicketGrantingTicket.getExpirationPolicy());
@@ -119,6 +121,8 @@ public class StatelessTicketRegistryTests extends BaseTicketRegistryTests {
         val attributes = new HashMap<String, List<Object>>();
         val principal = RegisteredServiceTestUtils.getPrincipal(UUID.randomUUID().toString(), attributes);
         val originalAuthn = RegisteredServiceTestUtils.getAuthentication(principal, attributes);
+
+        val ticketGrantingTicketId = TestTicketIdentifiers.generate().ticketGrantingTicketId();
         val tgt = new TicketGrantingTicketImpl(ticketGrantingTicketId, originalAuthn,
             new TicketGrantingTicketExpirationPolicy(5000, 2000));
         newTicketRegistry.addTicket(tgt);
