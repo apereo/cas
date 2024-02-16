@@ -2,6 +2,7 @@ package org.apereo.cas.util;
 
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -173,6 +174,14 @@ public class MockWebServer implements Closeable {
         }
     }
 
+    public void responseStatus(final HttpStatus httpStatus) {
+        this.worker.setStatus(httpStatus);
+    }
+
+    public void setContentType(final String value) {
+        this.worker.setContentType(value);
+    }
+
     private static ServerSocket getServerSocket(final int port, final boolean ssl) throws Exception {
         if (port == 8443 || ssl) {
             val sslContext = SSLContext.getInstance("SSL");
@@ -197,9 +206,9 @@ public class MockWebServer implements Closeable {
             val addr = new InetSocketAddress("0.0.0.0", port);
             return sslContext.getServerSocketFactory().createServerSocket(port, 0, addr.getAddress());
         }
-        val ss = new ServerSocket(port);
-        ss.setSoTimeout(30000);
-        return ss;
+        val serverSocket = new ServerSocket(port);
+        serverSocket.setSoTimeout(30000);
+        return serverSocket;
     }
 
     public int getPort() {
@@ -208,9 +217,24 @@ public class MockWebServer implements Closeable {
 
     public void responseBody(final String data) {
         this.worker.setResource(new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8)));
+        this.worker.setResourceSupplier(null);
+    }
+
+    public void responseBodyJson(final Object body) throws Exception {
+        try {
+            val data = MAPPER.writeValueAsString(body);
+            responseBody(data);
+        } catch (final Exception e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
+
+    public void headers(final Map<String, String> headers) {
+        this.worker.getHeaders().putAll(headers);
     }
 
     public void responseBodySupplier(final Supplier<Resource> sup) {
+        this.worker.setResource(null);
         this.worker.setResourceSupplier(sup);
     }
 
@@ -263,15 +287,18 @@ public class MockWebServer implements Closeable {
          */
         private static final int BUFFER_SIZE = 2048;
 
+        @Getter
         private final Map<String, String> headers = new HashMap<>();
 
         private final ServerSocket serverSocket;
 
-        private final String contentType;
+        @Setter
+        private String contentType;
 
         private final Function<Socket, Object> functionToExecute;
 
-        private final HttpStatus status;
+        @Setter
+        private HttpStatus status;
 
         @Setter
         private Resource resource;

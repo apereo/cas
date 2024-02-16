@@ -8,6 +8,8 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
@@ -24,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("RestfulApiAuthentication")
 @TestPropertySource(properties = "cas.authn.mfa.web-authn.rest.url=http://localhost:9559")
 @Import(CasRestfulWebAuthnAutoConfiguration.class)
+@Execution(ExecutionMode.SAME_THREAD)
 class RestfulWebAuthnCredentialRepositoryTests extends BaseWebAuthnCredentialRepositoryTests {
 
     @Test
