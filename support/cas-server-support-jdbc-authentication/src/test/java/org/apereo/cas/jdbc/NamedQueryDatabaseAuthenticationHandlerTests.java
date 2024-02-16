@@ -43,7 +43,7 @@ class NamedQueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthentic
 
     private static String getSqlInsertStatementToCreateUserAccount(final int i, final String expired, final String disabled) {
         return String.format("insert into cas_named_users (username, password, expired, disabled, phone) values('%s', '%s', '%s', '%s', '%s');",
-            "user" + i, "psw" + i, expired, disabled, "123456789");
+            "user%d".formatted(i), "psw%d".formatted(i), expired, disabled, "123456789");
     }
 
     @BeforeEach

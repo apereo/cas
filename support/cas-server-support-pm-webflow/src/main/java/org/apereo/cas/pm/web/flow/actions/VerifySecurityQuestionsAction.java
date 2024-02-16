@@ -40,7 +40,7 @@ public class VerifySecurityQuestionsAction extends BasePasswordManagementAction 
             val count = canonicalQuestions
                 .stream()
                 .filter(question -> {
-                    val answer = request.getParameter("q" + index.getAndIncrement());
+                    val answer = request.getParameter("q%d".formatted(index.getAndIncrement()));
                     val answerOnRecord = questions.get(question);
                     LOGGER.trace("Validating security question [{}] with answer [{}] against provided answer [{}] by username [{}]",
                         question, answerOnRecord, answer, username);

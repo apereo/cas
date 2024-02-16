@@ -153,7 +153,7 @@ class DelegatedAuthenticationEventExecutionPlanConfiguration {
             final CasConfigurationProperties casProperties) {
             val cookie = casProperties.getAuthn().getPac4j().getCore().getSessionReplication().getCookie();
             if (StringUtils.isBlank(cookie.getName())) {
-                cookie.setName(CookieSessionReplicationProperties.DEFAULT_COOKIE_NAME + AUTHENTICATION_DELEGATION_PREFIX);
+                cookie.setName("%s%s".formatted(CookieSessionReplicationProperties.DEFAULT_COOKIE_NAME, AUTHENTICATION_DELEGATION_PREFIX));
             }
             return CookieUtils.buildCookieRetrievingGenerator(cookie,
                 new DefaultCasCookieValueManager(delegatedClientDistributedSessionCookieCipherExecutor,

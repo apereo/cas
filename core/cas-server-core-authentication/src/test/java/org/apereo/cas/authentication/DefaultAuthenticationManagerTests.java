@@ -65,7 +65,7 @@ class DefaultAuthenticationManagerTests {
     }
 
     private static AuthenticationHandler newMockHandler(final boolean success, final boolean error) throws Throwable {
-        val name = "MockAuthenticationHandler" + UUID.randomUUID();
+        val name = "MockAuthenticationHandler%s".formatted(UUID.randomUUID());
         return newMockHandler(name, success, error);
     }
 

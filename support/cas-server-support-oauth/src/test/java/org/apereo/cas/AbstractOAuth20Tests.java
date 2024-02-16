@@ -753,7 +753,7 @@ public abstract class AbstractOAuth20Tests {
     protected HttpSession storeProfileIntoSession(final HttpServletRequest request, final CommonProfile profile) {
         val session = request.getSession(true);
         assertNotNull(session);
-        session.setAttribute("OauthOidcServerSupport" + Pac4jConstants.USER_PROFILES,
+        session.setAttribute("OauthOidcServerSupport%s".formatted(Pac4jConstants.USER_PROFILES),
             CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
         return session;
     }

@@ -65,10 +65,10 @@ class QueryAndEncodeDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthe
     private DataSource dataSource;
 
     private static String getSqlInsertStatementToCreateUserAccount(final int i, final String expired, final String disabled) {
-        val psw = genPassword("user" + i, "salt" + i, NUM_ITERATIONS);
+        val psw = genPassword("user%d".formatted(i), "salt%d".formatted(i), NUM_ITERATIONS);
         return String.format(
             "insert into users (username, password, salt, numIterations, expired, disabled, location, color) values('%s', '%s', '%s', %s, '%s', '%s', '%s', '%s');",
-            "user" + i, psw, "salt" + i, NUM_ITERATIONS, expired, disabled, "London", "blue");
+            "user%d".formatted(i), psw, "salt%d".formatted(i), NUM_ITERATIONS, expired, disabled, "London", "blue");
     }
 
     private static String buildSql(final String where) {
