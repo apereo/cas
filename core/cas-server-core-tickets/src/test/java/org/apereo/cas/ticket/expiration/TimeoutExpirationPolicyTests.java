@@ -4,18 +4,18 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.serialization.SerializationUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
-import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,8 +27,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("ExpirationPolicy")
 class TimeoutExpirationPolicyTests {
-
-    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "timeoutExpirationPolicy.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
@@ -72,8 +70,9 @@ class TimeoutExpirationPolicyTests {
 
     @Test
     void verifySerializeATimeoutExpirationPolicyToJson() throws IOException {
-        MAPPER.writeValue(JSON_FILE, expirationPolicy);
-        val policyRead = MAPPER.readValue(JSON_FILE, TimeoutExpirationPolicy.class);
+        val jsonFile = Files.createTempFile(RandomUtils.randomAlphabetic(8), ".json").toFile();
+        MAPPER.writeValue(jsonFile, expirationPolicy);
+        val policyRead = MAPPER.readValue(jsonFile, TimeoutExpirationPolicy.class);
         assertEquals(expirationPolicy, policyRead);
     }
 }

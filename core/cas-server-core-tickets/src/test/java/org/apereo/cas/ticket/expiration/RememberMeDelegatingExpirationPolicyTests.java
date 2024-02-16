@@ -10,19 +10,19 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.factory.BaseTicketFactoryTests;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.serialization.SerializationUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
-import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Collections;
 import java.util.List;
 
@@ -37,8 +37,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("ExpirationPolicy")
 @TestPropertySource(properties = "cas.ticket.tgt.core.only-track-most-recent-session=true")
 class RememberMeDelegatingExpirationPolicyTests extends BaseTicketFactoryTests {
-
-    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "rememberMeDelegatingExpirationPolicy.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
@@ -131,8 +129,9 @@ class RememberMeDelegatingExpirationPolicyTests extends BaseTicketFactoryTests {
 
     @Test
     void verifySerializeATimeoutExpirationPolicyToJson() throws IOException {
-        MAPPER.writeValue(JSON_FILE, expirationPolicy);
-        val policyRead = MAPPER.readValue(JSON_FILE, RememberMeDelegatingExpirationPolicy.class);
+        val jsonFile = Files.createTempFile(RandomUtils.randomAlphabetic(8), ".json").toFile();
+        MAPPER.writeValue(jsonFile, expirationPolicy);
+        val policyRead = MAPPER.readValue(jsonFile, RememberMeDelegatingExpirationPolicy.class);
         assertEquals(expirationPolicy, policyRead);
     }
 
