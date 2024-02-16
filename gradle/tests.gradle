@@ -1,19 +1,20 @@
 import java.util.regex.Pattern
+import com.gradle.enterprise.gradleplugin.testselection.*
 
 enum TestCategories {
     ActiveDirectory,
     ActuatorEndpoint(true),
-    AmazonWebServices,
+    AmazonWebServices(true),
     AMQP,
     Attributes(true),
     Audits(true),
-    Authentication(true),
+    Authentication(true, true),
     AuthenticationHandler(true),
     AuthenticationPolicy(true),
     AuthenticationMetadata(true),
     AuthenticationThrottling,
     Azure,
-    CAS(true),
+    CAS(true, true),
     CasConfiguration(true),
     Cassandra,
     Cipher(true),
@@ -29,7 +30,7 @@ enum TestCategories {
     GCP,
     GeoLocation(true),
     Git(true),
-    Groovy(true),
+    Groovy(true, true),
     GroovyAuthentication(true),
     GroovyMfa(true),
     GroovyServices(true),
@@ -49,7 +50,7 @@ enum TestCategories {
     Ldap,
     LdapServices,
     LdapRepository,
-    Logout(true),
+    Logout(true, true),
     Mail,
     MariaDb,
     Memcached,
@@ -65,7 +66,7 @@ enum TestCategories {
     Native(true),
     OAuth(true),
     OAuthToken(true),
-    OAuthWeb,
+    OAuthWeb(true),
     OIDC,
     Oracle,
     PasswordOps(true),
@@ -86,14 +87,14 @@ enum TestCategories {
     SAMLResponse(true),
     SCIM(true),
     SHELL(true),
-    Simple(true),
+    Simple(true, true),
     SMS(true),
     Spnego(true),
     Syncope(true),
     Tickets,
     UMA(true),
-    Utility(true),
-    Web(true),
+    Utility(true, true),
+    Web(true, true),
     WebApp(true),
     Webflow(true),
     WebflowActions(true),
@@ -194,8 +195,8 @@ TestCategories.values().each({ testCategory ->
                     ansi.green "Predictive test selection is enabled for test category ${testCategory.name()} and task ${taskName}"
                     predictiveSelection {
                         enabled = true
-                        mode = providers.systemProperty("ptsMode").getOrElse("RELEVANT_TESTS")
-                        profile = providers.systemProperty("ptsProfile").getOrElse("STANDARD")
+                        mode = PredictiveTestSelectionMode.valueOf(providers.systemProperty("ptsMode").getOrElse("RELEVANT_TESTS"))
+                        profile = PredictiveTestSelectionProfile.valueOf(providers.systemProperty("ptsProfile").getOrElse("STANDARD"))
                     }
                 }
 
