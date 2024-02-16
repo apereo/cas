@@ -41,7 +41,7 @@ class RestfulRegisteredServiceProxyPolicyTests {
 
     @Test
     void verifyOperationPasses() throws Throwable {
-        try (val webServer = new MockWebServer( HttpStatus.OK)) {
+        try (val webServer = new MockWebServer(HttpStatus.OK)) {
             webServer.start();
             val service = RegisteredServiceTestUtils.getRegisteredService();
             val policy = new RestfulRegisteredServiceProxyPolicy();
