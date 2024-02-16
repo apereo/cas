@@ -70,7 +70,7 @@ enum TestCategories {
     Oracle,
     PasswordOps(true),
     Postgres,
-    Radius,
+    Radius(true),
     Redis,
     RegisteredService(true),
     RestfulApi,
@@ -104,7 +104,7 @@ enum TestCategories {
     WebflowMfaConfig(true),
     WebflowEvents(true),
     WebflowMfaActions(true),
-    WSFederation,
+    WSFederation(true),
     X509(true),
     ZooKeeper(true)
 
