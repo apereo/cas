@@ -41,9 +41,9 @@ public class OAuth20ResourceOwnerCredentialsResponseBuilder<T extends OAuth20Con
             .service(holder.getService())
             .accessTokenTimeout(accessTokenTimeout)
             .responseType(holder.getResponseType())
+            .grantType(holder.getGrantType())
             .casProperties(configurationContext.getCasProperties())
             .generatedToken(accessTokenResult)
-            .grantType(holder.getGrantType())
             .userProfile(holder.getUserProfile())
             .build();
         configurationContext.getAccessTokenResponseGenerator().generate(result);

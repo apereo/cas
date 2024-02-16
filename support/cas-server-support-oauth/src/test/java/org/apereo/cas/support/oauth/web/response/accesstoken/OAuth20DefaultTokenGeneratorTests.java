@@ -6,13 +6,13 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.OAuth20TokenExchangeTypes;
 import org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthAccessTokenExpirationPolicy;
 import org.apereo.cas.support.oauth.validator.token.device.InvalidOAuth20DeviceTokenException;
 import org.apereo.cas.support.oauth.validator.token.device.ThrottledOAuth20DeviceUserCodeApprovalException;
 import org.apereo.cas.support.oauth.validator.token.device.UnapprovedOAuth20DeviceUserCodeException;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
-
 import lombok.val;
 import org.jose4j.jwt.JwtClaims;
 import org.junit.jupiter.api.Tag;
@@ -22,10 +22,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
-
 import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -43,6 +42,36 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
     @Test
+    void verifyExchangeTokens() throws Throwable {
+
+        val registeredService = getRegisteredService(UUID.randomUUID().toString(), "secret",
+            Set.of(OAuth20GrantTypes.TOKEN_EXCHANGE));
+        servicesManager.save(registeredService);
+
+        val accessToken = getAccessToken(registeredService.getServiceId(), registeredService.getClientId());
+        ticketRegistry.addTicket(accessToken);
+
+        val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
+        mockRequest.setParameter(OAuth20Constants.REQUESTED_TOKEN_TYPE, OAuth20TokenExchangeTypes.ACCESS_TOKEN.getType());
+        mockRequest.setParameter(OAuth20Constants.SUBJECT_TOKEN, accessToken.getId());
+        
+        val mv = generateAccessTokenResponseAndGetModelAndView(registeredService,
+            RegisteredServiceTestUtils.getAuthentication("casuser"),
+            OAuth20GrantTypes.TOKEN_EXCHANGE, mockRequest);
+        assertNotNull(mv);
+        val id = mv.getModel().get(OAuth20Constants.ACCESS_TOKEN).toString();
+        val at = ticketRegistry.getTicket(id, OAuth20AccessToken.class);
+        assertNotNull(at);
+        val attributes = at.getAuthentication().getPrincipal().getAttributes();
+        assertTrue(attributes.containsKey("givenName"));
+        assertTrue(attributes.containsKey("uid"));
+        assertTrue(attributes.containsKey("username"));
+        assertTrue(mv.getModel().containsKey(OAuth20Constants.EXPIRES_IN));
+        assertTrue(mv.getModel().containsKey(OAuth20Constants.TOKEN_TYPE));
+        assertTrue(mv.getModel().containsKey(OAuth20Constants.ISSUED_TOKEN_TYPE));
+    }
+
+    @Test
     void verifyRequestedClaims() throws Throwable {
         val registeredService = getRegisteredService(UUID.randomUUID().toString(), "secret", new LinkedHashSet<>());
         servicesManager.save(registeredService);
@@ -53,7 +82,7 @@ class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
             RegisteredServiceTestUtils.getAuthentication("casuser"),
             OAuth20GrantTypes.AUTHORIZATION_CODE, mockRequest);
         assertNotNull(mv);
-        val id = mv.getModel().get("access_token").toString();
+        val id = mv.getModel().get(OAuth20Constants.ACCESS_TOKEN).toString();
         val at = ticketRegistry.getTicket(id, OAuth20AccessToken.class);
         assertTrue(at.getAuthentication().getAttributes().containsKey("given_name"));
     }
