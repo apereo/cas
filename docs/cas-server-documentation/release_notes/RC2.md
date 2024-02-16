@@ -61,6 +61,11 @@ and scenarios. At the moment, total number of jobs stands at approximately `474`
 test coverage of the CAS codebase is approximately `94%`. Furthermore, a large number of test categories that group internal unit tests
 are now configured to run with parallelism enabled.
 
+### OAuth/OpenID Connect Token Exchange
+
+[OAuth Token Exchange](../authentication/OAuth-ProtocolFlow-TokenExchange.html) protocol can now support ID token exchanges
+when CAS is running as an OpenID Connect provider..
+
 ## Other Stuff
 
 - Internal enhancements to allow a few more ticket registries to support more advanced querying operations and session management features.
@@ -80,3 +85,6 @@ are now configured to run with parallelism enabled.
 - Spring Boot
 - Spring Data
 - Micrometer
+- Jose4j
+- Elastic APM
+- SendGrid

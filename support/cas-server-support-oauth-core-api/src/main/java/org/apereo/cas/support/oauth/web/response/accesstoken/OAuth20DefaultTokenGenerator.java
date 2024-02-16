@@ -3,6 +3,7 @@ package org.apereo.cas.support.oauth.web.response.accesstoken;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
+import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -218,11 +219,14 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         scopes.retainAll(tokenRequestContext.getRegisteredService().getScopes());
 
         val credential = new BasicIdentifiableCredential(accessToken.getAuthentication().getPrincipal().getId());
-        val resolvedPrincipal = principalResolver.resolve(credential);
-
+        var resolvedPrincipal = principalResolver.resolve(credential);
+        if (resolvedPrincipal instanceof NullPrincipal) {
+            resolvedPrincipal = accessToken.getAuthentication().getPrincipal();
+        }
         val exchangedPrincipal = profileScopeToAttributesFilter.filter(service, resolvedPrincipal,
             tokenRequestContext.getRegisteredService(), scopes, accessToken);
-        val authentication = DefaultAuthenticationBuilder.newInstance(exchangedPrincipal).build();
+        val authentication = DefaultAuthenticationBuilder.newInstance(exchangedPrincipal)
+            .addAttribute(OAuth20Constants.GRANT_TYPE, accessToken.getGrantType().getType()).build();
 
         val accessTokenFactory = (OAuth20AccessTokenFactory) ticketFactory.get(OAuth20AccessToken.class);
         return accessTokenFactory.create(

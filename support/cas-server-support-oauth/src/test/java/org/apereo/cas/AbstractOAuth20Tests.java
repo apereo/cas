@@ -40,6 +40,7 @@ import org.apereo.cas.services.ServicesManagerConfigurationContext;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.OAuth20TokenExchangeTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.validator.OAuth20ClientSecretValidator;
 import org.apereo.cas.support.oauth.web.CasOAuth20AuthenticationEventExecutionPlanTestConfiguration;
@@ -391,6 +392,7 @@ public abstract class AbstractOAuth20Tests {
         when(accessToken.getExpirationPolicy()).thenReturn(NeverExpiresExpirationPolicy.INSTANCE);
         when(accessToken.getCreationTime()).thenReturn(ZonedDateTime.now(Clock.systemUTC()));
         when(accessToken.toString()).thenReturn(ticketId);
+        when(accessToken.getGrantType()).thenReturn(OAuth20GrantTypes.AUTHORIZATION_CODE);
         return accessToken;
     }
 
@@ -710,9 +712,10 @@ public abstract class AbstractOAuth20Tests {
         final HttpServletRequest mockRequest) throws Throwable {
 
         val mockResponse = new MockHttpServletResponse();
-
         val service = RegisteredServiceTestUtils.getService(SERVICE_URL);
-        val tokenRequestContext = AccessTokenRequestContext.builder()
+        val webContext = new JEEContext(mockRequest, mockResponse);
+        val tokenRequestContext = AccessTokenRequestContext
+            .builder()
             .clientId(registeredService.getClientId())
             .service(service)
             .authentication(authentication)
@@ -720,16 +723,24 @@ public abstract class AbstractOAuth20Tests {
             .grantType(grantType)
             .responseType(OAuth20ResponseTypes.CODE)
             .ticketGrantingTicket(new MockTicketGrantingTicket("casuser"))
-            .claims(oauthRequestParameterResolver.resolveRequestClaims(new JEEContext(mockRequest, mockResponse)))
+            .claims(oauthRequestParameterResolver.resolveRequestClaims(webContext))
+            .requestedTokenType(oauthRequestParameterResolver.resolveRequestParameter(webContext, OAuth20Constants.REQUESTED_TOKEN_TYPE)
+                .map(OAuth20TokenExchangeTypes::from)
+                .orElse(null))
+            .subjectToken(oauthRequestParameterResolver.resolveRequestParameter(webContext, OAuth20Constants.SUBJECT_TOKEN)
+                .map(token -> ticketRegistry.getTicket(token))
+                .orElse(null))
             .build();
 
         val generatedToken = oauthTokenGenerator.generate(tokenRequestContext);
-        val builder = OAuth20AccessTokenResponseResult.builder();
-        val result = builder
+        val result = OAuth20AccessTokenResponseResult.builder()
             .registeredService(registeredService)
             .responseType(OAuth20ResponseTypes.CODE)
             .service(service)
             .generatedToken(generatedToken)
+            .responseType(tokenRequestContext.getResponseType())
+            .grantType(tokenRequestContext.getGrantType())
+            .requestedTokenType(tokenRequestContext.getRequestedTokenType())
             .build();
         return accessTokenResponseGenerator.generate(result);
     }
