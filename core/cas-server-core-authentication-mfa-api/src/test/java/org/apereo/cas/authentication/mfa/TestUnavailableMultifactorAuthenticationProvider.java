@@ -32,7 +32,7 @@ public class TestUnavailableMultifactorAuthenticationProvider extends AbstractMu
     public static TestUnavailableMultifactorAuthenticationProvider registerProviderIntoApplicationContext(
         final ConfigurableApplicationContext applicationContext) {
         return ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
-            TestUnavailableMultifactorAuthenticationProvider.class, "unavailable-provider" + System.currentTimeMillis());
+            TestUnavailableMultifactorAuthenticationProvider.class, "unavailable-provider%d".formatted(System.currentTimeMillis()));
     }
 
     @Override

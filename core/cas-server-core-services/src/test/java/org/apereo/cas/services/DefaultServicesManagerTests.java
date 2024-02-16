@@ -21,7 +21,7 @@ class DefaultServicesManagerTests extends AbstractServicesManagerTests<DefaultSe
     void verifyFindByQuery() throws Throwable {
         val service = new CasRegisteredService();
         service.setId(1984);
-        service.setName(TEST + 1984);
+        service.setName("%s%d".formatted(TEST, 1984));
         service.setServiceId(service.getName());
         servicesManager.save(service);
         assertEquals(0, servicesManager.findServicesBy().count());

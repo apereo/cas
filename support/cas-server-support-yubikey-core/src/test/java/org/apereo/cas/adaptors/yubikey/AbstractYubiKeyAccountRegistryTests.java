@@ -67,7 +67,7 @@ public abstract class AbstractYubiKeyAccountRegistryTests {
         assertTrue(registerAccount(request2));
 
         val request3 = YubiKeyDeviceRegistrationRequest.builder().username("casuser")
-            .token(OTP + OTP).name(UUID.randomUUID().toString()).build();
+            .token("%s%s".formatted(OTP, OTP)).name(UUID.randomUUID().toString()).build();
         assertTrue(registerAccount(request3));
 
         assertTrue(isYubiKeyRegisteredFor("casuser", null));
