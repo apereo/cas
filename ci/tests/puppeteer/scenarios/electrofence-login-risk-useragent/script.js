@@ -15,18 +15,18 @@ const assert = require("assert");
 
     const page2 = await browser.newPage();
     await page2.goto("http://localhost:8282");
-    await page2.waitForTimeout(1000);
+    await cas.waitForTimeout(page2, 1000);
     await cas.click(page2, "table tbody td a[title=CAS]");
-    await page2.waitForTimeout(1000);
+    await cas.waitForTimeout(page2, 1000);
     const code = await cas.textContent(page2, "div[name=bodyPlainText] .well");
     await cas.screenshot(page);
     await page2.close();
 
     const page3 = await browser.newPage();
     await cas.goto(page3, "http://localhost:8282");
-    await page3.waitForTimeout(1000);
+    await cas.waitForTimeout(page3, 1000);
     await cas.click(page3, "table tbody td a[title=CasRiskyAuthN]");
-    await page3.waitForTimeout(1000);
+    await cas.waitForTimeout(page3, 1000);
     const body = await cas.textContent(page3, "div[name=bodyPlainText] .well");
     await cas.screenshot(page);
     await cas.log(`Email message body is: ${body}`);

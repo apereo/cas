@@ -332,12 +332,12 @@ public abstract class AbstractOidcTests {
         return getOidcRegisteredService("clientid", "https://oauth\\.example\\.org.*", sign, encrypt);
     }
 
-    protected static OidcRegisteredService getOidcRegisteredService(final String clientid, final String redirectUri) {
-        return getOidcRegisteredService(clientid, redirectUri, true, true);
+    protected static OidcRegisteredService getOidcRegisteredService(final String clientId, final String redirectUri) {
+        return getOidcRegisteredService(clientId, redirectUri, true, true);
     }
 
-    protected static OidcRegisteredService getOidcRegisteredService(final String clientid) {
-        return getOidcRegisteredService(clientid, "https://oauth\\.example\\.org.*", true, true);
+    protected static OidcRegisteredService getOidcRegisteredService(final String clientId) {
+        return getOidcRegisteredService(clientId, "https://oauth\\.example\\.org.*", true, true);
     }
 
     protected static OidcRegisteredService getOidcRegisteredService(final String clientId,
@@ -346,7 +346,7 @@ public abstract class AbstractOidcTests {
                                                                     final boolean encrypt) {
         val svc = new OidcRegisteredService();
         svc.setClientId(clientId);
-        svc.setName("oauth");
+        svc.setName("oauth-%s".formatted(UUID.randomUUID().toString()));
         svc.setDescription("description");
         svc.setClientSecret("secret");
         svc.setServiceId(redirectUri);
