@@ -24,7 +24,7 @@ async function getAllEvents() {
         const user = (Math.random() + 1).toString(36).substring(4);
         const password = (Math.random() + 1).toString(36).substring(4);
         await cas.loginWith(page, user, password);
-        await page.waitForTimeout(1000);
+        await cas.waitForTimeout(page, 1000);
     }
 
     await cas.gotoLogin(page);

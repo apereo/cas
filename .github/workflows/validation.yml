@@ -91,6 +91,7 @@ jobs:
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Validate CAS Command-line Shell
+        timeout-minutes: 10
         run: |
           chmod -R +x ./ci/tests/shell/run-shell.sh && ./ci/tests/shell/run-shell.sh
           echo "Checking for stack traces in output that would indicate an error"

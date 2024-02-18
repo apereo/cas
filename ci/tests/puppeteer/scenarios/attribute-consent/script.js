@@ -24,7 +24,7 @@ const os = require("os");
 
     await cas.screenshot(page);
     await cas.click(page, "#optionsButton");
-    await page.waitForTimeout(2000);
+    await cas.waitForTimeout(page, 2000);
 
     await cas.screenshot(page);
     let opt = await page.$("#optionAlways");
