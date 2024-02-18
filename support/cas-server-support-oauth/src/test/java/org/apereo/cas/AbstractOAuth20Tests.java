@@ -443,8 +443,8 @@ public abstract class AbstractOAuth20Tests {
         service.setClientId(clientId);
         service.setClientSecret(secret);
         service.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
-        service.setSupportedGrantTypes(grantTypes.stream().map(OAuth20GrantTypes::getType)
-            .collect(Collectors.toCollection(HashSet::new)));
+        val types = grantTypes.stream().map(OAuth20GrantTypes::getType).collect(Collectors.toCollection(HashSet::new));
+        service.setSupportedGrantTypes(types);
         return service;
     }
 
