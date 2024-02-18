@@ -103,6 +103,10 @@ exports.removeDirectoryOrFile = async (directory) => {
     }
 };
 
+exports.waitForTimeout = async(page, milliseconds) => {
+    await page.evaluate(() => new Promise((r) => setTimeout(r, milliseconds)));
+};
+
 exports.click = async (page, button) => {
     await page.evaluate((button) => {
         const buttonNode = document.querySelector(button);
@@ -271,13 +275,13 @@ exports.submitForm = async (page, selector, predicate = undefined, statusCode = 
     return Promise.all([
         page.waitForResponse(predicate),
         page.$eval(selector, (form) => form.submit()),
-        page.waitForTimeout(3000)
+        cas.waitForTimeout(page, 3000)
     ]);
 };
 
 exports.pressEnter = async (page) => {
     page.keyboard.press("Enter");
-    page.waitForTimeout(1000);
+    cas.waitForTimeout(page, 1000);
 };
 
 exports.type = async (page, selector, value, obfuscate = false) => {
@@ -888,7 +892,7 @@ exports.refreshBusContext = async (url = "https://localhost:8443/cas") => {
 };
 
 exports.loginDuoSecurityBypassCode = async (page, username = "casuser", currentCodes = undefined) => {
-    await page.waitForTimeout(12000);
+    await cas.waitForTimeout(page, 12000);
     await this.click(page, "button#passcode");
     const bypassCodes = currentCodes ?? await this.fetchDuoSecurityBypassCodes(username);
     await this.log(`Duo Security: Retrieved bypass codes ${bypassCodes}`);
@@ -904,7 +908,7 @@ exports.loginDuoSecurityBypassCode = async (page, username = "casuser", currentC
         await this.screenshot(page);
         await this.pressEnter(page);
         await this.log("Waiting for Duo Security to accept bypass code...");
-        await page.waitForTimeout(10000);
+        await cas.waitForTimeout(page, 10000);
         const error = await this.isVisible(page, "div.message.error");
         if (error) {
             await this.log("Duo Security is unable to accept bypass code");

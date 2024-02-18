@@ -21,7 +21,7 @@ const fs = require("fs");
     const page = await cas.newPage(browser);
     await cas.gotoLogin(page);
     await cas.loginWith(page);
-    await page.waitForTimeout(1000);
+    await cas.waitForTimeout(page, 1000);
     await cas.assertCookie(page);
 
     await cas.logPage(page);
@@ -29,16 +29,16 @@ const fs = require("fs");
     assert(url === "https://localhost:8443/cas/account");
 
     await cas.goto(page, "https://localhost:8443/cas/account");
-    await page.waitForTimeout(1000);
+    await cas.waitForTimeout(page, 1000);
     
     await cas.click(page, "#linkOverview");
-    await page.waitForTimeout(1000);
+    await cas.waitForTimeout(page, 1000);
 
     await cas.click(page, "#linkAttributes");
-    await page.waitForTimeout(1000);
+    await cas.waitForTimeout(page, 1000);
 
     await cas.click(page, "#linkServices");
-    await page.waitForTimeout(1000);
+    await cas.waitForTimeout(page, 1000);
 
     await cas.click(page, "#linkMfaRegisteredAccounts");
     await page.waitForTimeout(1000);

@@ -9,7 +9,7 @@ async function executeFlow(browser, redirectUri, clientId, accessTokenSecret) {
 
     await cas.goto(page, url);
     await cas.logPage(page);
-    await page.waitForTimeout(1000);
+    await cas.waitForTimeout(page, 1000);
     await cas.loginWith(page);
     await page.waitForTimeout(1000);
 
