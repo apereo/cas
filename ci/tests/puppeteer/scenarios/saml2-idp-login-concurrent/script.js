@@ -17,7 +17,7 @@ const cas = require("../../cas.js");
         const page2 = await browser.newPage();
         await page2.bringToFront();
         await cas.goto(page2, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=refeds-sp");
-        await page2.waitForTimeout(4000);
+        await cas.waitForTimeout(page2, 4000);
         await cas.log(page2.url());
 
         await cas.log("Resuming with first authentication attempt");
@@ -31,7 +31,7 @@ const cas = require("../../cas.js");
         await page2.bringToFront();
         await cas.screenshot(page2);
         await cas.loginWith(page2, "casuser", "Mellon");
-        await page2.waitForTimeout(3000);
+        await cas.waitForTimeout(page2, 3000);
         await page2.waitForSelector("#table_with_attributes", {visible: true});
         await cas.assertVisibility(page2, "#table_with_attributes");
 

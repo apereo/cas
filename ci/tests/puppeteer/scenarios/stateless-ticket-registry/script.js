@@ -58,7 +58,7 @@ async function verifyExistingSsoSession(context, service) {
     await cas.log(`Logging into service ${service}`);
     const page2 = await cas.newPage(context);
     await cas.gotoLogin(page, service);
-    await page2.waitForTimeout(2000);
+    await cas.waitForTimeout(page2, 2000);
     await cas.log("Checking for page URL...");
     await cas.logPage(page);
     await cas.assertInvisibility(page, "#username");
