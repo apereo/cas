@@ -71,7 +71,10 @@ public class CasTrustedAuthenticationWebflowAutoConfiguration {
             filter.setPrincipalRequestHeader(StringUtils.defaultIfBlank(valve.getRemoteUserHeader(), "NA"));
             filter.setExceptionIfHeaderMissing(false);
             filter.setRequiresAuthenticationRequestMatcher(request -> RegexUtils.matchesIpAddress(valve.getAllowedIpAddressRegex(), request.getRemoteAddr()));
-            filter.setAuthenticationManager(authentication -> authentication);
+            filter.setAuthenticationManager(authentication -> {
+                authentication.setAuthenticated(authentication.getPrincipal() != null);
+                return authentication;
+            });
             val bean = new FilterRegistrationBean<>(filter);
             bean.setName("casRequestHeaderAuthenticationFilter");
             bean.setAsyncSupported(true);

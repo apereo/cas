@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider;
+import org.apereo.cas.shell.commands.ExitCommand;
 import org.apereo.cas.shell.commands.cipher.GenerateCryptoKeysCommand;
 import org.apereo.cas.shell.commands.cipher.StringableCipherExecutorCommand;
 import org.apereo.cas.shell.commands.db.GenerateDdlCommand;
@@ -45,6 +46,11 @@ public class CasCommandLineShellAutoConfiguration {
     @Bean
     public PromptProvider shellPromptProvider() {
         return () -> new AttributedString("cas>", AttributedStyle.DEFAULT.foreground(AttributedStyle.GREEN));
+    }
+
+    @Bean
+    public ExitCommand exitCommand() {
+        return new ExitCommand();
     }
 
     @Bean
