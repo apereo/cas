@@ -168,7 +168,8 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
         val cacheResult = Objects.requireNonNull(cache.get(cacheKey));
         LOGGER.debug("Loaded and cached SAML metadata [{}] from [{}]",
             cacheResult.getMetadataResolver().getId(), service.getMetadataLocation());
-        return MetadataResolverCacheQueryResult.builder()
+        return MetadataResolverCacheQueryResult
+            .builder()
             .entityDescriptor(Optional.empty())
             .result(cacheResult)
             .build();

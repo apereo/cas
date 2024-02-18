@@ -7,7 +7,7 @@ const cas = require("../../cas.js");
 
     await cas.log("Trying first app with a fancy theme");
     await cas.gotoLogin(page, "https://apereo.github.io");
-    await page.waitForTimeout(2000);
+    await cas.waitForTimeout(page, 2000);
     await cas.screenshot(page);
 
     await cas.log("Listing all stylesheet links for first app");
@@ -21,7 +21,7 @@ const cas = require("../../cas.js");
 
     await cas.log("Trying second app with a fancy theme");
     await cas.gotoLogin(page, "https://localhost:9859/anything/fancy");
-    await page.waitForTimeout(2000);
+    await cas.waitForTimeout(page, 2000);
     await cas.screenshot(page);
 
     await cas.log("Listing all stylesheet links for second app");
@@ -34,7 +34,7 @@ const cas = require("../../cas.js");
 
     await cas.log("Trying third app with a default theme");
     await cas.gotoLogin(page, "https://localhost:9859/anything/default");
-    await page.waitForTimeout(2000);
+    await cas.waitForTimeout(page, 2000);
     await cas.screenshot(page);
     await cas.log("Listing all stylesheet links for third app");
     await page.evaluate(() => {

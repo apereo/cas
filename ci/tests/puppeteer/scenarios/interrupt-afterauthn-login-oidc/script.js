@@ -12,11 +12,11 @@ const assert = require("assert");
     const url = `https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=client&scope=${encodeURIComponent("openid profile")}&redirect_uri=${redirectUri}`;
     await cas.goto(page, url);
     await cas.logPage(page);
-    await page.waitForTimeout(1000);
+    await cas.waitForTimeout(page, 1000);
 
     if (await cas.isVisible(page, "#username")) {
         await cas.loginWith(page);
-        await page.waitForTimeout(1000);
+        await cas.waitForTimeout(page, 1000);
     }
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
@@ -35,7 +35,7 @@ const assert = require("assert");
     await page.bringToFront();
     await cas.type(page, "#token", code);
     await cas.submitForm(page, "#fm1");
-    await page.waitForTimeout(2000);
+    await cas.waitForTimeout(page, 2000);
 
     await cas.assertTextContent(page, "#content h1", "Authentication Interrupt");
     await cas.assertTextContentStartsWith(page, "#content p", "The authentication flow has been interrupted");
@@ -48,7 +48,7 @@ const assert = require("assert");
     await cas.assertVisibility(page, "#field2");
     await cas.assertVisibility(page, "#field2-value");
     await cas.submitForm(page, "#fm1");
-    await page.waitForTimeout(3000);
+    await cas.waitForTimeout(page, 3000);
     await cas.screenshot(page);
 
     code = await cas.assertParameter(page, "code");

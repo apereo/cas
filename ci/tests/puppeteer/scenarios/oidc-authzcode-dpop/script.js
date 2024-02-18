@@ -13,7 +13,7 @@ const jose = require("jose");
     await cas.goto(page, url);
     await cas.waitForTimeout(page, 1000);
     await cas.loginWith(page);
-    await page.waitForTimeout(1000);
+    await cas.waitForTimeout(page, 1000);
 
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");

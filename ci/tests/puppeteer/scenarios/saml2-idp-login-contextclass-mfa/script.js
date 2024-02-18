@@ -11,10 +11,10 @@ const assert = require("assert");
     assert(response.ok());
 
     await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=refeds-sp");
-    await page.waitForTimeout(1000);
+    await cas.waitForTimeout(page, 1000);
 
     await cas.loginWith(page);
-    await page.waitForTimeout(2000);
+    await cas.waitForTimeout(page, 2000);
 
     await cas.log("Fetching Scratch codes from /cas/actuator...");
     const scratch = await cas.fetchGoogleAuthenticatorScratchCode();
@@ -24,7 +24,7 @@ const assert = require("assert");
     await cas.pressEnter(page);
     await page.waitForNavigation();
     await cas.logPage(page);
-    await page.waitForTimeout(3000);
+    await cas.waitForTimeout(page, 3000);
     await cas.screenshot(page);
 
     await page.waitForSelector("#table_with_attributes", {visible: true});

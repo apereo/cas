@@ -8,7 +8,7 @@ const request = require("request");
     const page = await cas.newPage(browser);
     await cas.gotoLogin(page);
     await cas.assertVisibility(page, "#x509Login");
-    await page.waitForTimeout(2000);
+    await cas.waitForTimeout(page, 2000);
 
     await page.setRequestInterception(true);
     const args = process.argv.slice(2);
@@ -48,7 +48,7 @@ const request = require("request");
     });
     
     await cas.click(page, "#x509LoginLink");
-    await page.waitForTimeout(5000);
+    await cas.waitForTimeout(page, 5000);
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
     await cas.assertInnerTextContains(page, "#content div p", "CN=mmoayyed, OU=dev, O=bft, L=mt, C=world");
     await browser.close();

@@ -7,9 +7,9 @@ async function fetchRefreshToken(page, clientId, redirectUrl) {
 
     await cas.log(`Navigating to ${url}`);
     await cas.goto(page, url);
-    await page.waitForTimeout(1000);
+    await cas.waitForTimeout(page, 1000);
     await cas.loginWith(page);
-    await page.waitForTimeout(1000);
+    await cas.waitForTimeout(page, 1000);
 
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
@@ -109,7 +109,7 @@ async function exchangeToken(refreshToken, clientId, successHandler, errorHandle
         });
 
     await cas.log("Let's wait 5 seconds for the TGT to expire, RTs should be still alive");
-    await page.waitForTimeout(5000);
+    await cas.waitForTimeout(page, 5000);
 
     await exchangeToken(refreshToken1, "client",
         (res) => {

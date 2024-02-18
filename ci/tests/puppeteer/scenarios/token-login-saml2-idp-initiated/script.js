@@ -24,7 +24,7 @@ async function cleanUp() {
 
         await cas.log(`Navigating to ${url}`);
         await cas.goto(page, url);
-        await page.waitForTimeout(5000);
+        await cas.waitForTimeout(page, 5000);
 
         const resultUrl = await page.url();
         await cas.logg(`Page url: ${resultUrl}`);
@@ -34,7 +34,7 @@ async function cleanUp() {
         await cas.gotoLogin(page);
         await cas.assertCookie(page);
         await cas.assertInnerText(page, "#content div h2", "Log In Successful");
-        await page.waitForTimeout(1000);
+        await cas.waitForTimeout(page, 1000);
         
         await browser.close();
         await cleanUp();

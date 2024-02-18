@@ -6,7 +6,7 @@ const cas = require("../../cas.js");
     const page = await cas.newPage(browser);
     await cas.gotoLogin(page);
     await cas.loginWith(page);
-    await page.waitForTimeout(1000);
+    await cas.waitForTimeout(page, 1000);
     await cas.assertInnerTextContains(page, "#attribute-tab-0 table#attributesTable tbody", "[CAS, sys_CAS]");
     await cas.assertInnerTextContains(page, "#attribute-tab-0 table#attributesTable tbody", "[User, sys_User]");
     await cas.assertCookie(page);

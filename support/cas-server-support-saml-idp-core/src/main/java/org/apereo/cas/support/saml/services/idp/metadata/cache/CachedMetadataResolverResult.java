@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 
+import jakarta.validation.constraints.NotNull;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Clock;
@@ -28,5 +29,6 @@ public class CachedMetadataResolverResult implements Serializable {
     @Builder.Default
     private final Instant cachedInstant = Instant.now(Clock.systemUTC());
 
+    @NotNull
     private final MetadataResolver metadataResolver;
 }

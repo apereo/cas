@@ -7,7 +7,7 @@ const cas = require("../../cas.js");
     await cas.gotoLogin(page, "https://apereo.github.io");
     await cas.loginWith(page);
 
-    await page.waitForTimeout(1000);
+    await cas.waitForTimeout(page, 1000);
     await cas.assertTextContent(page, "#login h3", "Use your registered YubiKey device(s) to authenticate.");
 
     await cas.assertInvisibility(page, "button[name=register]");

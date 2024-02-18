@@ -23,7 +23,7 @@ const path = require("path");
 
     await cas.log("Updating configuration and waiting for changes to reload...");
     await updateConfig(configFile, configFilePath, "casrefresh::p@$$word");
-    await page.waitForTimeout(8000);
+    await cas.waitForTimeout(page, 8000);
 
     await cas.log("Attempting to login with new updated credentials...");
     await cas.gotoLogin(page);

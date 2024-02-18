@@ -21,13 +21,13 @@ async function updateProperty(properties, propertiesFile, value) {
         await cas.log(`Loading properties file ${propertiesFile}`);
         const page = await cas.newPage(browser);
         await cas.gotoLogin(page);
-        await page.waitForTimeout(1000);
+        await cas.waitForTimeout(page, 1000);
         await cas.assertInnerText(page, "#sidebar div p", "Stay safe!");
         await cas.assertInnerText(page, "#login-form-controls h2 span", "Welcome to CAS");
 
         await updateProperty(properties, propertiesFile, "Hello World!");
 
-        await page.waitForTimeout(2000);
+        await cas.waitForTimeout(page, 2000);
         await page.reload("https://localhost:8443/cas/login");
         await cas.assertInnerText(page, "#sidebar div p", "Hello World!");
     } finally {

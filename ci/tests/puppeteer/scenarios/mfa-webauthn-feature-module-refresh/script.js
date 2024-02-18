@@ -18,16 +18,16 @@ const path = require("path");
     const file = fs.readFileSync(configFilePath, "utf8");
     const configFile = YAML.parse(file);
     await updateConfig(configFile, configFilePath, true);
-    await page.waitForTimeout(5000);
+    await cas.waitForTimeout(page, 5000);
 
     try {
         await cas.refreshContext();
-        await page.waitForTimeout(2000);
+        await cas.waitForTimeout(page, 2000);
 
         await cas.gotoLogout(page);
         await cas.goto(page, url);
         await cas.loginWith(page);
-        await page.waitForTimeout(4000);
+        await cas.waitForTimeout(page, 4000);
         await cas.assertTextContent(page, "#status", "Login with FIDO2-enabled Device");
 
         await cas.log("Checking for presence of errors...");

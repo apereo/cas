@@ -16,7 +16,7 @@ const path = require("path");
         await cas.log(`Navigating to ${url}`);
         await cas.goto(page, url);
         await cas.screenshot(page);
-        await page.waitForTimeout(2000);
+        await cas.waitForTimeout(page, 2000);
         await cas.loginWith(page);
         await cas.waitForElement(page, "body");
         const content = JSON.parse(await cas.innerText(page, "body"));

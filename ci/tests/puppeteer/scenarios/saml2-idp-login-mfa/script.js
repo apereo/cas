@@ -12,7 +12,7 @@ const assert = require("assert");
     await cas.loginWith(page);
     
     await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
-    await page.waitForTimeout(3000);
+    await cas.waitForTimeout(page, 3000);
     await cas.screenshot(page);
 
     const page2 = await browser.newPage();
@@ -26,7 +26,7 @@ const assert = require("assert");
     await page.bringToFront();
     await cas.type(page, "#token", code);
     await cas.submitForm(page, "#fm1");
-    await page.waitForTimeout(4000);
+    await cas.waitForTimeout(page, 4000);
     await page.waitForSelector("#table_with_attributes", {visible: true});
     await cas.assertInnerTextContains(page, "#content p", "status page of SimpleSAMLphp");
     await cas.assertVisibility(page, "#table_with_attributes");
@@ -45,7 +45,7 @@ const assert = require("assert");
     });
     
     await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
-    await page.waitForTimeout(3000);
+    await cas.waitForTimeout(page, 3000);
 
     authData = JSON.parse(await cas.innerHTML(page, "details pre"));
     await cas.log(authData);

@@ -65,6 +65,22 @@ are now configured to run with parallelism enabled.
 
 [OAuth Token Exchange](../authentication/OAuth-ProtocolFlow-TokenExchange.html) protocol can now support ID token exchanges
 when CAS is running as an OpenID Connect provider..
+  
+### Devlocity Predictive Test Selection
+
+[Develocity Predictive Test Selection](https://develocity.apereo.org/scans/test-selection) is now turned on for certain number
+of CAS unit test categories. This feature saves testing time by identifying, prioritizing, and running only 
+tests that are likely to provide useful feedback during test runs and it accomplishes 
+this by applying a machine learning model that uniquely incorporates fine-grained code snapshots, 
+comprehensive test analytics, and flaky test data.
+
+To accommodate the machine learning model, CAS will also run its suite of unit tests using a fixed schedule.
+The scheduled workflow runs disable the predictive test selection feature and instead run all tests in the suite to
+avoid accidents and mistakes made when a test run is incorrectly skipped. As the number of runs increase, 
+we expect the model to improve and learn more efficiently.
+
+This capability is provided by [Devlocity](https://gradle.com/develocity/) to the Apereo CAS project for free and is proving
+to be extremely valuable in cutting down test execution time and therefor resulting in a quicker feedback loop. 
 
 ## Other Stuff
 

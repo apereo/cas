@@ -28,7 +28,7 @@ const cas = require("../../cas.js");
 
         await cas.gotoLoginWithAuthnMethod(page, undefined, "mfa-simple");
         await cas.loginWith(page);
-        await page.waitForTimeout(1000);
+        await cas.waitForTimeout(page, 1000);
         await cas.assertVisibility(page, "#token");
 
         const page2 = await browser.newPage();
@@ -42,9 +42,9 @@ const cas = require("../../cas.js");
         await page.bringToFront();
         await cas.type(page, "#token", code);
         await cas.submitForm(page, "#fm1");
-        await page.waitForTimeout(1000);
+        await cas.waitForTimeout(page, 1000);
         await cas.submitForm(page, "#registerform");
-        await page.waitForTimeout(1000);
+        await cas.waitForTimeout(page, 1000);
         await cas.assertInnerText(page, "#content div h2", "Log In Successful");
         await cas.assertCookie(page);
     } finally {

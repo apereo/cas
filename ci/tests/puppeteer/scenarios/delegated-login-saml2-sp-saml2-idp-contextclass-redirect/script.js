@@ -16,14 +16,14 @@ async function cleanUp() {
     assert(response.ok());
 
     await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=refeds-sp");
-    await page.waitForTimeout(2000);
+    await cas.waitForTimeout(page, 2000);
     await cas.screenshot(page);
     await cas.loginWith(page, "user1", "password");
-    await page.waitForTimeout(3000);
+    await cas.waitForTimeout(page, 3000);
     await cas.log("Checking for page URL...");
     await cas.logPage(page);
     await cas.screenshot(page);
-    await page.waitForTimeout(3000);
+    await cas.waitForTimeout(page, 3000);
 
     await page.waitForSelector("#table_with_attributes", {visible: true});
     await cas.assertInnerTextContains(page, "#content p", "status page of SimpleSAMLphp");
