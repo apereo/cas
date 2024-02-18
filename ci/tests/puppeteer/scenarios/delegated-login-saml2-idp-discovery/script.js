@@ -7,15 +7,15 @@ const path = require("path");
     const page = await cas.newPage(browser);
     await cas.gotoLogin(page);
     await cas.click(page, "#saml2IdPDiscovery");
-    await page.waitForTimeout(5000);
+    await cas.waitForTimeout(page, 5000);
     await cas.type(page, "#idpSelectInput", "simplesaml");
-    await page.waitForTimeout(1000);
+    await cas.waitForTimeout(page, 1000);
     await cas.pressEnter(page);
-    await page.waitForTimeout(4000);
+    await cas.waitForTimeout(page, 4000);
     await cas.log(`Page url: ${ await page.url()}`);
 
     await cas.loginWith(page, "user1", "password");
-    await page.waitForTimeout(2000);
+    await cas.waitForTimeout(page, 2000);
 
     await cas.log(`Page url: ${ await page.url()}`);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");

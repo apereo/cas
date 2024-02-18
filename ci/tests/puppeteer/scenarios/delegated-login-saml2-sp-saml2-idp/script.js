@@ -7,20 +7,20 @@ const path = require("path");
     const page = await cas.newPage(browser);
 
     await cas.gotoLogin(page);
-    await page.waitForTimeout(1000);
+    await cas.waitForTimeout(page, 1000);
 
     await cas.doRequest("https://localhost:8443/cas/sp/metadata", "GET", {}, 200);
     await cas.doRequest("https://localhost:8443/cas/sp/idp/metadata", "GET", {}, 200);
 
     await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
-    await page.waitForTimeout(1000);
+    await cas.waitForTimeout(page, 1000);
 
     await cas.assertVisibility(page, "li #SAML2Client");
     await cas.click(page, "li #SAML2Client");
-    await page.waitForTimeout(6000);
+    await cas.waitForTimeout(page, 6000);
 
     await cas.loginWith(page, "user1", "password");
-    await page.waitForTimeout(2000);
+    await cas.waitForTimeout(page, 2000);
 
     await cas.log("Checking for page URL...");
     await cas.logPage(page);

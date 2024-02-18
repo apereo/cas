@@ -26,5 +26,5 @@ async function submitLogin(page) {
 
 async function assertFailure(page) {
     await cas.assertInnerText(page, "#loginErrorsPanel p", "Service access denied due to missing privileges.");
-    await page.waitForTimeout(1000);
+    await cas.waitForTimeout(page, 1000);
 }

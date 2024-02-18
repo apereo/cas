@@ -10,7 +10,7 @@ const cas = require("../../cas.js");
         await cas.log("Sending first authentication request");
         const page = await cas.newPage(browser);
         await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
-        await page.waitForTimeout(4000);
+        await cas.waitForTimeout(page, 4000);
         await cas.logPage(page);
 
         await cas.log("Sending second authentication request");
@@ -24,7 +24,7 @@ const cas = require("../../cas.js");
         await page.bringToFront();
         await cas.screenshot(page);
         await cas.loginWith(page);
-        await page.waitForTimeout(3000);
+        await cas.waitForTimeout(page, 3000);
         await page.waitForSelector("#table_with_attributes", {visible: true});
         await cas.assertVisibility(page, "#table_with_attributes");
         

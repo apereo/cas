@@ -39,11 +39,11 @@ async function getPayload(page, redirectUri, clientId, clientSecret, scopes = "o
     const url = `https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=${clientId}&scope=${encodedScopes}&redirect_uri=${redirectUri}`;
     await cas.goto(page, url);
     await cas.logPage(page);
-    await page.waitForTimeout(1000);
+    await cas.waitForTimeout(page, 1000);
     
     if (await cas.isVisible(page, "#username")) {
         await cas.loginWith(page);
-        await page.waitForTimeout(1000);
+        await cas.waitForTimeout(page, 1000);
     }
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");

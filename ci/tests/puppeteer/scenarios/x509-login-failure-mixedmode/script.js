@@ -45,7 +45,7 @@ const request = require("request");
     });
 
     await cas.gotoLogin(page);
-    await page.waitForTimeout(3000);
+    await cas.waitForTimeout(page, 3000);
     await cas.assertInnerTextStartsWith(page, "#loginErrorsPanel p", "Authentication attempt has failed");
     await browser.close();
 })();

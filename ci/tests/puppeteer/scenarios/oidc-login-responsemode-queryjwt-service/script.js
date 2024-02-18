@@ -11,7 +11,7 @@ const path = require("path");
     await cas.goto(page, url);
 
     await cas.loginWith(page);
-    await page.waitForTimeout(1000);
+    await cas.waitForTimeout(page, 1000);
 
     await cas.click(page, "#allow");
     await page.waitForNavigation();

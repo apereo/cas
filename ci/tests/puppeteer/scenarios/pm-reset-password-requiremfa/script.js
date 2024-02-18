@@ -5,15 +5,15 @@ const cas = require("../../cas.js");
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.gotoLogin(page);
-    await page.waitForTimeout(2000);
+    await cas.waitForTimeout(page, 2000);
     await cas.assertInnerText(page, "#forgotPasswordLink", "Reset your password");
     await cas.click(page, "#forgotPasswordLink");
-    await page.waitForTimeout(2000);
+    await cas.waitForTimeout(page, 2000);
 
     await cas.type(page,"#username", "casuser");
     await cas.pressEnter(page);
     await page.waitForNavigation();
-    await page.waitForTimeout(1000);
+    await cas.waitForTimeout(page, 1000);
     await cas.screenshot(page);
 
     const page2 = await browser.newPage();
@@ -27,10 +27,10 @@ const cas = require("../../cas.js");
     await page.bringToFront();
     await cas.type(page, "#token", code);
     await cas.submitForm(page, "#fm1");
-    await page.waitForTimeout(4000);
+    await cas.waitForTimeout(page, 4000);
     await cas.screenshot(page);
 
-    await page.waitForTimeout(1000);
+    await cas.waitForTimeout(page, 1000);
     await cas.assertInnerText(page, "#content h2", "Password Reset Instructions Sent Successfully.");
     await cas.assertInnerTextStartsWith(page, "#content p", "You should shortly receive a message");
 

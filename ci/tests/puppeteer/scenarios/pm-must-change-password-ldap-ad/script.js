@@ -6,7 +6,7 @@ const cas = require("../../cas.js");
     const page = await cas.newPage(browser);
     await cas.gotoLogin(page);
     await cas.loginWith(page, "mustchangepassword", "P@ssw0rd");
-    await page.waitForTimeout(2000);
+    await cas.waitForTimeout(page, 2000);
 
     await cas.assertInnerText(page, "#pwdmain h3", "Hello, mustchangepassword. You must change your password.");
     await cas.type(page,"#password", "Jv!e0mKD&dCNl^Q");

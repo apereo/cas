@@ -44,20 +44,20 @@ const fs = require("fs");
     });
 
     await cas.gotoLogin(page);
-    await page.waitForTimeout(5000);
+    await cas.waitForTimeout(page, 5000);
 
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
     await cas.assertInnerTextContains(page, "#content div p", "1234567890@college.edu");
 
     await cas.gotoLogin(page, "https://localhost:9859/anything/cas");
-    await page.waitForTimeout(5000);
+    await cas.waitForTimeout(page, 5000);
     await assertFailure(page);
     await browser.close();
 })();
 
 async function assertFailure(page) {
     await cas.assertInnerText(page, "#loginErrorsPanel p", "Service access denied due to missing privileges.");
-    await page.waitForTimeout(1000);
+    await cas.waitForTimeout(page, 1000);
 }
 
 

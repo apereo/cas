@@ -19,10 +19,10 @@ const cas = require("../../cas.js");
     await cas.click(page, "li #CasClient");
     await page.waitForNavigation();
 
-    await page.waitForTimeout(2000);
+    await cas.waitForTimeout(page, 2000);
     await cas.screenshot(page);
     await cas.loginWith(page);
-    await page.waitForTimeout(1000);
+    await cas.waitForTimeout(page, 1000);
 
     const result = new URL(page.url());
     await cas.log(result.searchParams.toString());
@@ -35,7 +35,7 @@ const cas = require("../../cas.js");
     await cas.log("Allowing release of scopes and claims...");
     await cas.click(page, "#allow");
     await page.waitForNavigation();
-    await page.waitForTimeout(2000);
+    await cas.waitForTimeout(page, 2000);
     await cas.assertTextContent(page, "h1.green-text", "Success!");
 
     await cas.logPage(page);

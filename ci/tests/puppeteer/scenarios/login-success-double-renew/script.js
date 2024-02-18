@@ -23,7 +23,7 @@ const cas = require("../../cas.js");
 
     for (let i = 0; i < 2; i++) {
         await cas.gotoLogin(page, undefined, 8443, true);
-        await page.waitForTimeout(1000);
+        await cas.waitForTimeout(page, 1000);
 
         await cas.assertVisibility(page, "#existingSsoMsg");
     }

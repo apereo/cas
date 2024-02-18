@@ -10,7 +10,7 @@ const assert = require("assert");
     await cas.loginWith(page, "s#kiooritea", "p@$$W0rd");
     await cas.screenshot(page);
     await cas.goto(page, "https://localhost:8443/cas/sba/applications/CAS");
-    await page.waitForTimeout(2000);
+    await cas.waitForTimeout(page, 2000);
     const count = (await page.$$("div#CAS li")).length;
     await cas.log(`Number of instances: ${count}`);
     assert(count === 2);

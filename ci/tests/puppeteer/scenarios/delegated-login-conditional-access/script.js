@@ -9,22 +9,22 @@ const cas = require("../../cas.js");
 
     await cas.gotoLogout(page);
     await cas.gotoLogin(page, service);
-    await page.waitForTimeout(1000);
+    await cas.waitForTimeout(page, 1000);
     await cas.loginWith(page);
-    await page.waitForTimeout(2000);
+    await cas.waitForTimeout(page, 2000);
     await cas.assertParameter(page, "ticket");
 
     await cas.log("Trying delegated authentication to activate access strategy");
     await cas.gotoLogout(page);
     await cas.gotoLogin(page, service);
-    await page.waitForTimeout(1000);
+    await cas.waitForTimeout(page, 1000);
     await cas.assertVisibility(page, "li #CASClient");
     await cas.click(page, "#CASClient");
     await page.waitForNavigation();
-    await page.waitForTimeout(1000);
+    await cas.waitForTimeout(page, 1000);
     const response = await cas.loginWith(page);
     await cas.log(`${response.status()} ${response.statusText()}`);
-    await page.waitForTimeout(1000);
+    await cas.waitForTimeout(page, 1000);
     await cas.screenshot(page);
     await cas.assertInnerText(page, "#content h2", "Unauthorized Access");
     await cas.assertTextContentStartsWith(page, "#content div p", "Either the authentication request was rejected/cancelled");

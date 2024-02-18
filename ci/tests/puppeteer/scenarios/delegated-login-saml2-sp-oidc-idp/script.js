@@ -7,10 +7,10 @@ const path = require("path");
     const page = await cas.newPage(browser);
 
     await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
-    await page.waitForTimeout(1000);
+    await cas.waitForTimeout(page, 1000);
     await cas.assertVisibility(page, "li #OktaOidcClient");
     await cas.click(page, "li #OktaOidcClient");
-    await page.waitForTimeout(3000);
+    await cas.waitForTimeout(page, 3000);
 
     await cas.loginWith(page, "info@fawnoos.com", "QFkN&d^bf9vhS3KS49",
         "#okta-signin-username", "#okta-signin-password");
