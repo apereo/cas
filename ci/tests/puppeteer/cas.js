@@ -104,7 +104,7 @@ exports.removeDirectoryOrFile = async (directory) => {
 };
 
 exports.waitForTimeout = async(page, milliseconds) => {
-    await page.evaluate(() => new Promise((r) => setTimeout(r, milliseconds)));
+    await new Promise((r) => setTimeout(r, milliseconds));
 };
 
 exports.click = async (page, button) => {
