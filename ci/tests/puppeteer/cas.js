@@ -280,8 +280,7 @@ exports.submitForm = async (page, selector, predicate = undefined, statusCode = 
 };
 
 exports.pressEnter = async (page) => {
-    page.keyboard.press("Enter");
-    await this.waitForTimeout(page, 1000);
+    await page.keyboard.press("Enter");
 };
 
 exports.type = async (page, selector, value, obfuscate = false) => {
@@ -434,11 +433,11 @@ exports.doRequest = async (url, method = "GET",
             }
         };
 
-        if (requestBody !== undefined) {
+        if (requestBody === undefined) {
+            https.get(url, options, (res) => handler(res)).on("error", reject);
+        } else {
             const request = https.request(url, options, (res) => handler(res)).on("error", reject);
             request.write(requestBody);
-        } else {
-            https.get(url, options, (res) => handler(res)).on("error", reject);
         }
     });
 
@@ -523,25 +522,6 @@ exports.runGradle = async (workdir, opts = [], exitFunc) => {
     });
     exec.on("exit", exitFunc);
     return exec;
-};
-
-exports.launchWsFedSp = async (spDir, opts = []) => {
-    let args = ["build", "appStart", "-q", "-x", "test", "--no-daemon", `-Dsp.sslKeystorePath=${process.env.CAS_KEYSTORE}`];
-    args = args.concat(opts);
-    await this.logg(`Launching WSFED SP in ${spDir} with ${args}`);
-    return this.runGradle(spDir, args, (code) => this.log(`WSFED SP Child process exited with code ${code}`));
-};
-
-exports.stopGradleApp = async (gradleDir, deleteDir = true) => {
-    const args = ["appStop", "-q", "--no-daemon"];
-    await this.logg(`Stopping process in ${gradleDir} with ${args}`);
-    return this.runGradle(gradleDir, args, (code) => {
-        this.log(`Stopped child process exited with code ${code}`);
-        if (deleteDir) {
-            this.sleep(3000);
-            this.removeDirectory(gradleDir);
-        }
-    });
 };
 
 exports.shutdownCas = async (baseUrl) => {
