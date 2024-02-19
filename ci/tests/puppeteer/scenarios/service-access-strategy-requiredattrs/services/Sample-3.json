@@ -1,0 +1,19 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "https://required.rejected.example.com",
+  "name": "Sample",
+  "id": 3,
+  "description": "Sample Service",
+  "evaluationOrder": 10000,
+  "accessStrategy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "requiredAttributes" : {
+      "@class" : "java.util.HashMap",
+      "givenName" : [ "java.util.HashSet", [ "ApereoCAS" ] ]
+    },
+    "rejectedAttributes" : {
+      "@class" : "java.util.HashMap",
+      "credentialType" : [ "java.util.HashSet", [ "X509CertificateCredential" ] ]
+    }
+  }
+}
