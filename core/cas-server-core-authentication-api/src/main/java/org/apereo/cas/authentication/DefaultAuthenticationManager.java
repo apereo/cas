@@ -187,7 +187,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         LOGGER.debug("Final principal resolved for this authentication event is [{}]", principal);
         publishEvent(new CasAuthenticationPrincipalResolvedEvent(this, principal, clientInfo));
     }
-    
+
     protected PrincipalResolver getPrincipalResolverLinkedToHandlerIfAny(final AuthenticationHandler handler,
                                                                          final AuthenticationTransaction transaction) {
         return this.authenticationEventExecutionPlan.getPrincipalResolver(handler, transaction);
@@ -262,6 +262,11 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
                                                final Set<AuthenticationHandler> authenticationHandlers) throws Throwable {
         val clientInfo = ClientInfoHolder.getClientInfo();
         if (builder.getSuccesses().isEmpty()) {
+            if (builder.getFailures().isEmpty()) {
+                LOGGER.warn("The resulting authentication attempt has not recorded any successes or failures. This typically means that no authentication handler "
+                    + "could be found to support the authentication request or the credential types provided. The authentication handlers that were "
+                    + "examined are: [{}]", authenticationHandlers.stream().map(AuthenticationHandler::getName).collect(Collectors.joining(", ")));
+            }
             publishEvent(new CasAuthenticationTransactionFailureEvent(this, builder.getFailures(), transaction.getCredentials(), clientInfo));
             throw new AuthenticationException(builder.getFailures(), builder.getSuccesses());
         }

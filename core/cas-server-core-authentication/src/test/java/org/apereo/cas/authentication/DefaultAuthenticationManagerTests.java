@@ -131,6 +131,17 @@ class DefaultAuthenticationManagerTests {
     }
 
     @Test
+    void verifyHandlerDoesNotSupportCredential() throws Throwable {
+        val map = new HashMap<AuthenticationHandler, PrincipalResolver>();
+        val handler = newMockHandler(true);
+        when(handler.supports(any(Credential.class))).thenReturn(Boolean.FALSE);
+        map.put(handler, null);
+        val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
+        val manager = getAuthenticationManager(authenticationExecutionPlan);
+        assertThrows(AuthenticationException.class, () -> manager.authenticate(transaction));
+    }
+
+    @Test
     void verifyTransactionWithAuthnHistoryAndAuthnPolicy() throws Throwable {
         val map = new LinkedHashMap<AuthenticationHandler, PrincipalResolver>();
         map.put(newMockHandler(true), null);
