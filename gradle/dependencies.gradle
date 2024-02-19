@@ -2343,7 +2343,7 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "log4j-over-slf4j")
                     exclude(group: "org.slf4j", module: "jul-to-slf4j")
                 },
-                dependencies.create("ch.qos.logback:logback-access:$logbackVersion") {
+                dependencies.create("ch.qos.logback:logback-access:$logbackAccessVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.slf4j", module: "log4j-over-slf4j")
                     exclude(group: "org.slf4j", module: "jul-to-slf4j")
