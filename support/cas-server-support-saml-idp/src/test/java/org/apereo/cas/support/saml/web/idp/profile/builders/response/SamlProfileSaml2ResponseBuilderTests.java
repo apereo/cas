@@ -158,7 +158,7 @@ class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurationTests
 
         val service = getSamlRegisteredServiceForTestShib(true, false);
         val adaptor = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver,
-            service, service.getServiceId()).get();
+            service, service.getServiceId()).orElseThrow();
 
         val authnRequest = getAuthnRequestFor(service);
         val assertion = getAssertion();

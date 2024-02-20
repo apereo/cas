@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 import java.util.List;
+import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -32,7 +33,7 @@ class OidcPhoneScopeAttributeReleasePolicyTests {
             val principal = CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("phone_number", List.of("12134321245")));
 
             val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
-                .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
+                .registeredService(CoreAuthenticationTestUtils.getRegisteredService(randomServiceUrl()))
                 .service(CoreAuthenticationTestUtils.getService())
                 .principal(principal)
                 .applicationContext(applicationContext)
@@ -48,7 +49,7 @@ class OidcPhoneScopeAttributeReleasePolicyTests {
                 CollectionUtils.wrap("cell_phone", List.of("12134321245")));
 
             val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
-                .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
+                .registeredService(CoreAuthenticationTestUtils.getRegisteredService(randomServiceUrl()))
                 .service(CoreAuthenticationTestUtils.getService())
                 .principal(principal)
                 .applicationContext(applicationContext)
@@ -68,7 +69,7 @@ class OidcPhoneScopeAttributeReleasePolicyTests {
             val principal = CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("phone_number_verified", List.of("12134321245"),
                 "phone_number", List.of("12134321245")));
             val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
-                .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
+                .registeredService(CoreAuthenticationTestUtils.getRegisteredService(randomServiceUrl()))
                 .service(CoreAuthenticationTestUtils.getService())
                 .principal(principal)
                 .applicationContext(applicationContext)
@@ -83,7 +84,7 @@ class OidcPhoneScopeAttributeReleasePolicyTests {
             val policy = new OidcPhoneScopeAttributeReleasePolicy();
             val chain = new ChainingAttributeReleasePolicy();
             chain.addPolicies(policy);
-            val service = getOidcRegisteredService();
+            val service = getOidcRegisteredService(UUID.randomUUID().toString(), randomServiceUrl());
             service.setAttributeReleasePolicy(chain);
             val serializer = new RegisteredServiceJsonSerializer(applicationContext);
             val json = serializer.toString(service);

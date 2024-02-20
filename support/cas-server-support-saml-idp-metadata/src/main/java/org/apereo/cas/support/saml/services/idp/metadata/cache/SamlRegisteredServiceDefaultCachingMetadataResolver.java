@@ -158,6 +158,7 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
             }))
             .filter(Optional::isPresent)
             .flatMap(Optional::stream)
+            .filter(MetadataResolverCacheQueryResult::isValid)
             .findFirst();
 
         if (cachedEntry.isPresent() && cachedEntry.get().isValid()) {
@@ -211,7 +212,7 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
 
     @SuperBuilder
     @Getter
-    private static final class MetadataResolverCacheQueryResult {
+    static final class MetadataResolverCacheQueryResult {
         private final CachedMetadataResolverResult result;
 
         @Builder.Default

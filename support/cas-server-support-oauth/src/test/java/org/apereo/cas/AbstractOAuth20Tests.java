@@ -662,7 +662,7 @@ public abstract class AbstractOAuth20Tests {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.name().toLowerCase(Locale.ENGLISH));
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
-        mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, CLIENT_SECRET);
+        mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, service.getClientSecret());
         mockRequest.setParameter(OAuth20Constants.REFRESH_TOKEN, refreshToken.getId());
         val mockResponse = new MockHttpServletResponse();
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
@@ -693,13 +693,10 @@ public abstract class AbstractOAuth20Tests {
         return Pair.of(accessToken, newRefreshToken);
     }
 
-    /**
-     * Generate access token response and get model and view.
-     *
-     * @param registeredService the registered service
-     * @return the model and view
-     * @throws Throwable the exception
-     */
+    protected String randomServiceUrl() {
+        return "https://app.example.org/%s".formatted(RandomUtils.randomAlphabetic(8));
+    }
+
     protected ModelAndView generateAccessTokenResponseAndGetModelAndView(final OAuthRegisteredService registeredService) throws Throwable {
         return generateAccessTokenResponseAndGetModelAndView(registeredService,
             RegisteredServiceTestUtils.getAuthentication("casuser"), OAuth20GrantTypes.AUTHORIZATION_CODE);

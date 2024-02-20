@@ -484,6 +484,10 @@ public abstract class AbstractOidcTests {
         return accessToken;
     }
 
+    protected String randomServiceUrl() {
+        return "https://app.example.org/%s".formatted(RandomUtils.randomAlphabetic(8));
+    }
+
     protected OAuth20Code addCode(final Principal principal,
                                   final OAuthRegisteredService registeredService) throws Throwable {
         val tgt = new MockTicketGrantingTicket("casuser");
