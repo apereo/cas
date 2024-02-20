@@ -114,7 +114,7 @@ public class MockWebServer implements Closeable {
 
     public MockWebServer(final int port, final Object body) {
         try {
-            val data = MAPPER.writeValueAsString(body);
+            val data = toJsonString(body);
             val resource = new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output");
             this.worker = new Worker(getServerSocket(port, false), resource,
                 HttpStatus.OK, MediaType.APPLICATION_JSON_VALUE, Map.of());
@@ -123,9 +123,13 @@ public class MockWebServer implements Closeable {
         }
     }
 
+    public MockWebServer(final Map body) {
+        this(toJsonString(body));
+    }
+
     public MockWebServer(final int port, final Object body, final Map headers, final HttpStatus status) {
         try {
-            val data = MAPPER.writeValueAsString(body);
+            val data = toJsonString(body);
             val resource = new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output");
             this.worker = new Worker(getServerSocket(port, false), resource, status, MediaType.APPLICATION_JSON_VALUE, headers);
         } catch (final Exception e) {
@@ -222,7 +226,7 @@ public class MockWebServer implements Closeable {
 
     public void responseBodyJson(final Object body) throws Exception {
         try {
-            val data = MAPPER.writeValueAsString(body);
+            val data = toJsonString(body);
             responseBody(data);
         } catch (final Exception e) {
             throw new IllegalArgumentException(e);
@@ -253,6 +257,7 @@ public class MockWebServer implements Closeable {
         try {
             this.worker.stop();
             this.workerThread.join();
+            ALL_PORTS.remove(getPort());
         } catch (final InterruptedException e) {
             LoggingUtils.error(LOGGER, e);
         }
@@ -433,5 +438,13 @@ public class MockWebServer implements Closeable {
         }
         ALL_PORTS.add(port);
         return port;
+    }
+
+    private static String toJsonString(final Object body) {
+        try {
+            return MAPPER.writeValueAsString(body);
+        } catch (final Exception e) {
+            throw new IllegalArgumentException("Cannot convert object to JSON ", e);
+        }
     }
 }

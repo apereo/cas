@@ -9,7 +9,7 @@ const cas = require("../../cas.js");
     await cas.waitForTimeout(page, 2000);
     await cas.assertTextContent(page, "#accountSignUpLink", "Sign Up");
     await cas.submitForm(page, "#accountMgmtSignupForm");
-    await cas.waitForTimeout(page, 1000);
+
 
     await cas.assertInnerText(page, "#content h2", "Account Registration");
     await cas.type(page,"#username", "casuser");
@@ -23,18 +23,18 @@ const cas = require("../../cas.js");
     await cas.assertInnerTextStartsWith(page, "#content p", "Account activation instructions are successfully sent");
 
     await cas.goto(page, "http://localhost:8282");
-    await cas.waitForTimeout(page, 1000);
+
     await cas.click(page, "table tbody td a");
-    await cas.waitForTimeout(page, 1000);
+
     const link = await cas.textContent(page, "div[name=bodyPlainText] .well");
     await cas.log(`Activation link is ${link}`);
     await cas.goto(page, link);
-    await cas.waitForTimeout(page, 1000);
+
     await cas.assertInnerText(page, "#content h2", "Account Registration");
     await cas.assertInnerTextStartsWith(page, "#content p", "Welcome back!");
 
     await typePassword(page, "EaP8R&iX$eK4nb8eAI", "EaP8R&iX$eK4nb8eAI");
-    await cas.waitForTimeout(page, 1000);
+
 
     for (let i = 1; i <= 2; i++) {
         await cas.type(page, `#securityquestion${i}`, `Security question ${i}`);

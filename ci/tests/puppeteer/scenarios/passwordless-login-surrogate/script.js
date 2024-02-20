@@ -7,7 +7,7 @@ const cas = require("../../cas.js");
     const page = await cas.newPage(browser);
     
     await cas.gotoLogin(page);
-    await cas.waitForTimeout(page, 1000);
+
 
     const pswd = await page.$("#password");
     assert(pswd === null);
@@ -19,7 +19,7 @@ const cas = require("../../cas.js");
     await cas.assertInnerText(page, "#login h3", "Provide Token");
     await cas.assertInnerTextStartsWith(page, "#login p", "Please provide the security token sent to you");
     await cas.assertVisibility(page, "#token");
-    await cas.waitForTimeout(page, 1000);
+
     
     const page2 = await browser.newPage();
     await page2.goto("http://localhost:8282");
@@ -32,13 +32,13 @@ const cas = require("../../cas.js");
     await page.bringToFront();
     await cas.type(page, "#token", code);
     await cas.submitForm(page, "#fm1");
-    await cas.waitForTimeout(page, 1000);
+
 
     await cas.assertCookie(page);
     await cas.assertInnerTextStartsWith(page, "#content div p", "You, user3, have successfully logged in");
 
     await cas.click(page, "#auth-tab");
-    await cas.waitForTimeout(page, 1000);
+
     await cas.type(page, "#attribute-tab-1 input[type=search]", "surrogate");
     await cas.waitForTimeout(page, 1000);
     await cas.screenshot(page);

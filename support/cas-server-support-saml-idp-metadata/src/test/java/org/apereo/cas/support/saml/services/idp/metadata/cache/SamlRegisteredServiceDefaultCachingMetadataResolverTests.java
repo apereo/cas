@@ -38,18 +38,18 @@ class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlI
         aggregateRegisteredService.setName("AggregateMetadata");
         aggregateRegisteredService.setId(1000);
         aggregateRegisteredService.setServiceId("https://.+");
-        aggregateRegisteredService.setMetadataLocation("http://localhost:9191");
 
         val resolver = getResolver("PT1M");
-        try (val webServer = new MockWebServer(9191, new ClassPathResource("aggregate-md.xml"), MediaType.APPLICATION_XML_VALUE)) {
+        try (val webServer = new MockWebServer(new ClassPathResource("aggregate-md.xml"), MediaType.APPLICATION_XML_VALUE)) {
             webServer.start();
 
+            aggregateRegisteredService.setMetadataLocation("http://localhost:%s".formatted(webServer.getPort()));
             val criteriaSet1 = getCriteriaFor("https://issues.shibboleth.net/shibboleth");
             assertNotNull(resolver.resolve(aggregateRegisteredService, criteriaSet1));
             assertTrue(resolver.resolveIfPresent(aggregateRegisteredService, criteriaSet1).isPresent());
 
             val criteriaSet2 = getCriteriaFor("unknown-entity");
-            assertThrowsWithRootCause(RuntimeException.class, SamlException.class, () -> resolver.resolve(aggregateRegisteredService, criteriaSet2));
+            assertThrows(SamlException.class, () -> resolver.resolve(aggregateRegisteredService, criteriaSet2));
             assertTrue(resolver.resolveIfPresent(aggregateRegisteredService, criteriaSet1).isPresent());
         }
     }
@@ -69,7 +69,7 @@ class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlI
         assertTrue(resolver.resolveIfPresent(aggregateRegisteredService, criteriaSet1).isPresent());
 
         val criteriaSet2 = getCriteriaFor("unknown-service-provider");
-        assertThrowsWithRootCause(RuntimeException.class, SamlException.class, () -> resolver.resolve(aggregateRegisteredService, criteriaSet2));
+        assertThrows(SamlException.class, () -> resolver.resolve(aggregateRegisteredService, criteriaSet2));
 
         assertTrue(resolver.resolveIfPresent(aggregateRegisteredService, criteriaSet1).isPresent());
 
@@ -95,7 +95,7 @@ class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlI
         assertTrue(resolver.resolveIfPresent(service, criteriaSet).isPresent());
 
         val criteriaSet2 = getCriteriaFor("unknown-service-provider");
-        assertThrowsWithRootCause(RuntimeException.class, SamlException.class, () -> resolver.resolve(service, criteriaSet2));
+        assertThrows(SamlException.class, () -> resolver.resolve(service, criteriaSet2));
 
         assertFalse(resolver.resolveIfPresent(service, criteriaSet).isPresent());
         resolver.invalidate();
@@ -112,7 +112,7 @@ class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlI
         service.setMetadataLocation("classpath:metadata-invalid.xml");
 
         val resolver = getResolver("PT5S");
-        assertThrowsWithRootCause(RuntimeException.class, SamlException.class, () -> resolver.resolve(service, criteriaSet));
+        assertThrows(SamlException.class, () -> resolver.resolve(service, criteriaSet));
         resolver.invalidate();
     }
 
@@ -130,7 +130,7 @@ class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlI
         assertNotNull(resolver.resolve(service, criteriaSet1));
 
         val criteriaSet2 = getCriteriaFor("unknown-service-provider");
-        assertThrowsWithRootCause(RuntimeException.class, SamlException.class, () -> resolver.resolve(service, criteriaSet2));
+        assertThrows(SamlException.class, () -> resolver.resolve(service, criteriaSet2));
 
         assertFalse(resolver.resolveIfPresent(service, criteriaSet1).isPresent());
         resolver.invalidate();

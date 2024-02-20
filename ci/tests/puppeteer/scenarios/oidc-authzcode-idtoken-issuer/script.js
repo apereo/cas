@@ -7,7 +7,7 @@ async function testService(page, clientId, oidc = true) {
     const redirectUrl = "https://localhost:9859/anything/cas";
     const url = `https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=${clientId}&scope=${encodeURIComponent("openid profile")}&redirect_uri=${redirectUrl}`;
     await cas.goto(page, url);
-    await cas.waitForTimeout(page, 1000);
+
     await cas.loginWith(page);
     await cas.waitForTimeout(page, 1000);
 

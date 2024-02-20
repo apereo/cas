@@ -8,7 +8,7 @@ const assert = require("assert");
     const page = await cas.newPage(browser);
 
     await cas.goto(page, "https://localhost:8444");
-    await cas.waitForTimeout(page, 1000);
+
 
     await cas.log("Accessing protected CAS application");
     await cas.goto(page, "https://localhost:8444/protected");

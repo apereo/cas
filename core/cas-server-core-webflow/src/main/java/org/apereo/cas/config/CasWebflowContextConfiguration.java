@@ -107,6 +107,7 @@ class CasWebflowContextConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public HandlerAdapter logoutHandlerAdapter(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("logoutFlowUrlHandler") final FlowUrlHandler logoutFlowUrlHandler,
             @Qualifier("logoutFlowExecutor") final FlowExecutor logoutFlowExecutor) {
             val handler = new CasFlowHandlerAdapter(CasWebflowConfigurer.FLOW_ID_LOGOUT);
@@ -130,6 +131,7 @@ class CasWebflowContextConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public HandlerAdapter loginHandlerAdapter(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("loginFlowExecutor") final FlowExecutor loginFlowExecutor,
             @Qualifier("loginFlowUrlHandler") final FlowUrlHandler loginFlowUrlHandler) {
             val handler = new CasFlowHandlerAdapter(CasWebflowConfigurer.FLOW_ID_LOGIN);
@@ -374,8 +376,10 @@ class CasWebflowContextConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowExecutionPlan.BEAN_NAME)
-        public CasWebflowExecutionPlan casWebflowExecutionPlan(final List<CasWebflowExecutionPlanConfigurer> configurers) {
-            val plan = new DefaultCasWebflowExecutionPlan();
+        public CasWebflowExecutionPlan casWebflowExecutionPlan(
+            final ConfigurableApplicationContext applicationContext,
+            final List<CasWebflowExecutionPlanConfigurer> configurers) {
+            val plan = new DefaultCasWebflowExecutionPlan(applicationContext);
             configurers
                 .stream()
                 .filter(BeanSupplier::isNotProxy)
@@ -388,7 +392,6 @@ class CasWebflowContextConfiguration {
             val webflowExecutionPlan = event.getApplicationContext().getBean(CasWebflowExecutionPlan.BEAN_NAME, CasWebflowExecutionPlan.class);
             LOGGER.debug("Executing CAS webflow execution plan...");
             webflowExecutionPlan.execute();
-            webflowExecutionPlan.getWebflowConfigurers().forEach(cfg -> cfg.postInitialization(event.getApplicationContext()));
         }
     }
 }

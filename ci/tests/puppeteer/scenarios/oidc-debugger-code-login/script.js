@@ -16,11 +16,11 @@ const cas = require("../../cas.js");
     await cas.goto(page, url);
 
     await cas.loginWith(page);
-    await cas.waitForTimeout(page, 1000);
+
 
     await cas.click(page, "#allow");
     await page.waitForNavigation();
-    await cas.waitForTimeout(page, 1000);
+
     await cas.assertTextContent(page, "h1.green-text", "Success!");
 
     await browser.close();

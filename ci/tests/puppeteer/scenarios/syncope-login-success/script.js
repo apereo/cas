@@ -28,7 +28,7 @@ const path = require("path");
 async function doLogin(page, uid, psw, email) {
     await cas.gotoLogout(page);
     await cas.gotoLogin(page);
-    await cas.loginWith(page,uid, psw);
+    await cas.loginWith(page, uid, psw);
     await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
