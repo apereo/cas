@@ -350,8 +350,7 @@ random=$(openssl rand -hex 8)
 if [[ ! -d "${PUPPETEER_DIR}/node_modules/puppeteer" || "${INSTALL_PUPPETEER}" == "true" ]]; then
   printgreen "Installing Puppeteer"
   cd "$PUPPETEER_DIR"
-  npm_install_cmd="npm install"
-  eval $npm_install_cmd || eval $npm_install_cmd || eval $npm_install_cmd
+  npm install --fetch-timeout 5000 --fetch-retries 3 --fetch-retry-maxtimeout 30000 --no-audit
   cd -
 else
   printgreen "Using existing Puppeteer modules..."

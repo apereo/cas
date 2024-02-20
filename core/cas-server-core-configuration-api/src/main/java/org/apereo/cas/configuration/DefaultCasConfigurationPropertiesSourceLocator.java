@@ -182,10 +182,20 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
         return composite;
     }
 
-    private PropertySource<?> loadEmbeddedProperties(final ResourceLoader resourceLoader,
+    /**
+     * Load embedded YAML/Properties property source.
+     * To save startup time and no incur too much IO for embedded resources,
+     * this method does not use {@link ResourceUtils#doesResourceExist} and instead relies on {@link Resource#exists()}.
+     *
+     * @param resourceLoader the resource loader
+     * @param environment    the environment
+     * @return the property source
+     */
+    protected PropertySource<?> loadEmbeddedProperties(final ResourceLoader resourceLoader,
                                                      final Environment environment) {
         val profiles = ConfigurationPropertiesLoaderFactory.getApplicationProfiles(environment);
-        val configFiles = profiles.stream()
+        val configFiles = profiles
+            .stream()
             .map(profile -> EXTENSIONS.stream()
                 .map(ext -> String.format("classpath:/application-%s.%s", profile, ext))
                 .collect(Collectors.toList()))
@@ -202,7 +212,7 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
         val composite = new CompositePropertySource("embeddedCompositeProperties");
         configFiles
             .stream()
-            .filter(ResourceUtils::doesResourceExist)
+            .filter(Resource::exists)
             .forEach(resource -> {
                 LOGGER.trace("Loading properties from [{}]", resource);
                 val source = configurationPropertiesLoaderFactory.getLoader(resource,
