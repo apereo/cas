@@ -201,8 +201,7 @@ exports.loginWith = async (page,
 
     await page.waitForSelector(passwordField, {visible: true});
     await this.type(page, passwordField, password, true);
-
-    await this.pressEnter(page);
+    this.pressEnter(page);
     return page.waitForNavigation();
 };
 
@@ -279,9 +278,7 @@ exports.submitForm = async (page, selector, predicate = undefined, statusCode = 
     ]);
 };
 
-exports.pressEnter = async (page) => {
-    await page.keyboard.press("Enter");
-};
+exports.pressEnter = async (page) => page.keyboard.press("Enter");
 
 exports.type = async (page, selector, value, obfuscate = false) => {
     const logValue = obfuscate ? "******" : value;

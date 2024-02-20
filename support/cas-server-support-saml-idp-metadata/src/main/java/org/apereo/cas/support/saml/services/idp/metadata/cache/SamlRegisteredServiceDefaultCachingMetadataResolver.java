@@ -6,10 +6,8 @@ import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.apereo.cas.util.concurrent.CasReentrantLock;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-
 import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
@@ -28,7 +26,6 @@ import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.springframework.util.Assert;
-
 import java.util.Objects;
 import java.util.Optional;
 
@@ -43,8 +40,6 @@ import java.util.Optional;
 @Slf4j
 @Monitorable
 public class SamlRegisteredServiceDefaultCachingMetadataResolver implements SamlRegisteredServiceCachingMetadataResolver {
-    private final CasReentrantLock lock = new CasReentrantLock();
-
     private final LoadingCache<SamlRegisteredServiceCacheKey, CachedMetadataResolverResult> cache;
 
     @Getter
@@ -73,31 +68,29 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
     }
 
     @Override
-    public CachedMetadataResolverResult resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
-        return lock.tryLock(() -> {
-            val metadataLocation = SpringExpressionLanguageValueResolver.getInstance().resolve(service.getMetadataLocation());
-            LOGGER.debug("Resolving metadata for [{}] at [{}]", service.getName(), metadataLocation);
-            val cacheKey = new SamlRegisteredServiceCacheKey(service, criteriaSet);
-            return FunctionUtils.doAndRetry(retryContext -> {
-                LOGGER.debug("Locating cached metadata resolver using key [{}] for service [{}]. Attempt [{}]",
-                    cacheKey.getId(), service.getName(), retryContext.getRetryCount());
-                val queryResult = locateAndCacheMetadataResolver(service, criteriaSet, cacheKey);
-                val result = isMetadataResolverAcceptable(queryResult, criteriaSet);
-                if (!result.isValid()) {
-                    val count = countResolvableEntityDescriptors(result);
-                    if (count == 1) {
-                        invalidate(service, criteriaSet);
-                    }
-                    LOGGER.warn("SAML metadata resolver [{}] obtained from the cache is "
-                            + "unable to produce/resolve valid metadata from [{}]. Metadata resolver cache entry with key [{}] "
-                            + "has been invalidated. Attempt: [#{}]",
-                        result.getResult().getMetadataResolver().getId(), metadataLocation,
-                        cacheKey.getId(), retryContext.getRetryCount());
-                    throw new SamlException("Unable to locate a valid SAML metadata resolver for "
-                        + metadataLocation + " to locate " + criteriaSet);
+    public CachedMetadataResolverResult resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) throws Exception {
+        val metadataLocation = SpringExpressionLanguageValueResolver.getInstance().resolve(service.getMetadataLocation());
+        LOGGER.debug("Resolving metadata for [{}] at [{}]", service.getName(), metadataLocation);
+        val cacheKey = new SamlRegisteredServiceCacheKey(service, criteriaSet);
+        return FunctionUtils.doAndRetry(retryContext -> {
+            LOGGER.debug("Locating cached metadata resolver using key [{}] for service [{}]. Attempt [{}]",
+                cacheKey.getId(), service.getName(), retryContext.getRetryCount());
+            val queryResult = locateAndCacheMetadataResolver(service, criteriaSet, cacheKey);
+            val result = isMetadataResolverAcceptable(queryResult, criteriaSet);
+            if (!result.isValid()) {
+                val count = countResolvableEntityDescriptors(result);
+                if (count == 1) {
+                    invalidate(service, criteriaSet);
                 }
-                return queryResult.getResult();
-            });
+                LOGGER.warn("SAML metadata resolver [{}] obtained from the cache is "
+                        + "unable to produce/resolve valid metadata from [{}]. Metadata resolver cache entry with key [{}] "
+                        + "has been invalidated. Attempt: [#{}]",
+                    result.getResult().getMetadataResolver().getId(), metadataLocation,
+                    cacheKey.getId(), retryContext.getRetryCount());
+                throw new SamlException("Unable to locate a valid SAML metadata resolver for "
+                    + metadataLocation + " to locate " + criteriaSet);
+            }
+            return queryResult.getResult();
         });
     }
 
