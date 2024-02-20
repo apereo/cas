@@ -13,7 +13,7 @@ const cas = require("../../cas.js");
     await cas.assertVisibility(page, "li #GitHubClient");
 
     await cas.goto(page, "https://localhost:8443/cas/login?error=Fail&error_description=Error&error_code=400&error_reason=Reason");
-    await cas.waitForTimeout(page, 1000);
+
     await cas.assertInnerText(page, "#content div h2", "Unauthorized Access");
     await cas.assertTextContentStartsWith(page, "#content div p", "Either the authentication request was rejected/cancelled");
 

@@ -10,7 +10,7 @@ const cas = require("../../cas.js");
     await cas.loginWith(page);
 
     await cas.gotoLogin(page);
-    await cas.waitForTimeout(page, 1000);
+
 
     await cas.assertCookie(page);
 
@@ -26,7 +26,7 @@ const cas = require("../../cas.js");
     let url = await page.url();
     assert(url === "https://localhost:8443/cas/logout");
 
-    await cas.waitForTimeout(page, 1000);
+
     await cas.assertCookie(page, false);
 
     await cas.log("Logout with redirect...");
@@ -41,7 +41,7 @@ const cas = require("../../cas.js");
     await cas.log(`${response.status()} ${response.statusText()}`);
     assert(response.status() === 403);
     
-    await cas.waitForTimeout(page, 1000);
+
     await cas.assertInnerText(page, "#content h2", "Application Not Authorized to Use CAS");
     await cas.logPage(page);
 

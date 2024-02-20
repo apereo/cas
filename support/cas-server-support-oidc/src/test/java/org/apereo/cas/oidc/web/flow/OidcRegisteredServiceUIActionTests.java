@@ -42,12 +42,10 @@ class OidcRegisteredServiceUIActionTests extends AbstractOidcTests {
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
         val mdui = WebUtils.getServiceUserInterfaceMetadata(context, DefaultRegisteredServiceUserInterfaceInfo.class);
         assertNotNull(mdui);
-
-        val svc = getOidcRegisteredService();
-        assertEquals(mdui.getDisplayName(), svc.getName());
-        assertEquals(mdui.getInformationURL(), svc.getInformationUrl());
-        assertEquals(mdui.getDescription(), svc.getDescription());
-        assertEquals(mdui.getPrivacyStatementURL(), svc.getPrivacyUrl());
-        assertEquals(mdui.getLogoUrl(), svc.getLogo());
+        assertEquals(mdui.getDisplayName(), service.getName());
+        assertEquals(mdui.getInformationURL(), service.getInformationUrl());
+        assertEquals(mdui.getDescription(), service.getDescription());
+        assertEquals(mdui.getPrivacyStatementURL(), service.getPrivacyUrl());
+        assertEquals(mdui.getLogoUrl(), service.getLogo());
     }
 }

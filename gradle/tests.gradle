@@ -67,7 +67,7 @@ enum TestCategories {
     OAuth(true),
     OAuthToken(true),
     OAuthWeb,
-    OIDC,
+    OIDC(true),
     Oracle,
     PasswordOps(true),
     Postgres,

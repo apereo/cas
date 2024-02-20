@@ -13,7 +13,7 @@ const cas = require("../../cas.js");
     await cas.waitForTimeout(page, 4000);
     await cas.type(page, "#userNameInput", process.env.ADFS_USERNAME, true);
     await cas.type(page, "#passwordInput", process.env.ADFS_PASSWORD, true);
-    await cas.waitForTimeout(page, 1000);
+
     await cas.submitForm(page, "#loginForm");
     await cas.waitForTimeout(page, 3000);
     await cas.assertTextContent(page, "#content h1", "Authentication Interrupt");

@@ -13,7 +13,7 @@ const path = require("path");
         assert(response.ok());
 
         await cas.loginWith(page);
-        await cas.waitForTimeout(page, 1000);
+
         await cas.assertCookie(page);
         await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
         await cas.assertInnerText(page, "#content div h2", "Log In Successful");
@@ -22,21 +22,21 @@ const path = require("path");
         await cas.logPage(page);
         const url = await page.url();
         assert(url === "https://localhost:8443/cas/logout");
-        await cas.waitForTimeout(page, 1000);
+
         await cas.assertCookie(page, false);
 
         await cas.log("Logging in using external SAML2 identity provider...");
         await cas.gotoLogin(page);
-        await cas.waitForTimeout(page, 1000);
+
         await cas.click(page, "li #SAML2Client");
         await page.waitForNavigation();
         await cas.loginWith(page, "user1", "password");
         await cas.waitForTimeout(page, 3000);
         await cas.assertCookie(page);
 
-        await cas.waitForTimeout(page, 1000);
+
         await cas.goto(page, "https://localhost:8444/cas/login");
-        await cas.waitForTimeout(page, 1000);
+
         await cas.assertCookie(page);
 
     } finally {

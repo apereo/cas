@@ -20,7 +20,7 @@ const assert = require("assert");
     await cas.log(`Found session cookie ${sessionCookie.name}`);
     const cookieValue = await cas.base64Decode(sessionCookie.value);
     await cas.log(`Session cookie value ${cookieValue}`);
-    await cas.waitForTimeout(page, 1000);
+
     await cas.doGet(`https://localhost:8443/cas/actuator/sessions/${cookieValue}`,
         (res) => {
             assert(res.data.id !== undefined);

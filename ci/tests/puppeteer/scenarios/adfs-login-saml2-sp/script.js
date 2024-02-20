@@ -25,7 +25,7 @@ const cas = require("../../cas.js");
 
     const authData = JSON.parse(await cas.innerHTML(page, "details pre"));
     await cas.log(authData);
-    await cas.waitForTimeout(page, 1000);
+
 
     await browser.close();
 })();

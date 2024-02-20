@@ -56,10 +56,13 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 
 ### Testing Strategy
 
-The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
+The collection of end-to-end [browser tests based via Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
 and scenarios. At the moment, total number of jobs stands at approximately `475` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`. Furthermore, a large number of test categories that group internal unit tests
 are now configured to run with parallelism enabled.
+  
+Finally, the overall execution of the [browser tests based via Puppeteer](../../developer/Test-Process.html) is reduced
+by approximately `60` seconds by removing unnecessary *wait* times and delays in the test scenarios.
 
 ### OAuth/OpenID Connect Token Exchange
 
@@ -99,6 +102,7 @@ to be extremely valuable in cutting down test execution time and therefor result
 - Spring Cloud CosmosDb
 - Spring Data CosmosDb
 - Spring Boot
+- Puppeteer
 - Spring Data
 - Micrometer
 - Jose4j
