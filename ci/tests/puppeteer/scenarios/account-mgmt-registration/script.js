@@ -10,7 +10,6 @@ const cas = require("../../cas.js");
     await cas.assertTextContent(page, "#accountSignUpLink", "Sign Up");
     await cas.submitForm(page, "#accountMgmtSignupForm");
 
-
     await cas.assertInnerText(page, "#content h2", "Account Registration");
     await cas.type(page,"#username", "casuser");
     await cas.type(page,"#firstName", "CAS");
@@ -23,9 +22,9 @@ const cas = require("../../cas.js");
     await cas.assertInnerTextStartsWith(page, "#content p", "Account activation instructions are successfully sent");
 
     await cas.goto(page, "http://localhost:8282");
-
     await cas.click(page, "table tbody td a");
-
+    await cas.waitForElement(page, "div[name=bodyPlainText] .well");
+    
     const link = await cas.textContent(page, "div[name=bodyPlainText] .well");
     await cas.log(`Activation link is ${link}`);
     await cas.goto(page, link);

@@ -5,7 +5,8 @@ const assert = require("assert");
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
-
+    await cas.gotoLogin(page);
+    
     const authzUrl = "https://localhost:8443/cas/oidc/oidcAuthorize";
     const params = "client_id=client&" +
         "redirect_uri=https%3A%2F%2Foidcdebugger.com%2Fdebug&" +

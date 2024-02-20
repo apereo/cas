@@ -6,6 +6,8 @@ const cas = require("../../cas.js");
     
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
+    await cas.gotoLogin(page);
+
     const url = "https://localhost:8443/cas/oidc/oidcAuthorize?" +
         "client_id=client&" +
         "redirect_uri=https%3A%2F%2Foidcdebugger.com%2Fdebug&" +
@@ -14,15 +16,10 @@ const cas = require("../../cas.js");
         "response_mode=form_post&" +
         "nonce=vn4qulthnx";
     await cas.goto(page, url);
-
     await cas.loginWith(page);
-
-
     await cas.click(page, "#allow");
     await page.waitForNavigation();
-
     await cas.assertTextContent(page, "h1.green-text", "Success!");
-
     await browser.close();
 })();
 

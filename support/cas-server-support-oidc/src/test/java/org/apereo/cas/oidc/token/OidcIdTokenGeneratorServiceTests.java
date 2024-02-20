@@ -193,7 +193,8 @@ class OidcIdTokenGeneratorServiceTests {
             val tgt = new MockTicketGrantingTicket(authentication);
             val accessToken = buildAccessToken(tgt, Set.of(EMAIL.getScope()));
 
-            val registeredService = getOidcRegisteredService("clientid");
+            val registeredService = getOidcRegisteredService(UUID.randomUUID().toString(), randomServiceUrl());
+            servicesManager.save(registeredService);
             val profile = new CommonProfile();
             profile.setClientName("OIDC");
             profile.setId("casuser");
@@ -233,7 +234,7 @@ class OidcIdTokenGeneratorServiceTests {
             
             val accessToken = buildAccessToken(tgt);
 
-            val registeredService = getOidcRegisteredService("clientid");
+            val registeredService = getOidcRegisteredService(UUID.randomUUID().toString(), randomServiceUrl());
             registeredService.setIdTokenIssuer(UUID.randomUUID().toString());
             registeredService.setScopes(CollectionUtils.wrapSet(EMAIL.getScope(), PROFILE.getScope(), PHONE.getScope()));
             servicesManager.save(registeredService);
@@ -286,10 +287,11 @@ class OidcIdTokenGeneratorServiceTests {
 
             val accessToken = buildAccessToken(tgt);
 
-            val registeredService = (OidcRegisteredService) OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, "clientid");
+            val registeredService = getOidcRegisteredService(UUID.randomUUID().toString(), randomServiceUrl());
             registeredService.setIdTokenExpirationPolicy(new DefaultRegisteredServiceOidcIdTokenExpirationPolicy("PT60S"));
-
             registeredService.setScopes(CollectionUtils.wrapSet(EMAIL.getScope(), PROFILE.getScope(), PHONE.getScope()));
+            servicesManager.save(registeredService);
+
             val idToken = oidcIdTokenGenerator.generate(accessToken, profile,
                 OAuth20ResponseTypes.CODE, OAuth20GrantTypes.NONE, registeredService);
             assertNotNull(idToken);
@@ -332,9 +334,9 @@ class OidcIdTokenGeneratorServiceTests {
 
             val accessToken = buildAccessToken(tgt);
 
-            val registeredService = (OidcRegisteredService) OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, "clientid");
-            assertNotNull(registeredService);
+            val registeredService = getOidcRegisteredService(UUID.randomUUID().toString(), randomServiceUrl());
             registeredService.setScopes(CollectionUtils.wrapSet(EMAIL.getScope(), PROFILE.getScope(), PHONE.getScope()));
+            servicesManager.save(registeredService);
             val idToken = oidcIdTokenGenerator.generate(accessToken, profile,
                 OAuth20ResponseTypes.ID_TOKEN, OAuth20GrantTypes.AUTHORIZATION_CODE, registeredService);
             assertNotNull(idToken);
@@ -366,9 +368,11 @@ class OidcIdTokenGeneratorServiceTests {
             
             val accessToken = buildAccessToken(tgt);
 
+            val registeredService = getOidcRegisteredService(UUID.randomUUID().toString(), randomServiceUrl());
+            servicesManager.save(registeredService);
+
             val idToken = oidcIdTokenGenerator.generate(accessToken, profile,
-                OAuth20ResponseTypes.CODE, OAuth20GrantTypes.NONE,
-                OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, "clientid"));
+                OAuth20ResponseTypes.CODE, OAuth20GrantTypes.NONE, registeredService);
             assertNotNull(idToken);
         }
 
