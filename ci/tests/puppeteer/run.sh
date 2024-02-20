@@ -82,7 +82,6 @@ DEBUG_SUSPEND="n"
 DAEMON=""
 BUILDFLAGS=""
 DRYRUN=""
-CLEAR="true"
 INITONLY="false"
 NATIVE_BUILD="false"
 NATIVE_RUN="false"
@@ -97,7 +96,6 @@ while (( "$#" )); do
     NATIVE_BUILD="true"
     BUILDFLAGS="${BUILDFLAGS} --no-configuration-cache"
     QUIT_QUIETLY="true"
-    CLEAR=""
     shift 1;
     ;;
   --nr|--native-run)
@@ -222,10 +220,6 @@ while (( "$#" )); do
     ;;
   --nolint|--no-lint|--nol)
     DISABLE_LINTER="true"
-    shift 1;
-    ;;
-  --noclear|--nc|--ncl|--no-clear)
-    CLEAR=""
     shift 1;
     ;;
   *)
@@ -757,9 +751,6 @@ if [[ "${NATIVE_BUILD}" == "true" ]]; then
 fi
 
 if [[ "${DRYRUN}" != "true" && ("${NATIVE_BUILD}" == "false" || "${NATIVE_RUN}" == "true") ]]; then
-  if [[ "${CLEAR}" == "true" ]]; then
-    clear
-  fi
   echo -e "**************************************************************************"
   echo -e "Running ${scriptPath}\n"
   export NODE_TLS_REJECT_UNAUTHORIZED=0

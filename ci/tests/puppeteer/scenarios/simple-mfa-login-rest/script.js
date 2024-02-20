@@ -44,7 +44,7 @@ const cas = require("../../cas.js");
         await cas.submitForm(page, "#fm1");
 
         await cas.submitForm(page, "#registerform");
-        await cas.waitForTimeout(page, 1000);
+
         await cas.assertInnerText(page, "#content div h2", "Log In Successful");
         await cas.assertCookie(page);
     } finally {

@@ -62,7 +62,7 @@ test coverage of the CAS codebase is approximately `94%`. Furthermore, a large n
 are now configured to run with parallelism enabled.
   
 Finally, the overall execution of the [browser tests based via Puppeteer](../../developer/Test-Process.html) is reduced
-by approximately `60` seconds by removing unnecessary *wait* times and delays in the test scenarios.
+by approximately `90` seconds by removing unnecessary *wait* times and delays in test scenarios.
 
 ### OAuth/OpenID Connect Token Exchange
 
@@ -84,6 +84,15 @@ we expect the model to improve and learn more efficiently.
 
 This capability is provided by [Devlocity](https://gradle.com/develocity/) to the Apereo CAS project for free and is proving
 to be extremely valuable in cutting down test execution time and therefor resulting in a quicker feedback loop. 
+
+### Startup Time Improvements
+
+CAS web application startup time has been improved by approximately `3` seconds by removing unnecessary initializations.
+Notable changes in this area include:
+
+- Removing unnecessary I/O operations during startup to verify existence of embedded application resources on the classpath.
+- Removing the `org.webjars:webjars-locator-core` library which does classpath scanning at startup to locate assets.
+- Delaying the reconstruction of the CAS webflow execution plan until the application container is fully ready.
 
 ## Other Stuff
 

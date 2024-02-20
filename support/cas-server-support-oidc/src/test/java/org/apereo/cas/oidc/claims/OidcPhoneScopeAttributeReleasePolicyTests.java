@@ -32,8 +32,11 @@ class OidcPhoneScopeAttributeReleasePolicyTests {
             val policy = new OidcPhoneScopeAttributeReleasePolicy();
             val principal = CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("phone_number", List.of("12134321245")));
 
+            val registeredService = getOidcRegisteredService(UUID.randomUUID().toString(), randomServiceUrl());
+            registeredService.setAttributeReleasePolicy(policy);
+
             val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
-                .registeredService(CoreAuthenticationTestUtils.getRegisteredService(randomServiceUrl()))
+                .registeredService(registeredService)
                 .service(CoreAuthenticationTestUtils.getService())
                 .principal(principal)
                 .applicationContext(applicationContext)
@@ -48,8 +51,10 @@ class OidcPhoneScopeAttributeReleasePolicyTests {
             val principal = CoreAuthenticationTestUtils.getPrincipal(
                 CollectionUtils.wrap("cell_phone", List.of("12134321245")));
 
+            val registeredService = getOidcRegisteredService(UUID.randomUUID().toString(), randomServiceUrl());
+            registeredService.setAttributeReleasePolicy(policy);
             val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
-                .registeredService(CoreAuthenticationTestUtils.getRegisteredService(randomServiceUrl()))
+                .registeredService(registeredService)
                 .service(CoreAuthenticationTestUtils.getService())
                 .principal(principal)
                 .applicationContext(applicationContext)
@@ -68,8 +73,12 @@ class OidcPhoneScopeAttributeReleasePolicyTests {
             assertNotNull(policy.getAllowedAttributes());
             val principal = CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("phone_number_verified", List.of("12134321245"),
                 "phone_number", List.of("12134321245")));
-            val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
-                .registeredService(CoreAuthenticationTestUtils.getRegisteredService(randomServiceUrl()))
+
+            val registeredService = getOidcRegisteredService(UUID.randomUUID().toString(), randomServiceUrl());
+            registeredService.setAttributeReleasePolicy(policy);
+            val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext
+                .builder()
+                .registeredService(registeredService)
                 .service(CoreAuthenticationTestUtils.getService())
                 .principal(principal)
                 .applicationContext(applicationContext)

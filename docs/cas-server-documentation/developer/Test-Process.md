@@ -188,7 +188,6 @@ The following command-line options are supported for test execution:
 | `--body`, `--bogy`, `--boyd`              | A combination of `--build`, `--debug`, `--dry-run` and Gradle's `--offline` flag.        |
 | `--boy`                                   | A combination of `--build`, `--dry-run` and Gradle's `--offline` flag.                   |
 | `--io`, `--initonly`                      | Initialize the execution of the test scenario, but do not run it.                        |
-| `--nc`, `--ncl`, `--no-clear`             | Initialize the execution of the test scenario, but do not run it.                        |
 | `--native`, `--graalvm`, `--nb`           | Build the test scenario and produce a native-image as the final build artifact.          |
 | `--nr`, `--native-run`                    | Run the test scenario as a native-image. Requires a native build via `--nb`.             |
 | `--nbr`                                   | A combination of `--nb` and `--nr` flags.                                                |

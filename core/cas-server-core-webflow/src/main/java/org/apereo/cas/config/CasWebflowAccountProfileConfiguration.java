@@ -98,6 +98,7 @@ class CasWebflowAccountProfileConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     public HandlerAdapter accountProfileWebflowHandlerAdapter(
+        final ConfigurableApplicationContext applicationContext,
         @Qualifier("accountProfileFlowExecutor") final FlowExecutor accountProfileFlowExecutor) {
         val handler = new CasFlowHandlerAdapter(CasWebflowConfigurer.FLOW_ID_ACCOUNT);
         handler.setFlowExecutor(accountProfileFlowExecutor);

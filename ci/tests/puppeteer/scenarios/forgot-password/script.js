@@ -22,7 +22,6 @@ const cas = require("../../cas.js");
     await page.waitForNavigation();
 
 
-
     await cas.assertInnerText(page, "#content h2", "Password Reset Instructions Sent Successfully.");
     await cas.assertInnerTextStartsWith(page, "#content p", "You should shortly receive a message");
 

@@ -9,11 +9,11 @@
     "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
     "requiredAttributes" : {
       "@class" : "java.util.HashMap",
-      "givenName" : [ "java.util.HashSet", [ "ApereoCAS" ] ]
+      "phone" : [ "java.util.HashSet", [ "10854121763" ] ]
     },
     "rejectedAttributes" : {
       "@class" : "java.util.HashMap",
-      "credentialType" : [ "java.util.HashSet", [ "X509CertificateCredential" ] ]
+      "phone" : [ "java.util.HashSet", [ "000000000" ] ]
     }
   }
 }

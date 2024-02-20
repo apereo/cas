@@ -5,7 +5,9 @@ import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowLoginContextProvider;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.web.servlet.HandlerInterceptor;
 import java.util.ArrayList;
@@ -19,12 +21,15 @@ import java.util.List;
  */
 @Getter
 @Slf4j
+@RequiredArgsConstructor
 public class DefaultCasWebflowExecutionPlan implements CasWebflowExecutionPlan {
     private final List<CasWebflowConfigurer> webflowConfigurers = new ArrayList<>(0);
 
     private final List<HandlerInterceptor> webflowInterceptors = new ArrayList<>(0);
 
     private final List<CasWebflowLoginContextProvider> webflowLoginContextProviders = new ArrayList<>(0);
+
+    private final ConfigurableApplicationContext applicationContext;
 
     private boolean initialized;
 
@@ -53,7 +58,7 @@ public class DefaultCasWebflowExecutionPlan implements CasWebflowExecutionPlan {
     }
 
     @Override
-    public void execute() {
+    public CasWebflowExecutionPlan execute() {
         if (!initialized) {
             AnnotationAwareOrderComparator.sortIfNecessary(webflowConfigurers);
             AnnotationAwareOrderComparator.sortIfNecessary(webflowLoginContextProviders);
@@ -64,7 +69,13 @@ public class DefaultCasWebflowExecutionPlan implements CasWebflowExecutionPlan {
                     LOGGER.trace("Registering webflow configurer [{}]", cfg.getName());
                     cfg.initialize();
                 });
+            webflowConfigurers
+                .stream()
+                .filter(BeanSupplier::isNotProxy)
+                .forEach(cfg -> cfg.postInitialization(applicationContext));
             initialized = true;
         }
+        return this;
     }
+
 }

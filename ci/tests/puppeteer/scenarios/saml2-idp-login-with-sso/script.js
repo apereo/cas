@@ -25,7 +25,7 @@ const cas = require("../../cas.js");
     url += `?providerId=${entityId}`;
     url += "&target=https%3A%2F%2Flocalhost%3A8443%2Fcas%2Flogin";
     await cas.goto(page, url);
-    await cas.waitForTimeout(page, 1000);
+
     await cas.assertInnerText(page, "#content h2", "Application Not Authorized to Use CAS");
     await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
     await browser.close();

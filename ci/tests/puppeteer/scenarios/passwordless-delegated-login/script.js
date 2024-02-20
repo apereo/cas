@@ -7,17 +7,17 @@ async function startAuthFlow(page, username) {
     await cas.gotoLogout(page);
     await cas.log(`Starting authentication flow for ${username}`);
     await cas.gotoLogin(page);
-    await cas.waitForTimeout(page, 1000);
+
     const pswd = await page.$("#password");
     assert(pswd === null);
     await cas.type(page, "#username", username);
     await cas.pressEnter(page);
     await page.waitForNavigation();
-    await cas.waitForTimeout(page, 1000);
+
     const url = await page.url();
     await cas.logPage(page);
     assert(url.startsWith("https://localhost:8444"));
-    await cas.waitForTimeout(page, 1000);
+
 
     await cas.loginWith(page);
     await cas.waitForTimeout(page, 5000);
@@ -26,9 +26,9 @@ async function startAuthFlow(page, username) {
     await cas.assertInnerTextStartsWith(page, "#content div p", "You, casuser, have successfully logged in");
 
     await cas.click(page, "#auth-tab");
-    await cas.waitForTimeout(page, 1000);
+
     await cas.type(page, "#attribute-tab-1 input[type=search]", "surrogate");
-    await cas.waitForTimeout(page, 1000);
+
     await cas.screenshot(page);
 
     const surrogateEnabled = await page.$("#surrogateEnabled");

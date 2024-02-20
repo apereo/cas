@@ -4,6 +4,7 @@
   "properties": [
     "--cas.server.tomcat.http[0].enabled=true",
     "--cas.server.tomcat.http[0].port=8080",
+    "--cas.audit.slf4j.use-single-line=true",
     
     "--cas.server.name=http://localhost:8080",
     "--cas.server.prefix=http://localhost:8080/cas",

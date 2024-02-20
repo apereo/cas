@@ -685,6 +685,7 @@ class DelegatedAuthenticationWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public HandlerAdapter delegatedClientRedirectWebflowHandlerAdapter(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("delegatedClientRedirectFlowExecutor") final FlowExecutor delegatedClientRedirectFlowExecutor) {
             val handler = new CasFlowHandlerAdapter(CasWebflowConfigurer.FLOW_ID_DELEGATION_REDIRECT);
             handler.setFlowExecutor(delegatedClientRedirectFlowExecutor);
