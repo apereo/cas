@@ -25,7 +25,7 @@ env:
   JDK_DISTRIBUTION: "corretto"
   RETRY_ATTEMPTS: 2
   RETRY_MINUTES: 30
-  CATEGORY_REGEX: "oauth.*|samlres.*|oidc.*"
+  CATEGORY_REGEX: "oauthweb.*|samlres.*|oidc.*"
 ##########################################################################
 
 on:
