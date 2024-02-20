@@ -49,9 +49,10 @@ public class SamlSPUtils {
      * @param sp       the properties
      * @param resolver the resolver
      * @return the saml registered service
+     * @throws Exception the exception
      */
     public static SamlRegisteredService newSamlServiceProviderService(final AbstractSamlSPProperties sp,
-                                                                      final SamlRegisteredServiceCachingMetadataResolver resolver) {
+                                                                      final SamlRegisteredServiceCachingMetadataResolver resolver) throws Exception {
         if (StringUtils.isBlank(sp.getMetadata())) {
             LOGGER.debug("Skipped registration of [{}] since no metadata location is defined", sp.getName());
             return null;
@@ -103,7 +104,7 @@ public class SamlSPUtils {
 
     private static List<String> determineEntityIdList(final AbstractSamlSPProperties sp,
                                                       final SamlRegisteredServiceCachingMetadataResolver resolver,
-                                                      final SamlRegisteredService service) {
+                                                      final SamlRegisteredService service) throws Exception {
         val entityIDList = sp.getEntityIds();
         if (entityIDList.isEmpty()) {
 

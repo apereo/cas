@@ -29,8 +29,9 @@ public interface SamlRegisteredServiceCachingMetadataResolver {
      * @param service     the service
      * @param criteriaSet the criteria set
      * @return the chaining metadata resolver
+     * @throws Exception the exception
      */
-    CachedMetadataResolverResult resolve(SamlRegisteredService service, CriteriaSet criteriaSet);
+    CachedMetadataResolverResult resolve(SamlRegisteredService service, CriteriaSet criteriaSet) throws Exception;
 
     /**
      * Invalid and clean the result of all previous operations.

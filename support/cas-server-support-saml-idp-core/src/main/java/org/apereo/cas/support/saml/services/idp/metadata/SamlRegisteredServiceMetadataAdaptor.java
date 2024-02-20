@@ -94,7 +94,7 @@ public record SamlRegisteredServiceMetadataAdaptor(SPSSODescriptor ssoDescriptor
             LOGGER.trace("Adapting SAML metadata for CAS service [{}] issued by [{}]", registeredService.getName(), entityID);
             criteriaSet.add(new EntityIdCriterion(entityID), true);
             LOGGER.debug("Locating metadata for entityID [{}] by attempting to run through the metadata chain...", entityID);
-            val cachedResult = resolver.resolve(registeredService, criteriaSet);
+            val cachedResult = Objects.requireNonNull(resolver.resolve(registeredService, criteriaSet));
             Assert.isTrue(cachedResult.isResolved(), "Metadata resolution resulted in an unknown metadata resolver entry for entity id %s".formatted(entityID));
             val cachedMetadataResolver = cachedResult.getMetadataResolver();
             LOGGER.debug("Resolved metadata chain from [{}] using [{}]. Filtering the chain by entity ID [{}]",

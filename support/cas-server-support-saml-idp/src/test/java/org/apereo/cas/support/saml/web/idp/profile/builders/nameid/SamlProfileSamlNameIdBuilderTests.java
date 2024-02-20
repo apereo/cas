@@ -135,7 +135,7 @@ class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationTests {
         val authnRequest = getAuthnRequestFor(service);
 
         val adaptor = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver,
-            service, service.getServiceId()).get();
+            service, service.getServiceId()).orElseThrow();
         val buildContext = SamlProfileBuilderContext.builder()
             .samlRequest(authnRequest)
             .httpRequest(new MockHttpServletRequest())
@@ -172,7 +172,7 @@ class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationTests {
         when(attributeQuery.getSubject()).thenReturn(aqSubject);
 
         val adaptor = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver,
-            service, service.getServiceId()).get();
+            service, service.getServiceId()).orElseThrow();
         val buildContext = SamlProfileBuilderContext.builder()
             .samlRequest(attributeQuery)
             .httpRequest(new MockHttpServletRequest())
@@ -200,7 +200,7 @@ class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationTests {
         val authnRequest = getAuthnRequestFor(service);
 
         val adaptor = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver,
-            service, service.getServiceId()).get();
+            service, service.getServiceId()).orElseThrow();
 
         val buildContext = SamlProfileBuilderContext.builder()
             .samlRequest(authnRequest)
@@ -229,7 +229,7 @@ class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationTests {
 
         val authnRequest = getAuthnRequestFor(service);
         val adaptor = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver,
-            service, service.getServiceId()).get();
+            service, service.getServiceId()).orElseThrow();
 
         val buildContext = SamlProfileBuilderContext.builder()
             .samlRequest(authnRequest)
@@ -259,7 +259,7 @@ class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationTests {
         val authnRequest = getAuthnRequestFor(service);
 
         val adaptor = SamlRegisteredServiceMetadataAdaptor.get(this.samlRegisteredServiceCachingMetadataResolver,
-            service, service.getServiceId()).get();
+            service, service.getServiceId()).orElseThrow();
 
         val request = new MockHttpServletRequest();
         val buildContext = SamlProfileBuilderContext.builder()

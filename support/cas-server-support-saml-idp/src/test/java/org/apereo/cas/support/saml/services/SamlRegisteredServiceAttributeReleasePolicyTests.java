@@ -172,7 +172,7 @@ class SamlRegisteredServiceAttributeReleasePolicyTests {
         @TestConfiguration(proxyBeanMethods = false)
         static class SamlTestConfiguration {
             @Bean
-            public SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver() {
+            public SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver() throws Exception {
                 val resolver = mock(SamlRegisteredServiceCachingMetadataResolver.class);
                 val resolverResult = CachedMetadataResolverResult.builder().metadataResolver(mock(MetadataResolver.class)).build();
                 when(resolver.resolve(any(), any())).thenReturn(resolverResult);
