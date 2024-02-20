@@ -7,7 +7,6 @@ async function normalAuthenticationFlow(context) {
     const page = await cas.newPage(context);
 
     await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
-    await cas.waitForTimeout(page, 2000);
     await cas.screenshot(page);
     await cas.loginWith(page);
     await cas.waitForTimeout(page, 3000);
