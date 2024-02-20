@@ -27,6 +27,7 @@ import org.opensaml.saml.metadata.criteria.entity.impl.EvaluableEntityRoleEntity
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
+import org.springframework.util.Assert;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -145,29 +146,29 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
         final CriteriaSet criteriaSet,
         final SamlRegisteredServiceCacheKey cacheKey) {
 
-        val result = cache
+        val cachedEntry = cache
             .asMap()
             .values()
             .stream()
+            .filter(Objects::nonNull)
             .map(Unchecked.function(res -> {
                 val entity = res.getMetadataResolver().resolveSingle(criteriaSet);
                 return Optional.ofNullable(entity)
-                    .map(e -> MetadataResolverCacheQueryResult.builder()
-                        .result(res)
-                        .entityDescriptor(Optional.of(e))
-                        .build());
+                    .map(e -> MetadataResolverCacheQueryResult.builder().result(res).entityDescriptor(Optional.of(e)).build());
             }))
             .filter(Optional::isPresent)
             .flatMap(Optional::stream)
             .findFirst();
 
-        if (result.isPresent()) {
-            return result.get();
+        if (cachedEntry.isPresent() && cachedEntry.get().isValid()) {
+            return cachedEntry.get();
         }
         LOGGER.debug("Loading metadata resolver from the cache using [{}]", cacheKey.getCacheKey());
         val cacheResult = Objects.requireNonNull(cache.get(cacheKey));
         LOGGER.debug("Loaded and cached SAML metadata [{}] from [{}]",
             cacheResult.getMetadataResolver().getId(), service.getMetadataLocation());
+        Assert.isTrue(cacheResult.isResolved(), "Metadata resolver cannot be found from the cache for " + service.getName());
+
         return MetadataResolverCacheQueryResult
             .builder()
             .entityDescriptor(Optional.empty())
@@ -215,5 +216,9 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
 
         @Builder.Default
         private final Optional<EntityDescriptor> entityDescriptor = Optional.empty();
+
+        public boolean isValid() {
+            return result != null && result.isResolved();
+        }
     }
 }

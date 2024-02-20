@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -31,4 +32,14 @@ public class CachedMetadataResolverResult implements Serializable {
 
     @NotNull
     private final MetadataResolver metadataResolver;
+
+    /**
+     * Is metadata resolver available?
+     *
+     * @return the boolean
+     */
+    @JsonIgnore
+    public boolean isResolved() {
+        return metadataResolver != null;
+    }
 }

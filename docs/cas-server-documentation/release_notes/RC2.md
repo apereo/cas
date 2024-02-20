@@ -104,3 +104,6 @@ to be extremely valuable in cutting down test execution time and therefor result
 - Jose4j
 - Elastic APM
 - SendGrid
+- JavaMelody
+- Apache Tomcat
+- Logback
