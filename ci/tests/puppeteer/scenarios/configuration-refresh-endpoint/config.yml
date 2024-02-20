@@ -1,4 +1,4 @@
 cas:
   authn:
     accept:
-      users: casuser::p@$$word
+      users: casrefresh::p@$$word
