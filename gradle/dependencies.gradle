@@ -3520,8 +3520,6 @@ ext.libraries = [
                 }
         ],
         webjars                    : [
-                dependencies.create("org.webjars:hal-explorer:$halVersion") {
-                },
                 dependencies.create("org.webjars:jquery:$jqueryVersion") {},
                 dependencies.create("org.webjars:highlightjs:$highlightJsVersion") {},
                 dependencies.create("org.webjars:zxcvbn:$zxcvbnVersion") {

@@ -22,12 +22,9 @@ const path = require("path");
 
     try {
         await cas.refreshContext();
-        await cas.waitForTimeout(page, 2000);
-
         await cas.gotoLogout(page);
         await cas.goto(page, url);
         await cas.loginWith(page);
-        await cas.waitForTimeout(page, 4000);
         await cas.assertTextContent(page, "#status", "Login with FIDO2-enabled Device");
 
         await cas.log("Checking for presence of errors...");

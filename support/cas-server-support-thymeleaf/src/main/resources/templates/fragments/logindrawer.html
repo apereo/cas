@@ -25,13 +25,6 @@
             </div>
             <div class="mdc-drawer__content offcanvas-body">
                 <nav class="mdc-list list-group list-group-flush" th:with="serverprefix=${cas.server.prefix}">
-                    <a id="halbrowser"
-                       th:href="@{${'/webjars/hal-explorer/index.html#hkey0=Content-Type&hval0=application/json&uri=' + serverprefix + '/actuator'}}"
-                       class="mdc-list-item list-group-item list-group-item-action">
-                        <i class="mdi mdi-cogs fa fa-cogs" aria-hidden="true"></i>&nbsp;
-                        <span class="mdc-list-item__text">HAL Explorer</span>
-                    </a>
-
                     <a th:href="@{/actuator}" class="mdc-list-item list-group-item list-group-item-action">
                         <i class="mdi mdi-cogs fa fa-cogs" aria-hidden="true"></i>&nbsp;
                         <span class="mdc-list-item__text">[[#{cas.login.resources.endpoints}]]</span>

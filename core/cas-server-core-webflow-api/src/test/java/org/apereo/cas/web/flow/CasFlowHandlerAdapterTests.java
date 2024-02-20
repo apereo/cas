@@ -5,7 +5,7 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.webflow.mvc.servlet.FlowHandler;
@@ -29,8 +29,9 @@ public class CasFlowHandlerAdapterTests {
         ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, plan, CasWebflowExecutionPlan.BEAN_NAME);
         val adapter = new CasFlowHandlerAdapter("login");
         adapter.setApplicationContext(applicationContext);
-        val mv = adapter.handle(new MockHttpServletRequest(), new MockHttpServletResponse(), mock(FlowHandler.class));
-        assertNotNull(mv);
-        assertEquals(HttpStatus.TOO_EARLY.value(), mv.getStatus().value());
+        val request = new MockHttpServletRequest();
+        request.setMethod(HttpMethod.GET.name());
+        assertThrows(RuntimeException.class, () -> adapter.handle(request, new MockHttpServletResponse(), mock(FlowHandler.class)));
+        assertNotNull(request.getAttribute(CasWebflowExecutionPlan.class.getName()));
     }
 }
