@@ -29,6 +29,7 @@ import org.apereo.cas.web.flow.resolver.CasMvcViewFactoryCreator;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.CasLocaleChangeInterceptor;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -368,24 +369,25 @@ class CasWebflowContextConfiguration {
     }
 
     @Configuration(value = "CasWebflowExecutionConfiguration", proxyBeanMethods = false)
+    @Slf4j
     static class CasWebflowExecutionConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public CasWebflowExecutionPlan casWebflowExecutionPlan(final ConfigurableApplicationContext applicationContext) {
-            val configurers = applicationContext.getBeansOfType(CasWebflowExecutionPlanConfigurer.class)
-                .values()
+        @ConditionalOnMissingBean(name = CasWebflowExecutionPlan.BEAN_NAME)
+        public CasWebflowExecutionPlan casWebflowExecutionPlan(final List<CasWebflowExecutionPlanConfigurer> configurers) {
+            val plan = new DefaultCasWebflowExecutionPlan();
+            configurers
                 .stream()
                 .filter(BeanSupplier::isNotProxy)
-                .toList();
-            val plan = new DefaultCasWebflowExecutionPlan();
-            configurers.forEach(cfg -> cfg.configureWebflowExecutionPlan(plan));
-            plan.execute();
+                .forEach(cfg -> cfg.configureWebflowExecutionPlan(plan));
             return plan;
         }
 
         @EventListener
         public void handleApplicationReadyEvent(final ApplicationReadyEvent event) {
             val webflowExecutionPlan = event.getApplicationContext().getBean(CasWebflowExecutionPlan.BEAN_NAME, CasWebflowExecutionPlan.class);
+            LOGGER.debug("Executing CAS webflow execution plan...");
+            webflowExecutionPlan.execute();
             webflowExecutionPlan.getWebflowConfigurers().forEach(cfg -> cfg.postInitialization(event.getApplicationContext()));
         }
     }
