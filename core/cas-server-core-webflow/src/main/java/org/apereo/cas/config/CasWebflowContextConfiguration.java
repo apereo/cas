@@ -390,7 +390,7 @@ class CasWebflowContextConfiguration {
         @EventListener
         public void handleApplicationReadyEvent(final ApplicationReadyEvent event) {
             val webflowExecutionPlan = event.getApplicationContext().getBean(CasWebflowExecutionPlan.BEAN_NAME, CasWebflowExecutionPlan.class);
-            LOGGER.debug("Executing CAS webflow execution plan...");
+            LOGGER.debug("Configuring CAS webflow execution plan...");
             webflowExecutionPlan.execute();
         }
     }

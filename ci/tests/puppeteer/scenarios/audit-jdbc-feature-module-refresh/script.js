@@ -27,7 +27,8 @@ const YAML = require("yaml");
     await cas.waitForTimeout(page, 5000);
 
     await cas.refreshContext();
-
+    await cas.sleep(8000);
+    
     await cas.gotoLogin(page);
     await cas.loginWith(page, "unknown", "Mellon");
 

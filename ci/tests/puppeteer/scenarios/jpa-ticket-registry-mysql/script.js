@@ -16,7 +16,7 @@ const YAML = require("yaml");
     await cas.sleep(2000);
 
     await cas.refreshContext();
-    await cas.sleep(5000);
+    await cas.sleep(10000);
 
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);

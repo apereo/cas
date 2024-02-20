@@ -25,7 +25,8 @@ const path = require("path");
     await cas.waitForTimeout(page, 5000);
 
     await cas.refreshContext();
-
+    await cas.sleep(8000);
+    
     await cas.log("Attempting to login with new updated credentials...");
     await cas.gotoLogout(page);
     await cas.gotoLogin(page);
