@@ -10,6 +10,7 @@ import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfigur
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasInterruptAutoConfiguration;
@@ -47,6 +48,7 @@ public abstract class BaseInterruptFlowActionTests {
         CasCoreWebflowAutoConfiguration.class,
         CasPersonDirectoryAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
+        CasCoreUtilAutoConfiguration.class,
         CasInterruptAutoConfiguration.class,
         CasInterruptWebflowAutoConfiguration.class
     })

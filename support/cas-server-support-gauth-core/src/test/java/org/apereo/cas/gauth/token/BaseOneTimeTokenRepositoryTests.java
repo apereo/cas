@@ -44,8 +44,6 @@ public abstract class BaseOneTimeTokenRepositoryTests {
     @BeforeEach
     public void initialize() {
         this.userId = RandomUtils.randomAlphabetic(6);
-        oneTimeTokenAuthenticatorTokenRepository.removeAll();
-        await().untilAsserted(() -> assertEquals(0, oneTimeTokenAuthenticatorTokenRepository.count()));
     }
 
     @Test
@@ -134,7 +132,6 @@ public abstract class BaseOneTimeTokenRepositoryTests {
         assertEquals(0, oneTimeTokenAuthenticatorTokenRepository.count());
         val token = new GoogleAuthenticatorToken(otp, uid);
         oneTimeTokenAuthenticatorTokenRepository.store(token);
-        assertTrue(oneTimeTokenAuthenticatorTokenRepository.count() > 1);
         assertEquals(1, oneTimeTokenAuthenticatorTokenRepository.count(uid));
         oneTimeTokenAuthenticatorTokenRepository.removeAll();
         assertEquals(0, oneTimeTokenAuthenticatorTokenRepository.count(), "Repository is not empty");
