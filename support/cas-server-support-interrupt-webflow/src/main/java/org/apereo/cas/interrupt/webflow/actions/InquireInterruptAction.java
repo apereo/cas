@@ -1,10 +1,12 @@
 package org.apereo.cas.interrupt.webflow.actions;
 
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.interrupt.InterruptInquirer;
 import org.apereo.cas.interrupt.InterruptResponse;
 import org.apereo.cas.interrupt.InterruptTrackingEngine;
 import org.apereo.cas.interrupt.webflow.InterruptUtils;
+import org.apereo.cas.services.RegisteredServiceWebflowInterruptPolicy;
 import org.apereo.cas.services.WebBasedRegisteredService;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RegexUtils;
@@ -61,27 +63,8 @@ public class InquireInterruptAction extends BaseCasWebflowAction {
 
         if (registeredService != null) {
             val policy = registeredService.getWebflowInterruptPolicy();
-            if (policy != null && StringUtils.isNotBlank(policy.getAttributeName()) && StringUtils.isNotBlank(policy.getAttributeValue())) {
-                val instance = SpringExpressionLanguageValueResolver.getInstance();
-                val attributeName = instance.resolve(policy.getAttributeName());
-                val attributeValue = instance.resolve(policy.getAttributeValue());
-
-                val attributes = new HashMap<>(authentication.getAttributes());
-                attributes.putAll(authentication.getPrincipal().getAttributes());
-
-                val attributeToMatch = RegexUtils.findFirst(attributeName, attributes.keySet());
-                LOGGER.trace("Checking attribute [{}] to match [{}] in current set of attributes [{}]",
-                    attributeToMatch, attributeValue, attributes);
-                val skipInterrupt = attributeToMatch
-                    .filter(attributes::containsKey)
-                    .map(attributes::get)
-                    .flatMap(values -> RegexUtils.findFirst(attributeValue, values))
-                    .stream()
-                    .findFirst()
-                    .isEmpty();
-                if (skipInterrupt) {
-                    return getInterruptSkippedEvent();
-                }
+            if (shouldSkipInterruptForPrincipalAttributes(policy, authentication)) {
+                return getInterruptSkippedEvent();
             }
         }
 
@@ -97,6 +80,32 @@ public class InquireInterruptAction extends BaseCasWebflowAction {
                 LOGGER.debug("Webflow interrupt is skipped since no inquirer produced a response");
                 return getInterruptSkippedEvent();
             });
+    }
+
+    protected boolean shouldSkipInterruptForPrincipalAttributes(final RegisteredServiceWebflowInterruptPolicy policy,
+                                                                final Authentication authentication) {
+        if (policy == null || StringUtils.isBlank(policy.getAttributeName())
+            || StringUtils.isBlank(policy.getAttributeValue())) {
+            return false;
+        }
+        
+        val instance = SpringExpressionLanguageValueResolver.getInstance();
+        val attributeName = instance.resolve(policy.getAttributeName());
+        val attributeValue = instance.resolve(policy.getAttributeValue());
+
+        val attributes = new HashMap<>(authentication.getAttributes());
+        attributes.putAll(authentication.getPrincipal().getAttributes());
+
+        val attributeToMatch = RegexUtils.findFirst(attributeName, attributes.keySet());
+        LOGGER.trace("Checking attribute [{}] to match [{}] in current set of attributes [{}]",
+            attributeToMatch, attributeValue, attributes);
+        return attributeToMatch
+            .filter(attributes::containsKey)
+            .map(attributes::get)
+            .flatMap(values -> RegexUtils.findFirst(attributeValue, values))
+            .stream()
+            .findFirst()
+            .isEmpty();
     }
 
     private boolean isInterruptInquiryForcedFor(final WebBasedRegisteredService registeredService) {

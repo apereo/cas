@@ -13,6 +13,8 @@ const path = require("path");
     const browser = await puppeteer.launch(cas.browserOptions());
     try {
         const page = await cas.newPage(browser);
+        await cas.gotoLogin(page);
+        
         await updateConfig(configFile, configFilePath, "http://localhost:18080/syncope");
         await cas.waitForTimeout(page, 3000);
         await cas.refreshContext();

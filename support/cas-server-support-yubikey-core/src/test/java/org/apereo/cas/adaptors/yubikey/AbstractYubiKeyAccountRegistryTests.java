@@ -73,13 +73,13 @@ public abstract class AbstractYubiKeyAccountRegistryTests {
         assertTrue(registerAccount(request3));
 
         assertTrue(isYubiKeyRegisteredFor(casuser, null));
-        assertEquals(2, getAccounts().size());
         val account = getAccount(casuser);
         account.ifPresent(acct -> assertEquals(2, acct.getDevices().size()));
 
         getYubiKeyAccountRegistry().delete(casuser);
         assertTrue(getAccount(casuser).isEmpty());
         getYubiKeyAccountRegistry().deleteAll();
+        assertEquals(0, getAccounts().size());
     }
 
     @Test
