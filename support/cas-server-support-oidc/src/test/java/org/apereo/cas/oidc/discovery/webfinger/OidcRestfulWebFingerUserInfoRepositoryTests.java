@@ -4,8 +4,6 @@ import org.apereo.cas.configuration.model.RestEndpointProperties;
 import org.apereo.cas.oidc.discovery.webfinger.userinfo.OidcRestfulWebFingerUserInfoRepository;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
-import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -19,9 +17,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("RestfulApi")
 class OidcRestfulWebFingerUserInfoRepositoryTests {
-    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .defaultTypingEnabled(false).build().toObjectMapper();
-
     private MockWebServer webServer;
 
     @Test
@@ -40,7 +35,6 @@ class OidcRestfulWebFingerUserInfoRepositoryTests {
 
     @Test
     void verifyFindByEmail() throws Throwable {
-
         try (val webServer = new MockWebServer(CollectionUtils.wrap("email", "cas@example.org"))) {
             this.webServer = webServer;
             this.webServer.start();
