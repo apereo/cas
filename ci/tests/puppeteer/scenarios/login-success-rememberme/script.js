@@ -36,6 +36,8 @@ async function loginAndVerify(browser) {
     const browser = await puppeteer.launch(cas.browserOptions());
     await loginAndVerify(browser);
     await cas.refreshContext();
+    await cas.sleep(6000);
+    
     await loginAndVerify(browser);
     await browser.close();
 })();
