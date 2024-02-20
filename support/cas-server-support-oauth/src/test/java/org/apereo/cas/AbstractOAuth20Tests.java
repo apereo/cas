@@ -496,6 +496,15 @@ public abstract class AbstractOAuth20Tests {
         return registeredService;
     }
 
+    protected OAuthRegisteredService addRegisteredService(final Set<OAuth20GrantTypes> grantTypes,
+                                                          final String clientId,
+                                                          final String clientSecret,
+                                                          final String redirectUri) {
+        val registeredService = getRegisteredService(redirectUri, clientId, clientSecret, grantTypes);
+        servicesManager.save(registeredService);
+        return registeredService;
+    }
+
     protected OAuthRegisteredService addRegisteredService(final String redirectUri, final String clientSecret) {
         val registeredService = getRegisteredService(redirectUri, clientSecret, EnumSet.allOf(OAuth20GrantTypes.class));
         registeredService.setGenerateRefreshToken(true);

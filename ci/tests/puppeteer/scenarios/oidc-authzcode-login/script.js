@@ -150,15 +150,15 @@ async function verifyAccessTokenAndProfile(context) {
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
 
-    let context = await browser.createIncognitoBrowserContext();
+    let context = await browser.createBrowserContext();
     await verifyAccessTokenAndProfile(context);
     await context.close();
 
-    context = await browser.createIncognitoBrowserContext();
+    context = await browser.createBrowserContext();
     await verifyAccessTokenIsNeverReceived(context);
     await context.close();
 
-    context = await browser.createIncognitoBrowserContext();
+    context = await browser.createBrowserContext();
     await verifyAccessTokenIsLimited(context);
     await context.close();
 

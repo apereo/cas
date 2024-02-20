@@ -11,10 +11,10 @@ import org.apereo.cas.services.query.RegisteredServiceQuery;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.RandomUtils;
 
 import lombok.val;
 import org.apache.hc.core5.net.URIBuilder;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,16 +41,13 @@ class OidcServicesManagerRegisteredServiceLocatorTests extends AbstractOidcTests
     @Autowired
     @Qualifier("oidcServicesManagerRegisteredServiceLocator")
     private ServicesManagerRegisteredServiceLocator oidcServicesManagerRegisteredServiceLocator;
-
-    @BeforeEach
-    public void setup() {
-        servicesManager.deleteAll();
-    }
-
+    
     @Test
     void verifyFindByQuery() throws Throwable {
-        val service1 = getOidcRegisteredService(UUID.randomUUID().toString());
-        val service2 = getOidcRegisteredService(UUID.randomUUID().toString());
+        val service1 = getOidcRegisteredService(UUID.randomUUID().toString(),
+            "https://app.example.org/%s".formatted(RandomUtils.randomAlphabetic(4)));
+        val service2 = getOidcRegisteredService(UUID.randomUUID().toString(),
+            "https://app.example.org/%s".formatted(RandomUtils.randomAlphabetic(4)));
         servicesManager.save(service1, service2);
 
         assertEquals(1, servicesManager.findServicesBy(
@@ -102,7 +99,7 @@ class OidcServicesManagerRegisteredServiceLocatorTests extends AbstractOidcTests
         assertEquals(OidcServicesManagerRegisteredServiceLocator.DEFAULT_ORDER, oidcServicesManagerRegisteredServiceLocator.getOrder());
 
         val clientId = UUID.randomUUID().toString();
-        val service = getOidcRegisteredService(clientId);
+        val service = getOidcRegisteredService(clientId, "https://app.example.org/%s".formatted(RandomUtils.randomAlphabetic(4)));
         service.setMatchingStrategy(new PartialRegexRegisteredServiceMatchingStrategy());
         val svc = webApplicationServiceFactory.createService(
             String.format("https://oauth.example.org/whatever?%s=%s", OAuth20Constants.CLIENT_ID, clientId));
