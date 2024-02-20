@@ -19,9 +19,7 @@ Application definitions may be assigned a dedicated webflow interrupt policy. A 
   "webflowInterruptPolicy" : {
     "@class" : "org.apereo.cas.services.DefaultRegisteredServiceWebflowInterruptPolicy",
     "enabled": true,
-    "forceExecution": "TRUE",
-    "attributeName": "mem...of",
-    "attributeValue": "^st[a-z]ff$"
+    "forceExecution": "TRUE"
   }
 }
 ```
@@ -37,6 +35,96 @@ The following policy settings are supported:
 |-------------------|-------------------------------------------------------------------------------------------------------------------|
 | `enabled`         | Whether interrupt notifications are enabled for this application. Default is `true`.                              |
 | `forceExecution`  | Whether execution should proceed anyway, regardless. Accepted values are `TRUE`, `FALSE` or `UNDEFINED`.          |
+       
+Additional interrupt triggers are listed below.
+
+{% tabs interrupttriggers %}
+
+{% tab interrupttriggers Principal Attribute %}
+      
+Interrupt triggers per application can be triggered based on the principal attributes. If the defined attribute name
+exists and can produce a value to match the defined attribute value, interrupt may be triggered.
+
+| Field             | Description                                                                                                       |
+|-------------------|-------------------------------------------------------------------------------------------------------------------|
 | `attributeName`   | Regular expression pattern to compare against authentication and principal attribute names to trigger interrupt.  |
 | `attributeValue`  | Regular expression pattern to compare against authentication and principal attribute values to trigger interrupt. |
+
+The application definition may be defined as:
+
+```json
+{
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
+  "serviceId" : "^https://.+",
+  "name" : "sample service",
+  "id" : 100,
+  "webflowInterruptPolicy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceWebflowInterruptPolicy",
+    "attributeName": "mem...of",
+    "attributeValue": "^st[a-z]ff$"
+  }
+}
+```
+
+These fields support the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax.
+
+{% endtab %}
+
+{% tab interrupttriggers Groovy Script %}
+
+Interrupt triggers per application can be triggered based on the outcome of an external or inline Groovy script. The script
+should return a boolean value, i.e. `true` or `false` to indicate whether interrupt should be triggered.
+
+| Field            | Description                                                                                               |
+|------------------|-----------------------------------------------------------------------------------------------------------|
+| `groovyScript`   | Inline or external groovy script to determine whether interrupt should be triggered for this application. |
+
+This field supports the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax.
+
+The application definition may be defined as:
+
+```json
+{
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
+  "serviceId" : "^https://.+",
+  "name" : "sample service",
+  "id" : 100,
+  "webflowInterruptPolicy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceWebflowInterruptPolicy",
+    "groovyScript": "file:/path/to/script.groovy"
+  }
+}
+```
+
+An external script itself may be designed in Groovy as:
+
+```groovy
+def run(Object... args) {
+    def (attributes,username,registeredService,service,logger) = args
+    logger.debug("Current attributes received are {}", attributes)
+    // Determine whether interrupt should be triggered...
+    return true
+}
+```
+
+<div class="alert alert-info">:information_source: <strong>Usage Warning</strong><p>Activating this mode is not without cost,
+as CAS needs to evaluate the script, compile and run it for subsequent executions. While the compiled
+script is cached and should help with execution performance, as a general rule, you should avoid opting
+for and designing complicated scripts.</p></div>
+
+The following parameters are passed to the script:
+
+| Parameter           | Description                                                                   |
+|---------------------|-------------------------------------------------------------------------------|
+| `attributes`        | `Map` of attributes currently resolved and available for release.             |
+| `username`          | The object representing the authenticated username.                           |
+| `registeredService` | The object representing the corresponding service definition in the registry. |
+| `service`           | The object representing the service requesting authentication.                |
+| `logger`            | The object responsible for issuing log messages such as `logger.info(...)`.   |
+
+{% endtab %}
+
+{% endtabs %}
+
+
 

@@ -6,6 +6,7 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 
 import lombok.val;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -42,6 +43,11 @@ public abstract class BaseMultifactorWebflowConfigurerTests {
 
     @Autowired
     protected ConfigurableApplicationContext applicationContext;
+
+    @BeforeEach
+    void setup() {
+        casWebflowExecutionPlan.execute();
+    }
 
     /**
      * Ensures that, for every transition within this MFA flow, the target

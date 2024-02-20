@@ -6,10 +6,11 @@ import org.apereo.cas.interrupt.InterruptInquirer;
 import org.apereo.cas.interrupt.InterruptResponse;
 import org.apereo.cas.interrupt.InterruptTrackingEngine;
 import org.apereo.cas.interrupt.webflow.InterruptUtils;
-import org.apereo.cas.services.RegisteredServiceWebflowInterruptPolicy;
 import org.apereo.cas.services.WebBasedRegisteredService;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RegexUtils;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
@@ -61,9 +62,11 @@ public class InquireInterruptAction extends BaseCasWebflowAction {
             }
         }
 
-        if (registeredService != null) {
-            val policy = registeredService.getWebflowInterruptPolicy();
-            if (shouldSkipInterruptForPrincipalAttributes(policy, authentication)) {
+        if (registeredService != null && registeredService.getWebflowInterruptPolicy() != null) {
+            if (shouldSkipInterruptForPrincipalAttributes(registeredService, authentication)) {
+                return getInterruptSkippedEvent();
+            }
+            if (shouldSkipInterruptForGroovyScript(requestContext, registeredService, authentication)) {
                 return getInterruptSkippedEvent();
             }
         }
@@ -82,10 +85,36 @@ public class InquireInterruptAction extends BaseCasWebflowAction {
             });
     }
 
-    protected boolean shouldSkipInterruptForPrincipalAttributes(final RegisteredServiceWebflowInterruptPolicy policy,
+    protected boolean shouldSkipInterruptForGroovyScript(final RequestContext requestContext,
+                                                         final WebBasedRegisteredService registeredService,
+                                                         final Authentication authentication) throws Throwable {
+        val policy = registeredService.getWebflowInterruptPolicy();
+        if (StringUtils.isBlank(policy.getGroovyScript())) {
+            return false;
+        }
+
+        val groovyScript = SpringExpressionLanguageValueResolver.getInstance().resolve(policy.getGroovyScript());
+        val cacheMgr = ApplicationContextProvider.getScriptResourceCacheManager()
+            .orElseThrow(() -> new RuntimeException("No groovy script cache manager is available to evaluate interrupt policy"));
+        val script = cacheMgr.resolveScriptableResource(groovyScript, registeredService.getServiceId(), registeredService.getName());
+
+        val attributes = new HashMap<>(authentication.getAttributes());
+        attributes.putAll(authentication.getPrincipal().getAttributes());
+
+        val args = CollectionUtils.<String, Object>wrap(
+            "attributes", attributes,
+            "username", authentication.getPrincipal().getId(),
+            "registeredService", registeredService,
+            "service", WebUtils.getService(requestContext),
+            "logger", LOGGER);
+        script.setBinding(args);
+        return !script.execute(args.values().toArray(), Boolean.class);
+    }
+
+    protected boolean shouldSkipInterruptForPrincipalAttributes(final WebBasedRegisteredService registeredService,
                                                                 final Authentication authentication) {
-        if (policy == null || StringUtils.isBlank(policy.getAttributeName())
-            || StringUtils.isBlank(policy.getAttributeValue())) {
+        val policy = registeredService.getWebflowInterruptPolicy();
+        if (StringUtils.isBlank(policy.getAttributeName()) || StringUtils.isBlank(policy.getAttributeValue())) {
             return false;
         }
         

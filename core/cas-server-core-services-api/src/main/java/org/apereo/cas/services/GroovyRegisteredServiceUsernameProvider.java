@@ -16,6 +16,7 @@ import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import java.io.Serial;
 import java.util.Optional;
 
 
@@ -33,6 +34,7 @@ import java.util.Optional;
 @Accessors(chain = true)
 public class GroovyRegisteredServiceUsernameProvider extends BaseRegisteredServiceUsernameAttributeProvider {
 
+    @Serial
     private static final long serialVersionUID = 5823989148794052951L;
 
     @ExpressionLanguageCapable

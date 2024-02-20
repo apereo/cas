@@ -44,4 +44,12 @@ public interface RegisteredServiceWebflowInterruptPolicy extends Serializable {
      * @return the attribute value
      */
     String getAttributeValue();
+
+    /**
+     * Gets inline/external groovy script
+     * to determine if interrupt should be activated for the service.
+     *
+     * @return the groovy script
+     */
+    String getGroovyScript();
 }

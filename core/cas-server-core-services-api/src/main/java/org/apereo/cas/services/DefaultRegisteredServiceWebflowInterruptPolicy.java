@@ -38,4 +38,7 @@ public class DefaultRegisteredServiceWebflowInterruptPolicy implements Registere
     @ExpressionLanguageCapable
     @RegularExpressionCapable
     private String attributeValue;
+
+    @ExpressionLanguageCapable
+    private String groovyScript;
 }
