@@ -6,7 +6,7 @@ const cas = require("../../cas.js");
     const page = await cas.newPage(browser);
     await cas.gotoLoginWithAuthnMethod(page, undefined, "mfa-simple", "en");
     await cas.loginWith(page);
-    await cas.waitForTimeout(page, 1000);
+
     await cas.assertVisibility(page, "#token");
     await cas.attributeValue(page, "html", "lang", "en");
 

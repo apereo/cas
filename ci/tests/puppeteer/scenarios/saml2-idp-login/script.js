@@ -17,7 +17,7 @@ async function normalAuthenticationFlow(context) {
 
     const authData = JSON.parse(await cas.innerHTML(page, "details pre"));
     await cas.log(authData);
-    await cas.waitForTimeout(page, 1000);
+
 
     await cas.log("Removing cached metadata for service providers");
     await cas.doRequest("https://localhost:8443/cas/actuator/samlIdPRegisteredServiceMetadataCache", "DELETE", {}, 204);

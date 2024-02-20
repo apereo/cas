@@ -19,7 +19,7 @@ const cas = require("../../cas.js");
     await cas.assertVisibility(page, "#password");
 
     let response = await cas.loginWith(page, "unknown", "badpassword");
-    await cas.waitForTimeout(page, 1000);
+
     await cas.log(`${response.status()} ${response.statusText()}`);
     await cas.screenshot(page);
     assert(response.status() === 200);

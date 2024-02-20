@@ -26,7 +26,7 @@ const cas = require("../../cas.js");
         }
     });
     await page.click("#authnButton");
-    await cas.waitForTimeout(page, 1000);
+
 
     const urls = [
         "https://localhost:8443/cas/webauthn/authenticate",
