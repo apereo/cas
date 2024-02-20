@@ -54,8 +54,6 @@ const path = require("path");
     await updateConfig(configFile, configFilePath, number);
     await cas.sleep(6000);
     await cas.refreshContext();
-    await cas.sleep(8000);
-
     await cas.log("Testing authentication after refresh...");
     browser = await puppeteer.launch(cas.browserOptions());
     page = await cas.newPage(browser);

@@ -62,7 +62,7 @@ test coverage of the CAS codebase is approximately `94%`. Furthermore, a large n
 are now configured to run with parallelism enabled.
   
 Finally, the overall execution of the [browser tests based via Puppeteer](../../developer/Test-Process.html) is reduced
-by approximately `90` seconds by removing unnecessary *wait* times and delays in test scenarios.
+by approximately `90` seconds for every rune of the test suite by removing unnecessary *wait* times and delays in test scenarios.
 
 ### OAuth/OpenID Connect Token Exchange
 
@@ -92,6 +92,7 @@ Notable changes in this area include:
 
 - Removing unnecessary I/O operations during startup to verify existence of embedded application resources on the classpath.
 - Removing the `org.webjars:webjars-locator-core` library which does classpath scanning at startup to locate assets.
+- ...and as a result, the "Hal Browser" interface that listed the CAS actuator endpoints has been removed.
 - Delaying the reconstruction of the CAS webflow execution plan until the application container is fully ready.
 
 ## Other Stuff

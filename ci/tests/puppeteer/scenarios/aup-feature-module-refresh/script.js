@@ -26,8 +26,6 @@ const assert = require("assert");
     await cas.waitForTimeout(page, 5000);
 
     await cas.refreshContext();
-    await cas.sleep(10000);
-    
     await cas.log("Starting out with acceptable usage policy feature enabled...");
     await cas.goto(page, "https://localhost:8443/cas/logout");
     await cas.gotoLogin(page, service);

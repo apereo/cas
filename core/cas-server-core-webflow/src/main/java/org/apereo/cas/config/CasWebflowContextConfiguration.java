@@ -36,14 +36,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.context.event.EventListener;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.annotation.Order;
@@ -385,13 +383,6 @@ class CasWebflowContextConfiguration {
                 .filter(BeanSupplier::isNotProxy)
                 .forEach(cfg -> cfg.configureWebflowExecutionPlan(plan));
             return plan;
-        }
-
-        @EventListener
-        public void handleApplicationReadyEvent(final ApplicationReadyEvent event) {
-            val webflowExecutionPlan = event.getApplicationContext().getBean(CasWebflowExecutionPlan.BEAN_NAME, CasWebflowExecutionPlan.class);
-            LOGGER.debug("Configuring CAS webflow execution plan...");
-            webflowExecutionPlan.execute();
         }
     }
 }
