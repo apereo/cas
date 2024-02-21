@@ -100,13 +100,6 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
         }
     }
 
-    /**
-     * Is request throttled.
-     *
-     * @param request  the request
-     * @param response the response
-     * @return true if the request is throttled. False otherwise, letting it proceed.
-     */
     protected boolean throttleRequest(final HttpServletRequest request, final HttpServletResponse response) {
         val executor = configurationContext.getThrottledRequestExecutor();
         return executor != null && executor.throttle(request, response);
