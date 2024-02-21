@@ -50,7 +50,7 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
             .clientIpAddress(ClientInfoHolder.getClientInfo().getClientIpAddress())
             .expiration(determineThrottledSubmissionExpiration(key))
             .build();
-        LOGGER.debug("Recording submission failure entry [{}]", submission);
+        LOGGER.info("Recording submission failure entry [{}]", submission);
         getConfigurationContext().getThrottledSubmissionStore().put(submission);
         throttledSubmissionReceivers.forEach(Unchecked.consumer(receiver -> receiver.receive(submission)));
     }

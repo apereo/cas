@@ -11,8 +11,7 @@ const cas = require("../../cas.js");
 
     const browser2 = await puppeteer.launch(cas.browserOptions());
     const page2 = await cas.newPage(browser2);
-    await page2.goto("https://localhost:8443/cas/login?service=https://github.com/apereo/cas");
-    await cas.waitForTimeout(page2, 1000);
+    await cas.gotoLogin(page2, "https://github.com/apereo/cas");
     await cas.assertVisibility(page2, "li #CasClient");
 
     await cas.click(page1, "li #CasClient");

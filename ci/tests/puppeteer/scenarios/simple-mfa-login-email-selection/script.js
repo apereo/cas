@@ -7,7 +7,6 @@ const cas = require("../../cas.js");
     const page = await cas.newPage(browser);
     await cas.gotoLoginWithAuthnMethod(page, undefined, "mfa-simple");
     await cas.loginWith(page);
-    await cas.waitForTimeout(page, 1000);
     await cas.screenshot(page);
 
     await cas.assertVisibility(page, "#continueButton");
@@ -27,9 +26,8 @@ const cas = require("../../cas.js");
 
     const page2 = await browser.newPage();
     await page2.goto("http://localhost:8282");
-    await cas.waitForTimeout(page2, 1000);
     await cas.click(page2, "table tbody td a");
-    await cas.waitForTimeout(page2, 1000);
+    await cas.waitForElement(page2, "div[name=bodyPlainText] .well");
     const addresses = await cas.textContent(page2, "div[name=addresses] span");
     assert(addresses.includes("casperson@example.com"));
     assert(addresses.includes("casuser@example.org"));

@@ -9,7 +9,6 @@ async function testService(page, clientId, oidc = true) {
     await cas.goto(page, url);
 
     await cas.loginWith(page);
-    await cas.waitForTimeout(page, 1000);
 
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");

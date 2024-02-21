@@ -14,12 +14,9 @@ const assert = require("assert");
     let url = await page.url();
     assert(url.startsWith("https://localhost:8444/cas/login"));
     await cas.loginWith(page);
-    await cas.waitForTimeout(page, 1000);
     await cas.assertTicketParameter(page);
     url = await page.url();
     await cas.log(url);
-    await cas.waitForTimeout(page, 1000);
-
     await cas.log("Checking for SSO availability of our CAS server...");
     await cas.gotoLogin(page);
     url = await page.url();

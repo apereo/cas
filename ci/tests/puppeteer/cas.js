@@ -532,24 +532,28 @@ exports.shutdownCas = async (baseUrl) => {
 };
 
 exports.assertInnerTextStartsWith = async (page, selector, value) => {
+    await this.waitForElement(page, selector);
     const header = await this.innerText(page, selector);
     await this.log(`Checking ${header} to start with ${value}`);
     assert(header.startsWith(value));
 };
 
 exports.assertInnerTextContains = async (page, selector, value) => {
+    await this.waitForElement(page, selector);
     const header = await this.innerText(page, selector);
     await this.log(`Checking [${header}] to contain [${value}]`);
     assert(header.includes(value));
 };
 
 exports.assertInnerTextDoesNotContain = async (page, selector, value) => {
+    await this.waitForElement(page, selector);
     const header = await this.innerText(page, selector);
     await this.log(`Checking ${header} to contain ${value}`);
     assert(!header.includes(value));
 };
 
 exports.assertInnerText = async (page, selector, value) => {
+    await this.waitForElement(page, selector);
     const header = await this.innerText(page, selector);
     assert.equal(header, value);
 };

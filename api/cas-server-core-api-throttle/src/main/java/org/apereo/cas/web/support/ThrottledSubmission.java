@@ -47,7 +47,7 @@ public class ThrottledSubmission implements Serializable {
      */
     public boolean hasExpiredAlready() {
         val now = ZonedDateTime.now(Clock.systemUTC());
-        return expiration != null && (now.isAfter(expiration) || now.isEqual(expiration));
+        return expiration == null || now.isAfter(expiration) || now.isEqual(expiration);
     }
 
     /**
@@ -58,6 +58,6 @@ public class ThrottledSubmission implements Serializable {
     @JsonIgnore
     public boolean isStillInExpirationWindow() {
         val now = ZonedDateTime.now(Clock.systemUTC());
-        return expiration == null || expiration.isAfter(now) || expiration.isEqual(now);
+        return expiration != null && (expiration.isAfter(now) || expiration.isEqual(now));
     }
 }

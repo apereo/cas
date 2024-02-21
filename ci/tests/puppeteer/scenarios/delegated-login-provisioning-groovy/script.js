@@ -13,7 +13,6 @@ const path = require("path");
     await cas.click(page, "li #CasClient");
     await page.waitForNavigation();
     await cas.loginWith(page);
-    await cas.waitForTimeout(page, 1000);
     await cas.assertTicketParameter(page);
 
     const result = path.join(os.tmpdir(), "profile.txt");

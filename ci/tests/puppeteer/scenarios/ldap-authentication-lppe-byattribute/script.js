@@ -7,7 +7,6 @@ const cas = require("../../cas.js");
 
     await cas.gotoLogin(page);
     await cas.loginWith(page);
-    await cas.waitForTimeout(page, 2000);
     await cas.assertInnerText(page, "#content h2", "This account has been locked.");
     await cas.assertCookie(page, false);
     await cas.gotoLogout(page);
