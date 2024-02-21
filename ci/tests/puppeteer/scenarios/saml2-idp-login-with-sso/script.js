@@ -11,7 +11,6 @@ const cas = require("../../cas.js");
     await cas.loginWith(page);
     
     await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
-    await cas.waitForTimeout(page, 3000);
     await cas.screenshot(page);
     await page.waitForSelector("#table_with_attributes", {visible: true});
     await cas.assertInnerTextContains(page, "#content p", "status page of SimpleSAMLphp");

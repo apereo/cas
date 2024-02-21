@@ -33,7 +33,6 @@ const cas = require("../../cas.js");
     await cas.assertTicketParameter(page);
 
     await cas.gotoLogin(page);
-    await cas.waitForTimeout(page, 1000);
 
     await cas.assertInnerTextStartsWith(page, "#authnContextClass td.attribute-value", "[mfa-gauth]");
     

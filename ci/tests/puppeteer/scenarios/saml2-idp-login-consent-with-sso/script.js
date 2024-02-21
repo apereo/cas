@@ -13,7 +13,6 @@ const assert = require("assert");
 
     await cas.log("Establishing SSO session...");
     await cas.gotoLogin(page);
-    await cas.waitForTimeout(page, 2000);
     await cas.loginWith(page);
 
     const entityId = "https://localhost:9859/shibboleth";

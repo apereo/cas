@@ -7,7 +7,6 @@ const path = require("path");
     const page = await cas.newPage(browser);
 
     await cas.gotoLogin(page);
-    await cas.waitForTimeout(page, 2000);
     await cas.click(page, "li #SAML2Client");
     await page.waitForNavigation();
 

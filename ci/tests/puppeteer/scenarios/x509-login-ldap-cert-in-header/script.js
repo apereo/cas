@@ -44,13 +44,11 @@ const fs = require("fs");
     });
 
     await cas.gotoLogin(page);
-    await cas.waitForTimeout(page, 5000);
 
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
     await cas.assertInnerTextContains(page, "#content div p", "1234567890@college.edu");
 
     await cas.gotoLogin(page, "https://localhost:9859/anything/cas");
-    await cas.waitForTimeout(page, 5000);
     await assertFailure(page);
     await browser.close();
 })();

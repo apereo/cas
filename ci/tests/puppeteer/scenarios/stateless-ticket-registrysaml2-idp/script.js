@@ -23,7 +23,6 @@ async function normalAuthenticationFlow(context) {
     assert(authData["Attributes"]["group"].includes("sys-control"));
     assert(authData["Attributes"]["group"].includes("sys-super"));
 
-    await cas.waitForTimeout(page, 1000);
     await cas.gotoLogout(page);
 }
 
