@@ -2,12 +2,10 @@ package org.apereo.cas.configuration.model.support.ldap;
 
 import org.apereo.cas.configuration.model.core.authentication.AttributeRepositoryStates;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
 import java.io.Serial;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -49,8 +47,12 @@ public class LdapPrincipalAttributesProperties extends AbstractLdapSearchPropert
      * attribute map is the original attribute,
      * and the value should be the virtually-renamed attribute.
      * <p>
-     * To fetch and resolve attributes that carry tags/options,
-     * consider tagging the mapped attribute as such: {@code affiliation=affiliation}.
+     * To fetch and resolve attributes that carry tags/options, such as {@code homePostalAddress;lang-jp}
+     * consider tagging the mapped attribute as such: {@code affiliation=affiliation;}.
+     * <p>
+     * Values may be separated by a comma, which allows you to rename the source attribute
+     * into multiple CAS attributes. For example {@code mail=mail,email} would fetch the {@code mail}
+     * attribute from the data source and virtually rename it into two CAS attributes: {@code mail} and {@code email}.
      */
     private Map<String, String> attributes = new LinkedHashMap<>();
 
