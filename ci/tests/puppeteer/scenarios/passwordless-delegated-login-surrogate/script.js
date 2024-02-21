@@ -12,16 +12,13 @@ async function startAuthFlow(page, username) {
     assert(pswd === null);
     await cas.screenshot(page);
     await cas.type(page, "#username", username);
-    await cas.waitForTimeout(page, 1000);
     await cas.pressEnter(page);
     await page.waitForNavigation();
-    await cas.waitForTimeout(page, 1000);
-    await cas.log(`Page url: ${await page.url()}`);
+    await cas.logPage(page);
     await cas.screenshot(page);
 
     await cas.loginWith(page);
-    await cas.waitForTimeout(page, 5000);
-    await cas.log(`Page url: ${await page.url()}`);
+    await cas.logPage(page);
     await cas.screenshot(page);
     await cas.assertCookie(page);
     await cas.assertInnerTextStartsWith(page, "#content div p", "You, user3, have successfully logged in");

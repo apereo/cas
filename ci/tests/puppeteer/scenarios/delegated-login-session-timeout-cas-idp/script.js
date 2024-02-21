@@ -12,10 +12,10 @@ const cas = require("../../cas.js");
     await cas.screenshot(page);
     await cas.click(page, "li #CasClient");
     await page.waitForNavigation();
-    await cas.waitForTimeout(page, 3000);
+
     await cas.screenshot(page);
     await cas.loginWith(page);
-    await cas.waitForTimeout(page, 1000);
+
     await cas.screenshot(page);
     await cas.logPage(page);
     await cas.assertParameter(page, "ticket");

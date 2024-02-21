@@ -7,9 +7,7 @@ async function fetchRefreshToken(page, clientId, redirectUrl) {
 
     await cas.log(`Navigating to ${url}`);
     await cas.goto(page, url);
-    await cas.waitForTimeout(page, 1000);
     await cas.loginWith(page);
-    await cas.waitForTimeout(page, 1000);
 
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");

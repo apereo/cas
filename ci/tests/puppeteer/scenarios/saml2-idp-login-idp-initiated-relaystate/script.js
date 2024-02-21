@@ -25,16 +25,10 @@ async function unsolicited(page, target) {
     assert(response.ok());
 
     await cas.gotoLogin(page);
-    await cas.waitForTimeout(page, 2000);
-
     await cas.loginWith(page);
-    await cas.waitForTimeout(page, 5000);
-    
-    await unsolicited(page, "https://apereo.github.io");
-    await cas.waitForTimeout(page, 5000);
 
+    await unsolicited(page, "https://apereo.github.io");
     await unsolicited(page, "https://github.com/apereo/cas");
-    await cas.waitForTimeout(page, 4000);
 
     await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
     await browser.close();

@@ -14,16 +14,14 @@ const cas = require("../../cas.js");
     await cas.type(page,"#username", "user3+casuser");
     await cas.pressEnter(page);
     await page.waitForNavigation();
-    await cas.waitForTimeout(page, 3000);
     await cas.assertInnerText(page, "#login h3", "Provide Token");
     await cas.assertInnerTextStartsWith(page, "#login p", "Please provide the security token sent to you");
     await cas.assertVisibility(page, "#token");
     
     const page2 = await browser.newPage();
     await page2.goto("http://localhost:8282");
-    await cas.waitForTimeout(page2, 1000);
     await cas.click(page2, "table tbody td a");
-    await cas.waitForTimeout(page2, 1000);
+    await cas.waitForElement(page2, "div[name=bodyPlainText] .well");
     const code = await cas.textContent(page2, "div[name=bodyPlainText] .well");
     await page2.close();
 

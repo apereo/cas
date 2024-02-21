@@ -20,7 +20,6 @@ const cas = require("../../cas.js");
     await cas.type(page,"#phone", "+1 347 745 4321");
     await cas.click(page, "#submit");
     await page.waitForNavigation();
-    await cas.waitForTimeout(page, 1000);
     await cas.assertTextContent(page, "div .banner-danger p", "reCAPTCHA’s validation failed.");
     await browser.close();
 })();

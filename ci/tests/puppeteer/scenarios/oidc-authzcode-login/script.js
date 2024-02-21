@@ -13,7 +13,6 @@ async function verifyAccessTokenIsLimited(context) {
     await cas.goto(page, url);
 
     await cas.loginWith(page);
-    await cas.waitForTimeout(page, 2000);
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
         await page.waitForNavigation();
@@ -50,7 +49,6 @@ async function verifyAccessTokenIsNeverReceived(context) {
     await cas.goto(page, url);
 
     await cas.loginWith(page);
-    await cas.waitForTimeout(page, 2000);
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
         await page.waitForNavigation();
@@ -85,7 +83,6 @@ async function verifyAccessTokenAndProfile(context) {
     await cas.goto(page, url);
 
     await cas.loginWith(page);
-    await cas.waitForTimeout(page, 2000);
     await cas.assertVisibility(page, "#userInfoClaims");
     await cas.assertVisibility(page, "#scopes");
     await cas.assertVisibility(page, "#MyCustomScope");

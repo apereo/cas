@@ -34,7 +34,6 @@ const cas = require("../../cas.js");
     await cas.log("Allowing release of scopes and claims...");
     await cas.click(page, "#allow");
     await page.waitForNavigation();
-    await cas.waitForTimeout(page, 2000);
     await cas.assertTextContent(page, "h1.green-text", "Success!");
 
     await cas.logPage(page);

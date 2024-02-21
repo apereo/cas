@@ -18,16 +18,14 @@ const cas = require("../../cas.js");
 
     const page2 = await browser.newPage();
     await page2.goto("http://localhost:8282");
-    await cas.waitForTimeout(page2, 1000);
     await cas.click(page2, "table tbody td a");
-    await cas.waitForTimeout(page2, 1000);
+    await cas.waitForElement(page2, "div[name=bodyPlainText] .well");
     const code = await cas.textContent(page2, "div[name=bodyPlainText] .well");
     await page2.close();
 
     await page.bringToFront();
     await cas.type(page, "#token", code);
     await cas.submitForm(page, "#fm1");
-    await cas.waitForTimeout(page, 4000);
     await cas.screenshot(page);
 
     await cas.assertInnerText(page, "#content h2", "Password Reset Instructions Sent Successfully.");

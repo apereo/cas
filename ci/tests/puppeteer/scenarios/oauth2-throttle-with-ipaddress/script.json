@@ -1,11 +1,11 @@
 {
-  "dependencies": "throttle,oauth-webflow",
-
+  "dependencies": "throttle,oauth-webflow,reports",
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
 
     "--cas.audit.engine.enabled=true",
+    "--cas.audit.slf4j.use-single-line=true",
     
     "--cas.authn.throttle.failure.threshold=2",
     "--cas.authn.throttle.failure.range-seconds=3",
@@ -13,7 +13,10 @@
 
     "--cas.authn.throttle.schedule.start-delay=PT60S",
 
-    "--logging.level.org.apereo.cas=info",
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=throttles",
+    "--management.endpoints.enabled-by-default=true",
+
     "--logging.level.org.apereo.cas.web.support.AbstractThrottledSubmissionHandlerInterceptorAdapter=trace"
   ]
 }

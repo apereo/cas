@@ -9,14 +9,12 @@ const cas = require("../../cas.js");
     const service = "https://example.com";
     await cas.gotoLogin(page, service);
     await cas.loginWith(page);
-    await cas.waitForTimeout(page, 3000);
     await cas.screenshot(page);
     const ticket = await cas.assertTicketParameter(page);
     const body = await cas.doRequest(`https://localhost:8443/cas/validate?service=${service}&ticket=${ticket}`);
     assert(body === "yes\ncasuser\n");
 
     await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
-    await cas.waitForTimeout(page, 3000);
     await page.waitForSelector("#table_with_attributes", {visible: true});
     await cas.assertInnerTextContains(page, "#content p", "status page of SimpleSAMLphp");
     await cas.assertVisibility(page, "#table_with_attributes");

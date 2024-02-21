@@ -7,7 +7,6 @@ const cas = require("../../cas.js");
     const page = await cas.newPage(browser);
     await cas.gotoLoginWithAuthnMethod(page, undefined, "mfa-gauth");
     await cas.loginWith(page);
-    await cas.waitForTimeout(page, 1000);
 
     await cas.log("Using scratch code to login...");
     await cas.type(page,"#token", "83766843");
@@ -15,8 +14,6 @@ const cas = require("../../cas.js");
 
     await cas.innerText(page, "#deviceName");
     await cas.type(page, "#deviceName", "My Trusted Device");
-
-    await cas.waitForTimeout(page, 1000);
 
     await cas.assertInvisibility(page, "#expiration");
     await cas.assertVisibility(page, "#timeUnit");
