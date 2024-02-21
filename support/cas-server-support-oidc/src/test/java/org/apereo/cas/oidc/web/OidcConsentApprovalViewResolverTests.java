@@ -38,7 +38,8 @@ class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
         oauthDistributedSessionStore.set(context, OAuth20Constants.BYPASS_APPROVAL_PROMPT, "true");
-        val service = getOAuthRegisteredService(UUID.randomUUID().toString(), "https://google.com");
+        val service = getOidcRegisteredService(UUID.randomUUID().toString(), randomServiceUrl());
+        servicesManager.save(service);
         assertFalse(consentApprovalViewResolver.resolve(context, service).hasView());
     }
 
@@ -52,7 +53,8 @@ class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
 
-        val service = getOidcRegisteredService(UUID.randomUUID().toString());
+        val service = getOidcRegisteredService(UUID.randomUUID().toString(), randomServiceUrl());
+        servicesManager.save(service);
         val mv = consentApprovalViewResolver.resolve(context, service);
         assertTrue(mv.hasView());
     }
@@ -65,14 +67,17 @@ class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
 
-        val service = getOidcRegisteredService(UUID.randomUUID().toString());
+        val service = getOidcRegisteredService(UUID.randomUUID().toString(), randomServiceUrl());
+        servicesManager.save(service);
         val mv = consentApprovalViewResolver.resolve(context, service);
         assertFalse(mv.hasView());
     }
 
     @Test
     void verifyPushedAuthz() throws Throwable {
-        val registeredService = getOidcRegisteredService();
+        val registeredService = getOidcRegisteredService(UUID.randomUUID().toString(), randomServiceUrl());
+        servicesManager.save(registeredService);
+
         val profile = new CommonProfile();
         profile.setId("casTest");
         val holder = AccessTokenRequestContext.builder()
@@ -96,7 +101,8 @@ class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
 
-        val service = getOidcRegisteredService(UUID.randomUUID().toString());
+        val service = getOidcRegisteredService(UUID.randomUUID().toString(), randomServiceUrl());
+        servicesManager.save(service);
         val mv = consentApprovalViewResolver.resolve(context, service);
         assertTrue(mv.hasView());
         assertEquals(3, ((Collection) mv.getModel().get("scopes")).size());
@@ -111,8 +117,9 @@ class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
 
-        val service = getOidcRegisteredService(UUID.randomUUID().toString());
+        val service = getOidcRegisteredService(UUID.randomUUID().toString(), randomServiceUrl());
         service.markAsDynamicallyRegistered();
+        servicesManager.save(service);
         val mv = consentApprovalViewResolver.resolve(context, service);
         assertTrue(mv.hasView());
         assertTrue(mv.getModel().containsKey("dynamic"));

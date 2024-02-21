@@ -7,9 +7,6 @@ const cas = require("../../cas.js");
     const page = await cas.newPage(browser);
     await cas.goto(page, "https://localhost:8443/cas/palantir/dashboard");
     let response = await cas.loginWith(page, "casadmin", "password");
-
-    await cas.log(`${response.status()} ${response.statusText()}`);
-
     await cas.screenshot(page);
     assert(response.status() === 200);
     response = await cas.goto(page, "https://localhost:8443/cas/palantir/dashboard/services");

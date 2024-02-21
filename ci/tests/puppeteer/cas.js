@@ -201,12 +201,11 @@ exports.loginWith = async (page,
 
     await page.waitForSelector(passwordField, {visible: true});
     await this.type(page, passwordField, password, true);
-
-    const [response] = await Promise.all([
+    const response = await Promise.all([
         this.pressEnter(page),
         page.waitForNavigation()
     ]);
-    return response;
+    return response[1];
 };
 
 exports.fetchGoogleAuthenticatorScratchCode = async (user = "casuser") => {
