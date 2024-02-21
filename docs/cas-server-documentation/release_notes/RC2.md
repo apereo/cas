@@ -121,6 +121,7 @@ Notable changes in this area include:
 - JavaMelody
 - Apache Tomcat
 - Logback
+- Apache Log4j
 - MariaDb
 - Gradle
 - PostgreSQL
