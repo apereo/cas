@@ -4,11 +4,14 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlan;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.actuate.endpoint.annotation.DeleteOperation;
-import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
-import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
+import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -20,7 +23,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Endpoint(id = "throttles", enableByDefault = false)
+@RestControllerEndpoint(id = "throttles", enableByDefault = false)
 public class ThrottledSubmissionHandlerEndpoint extends BaseCasActuatorEndpoint {
 
     private final ObjectProvider<AuthenticationThrottlingExecutionPlan> authenticationThrottlingExecutionPlan;
@@ -31,7 +34,7 @@ public class ThrottledSubmissionHandlerEndpoint extends BaseCasActuatorEndpoint 
         this.authenticationThrottlingExecutionPlan = executionPlan;
     }
 
-    @ReadOperation
+    @GetMapping
     @Operation(summary = "Get throttled authentication records")
     public List getRecords() {
         return (List) authenticationThrottlingExecutionPlan.getObject().getAuthenticationThrottleInterceptors()
@@ -46,13 +49,20 @@ public class ThrottledSubmissionHandlerEndpoint extends BaseCasActuatorEndpoint 
     /**
      * Release throttled interceptors as necessary.
      */
-    @DeleteOperation
-    @Operation(summary = "Clean and release throttled authentication records")
-    public void release() {
+    @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Clean and release throttled authentication records",
+        parameters = @Parameter(name = "clear", required = false, description = "Whether to clear/remove the records or simply release them"))
+    public void release(@RequestParam(value = "clear", required = false) final boolean clear) {
         val interceptors = authenticationThrottlingExecutionPlan.getObject().getAuthenticationThrottleInterceptors();
         interceptors
             .stream()
             .map(ThrottledSubmissionHandlerInterceptor.class::cast)
-            .forEach(ThrottledSubmissionHandlerInterceptor::release);
+            .forEach(interceptor -> {
+                if (clear) {
+                    interceptor.clear();
+                } else {
+                    interceptor.release();
+                }
+            });
     }
 }

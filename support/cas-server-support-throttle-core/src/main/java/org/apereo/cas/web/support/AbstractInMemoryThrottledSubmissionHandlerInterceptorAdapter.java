@@ -1,13 +1,11 @@
 package org.apereo.cas.web.support;
 
 import org.apereo.cas.configuration.support.Beans;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jooq.lambda.Unchecked;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.Clock;
 import java.time.ZonedDateTime;
@@ -100,5 +98,10 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
         } finally {
             LOGGER.debug("Done releasing throttled entries.");
         }
+    }
+
+    @Override
+    public void clear() {
+        getConfigurationContext().getThrottledSubmissionStore().clear();
     }
 }
