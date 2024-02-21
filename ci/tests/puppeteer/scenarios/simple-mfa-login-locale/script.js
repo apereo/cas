@@ -26,9 +26,9 @@ const cas = require("../../cas.js");
     await page.bringToFront();
     await cas.type(page, "#token", code);
     await cas.submitForm(page, "#fm1");
-
+    await cas.waitForElement(page, "#registerform");
     await cas.submitForm(page, "#registerform");
-
+    await cas.waitForElement(page, "#content div h2");
     await cas.assertInnerText(page, "#content div h2", "Anmeldung erfolgreich");
     await cas.assertCookie(page);
 

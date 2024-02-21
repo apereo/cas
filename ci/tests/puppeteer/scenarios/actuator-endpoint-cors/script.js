@@ -13,7 +13,6 @@ const assert = require("assert");
             const browser = await puppeteer.launch(cas.browserOptions());
             const page = await cas.newPage(browser);
             await cas.goto(page, "http://localhost:8444?endpoint=info");
-            await cas.waitForTimeout(page, 2500);
 
             let data = JSON.parse(await cas.innerText(page, "#data"));
             console.dir(data, {depth: null, colors: true});
@@ -23,7 +22,6 @@ const assert = require("assert");
             assert(data.cas.java.version !== undefined);
 
             await cas.goto(page, "http://localhost:8444?endpoint=health");
-            await cas.waitForTimeout(page, 2500);
             data = JSON.parse(await cas.innerText(page, "#data"));
             console.dir(data, {depth: null, colors: true});
 
