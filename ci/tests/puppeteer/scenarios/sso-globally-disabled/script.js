@@ -15,11 +15,8 @@ const cas = require("../../cas.js");
     await cas.assertVisibility(page, "li #CASServerOne");
     await cas.click(page, "li #CASServerOne");
     await page.waitForNavigation();
-
-    await cas.waitForTimeout(page, 2000);
     await cas.screenshot(page);
     await cas.loginWith(page);
-
 
     const result = new URL(page.url());
     await cas.log(result.searchParams.toString());

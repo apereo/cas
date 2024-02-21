@@ -12,7 +12,6 @@ const cas = require("../../cas.js");
         await cas.gotoLogout(page);
         await cas.assertCookie(page, false);
         await cas.goto(page, "https://localhost:8443/cas/actuator/registeredServices");
-        await cas.waitForTimeout(page, 1500);
     }
     await browser.close();
     const baseUrl = "https://localhost:8443/cas/actuator";

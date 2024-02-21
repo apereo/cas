@@ -20,6 +20,5 @@ const cas = require("../../cas.js");
         }, 200);
     }
     await cas.goto(page, "http://localhost:9411/zipkin");
-    await cas.waitForTimeout(page, 4000);
     await browser.close();
 })();

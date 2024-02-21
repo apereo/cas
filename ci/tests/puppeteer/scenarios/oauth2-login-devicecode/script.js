@@ -52,7 +52,6 @@ async function verifyDeviceCode(data) {
     await cas.type(page, "#usercode", data.user_code);
     await cas.pressEnter(page);
     await page.waitForNavigation();
-    await cas.waitForTimeout(page, 2000);
     await browser.close();
     
     await cas.doPost(url, "", {

@@ -10,7 +10,6 @@ async function fetchRefreshToken(page, clientId, redirectUrl) {
 
     await cas.loginWith(page);
 
-
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
         await page.waitForNavigation();

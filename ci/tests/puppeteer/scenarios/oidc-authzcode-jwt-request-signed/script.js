@@ -56,7 +56,6 @@ const assert = require("assert");
     }, (error) => {
         throw `Operation failed to obtain access token: ${error}`;
     });
-
     
     await browser.close();
 })();

@@ -7,7 +7,6 @@ const cas = require("../../cas.js");
     await cas.gotoLogin(page, "https://github.com");
     await cas.loginWith(page);
 
-
     await cas.assertTicketParameter(page);
 
     await cas.goto(page, "https://localhost:8443/cas");

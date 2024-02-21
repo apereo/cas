@@ -34,7 +34,7 @@ const cas = require("../../cas.js");
         await cas.goto(page, "https://localhost:9876/fediz");
         await page.waitForSelector("#logincas", {visible: true});
         await cas.click(page, "#logincas");
-        await cas.waitForTimeout(page, 2000);
+        await cas.waitForElement(page, "#principalId");
         await cas.logPage(page);
         await cas.assertInnerText(page, "#principalId", "casuser");
         await cas.assertVisibility(page, "#assertion");

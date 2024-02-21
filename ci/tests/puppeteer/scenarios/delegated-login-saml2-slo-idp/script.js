@@ -9,7 +9,6 @@ const assert = require("assert");
 
     await cas.goto(page, "https://localhost:8444");
 
-
     await cas.log("Accessing protected CAS application");
     await cas.goto(page, "https://localhost:8444/protected");
     await cas.logPage(page);
@@ -75,5 +74,4 @@ const assert = require("assert");
     await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
     await browser.close();
 })();
-
 

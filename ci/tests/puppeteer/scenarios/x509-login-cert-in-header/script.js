@@ -34,7 +34,7 @@ async function assertFailure(page) {
     });
 
     await cas.gotoLogin(page);
-    await cas.waitForTimeout(page, 5000);
+    await cas.waitForElement(page, "#content div h2");
 
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
     await cas.assertInnerTextContains(page, "#content div p", "CN=mmoayyed, OU=dev, O=bft, L=mt, C=world");
@@ -44,5 +44,4 @@ async function assertFailure(page) {
     await assertFailure(page);
     await browser.close();
 })();
-
 

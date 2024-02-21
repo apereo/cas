@@ -15,7 +15,6 @@ const assert = require("assert");
     await cas.gotoLogout(page);
     await cas.gotoLogin(page, service);
     await cas.loginWith(page);
-    await cas.waitForTimeout(page, 2000);
     await cas.assertTicketParameter(page);
 
     await cas.log("Updating configuration and waiting for changes to reload...");
@@ -34,8 +33,6 @@ const assert = require("assert");
     await cas.assertVisibility(page, "button[name=submit]");
     await cas.click(page, "#aupSubmit");
     await page.waitForNavigation();
-    await cas.waitForTimeout(page, 2000);
-
     await cas.assertTicketParameter(page);
     const result = new URL(page.url());
     assert(result.host === "apereo.github.io");

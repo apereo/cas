@@ -15,7 +15,6 @@ const cas = require("../../cas.js");
 
     await cas.gotoLogin(page, "https://example.com&renew=true");
 
-
     await cas.assertVisibility(page, "#existingSsoMsg");
 
     await cas.gotoLogin(page);

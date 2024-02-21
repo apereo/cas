@@ -31,7 +31,6 @@ const cas = require("../../cas.js");
             throw error;
         }, { "Content-Type": "application/json" });
 
-
     await cas.goto(page, "https://localhost:8444/cas/login");
     await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");

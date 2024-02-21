@@ -24,7 +24,6 @@ const cas = require("../../cas.js");
             assert(res.data.components.mongo.status !== undefined);
             assert(res.data.components.mongo.details !== undefined);
 
-
             let details = res.data.components.mongo.details["MongoDbHealthIndicator-ticket-registry"];
             assert(details.name === "MongoDbHealthIndicator-ticket-registry");
             assert(details.proxyGrantingTicketsCollection !== undefined);
@@ -39,7 +38,6 @@ const cas = require("../../cas.js");
         }, async (error) => {
             throw error;
         }, { "Content-Type": "application/json" });
-
 
     await cas.logg("Querying registry for all ticket-granting tickets");
     await cas.doGet(`${baseUrl}/ticketRegistry/query?prefix=TGT&count=10`, async (res) => {

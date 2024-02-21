@@ -26,7 +26,6 @@ const cas = require("../../cas.js");
     await browser.close();
 })();
 
-
 async function assertFailure(page) {
     await cas.assertInnerText(page, "#loginErrorsPanel p", "Service access denied due to missing privileges.");
 }

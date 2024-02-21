@@ -37,7 +37,6 @@ const cas = require("../../cas.js");
     await cas.pressEnter(page);
     await page.waitForNavigation();
 
-
     await typePassword(page, "EaP8R&iX$eK4nb8eAI", "EaP8R&iX$eK4nb8eAI");
     await cas.waitForTimeout(page,1000);
     await cas.assertInvisibility(page, "#password-confirm-mismatch-msg");

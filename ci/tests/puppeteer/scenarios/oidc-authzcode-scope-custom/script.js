@@ -25,7 +25,6 @@ async function getPayload(page, redirectUri, clientId, clientSecret) {
     await cas.goto(page, url);
     await cas.logPage(page);
 
-
     if (await cas.isVisible(page, "#username")) {
         await cas.loginWith(page);
 

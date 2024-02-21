@@ -24,7 +24,6 @@ const request = require("request");
     const args = process.argv.slice(2);
     const config = JSON.parse(fs.readFileSync(args[0]));
 
-
     await cas.log(`Certificate file: ${config.trustStoreCertificateFile}`);
     await cas.log(`Private key file: ${config.trustStorePrivateKeyFile}`);
 
@@ -58,8 +57,7 @@ const request = require("request");
     });
 
     await cas.gotoLogin(page);
-    await cas.waitForTimeout(page, 5000);
-
+    await cas.waitForElement(page, "#content div h2");
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
     await cas.assertInnerTextContains(page, "#content div p", "1234567890@college.edu");
 

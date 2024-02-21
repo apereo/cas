@@ -14,7 +14,6 @@ const jose = require("jose");
 
     await cas.loginWith(page);
 
-
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
         await page.waitForNavigation();
@@ -70,7 +69,6 @@ const jose = require("jose");
     }, (error) => {
         throw `Operation failed: ${error}`;
     });
-
 
     const sha256 = await cas.sha256(accessToken);
     const base64Token = await cas.base64Url(sha256);

@@ -39,17 +39,16 @@ ext.createPom = { pom, project ->
             name = "Misagh Moayyed"
         }
         developer {
-            id = "dima767"
-            name = "Dmitriy Kopylenko"
-        }
-
-        developer {
             id = "hdeadman"
             name = "Hal Deadman"
         }
     }
 
     pom.contributors {
+        contributor {
+            id = "dima767"
+            name = "Dmitriy Kopylenko"
+        }
         contributor {
             id = "tduehr"
             name = "Timur Duehr"
