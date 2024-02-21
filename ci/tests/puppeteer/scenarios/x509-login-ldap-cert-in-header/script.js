@@ -54,7 +54,7 @@ const fs = require("fs");
 })();
 
 async function assertFailure(page) {
+    await cas.waitForElement(page, "#loginErrorsPanel");
     await cas.assertInnerText(page, "#loginErrorsPanel p", "Service access denied due to missing privileges.");
-    await cas.waitForTimeout(page, 1000);
 }
 

@@ -18,9 +18,8 @@ async function loginWith(page, user, password) {
     const captcha = await cas.innerText(page, "#captcha");
     await cas.type(page, "#captchaValue", captcha);
     await cas.submitForm(page, "#fm1");
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForElement(page, "#content h2");
     await cas.assertInnerText(page, "#content h2", "Your account is now unlocked.");
-    await cas.waitForTimeout(page, 1000);
     await cas.click(page, "#loginbtn");
     await page.waitForNavigation();
     await cas.logPage(page);

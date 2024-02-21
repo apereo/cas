@@ -31,7 +31,6 @@ async function getPayload(page, redirectUri, clientId, clientSecret) {
     
     if (await cas.isVisible(page, "#username")) {
         await cas.loginWith(page);
-        await cas.waitForTimeout(page, 1000);
     }
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");

@@ -11,6 +11,7 @@ const cas = require("../../cas.js");
         + "response_type=code";
     await cas.goto(page, url);
     await cas.loginWith(page);
+    await cas.waitForTimeout(page, 4000);
     await cas.goto(page, url);
     await cas.assertVisibility(page, "#username");
     await browser.close();

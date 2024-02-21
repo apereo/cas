@@ -23,7 +23,6 @@ const cas = require("../../cas.js");
 
     await cas.log("Repeat: force SSO session to step up with Duo MFA");
     await cas.goto(page, stepUpUrl);
-    await cas.waitForTimeout(page, 6000);
     await cas.loginDuoSecurityBypassCode(page, "duocode");
     await cas.waitForTimeout(page, 6000);
     await cas.screenshot(page);

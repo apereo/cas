@@ -101,7 +101,7 @@ async function verifyJwtAccessToken(page) {
     await cas.goto(page, url);
     await cas.logPage(page);
     await cas.loginWith(page);
-
+    await cas.waitForTimeout(page, 2000);
     const code = await cas.assertParameter(page, "code");
     await cas.log(`OAuth code ${code}`);
 

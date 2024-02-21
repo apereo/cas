@@ -9,16 +9,12 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.val;
-import org.opensaml.core.xml.ElementExtensibleXMLObject;
-import org.opensaml.saml.ext.saml2mdrpi.RegistrationInfo;
-import org.opensaml.saml.saml2.metadata.AffiliationDescriptor;
 import org.opensaml.saml.saml2.metadata.EntitiesDescriptor;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import java.io.Serial;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * This is {@link MetadataEntityGroupAttributeReleasePolicy}.
