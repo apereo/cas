@@ -38,17 +38,23 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
         val key = constructKey(request);
         LOGGER.debug("Recording submission failure [{}]", key);
 
-        val duration = Beans.newDuration(getConfigurationContext().getCasProperties()
-            .getAuthn().getThrottle().getFailure().getThrottleWindowSeconds());
-        val expiration = ZonedDateTime.now(Clock.systemUTC()).plusSeconds(duration.getSeconds());
+        val store = getConfigurationContext().getThrottledSubmissionStore();
 
-        val submission = ThrottledSubmission.builder()
+        val submissionBuilder = ThrottledSubmission
+            .builder()
             .key(key)
             .username(getUsernameParameterFromRequest(request))
-            .clientIpAddress(ClientInfoHolder.getClientInfo().getClientIpAddress())
-            .expiration(expiration)
-            .build();
-        getConfigurationContext().getThrottledSubmissionStore().put(submission);
+            .clientIpAddress(ClientInfoHolder.getClientInfo().getClientIpAddress());
+
+        if (store.exceedsThreshold(key, getThresholdRate())) {
+            val duration = Beans.newDuration(getConfigurationContext().getCasProperties()
+                .getAuthn().getThrottle().getFailure().getThrottleWindowSeconds());
+            val expiration = ZonedDateTime.now(Clock.systemUTC()).plusSeconds(duration.getSeconds());
+            submissionBuilder.expiration(expiration);
+        } 
+        val submission = submissionBuilder.build();
+        store.put(submission);
+        
         val receivers = new ArrayList<>(getConfigurationContext().getApplicationContext()
             .getBeansOfType(ThrottledSubmissionReceiver.class).values());
         AnnotationAwareOrderComparator.sort(receivers);

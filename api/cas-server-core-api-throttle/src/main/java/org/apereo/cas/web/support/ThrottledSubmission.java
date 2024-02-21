@@ -38,20 +38,20 @@ public class ThrottledSubmission implements Serializable {
      * Compares the current time with the expiration time to determine
      * whether the submission has expired.
      *
-     * @return the boolean
+     * @return true or false
      */
     public boolean hasExpiredAlready() {
         val now = ZonedDateTime.now(Clock.systemUTC());
-        return expiration != null && (now.isAfter(expiration) || now.isEqual(expiration));
+        return expiration == null || now.isAfter(expiration) || now.isEqual(expiration);
     }
 
     /**
-     * Is still locked?.
+     * Is the entry still locked and in its expiration window?
      *
      * @return true/false
      */
     @JsonIgnore
-    public boolean isStillLocked() {
+    public boolean isStillInExpirationWindow() {
         val now = ZonedDateTime.now(Clock.systemUTC());
         return expiration != null && (expiration.isAfter(now) || expiration.isEqual(now));
     }
