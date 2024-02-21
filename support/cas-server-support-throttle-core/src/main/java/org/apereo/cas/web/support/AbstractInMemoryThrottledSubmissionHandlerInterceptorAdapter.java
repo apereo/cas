@@ -44,22 +44,27 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
     @Override
     public void recordSubmissionFailure(final HttpServletRequest request) {
         val key = constructKey(request);
-
-        val duration = Beans.newDuration(getConfigurationContext().getCasProperties()
-            .getAuthn().getThrottle().getFailure().getThrottleWindowSeconds());
-        val expiration = ZonedDateTime.now(Clock.systemUTC()).plusSeconds(duration.getSeconds());
-
         val submission = ThrottledSubmission
             .builder()
             .id(UUID.randomUUID().toString())
             .key(key)
             .username(getUsernameParameterFromRequest(request))
             .clientIpAddress(ClientInfoHolder.getClientInfo().getClientIpAddress())
-            .expiration(expiration)
+            .expiration(determineThrottledSubmissionExpiration(key))
             .build();
         LOGGER.debug("Recording submission failure entry [{}]", submission);
         getConfigurationContext().getThrottledSubmissionStore().put(submission);
         throttledSubmissionReceivers.forEach(Unchecked.consumer(receiver -> receiver.receive(submission)));
+    }
+
+    protected ZonedDateTime determineThrottledSubmissionExpiration(final String key) {
+        val store = getConfigurationContext().getThrottledSubmissionStore();
+        if (store.exceedsThreshold(key, getThresholdRate())) {
+            val duration = Beans.newDuration(getConfigurationContext().getCasProperties()
+                .getAuthn().getThrottle().getFailure().getThrottleWindowSeconds());
+            return ZonedDateTime.now(Clock.systemUTC()).plusSeconds(duration.getSeconds());
+        }
+        return null;
     }
 
     @Override
