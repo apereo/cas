@@ -488,7 +488,10 @@
                       xmlns:xrd="http://docs.oasis-open.org/ns/xri/xrd-1.0">
 
 
-
+        <AffiliationDescriptor affiliationOwnerID="urn:mace:cas" ID="ID">
+            <md:AffiliateMember>https://example.org</md:AffiliateMember>
+        </AffiliationDescriptor>
+        
         <!-- An SP supporting SAML 1 and 2 contains this element with protocol support as shown. -->
         <SPSSODescriptor
                 protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol urn:oasis:names:tc:SAML:1.1:protocol http://schemas.xmlsoap.org/ws/2003/07/secext">
@@ -500,8 +503,6 @@
                                  Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"/>
 
             <NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</NameIDFormat>
-
-
             <AssertionConsumerService index="1"
                                       Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
                                       Location="https://httpbin.org/post"/>
@@ -514,6 +515,7 @@
             <AssertionConsumerService index="4"
                                       Binding="urn:oasis:names:tc:SAML:2.0:bindings:PAOS"
                                       Location="https://httpbin.org/post"/>
+
         </SPSSODescriptor>
 
 
