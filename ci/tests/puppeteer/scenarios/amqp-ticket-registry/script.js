@@ -12,7 +12,7 @@ const path = require("path");
         assert(response.ok());
 
         await cas.loginWith(page);
-
+        await cas.waitForElement(page, "#content div h2");
         await cas.assertCookie(page);
         await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
         await cas.assertInnerText(page, "#content div h2", "Log In Successful");

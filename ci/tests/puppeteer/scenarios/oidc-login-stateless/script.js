@@ -9,7 +9,7 @@ async function verifyNormalFlows(page) {
     await cas.goto(page, url);
     await cas.logPage(page);
     await cas.loginWith(page);
-
+    
     const code = await cas.assertParameter(page, "code");
     await cas.log(`OAuth code ${code}`);
 

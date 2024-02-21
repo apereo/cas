@@ -11,6 +11,7 @@ const path = require("path");
     await page.waitForNavigation();
 
     await cas.loginWith(page, "user1", "password");
+    await cas.waitForElement(page, "#content div h2");
     await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
