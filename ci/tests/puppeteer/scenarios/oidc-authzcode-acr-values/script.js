@@ -34,7 +34,6 @@ async function fetchCode(page, acr, params) {
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
         await page.waitForNavigation();
-        await cas.waitForTimeout(page, 2000);
     }
 
     const code = await cas.assertParameter(page, "code");

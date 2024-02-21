@@ -18,7 +18,6 @@ async function startAuthFlow(page, username) {
     await cas.logPage(page);
     assert(url.startsWith("https://localhost:8444"));
 
-
     await cas.loginWith(page);
     await cas.waitForTimeout(page, 5000);
     await cas.log(`Page url: ${await page.url()}`);

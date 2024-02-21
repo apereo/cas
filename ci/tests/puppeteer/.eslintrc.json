@@ -25,7 +25,13 @@
         "position": "above"
       }
     ],
-    "no-multiple-empty-lines": "error",
+    "no-multiple-empty-lines": [
+      "error",
+      {
+        "max": 1,
+        "maxEOF": 1
+      }
+    ],
     "quotes": "error",
     "semi": "error",
     "curly": "error",

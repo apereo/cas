@@ -6,7 +6,6 @@ const cas = require("../../cas.js");
     const page = await cas.newPage(browser);
     await cas.gotoLogin(page);
 
-
     await cas.assertVisibility(page, "#webauthnLoginPanel div h2#status");
     await cas.assertTextContent(page, "#webauthnLoginPanel div h2#status","Login with FIDO2-enabled Device");
     await browser.close();

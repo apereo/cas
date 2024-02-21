@@ -8,7 +8,6 @@ const cas = require("../../cas.js");
     await cas.gotoLoginWithAuthnMethod(page, undefined, "mfa-yubikey");
     await cas.loginWith(page);
 
-
     await cas.assertTextContent(page, "#login h3", "Use your registered YubiKey device(s) to authenticate.");
 
     await cas.assertVisibility(page, "button[name=register]");

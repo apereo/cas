@@ -8,12 +8,10 @@ const request = require("request");
     const page = await cas.newPage(browser);
     await cas.gotoLogin(page);
     await cas.assertVisibility(page, "#x509Login");
-    await cas.waitForTimeout(page, 2000);
 
     await page.setRequestInterception(true);
     const args = process.argv.slice(2);
     const config = JSON.parse(fs.readFileSync(args[0]));
-
 
     await cas.log(`Certificate file: ${config.trustStoreCertificateFile}`);
     await cas.log(`Private key file: ${config.trustStorePrivateKeyFile}`);
@@ -48,7 +46,7 @@ const request = require("request");
     });
     
     await cas.click(page, "#x509LoginLink");
-    await cas.waitForTimeout(page, 5000);
+    await cas.waitForElement(page, "#content div h2");
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
     await cas.assertInnerTextContains(page, "#content div p", "CN=mmoayyed, OU=dev, O=bft, L=mt, C=world");
     await browser.close();

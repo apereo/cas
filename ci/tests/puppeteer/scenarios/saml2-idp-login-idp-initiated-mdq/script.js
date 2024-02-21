@@ -53,4 +53,3 @@ async function tryServiceProviders(entityIds, page, timeout) {
     await browser.close();
 })();
 
-

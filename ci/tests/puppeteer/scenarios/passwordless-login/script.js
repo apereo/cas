@@ -33,7 +33,6 @@ const cas = require("../../cas.js");
     await cas.type(page, "#token", code);
     await cas.submitForm(page, "#fm1");
 
-
     await cas.assertCookie(page);
     await cas.assertInnerTextStartsWith(page, "#content div p", "You, casuser, have successfully logged in");
 
@@ -49,7 +48,6 @@ const cas = require("../../cas.js");
     assert(surrogatePrincipal === null);
     const surrogateUser = await page.$("#surrogateUser");
     assert(surrogateUser === null);
-
 
     await browser.close();
 })();

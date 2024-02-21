@@ -44,7 +44,6 @@ const assert = require("assert");
 
     await cas.loginWith(page);
 
-
     await cas.click(page, "#allow");
     await page.waitForNavigation();
 

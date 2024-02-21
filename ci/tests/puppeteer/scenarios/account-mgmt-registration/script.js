@@ -33,7 +33,6 @@ const cas = require("../../cas.js");
 
     await typePassword(page, "EaP8R&iX$eK4nb8eAI", "EaP8R&iX$eK4nb8eAI");
 
-
     for (let i = 1; i <= 2; i++) {
         await cas.type(page, `#securityquestion${i}`, `Security question ${i}`);
         await cas.type(page, `#securityanswer${i}`, `Security answer ${i}`);

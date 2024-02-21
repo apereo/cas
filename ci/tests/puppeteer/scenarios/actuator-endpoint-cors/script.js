@@ -22,6 +22,7 @@ const assert = require("assert");
             assert(data.cas.java.version !== undefined);
 
             await cas.goto(page, "http://localhost:8444?endpoint=health");
+            await cas.waitForElement(page, "#data");
             data = JSON.parse(await cas.innerText(page, "#data"));
             console.dir(data, {depth: null, colors: true});
 

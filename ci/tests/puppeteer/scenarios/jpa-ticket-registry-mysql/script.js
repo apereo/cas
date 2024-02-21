@@ -35,12 +35,10 @@ const YAML = require("yaml");
     const url = await page.url();
     assert(url === "https://localhost:8443/cas/logout");
 
-
     await cas.assertCookie(page, false);
 
     await browser.close();
 })();
-
 
 function updateConfig(configFile, configFilePath, data) {
     const config = {

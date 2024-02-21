@@ -62,7 +62,7 @@ test coverage of the CAS codebase is approximately `94%`. Furthermore, a large n
 are now configured to run with parallelism enabled.
   
 Finally, the overall execution of the [browser tests based via Puppeteer](../../developer/Test-Process.html) is reduced
-by approximately `90` seconds for every rune of the test suite by removing unnecessary *wait* times and delays in test scenarios.
+by approximately `10` minutes for every run of the test suite by removing unnecessary *wait* times and delays in test scenarios.
 
 ### OAuth/OpenID Connect Token Exchange
 
@@ -102,6 +102,7 @@ Notable changes in this area include:
 - [LDAP Passwordless Authentication](../authentication/Passwordless-Authentication-Storage-LDAP.html) can be configured to require specific user attributes and values before triggering the flow.
 - [Account Profile Management](../registration/Account-Management-Overview.html) can now display the list of access tokens that are issued for an authenticated user.
 - [MDC logging](../logging/Logging-MDC.html) gains options to control what parameters or headers should be excluded from the logging output.
+- [Triggering interrupts](../webflow/Webflow-Customization-Interrupt-PerService.html) per service can now be controlled via Groovy.
 
 ## Library Upgrades
            

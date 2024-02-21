@@ -7,7 +7,6 @@ const cas = require("../../cas.js");
 
     await cas.log("Create SSO session with external CAS server...");
     await cas.goto(page, "https://localhost:8444/cas/login");
-    await cas.waitForTimeout(page, 3000);
     await cas.screenshot(page);
     await cas.loginWith(page);
 

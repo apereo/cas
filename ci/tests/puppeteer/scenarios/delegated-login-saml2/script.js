@@ -8,8 +8,6 @@ const assert = require("assert");
     const page = await cas.newPage(browser);
 
     await cas.gotoLogin(page);
-    await cas.waitForTimeout(page, 2000);
-
     await cas.assertVisibility(page, "#loginProviders");
     await cas.assertVisibility(page, "li #SAML2Client");
     
@@ -17,7 +15,6 @@ const assert = require("assert");
     await page.waitForNavigation();
 
     await cas.loginWith(page, "user1", "password");
-    await cas.waitForTimeout(page, 8000);
     await cas.screenshot(page);
     await cas.logPage(page);
     await cas.assertCookie(page);
@@ -37,15 +34,12 @@ const assert = require("assert");
 
     await cas.log("Testing auto-redirection via configured cookie...");
     await cas.gotoLogout(page);
-    await cas.waitForTimeout(page, 3000);
     await cas.gotoLogin(page);
-    await cas.waitForTimeout(page, 2000);
-    const url = await page.url();
     await cas.logPage(page);
     await cas.waitForTimeout(page, 3000);
+    const url = await page.url();
     assert(url.startsWith("http://localhost:9443/simplesaml/"));
     await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
     await browser.close();
 })();
-
 

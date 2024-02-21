@@ -4,7 +4,6 @@ const assert = require("assert");
 const path = require("path");
 const fs = require("fs");
 
-
 (async () => {
 
     const template = path.join(__dirname, "device-record.json");
