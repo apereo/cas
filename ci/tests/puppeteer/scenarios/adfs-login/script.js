@@ -13,14 +13,13 @@ const cas = require("../../cas.js");
     await cas.log(`Navigating to ${service}`);
     await cas.gotoLogin(page, service);
     await cas.click(page, "div .idp span");
-    await cas.waitForTimeout(page, 4000);
+    await cas.waitForElement(page, "#userNameInput");
     await cas.screenshot(page);
     await cas.type(page, "#userNameInput", process.env.ADFS_USERNAME, true);
     await cas.type(page, "#passwordInput", process.env.ADFS_PASSWORD, true);
 
     await cas.screenshot(page);
     await cas.submitForm(page, "#loginForm");
-    await cas.waitForTimeout(page, 4000);
     await cas.screenshot(page);
     const ticket = await cas.assertTicketParameter(page);
     await cas.gotoLogin(page);

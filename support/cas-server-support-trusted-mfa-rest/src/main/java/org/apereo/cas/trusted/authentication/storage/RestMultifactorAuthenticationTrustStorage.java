@@ -92,16 +92,13 @@ public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
 
     private String getEndpointUrl(final String path) {
         val endpoint = getTrustedDevicesMultifactorProperties().getRest().getUrl();
-        return (!endpoint.endsWith("/") ? endpoint.concat("/") : endpoint).concat(StringUtils.defaultString(path));
+        return StringUtils.appendIfMissing(endpoint, "/").concat(StringUtils.defaultString(path));
     }
 
     @Override
     protected MultifactorAuthenticationTrustRecord saveInternal(final MultifactorAuthenticationTrustRecord record) {
         val entity = getHttpEntity(record);
         val response = restTemplate.exchange(getEndpointUrl(null), HttpMethod.POST, entity, Object.class);
-        if (response.getStatusCode() == HttpStatus.OK) {
-            return record;
-        }
-        return null;
+        return response.getStatusCode() == HttpStatus.OK ? record : null;
     }
 }

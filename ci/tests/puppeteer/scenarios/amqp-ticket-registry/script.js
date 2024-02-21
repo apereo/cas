@@ -34,7 +34,6 @@ const path = require("path");
         await cas.waitForTimeout(page, 3000);
         await cas.assertCookie(page);
 
-
         await cas.goto(page, "https://localhost:8444/cas/login");
 
         await cas.assertCookie(page);

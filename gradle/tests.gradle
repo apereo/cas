@@ -63,7 +63,7 @@ enum TestCategories {
     MongoDbMFA,
     MsSqlServer,
     MySQL,
-    Native(true),
+    Native(true, true),
     OAuth(true),
     OAuthToken(true),
     OAuthWeb,
@@ -72,7 +72,7 @@ enum TestCategories {
     PasswordOps(true),
     Postgres,
     Radius(true),
-    Redis(true),
+    Redis,
     RegisteredService(true),
     RestfulApi,
     RestfulApiAuthentication(true),
@@ -89,7 +89,7 @@ enum TestCategories {
     SHELL(true, true),
     Simple(true, true),
     SMS(true),
-    Spnego(true),
+    Spnego(true, true),
     Syncope(true),
     Tickets(true),
     UMA(true),
@@ -106,7 +106,7 @@ enum TestCategories {
     WebflowEvents(true),
     WebflowMfaActions(true),
     WSFederation(true),
-    X509(true),
+    X509(true, true),
     ZooKeeper(true, true)
 
     boolean parallelEnabled;

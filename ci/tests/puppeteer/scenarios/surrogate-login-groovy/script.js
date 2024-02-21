@@ -15,7 +15,7 @@ const cas = require("../../cas.js");
     await cas.loginWith(page, "+casuser3", "Mellon");
 
     await cas.assertTicketParameter(page);
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.gotoLogout(page);
 
     await cas.log("Checking auto selection for unauthorized user...");
     await cas.gotoLogin(page, "https://apereo.github.io");
@@ -34,7 +34,7 @@ const cas = require("../../cas.js");
     await cas.loginWith(page, "anybody+casuser4", "Mellon");
 
     await cas.assertTicketParameter(page);
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.gotoLogout(page);
 
     await browser.close();
 })();
@@ -46,5 +46,5 @@ async function impersonate(page, username) {
     await cas.assertTextContent(page, "#titlePanel h2", "Choose Account");
     await cas.assertTextContentStartsWith(page, "#surrogateInfo", "You are provided with a list of accounts");
     await cas.assertVisibility(page, "#surrogateTarget");
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.gotoLogout(page);
 }

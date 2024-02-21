@@ -38,7 +38,6 @@ async function callAuditLog() {
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
     await cas.gotoLogout(page);
-    await cas.waitForTimeout(page, 6000);
     await browser.close();
 
     await callAuditLog();

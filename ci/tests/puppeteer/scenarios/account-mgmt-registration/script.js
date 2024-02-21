@@ -6,7 +6,6 @@ const cas = require("../../cas.js");
     const page = await cas.newPage(browser);
     await cas.gotoLogin(page);
 
-    await cas.waitForTimeout(page, 2000);
     await cas.assertTextContent(page, "#accountSignUpLink", "Sign Up");
     await cas.submitForm(page, "#accountMgmtSignupForm");
 
@@ -40,7 +39,7 @@ const cas = require("../../cas.js");
         await cas.type(page, `#securityanswer${i}`, `Security answer ${i}`);
     }
     await cas.click(page, "#submit");
-    await cas.waitForTimeout(page, 5000);
+    await cas.waitForElement(page, "#content h2");
     await cas.assertInnerText(page, "#content h2", "Account Registration");
     await cas.assertInnerTextStartsWith(page, "#content p", "Thank you! Your account is now activated");
     await browser.close();

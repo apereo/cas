@@ -9,7 +9,7 @@ const assert = require("assert");
     await cas.goto(page, "http://localhost:8080/cas/login");
     await cas.assertVisibility(page, "#drawerButton");
     await cas.click(page, "#drawerButton");
-    await cas.waitForTimeout(page, 3000);
+    await cas.waitForElement(page, "div.container-fluid");
     await cas.screenshot(page);
     await cas.assertVisibility(page, "div.container-fluid");
 
