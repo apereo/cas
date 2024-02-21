@@ -10,7 +10,6 @@ const express = require("express");
         const page = await cas.newPage(browser);
 
         await cas.gotoLogin(page);
-        await cas.waitForTimeout(page, 2000);
         await cas.loginWith(page);
         await cas.waitForTimeout(page, 2000);
         await cas.assertTextContent(page, "#content h2", "Authentication attempt is blocked.");

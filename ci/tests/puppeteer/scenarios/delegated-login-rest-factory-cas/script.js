@@ -34,7 +34,6 @@ async function fetchIdentityProviders() {
     const mockServer = await cas.mockJsonServer(payload, 5432);
     const page = await cas.newPage(browser);
     await cas.gotoLogin(page);
-    await cas.waitForTimeout(page, 3000);
     await cas.assertVisibility(page, "#loginProviders");
     await cas.assertVisibility(page, "li #CasClient");
     await cas.assertVisibility(page, "li #OidcClient");

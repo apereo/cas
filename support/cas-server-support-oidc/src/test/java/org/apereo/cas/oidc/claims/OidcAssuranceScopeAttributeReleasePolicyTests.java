@@ -37,7 +37,8 @@ public class OidcAssuranceScopeAttributeReleasePolicyTests extends AbstractOidcT
 
         val registeredService = getOidcRegisteredService(UUID.randomUUID().toString(), randomServiceUrl());
         registeredService.setAttributeReleasePolicy(policy);
-
+        servicesManager.save(registeredService);
+        
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
             .service(CoreAuthenticationTestUtils.getService())

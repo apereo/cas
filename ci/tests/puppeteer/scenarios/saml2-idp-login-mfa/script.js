@@ -42,7 +42,7 @@ const assert = require("assert");
     });
     
     await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
-    await cas.waitForTimeout(page, 3000);
+    await cas.waitForElement(page, "details pre");
 
     authData = JSON.parse(await cas.innerHTML(page, "details pre"));
     await cas.log(authData);

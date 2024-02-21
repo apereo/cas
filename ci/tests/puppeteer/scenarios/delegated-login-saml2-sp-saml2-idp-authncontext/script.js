@@ -7,14 +7,11 @@ const path = require("path");
     const page = await cas.newPage(browser);
 
     await cas.gotoLogin(page);
-    await cas.waitForTimeout(page, 1000);
 
     await cas.doRequest("https://localhost:8443/cas/sp/metadata", "GET", {}, 200);
     await cas.doRequest("https://localhost:8443/cas/sp/idp/metadata", "GET", {}, 200);
 
     await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=refeds-sp");
-    await cas.waitForTimeout(page, 1000);
-
     await cas.assertVisibility(page, "li #SAML2Client");
     await cas.click(page, "li #SAML2Client");
     await cas.waitForTimeout(page, 6000);
