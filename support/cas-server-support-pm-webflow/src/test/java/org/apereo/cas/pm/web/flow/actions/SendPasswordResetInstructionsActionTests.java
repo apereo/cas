@@ -27,6 +27,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -96,8 +97,7 @@ class SendPasswordResetInstructionsActionTests {
             context.setParameter("username", "casuser");
             WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
             WebUtils.putMultifactorAuthenticationProvider(context, casSimpleMultifactorAuthenticationProvider);
-
-
+            
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, sendPasswordResetInstructionsAction.execute(context).getId());
         }
     }
@@ -131,19 +131,15 @@ class SendPasswordResetInstructionsActionTests {
         @Test
         void verifyNoPhoneOrEmail() throws Throwable {
             val context = MockRequestContext.create(applicationContext);
-
             context.setParameter("username", "none");
             WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
-
             assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, sendPasswordResetInstructionsAction.execute(context).getId());
         }
 
         @Test
         void verifyNoUsername() throws Throwable {
             val context = MockRequestContext.create(applicationContext);
-
             WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
-
             assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, sendPasswordResetInstructionsAction.execute(context).getId());
         }
     }
@@ -180,16 +176,35 @@ class SendPasswordResetInstructionsActionTests {
     }
 
     @Nested
+    @TestPropertySource(properties = {
+        "cas.authn.pm.reset.mail.html=true",
+        "cas.authn.pm.reset.mail.text=classpath:/password-reset.html"
+    })
+    class HtmlEmailTests extends BasePasswordManagementActionTests {
+
+        @Test
+        void verifyHtmlEmail() throws Throwable {
+            val context = MockRequestContext.create(applicationContext);
+
+            context.setParameter("username", "casuser");
+            WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
+
+            assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, sendPasswordResetInstructionsAction.execute(context).getId());
+            val tickets = ticketRegistry.getTickets();
+            assertEquals(1, tickets.size());
+            assertInstanceOf(HardTimeoutExpirationPolicy.class, tickets.iterator().next().getExpirationPolicy());
+        }
+    }
+
+    @Nested
     @Import(PasswordManagementTestConfiguration.class)
     class WithoutTokens extends BasePasswordManagementActionTests {
 
         @Test
         void verifyNoLinkAction() throws Throwable {
             val context = MockRequestContext.create(applicationContext);
-
             context.setParameter("username", "unknown");
             WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
-
             assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, sendPasswordResetInstructionsAction.execute(context).getId());
         }
     }
