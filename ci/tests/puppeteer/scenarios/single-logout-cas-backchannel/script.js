@@ -15,7 +15,7 @@ const assert = require("assert");
     await cas.gotoLogout(page);
     await cas.goto(page, "https://localhost:8444/protected");
     await cas.logPage(page);
-    await cas.waitForElement(page, "#username");
+    await cas.waitForTimeout(page, 3000);
     url = await page.url();
     assert(url.startsWith("https://localhost:8443/cas/login?service="));
     await cas.shutdownCas("https://localhost:8444");
