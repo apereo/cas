@@ -11,6 +11,7 @@ const cas = require("../../cas.js");
     await cas.assertInnerText(page, "h1.login-title","Log in to SonarQube");
     await cas.click(page,"a.identity-provider-link");
     await cas.loginWith(page);
+    await cas.waitForElement(page, "ul.global-navbar-menu");
     await cas.assertInnerTextContains(page, "ul.global-navbar-menu","Projects");
     await browser.close();
 })();

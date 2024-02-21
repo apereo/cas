@@ -92,7 +92,7 @@ Notable changes in this area include:
 
 - Removing unnecessary I/O operations during startup to verify existence of embedded application resources on the classpath.
 - Removing the `org.webjars:webjars-locator-core` library which does classpath scanning at startup to locate assets.
-- ...and as a result, the "Hal Browser" interface that listed the CAS actuator endpoints has been removed.
+- ...and as a result, the *Hal Browser* interface that listed the CAS actuator endpoints has been removed.
 - Delaying the reconstruction of the CAS webflow execution plan until the application container is fully ready.
 
 ## Other Stuff
@@ -121,3 +121,6 @@ Notable changes in this area include:
 - JavaMelody
 - Apache Tomcat
 - Logback
+- MariaDb
+- Gradle
+- PostgreSQL

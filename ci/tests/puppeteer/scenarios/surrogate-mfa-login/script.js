@@ -6,7 +6,7 @@ async function getOneTimeCode(browser) {
     await page.goto("http://localhost:8282");
 
     await cas.click(page, "table tbody td a");
-    await cas.waitForTimeout(page, 3000);
+    await cas.waitForElement(page, "div[name=bodyPlainText] .well");
     return cas.textContent(page, "div[name=bodyPlainText] .well");
 }
 
@@ -44,7 +44,6 @@ async function impersonateWithMenu(page, browser) {
     await cas.assertCookie(page);
 
     await cas.assertInnerTextStartsWith(page, "#content div p", "You, user3, have successfully logged in");
-    await cas.waitForTimeout(page, 2000);
     await cas.gotoLogout(page);
 }
 
