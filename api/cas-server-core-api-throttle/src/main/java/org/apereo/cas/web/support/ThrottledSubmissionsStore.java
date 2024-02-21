@@ -74,4 +74,9 @@ public interface ThrottledSubmissionsStore<T extends ThrottledSubmission> {
      * @param thresholdRate the threshold rate
      */
     void release(double thresholdRate);
+
+    /**
+     * Clear all store records.
+     */
+    void clear();
 }

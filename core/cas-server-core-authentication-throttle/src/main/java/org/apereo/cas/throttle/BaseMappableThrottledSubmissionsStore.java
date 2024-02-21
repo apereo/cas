@@ -98,6 +98,11 @@ public abstract class BaseMappableThrottledSubmissionsStore<T extends ThrottledS
     }
 
     @Override
+    public void clear() {
+        backingMap.clear();
+    }
+
+    @Override
     public void release(final double thresholdRate) {
         val now = ZonedDateTime.now(ZoneOffset.UTC);
         LOGGER.debug("Attempting to release throttled records for now [{}]", now);

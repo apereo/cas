@@ -26,10 +26,4 @@ public class HazelcastMapThrottledSubmissionsStore<T extends ThrottledSubmission
         val hzMap = (IMap<String, T>) backingMap;
         hzMap.removeAll((com.hazelcast.query.Predicate<String, T>) entry -> condition.test(entry.getValue()));
     }
-
-    @Override
-    public void remove(final String key) {
-        val hzMap = (IMap<String, T>) backingMap;
-        hzMap.remove(key);
-    }
 }

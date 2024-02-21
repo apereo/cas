@@ -67,6 +67,12 @@ public interface ThrottledSubmissionHandlerInterceptor extends AsyncHandlerInter
     }
 
     /**
+     * Clear records and remove all.
+     */
+    default void clear() {
+    }
+
+    /**
      * Gets all records.
      *
      * @return the all records
