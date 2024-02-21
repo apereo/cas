@@ -14,7 +14,6 @@ const cas = require("../../cas.js");
     await cas.logPage(page);
     await cas.type(page, "#userNameInput", process.env.ADFS_USERNAME, true);
     await cas.type(page, "#passwordInput", process.env.ADFS_PASSWORD, true);
-    await cas.waitForTimeout(page, 2000);
     await cas.submitForm(page, "#loginForm");
     await cas.screenshot(page);
     await cas.logPage(page);

@@ -7,7 +7,7 @@ import org.apereo.cas.ticket.UniqueTicketIdGeneratorConfigurer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -31,13 +31,14 @@ class CasCoreTicketIdGeneratorsConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "uniqueIdGeneratorsMap")
     public Map<String, UniqueTicketIdGenerator> uniqueIdGeneratorsMap(
-        final ObjectProvider<List<UniqueTicketIdGeneratorConfigurer>> configurers) {
+        final List<UniqueTicketIdGeneratorConfigurer> configurers) {
         val map = new HashMap<String, UniqueTicketIdGenerator>();
-        configurers.ifAvailable(cfgs -> cfgs.forEach(c -> {
-            val pair = c.buildUniqueTicketIdGenerators();
+        configurers.forEach(cfg -> {
+            val pair = cfg.buildUniqueTicketIdGenerators();
             pair.forEach(p -> map.put(p.getKey(), p.getValue()));
-        }));
+        });
         return map;
     }
 }

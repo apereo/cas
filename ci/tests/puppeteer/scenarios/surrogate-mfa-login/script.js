@@ -22,7 +22,6 @@ async function impersonatePreSelected(page, browser) {
     await cas.assertCookie(page);
 
     await cas.assertInnerTextStartsWith(page, "#content div p", "You, user3, have successfully logged in");
-    await cas.waitForTimeout(page, 2000);
     await cas.gotoLogout(page);
 }
 

@@ -51,7 +51,7 @@ const express = require("express");
         await cas.log("Logging in again, now with SSO");
         await cas.gotoLogin(page, service);
         await cas.assertTicketParameter(page);
-        await cas.goto(page, "https://localhost:8443/cas/logout");
+        await cas.gotoLogout(page);
 
         await cas.log("Logging in again, now without SSO");
         await cas.gotoLogin(page, service);

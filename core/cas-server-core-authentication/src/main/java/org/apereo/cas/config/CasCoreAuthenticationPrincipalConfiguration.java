@@ -23,12 +23,10 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.services.persondir.support.merger.IAttributeMerger;
 import org.jooq.lambda.Unchecked;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -38,11 +36,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 
 /**
  * This is {@link CasCoreAuthenticationPrincipalConfiguration}.
@@ -63,17 +59,16 @@ class CasCoreAuthenticationPrincipalConfiguration {
         @ConditionalOnMissingBean(name = PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PrincipalResolver defaultPrincipalResolver(
-            final ObjectProvider<List<PrincipalResolutionExecutionPlanConfigurer>> configurers,
+            final List<PrincipalResolutionExecutionPlanConfigurer> configurers,
             final CasConfigurationProperties casProperties,
-            @Qualifier(PrincipalElectionStrategy.BEAN_NAME) final PrincipalElectionStrategy principalElectionStrategy) {
+            @Qualifier(PrincipalElectionStrategy.BEAN_NAME)
+            final PrincipalElectionStrategy principalElectionStrategy) {
             val plan = new DefaultPrincipalResolutionExecutionPlan();
-            val sortedConfigurers = new ArrayList<>(
-                Optional.ofNullable(configurers.getIfAvailable()).orElseGet(() -> new ArrayList<>(0)));
+            val sortedConfigurers = new ArrayList<>(configurers);
             AnnotationAwareOrderComparator.sortIfNecessary(sortedConfigurers);
-
-            sortedConfigurers.forEach(Unchecked.consumer(c -> {
-                LOGGER.trace("Configuring principal resolution execution plan [{}]", c.getName());
-                c.configurePrincipalResolutionExecutionPlan(plan);
+            sortedConfigurers.forEach(Unchecked.consumer(cfg -> {
+                LOGGER.trace("Configuring principal resolution execution plan [{}]", cfg.getName());
+                cfg.configurePrincipalResolutionExecutionPlan(plan);
             }));
             plan.registerPrincipalResolver(new EchoingPrincipalResolver());
 

@@ -9,12 +9,12 @@ const cas = require("../../cas.js");
     await cas.log(`Navigating to ${service}`);
     await cas.gotoLogin(page, service);
     await cas.click(page, "div .idp span");
-    await cas.waitForTimeout(page, 4000);
+    await cas.waitForElement(page, "#userNameInput");
     await cas.type(page, "#userNameInput", process.env.ADFS_USERNAME, true);
     await cas.type(page, "#passwordInput", process.env.ADFS_PASSWORD, true);
 
     await cas.submitForm(page, "#loginForm");
-    await cas.waitForTimeout(page, 3000);
+    await cas.waitForElement(page, "#content h1");
     await cas.assertTextContent(page, "#content h1", "Authentication Interrupt");
     await cas.assertTextContentStartsWith(page, "#content p", "The authentication flow has been interrupted");
     await cas.assertTextContentStartsWith(page, "#interruptMessage", "We interrupted your login");

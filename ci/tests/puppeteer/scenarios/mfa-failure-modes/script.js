@@ -13,7 +13,7 @@ const cas = require("../../cas.js");
 
     await cas.assertInnerText(page, "#content h2", "MFA Provider Unavailable");
 
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.gotoLogout(page);
 
     service = "http://localhost:9889/anything/phantom";
     await cas.logg("Checking PHANTOM failure mode");
@@ -29,7 +29,7 @@ const cas = require("../../cas.js");
     assert(authenticationSuccess.attributes.bypassedMultifactorAuthenticationProviderId[0] === "mfa-yubikey");
     assert(authenticationSuccess.attributes.authenticationContext[0] === "mfa-yubikey");
 
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.gotoLogout(page);
 
     service = "http://localhost:9889/anything/open";
     await cas.logg("Checking OPEN failure mode");
@@ -45,7 +45,7 @@ const cas = require("../../cas.js");
     assert(authenticationSuccess.attributes.bypassedMultifactorAuthenticationProviderId[0] === "mfa-yubikey");
     assert(authenticationSuccess.attributes.authenticationContext === undefined);
 
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.gotoLogout(page);
 
     service = "http://localhost:9889/anything/none";
     await cas.logg("Checking NONE failure mode");
@@ -55,7 +55,7 @@ const cas = require("../../cas.js");
     await cas.assertTextContent(page, "#login h3", "Use your registered YubiKey device(s) to authenticate.");
     await cas.assertVisibility(page, "#token");
 
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.gotoLogout(page);
     service = "http://localhost:9889/anything/undefined";
     await cas.logg("Checking UNDEFINED failure mode");
     await cas.gotoLogin(page, service);

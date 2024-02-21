@@ -43,8 +43,7 @@ async function testService(page, clientId, oidc = true) {
         assert(decodedAccessToken.client_id === "oauth-clientid");
     }
     
-    await cas.goto(page, "https://localhost:8443/cas/logout");
-    await cas.waitForTimeout(page, 1000);
+    await cas.gotoLogout(page);
     await cas.log("=========================================================");
 }
 

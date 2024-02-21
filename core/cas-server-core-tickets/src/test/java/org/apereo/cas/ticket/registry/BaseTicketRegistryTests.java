@@ -51,8 +51,6 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.RepetitionInfo;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.TestInfo;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
@@ -91,7 +89,6 @@ import static org.junit.jupiter.api.Assumptions.*;
         "cas.ticket.tgt.core.only-track-most-recent-session=false",
         "cas.ticket.registry.cleaner.schedule.enabled=false"
     })
-@Execution(ExecutionMode.SAME_THREAD)
 public abstract class BaseTicketRegistryTests {
 
     private static final int TICKETS_IN_REGISTRY = 1;

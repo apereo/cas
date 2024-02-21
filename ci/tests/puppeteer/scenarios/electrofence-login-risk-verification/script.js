@@ -25,11 +25,9 @@ const assert = require("assert");
     assert(response.ok());
     await cas.assertInnerText(page, "#content h2", "Risky Authentication attempt is confirmed.");
 
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.gotoLogout(page);
     await cas.gotoLogin(page, service);
-    await cas.waitForTimeout(page, 1000);
     await cas.loginWith(page);
-    await cas.waitForTimeout(page, 1000);
     await cas.assertTicketParameter(page);
 
     await browser.close();
