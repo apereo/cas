@@ -30,6 +30,7 @@ const path = require("path");
         await cas.click(page, "li #SAML2Client");
         await page.waitForNavigation();
         await cas.loginWith(page, "user1", "password");
+        await cas.waitForTimeout(2000);
         await cas.assertCookie(page);
         await cas.goto(page, "https://localhost:8444/cas/login");
         await cas.assertCookie(page);

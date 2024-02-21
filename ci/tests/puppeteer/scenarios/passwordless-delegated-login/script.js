@@ -35,7 +35,6 @@ async function startAuthFlow(page, username) {
     assert(surrogatePrincipal === null);
     const surrogateUser = await page.$("#surrogateUser");
     assert(surrogateUser === null);
-    await cas.waitForTimeout(page, 1000);
 }
 
 (async () => {

@@ -4,7 +4,6 @@ import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.RegexUtils;
-
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,9 +11,7 @@ import lombok.ToString;
 import lombok.val;
 import org.opensaml.core.xml.ElementExtensibleXMLObject;
 import org.opensaml.saml.ext.saml2mdrpi.RegistrationInfo;
-import org.opensaml.saml.saml2.metadata.EntitiesDescriptor;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
-
 import java.io.Serial;
 import java.util.HashMap;
 import java.util.List;

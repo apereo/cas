@@ -39,10 +39,8 @@ async function cleanUp() {
         await cas.loginWith(page);
         await cas.assertCookie(page);
         await cas.goto(page, "https://localhost:9876/sp");
-        await cas.waitForTimeout(page, 3000);
         await page.waitForSelector("#idpForm", {visible: true});
         await cas.submitForm(page, "#idpForm");
-        await cas.waitForTimeout(page, 3000);
         await cas.logPage(page);
         await page.waitForSelector("body pre", { visible: true });
         content = await cas.textContent(page, "body pre");

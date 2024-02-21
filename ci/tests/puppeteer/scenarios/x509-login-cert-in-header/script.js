@@ -3,8 +3,8 @@ const cas = require("../../cas.js");
 const fs = require("fs");
 
 async function assertFailure(page) {
+    await cas.waitForElement(page, "#loginErrorsPanel");
     await cas.assertInnerText(page, "#loginErrorsPanel p", "Service access denied due to missing privileges.");
-
 }
 
 (async () => {
@@ -40,7 +40,6 @@ async function assertFailure(page) {
     await cas.assertInnerTextContains(page, "#content div p", "CN=mmoayyed, OU=dev, O=bft, L=mt, C=world");
 
     await cas.gotoLogin(page, "https://localhost:9859/anything/cas");
-    await cas.waitForTimeout(page, 5000);
     await assertFailure(page);
     await browser.close();
 })();
