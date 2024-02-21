@@ -7,13 +7,13 @@ const cas = require("../../cas.js");
     const page = await cas.newPage(browser);
     await cas.gotoLoginWithAuthnMethod(page, undefined, "mfa-simple");
     await cas.loginWith(page);
-
+    await cas.waitForElement(page, "#token");
     await cas.assertVisibility(page, "#token");
 
     const page2 = await browser.newPage();
     await page2.goto("http://localhost:8282");
     await cas.click(page2, "table tbody td a");
-    await cas.waitForElement(page2, "div[name=bodyPlainText] .well");
+    await cas.waitForElement(page2, "#greeting");
 
     await page2.evaluate((selector) => {
         const element = document.querySelector(selector);

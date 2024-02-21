@@ -14,6 +14,7 @@ const fs = require("fs");
 
     await cas.click(page, "#allow");
     await page.waitForNavigation();
+    await cas.waitForElement(page, "body pre");
     const content = await cas.textContent(page, "body pre");
     const payload = JSON.parse(content);
     assert(payload.form.response !== undefined);

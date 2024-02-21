@@ -33,7 +33,7 @@ const cas = require("../../cas.js");
     await cas.log("Allowing release of scopes and claims...");
     await cas.click(page, "#allow");
     await page.waitForNavigation();
-
+    await cas.waitForElement(page, "pre");
     await cas.logPage(page);
     assert(await page.url().startsWith("https://localhost:9859/anything/1"));
     await cas.assertInnerTextContains(page, "pre", "OC-1-");
