@@ -113,7 +113,8 @@ Notable changes in this area include:
 - Spring Cloud CosmosDb
 - Spring Data CosmosDb
 - Spring Boot
-- Puppeteer
+- Puppetee
+- Spring Integration
 - Spring Data
 - Micrometer
 - Jose4j
