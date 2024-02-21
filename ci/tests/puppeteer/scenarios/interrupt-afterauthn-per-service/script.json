@@ -8,10 +8,11 @@
     "--cas.server.prefix=${cas.server.name}/cas",
 
     "--cas.interrupt.core.trigger-mode=AFTER_AUTHENTICATION",
-
-    "--cas.interrupt.regex.attribute-name=groups",
-    "--cas.interrupt.regex.attribute-value=^st[a]ff$",
-
+    "--cas.interrupt.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/interrupt.json",
+    
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+    "--cas.service-registry.core.init-from-json=true",
+    
     "--cas.authn.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
     "--cas.authn.accept.enabled=false"
   ]

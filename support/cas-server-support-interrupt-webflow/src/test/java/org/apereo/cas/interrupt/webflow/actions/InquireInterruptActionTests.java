@@ -233,10 +233,7 @@ class InquireInterruptActionTests {
             assertEquals(CasWebflowConstants.TRANSITION_ID_INTERRUPT_SKIPPED, event.getId());
         }
     }
-
-
-
-
+    
     @TestConfiguration(value = "InterruptTestConfiguration", proxyBeanMethods = false)
     static class InterruptActiveTestConfiguration {
         @Bean
