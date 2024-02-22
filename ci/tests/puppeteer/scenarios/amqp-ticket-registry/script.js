@@ -10,8 +10,8 @@ const path = require("path");
         const response = await cas.gotoLogin(page);
         await cas.log(`${response.status()} ${response.statusText()}`);
         assert(response.ok());
-
         await cas.loginWith(page);
+        await cas.waitForTimeout(2000);
         await cas.waitForElement(page, "#content div h2");
         await cas.assertCookie(page);
         await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
