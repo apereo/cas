@@ -207,12 +207,13 @@ exports.loginWith = async (page,
     const response = await Promise.all([
         this.log("Pressing Enter to submit login form"),
         this.pressEnter(page),
+        this.screenshot(page),
         await this.waitForNavigation(page)
     ]);
     return response[response.length - 1];
 };
 
-exports.waitForNavigation = async (page, timeout = 5000) =>
+exports.waitForNavigation = async (page, timeout = 10000) =>
     page.waitForNavigation({
         timeout: timeout,
         waitUntil: "domcontentloaded"
