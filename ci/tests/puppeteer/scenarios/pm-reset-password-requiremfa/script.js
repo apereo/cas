@@ -26,7 +26,8 @@ const cas = require("../../cas.js");
     await cas.type(page, "#token", code);
     await cas.submitForm(page, "#fm1");
     await cas.screenshot(page);
-
+    await cas.waitForTimeout(page, 2000);
+    await cas.waitForElement(page, "#content h2");
     await cas.assertInnerText(page, "#content h2", "Password Reset Instructions Sent Successfully.");
     await cas.assertInnerTextStartsWith(page, "#content p", "You should shortly receive a message");
 

@@ -8,7 +8,7 @@ const cas = require("../../cas.js");
     await cas.loginWith(page);
     await cas.gotoLogin(page);
     await cas.assertCookie(page);
-    await cas.waitForTimeout(page, 2500);
+    await cas.waitForTimeout(page, 3000);
     await cas.gotoLogin(page);
     await cas.assertVisibility(page, "#username");
     await cas.assertVisibility(page, "#password");

@@ -17,7 +17,7 @@ const cas = require("../../cas.js");
 
     await cas.type(page,"#username", "casuser");
     await cas.pressEnter(page);
-    await cas.waitForNavigation(page);
+    await cas.waitForTimeout(page, 5000);
     await cas.assertInnerText(page, "#login h3", "Provide Token");
     await cas.assertInnerTextStartsWith(page, "#login p", "Please provide the security token sent to you");
     await cas.assertVisibility(page, "#token");
@@ -33,7 +33,7 @@ const cas = require("../../cas.js");
     await page.bringToFront();
     await cas.type(page, "#token", code);
     await cas.submitForm(page, "#fm1");
-    await cas.waitForTimeout(page, 3000);
+    await cas.waitForTimeout(page, 5000);
     await cas.assertCookie(page);
     await browser.close();
 })();
