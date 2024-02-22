@@ -104,7 +104,7 @@ exports.removeDirectoryOrFile = async (directory) => {
     }
 };
 
-exports.waitForTimeout = async(page, milliseconds) => {
+exports.waitForTimeout = async(page, milliseconds = 2000) => {
     await new Promise((r) => setTimeout(r, milliseconds));
 };
 
@@ -214,7 +214,7 @@ exports.loginWith = async (page,
     return response[response.length - 1];
 };
 
-exports.waitForNavigation = async (page, timeout = 10000) => {
+exports.waitForNavigation = async (page, timeout = 15000) => {
     let attempts = 0;
     let response = null;
     const retryCount = 3;

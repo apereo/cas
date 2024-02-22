@@ -18,9 +18,9 @@ async function testBasicLoginLogout(browser) {
     await logoutEverywhere(page);
     const service = "https://apereo.github.io";
     await cas.gotoLogin(page, service);
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page, 2000);
     await cas.loginWith(page);
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page, 3000);
     const ticket = await cas.assertTicketParameter(page);
     await page.goto(`https://localhost:8444/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
     const content = await cas.textContent(page, "body");
@@ -45,6 +45,7 @@ async function checkTicketValidationAcrossNodes(browser) {
     await cas.gotoLogin(page, service);
     await cas.waitForTimeout(page, 1000);
     await cas.loginWith(page);
+    await cas.waitForTimeout(page, 2000);
     const ticket = await cas.assertTicketParameter(page);
 
     await cas.log("Validating ticket on second node");
