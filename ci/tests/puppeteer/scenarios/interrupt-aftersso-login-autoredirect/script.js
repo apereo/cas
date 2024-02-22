@@ -6,8 +6,8 @@ const assert = require("assert");
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.gotoLogin(page);
-
     await cas.loginWith(page);
+    await cas.waitForTimeout(page, 3000);
     await cas.screenshot(page);
     await cas.assertTextContent(page, "#content h1", "Authentication Interrupt");
     await cas.assertTextContentStartsWith(page, "#content p", "The authentication flow has been interrupted");

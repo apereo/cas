@@ -32,10 +32,11 @@ const cas = require("../../cas.js");
     await cas.assertInvisibility(page, "#password-policy-violation-msg");
 
     await cas.pressEnter(page);
-    await cas.waitForNavigation(page);
+    await cas.waitForTimeout(page, 2000);
     await cas.assertTextContent(page, "#content h2", "Password Change Successful");
     await cas.assertTextContent(page, "#content p", "Your account password is successfully updated.");
     await cas.submitForm(page, "#form");
+    await cas.waitForTimeout(page, 2000);
 
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
     await cas.assertCookie(page);
@@ -46,4 +47,5 @@ const cas = require("../../cas.js");
 async function typePassword(page, pswd, confirm) {
     await cas.type(page,"#password", pswd);
     await cas.type(page,"#confirmedPassword", confirm);
+    await cas.waitForTimeout(page, 1000);
 }
