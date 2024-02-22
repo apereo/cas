@@ -202,7 +202,7 @@ exports.loginWith = async (page,
     await page.waitForSelector(passwordField, {visible: true});
     await this.type(page, passwordField, password, true);
     const response = await Promise.all([
-        await this.pressEnter(page),
+        this.pressEnter(page),
         await page.waitForNavigation()
     ]);
     return response[1];
@@ -218,6 +218,7 @@ exports.fetchGoogleAuthenticatorScratchCode = async (user = "casuser") => {
 };
 
 exports.isVisible = async (page, selector) => {
+    await this.waitForElement(page, selector);
     const element = await page.$(selector);
     const result = (element !== null && await element.boundingBox() !== null);
     await this.log(`Checking element visibility for ${selector} while on page ${page.url()}: ${result}`);
@@ -261,7 +262,6 @@ exports.assertCookie = async (page, cookieMustBePresent = true, cookieName = "TG
 };
 
 exports.submitForm = async (page, selector, predicate = undefined, statusCode = 0) => {
-    await this.log(`Submitting form ${selector}`);
     if (predicate === undefined) {
         predicate = async (response) => {
             const responseStatus = response.status();
@@ -274,11 +274,12 @@ exports.submitForm = async (page, selector, predicate = undefined, statusCode = 
             return responseStatus === statusCode;
         };
     }
-    return Promise.all([
-        page.waitForResponse(predicate),
+    const response = await Promise.all([
+        this.log(`Submitting form ${selector}`),
         page.$eval(selector, (form) => form.submit()),
-        await this.waitForTimeout(page, 3000)
+        page.waitForResponse(predicate)
     ]);
+    return response[response.length - 1];
 };
 
 exports.pressEnter = async (page) => page.keyboard.press("Enter");

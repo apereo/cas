@@ -42,6 +42,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -315,7 +316,7 @@ public class OAuth20Utils {
      * @return the set
      */
     public static Set<String> parseUserInfoRequestClaims(final OAuth20Token token) {
-        return token.getClaims().getOrDefault("userinfo", new HashMap<>(0)).keySet();
+        return token != null ? token.getClaims().getOrDefault("userinfo", new HashMap<>(0)).keySet() : new HashSet<>();
     }
 
 

@@ -30,7 +30,7 @@ const cas = require("../../cas.js");
         await cas.gotoLogout(page);
         await cas.gotoLogin(page);
         await cas.loginWith(page);
-        await cas.waitForTimeout(page, 2000);
+        await cas.waitForTimeout(page, 3000);
         await cas.assertCookie(page);
         await cas.goto(page, "https://localhost:9876/fediz");
         await page.waitForSelector("#logincas");

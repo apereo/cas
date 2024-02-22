@@ -89,7 +89,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
         val userInfo = OAuth20Utils.parseUserInfoRequestClaims(accessToken);
         if (userInfo.isEmpty()) {
             LOGGER.trace("No userinfo requested claims are available");
-        } else if (accessToken.getTicketGrantingTicket() instanceof final AuthenticationAwareTicket aat) {
+        } else if (accessToken != null && accessToken.getTicketGrantingTicket() instanceof final AuthenticationAwareTicket aat) {
             val principalAttributes = aat.getAuthentication().getPrincipal().getAttributes();
             LOGGER.debug("Requested user-info claims [{}] are compared against principal attributes [{}]", userInfo, principalAttributes);
             userInfo
