@@ -15,7 +15,7 @@ const assert = require("assert");
     await cas.click(page, "li #SAML2Client");
     await page.waitForNavigation();
     await cas.loginWith(page, "user1", "password");
-
+    await cas.waitForTimeout(2000);
     await cas.screenshot(page);
     await cas.assertCookie(page, false);
     await cas.logPage(page);
@@ -23,7 +23,6 @@ const assert = require("assert");
     const url = await page.url();
     assert(url.includes("https://localhost:8443/cas/login"));
     await cas.assertInnerText(page, "#content h2", "Application Not Authorized to Use CAS");
-    
     await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
     await browser.close();
 })();

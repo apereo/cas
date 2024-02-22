@@ -12,6 +12,7 @@ const cas = require("../../cas.js");
     await cas.assertInnerTextContains(page, "#content ul li span", "Password policy rules are here");
     await cas.click(page, "#continue");
     await cas.waitForTimeout(page, "#content div h2");
+    await cas.waitForTimeout(2000);
     await cas.assertCookie(page);
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
     await cas.gotoLogout(page);

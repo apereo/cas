@@ -10,7 +10,7 @@ const assert = require("assert");
     await cas.log("Establishing SSO session...");
     await cas.gotoLogin(page);
     await cas.loginWith(page);
-    
+
     await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
     await cas.screenshot(page);
 
@@ -36,13 +36,13 @@ const assert = require("assert");
     allCookies.forEach((cookie) => {
         cas.log(`Deleting cookie ${cookie.name}`);
         page.deleteCookie({
-            name : cookie.name,
-            domain : cookie.domain
+            name: cookie.name,
+            domain: cookie.domain
         });
     });
-    
+
     await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
-    await cas.waitForElement(page, "details pre");
+    await cas.waitForTimeout(page, 3000);
 
     authData = JSON.parse(await cas.innerHTML(page, "details pre"));
     await cas.log(authData);
