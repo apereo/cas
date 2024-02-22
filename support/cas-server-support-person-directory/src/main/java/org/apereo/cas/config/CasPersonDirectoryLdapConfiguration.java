@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.core.authentication.AttributeRepositoryStates;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapConnectionFactory;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -87,7 +88,8 @@ public class CasPersonDirectoryLdapConfiguration {
                             val constraints = new SearchControls();
                             if (ldap.getAttributes() != null && !ldap.getAttributes().isEmpty()) {
                                 LOGGER.debug("Configured result attribute mapping for [{}] to be [{}]", ldap.getLdapUrl(), ldap.getAttributes());
-                                dao.setResultAttributeMapping(ldap.getAttributes());
+                                val resultingAttributes = CollectionUtils.fromCommaDelimitedValues(ldap.getAttributes());
+                                dao.setResultAttributeMapping(resultingAttributes);
                                 val attributes = (String[]) ldap.getAttributes().keySet().toArray(ArrayUtils.EMPTY_STRING_ARRAY);
                                 constraints.setReturningAttributes(attributes);
                             } else {
