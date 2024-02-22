@@ -14,10 +14,7 @@ const cas = require("../../cas.js");
 
     await cas.type(page,"#username", "casuser");
     await cas.pressEnter(page);
-    await cas.waitForNavigation(page);
-
-    await cas.waitForTimeout(page, 1000);
-
+    await cas.waitForTimeout(page, 2000);
     await cas.assertVisibility(page, "#token");
 
     const page2 = await browser.newPage();

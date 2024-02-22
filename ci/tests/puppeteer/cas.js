@@ -209,7 +209,7 @@ exports.loginWith = async (page,
         this.log("Pressing Enter to submit login form"),
         this.pressEnter(page),
         this.screenshot(page),
-        this.waitForTimeout(page, 2000),
+        this.waitForTimeout(page, 3000),
         await this.waitForNavigation(page)
     ]);
     return response[response.length - 1];
@@ -304,14 +304,11 @@ exports.submitForm = async (page, selector, predicate = undefined, statusCode = 
             return responseStatus === statusCode;
         };
     }
-    const response = await Promise.all([
-        this.log(`Submitting form ${selector}`),
+    return Promise.all([
+        page.waitForResponse(predicate),
         page.$eval(selector, (form) => form.submit()),
-        this.waitForTimeout(page, 2000),
-        page.waitForResponse(predicate)
+        this.waitForTimeout(3000)
     ]);
-    await this.screenshot(page);
-    return response[response.length - 1];
 };
 
 exports.pressEnter = async (page) => {
