@@ -22,23 +22,23 @@ const cas = require("../../cas.js");
     await cas.screenshot(page);
     await cas.submitForm(page, "#fm1");
     await cas.assertVisibility(page, "#token");
-    //
-    // const page2 = await browser.newPage();
-    // await page2.goto("http://localhost:8282");
-    // await cas.click(page2, "table tbody td a");
-    // await cas.waitForElement(page2, "div[name=bodyPlainText] .well");
-    // const addresses = await cas.textContent(page2, "div[name=addresses] span");
-    // assert(addresses.includes("casperson@example.com"));
-    // assert(addresses.includes("casuser@example.org"));
-    // const code = await cas.textContent(page2, "div[name=bodyPlainText] .well");
-    // await cas.log(`Code to use is extracted as ${code}`);
-    // await page2.close();
-    //
-    // await page.bringToFront();
-    // await cas.type(page, "#token", code);
-    // await cas.submitForm(page, "#fm1");
-    // await cas.waitForElement(page, "#content div h2");
-    // await cas.assertInnerText(page, "#content div h2", "Log In Successful");
-    // await cas.assertCookie(page);
+
+    const page2 = await browser.newPage();
+    await page2.goto("http://localhost:8282");
+    await cas.click(page2, "table tbody td a");
+    await cas.waitForElement(page2, "div[name=bodyPlainText] .well");
+    const addresses = await cas.textContent(page2, "div[name=addresses] span");
+    assert(addresses.includes("casperson@example.com"));
+    assert(addresses.includes("casuser@example.org"));
+    const code = await cas.textContent(page2, "div[name=bodyPlainText] .well");
+    await cas.log(`Code to use is extracted as ${code}`);
+    await page2.close();
+
+    await page.bringToFront();
+    await cas.type(page, "#token", code);
+    await cas.submitForm(page, "#fm1");
+    await cas.waitForElement(page, "#content div h2");
+    await cas.assertInnerText(page, "#content div h2", "Log In Successful");
+    await cas.assertCookie(page);
     await browser.close();
 })();

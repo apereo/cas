@@ -18,13 +18,13 @@ const cas = require("../../cas.js");
 
     await cas.log("Logging out...");
     await cas.gotoLogout(page, service);
-
+    await cas.waitForTimeout(page, 1000);
     await cas.assertVisibility(page, "#twitter-link");
     await cas.assertVisibility(page, "#youtube-link");
 
     await cas.assertVisibility(page, "#logoutButton");
     await cas.submitForm(page, "#fm1");
-
+    await cas.waitForTimeout(page, 1000);
     const url = await page.url();
     await cas.logPage(page);
     assert(url.toString().startsWith("https://localhost:8443/cas/logout"));

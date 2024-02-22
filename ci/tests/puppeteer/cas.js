@@ -217,7 +217,7 @@ exports.loginWith = async (page,
 exports.waitForNavigation = async (page, timeout = 10000) => {
     let attempts = 0;
     let response = null;
-    const retryCount = 2;
+    const retryCount = 3;
 
     while (response === null && attempts < retryCount) {
         attempts += 1;
@@ -227,6 +227,7 @@ exports.waitForNavigation = async (page, timeout = 10000) => {
                 timeout: timeout,
                 waitUntil: "domcontentloaded"
             });
+            await this.waitForTimeout(page, 500);
         } catch (err) {
             this.logr(err);
             this.logPage(page);
@@ -260,7 +261,8 @@ exports.assertInvisibility = async (page, selector) => {
     const element = await page.$(selector);
     const result = element === null || await element.boundingBox() === null;
     await this.log(`Checking element invisibility for ${selector} while on page ${page.url()}: ${result}`);
-    assert(result, `The element ${selector} must be invisible but it's not.`);
+    const message = `The element ${selector} must be invisible but it's not.`;
+    assert(result, message);
 };
 
 exports.assertCookie = async (page, cookieMustBePresent = true, cookieName = "TGC") => {
