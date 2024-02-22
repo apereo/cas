@@ -21,6 +21,7 @@
     "--cas.audit.engine.enabled=true",
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=https://localhost:8443/cas",
+    "--cas.audit.slf4j.use-single-line=true",
 
     "--cas.ticket.registry.jpa.driver-class=org.postgresql.Driver",
     "--cas.ticket.registry.jpa.ddl-auto=update",

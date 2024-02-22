@@ -296,12 +296,12 @@ ext.libraries = [
                 }
         ],
         cassandra                  : [
-                dependencies.create("com.datastax.oss:java-driver-core:$apacheCassandraVersion") {
+                dependencies.create("org.apache.cassandra:java-driver-core:$apacheCassandraVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.codehaus.groovy", module: "groovy-json")
                     exclude(group: "org.codehaus.groovy", module: "groovy")
                 },
-                dependencies.create("com.datastax.oss:java-driver-mapper-runtime:$apacheCassandraVersion") {
+                dependencies.create("org.apache.cassandra:java-driver-mapper-runtime:$apacheCassandraVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.codehaus.groovy", module: "groovy-json")
                     exclude(group: "org.codehaus.groovy", module: "groovy")

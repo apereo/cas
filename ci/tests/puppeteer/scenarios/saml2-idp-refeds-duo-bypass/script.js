@@ -21,9 +21,7 @@ async function cleanUp() {
             await cas.waitForElement(page, "#idpForm");
             await cas.submitForm(page, "#idpForm");
             await cas.waitForElement(page, "#username");
-
             await cas.loginWith(page, "duobypass", "Mellon");
-
             await cas.log("Checking for page URL...");
             await cas.logPage(page);
             await cas.waitForElement(page, "#principal");
