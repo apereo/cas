@@ -22,6 +22,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -55,11 +56,11 @@ class OidcUserProfileEndpointControllerTests extends AbstractOidcTests {
         val map = new HashMap<String, List<Object>>();
         map.put("cn", List.of("cas"));
 
-        val principal = CoreAuthenticationTestUtils.getPrincipal("casuser", map);
+        val principal = CoreAuthenticationTestUtils.getPrincipal(UUID.randomUUID().toString(), map);
         val authentication = RegisteredServiceTestUtils.getAuthentication(principal);
         val code = addCode(principal, getOidcRegisteredService());
         val accessToken = accessTokenFactory.create(RegisteredServiceTestUtils.getService(), authentication,
-            new MockTicketGrantingTicket("casuser"), new ArrayList<>(),
+            new MockTicketGrantingTicket(principal.getId()), new ArrayList<>(),
             code.getId(), code.getClientId(), new HashMap<>(),
             OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         ticketRegistry.addTicket(accessToken);

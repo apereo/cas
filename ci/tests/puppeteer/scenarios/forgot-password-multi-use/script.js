@@ -17,7 +17,7 @@ const cas = require("../../cas.js");
 
     await cas.type(page,"#username", "casuser");
     await cas.pressEnter(page);
-    await page.waitForNavigation();
+    await cas.waitForNavigation(page);
     
     await cas.assertInnerText(page, "#content h2", "Password Reset Instructions Sent Successfully.");
     await cas.assertInnerTextStartsWith(page, "#content p", "You should shortly receive a message");

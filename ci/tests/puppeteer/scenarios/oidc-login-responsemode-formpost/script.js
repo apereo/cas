@@ -12,7 +12,7 @@ const assert = require("assert");
     await cas.loginWith(page);
 
     await cas.click(page, "#allow");
-    await page.waitForNavigation();
+    await cas.waitForNavigation(page);
     await cas.waitForElement(page, "body pre");
     const content = await cas.textContent(page, "body pre");
     const payload = JSON.parse(content);

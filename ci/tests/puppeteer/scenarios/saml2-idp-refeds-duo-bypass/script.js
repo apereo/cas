@@ -18,9 +18,9 @@ async function cleanUp() {
     await cas.waitFor("https://localhost:9876/sp/saml/status", async () => {
         try {
             await cas.goto(page, "https://localhost:9876/sp");
-            await page.waitForSelector("#idpForm", {visible: true});
+            await cas.waitForElement(page, "#idpForm");
             await cas.submitForm(page, "#idpForm");
-            await page.waitForSelector("#username", {visible: true});
+            await cas.waitForElement(page, "#username");
 
             await cas.loginWith(page, "duobypass", "Mellon");
 

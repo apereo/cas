@@ -19,7 +19,7 @@ const cas = require("../../cas.js");
     await cas.waitForElement(page, "#allow");
     
     await cas.click(page, "#allow");
-    await page.waitForNavigation();
+    await cas.waitForNavigation(page);
 
     await cas.assertTextContent(page, "h1.green-text", "Success!");
 

@@ -21,7 +21,7 @@ const cas = require("../../cas.js");
     await cas.assertVisibility(page, "#login");
     await page.select("#surrogateTarget", "user3");
     await cas.click(page, "#submit");
-    await page.waitForNavigation();
+    await cas.waitForNavigation(page);
     await cas.screenshot(page);
     await cas.assertTicketParameter(page);
     await cas.gotoLogin(page);

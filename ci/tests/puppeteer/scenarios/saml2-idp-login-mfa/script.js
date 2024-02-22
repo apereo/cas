@@ -24,7 +24,7 @@ const assert = require("assert");
     await page.bringToFront();
     await cas.type(page, "#token", code);
     await cas.submitForm(page, "#fm1");
-    await page.waitForSelector("#table_with_attributes");
+    await cas.waitForElement(page, "#table_with_attributes");
     await cas.screenshot(page);
     await cas.assertInnerTextContains(page, "#content p", "status page of SimpleSAMLphp");
     await cas.assertVisibility(page, "#table_with_attributes");

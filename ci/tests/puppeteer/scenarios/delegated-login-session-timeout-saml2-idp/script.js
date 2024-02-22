@@ -13,7 +13,7 @@ const assert = require("assert");
     await cas.assertVisibility(page, "li #SAML2Client");
     
     await cas.click(page, "li #SAML2Client");
-    await page.waitForNavigation();
+    await cas.waitForNavigation(page);
     await cas.loginWith(page, "user1", "password");
     await cas.waitForTimeout(2000);
     await cas.screenshot(page);

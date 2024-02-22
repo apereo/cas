@@ -14,7 +14,7 @@ const cas = require("../../cas.js");
     await cas.click(page, "#resendButton");
 
     await cas.screenshot(page);
-    await page.waitForSelector("#token", {visible: true});
+    await cas.waitForElement(page, "#token");
 
     const page2 = await browser.newPage();
     await page2.goto("http://localhost:8282");

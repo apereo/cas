@@ -5,8 +5,6 @@
     "env": "ADFS_HOST,ADFS_RELYING_PARTY_ID,ADFS_USERNAME,ADFS_PASSWORD"
   },
   "properties": [
-
-    
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=*",
     "--management.endpoints.enabled-by-default=true",
@@ -14,6 +12,7 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
     "--cas.audit.engine.enabled=true",
+    "--cas.audit.slf4j.use-single-line=true",
 
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",

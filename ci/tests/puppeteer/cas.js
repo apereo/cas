@@ -190,23 +190,33 @@ exports.uploadImage = async (imagePath) => {
 
 exports.waitForElement = async (page, selector, timeout = 10000) => page.waitForSelector(selector, {timeout: timeout});
 
+exports.waitForResponse = async(page, status = 200) => {
+    await page.waitForResponse((response) => response.status() === status);
+};
+
 exports.loginWith = async (page,
     user = "casuser",
     password = "Mellon",
     usernameField = "#username",
     passwordField = "#password") => {
     await this.log(`Logging in with ${user} and ${password}`);
-    await page.waitForSelector(usernameField, {visible: true});
+    await this.waitForElement(page, usernameField);
     await this.type(page, usernameField, user);
-
-    await page.waitForSelector(passwordField, {visible: true});
+    await this.waitForElement(page, passwordField);
     await this.type(page, passwordField, password, true);
     const response = await Promise.all([
+        this.log("Pressing Enter to submit login form"),
         this.pressEnter(page),
-        await page.waitForNavigation()
+        await this.waitForNavigation(page)
     ]);
-    return response[1];
+    return response[response.length - 1];
 };
+
+exports.waitForNavigation = async (page, timeout = 5000) =>
+    page.waitForNavigation({
+        timeout: timeout,
+        waitUntil: "domcontentloaded"
+    });
 
 exports.fetchGoogleAuthenticatorScratchCode = async (user = "casuser") => {
     await this.log(`Fetching Scratch codes for ${user}...`);
@@ -729,13 +739,13 @@ exports.isCiEnvironment = async () => process.env.CI !== undefined && process.en
 exports.isNotCiEnvironment = async () => !this.isCiEnvironment();
 
 exports.assertTextContent = async (page, selector, value) => {
-    await page.waitForSelector(selector, {visible: true});
+    await this.waitForElement(page, selector);
     const header = await this.textContent(page, selector);
     assert.equal(header, value);
 };
 
 exports.assertTextContentStartsWith = async (page, selector, value) => {
-    await page.waitForSelector(selector, {visible: true});
+    await this.waitForElement(page, selector);
     const header = await this.textContent(page, selector);
     assert(header.startsWith(value));
 };

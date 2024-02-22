@@ -12,7 +12,7 @@ async function startAuthFlow(page, username) {
     assert(pswd === null);
     await cas.type(page, "#username", username);
     await cas.pressEnter(page);
-    await page.waitForNavigation();
+    await cas.waitForNavigation(page);
 
     const url = await page.url();
     await cas.logPage(page);

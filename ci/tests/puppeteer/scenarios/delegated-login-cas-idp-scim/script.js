@@ -17,7 +17,7 @@ const cas = require("../../cas.js");
 
     await cas.assertVisibility(page, "li #CasClient");
     await cas.click(page, "li #CasClient");
-    await page.waitForNavigation();
+    await cas.waitForNavigation(page);
 
     await cas.waitForTimeout(page, 2000);
     await cas.screenshot(page);
@@ -33,7 +33,7 @@ const cas = require("../../cas.js");
 
     await cas.log("Allowing release of scopes and claims...");
     await cas.click(page, "#allow");
-    await page.waitForNavigation();
+    await cas.waitForNavigation(page);
     await cas.assertTextContent(page, "h1.green-text", "Success!");
 
     await cas.logPage(page);

@@ -7,11 +7,11 @@ const cas = require("../../cas.js");
     await cas.gotoLogin(page);
     await cas.assertInnerText(page, "#forgotPasswordLink", "Reset your password");
     await cas.click(page, "#forgotPasswordLink");
-    await page.waitForNavigation();
+    await cas.waitForNavigation(page);
 
     await cas.type(page,"#username", "casuser");
     await cas.pressEnter(page);
-    await page.waitForNavigation();
+    await cas.waitForNavigation(page);
 
     await cas.screenshot(page);
 
