@@ -21,6 +21,7 @@ const jose = require("jose");
 const pino = require("pino");
 const xml2js = require("xml2js");
 const {Docker} = require("node-docker-api");
+const {TimeoutError} = require("puppeteer");
 const docker = new Docker({ socketPath: "/var/run/docker.sock" });
 
 const LOGGER = pino({
@@ -213,11 +214,27 @@ exports.loginWith = async (page,
     return response[response.length - 1];
 };
 
-exports.waitForNavigation = async (page, timeout = 10000) =>
-    page.waitForNavigation({
-        timeout: timeout,
-        waitUntil: "domcontentloaded"
-    });
+exports.waitForNavigation = async (page, timeout = 10000) => {
+    let attempts = 0;
+    let response = null;
+    const retryCount = 2;
+
+    while (response === null && attempts < retryCount) {
+        attempts += 1;
+        try {
+            await this.log(`Waiting for page navigation with url ${await page.url()} with timeout ${timeout}`);
+            response = await page.waitForNavigation({
+                timeout: timeout,
+                waitUntil: "domcontentloaded"
+            });
+        } catch (err) {
+            this.logr(err);
+            this.logPage(page);
+            await this.screenshot(page);
+        }
+    }
+    return response;
+};
 
 exports.fetchGoogleAuthenticatorScratchCode = async (user = "casuser") => {
     await this.log(`Fetching Scratch codes for ${user}...`);
