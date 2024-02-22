@@ -715,9 +715,9 @@ if [[ "${RERUN}" != "true" && ("${NATIVE_BUILD}" == "false" || "${NATIVE_RUN}" =
 #        RC=0
 #      fi
 
-      until curl -I -k -L --connect-timeout 10 --output /dev/null --silent --fail $casLogin; do
+      until curl -I -k --connect-timeout 10 --output /dev/null --silent --fail $casLogin; do
          echo -n '.'
-         sleep 1
+         sleep 2
       done
       RC=0
 

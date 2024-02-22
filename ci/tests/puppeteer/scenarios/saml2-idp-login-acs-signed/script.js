@@ -25,10 +25,8 @@ async function cleanUp() {
 
         await cas.waitForElement(page, "#username");
         await cas.loginWith(page);
-        await cas.waitForResponse(page);
-        await cas.waitForTimeout(page, 3000);
+        await cas.waitForTimeout(page, 5000);
         await cas.logPage(page);
-        await cas.waitForElement(page, "body pre");
         let content = await cas.textContent(page, "body pre");
         let payload = JSON.parse(content);
         await cas.log(payload);
@@ -42,7 +40,7 @@ async function cleanUp() {
         await cas.waitForElement(page, "#idpForm");
         await cas.submitForm(page, "#idpForm");
         await cas.logPage(page);
-        await cas.waitForElement(page, "body pre");
+        await cas.waitForTimeout(page, 5000);
         content = await cas.textContent(page, "body pre");
         payload = JSON.parse(content);
         await cas.log(payload);
