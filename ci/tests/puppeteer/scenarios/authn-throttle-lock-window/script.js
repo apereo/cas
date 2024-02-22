@@ -7,10 +7,12 @@ const cas = require("../../cas.js");
 
     await cas.log("Original log in attempt");
     await submitLoginFailure(page);
+    await cas.waitForElement(page, "#content div.banner p");
     await cas.assertInnerTextStartsWith(page, "#content div.banner p", "Authentication attempt has failed");
 
     await cas.log("Log in attempt should be throttled");
     await submitLoginFailure(page);
+    await cas.waitForElement(page, "#content p");
     await cas.assertInnerTextContains(page, "#content p", "You've been throttled.");
 
     for (let i = 1; i <= 2; i++) {

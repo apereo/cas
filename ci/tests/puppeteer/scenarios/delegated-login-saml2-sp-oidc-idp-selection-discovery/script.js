@@ -16,6 +16,7 @@ async function startWithCasSp(page) {
     await cas.gotoLogout(page);
     await cas.waitForTimeout(page, 1000);
     await cas.gotoLogin(page, service);
+    await cas.waitForTimeout(page, 1000);
     await cas.assertVisibility(page, "#selectProviderButton");
     await cas.submitForm(page, "#providerDiscoveryForm");
     await cas.type(page, "#username", "casuser@heroku.org");
