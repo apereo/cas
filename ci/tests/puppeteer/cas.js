@@ -209,7 +209,7 @@ exports.loginWith = async (page,
         this.log("Pressing Enter to submit login form"),
         this.pressEnter(page),
         this.screenshot(page),
-        this.waitForTimeout(page, 500),
+        this.waitForTimeout(page, 2000),
         await this.waitForNavigation(page)
     ]);
     return response[response.length - 1];
@@ -228,7 +228,7 @@ exports.waitForNavigation = async (page, timeout = 15000) => {
                 timeout: timeout,
                 waitUntil: "domcontentloaded"
             });
-            await this.waitForTimeout(page, 500);
+            await this.waitForTimeout(page, 1500);
         } catch (err) {
             this.logr(err);
             this.logPage(page);
@@ -861,6 +861,7 @@ exports.goto = async (page, url, retryCount = 5) => {
     if (response !== null) {
         this.logg(`Response status: ${await response.status()}`);
     }
+    await this.waitForTimeout(page);
     return response;
 };
 
