@@ -5,7 +5,6 @@ const cas = require("../../cas.js");
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.gotoLogin(page);
-
     await cas.loginWith(page);
 
     await cas.waitForTimeout(page, 1000);
