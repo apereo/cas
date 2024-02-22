@@ -7,14 +7,11 @@ const cas = require("../../cas.js");
     await cas.gotoLogin(page);
     await cas.assertInnerText(page, "#forgotPasswordLink", "Reset your password");
     await cas.click(page, "#forgotPasswordLink");
-    await cas.waitForNavigation(page);
-
+    await cas.waitForTimeout(page, 4000);
     await cas.type(page,"#username", "casuser");
     await cas.pressEnter(page);
-    await cas.waitForNavigation(page);
-
+    await cas.waitForTimeout(page, 4000);
     await cas.screenshot(page);
-
     const page2 = await browser.newPage();
     await page2.goto("http://localhost:8282");
     await cas.click(page2, "table tbody td a");
@@ -26,8 +23,7 @@ const cas = require("../../cas.js");
     await cas.type(page, "#token", code);
     await cas.submitForm(page, "#fm1");
     await cas.screenshot(page);
-    await cas.waitForTimeout(page, 2000);
-    await cas.waitForElement(page, "#content h2");
+    await cas.waitForTimeout(page, 4000);
     await cas.assertInnerText(page, "#content h2", "Password Reset Instructions Sent Successfully.");
     await cas.assertInnerTextStartsWith(page, "#content p", "You should shortly receive a message");
 

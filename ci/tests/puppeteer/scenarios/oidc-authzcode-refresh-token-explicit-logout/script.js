@@ -11,9 +11,8 @@ async function fetchRefreshToken(page, clientId, redirectUrl) {
 
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
-        await cas.waitForNavigation(page);
     }
-
+    await cas.waitForTimeout(page, 2000);
     const code = await cas.assertParameter(page, "code");
     await cas.log(`OAuth code ${code}`);
 
