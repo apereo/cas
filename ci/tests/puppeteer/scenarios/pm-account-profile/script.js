@@ -53,7 +53,7 @@ const fs = require("fs");
     await cas.assertVisibility(page, "#securityQuestionsTable");
     await cas.click(page, "#linkAuditLog");
     await cas.click(page, "#linkPasswordManagement");
-    await page.waitForNavigation();
+    await cas.waitForNavigation(page);
     await cas.assertCookie(page, false);
 
     await browser.close();

@@ -4,6 +4,11 @@
     "docker": "true"
   },
   "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    "--cas.audit.slf4j.use-single-line=true",
+    "--cas.http-client.host-name-verifier=none",
+
     "--spring.thymeleaf.cache=false",
     "--cas.logout.confirm-logout=true",
     "--cas.logout.follow-service-redirects=false",

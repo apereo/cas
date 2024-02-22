@@ -14,7 +14,7 @@ const cas = require("../../cas.js");
 
     await cas.type(page,"#username", "casuser");
     await cas.pressEnter(page);
-    await page.waitForNavigation();
+    await cas.waitForNavigation(page);
 
     await cas.waitForTimeout(page, 2000);
 
@@ -27,7 +27,7 @@ const cas = require("../../cas.js");
 
     await cas.type(page,"#username", "casuser");
     await cas.pressEnter(page);
-    await page.waitForNavigation();
+    await cas.waitForNavigation(page);
 
     const page2 = await browser.newPage();
     await page2.goto("http://localhost:8282");

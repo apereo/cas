@@ -10,6 +10,6 @@ const assert = require("assert");
     await cas.log(`${response.status()} ${response.statusText()}`);
     assert(response.ok());
     await cas.click(page, "div.header a");
-    await page.waitForResponse((response) => response.status() === 200);
+    await cas.waitForResponse(page);
     await browser.close();
 })();

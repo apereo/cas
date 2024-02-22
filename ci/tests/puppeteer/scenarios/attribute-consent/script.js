@@ -45,7 +45,7 @@ const os = require("os");
     const confirm = await page.$("#confirm");
     assert(confirm !== null);
     await cas.click(page, "#confirm");
-    await page.waitForNavigation();
+    await cas.waitForNavigation(page);
     await cas.assertTicketParameter(page);
 
     const baseUrl = "https://localhost:8443/cas/actuator/attributeConsent";

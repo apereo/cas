@@ -41,7 +41,7 @@ const express = require("express");
         await cas.assertVisibility(page, "button[name=cancel]");
 
         await cas.click(page, "#aupSubmit");
-        await page.waitForNavigation();
+        await cas.waitForNavigation(page);
         const ticket = await cas.assertTicketParameter(page);
         const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
         await cas.logg(body);

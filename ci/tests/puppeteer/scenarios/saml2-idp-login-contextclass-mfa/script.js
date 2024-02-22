@@ -21,11 +21,11 @@ const assert = require("assert");
     await cas.screenshot(page);
     await cas.type(page,"#token", scratch);
     await cas.pressEnter(page);
-    await page.waitForNavigation();
+    await cas.waitForNavigation(page);
     await cas.logPage(page);
     await cas.screenshot(page);
 
-    await page.waitForSelector("#table_with_attributes", {visible: true});
+    await cas.waitForElement(page, "#table_with_attributes");
     await cas.assertInnerTextContains(page, "#content p", "status page of SimpleSAMLphp");
     await cas.assertVisibility(page, "#table_with_attributes");
     const authData = JSON.parse(await cas.innerHTML(page, "details pre"));

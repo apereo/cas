@@ -21,7 +21,7 @@ const assert = require("assert");
 
     await cas.log("Choosing SAML2 identity provider for login...");
     await cas.click(page, "li #SAML2Client");
-    await page.waitForNavigation();
+    await cas.waitForNavigation(page);
 
     await cas.loginWith(page, "user1", "password");
     await cas.waitForTimeout(page, 4000);

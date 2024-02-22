@@ -15,7 +15,7 @@ async function verifyAccessTokenIsLimited(context) {
     await cas.loginWith(page);
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
-        await page.waitForNavigation();
+        await cas.waitForNavigation(page);
     }
 
     const code = await cas.assertParameter(page, "code");
@@ -51,7 +51,7 @@ async function verifyAccessTokenIsNeverReceived(context) {
     await cas.loginWith(page);
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
-        await page.waitForNavigation();
+        await cas.waitForNavigation(page);
     }
     const code = await cas.assertParameter(page, "code");
     await cas.log(`Current code is ${code}`);
@@ -94,7 +94,7 @@ async function verifyAccessTokenAndProfile(context) {
 
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
-        await page.waitForNavigation();
+        await cas.waitForNavigation(page);
     }
     await cas.waitForTimeout(page, 2000);
     await cas.screenshot(page);

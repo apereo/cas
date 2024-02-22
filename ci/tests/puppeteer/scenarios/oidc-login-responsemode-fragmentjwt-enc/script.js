@@ -12,7 +12,7 @@ const fs = require("fs");
     await cas.loginWith(page);
 
     await cas.click(page, "#allow");
-    await page.waitForNavigation();
+    await cas.waitForNavigation(page);
     const pageUrl = await page.url();
     await cas.log(`Page url: ${pageUrl}\n`);
     const response = new URL(pageUrl).hash.replace("#response=", "");

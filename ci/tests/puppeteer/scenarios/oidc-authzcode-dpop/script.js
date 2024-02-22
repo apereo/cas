@@ -16,7 +16,7 @@ const jose = require("jose");
 
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
-        await page.waitForNavigation();
+        await cas.waitForNavigation(page);
     }
 
     const dt = new Date();

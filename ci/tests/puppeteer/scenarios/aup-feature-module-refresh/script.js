@@ -32,7 +32,7 @@ const assert = require("assert");
     await cas.assertTextContent(page, "#main-content #login #fm1 h3", "Acceptable Usage Policy");
     await cas.assertVisibility(page, "button[name=submit]");
     await cas.click(page, "#aupSubmit");
-    await page.waitForNavigation();
+    await cas.waitForNavigation(page);
     await cas.assertTicketParameter(page);
     const result = new URL(page.url());
     assert(result.host === "apereo.github.io");
