@@ -12,10 +12,8 @@ const cas = require("../../cas.js");
 
     await cas.log("Attempting to resend ticket...");
     await cas.click(page, "#resendButton");
-
     await cas.screenshot(page);
     await cas.waitForElement(page, "#token");
-
     const page2 = await browser.newPage();
     await page2.goto("http://localhost:8282");
     await cas.click(page2, "table tbody td a");
@@ -27,7 +25,7 @@ const cas = require("../../cas.js");
     await cas.submitForm(page, "#fm1");
 
     await cas.submitForm(page, "#registerform");
-
+    await cas.waitForElement(page, "#content div h2");
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
     await cas.assertCookie(page);
 

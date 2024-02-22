@@ -192,7 +192,7 @@ exports.uploadImage = async (imagePath) => {
 exports.waitForElement = async (page, selector, timeout = 10000) => page.waitForSelector(selector, {timeout: timeout});
 
 exports.waitForResponse = async(page, status = 200) => {
-    await page.waitForResponse((response) => response.status() === status);
+    await page.waitForResponse((response) => response.status() === status, {timeout: 5000});
 };
 
 exports.loginWith = async (page,
@@ -306,6 +306,7 @@ exports.submitForm = async (page, selector, predicate = undefined, statusCode = 
         page.$eval(selector, (form) => form.submit()),
         page.waitForResponse(predicate)
     ]);
+    await this.screenshot(page);
     return response[response.length - 1];
 };
 

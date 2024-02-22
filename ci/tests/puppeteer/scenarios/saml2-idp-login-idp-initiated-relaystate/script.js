@@ -9,9 +9,9 @@ async function unsolicited(page, target) {
     let url = "https://localhost:8443/cas/idp/profile/SAML2/Unsolicited/SSO";
     url += `?providerId=${entityId}`;
     url += `&target=${target}`;
-
     await cas.goto(page, url);
-    await cas.waitForTimeout(page, 8000);
+    await cas.waitForTimeout(page, 10000);
+    await cas.screenshot(page);
     const result = await page.url();
     await cas.log(`Page url: ${result}`);
     assert(result.includes(target));
