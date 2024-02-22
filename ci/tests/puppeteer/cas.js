@@ -209,6 +209,7 @@ exports.loginWith = async (page,
         this.log("Pressing Enter to submit login form"),
         this.pressEnter(page),
         this.screenshot(page),
+        this.waitForTimeout(page, 500),
         await this.waitForNavigation(page)
     ]);
     return response[response.length - 1];
@@ -306,6 +307,7 @@ exports.submitForm = async (page, selector, predicate = undefined, statusCode = 
     const response = await Promise.all([
         this.log(`Submitting form ${selector}`),
         page.$eval(selector, (form) => form.submit()),
+        this.waitForTimeout(page, 2000),
         page.waitForResponse(predicate)
     ]);
     await this.screenshot(page);
