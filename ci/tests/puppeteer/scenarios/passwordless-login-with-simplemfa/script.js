@@ -30,7 +30,7 @@ const cas = require("../../cas.js");
 
     await cas.type(page, "#token", code);
     await cas.submitForm(page, "#fm1");
-
+    await cas.waitForTimeout(page, 4000);
     await cas.assertInnerTextContains(page, "#attribute-tab-0 table#attributesTable tbody", "firstname");
 
     await browser.close();

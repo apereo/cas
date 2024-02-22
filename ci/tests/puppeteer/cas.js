@@ -314,7 +314,10 @@ exports.submitForm = async (page, selector, predicate = undefined, statusCode = 
     return response[response.length - 1];
 };
 
-exports.pressEnter = async (page) => page.keyboard.press("Enter");
+exports.pressEnter = async (page) => {
+    page.keyboard.press("Enter");
+    await this.waitForTimeout(page, 2000);
+};
 
 exports.type = async (page, selector, value, obfuscate = false) => {
     const logValue = obfuscate ? "******" : value;
