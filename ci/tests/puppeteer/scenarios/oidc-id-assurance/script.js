@@ -37,11 +37,6 @@ async function getPayload(page, redirectUri, clientId, clientSecret) {
         await cas.loginWith(page);
         await cas.waitForTimeout(page, 1000);
     }
-    if (await cas.isVisible(page, "#allow")) {
-        await cas.click(page, "#allow");
-        await page.waitForNavigation();
-    }
-
     const code = await cas.assertParameter(page, "code");
     await cas.log(`Current code is ${code}`);
     const accessTokenUrl = "https://localhost:8443/cas/oidc/token?grant_type=authorization_code"

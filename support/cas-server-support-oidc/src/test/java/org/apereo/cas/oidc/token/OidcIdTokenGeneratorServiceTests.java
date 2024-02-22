@@ -187,7 +187,7 @@ class OidcIdTokenGeneratorServiceTests {
 
         @Test
         void verifyNoIdTokenForMissingOpenIdScope() throws Throwable {
-            val authentication = CoreAuthenticationTestUtils.getAuthentication();
+            val authentication = CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString());
             val tgt = new MockTicketGrantingTicket(authentication);
             val accessToken = buildAccessToken(tgt, Set.of(EMAIL.getScope()));
 
@@ -195,7 +195,7 @@ class OidcIdTokenGeneratorServiceTests {
             servicesManager.save(registeredService);
             val profile = new CommonProfile();
             profile.setClientName("OIDC");
-            profile.setId(UUID.randomUUID().toString());
+            profile.setId(authentication.getPrincipal().getId());
             val idToken = oidcIdTokenGenerator.generate(accessToken, profile,
                 OAuth20ResponseTypes.ID_TOKEN, OAuth20GrantTypes.NONE, registeredService);
             assertNull(idToken);
