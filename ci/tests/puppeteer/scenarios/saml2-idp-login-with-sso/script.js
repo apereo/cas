@@ -12,6 +12,7 @@ const cas = require("../../cas.js");
     
     await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
     await cas.screenshot(page);
+    await cas.waitForTimeout(page, 2000);
     await cas.waitForElement(page, "#table_with_attributes");
     await cas.assertInnerTextContains(page, "#content p", "status page of SimpleSAMLphp");
     await cas.assertVisibility(page, "#table_with_attributes");
@@ -23,7 +24,7 @@ const cas = require("../../cas.js");
     let url = "https://localhost:8443/cas/idp/profile/SAML2/Unsolicited/SSO";
     url += `?providerId=${entityId}&target=https%3A%2F%2Flocalhost%3A8443%2Fcas%2Flogin`;
     await cas.goto(page, url);
-
+    await cas.waitForTimeout(page, 2000);
     await cas.waitForElement(page, "#content h2");
     await cas.assertInnerText(page, "#content h2", "Application Not Authorized to Use CAS");
     await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
