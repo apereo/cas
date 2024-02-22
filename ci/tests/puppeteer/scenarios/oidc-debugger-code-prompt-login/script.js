@@ -16,7 +16,8 @@ const cas = require("../../cas.js");
     await cas.goto(page, url);
 
     await cas.loginWith(page);
-
+    await cas.waitForElement(page, "#allow");
+    
     await cas.click(page, "#allow");
     await page.waitForNavigation();
 
