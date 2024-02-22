@@ -21,7 +21,6 @@ const cas = require("../../cas.js");
     });
     await cas.screenshot(page);
     await cas.submitForm(page, "#fm1");
-
     await cas.assertVisibility(page, "#token");
 
     const page2 = await browser.newPage();
@@ -37,9 +36,8 @@ const cas = require("../../cas.js");
     await page.bringToFront();
     await cas.type(page, "#token", code);
     await cas.submitForm(page, "#fm1");
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForElement(page, "#content div h2");
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
-    await cas.waitForTimeout(page, 1000);
     await cas.assertCookie(page);
     await browser.close();
 })();

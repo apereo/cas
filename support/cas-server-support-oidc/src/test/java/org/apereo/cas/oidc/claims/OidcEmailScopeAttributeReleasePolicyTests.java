@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -34,7 +35,8 @@ class OidcEmailScopeAttributeReleasePolicyTests extends AbstractOidcTests {
         val policy = new OidcEmailScopeAttributeReleasePolicy();
         assertEquals(OidcConstants.StandardScopes.EMAIL.getScope(), policy.getScopeType());
         assertNotNull(policy.getAllowedAttributes());
-        val principal = CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("email", List.of("cas@example.org"),
+        val principal = CoreAuthenticationTestUtils.getPrincipal(UUID.randomUUID().toString(),
+            CollectionUtils.wrap("email", List.of("cas@example.org"),
             "email_verified", List.of("cas@example.org")));
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())

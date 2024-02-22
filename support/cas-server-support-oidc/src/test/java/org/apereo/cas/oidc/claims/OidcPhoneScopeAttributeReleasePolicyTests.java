@@ -30,7 +30,8 @@ class OidcPhoneScopeAttributeReleasePolicyTests {
         @Test
         void verifyMappedToUnknown() throws Throwable {
             val policy = new OidcPhoneScopeAttributeReleasePolicy();
-            val principal = CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("phone_number", List.of("12134321245")));
+            val principal = CoreAuthenticationTestUtils.getPrincipal(UUID.randomUUID().toString(),
+                CollectionUtils.wrap("phone_number", List.of("12134321245")));
 
             val registeredService = getOidcRegisteredService(UUID.randomUUID().toString(), randomServiceUrl());
             registeredService.setAttributeReleasePolicy(policy);

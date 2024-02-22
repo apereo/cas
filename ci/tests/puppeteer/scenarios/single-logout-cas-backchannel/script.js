@@ -13,6 +13,7 @@ const assert = require("assert");
     assert(url.startsWith("https://localhost:8444/protected"));
     await cas.assertInnerTextContains(page, "div.starter-template h2 span", "casuser");
     await cas.gotoLogout(page);
+    await cas.waitForTimeout(page, 2000);
     await cas.goto(page, "https://localhost:8444/protected");
     await cas.logPage(page);
     await cas.waitForTimeout(page, 4000);
