@@ -687,7 +687,8 @@ if [[ "${RERUN}" != "true" && ("${NATIVE_BUILD}" == "false" || "${NATIVE_RUN}" =
       else
         printcyan "Launching CAS instance #${c} under port ${serverPort} from "$PWD"/cas.${projectType}"
         java ${runArgs} -Dlog.console.stacktraces=true -jar "$PWD"/cas.${projectType} \
-           -Dcom.sun.net.ssl.checkRevocation=false --server.port=${serverPort} \
+           -Dcom.sun.net.ssl.checkRevocation=false \
+           --server.port=${serverPort} \
            --spring.main.lazy-initialization=false \
            --spring.profiles.active=none \
            --management.endpoints.web.discovery.enabled=true \
@@ -698,21 +699,27 @@ if [[ "${RERUN}" != "true" && ("${NATIVE_BUILD}" == "false" || "${NATIVE_RUN}" =
       printcyan "Waiting for CAS instance #${c} under process id ${pid}"
       casLogin="https://localhost:${serverPort}/cas/login"
 
-      if [[ "${CI}" == "true" ]]; then
-        timeout=$(jq -j '.timeout // 70' "${config}")
-        sleepfor $timeout
+#      if [[ "${CI}" == "true" ]]; then
+#        timeout=$(jq -j '.timeout // 60' "${config}")
+#        sleepfor $timeout
+#
+#        printcyan "Checking CAS server's status @ ${casLogin}"
+#        curl -k -L --connect-timeout 10 --output /dev/null --silent --fail $casLogin
+#        RC=$?
+#      else
+#        # We cannot do this in Github Actions/CI; curl seems to hang indefinitely
+#        until curl -I -k -L --connect-timeout 10 --output /dev/null --silent --fail $casLogin; do
+#           echo -n '.'
+#           sleep 1
+#        done
+#        RC=0
+#      fi
 
-        printcyan "Checking CAS server's status @ ${casLogin}"
-        curl -k -L --connect-timeout 10 --output /dev/null --silent --fail $casLogin
-        RC=$?
-      else
-        # We cannot do this in Github Actions/CI; curl seems to hang indefinitely
-        until curl -I -k -L --connect-timeout 10 --output /dev/null --silent --fail $casLogin; do
-           echo -n '.'
-           sleep 1
-        done
-        RC=0
-      fi
+      until curl -I -k -L --connect-timeout 10 --output /dev/null --silent --fail $casLogin; do
+         echo -n '.'
+         sleep 1
+      done
+      RC=0
 
       if [[ $RC -ne 0 ]]; then
         printred "Unable to launch CAS instance #${c} under process id ${pid}."
