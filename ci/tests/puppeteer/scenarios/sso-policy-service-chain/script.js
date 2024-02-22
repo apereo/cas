@@ -12,6 +12,7 @@ const cas = require("../../cas.js");
     await cas.waitForTimeout(page, 2000);
     await cas.assertTicketParameter(page);
     await cas.gotoLogin(page, service);
+    await cas.waitForTimeout(page, 2000);
     await cas.assertTicketParameter(page);
     await cas.gotoLogout(page);
     
@@ -21,6 +22,7 @@ const cas = require("../../cas.js");
     await cas.waitForTimeout(page, 2000);
     await cas.assertTicketParameter(page);
     await cas.gotoLogin(page, service);
+    await cas.waitForTimeout(page, 2000);
     await cas.assertCookie(page, false);
     await cas.loginWith(page, "casblock");
     await cas.waitForTimeout(page, 2000);

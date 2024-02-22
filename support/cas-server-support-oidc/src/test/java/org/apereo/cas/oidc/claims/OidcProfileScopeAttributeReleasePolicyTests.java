@@ -11,6 +11,7 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import java.util.List;
+import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -27,10 +28,11 @@ class OidcProfileScopeAttributeReleasePolicyTests extends AbstractOidcTests {
         val policy = new OidcProfileScopeAttributeReleasePolicy();
         assertEquals(OidcConstants.StandardScopes.PROFILE.getScope(), policy.getScopeType());
         assertNotNull(policy.getAllowedAttributes());
-        val principal = CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("name", List.of("cas"),
-            "profile", List.of("test"),
-            "preferred_username", List.of("casuser"),
-            "family_name", List.of("given_name")));
+        val principal = CoreAuthenticationTestUtils.getPrincipal(UUID.randomUUID().toString(),
+            CollectionUtils.wrap("name", List.of("cas"),
+                "profile", List.of("test"),
+                "preferred_username", List.of("casuser"),
+                "family_name", List.of("given_name")));
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
             .service(CoreAuthenticationTestUtils.getService())

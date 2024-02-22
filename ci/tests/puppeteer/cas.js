@@ -202,8 +202,8 @@ exports.loginWith = async (page,
     await page.waitForSelector(passwordField, {visible: true});
     await this.type(page, passwordField, password, true);
     const response = await Promise.all([
-        this.pressEnter(page),
-        page.waitForNavigation()
+        await this.pressEnter(page),
+        await page.waitForNavigation()
     ]);
     return response[1];
 };
