@@ -857,7 +857,6 @@ exports.goto = async (page, url, retryCount = 5) => {
     if (response !== null) {
         this.logg(`Response status: ${await response.status()}`);
     }
-    await this.waitForTimeout(page);
     return response;
 };
 
