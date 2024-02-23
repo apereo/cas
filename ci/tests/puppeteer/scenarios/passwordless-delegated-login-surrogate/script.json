@@ -14,8 +14,8 @@
     
     "--cas.service-registry.core.init-from-json=true",
     
-    "--cas.audit.slf4j.use-single-line=true",
-    "--cas.audit.engine.enabled=true",
+
+
     "--cas.http-client.host-name-verifier=none",
     
     "--cas.authn.accept.users=casuser-server::Mellon,casuser-client::Mellon,casuser-none::Mellon",

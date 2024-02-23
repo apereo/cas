@@ -5,7 +5,7 @@
     "--cas.authn.pm.core.enabled=true",
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=https://localhost:8443/cas",
-    "--cas.audit.slf4j.use-single-line=true",
+
     
     "--cas.authn.accept.password-policy.strategy=GROOVY",
     "--cas.authn.accept.password-policy.groovy.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/GroovyPwdPolicy.groovy",

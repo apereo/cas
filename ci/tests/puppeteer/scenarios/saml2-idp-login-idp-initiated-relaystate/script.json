@@ -9,7 +9,7 @@
     "--cas.authn.attribute-repository.stub.attributes.givenName=Apereo",
     "--cas.authn.attribute-repository.stub.attributes.sn=CAS",
 
-    "--cas.audit.engine.enabled=true",
+
 
     "--cas.authn.saml-idp.core.entity-id=https://cas.apereo.org/saml/idp",
     "--cas.authn.saml-idp.metadata.file-system.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md",
@@ -19,7 +19,7 @@
     "--cas.server.scope=example.net",
 
     "--logging.level.org.apereo.cas=info",
-    "--cas.audit.slf4j.use-single-line=true",
+
     
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"

@@ -4,8 +4,8 @@
     "docker": "true"
   },
   "properties": [
-    "--cas.audit.engine.enabled=true",
-    "--cas.audit.slf4j.use-single-line=true",
+
+
     
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
     "--cas.service-registry.core.init-from-json=true",

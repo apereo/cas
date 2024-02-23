@@ -6,7 +6,7 @@
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=https://localhost:8443/cas",
-    "--cas.audit.slf4j.use-single-line=true",
+
 
     "--cas.authn.attribute-repository.stub.attributes.cn=9/9/9",
     "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",

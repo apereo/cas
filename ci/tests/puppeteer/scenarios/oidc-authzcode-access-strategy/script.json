@@ -9,8 +9,8 @@
 
     "--logging.level.org.apereo.cas=info",
 
-    "--cas.audit.engine.enabled=true",
-    "--cas.audit.slf4j.use-single-line=true",
+
+
 
     "--cas.authn.attribute-repository.stub.attributes.groups=director,admin",
     "--cas.authn.attribute-repository.stub.attributes.my_email=cas@example.org",

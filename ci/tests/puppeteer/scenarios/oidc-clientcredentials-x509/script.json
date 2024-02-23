@@ -13,7 +13,7 @@
     "--server.ssl.client-auth=want",
 
     "--logging.level.org.apereo.cas=info",
-    "--cas.audit.slf4j.use-single-line=true",
+
 
     "--cas.authn.attribute-repository.stub.attributes.uid=casuser",
     "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",

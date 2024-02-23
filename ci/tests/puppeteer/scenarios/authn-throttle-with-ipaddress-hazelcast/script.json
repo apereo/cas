@@ -1,8 +1,10 @@
 {
   "dependencies": "throttle,throttle-hazelcast",
-
   "properties": [
-    "--cas.audit.engine.enabled=true",
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+
     
     "--cas.authn.throttle.failure.threshold=2",
     "--cas.authn.throttle.failure.range-seconds=10",

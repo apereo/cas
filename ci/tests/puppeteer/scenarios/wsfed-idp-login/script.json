@@ -25,9 +25,9 @@
     
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=https://localhost:8443/cas",
-    "--cas.audit.engine.enabled=true",
+
     "--cas.authn.accept.name=STATIC",
-    "--cas.audit.slf4j.use-single-line=true",
+
 
     "--logging.level.org.apereo.cas=info",
     "--logging.level.org.apache.cxf=info",

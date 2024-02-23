@@ -8,7 +8,7 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=https://localhost:8443/cas",
     "--cas.http-client.host-name-verifier=none",
-    "--cas.audit.slf4j.use-single-line=true",
+
 
     "--cas.authn.pac4j.cas[0].login-url=https://localhost:8444/cas/login",
     "--cas.authn.pac4j.cas[0].protocol=CAS30",
