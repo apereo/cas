@@ -295,7 +295,7 @@ exports.submitForm = async (page, selector, predicate = undefined, statusCode = 
             const responseStatus = response.status();
             await this.log(`Page response status: ${responseStatus}`);
             if (statusCode <= 0) {
-                await this.log("Waiting for page to produce a valid response status code");
+                await this.log(`Checking page response status ${responseStatus} is greater than required ${statusCode}`);
                 return responseStatus > statusCode;
             }
             await this.log(`Waiting for page response status code ${statusCode}`);
@@ -304,6 +304,7 @@ exports.submitForm = async (page, selector, predicate = undefined, statusCode = 
     }
     return Promise.all([
         page.waitForResponse(predicate),
+        this.log(`Submitting form ${selector}`),
         page.$eval(selector, (form) => form.submit()),
         this.waitForTimeout(3000)
     ]);
