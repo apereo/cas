@@ -34,7 +34,7 @@ env:
   NODE_CURRENT: '20.10.0'
   MAX_ATTEMPTS: 2
   RETRY_MINUTES: 15
-  SCENARIO_REGEX: "saml.*|oidc.*|delegated.*"
+  SCENARIO_REGEX: "saml.*|oidc.*|.*password.*"
 
 on:
   workflow_dispatch:
