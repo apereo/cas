@@ -117,12 +117,12 @@ async function verifyJwtAccessToken(page) {
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     try {
-        let context = await browser.createBrowserContext();
+        let context = await browser.createIncognitoBrowserContext();
         let page = await cas.newPage(context);
         await verifyNormalFlows(page);
         await context.close();
 
-        context = await browser.createBrowserContext();
+        context = await browser.createIncognitoBrowserContext();
         page = await cas.newPage(context);
         await verifyJwtAccessToken(page);
         await context.close();

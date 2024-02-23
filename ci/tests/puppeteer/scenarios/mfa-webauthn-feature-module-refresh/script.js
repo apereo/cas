@@ -55,6 +55,7 @@ const path = require("path");
     await browser.close();
 })();
 
+
 async function updateConfig(configFile, configFilePath, data) {
     const config = {
         cas: {

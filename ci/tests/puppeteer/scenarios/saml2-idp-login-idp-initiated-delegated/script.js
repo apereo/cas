@@ -36,11 +36,12 @@ async function startFlow(context, clientName) {
     const browser = await puppeteer.launch(cas.browserOptions());
     const providers = ["CasClient", "CasClientFancy", "CasClientNone"];
     for (const provider of providers) {
-        const context = await browser.createBrowserContext();
+        const context = await browser.createIncognitoBrowserContext();
         await startFlow(context, provider);
         await context.close();
     }
     await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
     await browser.close();
 })();
+
 

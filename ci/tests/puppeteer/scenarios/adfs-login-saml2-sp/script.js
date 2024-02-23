@@ -3,7 +3,7 @@ const cas = require("../../cas.js");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
-    const context = await browser.createBrowserContext();
+    const context = await browser.createIncognitoBrowserContext();
     const page = await cas.newPage(context);
 
     await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
