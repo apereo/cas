@@ -312,6 +312,11 @@ exports.pressEnter = async (page) => {
     this.waitForTimeout(page, 2000);
 };
 
+exports.pressTab = async (page) => {
+    page.keyboard.press("Tab");
+    this.waitForTimeout(page, 1000);
+};
+
 exports.type = async (page, selector, value, obfuscate = false) => {
     const logValue = obfuscate ? "******" : value;
     await this.log(`Typing ${logValue} in field ${selector}`);
