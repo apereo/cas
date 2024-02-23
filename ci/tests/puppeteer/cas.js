@@ -309,7 +309,7 @@ exports.submitForm = async (page, selector, predicate = undefined, statusCode = 
 
 exports.pressEnter = async (page) => {
     page.keyboard.press("Enter");
-    this.waitForTimeout(page, 1000);
+    this.waitForTimeout(page, 2000);
 };
 
 exports.type = async (page, selector, value, obfuscate = false) => {

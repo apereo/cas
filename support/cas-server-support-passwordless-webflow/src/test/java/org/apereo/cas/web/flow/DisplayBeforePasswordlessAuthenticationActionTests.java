@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.api.PasswordlessRequestParser;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
+import org.apereo.cas.impl.token.PasswordlessAuthenticationToken;
 import org.apereo.cas.notifications.sms.MockSmsSender;
 import org.apereo.cas.notifications.sms.SmsSender;
 import org.apereo.cas.services.UnauthorizedServiceException;
@@ -50,6 +51,10 @@ class DisplayBeforePasswordlessAuthenticationActionTests extends BasePasswordles
     private Action displayBeforePasswordlessAuthenticationAction;
 
     @Autowired
+    @Qualifier(CasWebflowConstants.ACTION_ID_CREATE_PASSWORDLESS_AUTHN_TOKEN)
+    private Action createPasswordlessAuthenticationTokenAction;
+
+    @Autowired
     @Qualifier(PasswordlessUserAccountStore.BEAN_NAME)
     private PasswordlessUserAccountStore passwordlessUserAccountStore;
 
@@ -58,8 +63,12 @@ class DisplayBeforePasswordlessAuthenticationActionTests extends BasePasswordles
         val context = MockRequestContext.create(applicationContext);
         context.setCurrentEvent(new Event(this, "processing"));
         context.setParameter(PasswordlessRequestParser.PARAMETER_USERNAME, "casuser");
-        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS,
+        assertEquals(CasWebflowConstants.TRANSITION_ID_CREATE,
             displayBeforePasswordlessAuthenticationAction.execute(context).getId());
+        val result = createPasswordlessAuthenticationTokenAction.execute(context);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());
+        val token = result.getAttributes().get("result", PasswordlessAuthenticationToken.class);
+        assertNotNull(token);
     }
 
     @Test

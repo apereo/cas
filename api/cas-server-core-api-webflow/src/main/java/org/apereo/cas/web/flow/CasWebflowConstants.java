@@ -141,6 +141,11 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_PROMPT = "prompt";
 
     /**
+     * The transition state 'create'.
+     */
+    String TRANSITION_ID_CREATE = "create";
+
+    /**
      * The transition state 'finalize'.
      */
     String TRANSITION_ID_FINALIZE = "finalize";
@@ -1779,11 +1784,15 @@ public interface CasWebflowConstants {
      * Action id 'displayBeforePasswordlessAuthenticationAction .
      */
     String ACTION_ID_DISPLAY_BEFORE_PASSWORDLESS_AUTHN = "displayBeforePasswordlessAuthenticationAction";
+    /**
+     * Action id 'createPasswordlessAuthenticationTokenAction .
+     */
+    String ACTION_ID_CREATE_PASSWORDLESS_AUTHN_TOKEN = "createPasswordlessAuthenticationTokenAction";
 
     /**
-     * Action id 'passswordPrepareLoginAction .
+     * Action id 'passwordlessPrepareLoginAction .
      */
-    String ACTION_ID_PASSWORDLESS_PREPARE_LOGIN = "passswordPrepareLoginAction";
+    String ACTION_ID_PASSWORDLESS_PREPARE_LOGIN = "passwordlessPrepareLoginAction";
 
     /**
      * Action id 'verifyPasswordlessAccountAuthenticationAction .

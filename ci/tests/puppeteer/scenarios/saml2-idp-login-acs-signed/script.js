@@ -37,6 +37,7 @@ async function cleanUp() {
         await cas.gotoLogout(page);
         await cas.gotoLogin(page);
         await cas.loginWith(page);
+        await cas.waitForTimeout(page, 2000);
         await cas.assertCookie(page);
         await cas.goto(page, "https://localhost:9876/sp");
         await cas.waitForTimeout(page, 3000);

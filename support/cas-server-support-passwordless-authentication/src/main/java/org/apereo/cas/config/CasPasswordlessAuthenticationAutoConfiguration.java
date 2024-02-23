@@ -12,6 +12,7 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.impl.account.ChainingPasswordlessAccountStore;
 import org.apereo.cas.impl.account.GroovyPasswordlessUserAccountStore;
 import org.apereo.cas.impl.account.JsonPasswordlessUserAccountStore;
 import org.apereo.cas.impl.account.RestfulPasswordlessUserAccountStore;
@@ -36,6 +37,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -79,17 +81,58 @@ public class CasPasswordlessAuthenticationAutoConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = PasswordlessUserAccountStore.BEAN_NAME)
-    public PasswordlessUserAccountStore passwordlessUserAccountStore(final CasConfigurationProperties casProperties) {
+    public PasswordlessUserAccountStore passwordlessUserAccountStore(
+        final List<BeanSupplier<PasswordlessUserAccountStore>> passwordlessStoresSupplier) {
+        val allStores = passwordlessStoresSupplier
+            .stream()
+            .map(BeanSupplier::get)
+            .filter(BeanSupplier::isNotProxy)
+            .toList();
+        return new ChainingPasswordlessAccountStore(allStores);
+    }
+
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "jsonPasswordlessUserAccountStore")
+    public BeanSupplier<PasswordlessUserAccountStore> jsonPasswordlessUserAccountStore(
+        final CasConfigurationProperties casProperties) {
         val accounts = casProperties.getAuthn().getPasswordless().getAccounts();
-        if (accounts.getJson().getLocation() != null) {
-            return new JsonPasswordlessUserAccountStore(accounts.getJson().getLocation());
-        }
-        if (accounts.getGroovy().getLocation() != null) {
-            return new GroovyPasswordlessUserAccountStore(accounts.getGroovy().getLocation());
-        }
-        if (StringUtils.isNotBlank(accounts.getRest().getUrl())) {
-            return new RestfulPasswordlessUserAccountStore(accounts.getRest());
-        }
+        return BeanSupplier.of(PasswordlessUserAccountStore.class)
+            .when(() -> accounts.getJson().getLocation() != null)
+            .supply(() -> new JsonPasswordlessUserAccountStore(accounts.getJson().getLocation()))
+            .otherwiseNull();
+    }
+
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "groovyPasswordlessUserAccountStore")
+    public BeanSupplier<PasswordlessUserAccountStore> groovyPasswordlessUserAccountStore(
+        final CasConfigurationProperties casProperties) {
+        val accounts = casProperties.getAuthn().getPasswordless().getAccounts();
+        return BeanSupplier.of(PasswordlessUserAccountStore.class)
+            .when(() -> accounts.getGroovy().getLocation() != null)
+            .supply(() -> new GroovyPasswordlessUserAccountStore(accounts.getGroovy().getLocation()))
+            .otherwiseNull();
+    }
+
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "restfulPasswordlessUserAccountStore")
+    public BeanSupplier<PasswordlessUserAccountStore> restfulPasswordlessUserAccountStore(
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties) {
+        val accounts = casProperties.getAuthn().getPasswordless().getAccounts();
+        return BeanSupplier.of(PasswordlessUserAccountStore.class)
+            .when(() -> StringUtils.isNotBlank(accounts.getRest().getUrl()))
+            .supply(() -> new RestfulPasswordlessUserAccountStore(accounts.getRest()))
+            .otherwiseNull();
+    }
+
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "simplePasswordlessUserAccountStore")
+    public BeanSupplier<PasswordlessUserAccountStore> simplePasswordlessUserAccountStore(final CasConfigurationProperties casProperties) {
+        val accounts = casProperties.getAuthn().getPasswordless().getAccounts();
         var simple = accounts.getSimple().entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> {
             val account = new PasswordlessUserAccount();
             account.setUsername(entry.getKey());
@@ -101,7 +144,9 @@ public class CasPasswordlessAuthenticationAutoConfiguration {
             }
             return account;
         }));
-        return new SimplePasswordlessUserAccountStore(simple);
+        return BeanSupplier.of(PasswordlessUserAccountStore.class)
+            .alwaysMatch()
+            .supply(() -> new SimplePasswordlessUserAccountStore(simple));
     }
 
     @Bean
