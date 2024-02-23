@@ -12,7 +12,8 @@ const cas = require("../../cas.js");
 
     await cas.assertVisibility(page, "li #AzureClient");
     await cas.click(page, "li #AzureClient");
-    await cas.waitForNavigation(page);
+    await page.waitForNavigation();
+    await cas.waitForTimeout(page, 4000);
     await cas.screenshot(page);
 
     const username = `castest@${process.env.AZURE_AD_DOMAIN}`;

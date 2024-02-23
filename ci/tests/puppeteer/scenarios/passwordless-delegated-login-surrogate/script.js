@@ -12,13 +12,16 @@ async function startAuthFlow(page, username) {
     assert(pswd === null);
     await cas.screenshot(page);
     await cas.type(page, "#username", username);
+    await cas.waitForTimeout(page, 1000);
     await cas.pressEnter(page);
-    await cas.waitForTimeout(page, 4000);
-    await cas.logPage(page);
+    await page.waitForNavigation();
+    await cas.waitForTimeout(page, 1000);
+    await cas.log(`Page url: ${await page.url()}`);
     await cas.screenshot(page);
 
     await cas.loginWith(page);
-    await cas.logPage(page);
+    await cas.waitForTimeout(page, 5000);
+    await cas.log(`Page url: ${await page.url()}`);
     await cas.screenshot(page);
     await cas.assertCookie(page);
     await cas.assertInnerTextStartsWith(page, "#content div p", "You, user3, have successfully logged in");
@@ -27,8 +30,8 @@ async function startAuthFlow(page, username) {
     await cas.waitForTimeout(page, 1000);
     await cas.screenshot(page);
     await cas.type(page, "#attribute-tab-1 input[type=search]", "surrogate");
+    await cas.waitForTimeout(page, 1000);
     await cas.screenshot(page);
-    await cas.waitForTimeout(page, 5000);
     await cas.assertInnerTextStartsWith(page, "#surrogateEnabled td code kbd", "[true]");
     await cas.assertInnerTextStartsWith(page, "#surrogatePrincipal td code kbd", "[casuser]");
     await cas.assertInnerTextStartsWith(page, "#surrogateUser td code kbd", "[user3]");

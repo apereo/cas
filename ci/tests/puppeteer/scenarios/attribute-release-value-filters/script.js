@@ -19,7 +19,6 @@ async function executeRequest(page, service, attribute, attributeValue) {
     
     await cas.gotoLogin(page, service);
     await cas.loginWith(page);
-    await cas.waitForTimeout(page, 2000);
     const ticket = await cas.assertTicketParameter(page);
     const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
     await cas.log(body);
@@ -32,7 +31,8 @@ async function executeRequest(page, service, attribute, attributeValue) {
     assert(authenticationSuccess.attributes.isFromNewLogin === undefined);
     assert(authenticationSuccess.attributes.longTermAuthenticationRequestTokenUsed === undefined);
     assert(authenticationSuccess.attributes[attribute][0] === attributeValue);
-    await cas.gotoLogout(page);
+    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.waitForTimeout(page, 1000);
     await cas.log("============================");
     
     return authenticationSuccess;

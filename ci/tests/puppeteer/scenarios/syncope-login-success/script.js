@@ -13,8 +13,6 @@ const path = require("path");
     const browser = await puppeteer.launch(cas.browserOptions());
     try {
         const page = await cas.newPage(browser);
-        await cas.gotoLogin(page);
-        
         await updateConfig(configFile, configFilePath, "http://localhost:18080/syncope");
         await cas.waitForTimeout(page, 3000);
         await cas.refreshContext();
@@ -29,11 +27,11 @@ const path = require("path");
 async function doLogin(page, uid, psw, email) {
     await cas.gotoLogout(page);
     await cas.gotoLogin(page);
-    await cas.loginWith(page, uid, psw);
+    await cas.loginWith(page,uid, psw);
     await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
-
+    await cas.waitForTimeout(page, 1000);
     const attributes = await cas.innerText(page, "#attribute-tab-0 table#attributesTable tbody");
     assert(attributes.includes("syncopeUserAttr_email"));
     assert(attributes.includes(email));

@@ -17,16 +17,21 @@ const assert = require("assert");
     
     try {
         await cas.gotoLogin(page);
+        await cas.waitForTimeout(page, 1000);
+
         await cas.updateDuoSecurityUserStatus("duocode");
         await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
+        await cas.waitForTimeout(page, 5000);
         await cas.screenshot(page);
         await cas.loginWith(page, "duocode", "Mellon");
+        await cas.waitForTimeout(page, 5000);
         await cas.screenshot(page);
 
         await cas.loginDuoSecurityBypassCode(page,"duocode");
+        await cas.waitForTimeout(page, 5000);
         await cas.screenshot(page);
 
-        await cas.waitForElement(page, "#table_with_attributes");
+        await page.waitForSelector("#table_with_attributes", {visible: true});
         await cas.assertInnerTextContains(page, "#content p", "status page of SimpleSAMLphp");
         await cas.assertVisibility(page, "#table_with_attributes");
         const authData = JSON.parse(await cas.innerHTML(page, "details pre"));

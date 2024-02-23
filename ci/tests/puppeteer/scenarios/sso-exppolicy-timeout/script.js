@@ -10,7 +10,7 @@ const cas = require("../../cas.js");
 
     for (let i = 0; i < 3; i++) {
         await cas.log(`Attempt #${i}: waiting for timeout to complete...`);
-
+        await cas.waitForTimeout(page, 1000);
         await cas.gotoLogin(page, "https://apereo.github.io");
         await cas.assertTicketParameter(page);
         await cas.gotoLogin(page);

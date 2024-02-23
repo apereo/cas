@@ -6,17 +6,18 @@ const cas = require("../../cas.js");
     const page = await cas.newPage(browser);
     await cas.gotoLogin(page);
     await cas.loginWith(page);
+    await cas.waitForTimeout(page, 2000);
     await cas.assertCookie(page, false);
     await cas.screenshot(page);
     await cas.assertInnerText(page, "#content h2", "Weak Password Detected");
     await cas.click(page, "#submit");
-    await cas.waitForNavigation(page);
+    await page.waitForNavigation();
 
     await cas.assertInnerText(page, "#pwdmain h3", "Hello, casuser. You must change your password.");
     await cas.type(page,"#password", "P@ssw0rd9");
     await cas.type(page,"#confirmedPassword", "P@ssw0rd9");
     await cas.pressEnter(page);
-    await cas.waitForNavigation(page);
+    await page.waitForNavigation();
     await cas.assertInnerText(page, "#content h2", "Password Change Successful");
     
     await browser.close();

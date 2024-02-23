@@ -6,7 +6,7 @@ const cas = require("../../cas.js");
     const page = await cas.newPage(browser);
     await cas.gotoLoginWithAuthnMethod(page, undefined, "mfa-webauthn");
     await cas.loginWith(page);
-
+    await cas.waitForTimeout(page, 1000);
     await cas.assertTextContent(page, "#status", "Register Device");
     await cas.assertVisibility(page, "#messages");
     await cas.assertInvisibility(page, "#device-info");

@@ -10,9 +10,10 @@ const fs = require("fs");
     await cas.goto(page, url);
 
     await cas.loginWith(page);
+    await cas.waitForTimeout(page, 1000);
 
     await cas.click(page, "#allow");
-    await cas.waitForNavigation(page);
+    await page.waitForNavigation();
     await cas.log(`Page url: ${await page.url()}\n`);
     const response = await cas.assertParameter(page, "response");
 

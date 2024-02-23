@@ -16,12 +16,14 @@ async function startWithCasSp(page) {
     await cas.gotoLogout(page);
     await cas.waitForTimeout(page, 1000);
     await cas.gotoLogin(page, service);
-    await cas.waitForTimeout(page, 1000);
     await cas.assertVisibility(page, "#selectProviderButton");
     await cas.submitForm(page, "#providerDiscoveryForm");
+    await cas.waitForTimeout(page, 1000);
     await cas.type(page, "#username", "casuser@heroku.org");
     await cas.submitForm(page, "#discoverySelectionForm");
+    await cas.waitForTimeout(page, 2000);
     await cas.loginWith(page);
+    await cas.waitForTimeout(page, 1000);
     const ticket = await cas.assertTicketParameter(page);
     const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}`);
     await cas.log(body);
@@ -43,7 +45,7 @@ async function startWithSamlSp(page) {
     await cas.loginWith(page, "info@fawnoos.com", "QFkN&d^bf9vhS3KS49",
         "#okta-signin-username", "#okta-signin-password");
 
-    await cas.waitForElement(page, "#table_with_attributes");
+    await page.waitForSelector("#table_with_attributes", {visible: true});
     await cas.assertInnerTextContains(page, "#content p", "status page of SimpleSAMLphp");
     await cas.assertVisibility(page, "#table_with_attributes");
     const authData = JSON.parse(await cas.innerHTML(page, "details pre"));

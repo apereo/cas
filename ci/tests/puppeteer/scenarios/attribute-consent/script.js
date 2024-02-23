@@ -24,7 +24,7 @@ const os = require("os");
 
     await cas.screenshot(page);
     await cas.click(page, "#optionsButton");
-    await cas.waitForElement(page, "#optionAlways");
+    await cas.waitForTimeout(page, 2000);
 
     await cas.screenshot(page);
     let opt = await page.$("#optionAlways");
@@ -45,7 +45,7 @@ const os = require("os");
     const confirm = await page.$("#confirm");
     assert(confirm !== null);
     await cas.click(page, "#confirm");
-    await cas.waitForNavigation(page);
+    await page.waitForNavigation();
     await cas.assertTicketParameter(page);
 
     const baseUrl = "https://localhost:8443/cas/actuator/attributeConsent";

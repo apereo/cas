@@ -7,12 +7,15 @@ const assert = require("assert");
     const page = await cas.newPage(browser);
     const service = "https://localhost:9859/anything/adaptive";
     await cas.gotoLogin(page, service);
+    await cas.waitForTimeout(page, 2000);
     await cas.loginWith(page);
+    await cas.waitForTimeout(page, 2000);
 
     await cas.screenshot(page);
 
     const page2 = await browser.newPage();
     await page2.goto("http://localhost:8282");
+    await cas.waitForTimeout(page2, 1000);
     await cas.click(page2, "table tbody td a[title=CAS]");
     await cas.waitForTimeout(page2, 1000);
     const code = await cas.textContent(page2, "div[name=bodyPlainText] .well");

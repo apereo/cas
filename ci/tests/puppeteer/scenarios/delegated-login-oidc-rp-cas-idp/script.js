@@ -17,10 +17,12 @@ const cas = require("../../cas.js");
 
     await cas.assertVisibility(page, "li #CasClient");
     await cas.click(page, "li #CasClient");
-    await cas.waitForNavigation(page);
+    await page.waitForNavigation();
 
+    await cas.waitForTimeout(page, 3000);
     await cas.screenshot(page);
     await cas.loginWith(page);
+    await cas.waitForTimeout(page, 1000);
 
     const result = new URL(page.url());
     await cas.log(result.searchParams.toString());
@@ -32,15 +34,18 @@ const cas = require("../../cas.js");
 
     await cas.log("Allowing release of scopes and claims...");
     await cas.click(page, "#allow");
-    await cas.waitForNavigation(page);
-    await cas.waitForElement(page, "pre");
+    await page.waitForNavigation();
+    await cas.waitForTimeout(page, 2000);
+
     await cas.logPage(page);
     assert(await page.url().startsWith("https://localhost:9859/anything/1"));
+    await cas.waitForTimeout(page, 2000);
     await cas.assertInnerTextContains(page, "pre", "OC-1-");
     await cas.assertInnerTextContains(page, "pre", "DISSESSIONOauthOidcServerSupport");
 
     await cas.gotoLogout(page);
     assert(page.url().startsWith("https://localhost:8444/cas/logout"));
+    await cas.waitForTimeout(page, 2000);
 
     await browser.close();
 })();

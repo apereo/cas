@@ -11,9 +11,9 @@ const cas = require("../../cas.js");
     await cas.loginWith(page);
     
     await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
+    await cas.waitForTimeout(page, 3000);
     await cas.screenshot(page);
-    await cas.waitForTimeout(page, 2000);
-    await cas.waitForElement(page, "#table_with_attributes");
+    await page.waitForSelector("#table_with_attributes", {visible: true});
     await cas.assertInnerTextContains(page, "#content p", "status page of SimpleSAMLphp");
     await cas.assertVisibility(page, "#table_with_attributes");
 
@@ -22,10 +22,10 @@ const cas = require("../../cas.js");
     
     const entityId = "https://localhost:9859/shibboleth";
     let url = "https://localhost:8443/cas/idp/profile/SAML2/Unsolicited/SSO";
-    url += `?providerId=${entityId}&target=https%3A%2F%2Flocalhost%3A8443%2Fcas%2Flogin`;
+    url += `?providerId=${entityId}`;
+    url += "&target=https%3A%2F%2Flocalhost%3A8443%2Fcas%2Flogin";
     await cas.goto(page, url);
-    await cas.waitForTimeout(page, 2000);
-    await cas.waitForElement(page, "#content h2");
+    await cas.waitForTimeout(page, 1000);
     await cas.assertInnerText(page, "#content h2", "Application Not Authorized to Use CAS");
     await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
     await browser.close();

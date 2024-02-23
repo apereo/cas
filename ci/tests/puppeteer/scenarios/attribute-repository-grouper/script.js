@@ -9,7 +9,7 @@ const cas = require("../../cas.js");
     await cas.waitForTimeout(page, 10000);
     await cas.gotoLogin(page);
     await cas.loginWith(page, "GrouperSystem", "Mellon");
-
+    await cas.waitForTimeout(page, 1000);
     await cas.assertInnerTextContains(page, "#attribute-tab-0 table#attributesTable tbody", "grouperGroups");
     await cas.assertInnerTextContains(page, "#attribute-tab-0 table#attributesTable tbody", "etc:grouperUi:grouperUiUserData");
     await cas.assertCookie(page);

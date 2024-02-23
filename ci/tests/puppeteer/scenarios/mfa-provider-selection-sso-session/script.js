@@ -28,11 +28,12 @@ const cas = require("../../cas.js");
     await cas.log(`Using scratch code ${scratch} to login...`);
     await cas.type(page,"#token", scratch);
     await cas.pressEnter(page);
-    await cas.waitForNavigation(page);
+    await page.waitForNavigation();
 
     await cas.assertTicketParameter(page);
 
     await cas.gotoLogin(page);
+    await cas.waitForTimeout(page, 1000);
 
     await cas.assertInnerTextStartsWith(page, "#authnContextClass td.attribute-value", "[mfa-gauth]");
     
@@ -55,7 +56,7 @@ const cas = require("../../cas.js");
     await cas.log(`Using scratch code ${scratch} to login...`);
     await cas.type(page,"#token", scratch);
     await cas.pressEnter(page);
-    await cas.waitForNavigation(page);
+    await page.waitForNavigation();
 
     await cas.log("Navigating to second service with SSO session");
     await cas.gotoLogin(page, "https://github.com/apereo");

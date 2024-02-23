@@ -10,16 +10,16 @@ const cas = require("../../cas.js");
     await cas.logg("Checking CLOSED failure mode");
     await cas.gotoLogin(page, service);
     await cas.loginWith(page);
-
+    await cas.waitForTimeout(page, 1000);
     await cas.assertInnerText(page, "#content h2", "MFA Provider Unavailable");
 
-    await cas.gotoLogout(page);
+    await cas.goto(page, "https://localhost:8443/cas/logout");
 
     service = "http://localhost:9889/anything/phantom";
     await cas.logg("Checking PHANTOM failure mode");
     await cas.gotoLogin(page, service);
     await cas.loginWith(page);
-
+    await cas.waitForTimeout(page, 1000);
     let ticket = await cas.assertTicketParameter(page);
     let body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
     await cas.logg(body);
@@ -29,13 +29,13 @@ const cas = require("../../cas.js");
     assert(authenticationSuccess.attributes.bypassedMultifactorAuthenticationProviderId[0] === "mfa-yubikey");
     assert(authenticationSuccess.attributes.authenticationContext[0] === "mfa-yubikey");
 
-    await cas.gotoLogout(page);
+    await cas.goto(page, "https://localhost:8443/cas/logout");
 
     service = "http://localhost:9889/anything/open";
     await cas.logg("Checking OPEN failure mode");
     await cas.gotoLogin(page, service);
     await cas.loginWith(page);
-
+    await cas.waitForTimeout(page, 1000);
     ticket = await cas.assertTicketParameter(page);
     body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
     await cas.logg(body);
@@ -45,22 +45,22 @@ const cas = require("../../cas.js");
     assert(authenticationSuccess.attributes.bypassedMultifactorAuthenticationProviderId[0] === "mfa-yubikey");
     assert(authenticationSuccess.attributes.authenticationContext === undefined);
 
-    await cas.gotoLogout(page);
+    await cas.goto(page, "https://localhost:8443/cas/logout");
 
     service = "http://localhost:9889/anything/none";
     await cas.logg("Checking NONE failure mode");
     await cas.gotoLogin(page, service);
     await cas.loginWith(page);
-
+    await cas.waitForTimeout(page, 1000);
     await cas.assertTextContent(page, "#login h3", "Use your registered YubiKey device(s) to authenticate.");
     await cas.assertVisibility(page, "#token");
 
-    await cas.gotoLogout(page);
+    await cas.goto(page, "https://localhost:8443/cas/logout");
     service = "http://localhost:9889/anything/undefined";
     await cas.logg("Checking UNDEFINED failure mode");
     await cas.gotoLogin(page, service);
     await cas.loginWith(page);
-
+    await cas.waitForTimeout(page, 1000);
     ticket = await cas.assertTicketParameter(page);
     body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
     await cas.logg(body);

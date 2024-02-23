@@ -5,8 +5,7 @@ const assert = require("assert");
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
-    await cas.gotoLogin(page);
-    
+
     const authzUrl = "https://localhost:8443/cas/oidc/oidcAuthorize";
     const params = "client_id=client&" +
         "redirect_uri=https%3A%2F%2Foidcdebugger.com%2Fdebug&" +
@@ -17,7 +16,7 @@ const assert = require("assert");
     
     let url = `${authzUrl}?${params}`;
     let response = await cas.goto(page, url);
-
+    await cas.waitForTimeout(page, 1000);
     await cas.log(`Status: ${response.status()} ${response.statusText()}`);
     assert(response.status() === 403);
 
@@ -39,21 +38,22 @@ const assert = require("assert");
     url = `${authzUrl}?client_id=client&request_uri=${requestUri}`;
     await cas.log(`Going to ${url}`);
     response = await cas.goto(page, url);
-
+    await cas.waitForTimeout(page, 1000);
     await cas.log(`Status: ${response.status()} ${response.statusText()}`);
 
     await cas.loginWith(page);
+    await cas.waitForTimeout(page, 1000);
 
     await cas.click(page, "#allow");
-    await cas.waitForNavigation(page);
-
+    await page.waitForNavigation();
+    await cas.waitForTimeout(page, 1000);
     await cas.assertTextContent(page, "h1.green-text", "Success!");
 
     await cas.log(`Attempting to use request_uri ${requestUri}`);
     url = `${authzUrl}?client_id=client&request_uri=${requestUri}`;
     await cas.log(`Going to ${url}`);
     response = await cas.goto(page, url);
-
+    await cas.waitForTimeout(page, 1000);
     await cas.log(`Status: ${response.status()} ${response.statusText()}`);
     assert(response.status() === 403);
     

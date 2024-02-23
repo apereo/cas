@@ -9,9 +9,10 @@ async function executeFlow(browser, redirectUri, clientId, accessTokenSecret) {
 
     await cas.goto(page, url);
     await cas.logPage(page);
-
+    await cas.waitForTimeout(page, 1000);
     await cas.loginWith(page);
-    await cas.waitForTimeout(page, 2000);
+    await cas.waitForTimeout(page, 1000);
+
     const code = await cas.assertParameter(page, "code");
     await cas.log(`OAuth code ${code}`);
 
