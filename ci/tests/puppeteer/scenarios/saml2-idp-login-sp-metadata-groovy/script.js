@@ -40,4 +40,3 @@ async function getActuatorEndpoint(entityId, password = "Mellon") {
     await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
 })();
 
-

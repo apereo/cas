@@ -41,7 +41,6 @@ const querystring = require("querystring");
     await browser.close();
 })();
 
-
 async function connectAndLogin(channelId, page) {
     const client = new StompJS.Client({
         brokerURL: "ws://localhost:8443/cas/qr-websocket",
@@ -93,7 +92,6 @@ async function connectAndLogin(channelId, page) {
 
     client.activate();
 }
-
 
 async function executeRequest(url, statusCode, requestBody) {
     return cas.doRequest(url, "POST", {

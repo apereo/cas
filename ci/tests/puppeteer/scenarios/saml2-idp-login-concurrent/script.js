@@ -1,6 +1,5 @@
 const puppeteer = require("puppeteer");
 
-
 const cas = require("../../cas.js");
 
 (async () => {
@@ -40,5 +39,4 @@ const cas = require("../../cas.js");
         await browser.close();
     }
 })();
-
 

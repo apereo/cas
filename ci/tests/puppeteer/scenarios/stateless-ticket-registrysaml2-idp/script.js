@@ -84,4 +84,3 @@ async function staleAuthenticationFlow(context) {
     await browser.close();
 })();
 
-
