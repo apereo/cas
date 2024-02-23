@@ -23,6 +23,7 @@ const assert = require("assert");
     const accessTokenUrl = "https://localhost:8443/cas/oidc/token?grant_type=authorization_code"
         + `&client_id=client&client_secret=secret&redirect_uri=${redirectUri}&code=${code}`;
 
+
     const payload = await cas.doPost(accessTokenUrl, "", {
         "Content-Type": "application/json"
     }, (res) => res.data, (error) => {

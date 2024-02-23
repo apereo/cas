@@ -12,9 +12,9 @@ const cas = require("../../cas.js");
 
     const page2 = await browser.newPage();
     await page2.goto("http://localhost:8282");
-    await cas.waitForTimeout(page2, 1000);
+    await page2.waitForTimeout(1000);
     await cas.click(page2, "table tbody td a");
-    await cas.waitForTimeout(page2, 1000);
+    await page2.waitForTimeout(1000);
 
     await page2.evaluate((selector) => {
         const element = document.querySelector(selector);
@@ -22,7 +22,7 @@ const cas = require("../../cas.js");
             element.scrollIntoView();
         }
     }, "#greeting");
-    await cas.waitForTimeout(page2, 1000);
+    await page2.waitForTimeout(1000);
     await cas.screenshot(page);
 
     const greeting = await cas.textContent(page2, "#greeting");

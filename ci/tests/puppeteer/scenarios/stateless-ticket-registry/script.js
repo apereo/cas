@@ -58,7 +58,7 @@ async function verifyExistingSsoSession(context, service) {
     await cas.log(`Logging into service ${service}`);
     const page2 = await cas.newPage(context);
     await cas.gotoLogin(page, service);
-    await cas.waitForTimeout(page2, 2000);
+    await page2.waitForTimeout(2000);
     await cas.log("Checking for page URL...");
     await cas.logPage(page);
     await cas.assertInvisibility(page, "#username");
@@ -85,7 +85,7 @@ async function verifyExistingSsoSession(context, service) {
     const browser = await puppeteer.launch(cas.browserOptions());
 
     for (let i = 1; i <= 2; i++) {
-        const context = await browser.createBrowserContext();
+        const context = await browser.createIncognitoBrowserContext();
         await cas.log(`Running test scenario ${i}`);
         switch (i) {
         case 1:

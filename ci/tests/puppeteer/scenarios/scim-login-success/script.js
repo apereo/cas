@@ -24,6 +24,7 @@ const assert = require("assert");
         (error) => {
             throw error;
         }, { "Authorization": "Basic c2NpbS11c2VyOmNoYW5nZWl0" });
+
     
     await browser.close();
 })();

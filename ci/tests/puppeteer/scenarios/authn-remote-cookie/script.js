@@ -8,7 +8,7 @@ async function verifyWithoutService() {
     const page2 = await cas.newPage(browser2);
     await page2.setCookie(await buildCookie(page2, COOKIE_VALUE, "/", "MyCookie"));
     await page2.goto("https://localhost:8443/cas/login");
-    await cas.waitForTimeout(page2, 2000);
+    await page2.waitForTimeout(2000);
     await cas.assertCookie(page2);
     await cas.screenshot(page2);
     await browser2.close();
@@ -19,7 +19,7 @@ async function verifyWithService() {
     const page2 = await cas.newPage(browser2);
     await page2.setCookie(await buildCookie(page2, COOKIE_VALUE, "/", "MyCookie"));
     await page2.goto("https://localhost:8443/cas/login?service=https://localhost:9859/anything/1");
-    await cas.waitForTimeout(page2, 2000);
+    await page2.waitForTimeout(2000);
     await cas.assertTicketParameter(page2);
     await browser2.close();
 }

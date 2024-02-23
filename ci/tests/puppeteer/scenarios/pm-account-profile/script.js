@@ -4,6 +4,7 @@ const assert = require("assert");
 const path = require("path");
 const fs = require("fs");
 
+
 (async () => {
 
     const template = path.join(__dirname, "device-record.json");
@@ -56,6 +57,7 @@ const fs = require("fs");
     await cas.assertVisibility(page, "button#cancel");
     await cas.click(page, "button#cancel");
     await cas.waitForTimeout(page, 2000);
+
 
     await cas.click(page, "#linkMfaTrustedDevices");
     await cas.waitForTimeout(page, 1000);
