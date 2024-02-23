@@ -206,11 +206,12 @@ exports.loginWith = async (page,
     await this.type(page, passwordField, password, true);
 
     this.pressEnter(page);
-    const response = await page.waitForNavigation();
-    if (response !== null) {
-        this.log(`Response status after navigation: ${response.status()} - ${response.statusText()}`);
+    try {
+        await this.screenshot(page);
+        return page.waitForNavigation();
+    } catch (e) {
+        this.logr(e);
     }
-    return response;
 };
 
 exports.waitForNavigation = async (page, timeout = 15000) => {
@@ -310,11 +311,13 @@ exports.submitForm = async (page, selector, predicate = undefined, statusCode = 
     ]);
 };
 
-exports.pressEnter = async (page) =>
-    Promise.all([
-        this.waitForTimeout(page, 2000),
+exports.pressEnter = async (page) => {
+    await this.log("Pressing Enter...");
+    return Promise.all([
+        this.waitForTimeout(page, 1000),
         page.keyboard.press("Enter")
     ]);
+};
 
 exports.pressTab = async (page) => {
     page.keyboard.press("Tab");
