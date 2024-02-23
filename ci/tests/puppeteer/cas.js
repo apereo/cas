@@ -205,7 +205,13 @@ exports.loginWith = async (page,
     await page.waitForSelector(passwordField, {visible: true});
     await this.type(page, passwordField, password, true);
 
-    return this.pressEnter(page);
+    this.pressEnter(page);
+    try {
+        await this.screenshot(page);
+        return page.waitForNavigation();
+    } catch (e) {
+        this.logr(e);
+    }
 };
 
 exports.waitForNavigation = async (page, timeout = 15000) => {

@@ -13,10 +13,9 @@ const assert = require("assert");
     await cas.logPage(page);
     let url = await page.url();
     assert(url.startsWith("https://localhost:8444/cas/login"));
-
     await cas.waitForTimeout(page, 1000);
     await cas.loginWith(page);
-
+    await cas.waitForTimeout(page, 2000);
     url = await page.url();
     await cas.log(url);
     assert(url.startsWith(service));
@@ -27,6 +26,7 @@ const assert = require("assert");
     await cas.gotoLogin(page, service);
     url = await page.url();
     await cas.log(url);
+    await cas.waitForTimeout(page, 1000);
     await cas.assertTicketParameter(page);
 
     await browser.close();
