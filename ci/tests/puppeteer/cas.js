@@ -104,9 +104,7 @@ exports.removeDirectoryOrFile = async (directory) => {
     }
 };
 
-exports.waitForTimeout = async(page, milliseconds = 2000) => {
-    await new Promise((r) => setTimeout(r, milliseconds));
-};
+exports.waitForTimeout = async(page, milliseconds = 2000) => new Promise((r) => setTimeout(r, milliseconds));
 
 exports.click = async (page, button) => {
     await page.evaluate((button) => {
@@ -207,8 +205,10 @@ exports.loginWith = async (page,
     await page.waitForSelector(passwordField, {visible: true});
     await this.type(page, passwordField, password, true);
 
-    await this.pressEnter(page);
-    return page.waitForNavigation();
+    return Promise.all([
+        page.waitForNavigation(),
+        this.pressEnter(page)
+    ]);
 };
 
 exports.waitForNavigation = async (page, timeout = 15000) => {
