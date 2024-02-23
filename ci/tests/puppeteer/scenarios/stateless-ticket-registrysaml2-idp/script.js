@@ -43,15 +43,15 @@ async function staleAuthenticationFlow(context) {
     await cas.log(`Restarting the flow with ${url}`);
     const page2 = await cas.newPage(context);
     await cas.goto(page2, url);
-    await page2.waitForTimeout(2000);
+    await cas.waitForTimeout(page2, 2000);
     await cas.loginWith(page2);
-    await page2.waitForTimeout(3000);
+    await cas.waitForTimeout(page2, 3000);
     await page2.waitForSelector("#table_with_attributes", {visible: true});
     await cas.assertInnerTextContains(page2, "#content p", "status page of SimpleSAMLphp");
     await cas.assertVisibility(page2, "#table_with_attributes");
     const authData = JSON.parse(await cas.innerHTML(page2, "details pre"));
     await cas.log(authData);
-    await page2.waitForTimeout(1000);
+    await cas.waitForTimeout(page2, 1000);
     await cas.goto(page2, "https://localhost:8443/cas/logout");
     await cas.log("Done");
 }
