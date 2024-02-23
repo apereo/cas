@@ -35,7 +35,9 @@ dependencies {
     implementation project(":support:cas-server-support-trusted-mfa-core")
 
     compileOnly project(":core:cas-server-core-rest-api")
+
     compileOnly project(":support:cas-server-support-surrogate-api")
+    compileOnly project(":support:cas-server-support-passwordless-api")
 
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-trusted-mfa")
@@ -69,5 +71,9 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-webflow-mfa", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-notifications", configuration: "tests")
+
+    testImplementation project(":support:cas-server-support-passwordless-api")
+    testImplementation project(":support:cas-server-support-passwordless-webflow")
+    
     testImplementation project(path: ":support:cas-server-support-person-directory-core", configuration: "tests")
 }

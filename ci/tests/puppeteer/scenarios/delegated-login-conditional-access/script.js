@@ -23,7 +23,7 @@ const cas = require("../../cas.js");
     await page.waitForNavigation();
     await cas.waitForTimeout(page, 1000);
     const response = await cas.loginWith(page);
-    await cas.log(`${response.status()} ${response.statusText()}`);
+
     await cas.waitForTimeout(page, 1000);
     await cas.screenshot(page);
     await cas.assertInnerText(page, "#content h2", "Unauthorized Access");

@@ -9,11 +9,11 @@ const assert = require("assert");
     await cas.loginWith(page);
     await page.authenticate({"username":"javamelody", "password": "M3ll0n"});
     let response = await cas.goto(page, "https://localhost:8443/cas/monitoring");
-    await cas.log(`${response.status()} ${response.statusText()}`);
+
     assert(response.ok());
 
     response = await cas.goto(page, "https://localhost:8443/cas/monitoring?part=counterSummaryPerClass&counter=spring");
-    await cas.log(`${response.status()} ${response.statusText()}`);
+
     const entries = await cas.innerTexts(page, "td.wrappedText a");
     await cas.log(entries);
 

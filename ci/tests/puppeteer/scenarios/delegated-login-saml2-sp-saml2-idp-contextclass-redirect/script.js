@@ -12,7 +12,7 @@ async function cleanUp() {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     const response = await cas.goto(page, "https://localhost:8443/cas/idp/metadata");
-    await cas.log(`${response.status()} ${response.statusText()}`);
+
     assert(response.ok());
 
     await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=refeds-sp");

@@ -7,7 +7,7 @@ const assert = require("assert");
     const page = await cas.newPage(browser);
     const response = await cas.goto(page, "http://localhost:8500/ui/dc1/services/cas/instances");
     await cas.waitForTimeout(page, 2000);
-    await cas.log(`${response.status()} ${response.statusText()}`);
+
     assert(response.ok());
     await cas.click(page, "div.header a");
     await page.waitForResponse((response) => response.status() === 200);
