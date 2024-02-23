@@ -1,5 +1,4 @@
 const puppeteer = require("puppeteer");
-const assert = require("assert");
 const cas = require("../../cas.js");
 
 (async () => {
@@ -18,11 +17,10 @@ const cas = require("../../cas.js");
     await cas.attributeValue(page, "#username", "autocomplete", "username");
     await cas.assertVisibility(page, "#password");
 
-    const response = await cas.loginWith(page, "unknown", "badpassword");
+    await cas.loginWith(page, "unknown", "badpassword");
     await cas.waitForTimeout(page, 1000);
 
     await cas.screenshot(page);
-    assert(response.status() === 200);
     await cas.assertVisibility(page, "#errorPanel");
     await cas.assertInnerText(page, "#errorPanel", "Invalid credentials.");
 

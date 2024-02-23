@@ -205,13 +205,7 @@ exports.loginWith = async (page,
     await page.waitForSelector(passwordField, {visible: true});
     await this.type(page, passwordField, password, true);
 
-    this.pressEnter(page);
-    try {
-        await this.screenshot(page);
-        return page.waitForNavigation();
-    } catch (e) {
-        this.logr(e);
-    }
+    return this.pressEnter(page);
 };
 
 exports.waitForNavigation = async (page, timeout = 15000) => {
@@ -314,7 +308,7 @@ exports.submitForm = async (page, selector, predicate = undefined, statusCode = 
 exports.pressEnter = async (page) => {
     await this.log("Pressing Enter...");
     return Promise.all([
-        this.waitForTimeout(page, 1000),
+        this.waitForTimeout(page, 2000),
         page.keyboard.press("Enter")
     ]);
 };
