@@ -52,7 +52,7 @@ const os = require("os");
     const url = `${baseUrl}/casuser`;
     await cas.log(`Trying ${url}`);
     const response = await cas.goto(page, url);
-    await cas.log(`${response.status()} ${response.statusText()}`);
+
     assert(response.ok());
 
     const template = path.join(__dirname, "consent-record.json");

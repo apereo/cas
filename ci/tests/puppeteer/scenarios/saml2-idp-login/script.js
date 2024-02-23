@@ -27,7 +27,7 @@ async function normalAuthenticationFlow(context) {
     for (let i = 0; i < endpoints.length; i++) {
         const url = baseUrl + endpoints[i];
         const response = await cas.goto(page, url);
-        await cas.log(`${response.status()} ${response.statusText()}`);
+
         assert(response.ok());
     }
     const response = await cas.goto(page, "https://localhost:8443/cas/idp/error");

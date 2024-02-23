@@ -52,7 +52,7 @@ const request = require("request");
     const params = "grant_type=client_credentials&scope=openid&client_id=client";
     const url = `https://localhost:8443/cas/oidc/token?${params}`;
     const response = await cas.goto(page, url);
-    await cas.log(`${response.status()} ${response.statusText()}`);
+
     assert(response.ok());
     const tokenResponse = JSON.parse(await cas.innerText(page, "body pre"));
     await cas.logb(tokenResponse);

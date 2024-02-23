@@ -10,7 +10,7 @@ const puppeteer = require("puppeteer");
     let response = await cas.gotoLogout(page, casService);
     await cas.waitForTimeout(page, 1000);
     await cas.logPage(page);
-    await cas.log(`${response.status()} ${response.statusText()}`);
+
     assert(response.ok());
     let url = await page.url();
     assert(url === casService);
@@ -22,7 +22,7 @@ const puppeteer = require("puppeteer");
     response = await cas.goto(page, url);
     await cas.waitForTimeout(page, 1000);
     await cas.logPage(page);
-    await cas.log(`${response.status()} ${response.statusText()}`);
+
     assert(response.status() === 200);
     url = await page.url();
     assert(url === casService);
@@ -46,7 +46,6 @@ const puppeteer = require("puppeteer");
     response = await cas.goto(page, logoutUrl);
     await cas.waitForTimeout(page, 1000);
     await cas.logPage(page);
-    await cas.log(`${response.status()} ${response.statusText()}`);
 
     url = await page.url();
     assert(url.startsWith(casService));

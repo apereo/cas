@@ -45,7 +45,7 @@ const path = require("path");
             const url = baseUrl + endpoints[i];
             await cas.log(`Checking response status from ${url}`);
             const response = await cas.goto(page, url);
-            await cas.log(`${response.status()} ${response.statusText()}`);
+
             assert(response.ok());
         }
     } finally {

@@ -38,7 +38,7 @@ const cas = require("../../cas.js");
 
     await cas.log("Logout with unauthorized redirect...");
     const response = await cas.goto(page, "https://localhost:8443/cas/logout?url=https://google.com");
-    await cas.log(`${response.status()} ${response.statusText()}`);
+
     assert(response.status() === 403);
     
     await cas.waitForTimeout(page, 1000);

@@ -21,7 +21,7 @@ async function unsolicited(page, target) {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     const response = await cas.goto(page, "https://localhost:8443/cas/idp/metadata");
-    await cas.log(`${response.status()} ${response.statusText()}`);
+
     assert(response.ok());
 
     await cas.gotoLogin(page);

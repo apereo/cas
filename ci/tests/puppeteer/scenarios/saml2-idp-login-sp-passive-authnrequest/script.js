@@ -12,7 +12,7 @@ const assert = require("assert");
     let response = await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
     await cas.waitForTimeout(page, 3000);
     await cas.screenshot(page);
-    await cas.log(`${response.status()} ${response.statusText()}`);
+
     assert(response.ok());
 
     await cas.log("Establishing SSO session...");
@@ -24,7 +24,7 @@ const assert = require("assert");
     response = await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
     await cas.waitForTimeout(page, 3000);
     await cas.screenshot(page);
-    await cas.log(`${response.status()} ${response.statusText()}`);
+
     assert(response.ok());
 
     await page.waitForSelector("#table_with_attributes", {visible: true});

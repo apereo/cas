@@ -21,7 +21,7 @@ const assert = require("assert");
     const link = body.substring(body.indexOf("link=") + 5);
     await cas.logg(`Verification link is ${link}`);
     const response = await cas.goto(page, link);
-    await cas.log(`${response.status()} ${response.statusText()}`);
+
     assert(response.ok());
     await cas.assertInnerText(page, "#content h2", "Risky Authentication attempt is confirmed.");
 

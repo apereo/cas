@@ -18,16 +18,15 @@ const cas = require("../../cas.js");
     await cas.attributeValue(page, "#username", "autocomplete", "username");
     await cas.assertVisibility(page, "#password");
 
-    let response = await cas.loginWith(page, "unknown", "badpassword");
+    const response = await cas.loginWith(page, "unknown", "badpassword");
     await cas.waitForTimeout(page, 1000);
-    await cas.log(`${response.status()} ${response.statusText()}`);
+
     await cas.screenshot(page);
     assert(response.status() === 200);
     await cas.assertVisibility(page, "#errorPanel");
     await cas.assertInnerText(page, "#errorPanel", "Invalid credentials.");
 
-    response = await cas.loginWith(page);
-    await cas.log(`${response.status()} ${response.statusText()}`);
+    await cas.loginWith(page);
     await cas.screenshot(page);
     const content = await page.content();
     const json = await cas.substring(content, "<pre>", "</pre>");

@@ -9,7 +9,7 @@ const assert = require("assert");
     const page = await cas.newPage(browser);
     await page.authenticate({"username":"admin", "password": "password"});
     const response = await cas.goto(page, casLoginUrl);
-    await cas.log(`${response.status()} ${response.statusText()}`);
+
     assert(response.ok());
     await cas.assertCookie(page);
     await browser.close();

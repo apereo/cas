@@ -46,7 +46,7 @@ async function submitUser(page, user) {
 
         await cas.log("Checking for unauthorized use of identity provider");
         const response = await cas.goto(page, "https://localhost:8443/cas/clientredirect?client_name=CasClient3");
-        await cas.log(`${response.status()} ${response.statusText()}`);
+
         assert(response.status() === 403);
   
         await cas.log("Checking for user account with multiple clients w/o password");
