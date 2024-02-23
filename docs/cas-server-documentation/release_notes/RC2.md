@@ -93,7 +93,7 @@ Notable changes in this area include:
 - Removing unnecessary I/O operations during startup to verify existence of embedded application resources on the classpath.
 - Removing the `org.webjars:webjars-locator-core` library which does classpath scanning at startup to locate assets.
 - ...and as a result, the *Hal Browser* interface that listed the CAS actuator endpoints has been removed.
-- Delaying the reconstruction of the CAS webflow execution plan until the application container is fully ready.
+- Delaying the construction of the CAS webflow execution plan until the application container is fully ready.
 
 ## Other Stuff
 
@@ -103,6 +103,7 @@ Notable changes in this area include:
 - [Account Profile Management](../registration/Account-Management-Overview.html) can now display the list of access tokens that are issued for an authenticated user.
 - [MDC logging](../logging/Logging-MDC.html) gains options to control what parameters or headers should be excluded from the logging output.
 - [Triggering interrupts](../webflow/Webflow-Customization-Interrupt-PerService.html) per service can now be controlled via Groovy.
+- [LDAP attribute repositories](../integration/Attribute-Resolution-LDAP.html) can now virtually rename an attribute to multiple names.
 
 ## Library Upgrades
            
@@ -127,3 +128,5 @@ Notable changes in this area include:
 - MariaDb
 - Gradle
 - PostgreSQL
+- Apache Cassandra
+- Zipkin Brave
