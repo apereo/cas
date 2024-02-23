@@ -35,7 +35,6 @@ async function verifyNormalFlows(page) {
     assert(accessToken !== undefined);
     assert(refreshToken !== undefined);
 
-
     const value = "client:secret";
     const buff = Buffer.alloc(value.length, value);
     const authzHeader = `Basic ${buff.toString("base64")}`;
@@ -128,7 +127,6 @@ async function verifyJwtAccessToken(page) {
         });
     assert(accessToken !== undefined);
     assert(refreshToken !== undefined);
-
 
     await cas.doGet("https://localhost:8443/cas/oidc/jwks",
         (res) => {

@@ -71,7 +71,6 @@ const jose = require("jose");
         throw `Operation failed: ${error}`;
     });
 
-
     const sha256 = await cas.sha256(accessToken);
     const base64Token = await cas.base64Url(sha256);
     const profilePayload = {

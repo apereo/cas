@@ -24,7 +24,6 @@ const path = require("path");
     await browser.close();
 })();
 
-
 async function doLogin(page, uid, psw, email) {
     await cas.gotoLogout(page);
     await cas.gotoLogin(page);

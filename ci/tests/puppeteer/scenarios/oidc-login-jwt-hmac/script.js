@@ -1,7 +1,6 @@
 const assert = require("assert");
 const cas = require("../../cas.js");
 
-
 (async () => {
     const privateKey = "enTHR15K28p0N6f404HaC9Vp1cfIBgQiHhmbgBiO7UHEnSiNJudxtDhPQNFjFQtOVSjEYu0pr5yxEeBAiO6IlA";
     const jwt = await cas.createJwt({
