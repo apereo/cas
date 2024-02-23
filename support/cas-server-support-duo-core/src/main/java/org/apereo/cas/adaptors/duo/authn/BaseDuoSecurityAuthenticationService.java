@@ -237,13 +237,6 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
         return DuoSecurityAuthenticationResult.builder().success(false).username(credential.getId()).build();
     }
 
-    /**
-     * Execute duo api request.
-     *
-     * @param request the request
-     * @return the json object
-     * @throws Exception the exception
-     */
     protected JSONObject executeDuoApiRequest(final Http request) throws Exception {
         return (JSONObject) request.executeRequest();
     }

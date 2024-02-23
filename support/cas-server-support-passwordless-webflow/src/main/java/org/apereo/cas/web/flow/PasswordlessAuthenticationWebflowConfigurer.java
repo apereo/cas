@@ -70,8 +70,8 @@ public class PasswordlessAuthenticationWebflowConfigurer extends AbstractCasWebf
     protected void createStateDisplayPasswordless(final Flow flow) {
         val viewStateDisplay = createViewState(flow, CasWebflowConstants.STATE_ID_PASSWORDLESS_DISPLAY, "passwordless/casPasswordlessDisplayView");
         viewStateDisplay.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_DISPLAY_BEFORE_PASSWORDLESS_AUTHN));
-        createTransitionForState(viewStateDisplay, CasWebflowConstants.TRANSITION_ID_SUBMIT,
-            CasWebflowConstants.STATE_ID_ACCEPT_PASSWORDLESS_AUTHENTICATION);
+        viewStateDisplay.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_CREATE_PASSWORDLESS_AUTHN_TOKEN));
+        createTransitionForState(viewStateDisplay, CasWebflowConstants.TRANSITION_ID_SUBMIT, CasWebflowConstants.STATE_ID_ACCEPT_PASSWORDLESS_AUTHENTICATION);
     }
 
     protected void createStateVerifyPasswordlessAccount(final Flow flow) {

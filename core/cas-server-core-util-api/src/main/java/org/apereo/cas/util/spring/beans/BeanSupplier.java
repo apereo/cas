@@ -160,6 +160,12 @@ public interface BeanSupplier<T> extends Supplier<T> {
      * @return the bean supplier
      */
     BeanSupplier<T> otherwiseProxy();
+    /**
+     * Create a null bean.
+     *
+     * @return the bean supplier
+     */
+    BeanSupplier<T> otherwiseNull();
 
     @RequiredArgsConstructor
     class DefaultBeanSupplier<T> implements BeanSupplier<T> {
@@ -170,14 +176,14 @@ public interface BeanSupplier<T> extends Supplier<T> {
 
         private Supplier<T> beanSupplier;
 
-        private Supplier<T> proxySupplier;
+        private Supplier<T> otherwiseSupplier;
 
         @Override
         public T get() {
             if (!conditionSuppliers.isEmpty() && conditionSuppliers.stream().allMatch(Supplier::get)) {
                 return beanSupplier.get();
             }
-            return proxySupplier.get();
+            return otherwiseSupplier.get();
         }
 
         @Override
@@ -202,7 +208,7 @@ public interface BeanSupplier<T> extends Supplier<T> {
         @Override
         @CanIgnoreReturnValue
         public BeanSupplier<T> otherwise(final Supplier<T> beanSupplier) {
-            this.proxySupplier = beanSupplier;
+            this.otherwiseSupplier = beanSupplier;
             return this;
         }
 
@@ -210,6 +216,19 @@ public interface BeanSupplier<T> extends Supplier<T> {
         @CanIgnoreReturnValue
         public BeanSupplier<T> otherwiseProxy() {
             return otherwise(new ProxiedBeanSupplier<>(this.clazz));
+        }
+
+        @Override
+        @CanIgnoreReturnValue
+        public BeanSupplier<T> otherwiseNull() {
+            return otherwise(new NullBeanSupplier<>());
+        }
+    }
+
+    class NullBeanSupplier<T> implements Supplier<T> {
+        @Override
+        public T get() {
+            return null;
         }
     }
 
