@@ -98,12 +98,13 @@ Notable changes in this area include:
 ## Other Stuff
 
 - Internal enhancements to allow a few more ticket registries to support more advanced querying operations and session management features.
-- [Redis Ticket Registry](../ticketing/Redis-Ticket-Registry.html) correctly sets the expiration time for principal records tied to ticket objects.           
-- [LDAP Passwordless Authentication](../authentication/Passwordless-Authentication-Storage-LDAP.html) can be configured to require specific user attributes and values before triggering the flow.
+- [Redis ticket registry](../ticketing/Redis-Ticket-Registry.html) correctly sets the expiration time for principal records tied to ticket objects.           
+- [LDAP passwordless authentication](../authentication/Passwordless-Authentication-Storage-LDAP.html) can be configured to require specific user attributes and values before triggering the flow.
 - [Account Profile Management](../registration/Account-Management-Overview.html) can now display the list of access tokens that are issued for an authenticated user.
-- [MDC logging](../logging/Logging-MDC.html) gains options to control what parameters or headers should be excluded from the logging output.
+- [MDC](../logging/Logging-MDC.html) logging gains options to control what parameters or headers should be excluded from the logging output.
 - [Triggering interrupts](../webflow/Webflow-Customization-Interrupt-PerService.html) per service can now be controlled via Groovy.
 - [LDAP attribute repositories](../integration/Attribute-Resolution-LDAP.html) can now virtually rename an attribute to multiple names.
+- Multiple [passwordless account stores](../authentication/Passwordless-Authentication.html) can be used simultaneously to verify and locate passwordless accounts.
 
 ## Library Upgrades
            
