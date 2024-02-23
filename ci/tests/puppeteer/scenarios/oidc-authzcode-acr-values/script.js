@@ -29,14 +29,12 @@ async function fetchCode(page, acr, params) {
     await cas.screenshot(page);
     await cas.type(page, "#token", scratch);
     await cas.pressEnter(page);
-    await page.waitForNavigation();
 
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
         await page.waitForNavigation();
-        await cas.waitForTimeout(page, 2000);
     }
-
+    await cas.waitForTimeout(page, 2000);
     const code = await cas.assertParameter(page, "code");
     await cas.log(`OAuth code ${code}`);
     return code;
