@@ -8,8 +8,8 @@
     "--cas.server.prefix=${cas.server.name}/cas",
 
     "--logging.level.org.apereo.cas=info",
-    "--cas.audit.slf4j.use-single-line=true",
-    "--cas.audit.engine.enabled=true",
+
+
 
     "--cas.authn.attribute-repository.stub.attributes.common-name=casuser",
     "--cas.authn.attribute-repository.stub.attributes.name=CAS",

@@ -19,7 +19,7 @@
     "--cas.authn.saml-idp.metadata.http.force-metadata-refresh=false",
 
     "--cas.authn.attribute-repository.attribute-definition-store.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/definitions.json",
-    "--cas.audit.slf4j.use-single-line=true",
+
 
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=https://localhost:8443/cas",

@@ -14,8 +14,8 @@
     "--cas.server.prefix=https://localhost:8443/cas",
     "--cas.server.scope=example.net",
     
-    "--cas.audit.engine.enabled=true",
-    "--cas.audit.slf4j.use-single-line=true",
+
+
     
     "--cas.authn.accept.name=STATIC",
 

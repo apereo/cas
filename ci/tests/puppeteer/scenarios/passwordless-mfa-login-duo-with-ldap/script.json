@@ -11,8 +11,8 @@
     "--cas.server.prefix=${cas.server.name}/cas",
     "--cas.http-client.host-name-verifier=none",
 
-    "--cas.audit.engine.enabled=true",
-    "--cas.audit.slf4j.use-single-line=true",
+
+
 
     "--cas.authn.passwordless.accounts.ldap.ldap-url=ldap://localhost:10389",
     "--cas.authn.passwordless.accounts.ldap.base-dn=ou=people,dc=example,dc=org",

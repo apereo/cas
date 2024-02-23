@@ -8,8 +8,8 @@
     "--cas.server.prefix=${cas.server.name}/cas",
 
     "--logging.level.org.apereo.cas=info",
-    "--cas.audit.slf4j.use-single-line=true",
-    "--cas.audit.engine.enabled=true",
+
+
 
     "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",
     "--cas.authn.oidc.discovery.scopes=openid,profile,email,address,phone",

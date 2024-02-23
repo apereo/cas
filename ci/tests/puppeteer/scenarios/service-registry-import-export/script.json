@@ -2,7 +2,7 @@
   "dependencies": "reports,jpa-service-registry",
 
   "properties": [
-    "--cas.audit.engine.enabled=true",
+
 
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--cas.service-registry.core.init-from-json=false",

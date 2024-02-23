@@ -201,18 +201,14 @@ exports.loginWith = async (page,
     usernameField = "#username",
     passwordField = "#password") => {
     await this.log(`Logging in with ${user} and ${password}`);
-    await this.waitForElement(page, usernameField);
+    await page.waitForSelector(usernameField, {visible: true});
     await this.type(page, usernameField, user);
-    await this.waitForElement(page, passwordField);
+
+    await page.waitForSelector(passwordField, {visible: true});
     await this.type(page, passwordField, password, true);
-    const response = await Promise.all([
-        this.log("Pressing Enter to submit login form"),
-        this.pressEnter(page),
-        this.screenshot(page),
-        this.waitForTimeout(page, 3000),
-        await this.waitForNavigation(page)
-    ]);
-    return response[response.length - 1];
+
+    await this.pressEnter(page);
+    return page.waitForNavigation();
 };
 
 exports.waitForNavigation = async (page, timeout = 15000) => {

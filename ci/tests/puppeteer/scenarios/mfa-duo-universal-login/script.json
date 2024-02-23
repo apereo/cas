@@ -8,8 +8,8 @@
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
-    "--cas.audit.engine.enabled=true",
-    "--cas.audit.slf4j.use-single-line=true",
+
+
     
     "--cas.authn.accept.users=duocode::Mellon",
     "--cas.authn.mfa.duo[0].account-status-enabled=true",

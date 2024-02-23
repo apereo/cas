@@ -4,8 +4,8 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=https://localhost:8443/cas",
     
-    "--cas.audit.engine.enabled=true",
-    "--cas.audit.slf4j.use-single-line=true",
+
+
     "--cas.audit.engine.audit-format=JSON",
     
     "--cas.service-registry.core.init-from-json=true",

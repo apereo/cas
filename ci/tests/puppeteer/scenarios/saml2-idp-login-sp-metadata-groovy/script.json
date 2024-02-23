@@ -10,7 +10,7 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=https://localhost:8443/cas",
     "--cas.server.scope=example.net",
-    "--cas.audit.slf4j.use-single-line=true",
+
 
     "--logging.level.org.apereo.cas=info",
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",

@@ -693,27 +693,13 @@ if [[ "${RERUN}" != "true" && ("${NATIVE_BUILD}" == "false" || "${NATIVE_RUN}" =
            --spring.profiles.active=none \
            --management.endpoints.web.discovery.enabled=true \
            --server.ssl.key-store="$keystore" \
+           --cas.audit.engine.enabled=true \
+           --cas.audit.slf4j.use-single-line=true \
            ${properties} &
       fi
       pid=$!
       printcyan "Waiting for CAS instance #${c} under process id ${pid}"
       casLogin="https://localhost:${serverPort}/cas/login"
-
-#      if [[ "${CI}" == "true" ]]; then
-#        timeout=$(jq -j '.timeout // 60' "${config}")
-#        sleepfor $timeout
-#
-#        printcyan "Checking CAS server's status @ ${casLogin}"
-#        curl -k -L --connect-timeout 10 --output /dev/null --silent --fail $casLogin
-#        RC=$?
-#      else
-#        # We cannot do this in Github Actions/CI; curl seems to hang indefinitely
-#        until curl -I -k -L --connect-timeout 10 --output /dev/null --silent --fail $casLogin; do
-#           echo -n '.'
-#           sleep 1
-#        done
-#        RC=0
-#      fi
 
       until curl -I -k --connect-timeout 10 --output /dev/null --silent --fail $casLogin; do
          echo -n '.'

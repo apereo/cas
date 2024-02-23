@@ -12,8 +12,8 @@
     "--cas.server.scope=example.net",
 
     "--logging.level.org.apereo.cas=info",
-    "--cas.audit.engine.enabled=true",
-    "--cas.audit.slf4j.use-single-line=true",
+
+
 
     "--cas.http-client.host-name-verifier=none",
     

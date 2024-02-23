@@ -85,7 +85,7 @@ async function verifyExistingSsoSession(context, service) {
     const browser = await puppeteer.launch(cas.browserOptions());
 
     for (let i = 1; i <= 2; i++) {
-        const context = await browser.createIncognitoBrowserContext();
+        const context = await browser.createBrowserContext();
         await cas.log(`Running test scenario ${i}`);
         switch (i) {
         case 1:

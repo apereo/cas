@@ -8,6 +8,7 @@
     "--cas.jdbc.show-sql=true",
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
+
     
     "--cas.authn.throttle.failure.threshold=2",
     "--cas.authn.throttle.failure.range-seconds=10",
@@ -28,7 +29,7 @@
     "--cas.authn.throttle.jdbc.dialect=org.hibernate.dialect.PostgreSQLDialect",
     
     "--logging.level.org.apereo.cas=info",
-    "--logging.level.org.apereo.cas.web.support=debug"
+    "--logging.level.org.apereo.cas.web.support=info"
   ],
   "initScript": "${PWD}/ci/tests/postgres/run-postgres-server.sh",
   "jvmArgs": "-Djava.net.preferIPv4Stack=true -Djava.net.preferIPv4Addresses=true"
