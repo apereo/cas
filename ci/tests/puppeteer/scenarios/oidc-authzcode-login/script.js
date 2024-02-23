@@ -11,11 +11,12 @@ async function verifyAccessTokenIsLimited(context) {
         + `&client_id=client3&scope=${encodeURIComponent("openid profile")}&`
         + `redirect_uri=${redirectUri}&nonce=3d3a7457f9ad3`;
     await cas.goto(page, url);
-
+    await cas.waitForTimeout(page, 1000);
     await cas.loginWith(page);
+    await cas.waitForTimeout(page, 2000);
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
-        await cas.waitForNavigation(page);
+        await page.waitForNavigation();
     }
 
     const code = await cas.assertParameter(page, "code");
@@ -47,11 +48,12 @@ async function verifyAccessTokenIsNeverReceived(context) {
     const url = `https://localhost:8443/cas/oidc/oidcAuthorize?response_type=code&client_id=client2&scope=${encodeURIComponent("openid profile")}&`
         + `redirect_uri=${redirectUri}&nonce=3d3a7457f9ad3`;
     await cas.goto(page, url);
-
+    await cas.waitForTimeout(page, 1000);
     await cas.loginWith(page);
+    await cas.waitForTimeout(page, 2000);
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
-        await cas.waitForNavigation(page);
+        await page.waitForNavigation();
     }
     const code = await cas.assertParameter(page, "code");
     await cas.log(`Current code is ${code}`);
@@ -81,8 +83,9 @@ async function verifyAccessTokenAndProfile(context) {
         + "%22%3A%20true%7D%2C%22phone_number%22%3A%20%7B%22essential%22%3A%20true%7D%7D%7D";
 
     await cas.goto(page, url);
-
+    await cas.waitForTimeout(page, 1000);
     await cas.loginWith(page);
+    await cas.waitForTimeout(page, 2000);
     await cas.assertVisibility(page, "#userInfoClaims");
     await cas.assertVisibility(page, "#scopes");
     await cas.assertVisibility(page, "#MyCustomScope");
@@ -94,7 +97,7 @@ async function verifyAccessTokenAndProfile(context) {
 
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
-        await cas.waitForNavigation(page);
+        await page.waitForNavigation();
     }
     await cas.waitForTimeout(page, 2000);
     await cas.screenshot(page);

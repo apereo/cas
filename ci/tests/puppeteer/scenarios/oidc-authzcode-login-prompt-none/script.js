@@ -27,7 +27,7 @@ async function login(page, redirectUrl, params) {
     await cas.logPage(page);
     await cas.waitForTimeout(page, 2000);
     await cas.log("Waiting for page content body to render...");
-    await cas.waitForElement(page, "body pre");
+    await page.waitForSelector("body pre", { visible: true });
     let content = await cas.textContent(page, "body pre");
     let payload = JSON.parse(content);
     assert(payload.args.error !== "login_required");
@@ -43,7 +43,7 @@ async function login(page, redirectUrl, params) {
     await cas.logPage(page);
     await cas.waitForTimeout(page, 2000);
     await cas.log("Waiting for page content body to render...");
-    await cas.waitForElement(page, "body pre");
+    await page.waitForSelector("body pre", { visible: true });
 
     content = await cas.textContent(page, "body pre");
     payload = JSON.parse(content);

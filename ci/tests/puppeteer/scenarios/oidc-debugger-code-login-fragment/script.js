@@ -6,8 +6,6 @@ const assert = require("assert");
     
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
-    await cas.gotoLogin(page);
-
     const url = "https://localhost:8443/cas/oidc/oidcAuthorize?" +
         "client_id=client&" +
         "redirect_uri=https%3A%2F%2Foidcdebugger.com%2Fdebug&" +
@@ -18,13 +16,15 @@ const assert = require("assert");
     await cas.goto(page, url);
 
     await cas.loginWith(page);
+    await cas.waitForTimeout(page, 1000);
 
     await cas.click(page, "#allow");
-    await cas.waitForNavigation(page);
+    await page.waitForNavigation();
     await cas.log(`Page url: ${await page.url()}`);
     const result = await page.evaluate(() => window.location.hash);
     assert(result.includes("code="));
     assert(result.includes("nonce="));
+    await cas.waitForTimeout(page, 1000);
     await cas.assertTextContent(page, "h1.green-text", "Success!");
 
     await browser.close();

@@ -13,10 +13,11 @@ const assert = require("assert");
     const url = `https://localhost:8443/cas/oidc/oidcAuthorize?token=${token}&response_type=code&client_id=client1&scope=${encodeURIComponent("openid profile ssotoken email")}&redirect_uri=${service}`;
 
     await cas.goto(page, url);
+    await cas.waitForTimeout(page, 2000);
     await cas.screenshot(page);
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
-        await cas.waitForNavigation(page);
+        await page.waitForNavigation();
     }
     const code = await cas.assertParameter(page, "code");
     await cas.log(`Current code is ${code}`);

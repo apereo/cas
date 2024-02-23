@@ -19,14 +19,16 @@ async function cleanUp() {
         await cas.log("Trying without an exising SSO session...");
         await cas.goto(page, "https://localhost:9876/sp");
         await cas.waitForTimeout(page, 3000);
-        await cas.waitForElement(page, "#idpForm");
+        await page.waitForSelector("#idpForm", {visible: true});
         await cas.submitForm(page, "#idpForm");
         await cas.waitForTimeout(page, 2000);
 
-        await cas.waitForElement(page, "#username");
+        await page.waitForSelector("#username", {visible: true});
         await cas.loginWith(page);
-        await cas.waitForTimeout(page, 5000);
+        await page.waitForResponse((response) => response.status() === 200);
+        await cas.waitForTimeout(page, 3000);
         await cas.logPage(page);
+        await page.waitForSelector("body pre", { visible: true });
         let content = await cas.textContent(page, "body pre");
         let payload = JSON.parse(content);
         await cas.log(payload);
@@ -37,10 +39,12 @@ async function cleanUp() {
         await cas.loginWith(page);
         await cas.assertCookie(page);
         await cas.goto(page, "https://localhost:9876/sp");
-        await cas.waitForElement(page, "#idpForm");
+        await cas.waitForTimeout(page, 3000);
+        await page.waitForSelector("#idpForm", {visible: true});
         await cas.submitForm(page, "#idpForm");
+        await cas.waitForTimeout(page, 3000);
         await cas.logPage(page);
-        await cas.waitForTimeout(page, 5000);
+        await page.waitForSelector("body pre", { visible: true });
         content = await cas.textContent(page, "body pre");
         payload = JSON.parse(content);
         await cas.log(payload);

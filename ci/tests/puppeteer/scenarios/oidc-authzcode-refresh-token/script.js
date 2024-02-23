@@ -7,12 +7,13 @@ async function fetchRefreshToken(page, clientId, redirectUrl) {
 
     await cas.log(`Navigating to ${url}`);
     await cas.goto(page, url);
-
+    await cas.waitForTimeout(page, 1000);
     await cas.loginWith(page);
+    await cas.waitForTimeout(page, 1000);
 
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
-        await cas.waitForNavigation(page);
+        await page.waitForNavigation();
     }
 
     const code = await cas.assertParameter(page, "code");

@@ -64,7 +64,7 @@ const request = require("request");
     await cas.waitForTimeout(page, 1000);
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
-        await cas.waitForNavigation(page);
+        await page.waitForNavigation();
     }
     await cas.waitForTimeout(page, 1000);
     await cas.logPage(page);

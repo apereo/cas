@@ -7,11 +7,14 @@ const path = require("path");
     const page = await cas.newPage(browser);
 
     await cas.gotoLogin(page);
+    await cas.waitForTimeout(page, 1000);
 
     await cas.doRequest("https://localhost:8443/cas/sp/metadata", "GET", {}, 200);
     await cas.doRequest("https://localhost:8443/cas/sp/idp/metadata", "GET", {}, 200);
 
     await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=refeds-sp");
+    await cas.waitForTimeout(page, 1000);
+
     await cas.assertVisibility(page, "li #SAML2Client");
     await cas.click(page, "li #SAML2Client");
     await cas.waitForTimeout(page, 6000);
@@ -24,7 +27,7 @@ const path = require("path");
     await cas.screenshot(page);
     await cas.waitForTimeout(page, 2000);
     
-    await cas.waitForElement(page, "#table_with_attributes");
+    await page.waitForSelector("#table_with_attributes", {visible: true});
     await cas.assertInnerTextContains(page, "#content p", "status page of SimpleSAMLphp");
     await cas.assertVisibility(page, "#table_with_attributes");
     const authData = JSON.parse(await cas.innerHTML(page, "details pre"));

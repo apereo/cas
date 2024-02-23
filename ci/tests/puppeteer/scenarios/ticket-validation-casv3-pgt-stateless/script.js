@@ -29,7 +29,8 @@ async function getProxyTicket(service, ticket) {
 
     await cas.gotoLogin(page, service);
     await cas.loginWith(page);
-    await cas.waitForTimeout(page, 2000);
+    await cas.waitForTimeout(page, 3000);
+
     let ticket = await cas.assertTicketParameter(page);
     let body = await proxyValidateTicket(service, ticket);
     let json = JSON.parse(body);
@@ -45,7 +46,6 @@ async function getProxyTicket(service, ticket) {
 
     await cas.gotoLogin(page, service);
     ticket = await cas.assertTicketParameter(page);
-    await cas.waitForTimeout(page, 2000);
     body = await proxyValidateTicket(service, ticket, "XML");
     assert(body.includes("<cas:proxyGrantingTicket>"));
     assert(body.includes("<cas:authenticationMethod>STATIC</cas:authenticationMethod>"));

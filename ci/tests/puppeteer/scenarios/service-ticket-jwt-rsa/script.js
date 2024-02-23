@@ -8,6 +8,7 @@ const assert = require("assert");
     const service = "https://localhost:9859/anything/1";
     await cas.gotoLogin(page, service);
     await cas.loginWith(page);
+    await cas.waitForTimeout(page, 2000);
     const ticket = await cas.assertTicketParameter(page);
 
     await cas.doGet(`https://localhost:8443/cas/actuator/jwtTicketSigningPublicKey?service=${service}`,

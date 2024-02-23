@@ -6,15 +6,16 @@ const path = require("path");
 const assert = require("assert");
 
 (async () => {
-    const service = "https://localhost:9859/anything/cas";
+    const service = "https://apereo.github.io";
 
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
 
     await cas.log("Starting out with acceptable usage policy feature disabled...");
-    await cas.gotoLogout(page);
+    await cas.goto(page, "https://localhost:8443/cas/logout");
     await cas.gotoLogin(page, service);
     await cas.loginWith(page);
+    await cas.waitForTimeout(page, 2000);
     await cas.assertTicketParameter(page);
 
     await cas.log("Updating configuration and waiting for changes to reload...");
@@ -25,14 +26,17 @@ const assert = require("assert");
     await cas.waitForTimeout(page, 5000);
 
     await cas.refreshContext();
+
     await cas.log("Starting out with acceptable usage policy feature enabled...");
-    await cas.gotoLogout(page);
+    await cas.goto(page, "https://localhost:8443/cas/logout");
     await cas.gotoLogin(page, service);
     await cas.loginWith(page);
     await cas.assertTextContent(page, "#main-content #login #fm1 h3", "Acceptable Usage Policy");
     await cas.assertVisibility(page, "button[name=submit]");
     await cas.click(page, "#aupSubmit");
-    await cas.waitForNavigation(page);
+    await page.waitForNavigation();
+    await cas.waitForTimeout(page, 2000);
+
     await cas.assertTicketParameter(page);
     const result = new URL(page.url());
     assert(result.host === "apereo.github.io");

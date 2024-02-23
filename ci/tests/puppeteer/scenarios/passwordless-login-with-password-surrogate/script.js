@@ -14,7 +14,7 @@ const cas = require("../../cas.js");
 
     await cas.type(page,"#username", "user3+casuser");
     await cas.pressEnter(page);
-    await cas.waitForNavigation(page);
+    await page.waitForNavigation();
 
     await cas.waitForTimeout(page, 2000);
 
@@ -23,7 +23,7 @@ const cas = require("../../cas.js");
 
     await cas.type(page,"#password", "Mellon");
     await cas.pressEnter(page);
-    await cas.waitForNavigation(page);
+    await page.waitForNavigation();
 
     await cas.waitForTimeout(page, 2000);
 

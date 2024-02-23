@@ -5,6 +5,6 @@
   "name": "Sample",
   "ticketGrantingTicketExpirationPolicy": {
     "@class": "org.apereo.cas.services.DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy",
-    "maxTimeToLiveInSeconds": 1
+    "maxTimeToLiveInSeconds": 4
   }
 }

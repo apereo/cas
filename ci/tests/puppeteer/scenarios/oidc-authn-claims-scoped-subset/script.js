@@ -53,7 +53,7 @@ async function getPayload(page, redirectUri, clientId, clientSecret, scopes) {
     }
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
-        await cas.waitForNavigation(page);
+        await page.waitForNavigation();
     }
 
     const code = await cas.assertParameter(page, "code");

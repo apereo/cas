@@ -16,6 +16,7 @@ const cas = require("../../cas.js");
 
     await cas.log("Checking for SSO Session cookie...");
     await cas.gotoLogin(page);
+    await cas.waitForTimeout(page, 1000);
     await cas.assertCookie(page);
 
     await browser.close();

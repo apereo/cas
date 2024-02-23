@@ -7,8 +7,10 @@ const cas = require("../../cas.js");
     await cas.gotoLogin(page);
     await cas.loginWith(page);
     await cas.goto(page, "https://localhost:8443/cas/actuator/health");
+    await cas.waitForTimeout(page, 1000);
     await cas.doGet("https://localhost:8443/cas/actuator/health",
         () => {
+
         }, (error) => {
             throw error;
         }, { "Content-Type": "application/json" });

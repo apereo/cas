@@ -28,7 +28,7 @@ const assert = require("assert");
 
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
-        await cas.waitForNavigation(page);
+        await page.waitForNavigation();
     }
 
     const code = await cas.assertParameter(page, "code");

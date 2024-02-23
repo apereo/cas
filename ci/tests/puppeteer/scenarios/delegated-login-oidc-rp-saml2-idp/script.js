@@ -8,6 +8,7 @@ const path = require("path");
     const page = await cas.newPage(browser);
 
     await cas.gotoLogin(page);
+    await cas.waitForTimeout(page, 1000);
 
     const url = "https://localhost:8443/cas/oidc/oidcAuthorize?" +
         "client_id=client&" +

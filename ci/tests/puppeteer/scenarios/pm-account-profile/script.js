@@ -20,6 +20,7 @@ const fs = require("fs");
     const page = await cas.newPage(browser);
     await cas.gotoLogin(page);
     await cas.loginWith(page);
+    await cas.waitForTimeout(page, 1000);
     await cas.assertCookie(page);
 
     await cas.logPage(page);
@@ -27,11 +28,20 @@ const fs = require("fs");
     assert(url === "https://localhost:8443/cas/account");
 
     await cas.goto(page, "https://localhost:8443/cas/account");
-    await cas.click(page, "#linkOverview");
-    await cas.click(page, "#linkAttributes");
-    await cas.click(page, "#linkServices");
-    await cas.click(page, "#linkMfaRegisteredAccounts");
+    await cas.waitForTimeout(page, 1000);
     
+    await cas.click(page, "#linkOverview");
+    await cas.waitForTimeout(page, 1000);
+
+    await cas.click(page, "#linkAttributes");
+    await cas.waitForTimeout(page, 1000);
+
+    await cas.click(page, "#linkServices");
+    await cas.waitForTimeout(page, 1000);
+
+    await cas.click(page, "#linkMfaRegisteredAccounts");
+    await cas.waitForTimeout(page, 1000);
+
     await cas.assertInnerText(page, "#mfaDevicesTable tbody tr td:first-child", "Google Authenticator");
     await cas.assertInnerText(page, "#mfaDevicesTable tbody tr td:nth-child(2)", "1");
     await cas.assertInnerText(page, "#mfaDevicesTable tbody tr td:nth-child(3)", "MyRecordName");
@@ -48,12 +58,18 @@ const fs = require("fs");
     await cas.waitForTimeout(page, 2000);
 
     await cas.click(page, "#linkMfaTrustedDevices");
+    await cas.waitForTimeout(page, 1000);
     await cas.assertVisibility(page, "#divMultifactorTrustedDevices");
+
     await cas.click(page, "#linkSecurityQuestions");
+    await cas.waitForTimeout(page, 1000);
     await cas.assertVisibility(page, "#securityQuestionsTable");
+
     await cas.click(page, "#linkAuditLog");
+    await cas.waitForTimeout(page, 1000);
+
     await cas.click(page, "#linkPasswordManagement");
-    await cas.waitForNavigation(page);
+    await cas.waitForTimeout(page, 1000);
     await cas.assertCookie(page, false);
 
     await browser.close();

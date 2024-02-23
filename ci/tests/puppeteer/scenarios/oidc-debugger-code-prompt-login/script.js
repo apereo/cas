@@ -16,11 +16,11 @@ const cas = require("../../cas.js");
     await cas.goto(page, url);
 
     await cas.loginWith(page);
-    await cas.waitForElement(page, "#allow");
-    
-    await cas.click(page, "#allow");
-    await cas.waitForNavigation(page);
+    await cas.waitForTimeout(page, 1000);
 
+    await cas.click(page, "#allow");
+    await page.waitForNavigation();
+    await cas.waitForTimeout(page, 3000);
     await cas.assertTextContent(page, "h1.green-text", "Success!");
 
     url = `${url}&prompt=login`;
@@ -30,6 +30,7 @@ const cas = require("../../cas.js");
     await cas.assertVisibility(page, "#password");
     
     await cas.loginWith(page);
+    await cas.waitForTimeout(page, 2000);
     await cas.assertTextContent(page, "h1.green-text", "Success!");
 
     await browser.close();

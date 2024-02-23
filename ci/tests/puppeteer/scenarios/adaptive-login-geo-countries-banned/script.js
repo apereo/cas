@@ -10,6 +10,8 @@ const cas = require("../../cas.js");
     await page.setGeolocation({latitude: 90, longitude: 20});
 
     await cas.gotoLogin(page);
+    await cas.waitForTimeout(page, 2000);
+
     await cas.loginWith(page);
     await cas.assertTextContent(page, "#content h2", "Authentication attempt is blocked.");
 

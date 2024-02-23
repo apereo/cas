@@ -39,9 +39,9 @@ const express = require("express");
         await cas.assertTextContent(page, "#main-content #login #fm1 h3", "Acceptable Usage Policy");
         await cas.assertVisibility(page, "button[name=submit]");
         await cas.assertVisibility(page, "button[name=cancel]");
-
+        await cas.waitForTimeout(page, 1000);
         await cas.click(page, "#aupSubmit");
-        await cas.waitForNavigation(page);
+        await page.waitForNavigation();
         const ticket = await cas.assertTicketParameter(page);
         const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
         await cas.logg(body);
@@ -51,7 +51,7 @@ const express = require("express");
         await cas.log("Logging in again, now with SSO");
         await cas.gotoLogin(page, service);
         await cas.assertTicketParameter(page);
-        await cas.gotoLogout(page);
+        await cas.goto(page, "https://localhost:8443/cas/logout");
 
         await cas.log("Logging in again, now without SSO");
         await cas.gotoLogin(page, service);

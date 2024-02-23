@@ -8,6 +8,7 @@ const assert = require("assert");
     const page = await cas.newPage(browser);
 
     await cas.goto(page, "https://localhost:8444");
+    await cas.waitForTimeout(page, 1000);
 
     await cas.log("Accessing protected CAS application");
     await cas.goto(page, "https://localhost:8444/protected");
@@ -21,7 +22,7 @@ const assert = require("assert");
 
     await cas.log("Choosing SAML2 identity provider for login...");
     await cas.click(page, "li #SAML2Client");
-    await cas.waitForNavigation(page);
+    await page.waitForNavigation();
 
     await cas.loginWith(page, "user1", "password");
     await cas.waitForTimeout(page, 4000);

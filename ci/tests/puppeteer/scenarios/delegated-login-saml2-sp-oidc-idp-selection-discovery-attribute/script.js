@@ -16,10 +16,13 @@ async function startWithCasSp(page) {
     await cas.gotoLogin(page, service);
     await cas.assertVisibility(page, "#selectProviderButton");
     await cas.submitForm(page, "#providerDiscoveryForm");
+    await cas.waitForTimeout(page, 1000);
     await cas.type(page, "#username", "casuser");
     
     await cas.submitForm(page, "#discoverySelectionForm");
+    await cas.waitForTimeout(page, 2000);
     await cas.loginWith(page);
+    await cas.waitForTimeout(page, 1000);
     const ticket = await cas.assertTicketParameter(page);
     const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}`);
     await cas.log(body);

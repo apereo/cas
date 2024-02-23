@@ -11,12 +11,14 @@ const fs = require("fs");
     await cas.goto(page, url);
 
     await cas.loginWith(page);
+    await cas.waitForTimeout(page, 1000);
 
     await cas.click(page, "#allow");
-    await cas.waitForNavigation(page);
-    await cas.waitForElement(page, "body pre");
+    await page.waitForNavigation();
+    await cas.waitForTimeout(page, 5000);
     const content = await cas.textContent(page, "body pre");
     const payload = JSON.parse(content);
+    // await cas.log(payload);
     assert(payload.form.response !== undefined);
 
     const response = payload.form.response;

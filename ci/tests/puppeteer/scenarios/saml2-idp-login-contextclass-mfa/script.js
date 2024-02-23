@@ -14,6 +14,7 @@ const assert = require("assert");
     await cas.waitForTimeout(page, 1000);
 
     await cas.loginWith(page);
+    await cas.waitForTimeout(page, 2000);
 
     await cas.log("Fetching Scratch codes from /cas/actuator...");
     const scratch = await cas.fetchGoogleAuthenticatorScratchCode();
@@ -21,11 +22,12 @@ const assert = require("assert");
     await cas.screenshot(page);
     await cas.type(page,"#token", scratch);
     await cas.pressEnter(page);
-    await cas.waitForNavigation(page);
+    await page.waitForNavigation();
     await cas.logPage(page);
+    await cas.waitForTimeout(page, 3000);
     await cas.screenshot(page);
 
-    await cas.waitForElement(page, "#table_with_attributes");
+    await page.waitForSelector("#table_with_attributes", {visible: true});
     await cas.assertInnerTextContains(page, "#content p", "status page of SimpleSAMLphp");
     await cas.assertVisibility(page, "#table_with_attributes");
     const authData = JSON.parse(await cas.innerHTML(page, "details pre"));

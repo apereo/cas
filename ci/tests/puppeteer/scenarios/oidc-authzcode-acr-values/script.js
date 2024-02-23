@@ -12,7 +12,7 @@ async function fetchCode(page, acr, params) {
 
     await cas.log(`Navigating to ${url}`);
     await cas.goto(page, url);
-
+    await cas.waitForTimeout(page, 1000);
     if (await cas.isVisible(page, "#username")) {
         await cas.loginWith(page);
         await cas.waitForTimeout(page, 3000);
@@ -29,11 +29,12 @@ async function fetchCode(page, acr, params) {
     await cas.screenshot(page);
     await cas.type(page, "#token", scratch);
     await cas.pressEnter(page);
-    await cas.waitForNavigation(page);
+    await page.waitForNavigation();
 
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
-        await cas.waitForNavigation(page);
+        await page.waitForNavigation();
+        await cas.waitForTimeout(page, 2000);
     }
 
     const code = await cas.assertParameter(page, "code");

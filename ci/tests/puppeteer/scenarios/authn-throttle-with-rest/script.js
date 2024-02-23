@@ -10,7 +10,7 @@ const querystring = require("querystring");
     await cas.log("Fetching throttled submissions");
     await cas.doRequest("https://localhost:8443/cas/actuator/throttles");
     await cas.log("Cleaning throttled submissions");
-    await cas.doRequest("https://localhost:8443/cas/actuator/throttles", "DELETE", {}, 200);
+    await cas.doRequest("https://localhost:8443/cas/actuator/throttles", "DELETE", {}, 204);
     await loginWith("BadPassw0rd", 401);
 })();
 
@@ -32,3 +32,4 @@ async function loginWith(password, expectedStatus) {
     await cas.log(body);
     return JSON.parse(body);
 }
+

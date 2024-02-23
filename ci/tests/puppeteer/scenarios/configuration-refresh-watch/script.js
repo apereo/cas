@@ -21,19 +21,16 @@ const path = require("path");
     const users = configFile.cas.authn.accept.users;
     await cas.log(`Current users: ${users}`);
 
-    try {
-        await cas.log("Updating configuration and waiting for changes to reload...");
-        await updateConfig(configFile, configFilePath, "casrefresh::p@$$word");
-        await cas.waitForTimeout(page, 8000);
+    await cas.log("Updating configuration and waiting for changes to reload...");
+    await updateConfig(configFile, configFilePath, "casrefresh::p@$$word");
+    await cas.waitForTimeout(page, 8000);
 
-        await cas.log("Attempting to login with new updated credentials...");
-        await cas.gotoLogin(page);
-        await cas.loginWith(page, "casrefresh", "p@$$word");
-        await cas.assertCookie(page);
+    await cas.log("Attempting to login with new updated credentials...");
+    await cas.gotoLogin(page);
+    await cas.loginWith(page, "casrefresh", "p@$$word");
+    await cas.assertCookie(page);
 
-    } finally {
-        await updateConfig(configFile, configFilePath, users);
-    }
+    await updateConfig(configFile, configFilePath, users);
     await browser.close();
 })();
 
