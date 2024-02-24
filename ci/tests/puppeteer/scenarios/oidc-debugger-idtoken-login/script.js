@@ -17,7 +17,7 @@ const assert = require("assert");
     await cas.goto(page, url);
     await cas.loginWith(page);
     await cas.click(page, "#allow");
-    await page.waitForNavigation();
+    await cas.waitForNavigation(page);
     await cas.waitForTimeout(page, 3000);
     await cas.logPage(page);
     await cas.screenshot(page);

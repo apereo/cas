@@ -22,7 +22,7 @@ async function loginWith(page, user, password) {
     await cas.assertInnerText(page, "#content h2", "Your account is now unlocked.");
     await cas.waitForTimeout(page, 1000);
     await cas.click(page, "#loginbtn");
-    await page.waitForNavigation();
+    await cas.waitForNavigation(page);
     await cas.logPage(page);
     await cas.loginWith(page);
     await cas.assertCookie(page);

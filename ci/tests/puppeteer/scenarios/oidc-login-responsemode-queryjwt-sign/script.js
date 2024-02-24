@@ -12,7 +12,7 @@ const assert = require("assert");
     await cas.waitForTimeout(page, 1000);
 
     await cas.click(page, "#allow");
-    await page.waitForNavigation();
+    await cas.waitForNavigation(page);
     await cas.log(`Page url: ${await page.url()}\n`);
     const response = await cas.assertParameter(page, "response");
 

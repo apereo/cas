@@ -39,7 +39,7 @@ async function impersonateWithMenu(page, browser) {
     await cas.assertTextContentStartsWith(page, "#surrogateInfo", "You are provided with a list of accounts");
     await page.select("#surrogateTarget", "user3");
     await cas.click(page, "#submit");
-    await page.waitForNavigation();
+    await cas.waitForNavigation(page);
     await cas.waitForTimeout(page, 1000);
     await cas.assertCookie(page);
     await cas.waitForTimeout(page, 1000);

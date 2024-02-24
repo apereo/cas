@@ -20,7 +20,7 @@ const assert = require("assert");
     }
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
-        await page.waitForNavigation();
+        await cas.waitForNavigation(page);
     }
 
     await cas.screenshot(page);
