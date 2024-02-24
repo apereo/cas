@@ -18,7 +18,7 @@ async function fetchRefreshToken(page, clientId, redirectUrl) {
     const code = await cas.assertParameter(page, "code");
     await cas.log(`OAuth code ${code}`);
 
-    const accessTokenParams = `client_id=${clientId}&client_secret=secret&grant_type=authorization_code&redirect_uri=${redirectUrl}`;
+    const accessTokenParams = `scope=openid&client_id=${clientId}&client_secret=secret&grant_type=authorization_code&redirect_uri=${redirectUrl}`;
     let accessToken = null;
     let refreshToken = null;
 
