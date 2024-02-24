@@ -16,7 +16,7 @@ const assert = require("assert");
     await cas.goto(page, url);
 
     await cas.loginWith(page);
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
 
     await cas.click(page, "#allow");
     await cas.waitForNavigation(page);
@@ -24,7 +24,7 @@ const assert = require("assert");
     const result = await page.evaluate(() => window.location.hash);
     assert(result.includes("code="));
     assert(result.includes("nonce="));
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     await cas.assertTextContent(page, "h1.green-text", "Success!");
 
     await browser.close();

@@ -11,17 +11,17 @@ const cas = require("../../cas.js");
     await cas.click(page, "li #CasClient");
     await cas.waitForNavigation(page);
 
-    await cas.waitForTimeout(page, 2000);
+    await cas.waitForTimeout(page);
     await cas.screenshot(page);
     await cas.loginWith(page);
-    await cas.waitForTimeout(page, 2000);
+    await cas.waitForTimeout(page);
     await cas.assertInnerText(page, "#content div h2", "Delegated Authentication Profile Selection");
     await cas.assertPageTitleContains(page, "Delegated Authentication Profile Selection");
 
     const profileId = await cas.innerText(page, "#profilesTable tr td code");
     await cas.log(profileId);
     await cas.submitForm(page, `#profilesTable #form-${profileId}`);
-    await cas.waitForTimeout(page, 2000);
+    await cas.waitForTimeout(page);
 
     await cas.assertCookie(page);
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");

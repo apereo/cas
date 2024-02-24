@@ -8,7 +8,7 @@ const request = require("request");
     const page = await cas.newPage(browser);
     await cas.gotoLogin(page);
     await cas.assertVisibility(page, "#x509Login");
-    await cas.waitForTimeout(page, 2000);
+    await cas.waitForTimeout(page);
 
     await page.setRequestInterception(true);
     const args = process.argv.slice(2);

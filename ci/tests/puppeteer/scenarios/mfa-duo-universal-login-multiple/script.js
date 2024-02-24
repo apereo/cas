@@ -6,14 +6,14 @@ const assert = require("assert");
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     await login(page, "mfa-duo", "https://localhost:9859/anything/cas");
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
 
     await browser.close();
 })();
 
 async function login(page, providerId, service = undefined) {
     await cas.gotoLogout(page);
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     await cas.assertCookie(page, false);
 
     await cas.log(`Trying with provider id ${providerId} and service ${service}`);

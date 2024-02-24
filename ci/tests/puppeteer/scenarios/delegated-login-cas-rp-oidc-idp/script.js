@@ -16,7 +16,7 @@ const cas = require("../../cas.js");
     await cas.waitForTimeout(page, 3000);
     await cas.screenshot(page);
     await cas.loginWith(page, "caskeycloak", "r2RlZXz6f2h5");
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
 
     await cas.logPage(page);
     const result = new URL(page.url());

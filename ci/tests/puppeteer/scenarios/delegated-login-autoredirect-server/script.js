@@ -9,23 +9,23 @@ const assert = require("assert");
     await cas.goto(page, "https://localhost:8444/cas/logout");
     await cas.log("Checking for page URL redirecting based on service policy...");
     await cas.gotoLogin(page, "https://localhost:9859/anything/cas");
-    await cas.waitForTimeout(page, 2000);
+    await cas.waitForTimeout(page);
     await cas.logPage(page);
     let url = await page.url();
     assert(url.startsWith("https://localhost:8444/cas/login"));
     await cas.loginWith(page);
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     await cas.assertTicketParameter(page);
     url = await page.url();
     await cas.log(url);
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
 
     await cas.log("Checking for SSO availability of our CAS server...");
     await cas.gotoLogin(page);
     url = await page.url();
     await cas.log(url);
     assert(url.startsWith("https://localhost:8443/cas/login"));
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     await cas.assertCookie(page);
 
     await cas.log("Checking for SSO availability of external CAS server...");
@@ -33,14 +33,14 @@ const assert = require("assert");
     url = await page.url();
     await cas.log(url);
     assert(url.startsWith("https://localhost:8444/cas/login"));
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     await cas.assertCookie(page, true, "TGCEXT");
 
     await cas.log("Attempting to login based on existing SSO session");
     await cas.gotoLogin(page, "https://localhost:9859/anything/cas");
     url = await page.url();
     await cas.log(url);
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     await cas.assertTicketParameter(page);
 
     await cas.log("Removing CAS SSO session");
@@ -51,7 +51,7 @@ const assert = require("assert");
     await cas.log("Checking for page URL...");
     url = await page.url();
     await cas.log(url);
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
 
     await cas.log("External CAS server has no SSO, since logout request was propagated from our CAS server");
     await cas.assertVisibility(page, "#username");

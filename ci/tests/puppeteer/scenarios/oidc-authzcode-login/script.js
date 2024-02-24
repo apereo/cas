@@ -11,9 +11,9 @@ async function verifyAccessTokenIsLimited(context) {
         + `&client_id=client3&scope=${encodeURIComponent("openid profile")}&`
         + `redirect_uri=${redirectUri}&nonce=3d3a7457f9ad3`;
     await cas.goto(page, url);
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     await cas.loginWith(page);
-    await cas.waitForTimeout(page, 2000);
+    await cas.waitForTimeout(page);
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
         await cas.waitForNavigation(page);
@@ -48,9 +48,9 @@ async function verifyAccessTokenIsNeverReceived(context) {
     const url = `https://localhost:8443/cas/oidc/oidcAuthorize?response_type=code&client_id=client2&scope=${encodeURIComponent("openid profile")}&`
         + `redirect_uri=${redirectUri}&nonce=3d3a7457f9ad3`;
     await cas.goto(page, url);
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     await cas.loginWith(page);
-    await cas.waitForTimeout(page, 2000);
+    await cas.waitForTimeout(page);
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
         await cas.waitForNavigation(page);
@@ -83,9 +83,9 @@ async function verifyAccessTokenAndProfile(context) {
         + "%22%3A%20true%7D%2C%22phone_number%22%3A%20%7B%22essential%22%3A%20true%7D%7D%7D";
 
     await cas.goto(page, url);
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     await cas.loginWith(page);
-    await cas.waitForTimeout(page, 2000);
+    await cas.waitForTimeout(page);
     await cas.assertVisibility(page, "#userInfoClaims");
     await cas.assertVisibility(page, "#scopes");
     await cas.assertVisibility(page, "#MyCustomScope");
@@ -99,7 +99,7 @@ async function verifyAccessTokenAndProfile(context) {
         await cas.click(page, "#allow");
         await cas.waitForNavigation(page);
     }
-    await cas.waitForTimeout(page, 2000);
+    await cas.waitForTimeout(page);
     await cas.screenshot(page);
     await cas.logPage(page);
     const code = await cas.assertParameter(page, "code");

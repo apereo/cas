@@ -5,7 +5,7 @@ const cas = require("../../cas.js");
 async function submitUser(page, user) {
     await cas.type(page, "#username", user);
     await cas.pressEnter(page);
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
 }
 
 (async () => {

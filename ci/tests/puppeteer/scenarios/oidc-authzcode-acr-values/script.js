@@ -12,7 +12,7 @@ async function fetchCode(page, acr, params) {
 
     await cas.log(`Navigating to ${url}`);
     await cas.goto(page, url);
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     if (await cas.isVisible(page, "#username")) {
         await cas.loginWith(page);
         await cas.waitForTimeout(page, 3000);
@@ -21,7 +21,7 @@ async function fetchCode(page, acr, params) {
     const scratch = await cas.fetchGoogleAuthenticatorScratchCode();
     await cas.log(`Using scratch code ${scratch} to login...`);
     await cas.screenshot(page);
-    await cas.waitForTimeout(page, 2000);
+    await cas.waitForTimeout(page);
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
         await cas.waitForTimeout(page, 3000);
@@ -34,7 +34,7 @@ async function fetchCode(page, acr, params) {
         await cas.click(page, "#allow");
         await cas.waitForNavigation(page);
     }
-    await cas.waitForTimeout(page, 2000);
+    await cas.waitForTimeout(page);
     const code = await cas.assertParameter(page, "code");
     await cas.log(`OAuth code ${code}`);
     return code;

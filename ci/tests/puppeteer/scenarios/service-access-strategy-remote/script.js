@@ -20,12 +20,12 @@ const express = require("express");
         const page = await cas.newPage(browser);
         await cas.gotoLogin(page, "https://localhost:9859/anything/deny");
         await cas.loginWith(page, "casblock");
-        await cas.waitForTimeout(page, 1000);
+        await cas.waitForTimeout(page);
         await cas.assertInnerText(page, "#loginErrorsPanel p", "Service access denied due to missing privileges.");
 
         await cas.gotoLogin(page, "https://localhost:9859/anything/OK");
         await cas.loginWith(page, "casuser");
-        await cas.waitForTimeout(page, 1000);
+        await cas.waitForTimeout(page);
         await cas.assertTicketParameter(page);
         
         server.close(() => {

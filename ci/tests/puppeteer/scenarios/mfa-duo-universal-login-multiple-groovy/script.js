@@ -6,21 +6,21 @@ const cas = require("../../cas.js");
     const page = await cas.newPage(browser);
     
     await login(page, "https://localhost:9859/anything/sample", "mfa-duo");
-    await cas.waitForTimeout(page, 2000);
+    await cas.waitForTimeout(page);
 
     await login(page, "https://localhost:9859/anything/open", "mfa-duo-alt");
-    await cas.waitForTimeout(page, 2000);
+    await cas.waitForTimeout(page);
 
     await browser.close();
 })();
 
 async function login(page, service, providerId) {
     await cas.gotoLogout(page);
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     await cas.assertCookie(page, false);
     await cas.log(`Trying with service ${service}`);
     await cas.gotoLogin(page, service);
-    await cas.waitForTimeout(page, 2000);
+    await cas.waitForTimeout(page);
     await cas.loginWith(page, "duobypass", "Mellon");
     await cas.waitForTimeout(page, 4000);
     await cas.screenshot(page);

@@ -8,7 +8,7 @@ async function verifyNormalFlows(page) {
 
     await cas.goto(page, url);
     await cas.logPage(page);
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     await cas.loginWith(page);
     await cas.waitForTimeout(page, 3000);
 
@@ -82,7 +82,7 @@ async function verifyJwtAccessToken(page) {
 
     await cas.goto(page, url);
     await cas.logPage(page);
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     await cas.loginWith(page);
     await cas.waitForTimeout(page, 3000);
 

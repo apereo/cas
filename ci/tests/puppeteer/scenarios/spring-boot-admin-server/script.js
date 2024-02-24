@@ -4,7 +4,7 @@ const assert = require("assert");
 
 async function gotoPage(page, instanceId, pageId) {
     const response = await cas.goto(page, `https://localhost:8443/cas/sba/instances/${instanceId}/${pageId}`);
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
 
     assert(response.ok());
 }

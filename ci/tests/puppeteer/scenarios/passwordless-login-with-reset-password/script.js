@@ -15,18 +15,18 @@ const cas = require("../../cas.js");
     await cas.type(page,"#username", "casuser");
     await cas.pressEnter(page);
 
-    await cas.waitForTimeout(page, 2000);
+    await cas.waitForTimeout(page);
 
     await cas.assertInvisibility(page, "#username");
     await cas.assertVisibility(page, "#password");
     await cas.assertVisibility(page, "#forgotPasswordLink");
 
     await cas.click(page, "#forgotPasswordLink");
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
 
     await cas.type(page,"#username", "casuser");
     await cas.pressEnter(page);
-    await cas.waitForTimeout(page, 2000);
+    await cas.waitForTimeout(page);
 
     const page2 = await browser.newPage();
     await page2.goto("http://localhost:8282");
@@ -37,10 +37,10 @@ const cas = require("../../cas.js");
     await page2.close();
 
     await page.goto(pwdResetUrl);
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
 
     await cas.assertInnerText(page, "#content h3", "Hello, casuser. You must change your password.");
-    await cas.waitForTimeout(page, 2000);
+    await cas.waitForTimeout(page);
 
     await browser.close();
 })();

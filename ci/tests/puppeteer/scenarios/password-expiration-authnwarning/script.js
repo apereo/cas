@@ -7,43 +7,43 @@ const cas = require("../../cas.js");
     await cas.gotoLogin(page);
     await cas.loginWith(page);
 
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     await cas.assertTextContent(page, "#content h1", "Authentication Succeeded with Warnings");
     await cas.assertVisibility(page, "#changePassword");
     await cas.submitForm(page, "#changePasswordForm");
     await cas.assertTextContent(page, "#pwdmain h3", "Hello, casuser. You must change your password.");
 
     await typePassword(page, "123456", "123456");
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     await cas.screenshot(page);
     await cas.assertVisibility(page, "#password-policy-violation-msg");
 
     await typePassword(page, "123456", "123");
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     await cas.screenshot(page);
     await cas.assertVisibility(page, "#password-confirm-mismatch-msg");
 
     await typePassword(page, "Testing1234", "Testing1234");
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     await cas.screenshot(page);
     await cas.assertVisibility(page, "#password-strength-msg");
     await cas.assertVisibility(page, "#password-strength-notes");
 
     await typePassword(page, "EaP8R&iX$eK4nb8eAI", "EaP8R&iX$eK4nb8eAI");
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     await cas.screenshot(page);
     await cas.assertInvisibility(page, "#password-confirm-mismatch-msg");
     await cas.assertInvisibility(page, "#password-policy-violation-msg");
 
     await cas.pressEnter(page);
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     await cas.assertTextContent(page, "#content h2", "Password Change Successful");
     await cas.assertTextContent(page, "#content p", "Your account password is successfully updated.");
     await cas.submitForm(page, "#form");
 
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
     await cas.assertCookie(page);
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     await browser.close();
 })();
 

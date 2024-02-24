@@ -17,14 +17,14 @@ const cas = require("../../cas.js");
 
     await cas.click(page, "#aupSubmit");
     await cas.waitForNavigation(page);
-    await cas.waitForTimeout(page, 2000);
+    await cas.waitForTimeout(page);
 
     await cas.assertTicketParameter(page);
     const result = new URL(page.url());
     assert(result.host === "apereo.github.io");
 
     await cas.gotoLogin(page);
-    await cas.waitForTimeout(page, 2000);
+    await cas.waitForTimeout(page);
     await cas.assertCookie(page);
     
     await browser.close();

@@ -22,7 +22,7 @@ const cas = require("../../cas.js");
     await cas.waitForTimeout(page, 3000);
     await cas.screenshot(page);
     await cas.loginWith(page);
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
 
     const result = new URL(page.url());
     await cas.log(result.searchParams.toString());
@@ -35,16 +35,16 @@ const cas = require("../../cas.js");
     await cas.log("Allowing release of scopes and claims...");
     await cas.click(page, "#allow");
     await cas.waitForNavigation(page);
-    await cas.waitForTimeout(page, 2000);
+    await cas.waitForTimeout(page);
 
     await cas.log(await page.url());
     assert(await page.url().startsWith("https://localhost:9859/anything/1"));
-    await cas.waitForTimeout(page, 2000);
+    await cas.waitForTimeout(page);
     await cas.assertInnerTextContains(page, "pre", "OC-1-");
 
     await cas.gotoLogout(page);
     assert(page.url().startsWith("https://localhost:8444/cas/logout"));
-    await cas.waitForTimeout(page, 2000);
+    await cas.waitForTimeout(page);
 
     await browser.close();
 })();

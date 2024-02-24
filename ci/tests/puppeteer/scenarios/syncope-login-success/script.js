@@ -31,7 +31,7 @@ async function doLogin(page, uid, psw, email) {
     await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     const attributes = await cas.innerText(page, "#attribute-tab-0 table#attributesTable tbody");
     assert(attributes.includes("syncopeUserAttr_email"));
     assert(attributes.includes(email));

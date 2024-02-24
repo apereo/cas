@@ -46,12 +46,12 @@ async function verifyDeviceCode(data) {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     await page.goto(data.verification_uri);
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     await cas.log(`Page url: ${await page.url()}`);
     await cas.loginWith(page);
     await cas.type(page, "#usercode", data.user_code);
     await cas.pressEnter(page);
-    await cas.waitForTimeout(page, 2000);
+    await cas.waitForTimeout(page);
     await browser.close();
     
     await cas.doPost(url, "", {

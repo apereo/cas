@@ -15,10 +15,10 @@ const cas = require("../../cas.js");
     await cas.type(page,"#username", "casuser");
     await cas.pressEnter(page);
 
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
 
     await cas.assertVisibility(page, "#token");
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
 
     const page2 = await browser.newPage();
     await page2.goto("http://localhost:8282");
@@ -30,10 +30,10 @@ const cas = require("../../cas.js");
 
     await cas.type(page, "#token", code);
     await cas.submitForm(page, "#fm1");
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
 
     await cas.assertInnerTextContains(page, "#attribute-tab-0 table#attributesTable tbody", "firstname");
-    await cas.waitForTimeout(page, 2000);
+    await cas.waitForTimeout(page);
 
     await browser.close();
 })();

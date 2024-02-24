@@ -21,7 +21,7 @@ async function cleanUp() {
         await cas.waitForTimeout(page, 3000);
         await page.waitForSelector("#idpForm");
         await cas.submitForm(page, "#idpForm");
-        await cas.waitForTimeout(page, 2000);
+        await cas.waitForTimeout(page);
         await page.waitForSelector("#username");
         await cas.loginWith(page);
         await cas.waitForTimeout(page, 5000);

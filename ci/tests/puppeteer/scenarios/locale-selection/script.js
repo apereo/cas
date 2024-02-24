@@ -8,7 +8,7 @@ const cas = require("../../cas.js");
         "Accept-Language": "de"
     });
     await cas.gotoLogin(page);
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     await cas.assertInnerText(page, "#content #fm1 button[name=submitBtn]", "ANMELDEN");
     await cas.attributeValue(page, "html", "lang", "de");
     await browser.close();

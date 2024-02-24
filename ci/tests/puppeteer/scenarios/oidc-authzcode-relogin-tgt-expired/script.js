@@ -10,11 +10,11 @@ const cas = require("../../cas.js");
         + `redirect_uri=${redirectUrl}&scope=openid&state=U7yWide2Ak&nonce=8xiyRZUiYP&`
         + "response_type=code";
     await cas.goto(page, url);
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     await cas.loginWith(page);
     await cas.waitForTimeout(page, 4000);
     await cas.goto(page, url);
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     await cas.assertVisibility(page, "#username");
     await browser.close();
 })();

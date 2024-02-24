@@ -24,7 +24,7 @@ const cas = require("../../cas.js");
         await cas.screenshot(page);
         await cas.loginWith(page);
         await cas.waitForTimeout(page, 3000);
-        await page.waitForSelector("#table_with_attributes", {visible: true});
+        await cas.waitForTimeout(page);
         await cas.assertVisibility(page, "#table_with_attributes");
         
         await page2.bringToFront();

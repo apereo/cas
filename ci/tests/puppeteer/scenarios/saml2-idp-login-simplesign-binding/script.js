@@ -8,12 +8,12 @@ const cas = require("../../cas.js");
     let cleanup = false;
     try {
         await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
-        await cas.waitForTimeout(page, 2000);
+        await cas.waitForTimeout(page);
         await cas.screenshot(page);
         await cas.loginWith(page);
         await cas.waitForTimeout(page, 4000);
         await cas.screenshot(page);
-        await page.waitForSelector("#table_with_attributes", {visible: true});
+        await cas.waitForTimeout(page);
         await cas.assertInnerTextContains(page, "#content p", "status page of SimpleSAMLphp");
         await cas.assertVisibility(page, "#table_with_attributes");
         const authData = JSON.parse(await cas.innerHTML(page, "details pre"));

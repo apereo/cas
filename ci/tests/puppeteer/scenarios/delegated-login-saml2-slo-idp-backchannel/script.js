@@ -12,13 +12,13 @@ const assert = require("assert");
     const page = await cas.newPage(browser);
 
     await cas.goto(page, "https://localhost:8444");
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
 
     await cas.log("Accessing protected CAS application");
     await cas.goto(page, "https://localhost:8444/protected");
     await cas.logPage(page);
 
-    await cas.waitForTimeout(page, 2000);
+    await cas.waitForTimeout(page);
     await cas.screenshot(page);
 
     await cas.assertVisibility(page, "#loginProviders");
@@ -29,7 +29,7 @@ const assert = require("assert");
     await cas.waitForNavigation(page);
 
     await cas.loginWith(page, "user1", "password");
-    await cas.waitForTimeout(page, 2000);
+    await cas.waitForTimeout(page);
 
     await cas.log("Checking CAS application access...");
     let url = await page.url();
@@ -74,7 +74,7 @@ const assert = require("assert");
         throw err;
     });
     
-    await cas.waitForTimeout(page, 2000);
+    await cas.waitForTimeout(page);
     await cas.log("Invoking SAML2 identity provider SLO...");
     await cas.goto(page, "http://localhost:9443/simplesaml/saml2/idp/SingleLogoutService.php?ReturnTo=https://apereo.github.io");
     await cas.waitForTimeout(page, 4000);
@@ -84,7 +84,7 @@ const assert = require("assert");
 
     await cas.log("Going to CAS login page to check for session termination");
     await cas.gotoLogin(page);
-    await cas.waitForTimeout(page, 2000);
+    await cas.waitForTimeout(page);
     await cas.screenshot(page);
 
     await cas.log("Accessing protected CAS application");
