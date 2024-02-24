@@ -19,7 +19,6 @@ const cas = require("../../cas.js");
 
     await cas.type(page,"#username", "casuser");
     await cas.pressEnter(page);
-    await page.waitForNavigation();
 
     await cas.waitForTimeout(page, 1000);
 
@@ -40,7 +39,6 @@ const cas = require("../../cas.js");
     await cas.type(page,"#q0", "answer1");
     await cas.type(page,"#q1", "answer2");
     await cas.pressEnter(page);
-    await page.waitForNavigation();
     await cas.waitForTimeout(page, 1000);
 
     await typePassword(page, "EaP8R&iX$eK4nb8eAI", "EaP8R&iX$eK4nb8eAI");
@@ -49,7 +47,6 @@ const cas = require("../../cas.js");
     await cas.assertInvisibility(page, "#password-policy-violation-msg");
 
     await cas.pressEnter(page);
-    await page.waitForNavigation();
 
     await cas.assertInnerText(page, "#content h2", "Password Change Successful");
     await cas.assertInnerText(page, "#content p", "Your account password is successfully updated.");

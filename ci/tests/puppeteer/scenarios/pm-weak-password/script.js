@@ -17,7 +17,6 @@ const cas = require("../../cas.js");
     await cas.type(page,"#password", "P@ssw0rd9");
     await cas.type(page,"#confirmedPassword", "P@ssw0rd9");
     await cas.pressEnter(page);
-    await page.waitForNavigation();
     await cas.assertInnerText(page, "#content h2", "Password Change Successful");
     
     await browser.close();
