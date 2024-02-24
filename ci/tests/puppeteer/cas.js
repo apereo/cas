@@ -206,7 +206,7 @@ exports.loginWith = async (page,
 
     try {
         this.pressEnter(page);
-        const response = await this.waitForNavigation();
+        const response = await this.waitForNavigation(page);
         this.logg(`Response status: ${await response.status()}`);
         return response;
     } catch (e) {
@@ -222,16 +222,12 @@ exports.waitForNavigation = async (page, timeout = 10000) => {
     while (response === null && attempts < retryCount) {
         attempts += 1;
         try {
-            if (page !== undefined) {
-                await this.log(`Waiting for page navigation with url ${await page.url()} with timeout ${timeout}`);
-                response = await page.waitForNavigation({
-                    timeout: timeout,
-                    waitUntil: "domcontentloaded"
-                });
-                await this.waitForTimeout(page, 1500);
-            } else {
-                await this.log("Page is undefined and cannot wait for navigation");
-            }
+            await this.log(`Waiting for page navigation with url ${await page.url()} with timeout ${timeout}`);
+            response = await page.waitForNavigation({
+                timeout: timeout,
+                waitUntil: "domcontentloaded"
+            });
+            await this.waitForTimeout(page, 1500);
         } catch (err) {
             this.logr(err);
         }
