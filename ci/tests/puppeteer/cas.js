@@ -318,7 +318,6 @@ exports.submitForm = async (page, selector, predicate = undefined, statusCode = 
 
 exports.pressEnter = async (page) =>
     Promise.all([
-        this.waitForTimeout(page, 2000),
         this.log("Pressing Enter..."),
         page.keyboard.press("Enter")
     ]);
