@@ -207,17 +207,19 @@ exports.loginWith = async (page,
     try {
         this.pressEnter(page);
         const response = await this.waitForNavigation(page);
-        this.logg(`Response status: ${await response.status()}`);
-        return response;
+        if (response !== null && response !== undefined) {
+            this.logg(`Response status: ${await response.status()}`);
+            return response;
+        }
     } catch (e) {
         this.logr(e);
     }
 };
 
-exports.waitForNavigation = async (page, timeout = 10000) => {
+exports.waitForNavigation = async (page, timeout = 3000) => {
     let attempts = 0;
     let response = null;
-    const retryCount = 3;
+    const retryCount = 2;
 
     while (response === null && attempts < retryCount) {
         attempts += 1;
