@@ -24,7 +24,6 @@ const cas = require("../../cas.js");
     await cas.pressEnter(page);
 
     await cas.waitForTimeout(page);
-
     await cas.assertCookie(page);
     await cas.assertInnerTextStartsWith(page, "#content div p", "You, user3, have successfully logged in");
 

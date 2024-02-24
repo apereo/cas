@@ -103,7 +103,7 @@ exports.removeDirectoryOrFile = async (directory) => {
     }
 };
 
-exports.waitForTimeout = async(page, milliseconds = 2000) => new Promise((r) => setTimeout(r, milliseconds));
+exports.waitForTimeout = async(page, milliseconds = 3500) => new Promise((r) => setTimeout(r, milliseconds));
 
 exports.click = async (page, button) => {
     await page.evaluate((button) => {
@@ -553,23 +553,6 @@ exports.waitFor = async (url, successHandler, failureHandler) => {
         });
 };
 
-exports.runGradle = async (workdir, opts = [], exitFunc) => {
-    let gradleCmd = "./gradlew";
-    if (operativeSystemModule.type() === "Windows_NT") {
-        gradleCmd = "gradlew.bat";
-    }
-    const exec = spawn(gradleCmd, opts, {cwd: workdir});
-    await this.logg(`Spawned ${gradleCmd} process ID: ${exec.pid}`);
-    exec.stdout.on("data", (data) => {
-        this.log(data.toString());
-    });
-    exec.stderr.on("data", (data) => {
-        console.error(data.toString());
-    });
-    exec.on("exit", exitFunc);
-    return exec;
-};
-
 exports.shutdownCas = async (baseUrl) => {
     await this.logg("Stopping CAS via shutdown actuator");
     const response = await this.doRequest(`${baseUrl}/actuator/shutdown`,
@@ -581,28 +564,24 @@ exports.shutdownCas = async (baseUrl) => {
 };
 
 exports.assertInnerTextStartsWith = async (page, selector, value) => {
-    await this.waitForElement(page, selector);
     const header = await this.innerText(page, selector);
     await this.log(`Checking ${header} to start with ${value}`);
     assert(header.startsWith(value));
 };
 
 exports.assertInnerTextContains = async (page, selector, value) => {
-    await this.waitForElement(page, selector);
     const header = await this.innerText(page, selector);
     await this.log(`Checking [${header}] to contain [${value}]`);
     assert(header.includes(value));
 };
 
 exports.assertInnerTextDoesNotContain = async (page, selector, value) => {
-    await this.waitForElement(page, selector);
     const header = await this.innerText(page, selector);
     await this.log(`Checking ${header} to contain ${value}`);
     assert(!header.includes(value));
 };
 
 exports.assertInnerText = async (page, selector, value) => {
-    await this.waitForElement(page, selector);
     const header = await this.innerText(page, selector);
     assert.equal(header, value);
 };
