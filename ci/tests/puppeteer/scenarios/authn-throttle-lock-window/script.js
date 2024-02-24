@@ -19,7 +19,7 @@ const cas = require("../../cas.js");
         await cas.loginWith(page);
         await cas.waitForTimeout(page);
     }
-    await cas.waitForTimeout(page, 3000);
+    await cas.waitForTimeout(page);
     await cas.gotoLogin(page);
     await cas.loginWith(page);
     await cas.assertCookie(page);

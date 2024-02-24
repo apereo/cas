@@ -7,7 +7,7 @@ const cas = require("../../cas.js");
     const page = await cas.newPage(context);
 
     await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
-    await cas.waitForTimeout(page, 3000);
+    await cas.waitForTimeout(page);
     await cas.click(page, "div .idp span");
     await cas.waitForTimeout(page);
     await cas.screenshot(page);

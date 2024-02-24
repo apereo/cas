@@ -20,7 +20,7 @@ const cas = require("../../cas.js");
     await cas.type(page, "input[name=loginfmt]", username, true);
     await cas.pressEnter(page);
     
-    await cas.waitForTimeout(page, 3000);
+    await cas.waitForTimeout(page);
     await cas.type(page, "input[name=passwd]", process.env.AZURE_AD_USER_PASSWORD, true);
     await cas.pressEnter(page);
     await cas.waitForTimeout(page, 4000);

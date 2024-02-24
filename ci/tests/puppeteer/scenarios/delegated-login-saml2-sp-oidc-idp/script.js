@@ -10,7 +10,7 @@ const path = require("path");
     await cas.waitForTimeout(page);
     await cas.assertVisibility(page, "li #OktaOidcClient");
     await cas.click(page, "li #OktaOidcClient");
-    await cas.waitForTimeout(page, 3000);
+    await cas.waitForTimeout(page);
 
     await cas.loginWith(page, "info@fawnoos.com", "QFkN&d^bf9vhS3KS49",
         "#okta-signin-username", "#okta-signin-password");

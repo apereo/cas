@@ -23,7 +23,7 @@ const assert = require("assert");
     await cas.type(page,"#token", scratch);
     await cas.pressEnter(page);
     await cas.logPage(page);
-    await cas.waitForTimeout(page, 3000);
+    await cas.waitForTimeout(page);
     await cas.screenshot(page);
 
     await cas.waitForTimeout(page);

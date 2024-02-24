@@ -18,18 +18,18 @@ async function cleanUp() {
     await cas.waitFor("https://localhost:9876/sp/saml/status", async () => {
         try {
             await cas.goto(page, "https://localhost:9876/sp");
-            await cas.waitForTimeout(page, 3000);
+            await cas.waitForTimeout(page);
             await page.waitForSelector("#idpForm", {visible: true});
             await cas.submitForm(page, "#idpForm");
-            await cas.waitForTimeout(page, 3000);
+            await cas.waitForTimeout(page);
             await page.waitForSelector("#username", {visible: true});
 
             await cas.loginWith(page, "duobypass", "Mellon");
-            await cas.waitForTimeout(page, 3000);
+            await cas.waitForTimeout(page);
 
             await cas.log("Checking for page URL...");
             await cas.logPage(page);
-            await cas.waitForTimeout(page, 3000);
+            await cas.waitForTimeout(page);
             await cas.assertInnerText(page, "#principal", "casuser@example.org");
             await cas.assertInnerText(page, "#authnContextClass", "https://refeds.org/profile/mfa");
         } finally {

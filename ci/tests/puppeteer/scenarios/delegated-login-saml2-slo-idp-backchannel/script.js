@@ -63,7 +63,7 @@ const assert = require("assert");
     </samlp:LogoutRequest>`;
 
     await cas.log("Sending back-channel logout request via POST");
-    await cas.waitForTimeout(page, 3000);
+    await cas.waitForTimeout(page);
     const logoutUrl = `https://localhost:8443/cas/login?client_name=SAML2Client&SAMLRequest=${logoutRequest}&RelayState=_e0d9e4dddf88cc6a4979d677aefdca4881954e8102`;
     await cas.doPost(logoutUrl, {}, {
         "Content-Type": "text/xml"
@@ -89,7 +89,7 @@ const assert = require("assert");
 
     await cas.log("Accessing protected CAS application");
     await cas.goto(page, "https://localhost:8444/protected");
-    await cas.waitForTimeout(page, 3000);
+    await cas.waitForTimeout(page);
     await cas.screenshot(page);
     url = await page.url();
     await cas.logPage(page);

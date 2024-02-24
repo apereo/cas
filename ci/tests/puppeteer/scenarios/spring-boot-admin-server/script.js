@@ -16,11 +16,11 @@ async function gotoPage(page, instanceId, pageId) {
     await cas.screenshot(page);
     await cas.loginWith(page, "s#kiooritea", "p@$$W0rd");
     await cas.screenshot(page);
-    await cas.waitForTimeout(page, 3000);
+    await cas.waitForTimeout(page);
     await cas.click(page, "div#CAS button");
-    await cas.waitForTimeout(page, 3000);
+    await cas.waitForTimeout(page);
     await cas.click(page, "div#CAS li");
-    await cas.waitForTimeout(page, 3000);
+    await cas.waitForTimeout(page);
     await cas.logPage(page);
     const url = await page.url();
     const pathArray = url.split("/");

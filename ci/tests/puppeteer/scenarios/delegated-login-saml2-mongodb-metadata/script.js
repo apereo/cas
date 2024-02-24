@@ -26,11 +26,11 @@ const assert = require("assert");
 
     await cas.log("Testing auto-redirection via configured cookie...");
     await cas.gotoLogout(page);
-    await cas.waitForTimeout(page, 3000);
+    await cas.waitForTimeout(page);
     await cas.gotoLogin(page);
     await cas.waitForTimeout(page);
     await cas.logPage(page);
-    await cas.waitForTimeout(page, 3000);
+    await cas.waitForTimeout(page);
     const url = await page.url();
     assert(url.startsWith("http://localhost:9443/simplesaml/"));
     await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));

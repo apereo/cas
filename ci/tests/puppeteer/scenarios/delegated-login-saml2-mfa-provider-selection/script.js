@@ -12,7 +12,7 @@ const path = require("path");
     await cas.waitForNavigation(page);
 
     await cas.loginWith(page, "user1", "password");
-    await cas.waitForTimeout(page, 3000);
+    await cas.waitForTimeout(page);
     await cas.screenshot(page);
     await cas.assertInnerText(page, "#content h2", "Multifactor Authentication Provider Selection");
     await cas.assertVisibility(page, "#mfa-gauth");

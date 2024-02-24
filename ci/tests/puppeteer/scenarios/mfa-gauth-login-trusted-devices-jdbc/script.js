@@ -40,12 +40,12 @@ const assert = require("assert");
 
     await cas.gotoLoginWithAuthnMethod(page, undefined, "mfa-gauth");
     await cas.loginWith(page);
-    await cas.waitForTimeout(page, 3000);
+    await cas.waitForTimeout(page);
     await cas.log("Using scratch code to login...");
     scratch = await cas.fetchGoogleAuthenticatorScratchCode();
     await cas.type(page,"#token", scratch);
     await cas.submitForm(page, "#fm1");
-    await cas.waitForTimeout(page, 3000);
+    await cas.waitForTimeout(page);
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
     await cas.assertCookie(page);
     await cas.log("Resuming postgres server...");

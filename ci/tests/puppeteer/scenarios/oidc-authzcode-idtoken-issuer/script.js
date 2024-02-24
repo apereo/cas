@@ -15,7 +15,7 @@ async function testService(page, clientId, oidc = true) {
         await cas.waitForNavigation(page);
     }
 
-    await cas.waitForTimeout(page, 3000);
+    await cas.waitForTimeout(page);
     const code = await cas.assertParameter(page, "code");
     await cas.log(`Current code is ${code}`);
     const accessTokenUrl = `https://localhost:8443/cas/oidc/token?grant_type=authorization_code&client_id=${clientId}&client_secret=secret&redirect_uri=${redirectUrl}&code=${code}`;

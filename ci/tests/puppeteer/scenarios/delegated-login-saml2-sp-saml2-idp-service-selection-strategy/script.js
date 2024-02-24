@@ -19,11 +19,11 @@ async function cleanUp() {
     await cas.waitForTimeout(page);
     await cas.screenshot(page);
     await cas.loginWith(page, "user1", "password");
-    await cas.waitForTimeout(page, 3000);
+    await cas.waitForTimeout(page);
     await cas.log("Checking for page URL...");
     await cas.logPage(page);
     await cas.screenshot(page);
-    await cas.waitForTimeout(page, 3000);
+    await cas.waitForTimeout(page);
 
     await cas.waitForTimeout(page);
     await cas.assertInnerTextContains(page, "#content p", "status page of SimpleSAMLphp");

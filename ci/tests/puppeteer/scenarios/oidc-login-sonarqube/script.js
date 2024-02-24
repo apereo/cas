@@ -16,7 +16,7 @@ const cas = require("../../cas.js");
     //await cas.sleep(5000);
     // hit strapi endpoint that triggers CAS login to get JWT
     //await cas.goto(page, "https://host.k3d.internal");
-    await cas.waitForTimeout(page, 3000);
+    await cas.waitForTimeout(page);
     await cas.assertInnerTextContains(page, "ul.global-navbar-menu","Projects");
     await browser.close();
 })();
