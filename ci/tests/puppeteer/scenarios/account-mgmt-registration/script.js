@@ -22,11 +22,7 @@ const cas = require("../../cas.js");
     await cas.assertInnerText(page, "#content h2", "Account Registration");
     await cas.assertInnerTextStartsWith(page, "#content p", "Account activation instructions are successfully sent");
 
-    await cas.goto(page, "http://localhost:8282");
-    await cas.waitForTimeout(page, 1000);
-    await cas.click(page, "table tbody td a");
-    await cas.waitForTimeout(page, 1000);
-    const link = await cas.textContent(page, "div[name=bodyPlainText] .well");
+    const link = await cas.extractFromEmailMessage(browser);
     await cas.log(`Activation link is ${link}`);
     await cas.goto(page, link);
     await cas.waitForTimeout(page, 1000);

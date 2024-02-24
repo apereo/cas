@@ -750,6 +750,19 @@ exports.base64Decode = async (data) => {
     return buff.toString("ascii");
 };
 
+exports.extractFromEmailMessage = async(browser) => {
+    await this.log("Attempting to extract code from email message...");
+    const page = await browser.newPage();
+    await this.goto(page, "http://localhost:8282");
+    await this.waitForTimeout(page);
+    await this.click(page, "table tbody td a");
+    await this.waitForTimeout(page);
+    const message = await this.textContent(page, "div[name=bodyPlainText] .well");
+    await page.close();
+    await this.log(`Extracted from email message: ${message}`);
+    return message;
+};
+
 exports.screenshot = async (page) => {
     if (await this.isCiEnvironment()) {
         const index = Date.now();
