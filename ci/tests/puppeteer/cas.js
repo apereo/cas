@@ -21,7 +21,6 @@ const jose = require("jose");
 const pino = require("pino");
 const xml2js = require("xml2js");
 const {Docker} = require("node-docker-api");
-const {TimeoutError} = require("puppeteer");
 const docker = new Docker({ socketPath: "/var/run/docker.sock" });
 
 const LOGGER = pino({
@@ -231,8 +230,6 @@ exports.waitForNavigation = async (page, timeout = 10000) => {
             await this.waitForTimeout(page, 1500);
         } catch (err) {
             this.logr(err);
-            this.logPage(page);
-            await this.screenshot(page);
         }
     }
     return response;
