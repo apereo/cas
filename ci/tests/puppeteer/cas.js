@@ -205,11 +205,17 @@ exports.loginWith = async (page,
     await page.waitForSelector(passwordField, {visible: true});
     await this.type(page, passwordField, password, true);
 
-    this.pressEnter(page);
-    return page.waitForNavigation();
+    try {
+        this.pressEnter(page);
+        const response = await this.waitForNavigation();
+        this.logg(`Response status: ${await response.status()}`);
+        return response;
+    } catch (e) {
+        this.logr(e);
+    }
 };
 
-exports.waitForNavigation = async (page, timeout = 15000) => {
+exports.waitForNavigation = async (page, timeout = 10000) => {
     let attempts = 0;
     let response = null;
     const retryCount = 3;
