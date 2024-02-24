@@ -208,11 +208,11 @@ exports.loginWith = async (page,
 
     try {
         await this.pressEnter(page);
-        const response = await this.waitForNavigation(page);
-        if (response !== null && response !== undefined) {
-            this.logg(`Response status: ${await response.status()}`);
-            return response;
-        }
+        // const response = await this.waitForNavigation(page);
+        // if (response !== null && response !== undefined) {
+        //     this.logg(`Response status: ${await response.status()}`);
+        //     return response;
+        // }
     } catch (e) {
         this.logr(e);
     }
@@ -231,7 +231,6 @@ exports.waitForNavigation = async (page, timeout = 3000) => {
                 timeout: timeout,
                 waitUntil: "domcontentloaded"
             });
-            await this.waitForTimeout(page, 1500);
         } catch (err) {
             this.logr(err);
         }
