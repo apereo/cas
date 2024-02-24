@@ -18,7 +18,8 @@ const os = require("os");
     await cas.log(`Using scratch code ${scratch} to login...`);
     await cas.type(page,"#token", scratch);
     await cas.pressEnter(page);
-
+    await page.waitForNavigation();
+    
     await cas.assertCookie(page);
 
     const baseUrl = "https://localhost:8443/cas/actuator/multifactorTrustedDevices";

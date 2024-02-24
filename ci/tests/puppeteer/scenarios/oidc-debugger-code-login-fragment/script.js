@@ -16,15 +16,15 @@ const assert = require("assert");
     await cas.goto(page, url);
 
     await cas.loginWith(page);
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(1000);
 
     await cas.click(page, "#allow");
-    await cas.waitForNavigation(page);
+    await page.waitForNavigation();
     await cas.log(`Page url: ${await page.url()}`);
     const result = await page.evaluate(() => window.location.hash);
     assert(result.includes("code="));
     assert(result.includes("nonce="));
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(1000);
     await cas.assertTextContent(page, "h1.green-text", "Success!");
 
     await browser.close();

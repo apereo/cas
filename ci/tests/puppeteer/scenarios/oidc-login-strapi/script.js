@@ -9,7 +9,7 @@ const cas = require("../../cas.js");
     await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.goto(page, "http://localhost:1337/api/connect/cas");
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(2000);
     const id_token = await cas.assertParameter(page, "id_token");
     await cas.log(id_token);
     await browser.close();

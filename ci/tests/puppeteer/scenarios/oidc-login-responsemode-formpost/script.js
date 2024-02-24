@@ -10,11 +10,11 @@ const assert = require("assert");
     await cas.goto(page, url);
 
     await cas.loginWith(page);
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(1000);
 
     await cas.click(page, "#allow");
-    await cas.waitForNavigation(page);
-    await cas.waitForTimeout(page);
+    await page.waitForNavigation();
+    await page.waitForTimeout(3000);
     const content = await cas.textContent(page, "body pre");
     const payload = JSON.parse(content);
     await cas.log(payload);

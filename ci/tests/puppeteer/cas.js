@@ -103,10 +103,6 @@ exports.removeDirectoryOrFile = async (directory) => {
     }
 };
 
-exports.waitForTimeout = async(page, milliseconds = 3000) => {
-    await this.sleep(milliseconds);
-};
-
 exports.click = async (page, button) => {
     await page.evaluate((button) => {
         const buttonNode = document.querySelector(button);
@@ -190,10 +186,6 @@ exports.uploadImage = async (imagePath) => {
 
 exports.waitForElement = async (page, selector, timeout = 10000) => page.waitForSelector(selector, {timeout: timeout});
 
-exports.waitForResponse = async(page, status = 200) => {
-    await page.waitForResponse((response) => response.status() === status, {timeout: 5000});
-};
-
 exports.loginWith = async (page,
     user = "casuser",
     password = "Mellon",
@@ -206,36 +198,8 @@ exports.loginWith = async (page,
     await page.waitForSelector(passwordField, {visible: true});
     await this.type(page, passwordField, password, true);
 
-    try {
-        await this.pressEnter(page);
-        // const response = await this.waitForNavigation(page);
-        // if (response !== null && response !== undefined) {
-        //     this.logg(`Response status: ${await response.status()}`);
-        //     return response;
-        // }
-    } catch (e) {
-        this.logr(e);
-    }
-};
-
-exports.waitForNavigation = async (page, timeout = 3000) => {
-    let attempts = 0;
-    let response = null;
-    const retryCount = 2;
-
-    while (response === null && attempts < retryCount) {
-        attempts += 1;
-        try {
-            await this.log(`Waiting for page navigation with url ${await page.url()} with timeout ${timeout}`);
-            response = await page.waitForNavigation({
-                timeout: timeout,
-                waitUntil: "domcontentloaded"
-            });
-        } catch (err) {
-            this.logr(err);
-        }
-    }
-    return response;
+    await this.pressEnter(page);
+    return page.waitForNavigation();
 };
 
 exports.fetchGoogleAuthenticatorScratchCode = async (user = "casuser") => {
@@ -248,15 +212,10 @@ exports.fetchGoogleAuthenticatorScratchCode = async (user = "casuser") => {
 };
 
 exports.isVisible = async (page, selector) => {
-    try {
-        const element = await page.$(selector);
-        const result = (element !== null && await element.boundingBox() !== null);
-        await this.log(`Checking element visibility for ${selector} while on page ${page.url()}: ${result}`);
-        return result;
-    } catch (e) {
-        this.logr(e);
-        return false;
-    }
+    const element = await page.$(selector);
+    const result = (element !== null && await element.boundingBox() !== null);
+    await this.log(`Checking element visibility for ${selector} while on page ${page.url()}: ${result}`);
+    return result;
 };
 
 exports.assertVisibility = async (page, selector) => {
@@ -267,8 +226,7 @@ exports.assertInvisibility = async (page, selector) => {
     const element = await page.$(selector);
     const result = element === null || await element.boundingBox() === null;
     await this.log(`Checking element invisibility for ${selector} while on page ${page.url()}: ${result}`);
-    const message = `The element ${selector} must be invisible but it's not.`;
-    assert(result, message);
+    assert(result, `The element ${selector} must be invisible but it's not.`);
 };
 
 exports.assertCookie = async (page, cookieMustBePresent = true, cookieName = "TGC") => {
@@ -297,12 +255,13 @@ exports.assertCookie = async (page, cookieMustBePresent = true, cookieName = "TG
 };
 
 exports.submitForm = async (page, selector, predicate = undefined, statusCode = 0) => {
+    await this.log(`Submitting form ${selector}`);
     if (predicate === undefined) {
         predicate = async (response) => {
             const responseStatus = response.status();
             await this.log(`Page response status: ${responseStatus}`);
             if (statusCode <= 0) {
-                await this.log(`Checking page response status ${responseStatus} is greater than required ${statusCode}`);
+                await this.log("Waiting for page to produce a valid response status code");
                 return responseStatus > statusCode;
             }
             await this.log(`Waiting for page response status code ${statusCode}`);
@@ -311,22 +270,14 @@ exports.submitForm = async (page, selector, predicate = undefined, statusCode = 
     }
     return Promise.all([
         page.waitForResponse(predicate),
-        this.log(`Submitting form ${selector}`),
         page.$eval(selector, (form) => form.submit()),
-        this.waitForTimeout(3000)
+        page.waitForTimeout(3000)
     ]);
 };
 
-exports.pressEnter = async (page) =>
-    Promise.all([
-        this.log("Pressing Enter..."),
-        page.keyboard.press("Enter"),
-        this.waitForTimeout(page, 2000)
-    ]);
-
-exports.pressTab = async (page) => {
-    page.keyboard.press("Tab");
-    this.waitForTimeout(page, 1000);
+exports.pressEnter = async (page) => {
+    page.keyboard.press("Enter");
+    page.waitForTimeout(1000);
 };
 
 exports.type = async (page, selector, value, obfuscate = false) => {
@@ -368,9 +319,6 @@ exports.newPage = async (browser) => {
             }
         }
     }
-    // await page.setDefaultNavigationTimeout(0);
-    // await page.setRequestInterception(true);
-
     if (page === null || page === undefined) {
         const err = "Unable to open a new browser page";
         await this.logr(err);
@@ -479,11 +427,11 @@ exports.doRequest = async (url, method = "GET",
             }
         };
 
-        if (requestBody === undefined) {
-            https.get(url, options, (res) => handler(res)).on("error", reject);
-        } else {
+        if (requestBody !== undefined) {
             const request = https.request(url, options, (res) => handler(res)).on("error", reject);
             request.write(requestBody);
+        } else {
+            https.get(url, options, (res) => handler(res)).on("error", reject);
         }
     });
 
@@ -551,6 +499,42 @@ exports.waitFor = async (url, successHandler, failureHandler) => {
         .catch((err) => {
             failureHandler(err);
         });
+};
+
+exports.runGradle = async (workdir, opts = [], exitFunc) => {
+    let gradleCmd = "./gradlew";
+    if (operativeSystemModule.type() === "Windows_NT") {
+        gradleCmd = "gradlew.bat";
+    }
+    const exec = spawn(gradleCmd, opts, {cwd: workdir});
+    await this.logg(`Spawned ${gradleCmd} process ID: ${exec.pid}`);
+    exec.stdout.on("data", (data) => {
+        this.log(data.toString());
+    });
+    exec.stderr.on("data", (data) => {
+        console.error(data.toString());
+    });
+    exec.on("exit", exitFunc);
+    return exec;
+};
+
+exports.launchWsFedSp = async (spDir, opts = []) => {
+    let args = ["build", "appStart", "-q", "-x", "test", "--no-daemon", `-Dsp.sslKeystorePath=${process.env.CAS_KEYSTORE}`];
+    args = args.concat(opts);
+    await this.logg(`Launching WSFED SP in ${spDir} with ${args}`);
+    return this.runGradle(spDir, args, (code) => this.log(`WSFED SP Child process exited with code ${code}`));
+};
+
+exports.stopGradleApp = async (gradleDir, deleteDir = true) => {
+    const args = ["appStop", "-q", "--no-daemon"];
+    await this.logg(`Stopping process in ${gradleDir} with ${args}`);
+    return this.runGradle(gradleDir, args, (code) => {
+        this.log(`Stopped child process exited with code ${code}`);
+        if (deleteDir) {
+            this.sleep(3000);
+            this.removeDirectory(gradleDir);
+        }
+    });
 };
 
 exports.shutdownCas = async (baseUrl) => {
@@ -729,19 +713,6 @@ exports.base64Decode = async (data) => {
     return buff.toString("ascii");
 };
 
-exports.extractFromEmailMessage = async(browser) => {
-    await this.log("Attempting to extract code from email message...");
-    const page = await browser.newPage();
-    await this.goto(page, "http://localhost:8282");
-    await this.waitForTimeout(page);
-    await this.click(page, "table tbody td a");
-    await this.waitForTimeout(page);
-    const message = await this.textContent(page, "div[name=bodyPlainText] .well");
-    await page.close();
-    await this.log(`Extracted from email message: ${message}`);
-    return message;
-};
-
 exports.screenshot = async (page) => {
     if (await this.isCiEnvironment()) {
         const index = Date.now();
@@ -767,13 +738,13 @@ exports.isCiEnvironment = async () => process.env.CI !== undefined && process.en
 exports.isNotCiEnvironment = async () => !this.isCiEnvironment();
 
 exports.assertTextContent = async (page, selector, value) => {
-    await this.waitForElement(page, selector);
+    await page.waitForSelector(selector, {visible: true});
     const header = await this.textContent(page, selector);
     assert.equal(header, value);
 };
 
 exports.assertTextContentStartsWith = async (page, selector, value) => {
-    await this.waitForElement(page, selector);
+    await page.waitForSelector(selector, {visible: true});
     const header = await this.textContent(page, selector);
     assert(header.startsWith(value));
 };
@@ -914,7 +885,7 @@ exports.refreshBusContext = async (url = "https://localhost:8443/cas") => {
 };
 
 exports.loginDuoSecurityBypassCode = async (page, username = "casuser", currentCodes = undefined) => {
-    await this.waitForTimeout(page, 12000);
+    await page.waitForTimeout(12000);
     await this.click(page, "button#passcode");
     const bypassCodes = currentCodes ?? await this.fetchDuoSecurityBypassCodes(username);
     await this.log(`Duo Security: Retrieved bypass codes ${bypassCodes}`);
@@ -930,7 +901,7 @@ exports.loginDuoSecurityBypassCode = async (page, username = "casuser", currentC
         await this.screenshot(page);
         await this.pressEnter(page);
         await this.log("Waiting for Duo Security to accept bypass code...");
-        await this.waitForTimeout(page, 10000);
+        await page.waitForTimeout(10000);
         const error = await this.isVisible(page, "div.message.error");
         if (error) {
             await this.log("Duo Security is unable to accept bypass code");

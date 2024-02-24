@@ -15,7 +15,7 @@ const assert = require("assert");
 
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
-        await cas.waitForNavigation(page);
+        await page.waitForNavigation();
     }
 
     const code = await cas.assertParameter(page, "code");
@@ -56,6 +56,7 @@ const assert = require("assert");
     }, (error) => {
         throw `Operation failed to obtain access token: ${error}`;
     });
+
     
     await browser.close();
 })();

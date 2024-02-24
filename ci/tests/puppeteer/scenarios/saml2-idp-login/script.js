@@ -7,17 +7,17 @@ async function normalAuthenticationFlow(context) {
     const page = await cas.newPage(context);
 
     await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(2000);
     await cas.screenshot(page);
     await cas.loginWith(page);
-    await cas.waitForTimeout(page);
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(3000);
+    await page.waitForSelector("#table_with_attributes", {visible: true});
     await cas.assertInnerTextContains(page, "#content p", "status page of SimpleSAMLphp");
     await cas.assertVisibility(page, "#table_with_attributes");
 
     const authData = JSON.parse(await cas.innerHTML(page, "details pre"));
     await cas.log(authData);
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(1000);
 
     await cas.log("Removing cached metadata for service providers");
     await cas.doRequest("https://localhost:8443/cas/actuator/samlIdPRegisteredServiceMetadataCache", "DELETE", {}, 204);
@@ -27,7 +27,7 @@ async function normalAuthenticationFlow(context) {
     for (let i = 0; i < endpoints.length; i++) {
         const url = baseUrl + endpoints[i];
         const response = await cas.goto(page, url);
-
+        await cas.log(`${response.status()} ${response.statusText()}`);
         assert(response.ok());
     }
     const response = await cas.goto(page, "https://localhost:8443/cas/idp/error");
@@ -41,7 +41,7 @@ async function staleAuthenticationFlow(context) {
     const page = await cas.newPage(context);
     
     await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(2000);
     await cas.screenshot(page);
 
     await cas.log("Checking for page URL...");
@@ -51,15 +51,15 @@ async function staleAuthenticationFlow(context) {
     await cas.log(`Restarting the flow with ${url}`);
     const page2 = await cas.newPage(context);
     await cas.goto(page2, url);
-    await cas.waitForTimeout(page2, 2000);
+    await page2.waitForTimeout(2000);
     await cas.loginWith(page2);
-    await cas.waitForTimeout(page2, 3000);
+    await page2.waitForTimeout(3000);
     await page2.waitForSelector("#table_with_attributes", {visible: true});
     await cas.assertInnerTextContains(page2, "#content p", "status page of SimpleSAMLphp");
     await cas.assertVisibility(page2, "#table_with_attributes");
     const authData = JSON.parse(await cas.innerHTML(page2, "details pre"));
     await cas.log(authData);
-    await cas.waitForTimeout(page2, 1000);
+    await page2.waitForTimeout(1000);
     await cas.goto(page2, "https://localhost:8443/cas/logout");
     await cas.log("Done");
 }
@@ -67,7 +67,7 @@ async function staleAuthenticationFlow(context) {
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     for (let i = 1; i <= 2; i++) {
-        const context = await browser.createBrowserContext();
+        const context = await browser.createIncognitoBrowserContext();
         await cas.log(`Running test scenario ${i}`);
         switch (i) {
         case 1:
@@ -82,6 +82,7 @@ async function staleAuthenticationFlow(context) {
         await context.close();
         await cas.log("=======================================");
     }
+
 
     const samlMetrics = [
         "resolve"
@@ -100,4 +101,5 @@ async function staleAuthenticationFlow(context) {
     await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
     await browser.close();
 })();
+
 

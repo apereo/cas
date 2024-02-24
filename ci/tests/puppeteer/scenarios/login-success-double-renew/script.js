@@ -1,6 +1,7 @@
 const puppeteer = require("puppeteer");
 const cas = require("../../cas.js");
 
+
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
@@ -22,7 +23,7 @@ const cas = require("../../cas.js");
 
     for (let i = 0; i < 2; i++) {
         await cas.gotoLogin(page, undefined, 8443, true);
-        await cas.waitForTimeout(page);
+        await page.waitForTimeout(1000);
 
         await cas.assertVisibility(page, "#existingSsoMsg");
     }

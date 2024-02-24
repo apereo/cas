@@ -8,8 +8,7 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
     "--cas.authn.accept.enabled=false",
-
-
+    
     "--cas.authn.ldap[0].type=DIRECT",
     "--cas.authn.ldap[0].dn-format=uid=%s,ou=people,dc=example,dc=org",
     "--cas.authn.ldap[0].ldap-url=ldap://localhost:11389",

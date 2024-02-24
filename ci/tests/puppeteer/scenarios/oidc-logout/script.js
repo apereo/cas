@@ -8,9 +8,9 @@ const puppeteer = require("puppeteer");
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     let response = await cas.gotoLogout(page, casService);
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(1000);
     await cas.logPage(page);
-
+    await cas.log(`${response.status()} ${response.statusText()}`);
     assert(response.ok());
     let url = await page.url();
     assert(url === casService);
@@ -20,9 +20,9 @@ const puppeteer = require("puppeteer");
     logoutUrl += "&state=1234567890";
 
     response = await cas.goto(page, url);
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(1000);
     await cas.logPage(page);
-
+    await cas.log(`${response.status()} ${response.statusText()}`);
     assert(response.status() === 200);
     url = await page.url();
     assert(url === casService);
@@ -44,8 +44,9 @@ const puppeteer = require("puppeteer");
 
     logoutUrl += `&id_token_hint=${idToken}`;
     response = await cas.goto(page, logoutUrl);
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(1000);
     await cas.logPage(page);
+    await cas.log(`${response.status()} ${response.statusText()}`);
 
     url = await page.url();
     assert(url.startsWith(casService));
@@ -53,7 +54,7 @@ const puppeteer = require("puppeteer");
     await cas.assertParameter(page, "client_id");
 
     await cas.gotoLogout(page, "https://localhost:9859/anything/oidc&client_id=whatever");
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(1000);
     await cas.assertPageUrlStartsWith(page, "https://localhost:8443/cas/logout");
 
     await browser.close();

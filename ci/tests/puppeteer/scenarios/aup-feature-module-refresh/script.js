@@ -15,7 +15,7 @@ const assert = require("assert");
     await cas.goto(page, "https://localhost:8443/cas/logout");
     await cas.gotoLogin(page, service);
     await cas.loginWith(page);
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(2000);
     await cas.assertTicketParameter(page);
 
     await cas.log("Updating configuration and waiting for changes to reload...");
@@ -23,7 +23,7 @@ const assert = require("assert");
     const file = fs.readFileSync(configFilePath, "utf8");
     const configFile = YAML.parse(file);
     await updateConfig(configFile, configFilePath, true);
-    await cas.waitForTimeout(page, 5000);
+    await page.waitForTimeout(5000);
 
     await cas.refreshContext();
 
@@ -34,8 +34,8 @@ const assert = require("assert");
     await cas.assertTextContent(page, "#main-content #login #fm1 h3", "Acceptable Usage Policy");
     await cas.assertVisibility(page, "button[name=submit]");
     await cas.click(page, "#aupSubmit");
-    await cas.waitForNavigation(page);
-    await cas.waitForTimeout(page);
+    await page.waitForNavigation();
+    await page.waitForTimeout(2000);
 
     await cas.assertTicketParameter(page);
     const result = new URL(page.url());

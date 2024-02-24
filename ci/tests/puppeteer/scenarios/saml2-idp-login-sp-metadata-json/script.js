@@ -11,7 +11,7 @@ const assert = require("assert");
     await cas.log(`Navigating to ${url}`);
     await cas.goto(page, url);
     await cas.screenshot(page);
-    await cas.waitForTimeout(page, 4000);
+    await page.waitForTimeout(4000);
     await cas.loginWith(page);
     await cas.waitForElement(page, "body");
     const content = JSON.parse(await cas.innerText(page, "body"));
@@ -19,4 +19,5 @@ const assert = require("assert");
     assert(content.form.SAMLResponse !== undefined);
     await browser.close();
 })();
+
 

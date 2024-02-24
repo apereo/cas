@@ -1,9 +1,9 @@
 {
-  "dependencies": "throttle,oauth-webflow,reports",
+  "dependencies": "throttle,oauth-webflow",
+
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
-
 
 
     
@@ -13,10 +13,7 @@
 
     "--cas.authn.throttle.schedule.start-delay=PT60S",
 
-    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
-    "--management.endpoints.web.exposure.include=throttles",
-    "--management.endpoints.enabled-by-default=true",
-
+    "--logging.level.org.apereo.cas=info",
     "--logging.level.org.apereo.cas.web.support.AbstractThrottledSubmissionHandlerInterceptorAdapter=trace"
   ]
 }

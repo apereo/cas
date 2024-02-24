@@ -14,7 +14,7 @@ const path = require("path");
     try {
         const page = await cas.newPage(browser);
         await updateConfig(configFile, configFilePath, "http://localhost:18080/syncope");
-        await cas.waitForTimeout(page);
+        await page.waitForTimeout(3000);
         await cas.refreshContext();
         await doLogin(page, "syncopecas", "Mellon", "syncopecas@syncope.org");
         await doLogin(page, "casuser", "paSSw0rd", "casuser@syncope.org");
@@ -24,6 +24,7 @@ const path = require("path");
     await browser.close();
 })();
 
+
 async function doLogin(page, uid, psw, email) {
     await cas.gotoLogout(page);
     await cas.gotoLogin(page);
@@ -31,7 +32,7 @@ async function doLogin(page, uid, psw, email) {
     await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(1000);
     const attributes = await cas.innerText(page, "#attribute-tab-0 table#attributesTable tbody");
     assert(attributes.includes("syncopeUserAttr_email"));
     assert(attributes.includes(email));

@@ -14,7 +14,7 @@ const cas = require("../../cas.js");
     await cas.assertCookie(page);
 
     await cas.gotoLogin(page, "https://github.com/apereo/cas");
-    await cas.waitForTimeout(page, 500);
+    await page.waitForTimeout(500);
     await cas.assertInvisibility(page, "#username");
 
     await cas.log("Selecting mfa-gauth");
@@ -22,17 +22,18 @@ const cas = require("../../cas.js");
     await cas.assertVisibility(page, "#mfa-yubikey");
 
     await cas.submitForm(page, "#mfa-gauth > form[name=fm-mfa-gauth]");
-    await cas.waitForTimeout(page, 500);
+    await page.waitForTimeout(500);
 
     let scratch = await cas.fetchGoogleAuthenticatorScratchCode();
     await cas.log(`Using scratch code ${scratch} to login...`);
     await cas.type(page,"#token", scratch);
     await cas.pressEnter(page);
+    await page.waitForNavigation();
 
     await cas.assertTicketParameter(page);
 
     await cas.gotoLogin(page);
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(1000);
 
     await cas.assertInnerTextStartsWith(page, "#authnContextClass td.attribute-value", "[mfa-gauth]");
     
@@ -46,19 +47,20 @@ const cas = require("../../cas.js");
 
     await cas.log("Starting with MFA selection menu");
     await cas.gotoLogin(page, "https://github.com/apereo/cas");
-    await cas.waitForTimeout(page, 500);
+    await page.waitForTimeout(500);
     await cas.loginWith(page);
     await cas.submitForm(page, "#mfa-gauth > form[name=fm-mfa-gauth]");
-    await cas.waitForTimeout(page, 500);
+    await page.waitForTimeout(500);
 
     scratch = await cas.fetchGoogleAuthenticatorScratchCode();
     await cas.log(`Using scratch code ${scratch} to login...`);
     await cas.type(page,"#token", scratch);
     await cas.pressEnter(page);
+    await page.waitForNavigation();
 
     await cas.log("Navigating to second service with SSO session");
     await cas.gotoLogin(page, "https://github.com/apereo");
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(1000);
     await cas.assertInvisibility(page, "#username");
     await cas.assertTicketParameter(page);
 

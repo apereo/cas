@@ -1,16 +1,8 @@
 {
   "dependencies": "core",
+
   "properties": [
-    "--cas.server.name=https://localhost:8443",
-    "--cas.server.prefix=${cas.server.name}/cas",
-
-
-
-
     "--cas.authn.accept.name=STATIC",
-
-    "--cas.authn.attribute-repository.stub.attributes.phone=123456,112233,556677,987654",
-
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
   ]

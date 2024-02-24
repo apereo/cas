@@ -6,13 +6,14 @@ const cas = require("../../cas.js");
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.goto(page, "https://localhost:8443/cas/palantir/dashboard");
-    await cas.loginWith(page, "casadmin", "password");
-    await cas.waitForTimeout(page);
-
-    await cas.waitForTimeout(page);
+    let response = await cas.loginWith(page, "casadmin", "password");
+    await page.waitForTimeout(1000);
+    await cas.log(`${response.status()} ${response.statusText()}`);
+    await page.waitForTimeout(1000);
     await cas.screenshot(page);
-    const response = await cas.goto(page, "https://localhost:8443/cas/palantir/dashboard/services");
-
+    assert(response.status() === 200);
+    response = await cas.goto(page, "https://localhost:8443/cas/palantir/dashboard/services");
+    await cas.log(`${response.status()} ${response.statusText()}`);
     await cas.screenshot(page);
     assert(response.ok());
     await browser.close();

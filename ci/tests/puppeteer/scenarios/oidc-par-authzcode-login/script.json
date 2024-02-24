@@ -11,7 +11,6 @@
 
 
 
-    
     "--cas.authn.attribute-repository.stub.attributes.common-name=casuser",
     "--cas.authn.attribute-repository.stub.attributes.name=CAS",
     "--cas.authn.attribute-repository.stub.attributes.lastname=Apereo",

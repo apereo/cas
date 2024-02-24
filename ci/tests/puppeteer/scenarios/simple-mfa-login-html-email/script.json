@@ -9,7 +9,6 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
 
-    
     "--cas.authn.attribute-repository.stub.attributes.lastName=Apereo",
     "--cas.authn.attribute-repository.stub.attributes.firstName=CAS",
     "--cas.authn.attribute-repository.stub.attributes.phone=13477464523",

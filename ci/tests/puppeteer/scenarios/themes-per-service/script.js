@@ -7,7 +7,7 @@ const cas = require("../../cas.js");
     const page = await cas.newPage(browser);
     const service = "https://localhost:9859/anything/cas";
     await cas.gotoLogin(page, service);
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(1000);
 
     await cas.assertVisibility(page, "#twitter-link");
     await cas.assertVisibility(page, "#youtube-link");
@@ -19,7 +19,7 @@ const cas = require("../../cas.js");
 
     await cas.log("Logging out...");
     await cas.goto(page, `https://localhost:8443/cas/logout?service=${service}`);
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(1000);
 
     await cas.assertVisibility(page, "#twitter-link");
     await cas.assertVisibility(page, "#youtube-link");
@@ -27,7 +27,7 @@ const cas = require("../../cas.js");
     await cas.assertVisibility(page, "#logoutButton");
     await cas.submitForm(page, "#fm1");
 
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(1000);
     const url = await page.url();
     await cas.logPage(page);
     assert(url.toString().startsWith("https://localhost:8443/cas/logout"));

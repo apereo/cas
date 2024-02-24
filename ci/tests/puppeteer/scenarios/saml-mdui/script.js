@@ -18,13 +18,13 @@ async function runTestsFor(page, entityId, hasInfoUrl = true) {
     const service = encodeURIComponent(`https://apereo.github.io?entityId=${entityId}`);
     await cas.log(`Using service ${service}`);
     await cas.gotoLogin(page, service);
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(1000);
     await verify(page, hasInfoUrl);
 
     const url = `https://localhost:8443/cas/login?entityId=${encodeURIComponent(entityId)}&service=https://apereo.github.io`;
     await cas.log(`Using URL ${url}`);
     await cas.goto(page, url);
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(1000);
     await verify(page, hasInfoUrl);
 }
 

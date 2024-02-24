@@ -12,7 +12,7 @@ const cas = require("../../cas.js");
     await cas.gotoLogin(page);
     await cas.loginWith(page);
     await cas.goto(page, "https://localhost:8443/cas/actuator/health");
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(1000);
     await browser.close();
     
     await cas.doGet("https://localhost:8443/cas/actuator/health",
@@ -23,6 +23,7 @@ const cas = require("../../cas.js");
 
             assert(res.data.components.mongo.status !== undefined);
             assert(res.data.components.mongo.details !== undefined);
+
 
             let details = res.data.components.mongo.details["MongoDbHealthIndicator-ticket-registry"];
             assert(details.name === "MongoDbHealthIndicator-ticket-registry");
@@ -38,6 +39,7 @@ const cas = require("../../cas.js");
         }, async (error) => {
             throw error;
         }, { "Content-Type": "application/json" });
+
 
     await cas.logg("Querying registry for all ticket-granting tickets");
     await cas.doGet(`${baseUrl}/ticketRegistry/query?prefix=TGT&count=10`, async (res) => {

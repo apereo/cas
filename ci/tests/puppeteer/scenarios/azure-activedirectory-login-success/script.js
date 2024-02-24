@@ -10,7 +10,7 @@ const assert = require("assert");
     await cas.gotoLogin(page, service);
     await cas.loginWith(page, "castest", process.env.AZURE_AD_USER_PASSWORD);
     const ticket = await cas.assertTicketParameter(page);
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(1000);
     const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
     const json = JSON.parse(body);
     // console.dir(json, {depth: null, colors: true});

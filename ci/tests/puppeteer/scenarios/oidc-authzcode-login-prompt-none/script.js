@@ -25,7 +25,7 @@ async function login(page, redirectUrl, params) {
     const redirectUrl = "https://localhost:9859/post";
     await login(page, redirectUrl, "response_mode=form_post");
     await cas.logPage(page);
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(2000);
     await cas.log("Waiting for page content body to render...");
     await page.waitForSelector("body pre", { visible: true });
     let content = await cas.textContent(page, "body pre");
@@ -41,7 +41,7 @@ async function login(page, redirectUrl, params) {
 
     await login(page, redirectUrl, "response_mode=form_post");
     await cas.logPage(page);
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(2000);
     await cas.log("Waiting for page content body to render...");
     await page.waitForSelector("body pre", { visible: true });
 

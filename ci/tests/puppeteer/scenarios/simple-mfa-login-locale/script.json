@@ -5,10 +5,11 @@
   },
   "properties": [
 
+
+
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
 
-    
     "--cas.jdbc.show-sql=true",
     "--cas.authn.mfa.trusted.jpa.ddl-auto=create-drop",
     "--cas.authn.mfa.trusted.jpa.user=postgres",

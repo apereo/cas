@@ -9,8 +9,6 @@
     "--cas.http-client.host-name-verifier=none",
 
 
-
-
     "--cas.authn.attribute-repository.core.expiration-time=0",
 
     "--cas.authn.attribute-repository.stub.attributes.firstname=CAS",

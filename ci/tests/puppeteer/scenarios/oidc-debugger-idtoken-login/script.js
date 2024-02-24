@@ -17,8 +17,8 @@ const assert = require("assert");
     await cas.goto(page, url);
     await cas.loginWith(page);
     await cas.click(page, "#allow");
-    await cas.waitForNavigation(page);
-    await cas.waitForTimeout(page);
+    await page.waitForNavigation();
+    await page.waitForTimeout(3000);
     await cas.logPage(page);
     await cas.screenshot(page);
 
@@ -33,4 +33,5 @@ const assert = require("assert");
     assert(!fragment.includes("access_token="));
     await browser.close();
 })();
+
 

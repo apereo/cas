@@ -16,8 +16,9 @@ const path = require("path");
         await cas.log(`Navigating to ${url}`);
         await cas.goto(page, url);
         await cas.screenshot(page);
+        await page.waitForTimeout(2000);
         await cas.loginWith(page);
-        await cas.waitForTimeout(page, 5000);
+        await cas.waitForElement(page, "body");
         const content = JSON.parse(await cas.innerText(page, "body"));
         await cas.log(content);
         assert(content.form.SAMLResponse !== undefined);
@@ -26,4 +27,5 @@ const path = require("path");
     await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
     await browser.close();
 })();
+
 

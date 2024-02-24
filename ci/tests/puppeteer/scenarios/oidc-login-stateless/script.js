@@ -8,9 +8,9 @@ async function verifyNormalFlows(page) {
 
     await cas.goto(page, url);
     await cas.logPage(page);
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(1000);
     await cas.loginWith(page);
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(3000);
 
     const code = await cas.assertParameter(page, "code");
     await cas.log(`OAuth code ${code}`);
@@ -34,6 +34,7 @@ async function verifyNormalFlows(page) {
     });
     assert(accessToken !== undefined);
     assert(refreshToken !== undefined);
+
 
     const value = "client:secret";
     const buff = Buffer.alloc(value.length, value);
@@ -102,9 +103,9 @@ async function verifyJwtAccessToken(page) {
 
     await cas.goto(page, url);
     await cas.logPage(page);
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(1000);
     await cas.loginWith(page);
-    await cas.waitForTimeout(page, 4000);
+    await page.waitForTimeout(4000);
 
     const code = await cas.assertParameter(page, "code");
     await cas.log(`OAuth code ${code}`);
@@ -127,6 +128,7 @@ async function verifyJwtAccessToken(page) {
         });
     assert(accessToken !== undefined);
     assert(refreshToken !== undefined);
+
 
     await cas.doGet("https://localhost:8443/cas/oidc/jwks",
         (res) => {
@@ -157,12 +159,12 @@ async function verifyJwtAccessToken(page) {
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     try {
-        let context = await browser.createBrowserContext();
+        let context = await browser.createIncognitoBrowserContext();
         let page = await cas.newPage(context);
         await verifyNormalFlows(page);
         await context.close();
 
-        context = await browser.createBrowserContext();
+        context = await browser.createIncognitoBrowserContext();
         page = await cas.newPage(context);
         await verifyJwtAccessToken(page);
         await context.close();

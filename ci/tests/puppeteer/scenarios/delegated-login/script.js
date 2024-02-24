@@ -5,7 +5,7 @@ const cas = require("../../cas.js");
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.gotoLogin(page);
-    await cas.waitForTimeout(page, 5000);
+    await page.waitForTimeout(5000);
 
     await cas.assertVisibility(page, "#loginProviders");
     await cas.assertVisibility(page, "li #TwitterClient");
@@ -13,7 +13,7 @@ const cas = require("../../cas.js");
     await cas.assertVisibility(page, "li #GitHubClient");
 
     await cas.goto(page, "https://localhost:8443/cas/login?error=Fail&error_description=Error&error_code=400&error_reason=Reason");
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(1000);
     await cas.assertInnerText(page, "#content div h2", "Unauthorized Access");
     await cas.assertTextContentStartsWith(page, "#content div p", "Either the authentication request was rejected/cancelled");
 
