@@ -3,7 +3,7 @@
 
   "properties": [
     "--CasFeatureModule.AccountManagement.enabled=true",
-
+    
 
     
     "--cas.server.name=https://localhost:8443",

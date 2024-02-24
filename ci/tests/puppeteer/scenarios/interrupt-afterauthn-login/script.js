@@ -23,6 +23,6 @@ const cas = require("../../cas.js");
     await cas.assertInvisibility(page, "#cancel");
     await cas.submitForm(page, "#fm1");
     await cas.assertCookie(page);
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(1000);
     await browser.close();
 })();

@@ -10,18 +10,19 @@ const assert = require("assert");
 
     await cas.goto(page, url);
     await cas.logPage(page);
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(1000);
     await cas.loginWith(page);
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(1000);
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
-        await cas.waitForNavigation(page);
+        await page.waitForNavigation();
     }
 
     const code = await cas.assertParameter(page, "code");
     await cas.log(`Current code is ${code}`);
     const accessTokenUrl = "https://localhost:8443/cas/oidc/token?grant_type=authorization_code"
         + `&client_id=client&client_secret=secret&redirect_uri=${redirectUri}&code=${code}`;
+
 
     const payload = await cas.doPost(accessTokenUrl, "", {
         "Content-Type": "application/json"

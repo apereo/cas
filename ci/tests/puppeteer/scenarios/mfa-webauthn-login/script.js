@@ -7,7 +7,7 @@ const cas = require("../../cas.js");
     const page = await cas.newPage(browser);
     await cas.gotoLoginWithAuthnMethod(page, undefined, "mfa-webauthn");
     await cas.loginWith(page);
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(3000);
     await cas.screenshot(page);
     await cas.assertTextContent(page, "#status", "Login with FIDO2-enabled Device");
 
@@ -26,7 +26,7 @@ const cas = require("../../cas.js");
         }
     });
     await page.click("#authnButton");
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(1000);
 
     const urls = [
         "https://localhost:8443/cas/webauthn/authenticate",
@@ -51,7 +51,7 @@ const cas = require("../../cas.js");
     for (let i = 0; i < endpoints.length; i++) {
         const url = baseUrl + endpoints[i];
         const response = await cas.goto(page, url);
-
+        await cas.log(`${response.status()} ${response.statusText()}`);
         assert(response.ok());
     }
 

@@ -7,15 +7,15 @@ async function testService(page, clientId, oidc = true) {
     const redirectUrl = "https://localhost:9859/anything/cas";
     const url = `https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=${clientId}&scope=${encodeURIComponent("openid profile")}&redirect_uri=${redirectUrl}`;
     await cas.goto(page, url);
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(1000);
     await cas.loginWith(page);
+    await page.waitForTimeout(1000);
 
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
-        await cas.waitForNavigation(page);
+        await page.waitForNavigation();
     }
 
-    await cas.waitForTimeout(page);
     const code = await cas.assertParameter(page, "code");
     await cas.log(`Current code is ${code}`);
     const accessTokenUrl = `https://localhost:8443/cas/oidc/token?grant_type=authorization_code&client_id=${clientId}&client_secret=secret&redirect_uri=${redirectUrl}&code=${code}`;
@@ -44,7 +44,7 @@ async function testService(page, clientId, oidc = true) {
     }
     
     await cas.goto(page, "https://localhost:8443/cas/logout");
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(1000);
     await cas.log("=========================================================");
 }
 

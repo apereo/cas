@@ -19,8 +19,6 @@
 
     "--spring.mail.host=localhost",
     "--spring.mail.port=25000",
-
-
     "--logging.level.org.apereo=debug",
 
     "--cas.authn.mfa.simple.mail.html=false",

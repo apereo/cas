@@ -5,7 +5,7 @@ const cas = require("../../cas.js");
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.gotoLogin(page);
-    // await cas.waitForTimeout(page, 2000)
+    // await page.waitForTimeout(2000)
     await page.$eval("input[name=_eventId]", (el) => el.value = "unknown");
     await cas.loginWith(page);
     await cas.assertInnerText(page, "#content h2", "Invalid/Unknown Webflow Configuration");

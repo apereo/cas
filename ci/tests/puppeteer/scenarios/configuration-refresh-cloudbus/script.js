@@ -16,7 +16,7 @@ const path = require("path");
         const page = await cas.newPage(browser);
         await cas.log("Updating configuration and waiting for changes to reload...");
         await updateConfig(configFile, configFilePath, "casrefresh::p@$$word");
-        await cas.waitForTimeout(page, 5000);
+        await page.waitForTimeout(5000);
         await cas.refreshBusContext();
         await cas.log("Attempting to login with new updated credentials...");
         await cas.goto(page, "https://localhost:8444/cas/logout");

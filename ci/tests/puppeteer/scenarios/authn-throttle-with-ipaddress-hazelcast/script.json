@@ -1,9 +1,7 @@
 {
   "dependencies": "throttle,throttle-hazelcast",
-  "properties": [
-    "--cas.server.name=https://localhost:8443",
-    "--cas.server.prefix=${cas.server.name}/cas",
 
+  "properties": [
 
     
     "--cas.authn.throttle.failure.threshold=2",

@@ -8,20 +8,21 @@ const cas = require("../../cas.js");
     const page = await cas.newPage(browser);
     const service = "https://google.com";
     await cas.gotoLogin(page, service);
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(1000);
     await cas.loginWith(page);
-    await cas.waitForTimeout(page, 500);
+    await page.waitForTimeout(500);
 
     await cas.log("Select mfa-gauth");
     await cas.assertVisibility(page, "#mfa-gauth");
 
     await cas.submitForm(page, "#mfa-gauth > form[name=fm-mfa-gauth]");
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(1000);
 
     await cas.log(`Using scratch code ${scratch} to login...`);
     await cas.type(page,"#token", scratch);
     await cas.pressEnter(page);
-    await cas.waitForTimeout(page);
+    await page.waitForNavigation();
+    await page.waitForTimeout(1000);
 
     const ticket = await cas.assertTicketParameter(page);
 

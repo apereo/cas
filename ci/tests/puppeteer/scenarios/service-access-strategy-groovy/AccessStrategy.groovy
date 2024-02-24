@@ -2,7 +2,7 @@ import org.apereo.cas.services.*
 import org.apereo.cas.authentication.principal.*
 
 def isServiceAccessAllowed(RegisteredService registeredService, Service service) {
-    return service.id.contains("/allowed")
+    return service.id.endsWith("allowed")
 }
 
 def isServiceAccessAllowedForSso(RegisteredService registeredService) {
@@ -10,7 +10,7 @@ def isServiceAccessAllowedForSso(RegisteredService registeredService) {
 }
 
 def authorizeRequest(RegisteredServiceAccessStrategyRequest request) {
-    println "authorizing request for ${request.service.id}"
+    println "authorizing request for ${request.service}"
     def url = request.service.attributes["jakarta.servlet.http.HttpServletRequest.requestURL"][0] as String
     println "Request URL is ${url}"
     return url.endsWith("/logout")

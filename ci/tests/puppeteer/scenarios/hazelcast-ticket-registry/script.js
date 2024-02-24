@@ -10,7 +10,7 @@ const cas = require("../../cas.js");
     await cas.assertTicketParameter(page);
     
     await cas.goto(page, "https://localhost:8443/cas/actuator/health");
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(1000);
     await cas.doGet("https://localhost:8443/cas/actuator/health",
         (res) => {
             assert(res.data.components.hazelcast !== undefined);
@@ -30,6 +30,7 @@ const cas = require("../../cas.js");
         }, (error) => {
             throw error;
         }, { "Content-Type": "application/json" });
+
 
     await cas.goto(page, "https://localhost:8444/cas/login");
     await cas.assertCookie(page);

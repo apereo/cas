@@ -9,6 +9,7 @@ const request = require("request");
     const args = process.argv.slice(2);
     const config = JSON.parse(fs.readFileSync(args[0]));
 
+
     await cas.log(`Certificate file: ${config.trustStoreCertificateFile}`);
     await cas.log(`Private key file: ${config.trustStorePrivateKeyFile}`);
 
@@ -59,14 +60,14 @@ const request = require("request");
     const redirectUri = "https://localhost:9859/anything/oidc";
     const url = `https://localhost:8443/cas/oidc/oidcAuthorize?client_id=client&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent("openid profile")}&response_type=code&nonce=vn4qulthnx`;
     await cas.goto(page, url);
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(1000);
     await cas.screenshot(page);
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(1000);
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
-        await cas.waitForNavigation(page);
+        await page.waitForNavigation();
     }
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(1000);
     await cas.logPage(page);
     await cas.assertPageUrlStartsWith(page, "https://localhost:9859/anything/oidc");
     const code = await cas.assertParameter(page, "code");

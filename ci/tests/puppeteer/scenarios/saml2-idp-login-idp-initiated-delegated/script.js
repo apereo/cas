@@ -10,7 +10,7 @@ async function startFlow(context, clientName) {
     url += `?providerId=${entityId}&CName=${clientName}`;
     await cas.log(`Navigating to ${url} for client ${clientName}`);
     await cas.goto(page, url);
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(3000);
     await cas.loginWith(page);
     await cas.logPage(page);
     await cas.screenshot(page);
@@ -27,7 +27,7 @@ async function startFlow(context, clientName) {
     assert(subjectConfirmation["saml2:SubjectConfirmationData"][0]["$"]["Address"] === "127.0.0.1");
 
     await cas.gotoLogin(page, "https://apereo.github.io");
-    await cas.waitForTimeout(page, 6000);
+    await page.waitForTimeout(6000);
     await cas.logPage(page);
     await cas.assertTicketParameter(page);
 }
@@ -36,11 +36,12 @@ async function startFlow(context, clientName) {
     const browser = await puppeteer.launch(cas.browserOptions());
     const providers = ["CasClient", "CasClientFancy", "CasClientNone"];
     for (const provider of providers) {
-        const context = await browser.createBrowserContext();
+        const context = await browser.createIncognitoBrowserContext();
         await startFlow(context, provider);
         await context.close();
     }
     await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
     await browser.close();
 })();
+
 

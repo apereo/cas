@@ -6,10 +6,10 @@ const cas = require("../../cas.js");
     const page = await cas.newPage(browser);
     await cas.gotoLogin(page);
 
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(2000);
     await cas.assertTextContent(page, "#accountSignUpLink", "Sign Up");
     await cas.submitForm(page, "#accountMgmtSignupForm");
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(1000);
 
     await cas.assertInnerText(page, "#content h2", "Account Registration");
 
@@ -19,8 +19,8 @@ const cas = require("../../cas.js");
     await cas.type(page,"#email", "cas@example.org");
     await cas.type(page,"#phone", "+1 347 745 4321");
     await cas.click(page, "#submit");
-    await cas.waitForNavigation(page);
-    await cas.waitForTimeout(page);
+    await page.waitForNavigation();
+    await page.waitForTimeout(1000);
     await cas.assertTextContent(page, "div .banner-danger p", "reCAPTCHA’s validation failed.");
     await browser.close();
 })();

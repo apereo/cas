@@ -14,7 +14,7 @@ const assert = require("assert");
     await cas.assertTextContent(page, "#interruptMessage", "We interrupted your login");
     await cas.assertCookie(page);
     await cas.assertVisibility(page, "#interruptLinks");
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(3000);
     const url = `${page.url()}`;
     await cas.logPage(page);
     assert(url.includes("https://www.google.com"));

@@ -10,16 +10,16 @@ const cas = require("../../cas.js");
     await cas.assertTicketParameter(page);
     
     await cas.gotoLogin(page);
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(1000);
     await cas.assertCookie(page);
 
     await cas.gotoLogin(page, "https://example.com&renew=true");
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(1000);
 
     await cas.assertVisibility(page, "#existingSsoMsg");
 
     await cas.gotoLogin(page);
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(1000);
     await cas.assertCookie(page);
     
     await browser.close();

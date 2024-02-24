@@ -11,7 +11,7 @@ async function unsolicited(page, target) {
     url += `&target=${target}`;
 
     await cas.goto(page, url);
-    await cas.waitForTimeout(page, 8000);
+    await page.waitForTimeout(8000);
     const result = await page.url();
     await cas.log(`Page url: ${result}`);
     assert(result.includes(target));
@@ -21,20 +21,20 @@ async function unsolicited(page, target) {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     const response = await cas.goto(page, "https://localhost:8443/cas/idp/metadata");
-
+    await cas.log(`${response.status()} ${response.statusText()}`);
     assert(response.ok());
 
     await cas.gotoLogin(page);
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(2000);
 
     await cas.loginWith(page);
-    await cas.waitForTimeout(page, 5000);
+    await page.waitForTimeout(5000);
     
     await unsolicited(page, "https://apereo.github.io");
-    await cas.waitForTimeout(page, 5000);
+    await page.waitForTimeout(5000);
 
     await unsolicited(page, "https://github.com/apereo/cas");
-    await cas.waitForTimeout(page, 4000);
+    await page.waitForTimeout(4000);
 
     await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
     await browser.close();

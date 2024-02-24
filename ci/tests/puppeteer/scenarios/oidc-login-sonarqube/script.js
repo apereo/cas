@@ -6,7 +6,7 @@ const cas = require("../../cas.js");
     const page = await cas.newPage(browser);
 
     await cas.goto(page, "https://host.k3d.internal/sessions/new?return_to=%2F");
-    await cas.waitForTimeout(page, 10000);
+    await page.waitForTimeout(10000);
     await cas.assertPageTitle(page, "SonarQube");
     await cas.assertInnerText(page, "h1.login-title","Log in to SonarQube");
     //await cas.sleep(5000);
@@ -16,7 +16,7 @@ const cas = require("../../cas.js");
     //await cas.sleep(5000);
     // hit strapi endpoint that triggers CAS login to get JWT
     //await cas.goto(page, "https://host.k3d.internal");
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(3000);
     await cas.assertInnerTextContains(page, "ul.global-navbar-menu","Projects");
     await browser.close();
 })();

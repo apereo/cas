@@ -7,7 +7,7 @@ const cas = require("../../cas.js");
     const page = await cas.newPage(browser);
     await cas.goto(page, "https://127.0.0.1:8443/cas/login?authn_method=mfa-inwebo");
     await cas.loginWith(page, "testcas", "password");
-    await cas.waitForTimeout(page, 5000);
+    await page.waitForTimeout(5000);
     await cas.screenshot(page);
     await cas.log("Asking for the PIN code");
     await cas.assertVisibility(page, "#code");

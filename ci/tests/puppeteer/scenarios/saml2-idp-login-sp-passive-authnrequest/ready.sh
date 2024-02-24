@@ -3,9 +3,6 @@ echo "Running SAML server..."
 
 SCENARIO="saml2-idp-login-sp-passive-authnrequest"
 
-echo "Accessing CAS SAML2 identity provider metadata"
-curl -k -I https://localhost:8443/cas/idp/metadata
-
 metadataDirectory="${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md"
 
 cert=$(cat "${metadataDirectory}"/idp-signing.crt | sed 's/-----BEGIN CERTIFICATE-----//g' | sed 's/-----END CERTIFICATE-----//g')

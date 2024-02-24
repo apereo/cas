@@ -30,6 +30,7 @@ async function verifyServices() {
     }
 }
 
+
 async function importServices() {
     const template = path.join(__dirname, "registered-service.json");
     const contents = fs.readFileSync(template, "utf8");

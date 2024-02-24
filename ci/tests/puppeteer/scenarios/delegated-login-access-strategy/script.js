@@ -7,13 +7,13 @@ const cas = require("../../cas.js");
     const page = await cas.newPage(browser);
     
     await cas.gotoLogin(page, "https://localhost:9859/anything/cas");
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(1000);
 
     const loginProviders = await page.$("#loginProviders");
     assert(loginProviders === null);
 
     await cas.gotoLogin(page, "https://localhost:9859/anything/sample");
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(1000);
 
     await cas.assertVisibility(page, "li #CASServerOne");
     await cas.assertVisibility(page, "li #CASServerTwo");
@@ -38,4 +38,5 @@ const cas = require("../../cas.js");
     
     await browser.close();
 })();
+
 

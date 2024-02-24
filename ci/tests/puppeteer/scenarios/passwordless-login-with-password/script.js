@@ -14,24 +14,26 @@ const cas = require("../../cas.js");
 
     await cas.type(page,"#username", "casuser");
     await cas.pressEnter(page);
+    await page.waitForNavigation();
 
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(2000);
 
     await cas.assertInvisibility(page, "#username");
     await cas.assertVisibility(page, "#password");
 
     await cas.type(page,"#password", "Mellon");
     await cas.pressEnter(page);
+    await page.waitForNavigation();
 
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(2000);
 
     await cas.assertCookie(page);
     await cas.assertInnerTextStartsWith(page, "#content div p", "You, casuser, have successfully logged in");
 
     await cas.click(page, "#auth-tab");
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(1000);
     await cas.type(page, "#attribute-tab-1 input[type=search]", "surrogate");
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(1000);
     await cas.screenshot(page);
     
     const surrogateEnabled = await page.$("#surrogateEnabled");
@@ -40,7 +42,7 @@ const cas = require("../../cas.js");
     assert(surrogatePrincipal === null);
     const surrogateUser = await page.$("#surrogateUser");
     assert(surrogateUser === null);
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(1000);
 
     await browser.close();
 })();

@@ -7,25 +7,28 @@ async function startAuthFlow(page, username) {
     await cas.gotoLogout(page);
     await cas.log(`Starting authentication flow for ${username}`);
     await cas.gotoLogin(page);
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(1000);
     const pswd = await page.$("#password");
     assert(pswd === null);
     await cas.type(page, "#username", username);
     await cas.pressEnter(page);
-    await cas.waitForTimeout(page, 5000);
+    await page.waitForNavigation();
+    await page.waitForTimeout(1000);
     const url = await page.url();
     await cas.logPage(page);
     assert(url.startsWith("https://localhost:8444"));
+    await page.waitForTimeout(1000);
+
     await cas.loginWith(page);
-    await cas.waitForTimeout(page, 5000);
+    await page.waitForTimeout(5000);
     await cas.log(`Page url: ${await page.url()}`);
     await cas.assertCookie(page);
     await cas.assertInnerTextStartsWith(page, "#content div p", "You, casuser, have successfully logged in");
 
     await cas.click(page, "#auth-tab");
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(1000);
     await cas.type(page, "#attribute-tab-1 input[type=search]", "surrogate");
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(1000);
     await cas.screenshot(page);
 
     const surrogateEnabled = await page.$("#surrogateEnabled");
@@ -34,7 +37,7 @@ async function startAuthFlow(page, username) {
     assert(surrogatePrincipal === null);
     const surrogateUser = await page.$("#surrogateUser");
     assert(surrogateUser === null);
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(1000);
 }
 
 (async () => {

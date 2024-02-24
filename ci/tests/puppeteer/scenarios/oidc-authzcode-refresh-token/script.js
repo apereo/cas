@@ -7,18 +7,19 @@ async function fetchRefreshToken(page, clientId, redirectUrl) {
 
     await cas.log(`Navigating to ${url}`);
     await cas.goto(page, url);
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(1000);
     await cas.loginWith(page);
+    await page.waitForTimeout(1000);
+
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
-        await cas.waitForNavigation(page);
+        await page.waitForNavigation();
     }
 
-    await cas.waitForTimeout(page);
     const code = await cas.assertParameter(page, "code");
     await cas.log(`OAuth code ${code}`);
 
-    const accessTokenParams = `scope=openid&client_id=${clientId}&client_secret=secret&grant_type=authorization_code&redirect_uri=${redirectUrl}`;
+    const accessTokenParams = `client_id=${clientId}&client_secret=secret&grant_type=authorization_code&redirect_uri=${redirectUrl}`;
     let accessToken = null;
     let refreshToken = null;
 
@@ -108,7 +109,7 @@ async function exchangeToken(refreshToken, clientId, successHandler, errorHandle
         });
 
     await cas.log("Let's wait 5 seconds for the TGT to expire, RTs should be still alive");
-    await cas.waitForTimeout(page, 5000);
+    await page.waitForTimeout(5000);
 
     await exchangeToken(refreshToken1, "client",
         (res) => {

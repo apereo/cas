@@ -8,16 +8,16 @@ const assert = require("assert");
     const page = await cas.newPage(browser);
 
     await cas.gotoLogin(page);
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(2000);
 
     await cas.assertVisibility(page, "#loginProviders");
     await cas.assertVisibility(page, "li #SAML2Client");
     
     await cas.click(page, "li #SAML2Client");
-    await cas.waitForNavigation(page);
+    await page.waitForNavigation();
 
     await cas.loginWith(page, "user1", "password");
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(2000);
 
     await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
@@ -26,14 +26,15 @@ const assert = require("assert");
 
     await cas.log("Testing auto-redirection via configured cookie...");
     await cas.gotoLogout(page);
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(3000);
     await cas.gotoLogin(page);
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(2000);
     await cas.logPage(page);
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(3000);
     const url = await page.url();
     assert(url.startsWith("http://localhost:9443/simplesaml/"));
     await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
     await browser.close();
 })();
+
 

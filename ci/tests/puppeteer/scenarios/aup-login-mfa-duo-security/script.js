@@ -8,7 +8,7 @@ const cas = require("../../cas.js");
     await cas.gotoLogin(page, "https://apereo.github.io");
 
     await cas.loginWith(page, "duobypass", "Mellon");
-    await cas.waitForTimeout(page, 8000);
+    await page.waitForTimeout(8000);
     
     await cas.assertTextContent(page, "#main-content #login #fm1 h3", "Acceptable Usage Policy");
 
@@ -16,15 +16,15 @@ const cas = require("../../cas.js");
     await cas.assertVisibility(page, "button[name=cancel]");
 
     await cas.click(page, "#aupSubmit");
-    await cas.waitForNavigation(page);
-    await cas.waitForTimeout(page);
+    await page.waitForNavigation();
+    await page.waitForTimeout(2000);
 
     await cas.assertTicketParameter(page);
     const result = new URL(page.url());
     assert(result.host === "apereo.github.io");
 
     await cas.gotoLogin(page);
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(2000);
     await cas.assertCookie(page);
     
     await browser.close();

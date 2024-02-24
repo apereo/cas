@@ -11,13 +11,13 @@ const jose = require("jose");
     const url = `https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=client&scope=${encodeURIComponent("openid profile")}&redirect_uri=${redirectUrl}`;
 
     await cas.goto(page, url);
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(1000);
     await cas.loginWith(page);
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(1000);
 
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
-        await cas.waitForNavigation(page);
+        await page.waitForNavigation();
     }
 
     const dt = new Date();
@@ -70,6 +70,7 @@ const jose = require("jose");
     }, (error) => {
         throw `Operation failed: ${error}`;
     });
+
 
     const sha256 = await cas.sha256(accessToken);
     const base64Token = await cas.base64Url(sha256);

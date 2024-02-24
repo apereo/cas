@@ -29,7 +29,7 @@ async function getProxyTicket(service, ticket) {
 
     await cas.gotoLogin(page, service);
     await cas.loginWith(page);
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(3000);
 
     let ticket = await cas.assertTicketParameter(page);
     let body = await proxyValidateTicket(service, ticket);

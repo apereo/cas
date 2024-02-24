@@ -9,17 +9,17 @@ const assert = require("assert");
         const page = await cas.newPage(browser);
         const service = "https://localhost:9859/anything/cas";
         await cas.gotoLogin(page, service);
-        await cas.waitForTimeout(page);
+        await page.waitForTimeout(3000);
         await cas.assertVisibility(page, "#loginProviders");
         await cas.assertVisibility(page, "li #SAML2Client");
 
         await cas.click(page, "li #SAML2Client");
-        await cas.waitForNavigation(page);
-        await cas.waitForTimeout(page, 8000);
+        await page.waitForNavigation();
+        await page.waitForTimeout(8000);
         await cas.screenshot(page);
         await page.waitForSelector("#username", {visible: true});
         await cas.loginWith(page);
-        await cas.waitForTimeout(page, 8000);
+        await page.waitForTimeout(8000);
         await cas.screenshot(page);
         await cas.log("Checking for page URL...");
         await cas.logPage(page);
@@ -40,4 +40,5 @@ const assert = require("assert");
         await browser.close();
     }
 })();
+
 

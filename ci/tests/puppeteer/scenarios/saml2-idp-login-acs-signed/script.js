@@ -12,21 +12,23 @@ async function cleanUp() {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     const response = await cas.goto(page, "https://localhost:8443/cas/idp/metadata");
-
+    await cas.log(`${response.status()} ${response.statusText()}`);
     assert(response.ok());
     
     await cas.waitFor("https://localhost:9876/sp/saml/status", async () => {
         await cas.log("Trying without an exising SSO session...");
         await cas.goto(page, "https://localhost:9876/sp");
-        await cas.waitForTimeout(page);
-        await page.waitForSelector("#idpForm");
+        await page.waitForTimeout(3000);
+        await page.waitForSelector("#idpForm", {visible: true});
         await cas.submitForm(page, "#idpForm");
-        await cas.waitForTimeout(page);
-        await page.waitForSelector("#username");
+        await page.waitForTimeout(2000);
+
+        await page.waitForSelector("#username", {visible: true});
         await cas.loginWith(page);
-        await cas.waitForTimeout(page, 5000);
+        await page.waitForResponse((response) => response.status() === 200);
+        await page.waitForTimeout(3000);
         await cas.logPage(page);
-        await page.waitForSelector("body pre");
+        await page.waitForSelector("body pre", { visible: true });
         let content = await cas.textContent(page, "body pre");
         let payload = JSON.parse(content);
         await cas.log(payload);
@@ -35,14 +37,14 @@ async function cleanUp() {
         await cas.gotoLogout(page);
         await cas.gotoLogin(page);
         await cas.loginWith(page);
-        await cas.waitForTimeout(page, 4000);
         await cas.assertCookie(page);
         await cas.goto(page, "https://localhost:9876/sp");
-        await cas.waitForTimeout(page, 5000);
-        await page.waitForSelector("#idpForm");
+        await page.waitForTimeout(3000);
+        await page.waitForSelector("#idpForm", {visible: true});
         await cas.submitForm(page, "#idpForm");
-        await cas.waitForTimeout(page, 5000);
+        await page.waitForTimeout(3000);
         await cas.logPage(page);
+        await page.waitForSelector("body pre", { visible: true });
         content = await cas.textContent(page, "body pre");
         payload = JSON.parse(content);
         await cas.log(payload);

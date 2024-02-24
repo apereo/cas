@@ -18,6 +18,7 @@ const cas = require("../../cas.js");
         throw `Operation failed: ${error}`;
     });
 
+
     const resourceUrl = "https://localhost:8443/cas/oauth2.0/resourceSet";
     const resourceObject = {
         uri: "http://api.example.org/photos/**",
@@ -90,6 +91,7 @@ const cas = require("../../cas.js");
         }, 200, policyRequest));
     await cas.log(result);
 
+
     policyObject = {
         id: 1234,
         permissions: [
@@ -115,6 +117,7 @@ const cas = require("../../cas.js");
         }, 200, policyRequest));
     await cas.log(result);
     await cas.log(JSON.stringify(result.entity.policies));
+
 
     await cas.log("Deleting policy");
     result = JSON.parse(await cas.doRequest(`${policyUrl}/1234`, "DELETE",

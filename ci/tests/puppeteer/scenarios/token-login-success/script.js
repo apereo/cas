@@ -6,7 +6,7 @@ async function loginWithToken(page, service, token) {
     await cas.gotoLogout(page);
     await cas.gotoLogin(page, service);
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}&token=${token}`);
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(1000);
     await cas.assertTicketParameter(page);
     await cas.gotoLogin(page);
     await cas.assertCookie(page);

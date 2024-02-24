@@ -11,7 +11,7 @@ async function cleanUp() {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     const response = await cas.goto(page, "https://localhost:8443/cas/idp/metadata");
-
+    await cas.log(`${response.status()} ${response.statusText()}`);
     assert(response.ok());
 
     await cas.waitFor("https://localhost:9876/sp/saml/status", async () => {
@@ -24,7 +24,7 @@ async function cleanUp() {
 
         await cas.log(`Navigating to ${url}`);
         await cas.goto(page, url);
-        await cas.waitForTimeout(page, 5000);
+        await page.waitForTimeout(5000);
 
         const resultUrl = await page.url();
         await cas.logg(`Page url: ${resultUrl}`);
@@ -34,7 +34,7 @@ async function cleanUp() {
         await cas.gotoLogin(page);
         await cas.assertCookie(page);
         await cas.assertInnerText(page, "#content div h2", "Log In Successful");
-        await cas.waitForTimeout(page);
+        await page.waitForTimeout(1000);
         
         await browser.close();
         await cleanUp();

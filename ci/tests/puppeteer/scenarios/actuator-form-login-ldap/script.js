@@ -1,4 +1,5 @@
 const puppeteer = require("puppeteer");
+const assert = require("assert");
 const cas = require("../../cas.js");
 
 (async () => {
@@ -12,9 +13,11 @@ const cas = require("../../cas.js");
     await cas.assertVisibility(page, "#username");
     await cas.assertVisibility(page, "#password");
 
-    await cas.loginWith(page, "actuator", "123456");
-    await cas.waitForTimeout(page);
+    const response = await cas.loginWith(page, "actuator", "123456");
+    await cas.log(`${response.status()} ${response.statusText()}`);
+    await page.waitForTimeout(1000);
     await cas.screenshot(page);
+    assert(response.status() === 200);
 
     await browser.close();
 })();

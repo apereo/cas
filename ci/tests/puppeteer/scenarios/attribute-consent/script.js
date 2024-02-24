@@ -24,7 +24,7 @@ const os = require("os");
 
     await cas.screenshot(page);
     await cas.click(page, "#optionsButton");
-    await cas.waitForTimeout(page);
+    await page.waitForTimeout(2000);
 
     await cas.screenshot(page);
     let opt = await page.$("#optionAlways");
@@ -45,14 +45,14 @@ const os = require("os");
     const confirm = await page.$("#confirm");
     assert(confirm !== null);
     await cas.click(page, "#confirm");
-    await cas.waitForNavigation(page);
+    await page.waitForNavigation();
     await cas.assertTicketParameter(page);
 
     const baseUrl = "https://localhost:8443/cas/actuator/attributeConsent";
     const url = `${baseUrl}/casuser`;
     await cas.log(`Trying ${url}`);
     const response = await cas.goto(page, url);
-
+    await cas.log(`${response.status()} ${response.statusText()}`);
     assert(response.ok());
 
     const template = path.join(__dirname, "consent-record.json");
@@ -80,4 +80,5 @@ const os = require("os");
 
     await browser.close();
 })();
+
 
