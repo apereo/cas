@@ -83,7 +83,6 @@ async function staleAuthenticationFlow(context) {
         await cas.log("=======================================");
     }
 
-
     const samlMetrics = [
         "resolve"
     ];
@@ -101,5 +100,4 @@ async function staleAuthenticationFlow(context) {
     await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
     await browser.close();
 })();
-
 

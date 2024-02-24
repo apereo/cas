@@ -44,7 +44,6 @@ const cas = require("../../cas.js");
     await browser.close();
 })();
 
-
 async function typePassword(page, pswd, confirm) {
     await cas.type(page,"#password", pswd);
     await cas.type(page,"#confirmedPassword", confirm);

@@ -60,4 +60,3 @@ async function assertFailure(page) {
     await page.waitForTimeout(1000);
 }
 
-

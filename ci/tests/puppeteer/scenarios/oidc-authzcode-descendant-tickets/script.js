@@ -102,7 +102,6 @@ async function refreshTokens(refreshToken, clientId, successHandler, errorHandle
             throw `Operation should fail but instead produced: ${error}`;
         });
 
-
     await cas.logg("Logging out, removing all tokens...");
     await cas.gotoLogout(page);
     let failed = false;

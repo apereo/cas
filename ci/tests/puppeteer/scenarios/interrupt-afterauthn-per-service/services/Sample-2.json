@@ -1,0 +1,17 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://localhost:9859/anything/2",
+  "id": 2,
+  "name": "Sample",
+  "webflowInterruptPolicy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceWebflowInterruptPolicy",
+    "enabled": true,
+    "groovyScript":
+      '''
+      groovy {
+        logger.info("Current attributes received are [{}]", attributes)
+        return username == 'testuser' && attributes.containsKey('family_name')
+      }
+      '''
+  }
+}
