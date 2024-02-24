@@ -222,12 +222,16 @@ exports.waitForNavigation = async (page, timeout = 10000) => {
     while (response === null && attempts < retryCount) {
         attempts += 1;
         try {
-            await this.log(`Waiting for page navigation with url ${await page.url()} with timeout ${timeout}`);
-            response = await page.waitForNavigation({
-                timeout: timeout,
-                waitUntil: "domcontentloaded"
-            });
-            await this.waitForTimeout(page, 1500);
+            if (page !== undefined) {
+                await this.log(`Waiting for page navigation with url ${await page.url()} with timeout ${timeout}`);
+                response = await page.waitForNavigation({
+                    timeout: timeout,
+                    waitUntil: "domcontentloaded"
+                });
+                await this.waitForTimeout(page, 1500);
+            } else {
+                await this.log("Page is undefined and cannot wait for navigation");
+            }
         } catch (err) {
             this.logr(err);
         }
@@ -245,10 +249,15 @@ exports.fetchGoogleAuthenticatorScratchCode = async (user = "casuser") => {
 };
 
 exports.isVisible = async (page, selector) => {
-    const element = await page.$(selector);
-    const result = (element !== null && await element.boundingBox() !== null);
-    await this.log(`Checking element visibility for ${selector} while on page ${page.url()}: ${result}`);
-    return result;
+    try {
+        const element = await page.$(selector);
+        const result = (element !== null && await element.boundingBox() !== null);
+        await this.log(`Checking element visibility for ${selector} while on page ${page.url()}: ${result}`);
+        return result;
+    } catch (e) {
+        this.logr(e);
+        return false;
+    }
 };
 
 exports.assertVisibility = async (page, selector) => {
