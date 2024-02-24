@@ -92,9 +92,7 @@ public abstract class BaseDuoSecurityTests {
     @SpringBootConfiguration
     @Import({
         CasMultifactorAuthnTrustAutoConfiguration.class,
-
         CasDuoSecurityAutoConfiguration.class,
-
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
         CasCoreWebflowAutoConfiguration.class,

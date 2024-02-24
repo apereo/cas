@@ -66,6 +66,7 @@ class DefaultDuoSecurityAdminApiServiceTests {
             webServer.responseBodySupplier(() -> new ClassPathResource("duoAdminApiResponse-user.json"));
             val userAccount = duoSecurityAdminApiService.modifyDuoSecurityUserAccount(new DuoSecurityUserAccount("casuser"));
             assertFalse(userAccount.isEmpty());
+            assertNotNull(userAccount.get().getPhone());
         }
     }
 

@@ -69,4 +69,7 @@ public class PasswordlessUserAccount implements Serializable {
 
     @JsonProperty("requestPassword")
     private boolean requestPassword;
+
+    @JsonProperty("source")
+    private String source;
 }

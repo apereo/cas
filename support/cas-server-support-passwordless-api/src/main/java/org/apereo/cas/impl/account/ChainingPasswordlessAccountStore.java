@@ -18,7 +18,7 @@ public class ChainingPasswordlessAccountStore implements PasswordlessUserAccount
     private final List<PasswordlessUserAccountStore> stores;
 
     @Override
-    public Optional<PasswordlessUserAccount> findUser(final String username) throws Throwable {
+    public Optional<? extends PasswordlessUserAccount> findUser(final String username) throws Throwable {
         for (val store : stores) {
             val user = store.findUser(username);
             if (user.isPresent()) {
