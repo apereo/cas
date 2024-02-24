@@ -23,7 +23,7 @@ const cas = require("../../cas.js");
         await page.bringToFront();
         await cas.screenshot(page);
         await cas.loginWith(page);
-        await cas.waitForTimeout(page, 3000);
+        await cas.waitForTimeout(page);
         await cas.waitForTimeout(page);
         await cas.assertVisibility(page, "#table_with_attributes");
         

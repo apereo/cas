@@ -15,7 +15,7 @@ async function fetchCode(page, acr, params) {
     await cas.waitForTimeout(page);
     if (await cas.isVisible(page, "#username")) {
         await cas.loginWith(page);
-        await cas.waitForTimeout(page, 3000);
+        await cas.waitForTimeout(page);
     }
 
     const scratch = await cas.fetchGoogleAuthenticatorScratchCode();
@@ -24,7 +24,7 @@ async function fetchCode(page, acr, params) {
     await cas.waitForTimeout(page);
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
-        await cas.waitForTimeout(page, 3000);
+        await cas.waitForTimeout(page);
     }
     await cas.screenshot(page);
     await cas.type(page, "#token", scratch);

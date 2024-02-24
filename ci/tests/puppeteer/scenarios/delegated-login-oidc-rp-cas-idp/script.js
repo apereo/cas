@@ -19,7 +19,7 @@ const cas = require("../../cas.js");
     await cas.click(page, "li #CasClient");
     await cas.waitForNavigation(page);
 
-    await cas.waitForTimeout(page, 3000);
+    await cas.waitForTimeout(page);
     await cas.screenshot(page);
     await cas.loginWith(page);
     await cas.waitForTimeout(page);

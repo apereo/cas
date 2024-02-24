@@ -17,7 +17,7 @@ const path = require("path");
     await page.bringToFront();
     await cas.type(page, "#token", code);
     await cas.submitForm(page, "#fm1");
-    await cas.waitForTimeout(page, 3000);
+    await cas.waitForTimeout(page);
 
     await cas.assertTextContent(page, "#content h1", "Authentication Interrupt");
     await cas.assertTextContentStartsWith(page, "#content p", "The authentication flow has been interrupted");

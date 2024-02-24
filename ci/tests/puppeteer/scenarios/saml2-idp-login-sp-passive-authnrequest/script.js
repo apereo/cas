@@ -10,7 +10,7 @@ const assert = require("assert");
 
     await cas.log("Sending SP passive authentication request...");
     let response = await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
-    await cas.waitForTimeout(page, 3000);
+    await cas.waitForTimeout(page);
     await cas.screenshot(page);
 
     assert(response.ok());
@@ -22,7 +22,7 @@ const assert = require("assert");
 
     await cas.log("Sending SP passive authentication request with single sign-on session...");
     response = await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
-    await cas.waitForTimeout(page, 3000);
+    await cas.waitForTimeout(page);
     await cas.screenshot(page);
 
     assert(response.ok());

@@ -14,7 +14,7 @@ const assert = require("assert");
 
     await cas.click(page, "#allow");
     await cas.waitForNavigation(page);
-    await cas.waitForTimeout(page, 3000);
+    await cas.waitForTimeout(page);
     const content = await cas.textContent(page, "body pre");
     const payload = JSON.parse(content);
     await cas.log(payload);

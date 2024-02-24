@@ -21,7 +21,7 @@ const path = require("path");
 
     await cas.assertVisibility(page, "li #SAML2Client");
     await cas.click(page, "li #SAML2Client");
-    await cas.waitForTimeout(page, 3000);
+    await cas.waitForTimeout(page);
 
     await cas.loginWith(page, "user1", "password");
     await cas.waitForTimeout(page);
@@ -42,7 +42,7 @@ const path = require("path");
     assert(result.searchParams.has("scope"));
 
     await cas.click(page, "#allow");
-    await cas.waitForTimeout(page, 3000);
+    await cas.waitForTimeout(page);
     await cas.assertTextContent(page, "h1.green-text", "Success!");
 
     await cas.logPage(page);

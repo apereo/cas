@@ -20,7 +20,7 @@ const cas = require("../../cas.js");
 
     await cas.click(page, "#allow");
     await cas.waitForNavigation(page);
-    await cas.waitForTimeout(page, 3000);
+    await cas.waitForTimeout(page);
     await cas.assertTextContent(page, "h1.green-text", "Success!");
 
     url = `${url}&prompt=login`;

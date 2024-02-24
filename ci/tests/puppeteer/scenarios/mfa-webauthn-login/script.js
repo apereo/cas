@@ -7,7 +7,7 @@ const cas = require("../../cas.js");
     const page = await cas.newPage(browser);
     await cas.gotoLoginWithAuthnMethod(page, undefined, "mfa-webauthn");
     await cas.loginWith(page);
-    await cas.waitForTimeout(page, 3000);
+    await cas.waitForTimeout(page);
     await cas.screenshot(page);
     await cas.assertTextContent(page, "#status", "Login with FIDO2-enabled Device");
 

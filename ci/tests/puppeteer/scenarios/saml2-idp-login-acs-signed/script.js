@@ -18,7 +18,7 @@ async function cleanUp() {
     await cas.waitFor("https://localhost:9876/sp/saml/status", async () => {
         await cas.log("Trying without an exising SSO session...");
         await cas.goto(page, "https://localhost:9876/sp");
-        await cas.waitForTimeout(page, 3000);
+        await cas.waitForTimeout(page);
         await page.waitForSelector("#idpForm");
         await cas.submitForm(page, "#idpForm");
         await cas.waitForTimeout(page);

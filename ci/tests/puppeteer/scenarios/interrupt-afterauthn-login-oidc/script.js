@@ -48,7 +48,7 @@ const assert = require("assert");
     await cas.assertVisibility(page, "#field2");
     await cas.assertVisibility(page, "#field2-value");
     await cas.submitForm(page, "#fm1");
-    await cas.waitForTimeout(page, 3000);
+    await cas.waitForTimeout(page);
     await cas.screenshot(page);
 
     code = await cas.assertParameter(page, "code");

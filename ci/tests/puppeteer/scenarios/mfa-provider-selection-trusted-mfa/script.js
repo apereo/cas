@@ -34,7 +34,7 @@ const assert = require("assert");
 
     await cas.gotoLogin(page, "https://example.com");
     await cas.loginWith(page);
-    await cas.waitForTimeout(page, 3000);
+    await cas.waitForTimeout(page);
     await cas.screenshot(page);
     await cas.assertTicketParameter(page);
 

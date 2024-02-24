@@ -28,7 +28,7 @@ const cas = require("../../cas.js");
     const ticket = await cas.assertTicketParameter(page);
     await cas.gotoLogin(page);
     await cas.assertCookie(page);
-    await cas.waitForTimeout(page, 3000);
+    await cas.waitForTimeout(page);
     const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
     await cas.log(body);
     const json = JSON.parse(body);

@@ -41,7 +41,7 @@ const assert = require("assert");
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
     await cas.assertCookie(page, true, "Pac4jCookie");
-    await cas.waitForTimeout(page, 3000);
+    await cas.waitForTimeout(page);
 
     await cas.log("Invoking SAML2 identity provider SLO...");
     await cas.goto(page, "http://localhost:9443/simplesaml/saml2/idp/SingleLogoutService.php?ReturnTo=https://apereo.github.io");
@@ -61,7 +61,7 @@ const assert = require("assert");
 
     await cas.log("Accessing protected CAS application");
     await cas.goto(page, "https://localhost:8444/protected");
-    await cas.waitForTimeout(page, 3000);
+    await cas.waitForTimeout(page);
     await cas.screenshot(page);
     url = await page.url();
     await cas.logPage(page);

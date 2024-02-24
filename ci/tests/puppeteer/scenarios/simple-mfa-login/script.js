@@ -16,10 +16,10 @@ const cas = require("../../cas.js");
     await cas.attributeValue(page, "html", "lang", "en");
     await cas.type(page, "#token", code);
     await cas.submitForm(page, "#fm1");
-    await cas.waitForTimeout(page, 3000);
+    await cas.waitForTimeout(page);
 
     await cas.submitForm(page, "#registerform");
-    await cas.waitForTimeout(page, 3000);
+    await cas.waitForTimeout(page);
 
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
     await cas.assertCookie(page);

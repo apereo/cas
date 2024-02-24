@@ -9,7 +9,7 @@ const assert = require("assert");
         const page = await cas.newPage(browser);
         const service = "https://localhost:9859/anything/cas";
         await cas.gotoLogin(page, service);
-        await cas.waitForTimeout(page, 3000);
+        await cas.waitForTimeout(page);
         await cas.assertVisibility(page, "#loginProviders");
         await cas.assertVisibility(page, "li #SAML2Client");
 

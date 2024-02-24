@@ -28,17 +28,17 @@ const assert = require("assert");
     const responseBody = await response.text();
     const data = JSON.parse(responseBody);
     const requestUri = data.request_uri;
-    await cas.waitForTimeout(page, 3000);
+    await cas.waitForTimeout(page);
 
     page.setRequestInterception(false);
 
     const url = `https://localhost:8443/cas/oidc/oidcAuthorize?response_type=code&client_id=client&request_uri=${requestUri}`;
 
     await cas.goto(page, url);
-    await cas.waitForTimeout(page, 3000);
+    await cas.waitForTimeout(page);
     await cas.loginWith(page);
 
-    await cas.waitForTimeout(page, 3000);
+    await cas.waitForTimeout(page);
 
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
