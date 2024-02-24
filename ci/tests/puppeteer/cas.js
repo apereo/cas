@@ -216,7 +216,7 @@ exports.loginWith = async (page,
     }
 };
 
-exports.waitForNavigation = async (page, timeout = 5000) => {
+exports.waitForNavigation = async (page, timeout = 3000) => {
     let attempts = 0;
     let response = null;
     const retryCount = 2;
@@ -316,13 +316,12 @@ exports.submitForm = async (page, selector, predicate = undefined, statusCode = 
     ]);
 };
 
-exports.pressEnter = async (page) => {
-    await this.log("Pressing Enter...");
-    return Promise.all([
+exports.pressEnter = async (page) =>
+    Promise.all([
         this.waitForTimeout(page, 2000),
+        this.log("Pressing Enter..."),
         page.keyboard.press("Enter")
     ]);
-};
 
 exports.pressTab = async (page) => {
     page.keyboard.press("Tab");
