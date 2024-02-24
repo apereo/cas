@@ -12,16 +12,15 @@
     "--spring.mail.port=25000",
 
     "--cas.authn.mfa.simple.trusted-device-enabled=true",
-
+    "--cas.authn.mfa.simple.token.core.time-to-kill-in-seconds=30",
+    
     "--cas.authn.mfa.simple.mail.html=false",
     "--cas.authn.mfa.simple.mail.from=cas@example.com",
     "--cas.authn.mfa.simple.mail.subject=Token",
     "--cas.authn.mfa.simple.mail.text=${token}",
-    
 
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=https://localhost:8443/cas",
-
 
     "--cas.ticket.registry.jpa.driver-class=org.postgresql.Driver",
     "--cas.ticket.registry.jpa.ddl-auto=update",

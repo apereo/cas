@@ -15,8 +15,7 @@ const cas = require("../../cas.js");
     await cas.click(page, "#resendButton");
     await cas.waitForTimeout(page);
     await cas.screenshot(page);
-    await page.waitForSelector("#token", {visible: true});
-
+    await page.waitForSelector("#token");
     const code = await cas.extractFromEmailMessage(browser);
 
     await page.bringToFront();
