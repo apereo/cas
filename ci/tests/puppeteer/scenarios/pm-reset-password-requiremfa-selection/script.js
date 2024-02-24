@@ -12,7 +12,6 @@ const cas = require("../../cas.js");
 
     await cas.type(page,"#username", "casuser");
     await cas.pressEnter(page);
-    await page.waitForNavigation();
     await cas.waitForTimeout(page, 1000);
     await cas.screenshot(page);
 
@@ -27,7 +26,6 @@ const cas = require("../../cas.js");
     await cas.log(`Using scratch code ${scratch} to login...`);
     await cas.type(page,"#token", scratch);
     await cas.pressEnter(page);
-    await page.waitForNavigation();
 
     await cas.screenshot(page);
     await cas.waitForTimeout(page, 1000);

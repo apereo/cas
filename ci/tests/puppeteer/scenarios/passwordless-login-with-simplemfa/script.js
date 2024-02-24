@@ -14,7 +14,6 @@ const cas = require("../../cas.js");
 
     await cas.type(page,"#username", "casuser");
     await cas.pressEnter(page);
-    await page.waitForNavigation();
 
     await cas.waitForTimeout(page, 1000);
 

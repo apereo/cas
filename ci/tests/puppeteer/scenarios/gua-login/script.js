@@ -12,14 +12,12 @@ const cas = require("../../cas.js");
 
     await cas.type(page,"#username", "casuser");
     await cas.pressEnter(page);
-    await page.waitForNavigation();
     await cas.assertTextContent(page, "#login h2", "casuser");
     await cas.assertTextContent(page, "#guaInfo", "If you do not recognize this image as yours, do NOT continue.");
     await cas.assertVisibility(page, "#guaImage");
     await cas.submitForm(page, "#fm1");
     await cas.type(page,"#password", "Mellon");
     await cas.pressEnter(page);
-    await page.waitForNavigation();
     await cas.assertCookie(page);
     await browser.close();
 })();

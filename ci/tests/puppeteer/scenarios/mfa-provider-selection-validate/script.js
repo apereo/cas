@@ -21,7 +21,6 @@ const cas = require("../../cas.js");
     await cas.log(`Using scratch code ${scratch} to login...`);
     await cas.type(page,"#token", scratch);
     await cas.pressEnter(page);
-    await page.waitForNavigation();
     await cas.waitForTimeout(page, 1000);
 
     const ticket = await cas.assertTicketParameter(page);
