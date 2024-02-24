@@ -601,6 +601,11 @@ public interface CasWebflowConstants {
     String STATE_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN = "duoUniversalPromptPrepareValidate";
 
     /**
+     * The state 'duoSecurityPasswordlessVerifyAccount'.
+     */
+    String STATE_ID_DUO_PASSWORDLESS_VERIFY = "duoSecurityPasswordlessVerifyAccount";
+
+    /**
      * The state 'viewAccountSignUp'.
      */
     String STATE_ID_VIEW_ACCOUNT_SIGNUP = "viewAccountSignUp";
@@ -1710,6 +1715,12 @@ public interface CasWebflowConstants {
      * Action id 'selectSurrogateAction .
      */
     String ACTION_ID_SELECT_SURROGATE_ACTION = "selectSurrogateAction";
+
+    /**
+     * Action id 'duoSecurityVerifyPasswordlessAuthenticationAction .
+     */
+    String ACTION_ID_DUO_PASSWORDLESS_VERIFY = "duoSecurityVerifyPasswordlessAuthenticationAction";
+
     /**
      * Action id 'duoUniversalPromptValidateLoginAction .
      */
