@@ -32,7 +32,7 @@ const cas = require("../../cas.js");
     await cas.assertTicketParameter(page);
 
     await cas.gotoLogin(page);
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
 
     await cas.assertInnerTextStartsWith(page, "#authnContextClass td.attribute-value", "[mfa-gauth]");
     
@@ -58,7 +58,7 @@ const cas = require("../../cas.js");
 
     await cas.log("Navigating to second service with SSO session");
     await cas.gotoLogin(page, "https://github.com/apereo");
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     await cas.assertInvisibility(page, "#username");
     await cas.assertTicketParameter(page);
 

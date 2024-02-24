@@ -7,9 +7,9 @@ const assert = require("assert");
     const page = await cas.newPage(browser);
     const service = "https://localhost:9859/anything/adaptive";
     await cas.gotoLogin(page, service);
-    await cas.waitForTimeout(page, 2000);
+    await cas.waitForTimeout(page);
     await cas.loginWith(page);
-    await cas.waitForTimeout(page, 2000);
+    await cas.waitForTimeout(page);
     await cas.assertInnerTextContains(page, "#loginErrorsPanel p", "authentication attempt is determined to be risky");
 
     const body = await cas.extractFromEmailMessage(browser);

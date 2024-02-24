@@ -10,9 +10,9 @@ const assert = require("assert");
 
     await cas.goto(page, url);
     await cas.logPage(page);
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     await cas.loginWith(page);
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
         await cas.waitForNavigation(page);

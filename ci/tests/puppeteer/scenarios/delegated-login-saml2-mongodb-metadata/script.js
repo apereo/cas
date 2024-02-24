@@ -8,7 +8,7 @@ const assert = require("assert");
     const page = await cas.newPage(browser);
 
     await cas.gotoLogin(page);
-    await cas.waitForTimeout(page, 2000);
+    await cas.waitForTimeout(page);
 
     await cas.assertVisibility(page, "#loginProviders");
     await cas.assertVisibility(page, "li #SAML2Client");
@@ -17,7 +17,7 @@ const assert = require("assert");
     await cas.waitForNavigation(page);
 
     await cas.loginWith(page, "user1", "password");
-    await cas.waitForTimeout(page, 2000);
+    await cas.waitForTimeout(page);
 
     await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
@@ -28,7 +28,7 @@ const assert = require("assert");
     await cas.gotoLogout(page);
     await cas.waitForTimeout(page, 3000);
     await cas.gotoLogin(page);
-    await cas.waitForTimeout(page, 2000);
+    await cas.waitForTimeout(page);
     await cas.logPage(page);
     await cas.waitForTimeout(page, 3000);
     const url = await page.url();

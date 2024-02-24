@@ -8,13 +8,13 @@ const assert = require("assert");
     const page = await cas.newPage(browser);
 
     await cas.goto(page, "https://localhost:8444");
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
 
     await cas.log("Accessing protected CAS application");
     await cas.goto(page, "https://localhost:8444/protected");
     await cas.logPage(page);
 
-    await cas.waitForTimeout(page, 2000);
+    await cas.waitForTimeout(page);
     await cas.screenshot(page);
 
     await cas.assertVisibility(page, "#loginProviders");
@@ -51,7 +51,7 @@ const assert = require("assert");
     url = await page.url();
     assert(url.startsWith("https://localhost:8443/cas/logout"));
 
-    await cas.waitForTimeout(page, 2000);
+    await cas.waitForTimeout(page);
     await cas.goto(page, "http://localhost:9443/simplesaml/saml2/idp/SingleLogoutService.php?ReturnTo=https://apereo.github.io");
     url = await page.url();
     assert(url.startsWith("https://apereo.github.io"));

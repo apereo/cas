@@ -4,7 +4,7 @@ const cas = require("../../cas.js");
 async function loginWith(page, user, password) {
     await cas.gotoLogin(page);
     await cas.loginWith(page, user, password);
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     await cas.assertInnerText(page, "#content h2", `This account has been ${user}.`);
     await cas.assertVisibility(page, "#captchaImage");
     await cas.assertVisibility(page, "#captchaValue");
@@ -21,10 +21,10 @@ async function loginWith(page, user, password) {
     const captcha = await cas.innerText(page, "#captcha");
     await cas.type(page, "#captchaValue", captcha);
     await cas.submitForm(page, "#fm1");
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     await cas.assertInnerText(page, "#content h2", "Your account is now unlocked.");
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     await cas.click(page, "#loginbtn");
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     await browser.close();
 })();

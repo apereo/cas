@@ -8,7 +8,7 @@ const path = require("path");
     const page = await cas.newPage(browser);
 
     await cas.gotoLogin(page);
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
 
     const url = "https://localhost:8443/cas/oidc/oidcAuthorize?" +
         "client_id=client&" +
@@ -24,11 +24,11 @@ const path = require("path");
     await cas.waitForTimeout(page, 3000);
 
     await cas.loginWith(page, "user1", "password");
-    await cas.waitForTimeout(page, 2000);
+    await cas.waitForTimeout(page);
 
     await cas.log("Checking for page URL...");
     await cas.logPage(page);
-    await cas.waitForTimeout(page, 2000);
+    await cas.waitForTimeout(page);
 
     await cas.log("Allowing release of scopes and claims...");
     await cas.logPage(page);

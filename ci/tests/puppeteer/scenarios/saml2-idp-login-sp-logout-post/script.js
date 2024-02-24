@@ -16,7 +16,7 @@ async function getActuatorEndpoint(entityId) {
         const page = await cas.newPage(browser);
         const service = "https://localhost:9859/anything/cas";
         await cas.gotoLogin(page, service);
-        await cas.waitForTimeout(page, 1000);
+        await cas.waitForTimeout(page);
         await cas.loginWith(page);
 
         const ticket = await cas.assertTicketParameter(page);
@@ -37,7 +37,7 @@ async function getActuatorEndpoint(entityId) {
         await cas.waitForTimeout(page, 4000);
         await cas.logPage(page);
         const url = await page.url();
-        await cas.waitForTimeout(page, 1000);
+        await cas.waitForTimeout(page);
         assert(url === "http://localhost:9443/simplesaml/module.php/saml/sp/saml2-logout.php/default-sp");
     } finally {
         await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));

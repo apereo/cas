@@ -11,14 +11,14 @@ async function fetchIdToken(page, maxAge, successHandler) {
 
     await cas.log(`Navigating to ${url}`);
     await cas.goto(page, url);
-    await cas.waitForTimeout(page, 2000);
+    await cas.waitForTimeout(page);
     await cas.loginWith(page);
 
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
         await cas.waitForNavigation(page);
     }
-    await cas.waitForTimeout(page, 2000);
+    await cas.waitForTimeout(page);
     await cas.screenshot(page);
     const code = await cas.assertParameter(page, "code");
     await cas.log(`OAuth code ${code}`);
@@ -55,7 +55,7 @@ async function fetchIdToken(page, maxAge, successHandler) {
     await fetchIdToken(page, -1, (idToken) => {
         time1 = idToken.auth_time;
     });
-    await cas.waitForTimeout(page, 2000);
+    await cas.waitForTimeout(page);
     await fetchIdToken(page, 1, (idToken) => {
         time2 = idToken.auth_time;
     });

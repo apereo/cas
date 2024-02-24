@@ -9,7 +9,7 @@ const assert = require("assert");
     await cas.gotoLogin(page, "https://localhost:9859/anything/cas");
     await cas.log("Checking for page URL redirecting, based on service policy...");
     await cas.logPage(page);
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     let url = await page.url();
     assert(url.startsWith("https://localhost:8444/cas/login"));
 

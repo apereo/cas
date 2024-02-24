@@ -10,14 +10,14 @@ function getShibbolethUrlForEntityId(entityId) {
     const page = await cas.newPage(browser);
     await cas.goto(page, getShibbolethUrlForEntityId("google.com"));
     await cas.loginWith(page);
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     await cas.assertInnerTextStartsWith(page, "#login h2", "Your account is not registered");
     await cas.assertVisibility(page, "img#imageQRCode");
     await cas.assertVisibility(page, "#scratchcodes");
 
     await cas.goto(page, getShibbolethUrlForEntityId("github.com"));
     await cas.loginWith(page);
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     await cas.assertVisibility(page, "#token");
     await cas.assertVisibility(page, "#resendButton");
     await cas.assertVisibility(page, "#loginButton");

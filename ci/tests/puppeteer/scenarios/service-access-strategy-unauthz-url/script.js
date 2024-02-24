@@ -7,7 +7,7 @@ const assert = require("assert");
     const page = await cas.newPage(browser);
     await cas.gotoLogin(page, "https://apereo.github.io");
     await cas.loginWith(page);
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     await cas.screenshot(page);
     await cas.logPage(page);
     await cas.assertInnerText(page, "#content h2", "Application Not Authorized to Use CAS");

@@ -59,14 +59,14 @@ const request = require("request");
     const redirectUri = "https://localhost:9859/anything/oidc";
     const url = `https://localhost:8443/cas/oidc/oidcAuthorize?client_id=client&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent("openid profile")}&response_type=code&nonce=vn4qulthnx`;
     await cas.goto(page, url);
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     await cas.screenshot(page);
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
         await cas.waitForNavigation(page);
     }
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     await cas.logPage(page);
     await cas.assertPageUrlStartsWith(page, "https://localhost:9859/anything/oidc");
     const code = await cas.assertParameter(page, "code");

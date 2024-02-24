@@ -7,7 +7,7 @@ const cas = require("../../cas.js");
 
     await cas.log("Trying first app with a fancy theme");
     await cas.gotoLogin(page, "https://apereo.github.io");
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     await cas.click(page, "#publicWorkstation");
     await cas.loginWith(page);
     await cas.assertTicketParameter(page);

@@ -7,7 +7,7 @@ const assert = require("assert");
     const page = await cas.newPage(browser);
     await cas.gotoLoginWithAuthnMethod(page, undefined, "mfa-gauth");
     await cas.loginWith(page);
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
 
     await cas.log("Using scratch code to login...");
     let scratch = await cas.fetchGoogleAuthenticatorScratchCode();
@@ -16,16 +16,16 @@ const assert = require("assert");
 
     await cas.innerText(page, "#deviceName");
     await cas.type(page, "#deviceName", "My Trusted Device");
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
 
     await cas.assertInvisibility(page, "#expiration");
     await cas.assertVisibility(page, "#timeUnit");
     await cas.submitForm(page, "#registerform");
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     await cas.gotoLogout(page);
-    await cas.waitForTimeout(page, 2000);
+    await cas.waitForTimeout(page);
 
     const baseUrl = "https://localhost:8443/cas/actuator/multifactorTrustedDevices";
     const response = await cas.doRequest(baseUrl);

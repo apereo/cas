@@ -34,7 +34,7 @@ async function cleanUp() {
         await cas.gotoLogin(page);
         await cas.assertCookie(page);
         await cas.assertInnerText(page, "#content div h2", "Log In Successful");
-        await cas.waitForTimeout(page, 1000);
+        await cas.waitForTimeout(page);
         
         await browser.close();
         await cleanUp();

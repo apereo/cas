@@ -15,7 +15,7 @@ async function tryServiceProviders(entityIds, page, timeout) {
         await cas.log(`Navigating to ${url}`);
         const s = performance.now();
         await cas.goto(page, url);
-        await cas.waitForTimeout(page, 2000);
+        await cas.waitForTimeout(page);
         await cas.screenshot(page);
         const e = performance.now();
         const duration = (e - s) / 1000;
@@ -25,7 +25,7 @@ async function tryServiceProviders(entityIds, page, timeout) {
             throw `Request took longer than expected:${duration}`;
         }
 
-        await cas.waitForTimeout(page, 2000);
+        await cas.waitForTimeout(page);
         await cas.assertVisibility(page, "#username");
         await cas.assertVisibility(page, "#password");
         await cas.log("=====================================");

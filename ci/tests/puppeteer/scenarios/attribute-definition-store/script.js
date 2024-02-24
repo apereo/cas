@@ -8,7 +8,7 @@ const cas = require("../../cas.js");
         const page = await cas.newPage(browser);
         const service = "https://apereo.github.io";
         await cas.gotoLogin(page, service);
-        await cas.waitForTimeout(page, 1000);
+        await cas.waitForTimeout(page);
         await cas.loginWith(page);
         const ticket = await cas.assertTicketParameter(page);
         const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);

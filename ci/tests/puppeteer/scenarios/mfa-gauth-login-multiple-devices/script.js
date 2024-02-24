@@ -19,11 +19,11 @@ const cas = require("../../cas.js");
     await cas.assertVisibility(page, "#id-2");
     
     await cas.assertVisibility(page, "#register");
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
 
     await cas.log("Deleting a registered device now");
     await cas.click(page, "#delButton-1");
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
 
     await cas.assertInvisibility(page, "#form-1");
     await cas.assertInvisibility(page, "#name-RecordName");

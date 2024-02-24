@@ -7,7 +7,7 @@ const cas = require("../../cas.js");
 
     await cas.log("Trying first app with a fancy theme");
     await cas.gotoLogin(page, "https://apereo.github.io&authn_method=mfa-duo");
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     await cas.click(page, "#publicWorkstation");
     await cas.updateDuoSecurityUserStatus("duocode");
     await cas.loginWith(page, "duocode", "Mellon");

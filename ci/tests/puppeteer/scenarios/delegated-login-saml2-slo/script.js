@@ -7,13 +7,13 @@ const path = require("path");
     const page = await cas.newPage(browser);
 
     await cas.gotoLogin(page);
-    await cas.waitForTimeout(page, 2000);
+    await cas.waitForTimeout(page);
 
     await cas.click(page, "li #SAML2Client");
     await cas.waitForNavigation(page);
 
     await cas.loginWith(page, "user1", "password");
-    await cas.waitForTimeout(page, 2000);
+    await cas.waitForTimeout(page);
 
     await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
@@ -24,7 +24,7 @@ const path = require("path");
     await cas.waitForTimeout(page, 6000);
 
     await cas.gotoLogin(page);
-    await cas.waitForTimeout(page, 2000);
+    await cas.waitForTimeout(page);
     await cas.logPage(page);
     await cas.assertCookie(page, false);
     await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));

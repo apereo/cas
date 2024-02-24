@@ -17,7 +17,7 @@ const cas = require("../../cas.js");
         await cas.log(`Log in attempt should remain throttled: ${i}`);
         await cas.gotoLogin(page);
         await cas.loginWith(page);
-        await cas.waitForTimeout(page, 1000);
+        await cas.waitForTimeout(page);
     }
     await cas.waitForTimeout(page, 3000);
     await cas.gotoLogin(page);

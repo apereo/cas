@@ -12,7 +12,7 @@ const cas = require("../../cas.js");
     await cas.gotoLogin(page, "https://example.org");
 
     await cas.loginWith(page, "+duobypass", "Mellon");
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     await cas.screenshot(page);
     
     await cas.assertTextContent(page, "#titlePanel h2", "Choose Account");
@@ -26,7 +26,7 @@ const cas = require("../../cas.js");
     await cas.screenshot(page);
     await cas.assertTicketParameter(page);
     await cas.gotoLogin(page);
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     await cas.assertCookie(page);
     await cas.assertInnerTextStartsWith(page, "#content div p", "You, user3, have successfully logged in");
     await cas.screenshot(page);

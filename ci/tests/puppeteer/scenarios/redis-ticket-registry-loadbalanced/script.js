@@ -18,9 +18,9 @@ async function testBasicLoginLogout(browser) {
     await logoutEverywhere(page);
     const service = "https://apereo.github.io";
     await cas.gotoLogin(page, service);
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     await cas.loginWith(page);
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     const ticket = await cas.assertTicketParameter(page);
     await page.goto(`https://localhost:8444/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
     const content = await cas.textContent(page, "body");
@@ -43,7 +43,7 @@ async function checkTicketValidationAcrossNodes(browser) {
 
     const service = "https://localhost:9859/anything/100";
     await cas.gotoLogin(page, service);
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     await cas.loginWith(page);
     const ticket = await cas.assertTicketParameter(page);
 
@@ -93,18 +93,18 @@ async function checkSessionsAreSynced(browser) {
 
     await cas.log("Getting first ticket");
     await cas.gotoLogin(page, s1);
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     await cas.loginWith(page);
     const ticket1 = await cas.assertTicketParameter(page);
 
     await cas.log("Getting second ticket");
     await cas.gotoLogin(page, s2);
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     const ticket2 = await cas.assertTicketParameter(page);
 
     await cas.log("Getting third ticket");
     await cas.gotoLogin(page, s3);
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     const ticket3 = await cas.assertTicketParameter(page);
 
     const conditions = {
@@ -112,7 +112,7 @@ async function checkSessionsAreSynced(browser) {
         [ticket2]: s2,
         [ticket3]: s3
     };
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     await ensureSessionsRecorded(page, 8443, conditions);
     await ensureSessionsRecorded(page, 8444, conditions);
 

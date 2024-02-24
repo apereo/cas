@@ -22,7 +22,7 @@ const path = require("path");
 
     try {
         await cas.refreshContext();
-        await cas.waitForTimeout(page, 2000);
+        await cas.waitForTimeout(page);
 
         await cas.gotoLogout(page);
         await cas.goto(page, url);

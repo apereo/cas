@@ -18,7 +18,7 @@ const cas = require("../../cas.js");
     await cas.assertVisibility(page, "#password");
 
     await cas.loginWith(page, "unknown", "badpassword");
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
 
     await cas.screenshot(page);
     await cas.assertVisibility(page, "#errorPanel");

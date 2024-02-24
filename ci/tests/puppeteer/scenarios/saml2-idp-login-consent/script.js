@@ -16,7 +16,7 @@ const assert = require("assert");
     await cas.goto(page, url);
     await cas.waitForTimeout(page, 4000);
     await cas.loginWith(page);
-    await cas.waitForTimeout(page, 2000);
+    await cas.waitForTimeout(page);
     await cas.assertTextContent(page, "#content h2", "Attribute Consent");
     await cas.screenshot(page);
     await cas.submitForm(page, "#fm1");

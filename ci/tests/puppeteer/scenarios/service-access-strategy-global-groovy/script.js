@@ -5,10 +5,10 @@ const cas = require("../../cas.js");
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.gotoLogin(page, "https://apereo.github.io");
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     await cas.assertInnerText(page, "#content h2", "Application Not Authorized to Use CAS");
     await cas.gotoLogin(page, "https://github.com/apereo/cas");
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     await cas.loginWith(page);
     await cas.assertTicketParameter(page);
     

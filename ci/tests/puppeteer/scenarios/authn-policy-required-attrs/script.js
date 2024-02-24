@@ -32,7 +32,7 @@ async function authenticateWithRestApi(username, status = 200) {
 
     await cas.gotoLogin(page);
     await cas.loginWith(page, "casrest", "p@ssw0rd");
-    await cas.waitForTimeout(page, 2000);
+    await cas.waitForTimeout(page);
     await cas.screenshot(page);
     await cas.assertCookie(page, false);
     await cas.assertInnerTextStartsWith(page, "#loginErrorsPanel p", "Authentication attempt has failed");

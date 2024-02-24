@@ -57,11 +57,11 @@ async function sendRequest(page, entityIds) {
                 await cas.logr("Request took longer than expected");
             }
 
-            await cas.waitForTimeout(page, 1000);
+            await cas.waitForTimeout(page);
             await cas.assertVisibility(page, "#username");
             await cas.assertVisibility(page, "#password");
             await cas.loginWith(page);
-            await cas.waitForTimeout(page, 1000);
+            await cas.waitForTimeout(page);
             count++;
         } catch (e) {
             await cas.logr(e);

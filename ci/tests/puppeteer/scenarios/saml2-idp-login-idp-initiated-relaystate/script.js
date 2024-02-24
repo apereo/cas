@@ -25,7 +25,7 @@ async function unsolicited(page, target) {
     assert(response.ok());
 
     await cas.gotoLogin(page);
-    await cas.waitForTimeout(page, 2000);
+    await cas.waitForTimeout(page);
 
     await cas.loginWith(page);
     await cas.waitForTimeout(page, 5000);

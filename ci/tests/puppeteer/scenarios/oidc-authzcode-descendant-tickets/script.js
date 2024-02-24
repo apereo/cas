@@ -9,7 +9,7 @@ async function fetchCode(page) {
 
     await cas.log(`Navigating to ${url}`);
     await cas.goto(page, url);
-    await cas.waitForTimeout(page, 1000);
+    await cas.waitForTimeout(page);
     await cas.loginWith(page);
 
     if (await cas.isVisible(page, "#allow")) {
