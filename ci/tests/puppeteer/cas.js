@@ -205,7 +205,7 @@ exports.loginWith = async (page,
     await this.type(page, passwordField, password, true);
 
     try {
-        this.pressEnter(page);
+        await this.pressEnter(page);
         const response = await this.waitForNavigation(page);
         if (response !== null && response !== undefined) {
             this.logg(`Response status: ${await response.status()}`);

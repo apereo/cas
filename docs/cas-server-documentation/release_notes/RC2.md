@@ -95,6 +95,11 @@ Notable changes in this area include:
 - ...and as a result, the *Hal Browser* interface that listed the CAS actuator endpoints has been removed.
 - Delaying the construction of the CAS webflow execution plan until the application container is fully ready.
 
+### Passwordless Authentication w/ Duo Security
+
+[Duo Security](../authentication/Passwordless-Authentication-Storage-DuoSecurity.html) can now 
+act as a passwordless authentication account store to verify and locate passwordless accounts.
+
 ## Other Stuff
 
 - Internal enhancements to allow a few more ticket registries to support more advanced querying operations and session management features.
