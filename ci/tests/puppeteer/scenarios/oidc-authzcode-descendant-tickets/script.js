@@ -11,13 +11,13 @@ async function fetchCode(page) {
     await cas.goto(page, url);
     await cas.waitForTimeout(page, 1000);
     await cas.loginWith(page);
-    await cas.waitForTimeout(page, 1000);
 
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
         await cas.waitForNavigation(page);
     }
 
+    await cas.waitForTimeout(page, 3000);
     const code = await cas.assertParameter(page, "code");
     await cas.logg(`OAuth code ${code}`);
     return code;

@@ -216,7 +216,7 @@ exports.loginWith = async (page,
     }
 };
 
-exports.waitForNavigation = async (page, timeout = 3000) => {
+exports.waitForNavigation = async (page, timeout = 5000) => {
     let attempts = 0;
     let response = null;
     const retryCount = 2;
