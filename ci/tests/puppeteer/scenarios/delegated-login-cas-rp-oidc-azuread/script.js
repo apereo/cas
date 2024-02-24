@@ -12,7 +12,7 @@ const cas = require("../../cas.js");
 
     await cas.assertVisibility(page, "li #AzureClient");
     await cas.click(page, "li #AzureClient");
-    await page.waitForNavigation();
+    await cas.waitForNavigation(page);
     await cas.waitForTimeout(page, 4000);
     await cas.screenshot(page);
 

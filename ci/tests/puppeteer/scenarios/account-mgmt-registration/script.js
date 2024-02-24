@@ -18,7 +18,7 @@ const cas = require("../../cas.js");
     await cas.type(page,"#email", "cas@example.org");
     await cas.type(page,"#phone", "+1 347 745 1234");
     await cas.click(page, "#submit");
-    await page.waitForNavigation();
+    await cas.waitForNavigation(page);
     await cas.assertInnerText(page, "#content h2", "Account Registration");
     await cas.assertInnerTextStartsWith(page, "#content p", "Account activation instructions are successfully sent");
 

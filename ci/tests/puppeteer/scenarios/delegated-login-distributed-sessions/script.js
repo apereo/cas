@@ -16,10 +16,10 @@ const cas = require("../../cas.js");
     await cas.assertVisibility(page2, "li #CasClient");
 
     await cas.click(page1, "li #CasClient");
-    await page1.waitForNavigation();
+    await cas.waitForNavigation(page1);
 
     await cas.click(page2, "li #CasClient");
-    await page2.waitForNavigation();
+    await cas.waitForNavigation(page2);
 
     await cas.loginWith(page1, "casuser", "Mellon");
     await cas.waitForTimeout(page1, 1000);
