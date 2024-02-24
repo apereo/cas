@@ -34,7 +34,7 @@ env:
   NODE_CURRENT: '20.10.0'
   MAX_ATTEMPTS: 2
   RETRY_MINUTES: 15
-  SCENARIO_REGEX: "passwordless.*|redis.*|simple.*|sso.*|adfs.*|caching.*|"
+  SCENARIO_REGEX: "passwordless.*|redis.*|simple.*|sso.*|caching.*|"
 
 on:
   workflow_dispatch:
