@@ -9,13 +9,13 @@ async function testService(page, clientId, oidc = true) {
     await cas.goto(page, url);
     await cas.waitForTimeout(page, 1000);
     await cas.loginWith(page);
-    await cas.waitForTimeout(page, 1000);
 
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
         await cas.waitForNavigation(page);
     }
 
+    await cas.waitForTimeout(page, 3000);
     const code = await cas.assertParameter(page, "code");
     await cas.log(`Current code is ${code}`);
     const accessTokenUrl = `https://localhost:8443/cas/oidc/token?grant_type=authorization_code&client_id=${clientId}&client_secret=secret&redirect_uri=${redirectUrl}&code=${code}`;
