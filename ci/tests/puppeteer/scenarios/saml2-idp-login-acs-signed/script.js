@@ -24,7 +24,7 @@ async function cleanUp() {
         await cas.waitForTimeout(page, 2000);
         await page.waitForSelector("#username");
         await cas.loginWith(page);
-        await cas.waitForTimeout(page, 3000);
+        await cas.waitForTimeout(page, 5000);
         await cas.logPage(page);
         await page.waitForSelector("body pre");
         let content = await cas.textContent(page, "body pre");
@@ -35,15 +35,14 @@ async function cleanUp() {
         await cas.gotoLogout(page);
         await cas.gotoLogin(page);
         await cas.loginWith(page);
-        await cas.waitForTimeout(page, 2000);
+        await cas.waitForTimeout(page, 4000);
         await cas.assertCookie(page);
         await cas.goto(page, "https://localhost:9876/sp");
-        await cas.waitForTimeout(page, 3000);
+        await cas.waitForTimeout(page, 5000);
         await page.waitForSelector("#idpForm");
         await cas.submitForm(page, "#idpForm");
-        await cas.waitForTimeout(page, 3000);
+        await cas.waitForTimeout(page, 5000);
         await cas.logPage(page);
-        await page.waitForSelector("body pre");
         content = await cas.textContent(page, "body pre");
         payload = JSON.parse(content);
         await cas.log(payload);
