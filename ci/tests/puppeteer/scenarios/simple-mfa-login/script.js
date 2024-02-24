@@ -10,14 +10,7 @@ const cas = require("../../cas.js");
     await cas.assertVisibility(page, "#token");
     await cas.attributeValue(page, "html", "lang", "en");
 
-    // Call MockMock - SMTP Mock Server
-    const page2 = await browser.newPage();
-    await page2.goto("http://localhost:8282");
-    await cas.waitForTimeout(page2, 1000);
-    await cas.click(page2, "table tbody td a");
-    await cas.waitForTimeout(page2, 1000);
-    const code = await cas.textContent(page2, "div[name=bodyPlainText] .well");
-    await page2.close();
+    const code = await cas.extractFromEmailMessage(browser);
 
     await page.bringToFront();
     await cas.attributeValue(page, "html", "lang", "en");
