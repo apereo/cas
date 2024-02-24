@@ -52,6 +52,19 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
     }
 
     @Override
+    public void postInitialization(final ConfigurableApplicationContext applicationContext) {
+        val flow = getLoginFlow();
+        val verifyAccountState = getState(flow, CasWebflowConstants.STATE_ID_PASSWORDLESS_VERIFY_ACCOUNT);
+        val originalTargetState = verifyAccountState.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
+        createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_DUO_PASSWORDLESS_VERIFY, true);
+        val actionState = createActionState(flow, CasWebflowConstants.STATE_ID_DUO_PASSWORDLESS_VERIFY, CasWebflowConstants.ACTION_ID_DUO_PASSWORDLESS_VERIFY);
+        val acceptedState = getState(flow, CasWebflowConstants.STATE_ID_ACCEPT_PASSWORDLESS_AUTHENTICATION)
+            .getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
+        createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_SUCCESS, acceptedState);
+        createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_ERROR, originalTargetState);
+    }
+
+    @Override
     protected void doInitialize() {
         val duoConfig = casProperties.getAuthn().getMfa().getDuo();
         val flowRegistryBeans = duoConfig

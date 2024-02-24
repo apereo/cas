@@ -4,7 +4,11 @@ import org.apereo.cas.adaptors.duo.BaseDuoSecurityTests;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.config.CasPasswordlessAuthenticationAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.MockWebServer;
+import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.PasswordlessWebflowUtils;
+import org.apereo.cas.web.support.WebUtils;
 import com.duosecurity.Client;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -14,9 +18,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.webflow.execution.Action;
 import java.net.URI;
+import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -50,6 +57,13 @@ public class DuoSecurityPasswordlessUserAccountStoreTests {
     @Qualifier(PasswordlessUserAccountStore.BEAN_NAME)
     private PasswordlessUserAccountStore passwordlessUserAccountStore;
 
+    @Autowired
+    @Qualifier(CasWebflowConstants.ACTION_ID_DUO_PASSWORDLESS_VERIFY)
+    private Action duoSecurityVerifyPasswordlessAuthenticationAction;
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @Test
     void verifyOperation() throws Throwable {
         val props = casProperties.getAuthn().getMfa().getDuo().getFirst();
@@ -60,6 +74,16 @@ public class DuoSecurityPasswordlessUserAccountStoreTests {
             assertEquals("duosecurityuser", user.getUsername());
             assertEquals("jsmith@example.com", user.getEmail());
             assertEquals(props.getId(), user.getSource());
+            assertNotNull(duoSecurityVerifyPasswordlessAuthenticationAction);
+
+            val data = Map.of("stat", "OK", "response", Map.of("result", "allow", "status", "allow"));
+            webServer.responseBodyJson(data);
+            val context = MockRequestContext.create(applicationContext);
+            PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(context, user);
+            val result = duoSecurityVerifyPasswordlessAuthenticationAction.execute(context);
+            assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());
+            assertNotNull(WebUtils.getAuthentication(context));
+            assertNotNull(WebUtils.getCredential(context));
         }
     }
 
