@@ -19,7 +19,6 @@ const cas = require("../../cas.js");
         throw `Operation failed: ${error}`;
     });
 
-
     const resourceUrl = "https://localhost:8443/cas/oauth2.0/resourceSet";
     const resourceObject = {
         uri: "http://api.example.org/photos/**",
@@ -93,7 +92,6 @@ const cas = require("../../cas.js");
     await cas.log(result);
     assert(result.ticket !== undefined);
     assert(result.code !== undefined);
-
 
     await cas.log("Checking for claims");
 

@@ -1,0 +1,6 @@
+{
+  "testuser" : {
+    "message" : "We interrupted your login",
+    "interrupt" : true
+  }
+}

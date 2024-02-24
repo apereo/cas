@@ -50,7 +50,6 @@ const assert = require("assert");
     assert(entity.client_id === updatedEntity.client_id);
 })();
 
-
 async function executeRequest(clientId, clientSecret, expectFailure) {
     const params = "&grant_type=client_credentials&scope=openid";
     const url = `https://localhost:8443/cas/oidc/token?${params}`;
