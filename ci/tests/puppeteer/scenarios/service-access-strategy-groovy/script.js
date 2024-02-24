@@ -5,13 +5,13 @@ const assert = require("assert");
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
-    const response = await cas.gotoLogin(page, "https://localhost:9859/anything/denied");
+    let response = await cas.gotoLogin(page, "https://localhost:9859/anything/denied");
     await cas.waitForTimeout(page);
 
     assert(response.status() === 403);
     await cas.assertInnerText(page, "#content h2", "Application Not Authorized to Use CAS");
 
-    await cas.gotoLogin(page, "https://localhost:9859/anything/allowed");
+    response = await cas.gotoLogin(page, "https://localhost:9859/anything/allowed");
     await cas.loginWith(page);
     await cas.waitForTimeout(page);
     await cas.logPage(page);
