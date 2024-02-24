@@ -79,6 +79,7 @@ class DuoSecurityMultifactorAccountProfileWebflowConfigurerTests extends BaseWeb
         assertNotNull(devices);
         assertEquals(1, devices.size());
     }
+
     @TestConfiguration("DuoSecurityTestConfiguration")
     static class DuoSecurityTestConfiguration {
         @Bean

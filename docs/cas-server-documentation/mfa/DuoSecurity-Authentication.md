@@ -20,6 +20,10 @@ Duo offers several options for authenticating users:
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-duo" %}
 
+## Configuration
+
+{% include_cached casproperties.html properties="cas.authn.mfa.duo" %}
+
 ## Actuator Endpoints
       
 The following endpoints are provided by CAS:
@@ -122,10 +126,6 @@ to pass through Duo Security as well.
 curl --location --header "Content-Type: application/cas" https://apps.example.org/myapp -L -u casuser:Mellon
 ```
 
-## Configuration
-
-{% include_cached casproperties.html properties="cas.authn.mfa.duo" %}
-
 ## REST Protocol Credential Extraction
 
 In the event that the [CAS REST Protocol](../protocol/REST-Protocol.html) is turned on, a 
@@ -133,6 +133,12 @@ special credential extractor is injected into the REST authentication engine in 
 to recognize credentials and authenticate them as part of the REST request.
 The expected parameter name in the request body is `passcode` that can be found from
 Duo Security's mobile application or received via SMS.
+ 
+## Passwordless Authentication
+
+The integration with Duo Security can also act as an account store 
+for [Passwordless Authentication](../authentication/Passwordless-Authentication-Storage-DuoSecurity.html). This behavior needs to be
+explicitly turned on in CAS settings for eligible multifactor authentication providers.
 
 ## Troubleshooting
 

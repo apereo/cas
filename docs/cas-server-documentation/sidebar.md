@@ -183,6 +183,7 @@ layout: null
             *   [MongoDb](/cas/{{ version }}/authentication/Passwordless-Authentication-Storage-MongoDb.html)
             *   [REST](/cas/{{ version }}/authentication/Passwordless-Authentication-Storage-Rest.html)
             *   [Simple](/cas/{{ version }}/authentication/Passwordless-Authentication-Storage-Simple.html)
+            *   [Duo Security](/cas/{{ version }}/authentication/Passwordless-Authentication-Storage-DuoSecurity.html)
         *   [Tokens](#passwordlessauthntokens)
             *   [JPA](/cas/{{ version }}/authentication/Passwordless-Authentication-Tokens-JPA.html)
             *   [MongoDb](/cas/{{ version }}/authentication/Passwordless-Authentication-Tokens-MongoDb.html)
@@ -343,7 +344,7 @@ layout: null
                 *   [REST](/cas/{{ version }}/mfa/FIDO2-WebAuthn-Authentication-Registration-Rest.html)
         *   [Inwebo](/cas/{{ version }}/mfa/Inwebo-Authentication.html)
         *   [Custom](/cas/{{ version }}/mfa/Custom-MFA-Authentication.html)
-    *   [Triggers](#mfatriggers)
+    *   [Triggers & Activation](#mfatriggers)
         *   [Overview](/cas/{{ version }}/mfa/Configuring-Multifactor-Authentication-Triggers.html)
         *   [Global](/cas/{{ version }}/mfa/Configuring-Multifactor-Authentication-Triggers-Global.html)
         *   [Per Application](/cas/{{ version }}/mfa/Configuring-Multifactor-Authentication-Triggers-PerApplication.html)
@@ -739,7 +740,6 @@ layout: null
         *   [Groovy](/cas/{{ version }}/webflow/Webflow-Customization-Interrupt-Groovy.html)
         *   [REST](/cas/{{ version }}/webflow/Webflow-Customization-Interrupt-REST.html)
         *   [Custom](/cas/{{ version }}/webflow/Webflow-Customization-Interrupt-Custom.html) 
-
 
 * [Webflow Management](#webflowmgmt)
     *   [Overview](/cas/{{ version }}/webflow/Webflow-Customization.html)

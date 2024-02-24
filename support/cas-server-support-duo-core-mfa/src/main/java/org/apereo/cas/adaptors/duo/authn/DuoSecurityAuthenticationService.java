@@ -91,16 +91,6 @@ public interface DuoSecurityAuthenticationService extends Serializable {
     DuoSecurityMultifactorAuthenticationProperties getProperties();
 
     /**
-     * Sign request token.
-     *
-     * @param uid the uid
-     * @return the signed token
-     */
-    default Optional<String> signRequestToken(final String uid) {
-        return Optional.empty();
-    }
-
-    /**
      * Gets duo user account.
      *
      * @param username the actual user name

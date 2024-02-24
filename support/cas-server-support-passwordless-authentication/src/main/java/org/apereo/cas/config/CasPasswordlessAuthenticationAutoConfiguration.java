@@ -37,6 +37,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -64,16 +65,13 @@ public class CasPasswordlessAuthenticationAutoConfiguration {
     @ConditionalOnMissingBean(name = "passwordlessTokenAuthenticationHandler")
     public AuthenticationHandler passwordlessTokenAuthenticationHandler(
         final ConfigurableApplicationContext applicationContext,
-        @Qualifier("passwordlessPrincipalFactory")
-        final PrincipalFactory passwordlessPrincipalFactory,
-        @Qualifier(PasswordlessTokenRepository.BEAN_NAME)
-        final PasswordlessTokenRepository passwordlessTokenRepository,
-        @Qualifier(ServicesManager.BEAN_NAME)
-        final ServicesManager servicesManager) {
+        @Qualifier("passwordlessPrincipalFactory") final PrincipalFactory passwordlessPrincipalFactory,
+        @Qualifier(PasswordlessTokenRepository.BEAN_NAME) final PasswordlessTokenRepository passwordlessTokenRepository,
+        @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
         return BeanSupplier.of(AuthenticationHandler.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> new PasswordlessTokenAuthenticationHandler(null, servicesManager,
-                        passwordlessPrincipalFactory, null, passwordlessTokenRepository))
+            .supply(() -> new PasswordlessTokenAuthenticationHandler(null, servicesManager,
+                passwordlessPrincipalFactory, null, passwordlessTokenRepository))
             .otherwiseProxy()
             .get();
     }
@@ -87,6 +85,7 @@ public class CasPasswordlessAuthenticationAutoConfiguration {
             .stream()
             .map(BeanSupplier::get)
             .filter(BeanSupplier::isNotProxy)
+            .sorted(AnnotationAwareOrderComparator.INSTANCE)
             .toList();
         return new ChainingPasswordlessAccountStore(allStores);
     }
@@ -131,22 +130,27 @@ public class CasPasswordlessAuthenticationAutoConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "simplePasswordlessUserAccountStore")
-    public BeanSupplier<PasswordlessUserAccountStore> simplePasswordlessUserAccountStore(final CasConfigurationProperties casProperties) {
-        val accounts = casProperties.getAuthn().getPasswordless().getAccounts();
-        var simple = accounts.getSimple().entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> {
-            val account = new PasswordlessUserAccount();
-            account.setUsername(entry.getKey());
-            account.setName(entry.getKey());
-            if (EmailValidator.getInstance().isValid(entry.getValue())) {
-                account.setEmail(entry.getValue());
-            } else {
-                account.setPhone(entry.getValue());
-            }
-            return account;
-        }));
+    public BeanSupplier<PasswordlessUserAccountStore> simplePasswordlessUserAccountStore(
+        final CasConfigurationProperties casProperties) {
+        val allAccounts = casProperties.getAuthn().getPasswordless().getAccounts()
+            .getSimple()
+            .entrySet()
+            .stream()
+            .collect(Collectors.toMap(Map.Entry::getKey, entry -> {
+                val account = new PasswordlessUserAccount();
+                account.setUsername(entry.getKey());
+                account.setName(entry.getKey());
+                if (EmailValidator.getInstance().isValid(entry.getValue())) {
+                    account.setEmail(entry.getValue());
+                } else {
+                    account.setPhone(entry.getValue());
+                }
+                return account;
+            }));
         return BeanSupplier.of(PasswordlessUserAccountStore.class)
-            .alwaysMatch()
-            .supply(() -> new SimplePasswordlessUserAccountStore(simple));
+            .when(() -> !allAccounts.isEmpty())
+            .supply(() -> new SimplePasswordlessUserAccountStore(allAccounts))
+            .otherwiseNull();
     }
 
     @Bean
@@ -165,8 +169,7 @@ public class CasPasswordlessAuthenticationAutoConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = PasswordlessTokenRepository.BEAN_NAME)
     public PasswordlessTokenRepository passwordlessTokenRepository(final CasConfigurationProperties casProperties,
-                                                                   @Qualifier("passwordlessCipherExecutor")
-                                                                   final CipherExecutor passwordlessCipherExecutor) {
+                                                                   @Qualifier("passwordlessCipherExecutor") final CipherExecutor passwordlessCipherExecutor) {
         val tokens = casProperties.getAuthn().getPasswordless().getTokens();
         val expiration = Beans.newDuration(tokens.getCore().getExpiration()).toSeconds();
 
@@ -181,10 +184,8 @@ public class CasPasswordlessAuthenticationAutoConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthenticationEventExecutionPlanConfigurer passwordlessAuthenticationEventExecutionPlanConfigurer(
         final ConfigurableApplicationContext applicationContext,
-        @Qualifier("passwordlessTokenAuthenticationHandler")
-        final AuthenticationHandler passwordlessTokenAuthenticationHandler,
-        @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
-        final PrincipalResolver defaultPrincipalResolver) {
+        @Qualifier("passwordlessTokenAuthenticationHandler") final AuthenticationHandler passwordlessTokenAuthenticationHandler,
+        @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER) final PrincipalResolver defaultPrincipalResolver) {
         return BeanSupplier.of(AuthenticationEventExecutionPlanConfigurer.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(passwordlessTokenAuthenticationHandler, defaultPrincipalResolver))

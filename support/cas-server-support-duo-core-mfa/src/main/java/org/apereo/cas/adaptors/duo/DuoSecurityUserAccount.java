@@ -61,6 +61,8 @@ public class DuoSecurityUserAccount implements Serializable {
 
     private String userId;
 
+    private String providerId;
+
     /**
      * Add groups.
      *
@@ -142,5 +144,17 @@ public class DuoSecurityUserAccount implements Serializable {
 
     public boolean isEnrolled() {
         return BooleanUtils.toBoolean(this.metadata.getOrDefault("is_enrolled", "false"));
+    }
+
+    public String getPhone() {
+        return this.devices
+            .stream()
+            .filter(device -> StringUtils.equalsIgnoreCase(device.getType(), "phone")
+                || StringUtils.equalsIgnoreCase(device.getType(), "mobile"))
+            .map(DuoSecurityUserDevice::getNumber)
+            .filter(StringUtils::isNotBlank)
+            .findFirst()
+            .orElse(StringUtils.EMPTY);
+        
     }
 }

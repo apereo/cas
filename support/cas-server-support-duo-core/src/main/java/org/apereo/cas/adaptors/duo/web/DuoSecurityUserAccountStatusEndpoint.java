@@ -60,16 +60,15 @@ public class DuoSecurityUserAccountStatusEndpoint extends BaseCasActuatorEndpoin
             .filter(BeanSupplier::isNotProxy)
             .map(DuoSecurityMultifactorAuthenticationProvider.class::cast)
             .filter(provider -> StringUtils.isBlank(providerId) || provider.matches(providerId))
-            .forEach(p -> {
-                val duoService = p.getDuoAuthenticationService();
+            .forEach(provider -> {
+                val duoService = provider.getDuoAuthenticationService();
                 val accountStatus = duoService.getUserAccount(username);
-                results.put(p.getId(),
+                results.put(provider.getId(),
                     CollectionUtils.wrap("duoApiHost", resolver.resolve(duoService.getProperties().getDuoApiHost()),
-                        "name", p.getFriendlyName(),
+                        "name", provider.getFriendlyName(),
                         "accountStatus", accountStatus
                     ));
             });
         return results;
-
     }
 }

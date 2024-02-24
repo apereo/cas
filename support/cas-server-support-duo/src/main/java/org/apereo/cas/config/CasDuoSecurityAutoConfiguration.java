@@ -15,7 +15,8 @@ import org.springframework.context.annotation.Import;
     DuoSecurityMultifactorProviderBypassConfiguration.class,
     DuoSecurityAuthenticationEventExecutionPlanConfiguration.class,
     DuoSecurityConfiguration.class,
-    DuoSecurityRestConfiguration.class
+    DuoSecurityRestConfiguration.class,
+    DuoSecurityPasswordlessAuthenticationConfiguration.class
 })
 public class CasDuoSecurityAutoConfiguration {
 }

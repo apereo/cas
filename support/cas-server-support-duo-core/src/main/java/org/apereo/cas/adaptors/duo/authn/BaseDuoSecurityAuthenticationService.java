@@ -83,13 +83,6 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
 
     @Override
     public DuoSecurityUserAccount getUserAccount(final String username) {
-        if (!properties.isAccountStatusEnabled()) {
-            LOGGER.debug("Checking Duo Security for user's [{}] account status is disabled", username);
-            val account = new DuoSecurityUserAccount(username);
-            account.setStatus(DuoSecurityUserAccountStatus.AUTH);
-            return account;
-        }
-
         val userAccountCachedMap = userAccountCache.asMap();
         if (userAccountCachedMap.containsKey(username)) {
             val account = userAccountCachedMap.get(username);
@@ -119,6 +112,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
                 val authResult = response.get(RESULT_KEY_RESULT).asText().toUpperCase(Locale.ENGLISH);
 
                 val status = DuoSecurityUserAccountStatus.valueOf(authResult);
+                account.setProviderId(properties.getId());
                 account.setStatus(status);
                 account.setMessage(response.get(RESULT_KEY_STATUS_MESSAGE).asText());
                 if (status == DuoSecurityUserAccountStatus.ENROLL) {
