@@ -9,14 +9,14 @@ const cas = require("../../cas.js");
     await cas.pressEnter(page);
     await cas.screenshot(page);
     await cas.log("Waiting for Duo MFA to complete...");
-    await page.waitForTimeout(12000);
+    await cas.sleep(12000);
     await cas.screenshot(page);
     await cas.log("Checking for service ticket...");
     await cas.assertTicketParameter(page);
 
     await cas.log("Checking for SSO Session cookie...");
     await cas.gotoLogin(page);
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.assertCookie(page);
 
     await browser.close();

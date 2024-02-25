@@ -23,7 +23,7 @@ const YAML = require("yaml");
 
     await cas.log("Updating configuration and waiting for changes to reload...");
     await updateConfig(configFile, configFilePath, true);
-    await page.waitForTimeout(5000);
+    await cas.sleep(5000);
 
     await cas.refreshContext();
 

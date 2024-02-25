@@ -20,7 +20,7 @@ const fs = require("fs");
         const user = (Math.random() + 1).toString(36).substring(4);
         const password = (Math.random() + 1).toString(36).substring(4);
         await cas.loginWith(page, user, password);
-        await page.waitForTimeout(500);
+        await cas.sleep(500);
     }
 
     await cas.gotoLogin(page);

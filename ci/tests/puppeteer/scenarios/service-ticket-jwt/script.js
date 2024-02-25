@@ -9,7 +9,7 @@ const assert = require("assert");
     const service = "https://localhost:9859/anything/1";
     await cas.gotoLogin(page, service);
     await cas.loginWith(page);
-    await page.waitForTimeout(2000);
+    await cas.sleep(2000);
     const ticket = await cas.assertTicketParameter(page);
 
     const keyPath = path.join(__dirname, "private.key");

@@ -7,12 +7,12 @@ const path = require("path");
     const page = await cas.newPage(browser);
 
     await cas.gotoLogin(page);
-    await page.waitForTimeout(2000);
+    await cas.sleep(2000);
     await cas.click(page, "li #SAML2Client");
     await page.waitForNavigation();
 
     await cas.loginWith(page, "user1", "password");
-    await page.waitForTimeout(3000);
+    await cas.sleep(3000);
     await cas.screenshot(page);
     await cas.assertInnerText(page, "#content h2", "Multifactor Authentication Provider Selection");
     await cas.assertVisibility(page, "#mfa-gauth");

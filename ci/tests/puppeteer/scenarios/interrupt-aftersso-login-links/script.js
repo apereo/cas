@@ -12,7 +12,7 @@ const cas = require("../../cas.js");
     await cas.assertTextContent(page, "#interruptMessage", "We interrupted your login");
     await cas.assertCookie(page);
     await cas.assertVisibility(page, "#interruptLinks");
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.click(page, "#casapplication");
     await page.waitForNavigation();
     await cas.assertTicketParameter(page);

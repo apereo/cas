@@ -11,7 +11,7 @@ const cas = require("../../cas.js");
     await cas.gotoLogin(page);
     
     await cas.loginWith(page);
-    await page.waitForTimeout(3000);
+    await cas.sleep(3000);
 
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
 

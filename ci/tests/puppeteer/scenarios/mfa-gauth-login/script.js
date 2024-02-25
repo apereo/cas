@@ -6,7 +6,7 @@ const cas = require("../../cas.js");
     const page = await cas.newPage(browser);
     await cas.gotoLoginWithAuthnMethod(page, undefined, "GoogleAuth");
     await cas.loginWith(page);
-    await page.waitForTimeout(3000);
+    await cas.sleep(3000);
     await cas.screenshot(page);
     await cas.assertVisibility(page, "#form-1");
     await cas.assertVisibility(page, "#name-RecordName");

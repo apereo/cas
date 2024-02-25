@@ -7,15 +7,15 @@ const cas = require("../../cas.js");
     const page = await cas.newPage(browser);
     
     await cas.gotoLogin(page, "https://localhost:9859/anything/cas");
-    await page.waitForTimeout(2000);
+    await cas.sleep(2000);
     await cas.assertVisibility(page, "li #CasClient");
     await cas.screenshot(page);
     await cas.click(page, "li #CasClient");
     await page.waitForNavigation();
-    await page.waitForTimeout(3000);
+    await cas.sleep(3000);
     await cas.screenshot(page);
     await cas.loginWith(page);
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.screenshot(page);
     await cas.logPage(page);
     await cas.assertParameter(page, "ticket");

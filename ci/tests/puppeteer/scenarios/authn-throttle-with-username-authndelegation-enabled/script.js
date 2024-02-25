@@ -9,7 +9,7 @@ const cas = require("../../cas.js");
     await submitLoginFailure(page);
     await cas.assertInnerText(page, "#content h2", "Access Denied");
     await cas.assertInnerText(page, "#content p", "You've entered the wrong password for the user too many times. You've been throttled.");
-    await page.waitForTimeout(2000);
+    await cas.sleep(2000);
 
     await browser.close();
 })();

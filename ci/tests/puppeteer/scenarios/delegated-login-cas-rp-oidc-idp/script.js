@@ -13,10 +13,10 @@ const cas = require("../../cas.js");
     await cas.assertVisibility(page, "li #Keycloak");
     await cas.click(page, "li #Keycloak");
     await page.waitForNavigation();
-    await page.waitForTimeout(3000);
+    await cas.sleep(3000);
     await cas.screenshot(page);
     await cas.loginWith(page, "caskeycloak", "r2RlZXz6f2h5");
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
 
     await cas.logPage(page);
     const result = new URL(page.url());

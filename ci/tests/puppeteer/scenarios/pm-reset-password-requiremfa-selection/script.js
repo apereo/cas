@@ -5,15 +5,15 @@ const cas = require("../../cas.js");
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.gotoLogin(page);
-    await page.waitForTimeout(2000);
+    await cas.sleep(2000);
     await cas.assertInnerText(page, "#forgotPasswordLink", "Reset your password");
     await cas.click(page, "#forgotPasswordLink");
-    await page.waitForTimeout(2000);
+    await cas.sleep(2000);
 
     await cas.type(page,"#username", "casuser");
     await cas.pressEnter(page);
     await page.waitForNavigation();
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.screenshot(page);
 
     await cas.assertVisibility(page, "#mfa-gauth");
@@ -21,7 +21,7 @@ const cas = require("../../cas.js");
 
     await cas.log("Selecting mfa-gauth");
     await cas.submitForm(page, "#mfa-gauth > form[name=fm-mfa-gauth]");
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
 
     const scratch = await cas.fetchGoogleAuthenticatorScratchCode();
     await cas.log(`Using scratch code ${scratch} to login...`);
@@ -30,7 +30,7 @@ const cas = require("../../cas.js");
     await page.waitForNavigation();
 
     await cas.screenshot(page);
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.assertInnerText(page, "#content h2", "Password Reset Instructions Sent Successfully.");
     await cas.assertInnerTextStartsWith(page, "#content p", "You should shortly receive a message");
 

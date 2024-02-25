@@ -32,7 +32,7 @@ async function executeRequest(page, service, attribute, attributeValue) {
     assert(authenticationSuccess.attributes.longTermAuthenticationRequestTokenUsed === undefined);
     assert(authenticationSuccess.attributes[attribute][0] === attributeValue);
     await cas.goto(page, "https://localhost:8443/cas/logout");
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.log("============================");
     
     return authenticationSuccess;

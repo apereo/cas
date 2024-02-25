@@ -8,7 +8,7 @@ const cas = require("../../cas.js");
     await cas.gotoLogin(page, "https://apereo.github.io");
 
     await cas.loginWith(page, "duobypass", "Mellon");
-    await page.waitForTimeout(8000);
+    await cas.sleep(8000);
     
     await cas.assertTextContent(page, "#main-content #login #fm1 h3", "Acceptable Usage Policy");
 
@@ -17,14 +17,14 @@ const cas = require("../../cas.js");
 
     await cas.click(page, "#aupSubmit");
     await page.waitForNavigation();
-    await page.waitForTimeout(2000);
+    await cas.sleep(2000);
 
     await cas.assertTicketParameter(page);
     const result = new URL(page.url());
     assert(result.host === "apereo.github.io");
 
     await cas.gotoLogin(page);
-    await page.waitForTimeout(2000);
+    await cas.sleep(2000);
     await cas.assertCookie(page);
     
     await browser.close();

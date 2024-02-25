@@ -12,13 +12,13 @@ const assert = require("assert");
     const page = await cas.newPage(browser);
 
     await cas.goto(page, "https://localhost:8444");
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
 
     await cas.log("Accessing protected CAS application");
     await cas.goto(page, "https://localhost:8444/protected");
     await cas.logPage(page);
 
-    await page.waitForTimeout(2000);
+    await cas.sleep(2000);
     await cas.screenshot(page);
 
     await cas.assertVisibility(page, "#loginProviders");
@@ -29,7 +29,7 @@ const assert = require("assert");
     await page.waitForNavigation();
 
     await cas.loginWith(page, "user1", "password");
-    await page.waitForTimeout(2000);
+    await cas.sleep(2000);
 
     await cas.log("Checking CAS application access...");
     let url = await page.url();
@@ -63,7 +63,7 @@ const assert = require("assert");
     </samlp:LogoutRequest>`;
 
     await cas.log("Sending back-channel logout request via POST");
-    await page.waitForTimeout(3000);
+    await cas.sleep(3000);
     const logoutUrl = `https://localhost:8443/cas/login?client_name=SAML2Client&SAMLRequest=${logoutRequest}&RelayState=_e0d9e4dddf88cc6a4979d677aefdca4881954e8102`;
     await cas.doPost(logoutUrl, {}, {
         "Content-Type": "text/xml"
@@ -74,22 +74,22 @@ const assert = require("assert");
         throw err;
     });
     
-    await page.waitForTimeout(2000);
+    await cas.sleep(2000);
     await cas.log("Invoking SAML2 identity provider SLO...");
     await cas.goto(page, "http://localhost:9443/simplesaml/saml2/idp/SingleLogoutService.php?ReturnTo=https://apereo.github.io");
-    await page.waitForTimeout(4000);
+    await cas.sleep(4000);
     await cas.logPage(page);
     url = await page.url();
     assert(url.startsWith("https://apereo.github.io"));
 
     await cas.log("Going to CAS login page to check for session termination");
     await cas.gotoLogin(page);
-    await page.waitForTimeout(2000);
+    await cas.sleep(2000);
     await cas.screenshot(page);
 
     await cas.log("Accessing protected CAS application");
     await cas.goto(page, "https://localhost:8444/protected");
-    await page.waitForTimeout(3000);
+    await cas.sleep(3000);
     await cas.screenshot(page);
     url = await page.url();
     await cas.logPage(page);

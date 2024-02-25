@@ -7,7 +7,7 @@ const cas = require("../../cas.js");
     await cas.gotoLogin(page);
     await cas.assertTextContent(page, "#forgotUsernameLink", "Forgot your username?");
     await cas.click(page, "#forgotUsernameLink");
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
 
     await cas.assertTextContent(page, "#reset #fm1 h3", "Forgot your username?");
     await cas.assertVisibility(page, "#email");

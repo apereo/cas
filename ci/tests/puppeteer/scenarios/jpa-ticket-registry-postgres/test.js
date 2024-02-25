@@ -19,7 +19,7 @@ const assert = require("assert");
     const url = await page.url();
     assert(url === "https://localhost:8443/cas/logout");
 
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.assertCookie(page, false);
 
     await browser.close();

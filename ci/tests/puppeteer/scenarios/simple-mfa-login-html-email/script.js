@@ -7,14 +7,14 @@ const cas = require("../../cas.js");
     const page = await cas.newPage(browser);
     await cas.gotoLoginWithAuthnMethod(page, undefined, "mfa-simple");
     await cas.loginWith(page);
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.assertVisibility(page, "#token");
 
     const page2 = await browser.newPage();
     await page2.goto("http://localhost:8282");
-    await page2.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.click(page2, "table tbody td a");
-    await page2.waitForTimeout(1000);
+    await cas.sleep(1000);
 
     await page2.evaluate((selector) => {
         const element = document.querySelector(selector);
@@ -22,7 +22,7 @@ const cas = require("../../cas.js");
             element.scrollIntoView();
         }
     }, "#greeting");
-    await page2.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.screenshot(page);
 
     const greeting = await cas.textContent(page2, "#greeting");
@@ -34,9 +34,9 @@ const cas = require("../../cas.js");
     await page.bringToFront();
     await cas.type(page, "#token", code);
     await cas.submitForm(page, "#fm1");
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.submitForm(page, "#registerform");
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.assertCookie(page);
 
     await browser.close();

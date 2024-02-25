@@ -32,7 +32,7 @@ async function authenticateWithRestApi(username, status = 200) {
 
     await cas.gotoLogin(page);
     const response = await cas.loginWith(page, "casrest", "p@ssw0rd");
-    await page.waitForTimeout(2000);
+    await cas.sleep(2000);
     assert(response.status() === 401);
     await cas.screenshot(page);
     await cas.assertCookie(page, false);

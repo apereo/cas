@@ -8,7 +8,7 @@ async function verifyAuthenticationFlow(context, service) {
     await cas.gotoLogin(page, service);
     await cas.click(page, "#rememberMe");
     await cas.loginWith(page);
-    await page.waitForTimeout(2000);
+    await cas.sleep(2000);
     const ticket = await cas.assertTicketParameter(page);
 
     await cas.logb("Checking ticket validation response multiple times...");
@@ -49,7 +49,7 @@ async function verifyExistingSsoSession(context, service) {
     const page = await cas.newPage(context);
     await cas.gotoLogin(page);
     await cas.loginWith(page);
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
 
     const localStorageData = await cas.readLocalStorage(page);
     const storageContext = JSON.parse(localStorageData["CAS"]).CasBrowserStorageContext;
@@ -58,7 +58,7 @@ async function verifyExistingSsoSession(context, service) {
     await cas.log(`Logging into service ${service}`);
     const page2 = await cas.newPage(context);
     await cas.gotoLogin(page, service);
-    await page2.waitForTimeout(2000);
+    await cas.sleep(2000);
     await cas.log("Checking for page URL...");
     await cas.logPage(page);
     await cas.assertInvisibility(page, "#username");
