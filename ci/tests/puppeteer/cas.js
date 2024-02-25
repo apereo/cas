@@ -386,7 +386,7 @@ exports.assertMissingParameter = async (page, param) => {
     assert.equal(result.searchParams.has(param), false);
 };
 
-exports.sleep = async (ms) =>
+exports.sleep = async (ms = 1000) =>
     new Promise((resolve) => {
         this.logg(`Waiting for ${ms / 1000} second(s)...`);
         setTimeout(resolve, ms);
