@@ -244,7 +244,7 @@ exports.assertCookie = async (page, cookieMustBePresent = true, cookieName = "TG
     await this.log(`Found cookies ${cookies.length}`);
     if (cookieMustBePresent) {
         await this.log(`Checking for cookie ${cookieName}, which MUST be present`);
-        assert(cookies.length !== 0);
+        assert(cookies.length !== 0, `Cookie ${cookieName} must be present`);
         await this.logg("Asserting cookies:");
         await this.logg(`${JSON.stringify(cookies, undefined, 2)}`);
         return cookies[0];
@@ -283,6 +283,7 @@ exports.submitForm = async (page, selector, predicate = undefined, statusCode = 
 };
 
 exports.pressEnter = async (page) => {
+    this.screenshot(page);
     page.keyboard.press("Enter");
     this.sleep(1000);
 };
