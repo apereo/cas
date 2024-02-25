@@ -20,10 +20,11 @@ const cas = require("../../cas.js");
     assert(json.displayName === undefined);
     assert(json.cn === undefined);
     await cas.gotoLogout(page);
-    
+
     service = "https://localhost:9859/anything/2";
     await cas.gotoLogin(page, service);
     await cas.loginWith(page);
+    await cas.sleep(1000);
     ticket = await cas.assertTicketParameter(page);
     body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
     await cas.log(body);
