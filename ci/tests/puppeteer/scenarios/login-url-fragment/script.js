@@ -9,7 +9,7 @@ const assert = require("assert");
     const service = "https://apereo.github.io#hello-world";
     await cas.gotoLogin(page, service);
     await cas.loginWith(page);
-    await page.waitForTimeout(2000);
+    await cas.sleep(2000);
     await cas.assertTicketParameter(page);
     await cas.logPage(page);
     const url = await page.url();

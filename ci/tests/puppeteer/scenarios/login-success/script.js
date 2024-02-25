@@ -9,7 +9,7 @@ const assert = require("assert");
     await cas.goto(page, "http://localhost:8080/cas/login");
     await cas.assertVisibility(page, "#drawerButton");
     await cas.click(page, "#drawerButton");
-    await page.waitForTimeout(3000);
+    await cas.sleep(3000);
     await cas.screenshot(page);
     await cas.assertVisibility(page, "div.container-fluid");
 
@@ -28,7 +28,7 @@ const assert = require("assert");
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
 
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     assert (await cas.pageVariable(page, "googleAnalyticsTrackingId") !== null);
 
     await cas.gotoLogout(page);

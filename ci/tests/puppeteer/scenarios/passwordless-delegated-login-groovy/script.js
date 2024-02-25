@@ -6,7 +6,7 @@ async function submitUser(page, user) {
     await cas.type(page, "#username", user);
     await cas.pressEnter(page);
     await page.waitForNavigation();
-    await page.waitForTimeout(2000);
+    await cas.sleep(2000);
 }
 
 (async () => {

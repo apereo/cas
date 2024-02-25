@@ -8,9 +8,9 @@ async function verifyNormalFlows(page) {
 
     await cas.goto(page, url);
     await cas.logPage(page);
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.loginWith(page);
-    await page.waitForTimeout(3000);
+    await cas.sleep(3000);
 
     const code = await cas.assertParameter(page, "code");
     await cas.log(`OAuth code ${code}`);
@@ -82,9 +82,9 @@ async function verifyJwtAccessToken(page) {
 
     await cas.goto(page, url);
     await cas.logPage(page);
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.loginWith(page);
-    await page.waitForTimeout(3000);
+    await cas.sleep(3000);
 
     const code = await cas.assertParameter(page, "code");
     await cas.log(`OAuth code ${code}`);

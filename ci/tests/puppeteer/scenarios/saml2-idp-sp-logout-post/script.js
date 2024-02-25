@@ -25,7 +25,7 @@ const path = require("path");
     });
 
     await cas.goto(page2, "https://localhost:8443/cas/idp/profile/SAML2/POST/SLO");
-    await page2.waitForTimeout(3000);
+    await cas.sleep(3000);
     await cas.log("Checking for page URL...");
     await cas.logPage(page2);
     assert(await page2.url() === "https://samltest.id/Shibboleth.sso/SLO/POST");

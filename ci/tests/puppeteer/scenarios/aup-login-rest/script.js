@@ -39,7 +39,7 @@ const express = require("express");
         await cas.assertTextContent(page, "#main-content #login #fm1 h3", "Acceptable Usage Policy");
         await cas.assertVisibility(page, "button[name=submit]");
         await cas.assertVisibility(page, "button[name=cancel]");
-        await page.waitForTimeout(1000);
+        await cas.sleep(1000);
         await cas.click(page, "#aupSubmit");
         await page.waitForNavigation();
         const ticket = await cas.assertTicketParameter(page);

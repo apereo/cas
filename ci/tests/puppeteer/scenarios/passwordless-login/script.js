@@ -24,23 +24,23 @@ const cas = require("../../cas.js");
 
     const page2 = await browser.newPage();
     await page2.goto("http://localhost:8282");
-    await page2.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.click(page2, "table tbody td a");
-    await page2.waitForTimeout(1000);
+    await cas.sleep(1000);
     const code = await cas.textContent(page2, "div[name=bodyPlainText] .well");
 
     await page.bringToFront();
     await cas.type(page, "#token", code);
     await cas.submitForm(page, "#fm1");
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
 
     await cas.assertCookie(page);
     await cas.assertInnerTextStartsWith(page, "#content div p", "You, casuser, have successfully logged in");
 
     await cas.click(page, "#auth-tab");
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.type(page, "#attribute-tab-1 input[type=search]", "surrogate");
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.screenshot(page);
     
     const surrogateEnabled = await page.$("#surrogateEnabled");
@@ -49,7 +49,7 @@ const cas = require("../../cas.js");
     assert(surrogatePrincipal === null);
     const surrogateUser = await page.$("#surrogateUser");
     assert(surrogateUser === null);
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
 
     await browser.close();
 })();

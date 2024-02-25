@@ -7,9 +7,9 @@ async function fetchRefreshToken(page, clientId, redirectUrl) {
 
     await cas.log(`Navigating to ${url}`);
     await cas.goto(page, url);
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.loginWith(page);
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
 
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
@@ -85,7 +85,7 @@ async function exchangeToken(refreshToken, clientId, successHandler, errorHandle
     await cas.logg(`Refresh Token 2: ${refreshToken2}`);
 
     await cas.gotoLogout(page);
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.gotoLogin(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Login");
 

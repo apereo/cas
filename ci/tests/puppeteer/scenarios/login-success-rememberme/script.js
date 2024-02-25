@@ -8,7 +8,7 @@ async function loginAndVerify(browser) {
     await cas.gotoLogin(page);
     await cas.click(page, "#rememberMe");
     await cas.loginWith(page);
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     let tgc = await cas.assertCookie(page);
     let date = new Date(tgc.expires * 1000);
     await cas.logg(`TGC expiration date: ${date}`);

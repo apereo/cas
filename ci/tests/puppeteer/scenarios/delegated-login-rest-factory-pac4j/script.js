@@ -18,7 +18,7 @@ const cas = require("../../cas.js");
     const mockServer = await cas.mockJsonServer(payload, 5432);
     const page = await cas.newPage(browser);
     await cas.gotoLogin(page);
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.assertVisibility(page, "#loginProviders");
     await cas.assertVisibility(page, "li #CasClient");
     mockServer.stop();

@@ -11,13 +11,13 @@ const fs = require("fs");
         const page = await cas.newPage(browser);
         const service = "https://example.com";
         await cas.gotoLogin(page, service);
-        await page.waitForTimeout(1000);
+        await cas.sleep(1000);
         await cas.loginWith(page);
         const ticket = await cas.assertTicketParameter(page);
         const body = await cas.doRequest(`https://localhost:8443/cas/validate?service=${service}&ticket=${ticket}`);
         assert(body === "yes\ncasuser\n");
 
-        await page.waitForTimeout(1000);
+        await cas.sleep(1000);
         const SAMLRequest = "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHNhbWwycDpMb2dvdXRSZXF1ZXN0IERlc3RpbmF0aW9uPSJodHRwczovL2xvY2FsaG9zdDo4NDQzL2Nhcy9pZHAvcHJvZmlsZS9TQU1MMi9QT1NUL1NMTyIgSUQ9IkJURmsiIElzc3VlSW5zdGFudD0iMjAyMy0xMC0wNFQxMTozNDo1MC41MDdaIiBWZXJzaW9uPSIyLjAiIHhtbG5zOnNhbWwycD0idXJuOm9hc2lzOm5hbWVzOnRjOlNBTUw6Mi4wOnByb3RvY29sIj48c2FtbDI6SXNzdWVyIHhtbG5zOnNhbWwyPSJ1cm46b2FzaXM6bmFtZXM6dGM6U0FNTDoyLjA6YXNzZXJ0aW9uIj5odHRwOi8vbG9jYWxob3N0Ojk0NDMvc2ltcGxlc2FtbC9tb2R1bGUucGhwL3NhbWwvc3AvbWV0YWRhdGEucGhwL2RlZmF1bHQtc3A8L3NhbWwyOklzc3Vlcj48c2FtbDI6TmFtZUlEIHhtbG5zOnNhbWwyPSJ1cm46b2FzaXM6bmFtZXM6dGM6U0FNTDoyLjA6YXNzZXJ0aW9uIj43NjBiYWM3NS0yY2MwLTQ3YTQtODNiZS05YmY0OTZhYzYwZjU8L3NhbWwyOk5hbWVJRD48L3NhbWwycDpMb2dvdXRSZXF1ZXN0Pg==";
         const sloPage = `
         <html>
@@ -37,7 +37,7 @@ const fs = require("fs");
         await cas.log(`Logout page is written to ${sloFile}`);
 
         await cas.goto(page, `file://${sloFile}`);
-        await page.waitForTimeout(2000);
+        await cas.sleep(2000);
 
         await cas.logPage(page);
         await cas.screenshot(page);

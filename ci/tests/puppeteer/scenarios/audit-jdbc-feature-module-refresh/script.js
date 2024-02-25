@@ -24,7 +24,7 @@ const YAML = require("yaml");
     const name = (Math.random() + 1).toString(36).substring(4);
     await cas.log("Updating configuration and waiting for changes to reload...");
     await updateConfig(configFile, configFilePath, `jdbc:hsqldb:file:/tmp/db/${name}`);
-    await page.waitForTimeout(5000);
+    await cas.sleep(5000);
 
     await cas.refreshContext();
 

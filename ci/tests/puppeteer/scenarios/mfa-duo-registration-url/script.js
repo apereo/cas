@@ -8,7 +8,7 @@ const assert = require("assert");
     const page = await cas.newPage(browser);
     await cas.gotoLoginWithAuthnMethod(page, undefined, "mfa-duo");
     await cas.loginWith(page, "unknown", "Mellon");
-    await page.waitForTimeout(3000);
+    await cas.sleep(3000);
     await cas.screenshot(page);
     await cas.logPage(page);
     const url = await page.url();
