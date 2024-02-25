@@ -16,14 +16,17 @@ const cas = require("../../cas.js");
 
     await typePassword(page, "123456", "123456");
     await cas.sleep(2000);
+    await cas.screenshot(page);
     await cas.assertVisibility(page, "#password-policy-violation-msg");
 
     await typePassword(page, "123456", "123");
     await cas.sleep(2000);
+    await cas.screenshot(page);
     await cas.assertVisibility(page, "#password-confirm-mismatch-msg");
 
     await typePassword(page, "Testing1234", "Testing1234");
-    await cas.sleep(1000);
+    await cas.sleep(2000);
+    await cas.screenshot(page);
     await cas.assertVisibility(page, "#password-strength-msg");
     await cas.assertVisibility(page, "#password-strength-notes");
 
@@ -33,7 +36,9 @@ const cas = require("../../cas.js");
     await cas.assertInvisibility(page, "#password-policy-violation-msg");
 
     await cas.pressEnter(page);
+    await cas.sleep(1000);
     await page.waitForNavigation();
+    await cas.screenshot(page);
     await cas.assertTextContent(page, "#content h2", "Password Change Successful");
     await cas.assertTextContent(page, "#content p", "Your account password is successfully updated.");
     await cas.submitForm(page, "#form");

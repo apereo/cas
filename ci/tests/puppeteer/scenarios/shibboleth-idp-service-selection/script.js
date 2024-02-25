@@ -17,7 +17,7 @@ function getShibbolethUrlForEntityId(entityId) {
 
     await cas.goto(page, getShibbolethUrlForEntityId("github.com"));
     await cas.loginWith(page);
-    await cas.sleep(2000);
+    await cas.sleep(5000);
     await cas.assertVisibility(page, "#token");
     await cas.assertVisibility(page, "#resendButton");
     await cas.assertVisibility(page, "#loginButton");

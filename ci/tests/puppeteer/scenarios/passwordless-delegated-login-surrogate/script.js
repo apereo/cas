@@ -29,7 +29,7 @@ async function startAuthFlow(page, username) {
     await cas.sleep(2000);
     await cas.screenshot(page);
     await cas.type(page, "#attribute-tab-1 input[type=search]", "surrogate");
-    await cas.sleep(5000);
+    await cas.sleep(6000);
     await cas.screenshot(page);
     await cas.assertInnerTextStartsWith(page, "#surrogateEnabled td code kbd", "[true]");
     await cas.assertInnerTextStartsWith(page, "#surrogatePrincipal td code kbd", "[casuser]");
