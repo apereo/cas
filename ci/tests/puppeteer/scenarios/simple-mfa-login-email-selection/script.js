@@ -39,7 +39,7 @@ const cas = require("../../cas.js");
     await page.bringToFront();
     await cas.type(page, "#token", code);
     await cas.submitForm(page, "#fm1");
-    await cas.sleep(2000);
+    await cas.sleep(4000);
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
     await cas.sleep(2000);
     await cas.assertCookie(page);

@@ -12,6 +12,7 @@ const cas = require("../../cas.js");
     await cas.sleep(3000);
     await cas.assertTicketParameter(page);
     await cas.gotoLogin(page, service);
+    await cas.sleep(3000);
     await cas.assertTicketParameter(page);
     await cas.gotoLogout(page);
     
