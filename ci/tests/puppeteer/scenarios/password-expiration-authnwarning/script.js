@@ -15,11 +15,11 @@ const cas = require("../../cas.js");
     await cas.assertTextContent(page, "#pwdmain h3", "Hello, casuser. You must change your password.");
 
     await typePassword(page, "123456", "123456");
-    await cas.sleep(1000);
+    await cas.sleep(2000);
     await cas.assertVisibility(page, "#password-policy-violation-msg");
 
     await typePassword(page, "123456", "123");
-    await cas.sleep(1000);
+    await cas.sleep(2000);
     await cas.assertVisibility(page, "#password-confirm-mismatch-msg");
 
     await typePassword(page, "Testing1234", "Testing1234");
