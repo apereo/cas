@@ -38,7 +38,6 @@ const cas = require("../../cas.js");
 
     await cas.pressEnter(page);
     await cas.sleep(2000);
-    await page.waitForNavigation();
     await cas.screenshot(page);
     await cas.assertTextContent(page, "#content h2", "Password Change Successful");
     await cas.assertTextContent(page, "#content p", "Your account password is successfully updated.");
