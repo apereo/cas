@@ -8,6 +8,7 @@ const cas = require("../../cas.js");
         const page = await cas.newPage(browser);
         await cas.gotoLogin(page);
         await cas.loginWith(page);
+        await cas.sleep(1000);
         await cas.assertCookie(page);
         await cas.gotoLogout(page);
         await cas.assertCookie(page, false);
