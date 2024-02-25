@@ -11,8 +11,7 @@ async function executeFlow(browser, redirectUri, clientId, accessTokenSecret) {
     await cas.logPage(page);
     await cas.sleep(1000);
     await cas.loginWith(page);
-    await cas.sleep(1000);
-
+    await cas.sleep(2000);
     const code = await cas.assertParameter(page, "code");
     await cas.log(`OAuth code ${code}`);
 

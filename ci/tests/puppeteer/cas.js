@@ -352,7 +352,7 @@ exports.assertParameter = async (page, param) => {
     const result = new URL(page.url());
     const value = result.searchParams.get(param);
     await this.logg(`Parameter ${param} with value ${value}`);
-    assert(value !== null);
+    assert(value !== null, `Parameter ${param} cannot be null`);
     return value;
 };
 
@@ -892,7 +892,7 @@ exports.refreshBusContext = async (url = "https://localhost:8443/cas") => {
 };
 
 exports.loginDuoSecurityBypassCode = async (page, username = "casuser", currentCodes = undefined) => {
-    await cas.sleep(12000);
+    await this.sleep(12000);
     await this.click(page, "button#passcode");
     const bypassCodes = currentCodes ?? await this.fetchDuoSecurityBypassCodes(username);
     await this.log(`Duo Security: Retrieved bypass codes ${bypassCodes}`);
@@ -908,7 +908,7 @@ exports.loginDuoSecurityBypassCode = async (page, username = "casuser", currentC
         await this.screenshot(page);
         await this.pressEnter(page);
         await this.log("Waiting for Duo Security to accept bypass code...");
-        await cas.sleep(10000);
+        await this.sleep(10000);
         const error = await this.isVisible(page, "div.message.error");
         if (error) {
             await this.log("Duo Security is unable to accept bypass code");
