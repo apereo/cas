@@ -289,6 +289,7 @@ exports.pressEnter = async (page) => {
 };
 
 exports.type = async (page, selector, value, obfuscate = false) => {
+    await page.waitForSelector(selector, {visible: true, timeout: 3000 });
     const logValue = obfuscate ? "******" : value;
     await this.log(`Typing ${logValue} in field ${selector}`);
     await page.$eval(selector, (el) => el.value = "");
