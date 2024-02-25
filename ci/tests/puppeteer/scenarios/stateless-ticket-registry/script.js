@@ -56,7 +56,6 @@ async function verifyExistingSsoSession(context, service) {
     assert(storageContext !== undefined);
     
     await cas.log(`Logging into service ${service}`);
-    const page2 = await cas.newPage(context);
     await cas.gotoLogin(page, service);
     await cas.sleep(2000);
     await cas.log("Checking for page URL...");
@@ -85,7 +84,7 @@ async function verifyExistingSsoSession(context, service) {
     const browser = await puppeteer.launch(cas.browserOptions());
 
     for (let i = 1; i <= 2; i++) {
-        const context = await browser.createIncognitoBrowserContext();
+        const context = await browser.createBrowserContext();
         await cas.log(`Running test scenario ${i}`);
         switch (i) {
         case 1:
