@@ -121,6 +121,7 @@ public class ScriptingUtils {
             "org.apereo.cas.web",
             "org.apereo.cas.web.support",
             "org.apereo.cas.authentication.mfa",
+            "org.apereo.cas.services",
             "org.apereo.cas.support.saml",
             "org.apereo.cas.support.saml.services"
         );
