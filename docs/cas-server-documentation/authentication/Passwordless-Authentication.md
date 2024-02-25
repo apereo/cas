@@ -48,15 +48,16 @@ User records that qualify for passwordless authentication must
 be found by CAS using one of the following strategies. All strategies may be configured
 using CAS settings and are activated depending on the presence of configuration values.
 
-| Option  | Description                                                                |
-|---------|----------------------------------------------------------------------------|
-| Simple  | Please [see this guide](Passwordless-Authentication-Storage-Simple.html).  |
-| MongoDb | Please [see this guide](Passwordless-Authentication-Storage-MongoDb.html). |
-| LDAP    | Please [see this guide](Passwordless-Authentication-Storage-LDAP.html).    |
-| JSON    | Please [see this guide](Passwordless-Authentication-Storage-JSON.html).    |
-| Groovy  | Please [see this guide](Passwordless-Authentication-Storage-Groovy.html).  |
-| REST    | Please [see this guide](Passwordless-Authentication-Storage-Rest.html).    |
-| Custom  | Please [see this guide](Passwordless-Authentication-Storage-Custom.html).  |
+| Option       | Description                                                                    |
+|--------------|--------------------------------------------------------------------------------|
+| Simple       | Please [see this guide](Passwordless-Authentication-Storage-Simple.html).      |
+| MongoDb      | Please [see this guide](Passwordless-Authentication-Storage-MongoDb.html).     |
+| LDAP         | Please [see this guide](Passwordless-Authentication-Storage-LDAP.html).        |
+| JSON         | Please [see this guide](Passwordless-Authentication-Storage-JSON.html).        |
+| Groovy       | Please [see this guide](Passwordless-Authentication-Storage-Groovy.html).      |
+| REST         | Please [see this guide](Passwordless-Authentication-Storage-Rest.html).        |
+| Custom       | Please [see this guide](Passwordless-Authentication-Storage-Custom.html).      |
+| Duo Security | Please [see this guide](Passwordless-Authentication-Storage-DuoSecurity.html). |
 
 ## Token Management
 
