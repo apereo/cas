@@ -3,7 +3,7 @@ const cas = require("../../cas.js");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
-    const context = browser.createBrowserContext();
+    const context = await browser.createBrowserContext();
     const page = await cas.newPage(context);
 
     await cas.gotoLogin(page);

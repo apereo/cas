@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.With;
+import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 import java.io.Serial;
 import java.io.Serializable;
@@ -33,6 +34,7 @@ import java.util.Map;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @SuperBuilder
 @With
+@Accessors(chain = true)
 public class PasswordlessUserAccount implements Serializable {
     @Serial
     private static final long serialVersionUID = 5783908770607793373L;

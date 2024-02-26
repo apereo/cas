@@ -1,5 +1,6 @@
 package org.apereo.cas.impl.account;
 
+import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.impl.BasePasswordlessUserAccountStoreTests;
 
@@ -28,7 +29,10 @@ class GroovyPasswordlessUserAccountStoreTests extends BasePasswordlessUserAccoun
     @Test
     void verifyAction() throws Throwable {
         passwordlessUserAccountStore.reload();
-        val user = passwordlessUserAccountStore.findUser("casuser");
+        val user = passwordlessUserAccountStore.findUser(PasswordlessAuthenticationRequest
+            .builder()
+            .username("casuser")
+            .build());
         assertTrue(user.isPresent());
     }
 }

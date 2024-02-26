@@ -32,7 +32,7 @@ public class VerifyPasswordlessAccountAuthenticationAction extends BasePasswordl
     protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         val username = requestContext.getRequestParameters().getRequired(PasswordlessRequestParser.PARAMETER_USERNAME);
         val passwordlessRequest = passwordlessRequestParser.parse(username);
-        val account = passwordlessUserAccountStore.findUser(passwordlessRequest.getUsername());
+        val account = passwordlessUserAccountStore.findUser(passwordlessRequest);
         if (account.isEmpty()) {
             WebUtils.addErrorMessageToContext(requestContext, "passwordless.error.unknown.user");
             return error();

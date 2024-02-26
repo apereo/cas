@@ -1,6 +1,7 @@
 package org.apereo.cas.impl.account;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
+import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.config.CasLdapPasswordlessAuthenticationAutoConfiguration;
 import org.apereo.cas.impl.BasePasswordlessUserAccountStoreTests;
@@ -59,7 +60,10 @@ class LdapPasswordlessUserAccountStoreTests {
     class DefaultTests extends BaseLdapTests {
         @RetryingTest(3)
         void verifyAction() throws Throwable {
-            val user = passwordlessUserAccountStore.findUser("passwordlessuser");
+            val user = passwordlessUserAccountStore.findUser(PasswordlessAuthenticationRequest
+                .builder()
+                .username("passwordlessUser")
+                .build());
             assertTrue(user.isPresent());
             assertEquals("passwordlessuser@example.org", user.get().getEmail());
             assertEquals("123456789", user.get().getPhone());
@@ -76,7 +80,10 @@ class LdapPasswordlessUserAccountStoreTests {
     class MissingRequiredAttributesTests extends BaseLdapTests {
         @RetryingTest(3)
         void verifyAction() throws Throwable {
-            val user = passwordlessUserAccountStore.findUser("passwordlessuser");
+            val user = passwordlessUserAccountStore.findUser(PasswordlessAuthenticationRequest
+                .builder()
+                .username("passwordlessUser")
+                .build());
             assertFalse(user.isPresent());
         }
     }

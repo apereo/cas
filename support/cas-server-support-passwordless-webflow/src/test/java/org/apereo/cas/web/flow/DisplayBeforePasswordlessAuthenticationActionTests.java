@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessRequestParser;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.impl.token.PasswordlessAuthenticationToken;
@@ -31,7 +32,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = {
     "spring.mail.host=localhost",
     "spring.mail.port=25000",
-    
     "cas.authn.passwordless.accounts.groovy.location=classpath:PasswordlessAccount.groovy"
 })
 @Tag("Mail")
@@ -91,8 +91,8 @@ class DisplayBeforePasswordlessAuthenticationActionTests extends BasePasswordles
         val context = MockRequestContext.create(applicationContext);
         val attributes = new LocalAttributeMap("error", new IllegalArgumentException("Bad account"));
         context.setCurrentEvent(new Event(this, "processing", attributes));
-        PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(context, passwordlessUserAccountStore.findUser("casuser").get());
-        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS,
-            displayBeforePasswordlessAuthenticationAction.execute(context).getId());
+        val request = PasswordlessAuthenticationRequest.builder().username("casuser").build();
+        PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(context, passwordlessUserAccountStore.findUser(request).get());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, displayBeforePasswordlessAuthenticationAction.execute(context).getId());
     }
 }

@@ -47,7 +47,7 @@ public class DisplayBeforePasswordlessAuthenticationAction extends BasePasswordl
             throw UnauthorizedServiceException.denied("Denied");
         }
         val passwordlessRequest = passwordlessRequestParser.parse(username);
-        val account = passwordlessUserAccountStore.findUser(passwordlessRequest.getUsername());
+        val account = passwordlessUserAccountStore.findUser(passwordlessRequest);
         if (account.isEmpty()) {
             LOGGER.error("Unable to locate passwordless user account for [{}]", username);
             throw UnauthorizedServiceException.denied("Denied: %s".formatted(username));
