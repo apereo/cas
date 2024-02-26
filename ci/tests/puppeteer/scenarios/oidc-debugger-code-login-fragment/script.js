@@ -19,7 +19,7 @@ const assert = require("assert");
     await cas.sleep(1000);
 
     await cas.click(page, "#allow");
-    await page.waitForNavigation();
+    await cas.waitForNavigation(page);
     await cas.log(`Page url: ${await page.url()}`);
     const result = await page.evaluate(() => window.location.hash);
     assert(result.includes("code="));

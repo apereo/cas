@@ -59,7 +59,7 @@ const BROWSER_OPTIONS = {
 
 exports.browserOptions = () => BROWSER_OPTIONS;
 exports.browserOptions = (opt) => ({
-    ...BROWSER_OPTIONS,
+    ...this.browserOptions(),
     ...opt
 });
 
@@ -818,6 +818,8 @@ exports.base64Url = async (value) => CryptoJS.enc.Base64url.stringify(value);
 
 exports.pageVariable = async (page, name) => page.evaluate(name);
 
+exports.waitForNavigation = async(page) => page.waitForNavigation({timeout: 8000});
+
 exports.goto = async (page, url, retryCount = 5) => {
     let response = null;
     let attempts = 0;
@@ -941,4 +943,4 @@ exports.readLocalStorage = async(page) => {
 };
 
 this.asciiart("Apereo CAS - Puppeteer");
-this.log(`Chromium user data directory: ${CHROMIUM_USER_DATA_DIR}`)
+this.log(`Chromium user data directory: ${CHROMIUM_USER_DATA_DIR}`);

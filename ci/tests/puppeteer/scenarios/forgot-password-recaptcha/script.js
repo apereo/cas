@@ -16,7 +16,7 @@ const cas = require("../../cas.js");
     await cas.assertVisibility(page, "#username");
     await cas.type(page,"#username", "casuser");
     await cas.pressEnter(page);
-    await page.waitForNavigation();
+    await cas.waitForNavigation(page);
     await cas.sleep(1000);
     await cas.assertTextContent(page, "div .banner-danger p", "reCAPTCHA’s validation failed.");
     await browser.close();

@@ -11,7 +11,7 @@ const cas = require("../../cas.js");
     await cas.assertVisibility(page, "li #CasClient");
     await cas.screenshot(page);
     await cas.click(page, "li #CasClient");
-    await page.waitForNavigation();
+    await cas.waitForNavigation(page);
     await cas.sleep(3000);
     await cas.screenshot(page);
     await cas.loginWith(page);

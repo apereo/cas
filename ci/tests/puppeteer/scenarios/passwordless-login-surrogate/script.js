@@ -14,7 +14,7 @@ const cas = require("../../cas.js");
 
     await cas.type(page,"#username", "user3+casuser");
     await cas.pressEnter(page);
-    await page.waitForNavigation();
+    await cas.waitForNavigation(page);
     await cas.sleep(3000);
     await cas.assertInnerText(page, "#login h3", "Provide Token");
     await cas.assertInnerTextStartsWith(page, "#login p", "Please provide the security token sent to you");

@@ -28,7 +28,7 @@ const cas = require("../../cas.js");
     await cas.log(`Using scratch code ${scratch} to login...`);
     await cas.type(page,"#token", scratch);
     await cas.pressEnter(page);
-    await page.waitForNavigation();
+    await cas.waitForNavigation(page);
 
     await cas.assertTicketParameter(page);
 
@@ -56,7 +56,7 @@ const cas = require("../../cas.js");
     await cas.log(`Using scratch code ${scratch} to login...`);
     await cas.type(page,"#token", scratch);
     await cas.pressEnter(page);
-    await page.waitForNavigation();
+    await cas.waitForNavigation(page);
 
     await cas.log("Navigating to second service with SSO session");
     await cas.gotoLogin(page, "https://github.com/apereo");
