@@ -3,14 +3,16 @@ const puppeteer = require("puppeteer");
 const cas = require("../../cas.js");
 
 (async () => {
-    const browser1 = await puppeteer.launch(cas.browserOptions());
-    const page1 = await cas.newPage(browser1);
+    const browser = await puppeteer.launch(cas.browserOptions());
+
+    const context1 = browser.createBrowserContext();
+    const page1 = await cas.newPage(context1);
     await page1.goto("https://localhost:8443/cas/login");
     await cas.sleep(1000);
     await cas.assertVisibility(page1, "li #CasClient");
 
-    const browser2 = await puppeteer.launch(cas.browserOptions());
-    const page2 = await cas.newPage(browser2);
+    const context2 = browser.createBrowserContext();
+    const page2 = await cas.newPage(context2);
     await page2.goto("https://localhost:8443/cas/login?service=https://github.com/apereo/cas");
     await cas.sleep(1000);
     await cas.assertVisibility(page2, "li #CasClient");
@@ -26,6 +28,7 @@ const cas = require("../../cas.js");
 
     await cas.assertMissingParameter(page1, "service");
 
-    await browser1.close();
-    await browser2.close();
+    await context1.close();
+    await context2.close();
+    await browser.close();
 })();
