@@ -23,7 +23,7 @@ const assert = require("assert");
     await cas.assertInnerText(page, "#content h2", "Account Registration");
     await cas.assertInnerTextStartsWith(page, "#content p", "Account activation instructions are successfully sent");
 
-    const link = cas.extractFromEmail(browser);
+    const link = await cas.extractFromEmail(browser);
     assert(link !== undefined);
     await cas.assertInnerText(page, "#content h2", "Account Registration");
     await cas.assertInnerTextStartsWith(page, "#content p", "Welcome back!");

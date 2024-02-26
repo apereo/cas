@@ -13,7 +13,7 @@ const assert = require("assert");
 
     await cas.screenshot(page);
 
-    const code = cas.extractFromEmail(browser);
+    const code = await cas.extractFromEmail(browser);
 
     const page3 = await browser.newPage();
     await cas.goto(page3, "http://localhost:8282");

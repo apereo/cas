@@ -22,7 +22,7 @@ const cas = require("../../cas.js");
     await cas.assertInnerTextStartsWith(page, "#login p", "Please provide the security token sent to you");
     await cas.assertVisibility(page, "#token");
 
-    const code = cas.extractFromEmail(browser);
+    const code = await cas.extractFromEmail(browser);
 
     await page.bringToFront();
     await cas.type(page, "#token", code);

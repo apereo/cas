@@ -12,7 +12,7 @@ const assert = require("assert");
     await cas.sleep(1000);
     await cas.assertInnerTextContains(page, "#loginErrorsPanel p", "authentication attempt is determined to be risky");
     await cas.assertCookie(page, false);
-    const body = cas.extractFromEmail(browser);
+    const body = await cas.extractFromEmail(browser);
     const link = body.substring(body.indexOf("link=") + 5);
     await cas.logg(`Verification link is ${link}`);
     const response = await cas.goto(page, link);

@@ -11,7 +11,7 @@ const assert = require("assert");
     await cas.loginWith(page);
     await cas.sleep(2000);
     await cas.assertInnerTextContains(page, "#loginErrorsPanel p", "authentication attempt is determined to be risky");
-    const body = cas.extractFromEmail(browser);
+    const body = await cas.extractFromEmail(browser);
     assert(body.includes("casuser with score 1.00"));
     await browser.close();
 })();
