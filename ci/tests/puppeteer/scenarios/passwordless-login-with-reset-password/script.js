@@ -30,13 +30,7 @@ const cas = require("../../cas.js");
     await cas.waitForNavigation(page);
     await cas.sleep(2000);
 
-    const page2 = await browser.newPage();
-    await page2.goto("http://localhost:8282");
-    await cas.sleep(1000);
-    await cas.click(page2, "table tbody td a");
-    await cas.sleep(1000);
-    const pwdResetUrl =  await cas.textContent(page2, "div[name=bodyPlainText] .well");
-    await page2.close();
+    const pwdResetUrl = cas.extractFromEmail(browser);
 
     await page.goto(pwdResetUrl);
     await cas.sleep(1000);

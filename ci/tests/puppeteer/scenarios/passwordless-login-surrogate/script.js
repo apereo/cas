@@ -20,14 +20,8 @@ const cas = require("../../cas.js");
     await cas.assertInnerTextStartsWith(page, "#login p", "Please provide the security token sent to you");
     await cas.assertVisibility(page, "#token");
     await cas.sleep(1000);
-    
-    const page2 = await browser.newPage();
-    await page2.goto("http://localhost:8282");
-    await cas.sleep(1000);
-    await cas.click(page2, "table tbody td a");
-    await cas.sleep(1000);
-    const code = await cas.textContent(page2, "div[name=bodyPlainText] .well");
-    await page2.close();
+
+    const code = cas.extractFromEmail(browser);
 
     await page.bringToFront();
     await cas.type(page, "#token", code);
