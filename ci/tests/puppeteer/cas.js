@@ -59,7 +59,7 @@ const BROWSER_OPTIONS = {
 
 exports.browserOptions = () => BROWSER_OPTIONS;
 exports.browserOptions = (opt) => ({
-    ...this.browserOptions(),
+    ...BROWSER_OPTIONS,
     ...opt
 });
 
