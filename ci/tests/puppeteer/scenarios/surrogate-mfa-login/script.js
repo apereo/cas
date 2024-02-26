@@ -2,12 +2,7 @@ const puppeteer = require("puppeteer");
 const cas = require("../../cas.js");
 
 async function getOneTimeCode(browser) {
-    const page = await browser.newPage();
-    await page.goto("http://localhost:8282");
-    await cas.sleep(1000);
-    await cas.click(page, "table tbody td a");
-    await cas.sleep(3000);
-    return cas.textContent(page, "div[name=bodyPlainText] .well");
+    return cas.extractFromEmail(browser);
 }
 
 async function impersonatePreSelected(page, browser) {

@@ -12,16 +12,10 @@ const cas = require("../../cas.js");
     await cas.sleep(1000);
     await cas.assertVisibility(page, "#token");
 
-    const page2 = await browser.newPage();
-    await page2.goto("http://localhost:8282");
-    await cas.sleep(1000);
-    await cas.click(page2, "table tbody td a");
-    await cas.sleep(1000);
-    let code = await cas.textContent(page2, "div[name=bodyPlainText] .well");
+    let code = cas.extractFromEmail(browser);
     assert(code.includes("Dear CAS Apereo,Here is your token->"));
     code = code.substring(code.lastIndexOf(">") + 1);
     await cas.log(`Code to use is extracted as ${code}`);
-    await page2.close();
 
     await page.bringToFront();
     await cas.type(page, "#token", code);

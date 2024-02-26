@@ -24,16 +24,9 @@ const assert = require("assert");
     }
 
     await cas.screenshot(page);
-    const page2 = await browser.newPage();
-    await page2.goto("http://localhost:8282");
-    await cas.sleep(1000);
-    await cas.click(page2, "table tbody td a");
-    await cas.sleep(1000);
-    let code = await cas.textContent(page2, "div[name=bodyPlainText] .well");
-    await page2.close();
-
+    const token = cas.extractFromEmail(browser);
     await page.bringToFront();
-    await cas.type(page, "#token", code);
+    await cas.type(page, "#token", token);
     await cas.submitForm(page, "#fm1");
     await cas.sleep(2000);
 
@@ -51,7 +44,7 @@ const assert = require("assert");
     await cas.sleep(3000);
     await cas.screenshot(page);
 
-    code = await cas.assertParameter(page, "code");
+    const code = await cas.assertParameter(page, "code");
     await cas.log(`Current code is ${code}`);
 
     const accessTokenUrl = "https://localhost:8443/cas/oidc/token?grant_type=authorization_code"

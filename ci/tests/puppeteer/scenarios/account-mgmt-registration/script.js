@@ -1,5 +1,6 @@
 const puppeteer = require("puppeteer");
 const cas = require("../../cas.js");
+const assert = require("assert");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -22,14 +23,8 @@ const cas = require("../../cas.js");
     await cas.assertInnerText(page, "#content h2", "Account Registration");
     await cas.assertInnerTextStartsWith(page, "#content p", "Account activation instructions are successfully sent");
 
-    await cas.goto(page, "http://localhost:8282");
-    await cas.sleep(1000);
-    await cas.click(page, "table tbody td a");
-    await cas.sleep(1000);
-    const link = await cas.textContent(page, "div[name=bodyPlainText] .well");
-    await cas.log(`Activation link is ${link}`);
-    await cas.goto(page, link);
-    await cas.sleep(1000);
+    const link = cas.extractFromEmail(browser);
+    assert(link !== undefined);
     await cas.assertInnerText(page, "#content h2", "Account Registration");
     await cas.assertInnerTextStartsWith(page, "#content p", "Welcome back!");
 

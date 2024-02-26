@@ -13,14 +13,7 @@ const assert = require("assert");
 
     await cas.screenshot(page);
 
-    const page2 = await browser.newPage();
-    await page2.goto("http://localhost:8282");
-    await cas.sleep(1000);
-    await cas.click(page2, "table tbody td a[title=CAS]");
-    await cas.sleep(1000);
-    const code = await cas.textContent(page2, "div[name=bodyPlainText] .well");
-    await cas.screenshot(page);
-    await page2.close();
+    const code = cas.extractFromEmail(browser);
 
     const page3 = await browser.newPage();
     await cas.goto(page3, "http://localhost:8282");
