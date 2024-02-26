@@ -12,7 +12,7 @@ const cas = require("../../cas.js");
     await cas.sleep(1000);
     await cas.assertVisibility(page, "#token");
 
-    let code = cas.extractFromEmail(browser);
+    let code = await cas.extractFromEmail(browser);
     assert(code.includes("Dear CAS Apereo,Here is your token->"));
     code = code.substring(code.lastIndexOf(">") + 1);
     await cas.log(`Code to use is extracted as ${code}`);

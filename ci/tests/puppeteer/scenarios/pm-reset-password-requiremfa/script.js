@@ -16,7 +16,7 @@ const cas = require("../../cas.js");
     await cas.sleep(1000);
     await cas.screenshot(page);
 
-    const code = cas.extractFromEmail(browser);
+    const code = await cas.extractFromEmail(browser);
 
     await page.bringToFront();
     await cas.type(page, "#token", code);

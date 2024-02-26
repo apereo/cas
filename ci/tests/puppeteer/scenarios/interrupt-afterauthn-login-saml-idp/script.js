@@ -12,7 +12,7 @@ const path = require("path");
     await cas.sleep(2000);
     await cas.screenshot(page);
 
-    const code = cas.extractFromEmail(browser);
+    const code = await cas.extractFromEmail(browser);
 
     await page.bringToFront();
     await cas.type(page, "#token", code);

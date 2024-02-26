@@ -10,7 +10,7 @@ const cas = require("../../cas.js");
     await cas.assertVisibility(page, "#token");
     await cas.attributeValue(page, "html", "lang", "en");
 
-    const code = cas.extractFromEmail(browser);
+    const code = await cas.extractFromEmail(browser);
 
     await page.bringToFront();
     await cas.attributeValue(page, "html", "lang", "en");

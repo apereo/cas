@@ -24,7 +24,7 @@ const assert = require("assert");
     }
 
     await cas.screenshot(page);
-    const token = cas.extractFromEmail(browser);
+    const token = await cas.extractFromEmail(browser);
     await page.bringToFront();
     await cas.type(page, "#token", token);
     await cas.submitForm(page, "#fm1");

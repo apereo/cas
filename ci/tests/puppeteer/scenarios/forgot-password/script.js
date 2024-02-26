@@ -25,7 +25,7 @@ const cas = require("../../cas.js");
     await cas.assertInnerText(page, "#content h2", "Password Reset Instructions Sent Successfully.");
     await cas.assertInnerTextStartsWith(page, "#content p", "You should shortly receive a message");
 
-    const link = cas.extractFromEmail(browser);
+    const link = await cas.extractFromEmail(browser);
     await cas.goto(page, link);
     await cas.sleep(1000);
 

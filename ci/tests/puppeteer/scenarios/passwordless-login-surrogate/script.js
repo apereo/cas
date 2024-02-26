@@ -21,7 +21,7 @@ const cas = require("../../cas.js");
     await cas.assertVisibility(page, "#token");
     await cas.sleep(1000);
 
-    const code = cas.extractFromEmail(browser);
+    const code = await cas.extractFromEmail(browser);
 
     await page.bringToFront();
     await cas.type(page, "#token", code);

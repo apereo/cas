@@ -18,7 +18,7 @@ const cas = require("../../cas.js");
     await cas.submitForm(page, "#loginForm");
     await cas.sleep(4000);
     await cas.screenshot(page);
-    const code = cas.extractFromEmail(browser);
+    const code = await cas.extractFromEmail(browser);
     await page.bringToFront();
     await cas.type(page, "#token", code);
     await cas.submitForm(page, "#fm1");

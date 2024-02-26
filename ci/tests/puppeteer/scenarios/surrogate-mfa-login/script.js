@@ -2,7 +2,7 @@ const puppeteer = require("puppeteer");
 const cas = require("../../cas.js");
 
 async function getOneTimeCode(browser) {
-    return cas.extractFromEmail(browser);
+    return await cas.extractFromEmail(browser);
 }
 
 async function impersonatePreSelected(page, browser) {

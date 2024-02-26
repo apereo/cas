@@ -15,7 +15,7 @@ const assert = require("assert");
     await cas.sleep(3000);
     await cas.screenshot(page);
 
-    const code = cas.extractFromEmail(browser);
+    const code = await cas.extractFromEmail(browser);
 
     await page.bringToFront();
     await cas.type(page, "#token", code);

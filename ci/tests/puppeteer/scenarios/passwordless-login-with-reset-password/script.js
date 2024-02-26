@@ -30,7 +30,7 @@ const cas = require("../../cas.js");
     await cas.waitForNavigation(page);
     await cas.sleep(2000);
 
-    const pwdResetUrl = cas.extractFromEmail(browser);
+    const pwdResetUrl = await cas.extractFromEmail(browser);
 
     await page.goto(pwdResetUrl);
     await cas.sleep(1000);
