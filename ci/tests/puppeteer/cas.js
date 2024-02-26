@@ -33,6 +33,18 @@ const LOGGER = pino({
     }
 });
 
+/**
+ * IMPORTANT: Controls settings for the chromium browser.
+ * This appears to be necessary in newer versions of chromium
+ * so we can alter and store the security and privacy checks
+ * and disable everything, particular the password manager that
+ * forces a popup dialog, warning about password data breaches.
+ *
+ * The value should be:
+ * /path/to/cas-server/ci/tests/puppeteer/chromium
+ */
+const CHROMIUM_USER_DATA_DIR = `${__dirname}/chromium`;
+
 const BROWSER_OPTIONS = {
     ignoreHTTPSErrors: true,
     headless: (process.env.CI === "true" || process.env.HEADLESS === "true") ? "new" : false,
@@ -42,9 +54,8 @@ const BROWSER_OPTIONS = {
     protocolTimeout: 60000,
     dumpio: false,
     slowMo: process.env.CI === "true" ? 0 : 10,
-    args: ["--start-maximized", "--window-size=1920,1080"]
+    args: [`--user-data-dir=${CHROMIUM_USER_DATA_DIR}`, "--disable-web-security", "--start-maximized", "--window-size=1920,1080"]
 };
-
 
 exports.browserOptions = () => BROWSER_OPTIONS;
 exports.browserOptions = (opt) => ({
@@ -527,25 +538,6 @@ exports.runGradle = async (workdir, opts = [], exitFunc) => {
     return exec;
 };
 
-exports.launchWsFedSp = async (spDir, opts = []) => {
-    let args = ["build", "appStart", "-q", "-x", "test", "--no-daemon", `-Dsp.sslKeystorePath=${process.env.CAS_KEYSTORE}`];
-    args = args.concat(opts);
-    await this.logg(`Launching WSFED SP in ${spDir} with ${args}`);
-    return this.runGradle(spDir, args, (code) => this.log(`WSFED SP Child process exited with code ${code}`));
-};
-
-exports.stopGradleApp = async (gradleDir, deleteDir = true) => {
-    const args = ["appStop", "-q", "--no-daemon"];
-    await this.logg(`Stopping process in ${gradleDir} with ${args}`);
-    return this.runGradle(gradleDir, args, (code) => {
-        this.log(`Stopped child process exited with code ${code}`);
-        if (deleteDir) {
-            this.sleep(3000);
-            this.removeDirectory(gradleDir);
-        }
-    });
-};
-
 exports.shutdownCas = async (baseUrl) => {
     await this.logg("Stopping CAS via shutdown actuator");
     const response = await this.doRequest(`${baseUrl}/actuator/shutdown`,
@@ -949,3 +941,4 @@ exports.readLocalStorage = async(page) => {
 };
 
 this.asciiart("Apereo CAS - Puppeteer");
+this.log(`Chromium user data directory: ${CHROMIUM_USER_DATA_DIR}`)
