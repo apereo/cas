@@ -55,8 +55,8 @@ const cas = require("../../cas.js");
 async function login() {
     for (let i = 1; i <= 4; i++) {
         const browser = await puppeteer.launch(cas.browserOptions());
-        const context = browser.createBrowserContext();
-        const page = await cas.newPage(browser);
+        const context = await browser.createBrowserContext();
+        const page = await cas.newPage(context);
         await cas.gotoLogin(page);
         await cas.loginWith(page, `casuser${i}`, "Mellon");
         await cas.assertCookie(page);

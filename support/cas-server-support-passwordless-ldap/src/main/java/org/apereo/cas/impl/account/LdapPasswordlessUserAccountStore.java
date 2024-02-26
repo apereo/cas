@@ -1,5 +1,6 @@
 package org.apereo.cas.impl.account;
 
+import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.configuration.model.support.passwordless.account.PasswordlessAuthenticationLdapAccountsProperties;
@@ -37,11 +38,11 @@ public class LdapPasswordlessUserAccountStore implements PasswordlessUserAccount
     private final PasswordlessAuthenticationLdapAccountsProperties ldapProperties;
 
     @Override
-    public Optional<PasswordlessUserAccount> findUser(final String username) {
+    public Optional<PasswordlessUserAccount> findUser(final PasswordlessAuthenticationRequest request) {
         try {
             val filter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getSearchFilter(),
                 LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
-                CollectionUtils.wrap(username));
+                CollectionUtils.wrap(request.getUsername()));
 
             LOGGER.debug("Constructed LDAP filter [{}] to locate passwordless account", filter);
             val response = connectionFactory.executeSearchOperation(ldapProperties.getBaseDn(), filter, ldapProperties.getPageSize());
@@ -49,7 +50,10 @@ public class LdapPasswordlessUserAccountStore implements PasswordlessUserAccount
 
             if (LdapUtils.containsResultEntry(response)) {
                 val entry = response.getEntry();
-                val acctBuilder = PasswordlessUserAccount.builder().username(username).name(username);
+                val acctBuilder = PasswordlessUserAccount
+                    .builder()
+                    .username(request.getUsername())
+                    .name(request.getUsername());
 
                 setAttribute(entry, ldapProperties::getUsernameAttribute, acctBuilder::username);
                 setAttribute(entry, ldapProperties::getNameAttribute, acctBuilder::name);

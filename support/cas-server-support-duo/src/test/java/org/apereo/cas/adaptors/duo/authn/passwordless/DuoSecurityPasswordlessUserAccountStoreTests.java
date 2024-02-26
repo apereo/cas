@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.duo.authn.passwordless;
 
 import org.apereo.cas.adaptors.duo.BaseDuoSecurityTests;
+import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.config.CasPasswordlessAuthenticationAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -70,7 +71,9 @@ public class DuoSecurityPasswordlessUserAccountStoreTests {
         val port = URI.create(props.getDuoApiHost()).getPort();
         try (val webServer = new MockWebServer(true, port, new ClassPathResource("duo-adminapi-user.json"))) {
             webServer.start();
-            val user = passwordlessUserAccountStore.findUser("duosecurityuser").orElseThrow();
+
+            val request = PasswordlessAuthenticationRequest.builder().username("casuser").build();
+            val user = passwordlessUserAccountStore.findUser(request).orElseThrow();
             assertEquals("duosecurityuser", user.getUsername());
             assertEquals("jsmith@example.com", user.getEmail());
             assertEquals(props.getId(), user.getSource());

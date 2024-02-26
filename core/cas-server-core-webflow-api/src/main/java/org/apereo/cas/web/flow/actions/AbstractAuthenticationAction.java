@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.adaptive.UnauthorizedAuthenticationException;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -37,33 +36,31 @@ public abstract class AbstractAuthenticationAction extends BaseCasWebflowAction 
     private final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
-        return FunctionUtils.doUnchecked(() -> {
-            if (!evaluateAdaptiveAuthenticationPolicy(requestContext)) {
-                val agent = WebUtils.getHttpServletRequestUserAgentFromRequestContext(requestContext);
-                val geoLocation = WebUtils.getHttpServletRequestGeoLocationFromRequestContext(requestContext);
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+        if (!evaluateAdaptiveAuthenticationPolicy(requestContext)) {
+            val agent = WebUtils.getHttpServletRequestUserAgentFromRequestContext(requestContext);
+            val geoLocation = WebUtils.getHttpServletRequestGeoLocationFromRequestContext(requestContext);
 
-                val msg = "Adaptive authentication policy does not allow this request for " + agent + " and " + geoLocation;
-                LOGGER.warn(msg);
-                val map = CollectionUtils.<String, Throwable>wrap(UnauthorizedAuthenticationException.class.getSimpleName(),
-                    new UnauthorizedAuthenticationException(msg));
-                val error = new AuthenticationException(msg, map, new HashMap<>(0));
-                val event = new Event(this, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE,
-                    new LocalAttributeMap<>(CasWebflowConstants.TRANSITION_ID_ERROR, error));
-                fireEventHooks(event, requestContext);
-                return event;
-            }
+            val msg = "Adaptive authentication policy does not allow this request for " + agent + " and " + geoLocation;
+            LOGGER.warn(msg);
+            val map = CollectionUtils.<String, Throwable>wrap(UnauthorizedAuthenticationException.class.getSimpleName(),
+                new UnauthorizedAuthenticationException(msg));
+            val error = new AuthenticationException(msg, map, new HashMap<>(0));
+            val event = new Event(this, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE,
+                new LocalAttributeMap<>(CasWebflowConstants.TRANSITION_ID_ERROR, error));
+            fireEventHooks(event, requestContext);
+            return event;
+        }
 
-            val serviceTicketEvent = serviceTicketRequestWebflowEventResolver.resolveSingle(requestContext);
-            if (serviceTicketEvent != null) {
-                fireEventHooks(serviceTicketEvent, requestContext);
-                return serviceTicketEvent;
-            }
+        val serviceTicketEvent = serviceTicketRequestWebflowEventResolver.resolveSingle(requestContext);
+        if (serviceTicketEvent != null) {
+            fireEventHooks(serviceTicketEvent, requestContext);
+            return serviceTicketEvent;
+        }
 
-            val finalEvent = initialAuthenticationAttemptWebflowEventResolver.resolveSingle(requestContext);
-            fireEventHooks(finalEvent, requestContext);
-            return finalEvent;
-        });
+        val finalEvent = initialAuthenticationAttemptWebflowEventResolver.resolveSingle(requestContext);
+        fireEventHooks(finalEvent, requestContext);
+        return finalEvent;
     }
 
     protected boolean evaluateAdaptiveAuthenticationPolicy(final RequestContext requestContext) throws Throwable {

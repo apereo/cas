@@ -1,5 +1,6 @@
 package org.apereo.cas.impl.account;
 
+import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
@@ -28,8 +29,8 @@ public class GroovyPasswordlessUserAccountStore implements PasswordlessUserAccou
     }
 
     @Override
-    public Optional<PasswordlessUserAccount> findUser(final String username) throws Throwable {
-        val args = new Object[]{username, LOGGER};
+    public Optional<PasswordlessUserAccount> findUser(final PasswordlessAuthenticationRequest request) throws Throwable {
+        val args = new Object[]{request, LOGGER};
         return Optional.ofNullable(watchableScript.execute(args, PasswordlessUserAccount.class));
     }
 }
