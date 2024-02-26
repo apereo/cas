@@ -5,7 +5,7 @@ const cas = require("../../cas.js");
 async function submitUser(page, user) {
     await cas.type(page, "#username", user);
     await cas.pressEnter(page);
-    await page.waitForNavigation();
+    await cas.waitForNavigation(page);
     await cas.sleep(1000);
 }
 

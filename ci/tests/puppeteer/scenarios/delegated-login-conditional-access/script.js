@@ -20,7 +20,7 @@ const cas = require("../../cas.js");
     await cas.sleep(1000);
     await cas.assertVisibility(page, "li #CASClient");
     await cas.click(page, "#CASClient");
-    await page.waitForNavigation();
+    await cas.waitForNavigation(page);
     await cas.sleep(1000);
     const response = await cas.loginWith(page);
     await cas.log(`${response.status()} ${response.statusText()}`);

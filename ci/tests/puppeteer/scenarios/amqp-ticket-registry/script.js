@@ -29,7 +29,7 @@ const path = require("path");
         await cas.gotoLogin(page);
         await cas.sleep(1000);
         await cas.click(page, "li #SAML2Client");
-        await page.waitForNavigation();
+        await cas.waitForNavigation(page);
         await cas.loginWith(page, "user1", "password");
         await cas.sleep(3000);
         await cas.assertCookie(page);

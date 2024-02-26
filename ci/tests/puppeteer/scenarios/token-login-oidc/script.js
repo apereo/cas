@@ -17,7 +17,7 @@ const assert = require("assert");
     await cas.screenshot(page);
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
-        await page.waitForNavigation();
+        await cas.waitForNavigation(page);
     }
     const code = await cas.assertParameter(page, "code");
     await cas.log(`Current code is ${code}`);

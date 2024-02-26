@@ -16,7 +16,7 @@ async function fetchIdToken(page, maxAge, successHandler) {
 
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
-        await page.waitForNavigation();
+        await cas.waitForNavigation(page);
     }
     await cas.sleep(2000);
     await cas.screenshot(page);

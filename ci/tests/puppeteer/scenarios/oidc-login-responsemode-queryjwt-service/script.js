@@ -14,7 +14,7 @@ const path = require("path");
     await cas.sleep(1000);
 
     await cas.click(page, "#allow");
-    await page.waitForNavigation();
+    await cas.waitForNavigation(page);
     await cas.log(`Page url: ${await page.url()}\n`);
     const response = await cas.assertParameter(page, "response");
 

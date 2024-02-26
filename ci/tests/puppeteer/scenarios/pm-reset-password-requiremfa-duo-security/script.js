@@ -11,7 +11,7 @@ const cas = require("../../cas.js");
     await cas.sleep(2000);
     await cas.type(page,"#username", "duobypass");
     await cas.pressEnter(page);
-    await page.waitForNavigation();
+    await cas.waitForNavigation(page);
     await cas.sleep(8000);
     await cas.screenshot(page);
     await cas.assertInnerText(page, "#content h2", "Password Reset Instructions Sent Successfully.");

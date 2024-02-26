@@ -11,7 +11,7 @@ const path = require("path");
 
     await cas.gotoLogin(page, "https://apereo.github.io");
     await cas.click(page, "li #CasClient");
-    await page.waitForNavigation();
+    await cas.waitForNavigation(page);
     await cas.loginWith(page);
     await cas.sleep(1000);
     await cas.assertTicketParameter(page);

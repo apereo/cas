@@ -9,7 +9,7 @@ const cas = require("../../cas.js");
     await cas.gotoLogin(page);
     await cas.assertVisibility(page, "li #CasClient");
     await cas.click(page, "li #CasClient");
-    await page.waitForNavigation();
+    await cas.waitForNavigation(page);
 
     await cas.sleep(2000);
     await cas.screenshot(page);

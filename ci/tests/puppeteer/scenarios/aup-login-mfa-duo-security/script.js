@@ -16,7 +16,7 @@ const cas = require("../../cas.js");
     await cas.assertVisibility(page, "button[name=cancel]");
 
     await cas.click(page, "#aupSubmit");
-    await page.waitForNavigation();
+    await cas.waitForNavigation(page);
     await cas.sleep(2000);
 
     await cas.assertTicketParameter(page);

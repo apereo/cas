@@ -29,11 +29,11 @@ async function fetchCode(page, acr, params) {
     await cas.screenshot(page);
     await cas.type(page, "#token", scratch);
     await cas.pressEnter(page);
-    await page.waitForNavigation();
+    await cas.waitForNavigation(page);
 
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
-        await page.waitForNavigation();
+        await cas.waitForNavigation(page);
         await cas.sleep(2000);
     }
 
