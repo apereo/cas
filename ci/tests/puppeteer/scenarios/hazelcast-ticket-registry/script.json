@@ -3,9 +3,9 @@
   "conditions": {
     "docker": "true"
   },
-
   "properties": [
     "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
 
     "--cas.ticket.registry.core.enable-locking=true",
     "--cas.ticket.registry.hazelcast.cluster.discovery.zookeeper.url=localhost:2181",
@@ -32,6 +32,6 @@
     "--cas.ticket.registry.hazelcast.crypto.encryption.key=eAeP4KjGe+y2IrQDxOgL8LeEwfo4YmfYq/fW+b3mS4c=",
     "--cas.ticket.registry.hazelcast.crypto.signing.key=LqQXn8X66Oiob-lLAcvOGbDQO8J4PkiybTgKRIDNuyLjis-X-dBsvZNANlDO_VGPnpxdl7Nxfhkbn_lm57MgHQ"
   ],
-  "initScript": "${PWD}/ci/tests/zookeeper/run-zookeeper-server.sh",
+  "initScript": "${PWD}/ci/tests/zookeeper/run-zookeeper-server.sh,${PWD}/ci/tests/httpbin/run-httpbin-server.sh",
   "instances": 2
 }
