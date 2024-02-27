@@ -11,6 +11,7 @@ const cas = require("../../cas.js");
         await cas.sleep(1000);
         await cas.assertCookie(page);
         await cas.gotoLogout(page);
+        await cas.sleep(1000);
         await cas.assertCookie(page, false);
         await cas.goto(page, "https://localhost:8443/cas/actuator/registeredServices");
         await cas.sleep(1500);

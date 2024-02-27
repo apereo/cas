@@ -6,14 +6,14 @@ const cas = require("../../cas.js");
 
     const context1 = await browser.createBrowserContext();
     const page1 = await cas.newPage(context1);
-    await page1.goto("https://localhost:8443/cas/login");
-    await cas.sleep(1000);
+    await cas.gotoLogin(page1);
+    await cas.sleep(2000);
     await cas.assertVisibility(page1, "li #CasClient");
 
     const context2 = await browser.createBrowserContext();
     const page2 = await cas.newPage(context2);
-    await page2.goto("https://localhost:8443/cas/login?service=https://github.com/apereo/cas");
-    await cas.sleep(1000);
+    await cas.gotoLogin(page2, "https://github.com/apereo/cas");
+    await cas.sleep(2000);
     await cas.assertVisibility(page2, "li #CasClient");
 
     await cas.click(page1, "li #CasClient");
@@ -23,8 +23,8 @@ const cas = require("../../cas.js");
     await cas.waitForNavigation(page2);
 
     await cas.loginWith(page1, "casuser", "Mellon");
-    await cas.sleep(1000);
-
+    await cas.sleep(3000);
+    await cas.logPage(page1);
     await cas.assertMissingParameter(page1, "service");
 
     await context1.close();
