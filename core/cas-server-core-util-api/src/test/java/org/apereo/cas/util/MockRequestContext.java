@@ -23,6 +23,7 @@ import org.springframework.webflow.engine.support.DefaultTransitionCriteria;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockExternalContext;
 import org.springframework.webflow.test.MockFlowExecutionContext;
+import org.springframework.webflow.test.MockFlowSession;
 import org.springframework.webflow.test.MockRequestControlContext;
 import java.util.Locale;
 import java.util.Objects;
@@ -151,6 +152,14 @@ public class MockRequestContext extends MockRequestControlContext {
 
     public MockRequestContext setQueryString(final String s) {
         getHttpServletRequest().setQueryString(s);
+        return this;
+    }
+
+    public MockRequestContext setFlowExecutionContext(final String flowIdLogin) {
+        val flow = new Flow(flowIdLogin);
+        flow.setApplicationContext(getApplicationContext());
+        val exec = new MockFlowExecutionContext(new MockFlowSession(flow));
+        setFlowExecutionContext(exec);
         return this;
     }
 

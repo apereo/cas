@@ -11,10 +11,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.test.MockFlowExecutionContext;
-import org.springframework.webflow.test.MockFlowSession;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -36,11 +33,9 @@ class PrepareForPasswordlessAuthenticationActionTests extends BasePasswordlessAu
 
     @Test
     void verifyAction() throws Throwable {
-        val flow = new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN);
-        flow.setApplicationContext(applicationContext);
-        val exec = new MockFlowExecutionContext(new MockFlowSession(flow));
         val context = MockRequestContext.create(applicationContext);
-        context.setFlowExecutionContext(exec);
+        context.setFlowExecutionContext(CasWebflowConfigurer.FLOW_ID_LOGIN);
+
         assertEquals(CasWebflowConstants.TRANSITION_ID_PASSWORDLESS_GET_USERID, prepareLoginAction.execute(context).getId());
 
         val account = PasswordlessUserAccount.builder()
@@ -55,11 +50,8 @@ class PrepareForPasswordlessAuthenticationActionTests extends BasePasswordlessAu
 
     @Test
     void verifyFlowSkipped() throws Throwable {
-        val flow = new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN);
-        flow.setApplicationContext(applicationContext);
-        val exec = new MockFlowExecutionContext(new MockFlowSession(flow));
         val context = MockRequestContext.create(applicationContext);
-        context.setFlowExecutionContext(exec);
+        context.setFlowExecutionContext(CasWebflowConfigurer.FLOW_ID_LOGIN);
 
         val service = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
         service.setPasswordlessPolicy(new DefaultRegisteredServicePasswordlessPolicy().setEnabled(false));
