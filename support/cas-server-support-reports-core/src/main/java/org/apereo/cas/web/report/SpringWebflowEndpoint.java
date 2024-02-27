@@ -184,7 +184,7 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
 
         if (state instanceof final TransitionableState stDef) {
             acts = StreamSupport.stream(stDef.getExitActionList().spliterator(), false)
-                .map(Object::toString)
+                .map(SpringWebflowEndpoint::convertActionToString)
                 .collect(Collectors.toList());
 
             if (!acts.isEmpty()) {

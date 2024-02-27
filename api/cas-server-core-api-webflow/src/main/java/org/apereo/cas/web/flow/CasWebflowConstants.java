@@ -553,6 +553,10 @@ public interface CasWebflowConstants {
      * The state id 'createTicketGrantingTicket'.
      */
     String STATE_ID_CREATE_TICKET_GRANTING_TICKET = "createTicketGrantingTicket";
+    /**
+     * The state id 'startRemoteAuthentication'.
+     */
+    String STATE_ID_REMOTE_AUTHN_START = "startRemoteAuthentication";
 
     /**
      * The state 'initializeLoginForm'.

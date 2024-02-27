@@ -20,7 +20,6 @@
 
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=attributeConsent",
-    "--management.endpoint.health.show-details=always",
     "--management.endpoints.enabled-by-default=true"
   ]
 }
