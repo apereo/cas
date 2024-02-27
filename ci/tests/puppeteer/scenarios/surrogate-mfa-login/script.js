@@ -1,16 +1,13 @@
 const puppeteer = require("puppeteer");
 const cas = require("../../cas.js");
 
-async function getOneTimeCode(browser) {
-    return await cas.extractFromEmail(browser);
-}
 
 async function impersonatePreSelected(page, browser) {
     await cas.gotoLogin(page);
     await cas.loginWith(page, "user3+casuser", "Mellon");
     await cas.assertVisibility(page, "#token");
     await cas.sleep(1000);
-    const code = await getOneTimeCode(browser);
+    const code = await cas.extractFromEmail(browser);
     await page.bringToFront();
     await cas.type(page, "#token", code);
     await cas.submitForm(page, "#fm1");
@@ -26,7 +23,7 @@ async function impersonateWithMenu(page, browser) {
     await cas.loginWith(page, "+casuser", "Mellon");
     await cas.sleep(1000);
     await cas.assertVisibility(page, "#token");
-    const code = await getOneTimeCode(browser);
+    const code = await cas.extractFromEmail(browser);
     await page.bringToFront();
     await cas.type(page, "#token", code);
     await cas.submitForm(page, "#fm1");

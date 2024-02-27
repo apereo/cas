@@ -3,6 +3,7 @@ const cas = require("../../cas.js");
 const querystring = require("querystring");
 
 (async () => {
+    await cas.updateDuoSecurityUserStatus("casuser");
     const codes = await cas.fetchDuoSecurityBypassCodes("casuser");
     const url = "https://localhost:8443/cas/v1/users";
     const formData = {

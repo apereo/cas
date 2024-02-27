@@ -1,8 +1,3 @@
-import org.apereo.cas.api.*
-import org.apereo.cas.util.model.*
-import java.nio.charset.*
-import groovy.json.*
-
 class Payload {
     String accountId
     String accountName
@@ -14,15 +9,15 @@ class Payload {
 }
 
 def run(Object[] args) {
-    def username = args[0]
+    def request = args[0] as PasswordlessAuthenticationRequest
     def logger = args[1]
 
-    def endpoint = "http://localhost:5432/${username}.json"
-    logger.info("Locating user record for user $username @ $endpoint")
+    def endpoint = "http://localhost:5432/${request.username}.json"
+    logger.info("Locating user record for user $request.username @ $endpoint")
     def text = new URL(endpoint).text
     
     def slurper = new JsonSlurper()
-    logger.info("Parsing results for $username")
+    logger.info("Parsing results for $request.username")
     def results = (List<Payload>) slurper.parseText(text)
     logger.info("Results: {}", results)
     
@@ -32,7 +27,7 @@ def run(Object[] args) {
 
     def entry = results[0]
     if (results.size() == 1 && entry.authType == "none") {
-        logger.info("Could not locate user record for $username")
+        logger.info("Could not locate user record for $request.username")
         return null
     }
 
@@ -55,7 +50,7 @@ def run(Object[] args) {
     account.setMultifactorAuthenticationEligible(TriStateBoolean.FALSE)
     account.setDelegatedAuthenticationEligible(TriStateBoolean.FALSE)
     account.setRequestPassword(false)
-    account.email = "$username@example.org"
+    account.email = "$request.username@example.org"
 
     results.each {rec ->
         if (rec.authType == "local") {
