@@ -20,6 +20,13 @@ public interface WebBasedRegisteredService extends RegisteredService {
     RegisteredServiceWebflowInterruptPolicy getWebflowInterruptPolicy();
 
     /**
+     * Gets passwordless authentication policy that is assigned to this service.
+     *
+     * @return the passwordless policy
+     */
+    RegisteredServicePasswordlessPolicy getPasswordlessPolicy();
+
+    /**
      * Get the acceptable usage policy linked to this application.
      *
      * @return an instance of {@link RegisteredServiceAcceptableUsagePolicy}

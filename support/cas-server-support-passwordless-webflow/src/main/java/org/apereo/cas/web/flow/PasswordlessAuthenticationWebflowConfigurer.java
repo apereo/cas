@@ -51,8 +51,9 @@ public class PasswordlessAuthenticationWebflowConfigurer extends AbstractCasWebf
     protected void createStateInitialPasswordless(final Flow flow) {
         val state = getState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM, ActionState.class);
         prependActionsToActionStateExecutionList(flow, state, createEvaluateAction(CasWebflowConstants.ACTION_ID_PASSWORDLESS_PREPARE_LOGIN));
-        createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_PASSWORDLESS_GET_USERID,
-            CasWebflowConstants.STATE_ID_PASSWORDLESS_GET_USERID, true);
+        val targetState = state.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
+        createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_PASSWORDLESS_GET_USERID, CasWebflowConstants.STATE_ID_PASSWORDLESS_GET_USERID, true);
+        createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_PASSWORDLESS_SKIP, targetState);
     }
 
     protected void createStateAcceptPasswordless(final Flow flow) {

@@ -62,7 +62,7 @@ test coverage of the CAS codebase is approximately `94%`. Furthermore, a large n
 are now configured to run with parallelism enabled.
   
 Finally, the overall execution of the [browser tests based via Puppeteer](../../developer/Test-Process.html) is reduced
-by approximately `10` minutes for every run of the test suite by removing unnecessary *wait* times and delays in test scenarios.
+by approximately `8~10` minutes for every run of the test suite by removing unnecessary *wait* times and delays in test scenarios.
 
 ### OAuth/OpenID Connect Token Exchange
 
@@ -99,6 +99,7 @@ Notable changes in this area include:
 
 [Duo Security](../authentication/Passwordless-Authentication-Storage-DuoSecurity.html) can now 
 act as a passwordless authentication account store to verify and locate passwordless accounts.
+Furthermore, [passwordless authentication](../authentication/Passwordless-Authentication.html) can now be selectively controlled per application.
 
 ## Other Stuff
 
@@ -120,7 +121,7 @@ act as a passwordless authentication account store to verify and locate password
 - Spring Cloud CosmosDb
 - Spring Data CosmosDb
 - Spring Boot
-- Puppetee
+- Puppeteer
 - Spring Integration
 - Spring Data
 - Micrometer
@@ -132,6 +133,7 @@ act as a passwordless authentication account store to verify and locate password
 - Logback
 - Apache Log4j
 - MariaDb
+- Ldaptive
 - Gradle
 - PostgreSQL
 - Apache Cassandra

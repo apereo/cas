@@ -99,6 +99,10 @@ public interface CasWebflowConstants {
      * The transition state 'passwordlessGetUserId'.
      */
     String TRANSITION_ID_PASSWORDLESS_GET_USERID = "passwordlessGetUserId";
+    /**
+     * The transition state 'passwordlessSkip'.
+     */
+    String TRANSITION_ID_PASSWORDLESS_SKIP = "passwordlessSkip";
 
     /**
      * The transition state 'discovery'.
