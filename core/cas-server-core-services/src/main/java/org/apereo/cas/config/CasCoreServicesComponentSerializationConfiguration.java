@@ -27,6 +27,7 @@ import org.apereo.cas.services.DefaultRegisteredServiceContact;
 import org.apereo.cas.services.DefaultRegisteredServiceDelegatedAuthenticationPolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceExpirationPolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
+import org.apereo.cas.services.DefaultRegisteredServicePasswordlessPolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.DefaultRegisteredServiceProxyGrantingTicketExpirationPolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceProxyTicketExpirationPolicy;
@@ -150,6 +151,7 @@ class CasCoreServicesComponentSerializationConfiguration {
             plan.registerSerializableClass(PatternMatchingAttributeReleasePolicy.class);
             plan.registerSerializableClass(PatternMatchingAttributeReleasePolicy.Rule.class);
 
+            plan.registerSerializableClass(DefaultRegisteredServicePasswordlessPolicy.class);
             plan.registerSerializableClass(DefaultRegisteredServiceMultifactorPolicy.class);
             plan.registerSerializableClass(BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.class);
 
