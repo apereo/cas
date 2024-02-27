@@ -21,7 +21,7 @@ const jose = require("jose");
 const pino = require("pino");
 const xml2js = require("xml2js");
 const {Docker} = require("node-docker-api");
-const docker = new Docker({ socketPath: "/var/run/docker.sock" });
+const docker = new Docker({socketPath: "/var/run/docker.sock"});
 const archiver = require("archiver");
 const unzipper = require("unzipper");
 
@@ -56,7 +56,16 @@ const BROWSER_OPTIONS = {
     protocolTimeout: 60000,
     dumpio: false,
     slowMo: process.env.CI === "true" ? 0 : 10,
-    args: [`--user-data-dir=${CHROMIUM_USER_DATA_DIR}/user-data-dir`, "--disable-web-security", "--start-maximized", "--window-size=1920,1080"]
+    args: [
+        "--disable-setuid-sandbox",
+        "--disable-dev-shm-usage",
+        "--single-process",
+        `--user-data-dir=${CHROMIUM_USER_DATA_DIR}/user-data-dir`,
+        "--no-sandbox",
+        "--disable-web-security",
+        "--start-maximized",
+        "--window-size=1920,1080"
+    ]
 };
 
 exports.browserOptions = () => BROWSER_OPTIONS;
@@ -75,7 +84,7 @@ function inspect(text) {
     return util.inspect(result, {colors: false, depth: null});
 }
 
-exports.log = async(text, ...args) => {
+exports.log = async (text, ...args) => {
     const toLog = inspect(text);
     await LOGGER.debug(`💬 ${colors.blue(toLog)}`, args);
 };
@@ -100,7 +109,7 @@ exports.logr = async (text) => {
     await LOGGER.error(`📛 ${colors.red(toLog)}`);
 };
 
-exports.logPage = async(page) => {
+exports.logPage = async (page) => {
     const url = await page.url();
     await this.log(`Page URL: ${url}`);
 };
@@ -302,7 +311,7 @@ exports.pressEnter = async (page) => {
 };
 
 exports.type = async (page, selector, value, obfuscate = false) => {
-    await page.waitForSelector(selector, {visible: true, timeout: 3000 });
+    await page.waitForSelector(selector, {visible: true, timeout: 3000});
     const logValue = obfuscate ? "******" : value;
     await this.log(`Typing ${logValue} in field ${selector}`);
     await page.$eval(selector, (el) => el.value = "");
@@ -347,7 +356,6 @@ exports.newPage = async (browser) => {
         throw err;
     }
 
-    await page.bringToFront();
     page
         .on("console", (message) => {
             if (message.type() === "warning") {
@@ -359,6 +367,12 @@ exports.newPage = async (browser) => {
             }
         })
         .on("pageerror", ({message}) => this.logr(`Console: ${message}`));
+
+    try {
+        await page.bringToFront();
+    } catch (e) {
+        await this.logr(e);
+    }
     return page;
 };
 
@@ -371,27 +385,27 @@ exports.assertParameter = async (page, param) => {
     return value;
 };
 
-exports.assertPageUrl = async(page, url) => {
+exports.assertPageUrl = async (page, url) => {
     const result = await page.url();
     assert.equal(result, url);
 };
 
-exports.assertPageUrlStartsWith = async(page, url) => {
+exports.assertPageUrlStartsWith = async (page, url) => {
     const result = await page.url();
     assert(result.startsWith(url));
 };
 
-exports.assertPageUrlProtocol = async(page, protocol) => {
+exports.assertPageUrlProtocol = async (page, protocol) => {
     const result = new URL(await page.url());
     assert.equal(result.protocol, protocol);
 };
 
-exports.assertPageUrlHost = async(page, host) => {
+exports.assertPageUrlHost = async (page, host) => {
     const result = new URL(await page.url());
     assert.equal(result.host, host);
 };
 
-exports.assertPageUrlPort = async(page, port) => {
+exports.assertPageUrlPort = async (page, port) => {
     const result = new URL(await page.url());
     assert.equal(result.port, port);
 };
@@ -690,7 +704,7 @@ exports.decodeJwt = async (token, complete = false) => {
 
 exports.updateDuoSecurityUserStatus = async (user = "casuser", status = "AUTH") => {
     await this.log(`Updating user account status to ${status} in Duo Security for ${user}...`);
-    const body = JSON.stringify({ "status": status });
+    const body = JSON.stringify({"status": status});
     await this.doRequest(`https://localhost:8443/cas/actuator/duoAdmin/${user}`,
         "PUT",
         {
@@ -820,7 +834,7 @@ exports.base64Url = async (value) => CryptoJS.enc.Base64url.stringify(value);
 
 exports.pageVariable = async (page, name) => page.evaluate(name);
 
-exports.extractFromEmail = async(browser) => {
+exports.extractFromEmail = async (browser) => {
     const page = await browser.newPage();
     await page.goto("http://localhost:8282");
     await this.sleep(1000);
@@ -832,7 +846,7 @@ exports.extractFromEmail = async(browser) => {
     return text;
 };
 
-exports.waitForNavigation = async(page) => page.waitForNavigation({timeout: 8000});
+exports.waitForNavigation = async (page) => page.waitForNavigation({timeout: 8000});
 
 exports.goto = async (page, url, retryCount = 5) => {
     let response = null;
@@ -857,9 +871,9 @@ exports.goto = async (page, url, retryCount = 5) => {
     return response;
 };
 
-exports.gotoLoginWithLocale = async(page, service, locale) => this.gotoLoginWithAuthnMethod(page, service, undefined, locale);
+exports.gotoLoginWithLocale = async (page, service, locale) => this.gotoLoginWithAuthnMethod(page, service, undefined, locale);
 
-exports.gotoLoginWithAuthnMethod = async(page, service, authnMethod = undefined, locale = undefined) => {
+exports.gotoLoginWithAuthnMethod = async (page, service, authnMethod = undefined, locale = undefined) => {
     let queryString = (service === undefined ? "" : `service=${service}&`);
     queryString += (authnMethod === undefined ? "" : `authn_method=${authnMethod}&`);
     queryString += (locale === undefined ? "" : `locale=${locale}&`);
@@ -867,7 +881,7 @@ exports.gotoLoginWithAuthnMethod = async(page, service, authnMethod = undefined,
     return this.goto(page, url);
 };
 
-exports.gotoLogin = async(page, service = undefined, port = 8443, renew = undefined, method = undefined) => {
+exports.gotoLogin = async (page, service = undefined, port = 8443, renew = undefined, method = undefined) => {
     let queryString = (service === undefined ? "" : `service=${service}&`);
     queryString += (renew === undefined ? "" : "renew=true&");
     queryString += (method === undefined ? "" : `method=${method}&`);
@@ -875,12 +889,12 @@ exports.gotoLogin = async(page, service = undefined, port = 8443, renew = undefi
     return this.goto(page, url);
 };
 
-exports.gotoLogout = async(page, service = undefined, port = 8443) => {
-    const url = `https://localhost:${port}/cas/logout${  service === undefined ? "" : `?service=${service}`}`;
+exports.gotoLogout = async (page, service = undefined, port = 8443) => {
+    const url = `https://localhost:${port}/cas/logout${service === undefined ? "" : `?service=${service}`}`;
     return this.goto(page, url);
 };
 
-exports.parseXML = async(xml, options = {}) => {
+exports.parseXML = async (xml, options = {}) => {
     let parsedXML = undefined;
     const parser = new xml2js.Parser(options);
     await parser.parseString(xml, (err, result) => {
@@ -931,7 +945,7 @@ exports.loginDuoSecurityBypassCode = async (page, username = "casuser", currentC
     }
 };
 
-exports.dockerContainer = async(name) => {
+exports.dockerContainer = async (name) => {
     const containers = await docker.container.list();
     const results = containers.filter((c) => c.data.Names[0].slice(1) === name);
     await this.log(`Docker containers found for ${name} are\n:`);
@@ -943,7 +957,7 @@ exports.dockerContainer = async(name) => {
     return undefined;
 };
 
-exports.readLocalStorage = async(page) => {
+exports.readLocalStorage = async (page) => {
     const results = await page.evaluate(() => {
         const json = {};
         for (let i = 0; i < localStorage.length; i++) {
@@ -956,23 +970,23 @@ exports.readLocalStorage = async(page) => {
     return results;
 };
 
-exports.createZipFile = async(file, callback) => {
+exports.createZipFile = async (file, callback) => {
     const zip = fs.createWriteStream(file);
     const archive = archiver("zip", {
-        zlib: { level: 9 }
+        zlib: {level: 9}
     });
     archive.pipe(zip);
     await callback(archive);
     await archive.finalize();
 };
 
-exports.unzipFile = async(file, targetDirectory) => {
+exports.unzipFile = async (file, targetDirectory) => {
     await fs.createReadStream(file)
-        .pipe(unzipper.Extract({ path: targetDirectory }))
+        .pipe(unzipper.Extract({path: targetDirectory}))
         .on("close", () => this.log(`Files unzipped successfully @ ${targetDirectory}`));
 };
 
-exports.prepareChromium = async() => {
+exports.prepareChromium = async () => {
     this.log(`Chromium directory: ${CHROMIUM_USER_DATA_DIR}`);
     const targetDirectory = `${CHROMIUM_USER_DATA_DIR}/user-data-dir`;
     this.removeDirectoryOrFile(targetDirectory);
