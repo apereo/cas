@@ -211,7 +211,7 @@ exports.loginWith = async (page,
 
     await this.pressEnter(page);
     try {
-        const response = await page.waitForNavigation();
+        const response = await this.waitForNavigation();
         await this.log(`Page response status after navigation: ${response.status()}`);
         return response;
     } catch (e) {
@@ -289,7 +289,7 @@ exports.submitForm = async (page, selector, predicate = undefined, statusCode = 
     return Promise.all([
         page.waitForResponse(predicate),
         page.$eval(selector, (form) => form.submit()),
-        this.sleep(2000)
+        this.sleep(3000)
     ]);
 };
 
@@ -830,7 +830,7 @@ exports.extractFromEmail = async(browser) => {
     return text;
 };
 
-exports.waitForNavigation = async(page) => page.waitForNavigation({timeout: 5000});
+exports.waitForNavigation = async(page) => page.waitForNavigation({timeout: 8000});
 
 exports.goto = async (page, url, retryCount = 5) => {
     let response = null;
