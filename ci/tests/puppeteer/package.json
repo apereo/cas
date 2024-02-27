@@ -30,6 +30,7 @@
     "qrcode-reader": "^1.0.4",
     "request": "^2.88.2",
     "sockjs-client": "^1.6.1",
+    "unzipper": "^0.10.14",
     "wait-on": "^7.2.0",
     "xml2js": "^0.6.2",
     "yaml": "^2.3.4"
