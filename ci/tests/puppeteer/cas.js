@@ -211,7 +211,7 @@ exports.loginWith = async (page,
 
     await this.pressEnter(page);
     try {
-        const response = await this.waitForNavigation();
+        const response = await this.waitForNavigation(page);
         await this.log(`Page response status after navigation: ${response.status()}`);
         return response;
     } catch (e) {
