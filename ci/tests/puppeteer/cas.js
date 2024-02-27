@@ -54,7 +54,7 @@ const BROWSER_OPTIONS = {
     devtools: process.env.CI !== "true",
     defaultViewport: null,
     timeout: 60000,
-    protocolTimeout: 60000,
+    protocolTimeout: 90000,
     dumpio: false,
     slowMo: process.env.CI === "true" ? 0 : 10,
     args: [
@@ -88,6 +88,7 @@ function inspect(text) {
 exports.newBrowser = async (options) => {
     const browser = await puppeteer.launch(options);
     await this.sleep();
+    await this.logg("Browser is launched...");
     return browser;
 };
 
@@ -126,7 +127,7 @@ exports.removeDirectoryOrFile = async (directory) => {
     if (fs.existsSync(directory)) {
         await fs.rmSync(directory, {recursive: true});
     }
-    this.logg(`Removed directory ${directory}`);
+    await this.logg(`Removed directory ${directory}`);
     if (fs.existsSync(directory)) {
         await this.logr(`Removed directory still present at: ${directory}`);
     }
@@ -470,11 +471,11 @@ exports.doRequest = async (url, method = "GET",
             }
         };
 
-        if (requestBody !== undefined) {
+        if (requestBody === undefined) {
+            https.get(url, options, (res) => handler(res)).on("error", reject);
+        } else {
             const request = https.request(url, options, (res) => handler(res)).on("error", reject);
             request.write(requestBody);
-        } else {
-            https.get(url, options, (res) => handler(res)).on("error", reject);
         }
     });
 
