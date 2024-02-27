@@ -1,5 +1,4 @@
 const puppeteer = require("puppeteer");
-const assert = require("assert");
 const cas = require("../../cas.js");
 
 (async () => {
@@ -22,7 +21,7 @@ const cas = require("../../cas.js");
     await cas.click(page, "#CASClient");
     await cas.waitForNavigation(page);
     await cas.sleep(1000);
-    const response = await cas.loginWith(page);
+    await cas.loginWith(page);
     await cas.sleep(3000);
     await cas.screenshot(page);
     await cas.assertInnerText(page, "#content h2", "Unauthorized Access");

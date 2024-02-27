@@ -21,7 +21,7 @@ const assert = require("assert");
     url += `?providerId=${entityId}`;
     url += "&target=https%3A%2F%2Flocalhost%3A8443%2Fcas%2Flogin";
     await cas.goto(page, url);
-    await cas.sleep(3000);
+    await cas.sleep(5000);
     await cas.assertTextContent(page, "#content h2", "Attribute Consent");
     await cas.screenshot(page);
     await cas.submitForm(page, "#fm1");
