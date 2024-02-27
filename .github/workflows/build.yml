@@ -35,7 +35,7 @@ on:
 
 jobs:
   initialize:
-    if: ${{ (github.event_name == 'schedule' || contains(github.event.pull_request.labels.*.name, 'Bot')) }}
+    if: ${{ (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'Bot')) }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
