@@ -54,13 +54,10 @@ const BROWSER_OPTIONS = {
     devtools: process.env.CI !== "true",
     defaultViewport: null,
     timeout: 60000,
-    protocolTimeout: 90000,
+    protocolTimeout: 30000,
     dumpio: false,
     slowMo: process.env.CI === "true" ? 0 : 10,
     args: [
-        "--disable-setuid-sandbox",
-        "--disable-dev-shm-usage",
-        "--single-process",
         `--user-data-dir=${CHROMIUM_USER_DATA_DIR}/user-data-dir`,
         "--no-sandbox",
         "--disable-web-security",
@@ -88,7 +85,7 @@ function inspect(text) {
 exports.newBrowser = async (options) => {
     const browser = await puppeteer.launch(options);
     await this.sleep();
-    await this.logg("Browser is launched...");
+    await this.logg(`Browser ${await browser.version()} / ${await browser.userAgent()} is launched...`);
     return browser;
 };
 
@@ -210,7 +207,7 @@ exports.uploadImage = async (imagePath) => {
             image: fs.createReadStream(imagePath),
             type: "stream"
         });
-        await this.logg(`Uploaded image is at ${response.data.link}`);
+        await this.logg(`Uploaded image is at ${response.data}`);
     }
 };
 

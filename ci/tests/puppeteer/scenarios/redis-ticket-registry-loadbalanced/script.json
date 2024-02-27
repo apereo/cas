@@ -3,10 +3,8 @@
   "conditions": {
     "docker": "true"
   },
-
   "properties": [
     "--cas.server.prefix=${cas.server.name}/cas",
-
 
     "--logging.level.org.apereo.cas=warn",
 
