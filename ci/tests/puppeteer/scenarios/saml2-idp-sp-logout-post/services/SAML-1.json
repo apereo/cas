@@ -1,10 +1,10 @@
 {
   "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
-  "serviceId" : "https://samltest.id/.+",
+  "serviceId" : "^https://samltest.id/saml.*",
   "name" : "SAML",
   "id" : 1,
   "evaluationOrder" : 1,
-  "metadataLocation" : "https://samltest.id/saml/sp",
+  "metadataLocation" : "file://${#environmentVariables['PWD']}/ci/tests/puppeteer/scenarios/${#environmentVariables['SCENARIO']}/sp-metadata.xml",
   "logoutResponseBinding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST",
   "attributeReleasePolicy" : {
     "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"

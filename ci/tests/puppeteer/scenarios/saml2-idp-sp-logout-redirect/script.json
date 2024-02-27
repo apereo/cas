@@ -1,6 +1,8 @@
 {
   "dependencies": "saml-idp",
-
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
     "--cas.authn.saml-idp.core.entity-id=https://cas.apereo.org/saml/idp/%{random}",
     "--cas.authn.saml-idp.metadata.file-system.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md",
@@ -11,7 +13,6 @@
 
     "--cas.authn.accept.name=STATIC",
 
-    
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
 
