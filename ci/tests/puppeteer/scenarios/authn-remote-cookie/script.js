@@ -7,7 +7,7 @@ async function verifyWithoutService() {
     const browser2 = await puppeteer.launch(cas.browserOptions());
     const page2 = await cas.newPage(browser2);
     await page2.setCookie(await buildCookie(page2, COOKIE_VALUE, "/", "MyCookie"));
-    await page2.goto("https://localhost:8443/cas/login");
+    await cas.gotoLogin(page2, "https://localhost:8443/cas/login");
     await cas.sleep(2000);
     await cas.assertCookie(page2);
     await cas.screenshot(page2);
@@ -18,7 +18,7 @@ async function verifyWithService() {
     const browser2 = await puppeteer.launch(cas.browserOptions());
     const page2 = await cas.newPage(browser2);
     await page2.setCookie(await buildCookie(page2, COOKIE_VALUE, "/", "MyCookie"));
-    await page2.goto("https://localhost:8443/cas/login?service=https://localhost:9859/anything/1");
+    await cas.gotoLogin(page2, "https://localhost:9859/anything/1");
     await cas.sleep(2000);
     await cas.assertTicketParameter(page2);
     await browser2.close();

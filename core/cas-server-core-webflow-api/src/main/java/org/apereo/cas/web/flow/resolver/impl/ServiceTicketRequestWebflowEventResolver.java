@@ -51,9 +51,8 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
         val service = WebUtils.getService(context);
         LOGGER.trace("Located service [{}] from the request context", service);
 
-        val configContext = getConfigurationContext();
         if (service != null && StringUtils.isNotBlank(ticketGrantingTicketId)) {
-            val authn = configContext.getTicketRegistrySupport().getAuthenticationFrom(ticketGrantingTicketId);
+            val authn = getConfigurationContext().getTicketRegistrySupport().getAuthenticationFrom(ticketGrantingTicketId);
             LOGGER.debug("Request identifies itself as one asking for service tickets. Checking for authentication context validity...");
             val validAuthn = validateExistingAuthentication(authn, context);
             if (validAuthn) {

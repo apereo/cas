@@ -22,10 +22,10 @@ const cas = require("../../cas.js");
     await cas.sleep(2000);
     await cas.screenshot(page);
     await cas.loginWith(page);
-    await cas.sleep(1000);
-
+    await cas.sleep(3000);
     const result = new URL(page.url());
     await cas.log(result.searchParams.toString());
+    await cas.screenshot(page);
 
     assert(result.searchParams.has("ticket") === false);
     assert(result.searchParams.has("client_id"));
