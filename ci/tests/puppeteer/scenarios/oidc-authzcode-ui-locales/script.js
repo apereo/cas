@@ -1,8 +1,8 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     const url = "https://localhost:8443/cas/oidc/oidcAuthorize?client_id=client&redirect_uri=https://github.com&scope=openid&state=UDWY0eSHWH&nonce=sURRPJgKkr&response_type=code&ui_locales=de";
 

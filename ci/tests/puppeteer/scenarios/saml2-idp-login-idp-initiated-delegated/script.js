@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 const assert = require("assert");
 const path = require("path");
@@ -33,7 +33,7 @@ async function startFlow(context, clientName) {
 }
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const providers = ["CasClient", "CasClientFancy", "CasClientNone"];
     for (const provider of providers) {
         const context = await browser.createBrowserContext();

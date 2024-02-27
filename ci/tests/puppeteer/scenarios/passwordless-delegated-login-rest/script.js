@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const assert = require("assert");
 const cas = require("../../cas.js");
 
@@ -12,7 +12,7 @@ async function submitUser(page, user) {
 (async () => {
     let failure = false;
     await cas.httpServer(__dirname, 5432, false);
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     try {
         const page = await cas.newPage(browser);
 

@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 const express = require("express");
 
@@ -38,7 +38,7 @@ const auth = require("basic-auth");
         try {
             await cas.log("Listening...");
 
-            const browser = await puppeteer.launch(cas.browserOptions());
+            const browser = await cas.newBrowser(cas.browserOptions());
             const page = await cas.newPage(browser);
             await cas.gotoLogin(page);
             await cas.loginWith(page, "restapi", "YdCP05HvuhOH^*Z");

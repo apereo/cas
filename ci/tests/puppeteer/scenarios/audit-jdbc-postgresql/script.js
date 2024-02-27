@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 const assert = require("assert");
 const YAML = require("yaml");
@@ -10,7 +10,7 @@ const path = require("path");
     const file = fs.readFileSync(configFilePath, "utf8");
     const configFile = YAML.parse(file);
     
-    let browser = await puppeteer.launch(cas.browserOptions());
+    let browser = await cas.newBrowser(cas.browserOptions());
     let page = await cas.newPage(browser);
     await cas.gotoLogin(page);
     await cas.loginWith(page);
@@ -57,7 +57,7 @@ const path = require("path");
     await cas.sleep(3000);
 
     await cas.log("Testing authentication after refresh...");
-    browser = await puppeteer.launch(cas.browserOptions());
+    browser = await cas.newBrowser(cas.browserOptions());
     page = await cas.newPage(browser);
     await cas.gotoLogin(page);
     await cas.loginWith(page);

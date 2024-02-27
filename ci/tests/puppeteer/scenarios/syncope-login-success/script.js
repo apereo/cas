@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 const assert = require("assert");
 const YAML = require("yaml");
@@ -10,7 +10,7 @@ const path = require("path");
     const file = fs.readFileSync(configFilePath, "utf8");
     const configFile = YAML.parse(file);
 
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     try {
         const page = await cas.newPage(browser);
         await updateConfig(configFile, configFilePath, "http://localhost:18080/syncope");

@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 const assert = require("assert");
 
@@ -10,7 +10,7 @@ async function gotoPage(page, instanceId, pageId) {
 }
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.goto(page, "https://localhost:8443/cas/sba");
     await cas.screenshot(page);

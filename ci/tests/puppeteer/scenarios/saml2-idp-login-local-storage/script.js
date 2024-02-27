@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const path = require("path");
 const cas = require("../../cas.js");
 const assert = require("assert");
@@ -9,7 +9,7 @@ const assert = require("assert");
         cas.doRequest(`https://localhost:8443/cas/actuator/loggers/${p}`, "POST",
             {"Content-Type": "application/json"}, 204, JSON.stringify(body, undefined, 2)));
 
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     const response = await cas.goto(page, "https://localhost:8443/cas/idp/metadata");
     await cas.log(`${response.status()} ${response.statusText()}`);

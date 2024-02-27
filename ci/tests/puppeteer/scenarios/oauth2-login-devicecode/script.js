@@ -1,6 +1,5 @@
 const assert = require("assert");
 const cas = require("../../cas.js");
-const puppeteer = require("puppeteer");
 
 (async () => {
     const url = "https://localhost:8443/cas/oauth2.0/accessToken?response_type=device_code&client_id=client";
@@ -43,7 +42,7 @@ async function verifyDeviceCode(data) {
         assert(error.response.data.error === "authorization_pending");
     });
 
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     await page.goto(data.verification_uri);
     await cas.sleep(1000);

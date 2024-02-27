@@ -1,10 +1,10 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 const assert = require("assert");
 const jose = require("jose");
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
 
     const redirectUrl = "https://localhost:9859/anything/cas";

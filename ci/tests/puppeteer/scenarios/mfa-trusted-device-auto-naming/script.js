@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const assert = require("assert");
 const cas = require("../../cas.js");
 const path = require("path");
@@ -6,7 +6,7 @@ const fs = require("fs");
 const os = require("os");
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     await cas.log("Fetching Scratch codes from /cas/actuator...");
     const scratch = await cas.fetchGoogleAuthenticatorScratchCode();
 

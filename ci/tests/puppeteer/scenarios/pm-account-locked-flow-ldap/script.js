@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 
 async function loginWith(page, user, password) {
@@ -12,7 +12,7 @@ async function loginWith(page, user, password) {
 }
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     await loginWith(page, "casuser", "Mellon");
     const captcha = await cas.innerText(page, "#captcha");

@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 
 async function impersonatePreSelected(page, browser) {
@@ -40,7 +40,7 @@ async function impersonateWithMenu(page, browser) {
 }
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     await impersonatePreSelected(page, browser);
     await impersonateWithMenu(page, browser);

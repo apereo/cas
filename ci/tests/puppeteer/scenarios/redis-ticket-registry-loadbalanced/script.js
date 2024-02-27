@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const assert = require("assert");
 const cas = require("../../cas.js");
 
@@ -123,7 +123,7 @@ async function checkSessionsAreSynced(browser) {
 (async () => {
     let failed = false;
     try {
-        const browser = await puppeteer.launch(cas.browserOptions());
+        const browser = await cas.newBrowser(cas.browserOptions());
         await checkSessionsAreSynced(browser);
         await testBasicLoginLogout(browser);
         await checkTicketValidationAcrossNodes(browser);

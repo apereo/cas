@@ -1,10 +1,10 @@
-const puppeteer = require("puppeteer");
+
 const performance = require("perf_hooks").performance;
 const cas = require("../../cas.js");
 const path = require("path");
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
 
     const entityIds = [

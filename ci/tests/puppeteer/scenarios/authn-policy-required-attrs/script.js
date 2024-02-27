@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 const assert = require("assert");
 const querystring = require("querystring");
@@ -23,7 +23,7 @@ async function authenticateWithRestApi(username, status = 200) {
 }
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.gotoLogin(page);
     await cas.loginWith(page, "casweb", "p@ssw0rd");

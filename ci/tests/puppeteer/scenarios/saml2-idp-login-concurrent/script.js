@@ -1,9 +1,8 @@
-const puppeteer = require("puppeteer");
 
 const cas = require("../../cas.js");
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
 
     try {
         await cas.log("Sending first authentication request");

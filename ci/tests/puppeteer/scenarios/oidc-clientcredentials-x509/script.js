@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const assert = require("assert");
 const cas = require("../../cas.js");
 const fs = require("fs");
@@ -15,7 +15,7 @@ const request = require("request");
     const cert = fs.readFileSync(config.trustStoreCertificateFile);
     const key = fs.readFileSync(config.trustStorePrivateKeyFile);
 
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     await page.setRequestInterception(true);
     page.on("request", (interceptedRequest) => {

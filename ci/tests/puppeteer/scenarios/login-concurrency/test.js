@@ -1,10 +1,10 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 const https = require("https");
 const assert = require("assert");
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const service = "https://localhost:9859/anything/app";
     let ticket = null;
     let userid = null;

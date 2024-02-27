@@ -220,7 +220,7 @@ const cas = require('../../cas.js');
 const assert = require("assert");
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     
     // Do stuff and check/assert behavior...

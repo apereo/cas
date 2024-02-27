@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 const assert = require("assert");
 const express = require("express");
@@ -31,7 +31,7 @@ const express = require("express");
     });
     
     const server = app.listen(5544, async () => {
-        const browser = await puppeteer.launch(cas.browserOptions());
+        const browser = await cas.newBrowser(cas.browserOptions());
         const page = await cas.newPage(browser);
         const service = "http://localhost:9889/anything/app1";
         await cas.gotoLogin(page, service);

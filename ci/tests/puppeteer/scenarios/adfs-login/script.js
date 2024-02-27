@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const assert = require("assert");
 const cas = require("../../cas.js");
 
@@ -8,7 +8,7 @@ const cas = require("../../cas.js");
         cas.doRequest(`https://localhost:8443/cas/actuator/loggers/${p}`, "POST",
             {"Content-Type": "application/json"}, 204, JSON.stringify(body, undefined, 2)));
     const service = "https://localhost:9859/anything/cas";
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.log(`Navigating to ${service}`);
     await cas.gotoLogin(page, service);
