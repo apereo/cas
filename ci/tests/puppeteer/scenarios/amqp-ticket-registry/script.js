@@ -13,7 +13,7 @@ const path = require("path");
         assert(response.ok());
 
         await cas.loginWith(page);
-        await cas.sleep(1000);
+        await cas.sleep(3000);
         await cas.assertCookie(page);
         await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
         await cas.assertInnerText(page, "#content div h2", "Log In Successful");
@@ -36,7 +36,7 @@ const path = require("path");
 
         await cas.sleep(1000);
         await cas.goto(page, "https://localhost:8444/cas/login");
-        await cas.sleep(1000);
+        await cas.sleep(2000);
         await cas.assertCookie(page);
 
     } finally {
