@@ -16,11 +16,11 @@ async function ensureNoSsoSessionsExistAfterLogout(page, port) {
 async function testBasicLoginLogout(browser) {
     const page = await cas.newPage(browser);
     await logoutEverywhere(page);
-    const service = "https://apereo.github.io";
+    const service = "https://localhost:9859/anything/cas";
     await cas.gotoLogin(page, service);
     await cas.sleep(1000);
     await cas.loginWith(page);
-    await cas.sleep(6000);
+    await cas.sleep(8000);
     await cas.screenshot(page);
     const ticket = await cas.assertTicketParameter(page);
     await page.goto(`https://localhost:8444/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
@@ -89,8 +89,8 @@ async function checkSessionsAreSynced(browser) {
     await logoutEverywhere(page);
 
     const s1 = "https://localhost:9859/anything/1";
-    const s2 = "https://apereo.github.io";
-    const s3 = "https://example.org";
+    const s2 = "https://localhost:9859/anything/2";
+    const s3 = "https://localhost:9859/anything/3";
 
     await cas.log("Getting first ticket");
     await cas.gotoLogin(page, s1);

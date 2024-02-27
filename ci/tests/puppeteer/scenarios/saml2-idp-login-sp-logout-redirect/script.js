@@ -9,10 +9,11 @@ const fs = require("fs");
     const browser = await cas.newBrowser(cas.browserOptions());
     try {
         const page = await cas.newPage(browser);
-        const service = "https://example.com";
+        const service = "https://localhost:9859/anything/cas";
         await cas.gotoLogin(page, service);
         await cas.sleep(1000);
         await cas.loginWith(page);
+        await cas.sleep(4000);
         const ticket = await cas.assertTicketParameter(page);
         const body = await cas.doRequest(`https://localhost:8443/cas/validate?service=${service}&ticket=${ticket}`);
         assert(body === "yes\ncasuser\n");
