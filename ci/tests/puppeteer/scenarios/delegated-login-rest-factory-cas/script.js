@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 const assert = require("assert");
 
@@ -15,7 +15,7 @@ async function fetchIdentityProviders() {
 }
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const properties = {
         "cas.authn.pac4j.cas[0].login-url": "https://localhost:8444/cas/login",
         "cas.authn.pac4j.cas[0].protocol": "CAS30",

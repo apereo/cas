@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 const YAML = require("yaml");
 const fs = require("fs");
@@ -11,7 +11,7 @@ const path = require("path");
     const users = configFile.cas.authn.accept.users;
     await cas.log(`Current users: ${users}`);
 
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     try {
         const page = await cas.newPage(browser);
         await cas.log("Updating configuration and waiting for changes to reload...");

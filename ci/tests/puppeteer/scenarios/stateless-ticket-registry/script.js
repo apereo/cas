@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const assert = require("assert");
 const cas = require("../../cas.js");
 
@@ -81,7 +81,7 @@ async function verifyExistingSsoSession(context, service) {
 
 (async () => {
     const service = "https://localhost:9859/anything/lYzxki90TXtrk/7FPzc3OzJ4nNnVm/dPtVNRWdSqa8/TAIempOPCBbMPdje/gPpvsadQMANXyCCY/page.jsp?key=value&param=hello";
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
 
     for (let i = 1; i <= 2; i++) {
         const context = await browser.createBrowserContext();

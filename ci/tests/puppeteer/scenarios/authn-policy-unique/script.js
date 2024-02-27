@@ -1,15 +1,15 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 
 async function verifyWithoutService() {
-    const browser1 = await puppeteer.launch(cas.browserOptions());
+    const browser1 = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser1);
     await cas.gotoLogin(page);
     await cas.loginWith(page);
     await cas.sleep(2000);
     await browser1.close();
 
-    const browser2 = await puppeteer.launch(cas.browserOptions());
+    const browser2 = await cas.newBrowser(cas.browserOptions());
     const page2 = await cas.newPage(browser2);
     await page2.goto("https://localhost:8443/cas/login");
     await cas.loginWith(page2, "casuser", "Mellon");
@@ -20,14 +20,14 @@ async function verifyWithoutService() {
 }
 
 async function verifyWithService() {
-    const browser1 = await puppeteer.launch(cas.browserOptions());
+    const browser1 = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser1);
     await cas.gotoLogin(page, "https://apereo.github.io");
     await cas.loginWith(page);
     await cas.sleep(2000);
     await browser1.close();
 
-    const browser2 = await puppeteer.launch(cas.browserOptions());
+    const browser2 = await cas.newBrowser(cas.browserOptions());
     const page2 = await cas.newPage(browser2);
     await page2.goto("https://localhost:8443/cas/login?service=https://localhost:9859/anything/1");
     await cas.loginWith(page2, "casuser", "Mellon");

@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const assert = require("assert");
 const path = require("path");
 const cas = require("../../cas.js");
@@ -65,7 +65,7 @@ async function staleAuthenticationFlow(context) {
 }
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     for (let i = 1; i <= 2; i++) {
         const context = await browser.createBrowserContext();
         await cas.log(`Running test scenario ${i}`);

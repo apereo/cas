@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const assert = require("assert");
 const cas = require("../../cas.js");
 
@@ -86,7 +86,7 @@ async function executeFlow(browser, redirectUri, clientId, accessTokenSecret) {
 }
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     await executeFlow(browser, "http://localhost:9889/anything/app1","client", process.env.OAUTH_ACCESS_TOKEN_SIGNING_KEY);
     await executeFlow(browser, "http://localhost:9889/anything/app2","client2", process.env.OAUTH_ACCESS_TOKEN_ENCRYPTION_KEY);
     await browser.close();

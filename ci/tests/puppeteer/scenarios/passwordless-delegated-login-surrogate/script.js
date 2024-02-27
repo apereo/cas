@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const assert = require("assert");
 const cas = require("../../cas.js");
 
@@ -15,13 +15,13 @@ async function startAuthFlow(page, username) {
     await cas.sleep(1000);
     await cas.pressEnter(page);
     await cas.waitForNavigation(page);
-    await cas.sleep(1000);
-    await cas.log(`Page url: ${await page.url()}`);
+    await cas.sleep(3000);
+    await cas.logPage(page);
     await cas.screenshot(page);
 
     await cas.loginWith(page);
-    await cas.sleep(5000);
-    await cas.log(`Page url: ${await page.url()}`);
+    await cas.sleep(7000);
+    await cas.logPage(page);
     await cas.screenshot(page);
     await cas.assertCookie(page);
     await cas.assertInnerTextStartsWith(page, "#content div p", "You, user3, have successfully logged in");
@@ -39,7 +39,7 @@ async function startAuthFlow(page, username) {
 }
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
 
     await startAuthFlow(page, "user3+casuser-server");

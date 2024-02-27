@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 const assert = require("assert");
 const path = require("path");
@@ -6,7 +6,7 @@ const os = require("os");
 const fs = require("fs");
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     try {
         const page = await cas.newPage(browser);
         const service = "https://example.com";

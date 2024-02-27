@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 const assert = require("assert");
 const path = require("path");
@@ -18,7 +18,7 @@ const YAML = require("yaml");
     await cas.refreshContext();
     await cas.sleep(5000);
 
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     const response = await cas.gotoLogin(page);
     await cas.sleep(1000);

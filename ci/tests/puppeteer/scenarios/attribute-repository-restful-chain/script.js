@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const assert = require("assert");
 const cas = require("../../cas.js");
 
@@ -14,7 +14,7 @@ const cas = require("../../cas.js");
     };
     
     let mockServer = null;
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     try {
         mockServer = await cas.mockJsonServer(payload, 5423);
         const page = await cas.newPage(browser);

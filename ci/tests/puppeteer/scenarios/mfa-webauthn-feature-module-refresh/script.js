@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const assert = require("assert");
 const cas = require("../../cas.js");
 const YAML = require("yaml");
@@ -6,7 +6,7 @@ const fs = require("fs");
 const path = require("path");
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     const url = "https://localhost:8443/cas/login?authn_method=mfa-webauthn";
     await cas.goto(page, url);

@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 const assert = require("assert");
 const path = require("path");
@@ -15,7 +15,7 @@ const fs = require("fs");
         "Content-Type": "application/json"
     }, 201, body);
     
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
 
     const page = await cas.newPage(browser);
     await cas.gotoLogin(page);

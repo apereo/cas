@@ -1,11 +1,11 @@
-const puppeteer = require("puppeteer");
+
 const assert = require("assert");
 const cas = require("../../cas.js");
 const fs = require("fs");
 const request = require("request");
 
 (async () => {
-    let browser = await puppeteer.launch(cas.browserOptions());
+    let browser = await cas.newBrowser(cas.browserOptions());
     let page = await cas.newPage(browser);
     await cas.gotoLogin(page);
     await cas.loginWith(page, "aburr", "P@ssw0rd");
@@ -17,7 +17,7 @@ const request = require("request");
     assert(attributesldap.includes("ldap-dn"));
     await browser.close();
 
-    browser = await puppeteer.launch(cas.browserOptions());
+    browser = await cas.newBrowser(cas.browserOptions());
     page = await cas.newPage(browser);
 
     await page.setRequestInterception(true);

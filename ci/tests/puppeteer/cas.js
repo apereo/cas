@@ -24,6 +24,7 @@ const {Docker} = require("node-docker-api");
 const docker = new Docker({socketPath: "/var/run/docker.sock"});
 const archiver = require("archiver");
 const unzipper = require("unzipper");
+const puppeteer = require("puppeteer");
 
 const LOGGER = pino({
     level: "debug",
@@ -83,6 +84,12 @@ function inspect(text) {
     }
     return util.inspect(result, {colors: false, depth: null});
 }
+
+exports.newBrowser = async (options) => {
+    const browser = await puppeteer.launch(options);
+    await this.sleep();
+    return browser;
+};
 
 exports.log = async (text, ...args) => {
     const toLog = inspect(text);
@@ -346,7 +353,7 @@ exports.newPage = async (browser) => {
                 page = await browser.newPage();
             } catch (e) {
                 this.logr(e);
-                await this.sleep(1000);
+                await this.sleep(2000);
             }
         }
     }

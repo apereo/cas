@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 const YAML = require("yaml");
 const fs = require("fs");
@@ -8,7 +8,7 @@ const assert = require("assert");
 (async () => {
     const service = "https://apereo.github.io";
 
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
 
     await cas.log("Starting out with acceptable usage policy feature disabled...");

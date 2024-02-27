@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 const YAML = require("yaml");
 const fs = require("fs");
@@ -6,7 +6,7 @@ const path = require("path");
 
 (async () => {
 
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
 
     await cas.log("Attempting to login with default credentials...");

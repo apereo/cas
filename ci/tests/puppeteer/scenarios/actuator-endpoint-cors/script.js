@@ -1,7 +1,7 @@
 const cas = require("../../cas.js");
 const express = require("express");
 const path = require("path");
-const puppeteer = require("puppeteer");
+
 const assert = require("assert");
 
 (async () => {
@@ -10,7 +10,7 @@ const assert = require("assert");
     const server = app.listen(8444, async () => {
         let failed = false;
         try {
-            const browser = await puppeteer.launch(cas.browserOptions());
+            const browser = await cas.newBrowser(cas.browserOptions());
             const page = await cas.newPage(browser);
             await cas.goto(page, "http://localhost:8444?endpoint=info");
             await cas.sleep(2500);

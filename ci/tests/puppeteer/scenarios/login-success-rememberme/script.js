@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 const assert = require("assert");
 
@@ -33,7 +33,7 @@ async function loginAndVerify(browser) {
 }
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     await loginAndVerify(browser);
     await cas.refreshContext();
     await loginAndVerify(browser);
