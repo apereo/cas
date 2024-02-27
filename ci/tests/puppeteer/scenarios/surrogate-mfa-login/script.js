@@ -1,7 +1,6 @@
 const puppeteer = require("puppeteer");
 const cas = require("../../cas.js");
 
-
 async function impersonatePreSelected(page, browser) {
     await cas.gotoLogin(page);
     await cas.loginWith(page, "user3+casuser", "Mellon");

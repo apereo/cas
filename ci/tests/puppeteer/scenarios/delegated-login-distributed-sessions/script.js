@@ -1,17 +1,16 @@
 const puppeteer = require("puppeteer");
-
 const cas = require("../../cas.js");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
 
-    const context1 = browser.createBrowserContext();
+    const context1 = await browser.createBrowserContext();
     const page1 = await cas.newPage(context1);
     await page1.goto("https://localhost:8443/cas/login");
     await cas.sleep(1000);
     await cas.assertVisibility(page1, "li #CasClient");
 
-    const context2 = browser.createBrowserContext();
+    const context2 = await browser.createBrowserContext();
     const page2 = await cas.newPage(context2);
     await page2.goto("https://localhost:8443/cas/login?service=https://github.com/apereo/cas");
     await cas.sleep(1000);
