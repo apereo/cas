@@ -18,6 +18,7 @@ const assert = require("assert");
     await cas.type(page,"#lastName", "Person");
     await cas.type(page,"#email", "cas@example.org");
     await cas.type(page,"#phone", "+1 347 745 1234");
+    await cas.screenshot(page);
     await cas.click(page, "#submit");
     await cas.waitForNavigation(page);
     await cas.assertInnerText(page, "#content h2", "Account Registration");
@@ -25,6 +26,8 @@ const assert = require("assert");
 
     const link = await cas.extractFromEmail(browser);
     assert(link !== undefined);
+    await cas.goto(page, link);
+    await cas.sleep(1000);
     await cas.assertInnerText(page, "#content h2", "Account Registration");
     await cas.assertInnerTextStartsWith(page, "#content p", "Welcome back!");
 

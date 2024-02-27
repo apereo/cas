@@ -289,7 +289,7 @@ exports.submitForm = async (page, selector, predicate = undefined, statusCode = 
     return Promise.all([
         page.waitForResponse(predicate),
         page.$eval(selector, (form) => form.submit()),
-        this.sleep(3000)
+        this.sleep(2000)
     ]);
 };
 
