@@ -19,7 +19,7 @@ async function startAuthFlow(page, username) {
     assert(url.startsWith("https://localhost:8444"));
     await cas.sleep(1000);
     await cas.loginWith(page);
-    await cas.sleep(5000);
+    await cas.sleep(7000);
     await cas.log(`Page url: ${await page.url()}`);
     await cas.assertCookie(page);
     await cas.assertInnerTextStartsWith(page, "#content div p", "You, casuser, have successfully logged in");
