@@ -22,6 +22,8 @@ const pino = require("pino");
 const xml2js = require("xml2js");
 const {Docker} = require("node-docker-api");
 const docker = new Docker({ socketPath: "/var/run/docker.sock" });
+const archiver = require("archiver");
+const unzipper = require("unzipper");
 
 const LOGGER = pino({
     level: "debug",
@@ -54,7 +56,7 @@ const BROWSER_OPTIONS = {
     protocolTimeout: 60000,
     dumpio: false,
     slowMo: process.env.CI === "true" ? 0 : 10,
-    args: [`--user-data-dir=${CHROMIUM_USER_DATA_DIR}`, "--disable-web-security", "--start-maximized", "--window-size=1920,1080"]
+    args: [`--user-data-dir=${CHROMIUM_USER_DATA_DIR}/user-data-dir`, "--disable-web-security", "--start-maximized", "--window-size=1920,1080"]
 };
 
 exports.browserOptions = () => BROWSER_OPTIONS;
@@ -954,5 +956,29 @@ exports.readLocalStorage = async(page) => {
     return results;
 };
 
+exports.createZipFile = async(file, callback) => {
+    const zip = fs.createWriteStream(file);
+    const archive = archiver("zip", {
+        zlib: { level: 9 }
+    });
+    archive.pipe(zip);
+    await callback(archive);
+    await archive.finalize();
+};
+
+exports.unzipFile = async(file, targetDirectory) => {
+    await fs.createReadStream(file)
+        .pipe(unzipper.Extract({ path: targetDirectory }))
+        .on("close", () => this.log(`Files unzipped successfully @ ${targetDirectory}`));
+};
+
+exports.prepareChromium = async() => {
+    this.log(`Chromium directory: ${CHROMIUM_USER_DATA_DIR}`);
+    const targetDirectory = `${CHROMIUM_USER_DATA_DIR}/user-data-dir`;
+    this.removeDirectoryOrFile(targetDirectory);
+    this.unzipFile(`${CHROMIUM_USER_DATA_DIR}/user-data-dir.zip`, targetDirectory);
+    this.log(`Chromium user data directory: ${targetDirectory}`);
+};
+
 this.asciiart("Apereo CAS - Puppeteer");
-this.log(`Chromium user data directory: ${CHROMIUM_USER_DATA_DIR}`);
+this.prepareChromium();

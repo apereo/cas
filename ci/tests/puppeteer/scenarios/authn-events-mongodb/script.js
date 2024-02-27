@@ -1,7 +1,7 @@
 const puppeteer = require("puppeteer");
 const cas = require("../../cas.js");
 const assert = require("assert");
-const archiver = require("archiver");
+
 const fs = require("fs");
 
 (async () => {
@@ -34,15 +34,11 @@ const fs = require("fs");
             const count = Object.keys(res.data[1]).length;
             await cas.log(`Total event records found ${count}`);
             assert(count === totalAttempts + 1);
-
             fs.rmSync(`${__dirname}/events.zip`, {force: true});
-            const zip = fs.createWriteStream(`${__dirname}/events.zip`);
-            const archive = archiver("zip", {
-                zlib: { level: 9 }
+
+            await cas.createZipFile(`${__dirname}/events.zip`, (archive) => {
+                res.data[1].forEach((entry) => archive.append(JSON.stringify(entry), { name: `event-${entry.id}.json`}));
             });
-            archive.pipe(zip);
-            res.data[1].forEach((entry) => archive.append(JSON.stringify(entry), { name: `event-${entry.id}.json`}));
-            await archive.finalize();
 
         }, async (error) => {
             throw error;
