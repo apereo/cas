@@ -59,6 +59,22 @@ class MetadataQueryProtocolMetadataResolverTests extends BaseSamlIdPServicesTest
     }
 
     @Test
+    void verifyResolverWithMultipleURLs() throws Throwable {
+        val props = new SamlIdPProperties();
+        props.getMetadata().getFileSystem().setLocation(fileSystemMetadataPath);
+        val resolver = new MetadataQueryProtocolMetadataResolver(httpClient, props, openSamlConfigBean);
+        val service = new SamlRegisteredService();
+        service.setId(RandomUtils.nextLong());
+        service.setName(RandomUtils.randomAlphabetic(12));
+        service.setMetadataLocation("http://mdq.ukfederation.org.uk/entities/{0},http://mdq.incommon.org/entities/{0}");
+        service.setServiceId("https://webauth.cmc.edu/idp/shibboleth");
+        val results = resolver.resolve(service);
+        assertFalse(results.isEmpty());
+        assertTrue(resolver.isAvailable(service));
+        assertTrue(resolver.supports(service));
+    }
+
+    @Test
     void verifyResolverFails() throws Throwable {
         val props = new SamlIdPProperties();
         props.getMetadata().getFileSystem().setLocation(fileSystemMetadataPath);

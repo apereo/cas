@@ -27,10 +27,9 @@ class RemoteAuthenticationWebflowConfigurerTests extends BaseWebflowConfigurerTe
     @Test
     void verifyOperation() throws Throwable {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
-        val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
+        val flow = (Flow) loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);
-
-        var state = (TransitionableState) flow.getState(RemoteAuthenticationWebflowConfigurer.START_AUTHENTICATE);
+        val state = (TransitionableState) flow.getState(CasWebflowConstants.STATE_ID_REMOTE_AUTHN_START);
         assertNotNull(state);
     }
 }
