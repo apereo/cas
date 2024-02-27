@@ -21,7 +21,7 @@ const cas = require("../../cas.js");
     await cas.assertVisibility(page, "#token");
     await cas.sleep(1000);
 
-    const code = await cas.extractFromEmail(page);
+    const code = await cas.extractFromEmail(browser);
     
     await cas.type(page, "#token", code);
     await cas.submitForm(page, "#fm1");

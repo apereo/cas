@@ -48,7 +48,7 @@ public class AuthenticationAttributeMultifactorAuthenticationProperties implemen
     private String globalAuthenticationAttributeNameTriggers;
 
     /**
-     * The regular expression that is cross matches against the authentication attribute to determine
+     * The regular expression that is cross matched against the authentication attribute to determine
      * if the account is qualified for multifactor authentication.
      */
     @RegularExpressionCapable
