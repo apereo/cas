@@ -83,10 +83,23 @@ function inspect(text) {
 }
 
 exports.newBrowser = async (options) => {
-    const browser = await puppeteer.launch(options);
-    await this.sleep();
-    await this.logg(`Browser ${await browser.version()} / ${await browser.userAgent()} is launched...`);
-    return browser;
+    let browser = undefined;
+    let retry = 0;
+    const maxRetries = 5;
+    while (retry < maxRetries) {
+        try {
+            await this.logg(`Attempt ${retry} to launch browser...`);
+            browser = await puppeteer.launch(options);
+            await this.sleep();
+            await this.logg(`Browser ${await browser.version()} / ${await browser.userAgent()} is launched...`);
+            return browser;
+        } catch (e) {
+            retry++;
+            await this.logr(e);
+            await this.logg("Failed to launch browser. Retrying...");
+        }
+    }
+    throw "Failed to launch browser after multiple attempts";
 };
 
 exports.log = async (text, ...args) => {
