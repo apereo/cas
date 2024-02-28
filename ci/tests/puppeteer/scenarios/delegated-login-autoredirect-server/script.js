@@ -14,7 +14,7 @@ const assert = require("assert");
     let url = await page.url();
     assert(url.startsWith("https://localhost:8444/cas/login"));
     await cas.loginWith(page);
-    await cas.sleep(2000);
+    await cas.sleep(4000);
     await cas.assertTicketParameter(page);
     url = await page.url();
     await cas.log(url);
@@ -40,7 +40,7 @@ const assert = require("assert");
     await cas.gotoLogin(page, "https://localhost:9859/anything/cas");
     url = await page.url();
     await cas.log(url);
-    await cas.sleep(2000);
+    await cas.sleep(4000);
     await cas.assertTicketParameter(page);
 
     await cas.log("Removing CAS SSO session");

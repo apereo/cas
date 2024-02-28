@@ -4,12 +4,13 @@ const cas = require("../../cas.js");
 
 (async () => {
     await cas.refreshContext();
+    await cas.sleep(4000);
 
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.gotoLoginWithAuthnMethod(page, undefined, "mfa-simple", "de");
     await cas.loginWith(page);
-    await cas.sleep(6000);
+    await cas.sleep(8000);
     await cas.assertVisibility(page, "#token");
 
     let code = await cas.extractFromEmail(browser);

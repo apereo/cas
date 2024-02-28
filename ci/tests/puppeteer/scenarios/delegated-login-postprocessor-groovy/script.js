@@ -15,17 +15,16 @@ const assert = require("assert");
     assert(url.startsWith("https://localhost:8444/cas/login"));
     await cas.sleep(1000);
     await cas.loginWith(page);
-    await cas.sleep(4000);
+    await cas.sleep(8000);
+    await cas.logPage(page);
     url = await page.url();
-    await cas.log(url);
     assert(url.startsWith(service));
     await cas.assertTicketParameter(page);
 
     await cas.log("Attempting login after SSO...");
     await cas.gotoLogin(page, service);
-    await cas.sleep(2000);
-    url = await page.url();
-    await cas.log(url);
+    await cas.sleep(3000);
+    await cas.logPage(page);
     await cas.assertTicketParameter(page);
 
     await browser.close();

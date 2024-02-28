@@ -22,7 +22,7 @@ const cas = require("../../cas.js");
     await cas.sleep(3000);
     await cas.screenshot(page);
     await cas.loginWith(page);
-    await cas.sleep(3000);
+    await cas.sleep(6000);
 
     const result = new URL(page.url());
     await cas.log(result.searchParams.toString());

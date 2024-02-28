@@ -38,8 +38,7 @@ const fs = require("fs");
         await cas.log(`Logout page is written to ${sloFile}`);
 
         await cas.goto(page, `file://${sloFile}`);
-        await cas.sleep(4000);
-
+        await cas.sleep(8000);
         await cas.logPage(page);
         await cas.screenshot(page);
         await cas.assertInnerText(page, "#main-content h2", "Logout successful");
