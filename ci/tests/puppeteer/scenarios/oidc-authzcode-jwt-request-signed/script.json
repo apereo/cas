@@ -9,8 +9,6 @@
 
     "--logging.level.org.apereo.cas=warn",
 
-
-
     "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",
     "--cas.authn.oidc.discovery.scopes=openid,profile,email,address,phone",
     "--cas.authn.oidc.discovery.claims=sub,name,cn,given-name,given:name",
@@ -21,6 +19,4 @@
   ],
   "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }
-
-
 

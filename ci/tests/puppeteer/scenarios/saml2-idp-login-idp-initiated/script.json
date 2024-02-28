@@ -5,7 +5,6 @@
   },
 
   "properties": [
-
     
     "--cas.authn.saml-idp.core.entity-id=https://cas.apereo.org/saml/idp",
     "--cas.authn.saml-idp.metadata.file-system.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md",
@@ -13,7 +12,6 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=https://localhost:8443/cas",
     "--cas.server.scope=example.net",
-
 
     "--logging.level.org.apereo.cas=info",
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
@@ -31,7 +29,4 @@
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",
   "readyScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/ready.sh"
 }
-
-
-
 

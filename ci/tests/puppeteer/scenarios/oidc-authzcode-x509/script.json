@@ -14,7 +14,6 @@
 
     "--logging.level.org.apereo.cas=info",
 
-
     "--cas.authn.attribute-repository.stub.attributes.uid=casuser",
     "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
     "--cas.authn.attribute-repository.stub.attributes.givenName=ApereoCAS",

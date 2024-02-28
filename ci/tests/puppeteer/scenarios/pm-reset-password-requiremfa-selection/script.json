@@ -42,7 +42,6 @@
     "--cas.authn.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
     "--cas.authn.accept.enabled=false",
 
-
     "--cas.audit.engine.audit-format=JSON"
   ],
   "jvmArgs": "-Djava.net.preferIPv4Stack=true -Djava.net.preferIPv4Addresses=true",

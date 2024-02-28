@@ -8,7 +8,6 @@
     "--cas.server.name=http://localhost:8080",
     "--cas.server.prefix=http://localhost:8080/cas",
 
-
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
 

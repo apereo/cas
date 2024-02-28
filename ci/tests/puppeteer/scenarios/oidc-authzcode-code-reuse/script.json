@@ -3,8 +3,6 @@
 
   "properties": [
     "--logging.level.org.apereo.cas=info",
-    
-
 
     "--cas.ticket.crypto.enabled=true",
 
@@ -27,6 +25,4 @@
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
   ]
 }
-
-
 

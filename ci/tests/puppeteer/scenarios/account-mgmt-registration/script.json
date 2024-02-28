@@ -12,7 +12,6 @@
 
     "--cas.http-client.host-name-verifier=none",
 
-
     "--cas.account-registration.mail.from=cas@apereo.org",
     "--cas.account-registration.mail.html=false",
     "--cas.account-registration.mail.text=${url}",

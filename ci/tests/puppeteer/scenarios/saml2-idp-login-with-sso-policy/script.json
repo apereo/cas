@@ -21,6 +21,3 @@
   "readyScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/ready.sh"
 }
 
-
-
-

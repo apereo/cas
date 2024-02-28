@@ -19,7 +19,6 @@
     "--cas.server.prefix=https://localhost:8443/cas",
     "--cas.server.scope=example.net",
 
-
     "--cas.authn.accept.name=STATIC",
 
     "--cas.service-registry.core.init-from-json=true",

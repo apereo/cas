@@ -17,9 +17,6 @@
 
     "--cas.authn.mfa.core.provider-selection.provider-selection-enabled=true",
     "--cas.authn.mfa.core.provider-selection.cookie.enabled=false",
-
-
-
     
     "--cas.authn.mfa.trusted.core.device-registration-enabled=true",
     "--cas.authn.mfa.trusted.core.auto-assign-device-name=true",

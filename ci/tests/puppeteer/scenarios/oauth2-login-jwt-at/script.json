@@ -11,7 +11,6 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
 
-
     "--cas.authn.attribute-repository.stub.attributes.email=casuser@apereo.org",
 
     "--cas.authn.oauth.access-token.crypto.encryption.key=bTR6EwiuWw4IxCvl_Q4Ld3OoQSi-MmaJccXWxjoglzc",
@@ -25,6 +24,4 @@
   ],
   "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }
-
-
 

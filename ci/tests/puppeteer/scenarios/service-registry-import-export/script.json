@@ -3,7 +3,6 @@
 
   "properties": [
 
-
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--cas.service-registry.core.init-from-json=false",
     "--cas.authn.accept.name=STATIC",

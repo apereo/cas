@@ -8,7 +8,6 @@
     "--management.endpoints.enabled-by-default=true",
     "--management.endpoints.web.exposure.include=*",
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
-    
 
     "--cas.service-registry.stream.core.enabled=true",
     "--cas.service-registry.core.init-from-json=false",

@@ -5,7 +5,6 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
 
-
     "--cas.authn.mfa.yubikey.crypto.enabled=false",
     "--cas.authn.mfa.yubikey.client-id=18421",
     "--cas.authn.mfa.yubikey.secret-key=aBIehjui12aK8x82oe5qzGeb0As=",

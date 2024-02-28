@@ -8,8 +8,6 @@
     "--cas.server.prefix=${cas.server.name}/cas",
     "--cas.events.core.track-geolocation=true",
 
-
-
     "--cas.events.mongo.user-id=root",
     "--cas.events.mongo.password=secret",
     "--cas.events.mongo.host=localhost",
@@ -25,8 +23,4 @@
   "jvmArgs": "-Djava.net.preferIPv4Addresses=true",
   "initScript": "${PWD}/ci/tests/mongodb/run-mongodb-server.sh"
 }
-
-
-
-
 

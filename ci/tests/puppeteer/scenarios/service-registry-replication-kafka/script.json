@@ -13,8 +13,6 @@
 
     "--cas.service-registry.stream.kafka.bootstrap-address=localhost:9092",
     "--cas.service-registry.stream.kafka.topic.name=CasRegisteredServicesKafkaTopic",
-
-
     
     "--cas.service-registry.schedule.enabled=false",
     "--cas.service-registry.stream.core.enabled=true",

@@ -17,6 +17,3 @@
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
 }
 
-
-
-

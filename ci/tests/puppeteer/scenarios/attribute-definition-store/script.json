@@ -9,7 +9,6 @@
     
     "--cas.authn.attribute-repository.attribute-definition-store.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/definitions.json",
 
-
     "--logging.level.org.apereo.cas=info",
     
     "--cas.server.name=https://localhost:8443",
@@ -19,7 +18,4 @@
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
   ]
 }
-
-
-
 

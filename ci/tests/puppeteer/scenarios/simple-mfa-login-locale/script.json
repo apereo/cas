@@ -5,8 +5,6 @@
   },
   "properties": [
 
-
-
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
 
@@ -41,7 +39,4 @@
   ],
   "initScript": "${PWD}/ci/tests/mail/run-mail-server.sh,${PWD}/ci/tests/postgres/run-postgres-server.sh"
 }
-
-
-
 
