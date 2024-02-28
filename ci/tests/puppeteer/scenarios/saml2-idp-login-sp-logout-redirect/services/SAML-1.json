@@ -1,6 +1,6 @@
 {
   "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
-  "serviceId" : "http://localhost:9443/simplesaml.*",
+  "serviceId" : "^http://localhost:9443/simplesaml.*",
   "name" : "SAML",
   "id" : 1,
   "evaluationOrder" : 1,

@@ -31,8 +31,8 @@ env:
   TERM: xterm-256color
   JDK_CURRENT: 21
   JDK_DISTRIBUTION: "corretto"
-  NODE_CURRENT: '21.6.0'
-  MAX_ATTEMPTS: 2
+  NODE_CURRENT: '21.6.2'
+  MAX_ATTEMPTS: 3
   RETRY_MINUTES: 10
   SCENARIO_REGEX: ".*"
 
@@ -59,13 +59,13 @@ concurrency:
 jobs:
   trigger-ci:
     if: ${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'CI')) && !contains(github.event.pull_request.labels.*.name, 'Renovate') && !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
       - name: Trigger CI
         run: echo "CI Triggered"
   initialize:
     needs: [trigger-ci]
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK
@@ -82,7 +82,7 @@ jobs:
             
   puppeteer-scenarios:
     needs: [initialize]
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     timeout-minutes: 15
     outputs:
       scenarios255: ${{ steps.get-scenarios255.outputs.scenarios255 }}
@@ -106,7 +106,7 @@ jobs:
 
   ##########################################################################
   puppeteer-tests-255:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     needs: [puppeteer-scenarios]
     continue-on-error: false
     strategy:
@@ -148,7 +148,7 @@ jobs:
             ./ci/tests/puppeteer/run.sh --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
   ##########################################################################
   puppeteer-tests-511:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     needs: [puppeteer-scenarios]
     continue-on-error: false
     strategy:
