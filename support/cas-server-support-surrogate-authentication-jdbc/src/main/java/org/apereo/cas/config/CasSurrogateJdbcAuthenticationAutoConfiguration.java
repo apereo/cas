@@ -6,8 +6,10 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -31,16 +33,22 @@ public class CasSurrogateJdbcAuthenticationAutoConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    public SurrogateAuthenticationService surrogateAuthenticationService(
+    @ConditionalOnMissingBean(name = "jdbcSurrogateAuthenticationService")
+    public BeanSupplier<SurrogateAuthenticationService> jdbcSurrogateAuthenticationService(
         final CasConfigurationProperties casProperties,
         @Qualifier("surrogateAuthenticationJdbcDataSource")
         final DataSource surrogateAuthenticationJdbcDataSource,
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
-        val su = casProperties.getAuthn().getSurrogate();
-        return new SurrogateJdbcAuthenticationService(su.getJdbc().getSurrogateSearchQuery(),
-            new JdbcTemplate(surrogateAuthenticationJdbcDataSource),
-            su.getJdbc().getSurrogateAccountQuery(), servicesManager);
+        return BeanSupplier.of(SurrogateAuthenticationService.class)
+            .when(() -> casProperties.getAuthn().getSurrogate().getGroovy().getLocation() != null)
+            .supply(Unchecked.supplier(() -> {
+                val su = casProperties.getAuthn().getSurrogate();
+                return new SurrogateJdbcAuthenticationService(su.getJdbc().getSurrogateSearchQuery(),
+                    new JdbcTemplate(surrogateAuthenticationJdbcDataSource),
+                    su.getJdbc().getSurrogateAccountQuery(), servicesManager);
+            }))
+            .otherwiseNull();
     }
 
     @Bean

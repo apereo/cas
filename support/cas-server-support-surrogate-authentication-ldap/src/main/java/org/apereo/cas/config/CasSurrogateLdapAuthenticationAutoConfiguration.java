@@ -52,7 +52,8 @@ public class CasSurrogateLdapAuthenticationAutoConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    public SurrogateAuthenticationService surrogateAuthenticationService(
+    @ConditionalOnMissingBean(name = "ldapSurrogateAuthenticationService")
+    public BeanSupplier<SurrogateAuthenticationService> ldapSurrogateAuthenticationService(
         final ConfigurableApplicationContext applicationContext,
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
@@ -67,7 +68,6 @@ public class CasSurrogateLdapAuthenticationAutoConfiguration {
                     su.getLdap().getLdapUrl(), su.getLdap().getBaseDn());
                 return new SurrogateLdapAuthenticationService(surrogateLdapConnectionFactory, su.getLdap(), servicesManager);
             })
-            .otherwiseProxy()
-            .get();
+            .otherwiseNull();
     }
 }

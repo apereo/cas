@@ -22,6 +22,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolutionExecutionPlanConfigurer;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
+import org.apereo.cas.authentication.surrogate.ChainingSurrogateAuthenticationService;
 import org.apereo.cas.authentication.surrogate.GroovySurrogateAuthenticationService;
 import org.apereo.cas.authentication.surrogate.JsonResourceSurrogateAuthenticationService;
 import org.apereo.cas.authentication.surrogate.SimpleSurrogateAuthenticationService;
@@ -32,10 +33,12 @@ import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.expiration.builder.TicketGrantingTicketExpirationPolicyBuilder;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -46,6 +49,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.util.StringUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -148,27 +152,76 @@ class SurrogateAuthenticationConfiguration {
     @Configuration(value = "SurrogateAuthenticationServiceConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class SurrogateAuthenticationServiceConfiguration {
+        
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = SurrogateAuthenticationService.BEAN_NAME)
         @Bean
         public SurrogateAuthenticationService surrogateAuthenticationService(
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager, final CasConfigurationProperties casProperties) throws Exception {
-            val su = casProperties.getAuthn().getSurrogate();
-            if (su.getGroovy().getLocation() != null) {
-                LOGGER.debug("Using Groovy resource [{}] to locate surrogate accounts", su.getGroovy().getLocation());
-                return new GroovySurrogateAuthenticationService(servicesManager, su.getGroovy().getLocation());
-            }
-            if (su.getJson().getLocation() != null) {
-                LOGGER.debug("Using JSON resource [{}] to locate surrogate accounts", su.getJson().getLocation());
-                return new JsonResourceSurrogateAuthenticationService(su.getJson().getLocation(), servicesManager);
-            }
-            val accounts = new HashMap<String, List>();
-            su.getSimple().getSurrogates().forEach((k, v) -> accounts.put(k, new ArrayList<>(StringUtils.commaDelimitedListToSet(v))));
-            LOGGER.debug("Using accounts [{}] for surrogate authentication", accounts);
-            return new SimpleSurrogateAuthenticationService(accounts, servicesManager);
+            final List<BeanSupplier<SurrogateAuthenticationService>> surrogateServiceSuppliers) throws Exception {
+            val allServices = surrogateServiceSuppliers
+                .stream()
+                .map(BeanSupplier::get)
+                .filter(BeanSupplier::isNotProxy)
+                .sorted(AnnotationAwareOrderComparator.INSTANCE)
+                .toList();
+            return new ChainingSurrogateAuthenticationService(allServices);
         }
 
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "groovySurrogateAuthenticationService")
+        public BeanSupplier<SurrogateAuthenticationService> groovySurrogateAuthenticationService(
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            final CasConfigurationProperties casProperties) {
+
+            return BeanSupplier.of(SurrogateAuthenticationService.class)
+                .when(() -> casProperties.getAuthn().getSurrogate().getGroovy().getLocation() != null)
+                .supply(Unchecked.supplier(() -> {
+                    val su = casProperties.getAuthn().getSurrogate();
+                    LOGGER.debug("Using Groovy resource [{}] to locate surrogate accounts", su.getGroovy().getLocation());
+                    return new GroovySurrogateAuthenticationService(servicesManager, su.getGroovy().getLocation());
+                }))
+                .otherwiseNull();
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "jsonSurrogateAuthenticationService")
+        public BeanSupplier<SurrogateAuthenticationService> jsonSurrogateAuthenticationService(
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            final CasConfigurationProperties casProperties) {
+
+            return BeanSupplier.of(SurrogateAuthenticationService.class)
+                .when(() -> casProperties.getAuthn().getSurrogate().getJson().getLocation() != null)
+                .supply(Unchecked.supplier(() -> {
+                    val su = casProperties.getAuthn().getSurrogate();
+                    LOGGER.debug("Using JSON resource [{}] to locate surrogate accounts", su.getJson().getLocation());
+                    return new JsonResourceSurrogateAuthenticationService(su.getJson().getLocation(), servicesManager);
+                }))
+                .otherwiseNull();
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "simpleSurrogateAuthenticationService")
+        public BeanSupplier<SurrogateAuthenticationService> simpleSurrogateAuthenticationService(
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            final CasConfigurationProperties casProperties) {
+            return BeanSupplier.of(SurrogateAuthenticationService.class)
+                .alwaysMatch()
+                .supply(() -> {
+                    val su = casProperties.getAuthn().getSurrogate();
+                    val accounts = new HashMap<String, List>();
+                    su.getSimple().getSurrogates().forEach((k, v) -> accounts.put(k, new ArrayList<>(StringUtils.commaDelimitedListToSet(v))));
+                    LOGGER.debug("Using accounts [{}] for surrogate authentication", accounts);
+                    return new SimpleSurrogateAuthenticationService(accounts, servicesManager);
+                });
+        }
     }
 
     @Configuration(value = "SurrogateAuthenticationPlanConfiguration", proxyBeanMethods = false)
