@@ -1,4 +1,3 @@
-
 const cas = require("../../cas.js");
 
 (async () => {
@@ -12,7 +11,7 @@ const cas = require("../../cas.js");
 
     const context2 = await browser.createBrowserContext();
     const page2 = await cas.newPage(context2);
-    await cas.gotoLogin(page2, "https://github.com/apereo/cas");
+    await cas.gotoLogin(page2, "https://localhost:9859/anything/cas");
     await cas.sleep(2000);
     await cas.assertVisibility(page2, "li #CasClient");
 
@@ -23,7 +22,7 @@ const cas = require("../../cas.js");
     await cas.waitForNavigation(page2);
 
     await cas.loginWith(page1, "casuser", "Mellon");
-    await cas.sleep(3000);
+    await cas.sleep(6000);
     await cas.logPage(page1);
     await cas.assertMissingParameter(page1, "service");
 
