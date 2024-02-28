@@ -5,7 +5,6 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
 
-
     "--cas.server.tomcat.http[0].enabled=true",
     "--cas.server.tomcat.http[0].port=8080",
 

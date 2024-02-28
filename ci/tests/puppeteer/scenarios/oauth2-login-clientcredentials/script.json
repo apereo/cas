@@ -5,7 +5,6 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
 
-
     "--cas.authn.attribute-repository.stub.attributes.email=casuser@apereo.org",
 
     "--cas.authn.oauth.access-token.crypto.enabled=false",
@@ -15,6 +14,4 @@
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
   ]
 }
-
-
 

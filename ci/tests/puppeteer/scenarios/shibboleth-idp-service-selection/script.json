@@ -7,7 +7,6 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
 
-
     "--cas.authn.shib-idp.server-url=https://sso.shibboleth.org/idp/Authn/External",
 
     "--cas.authn.attribute-repository.stub.attributes.uid=casuser",

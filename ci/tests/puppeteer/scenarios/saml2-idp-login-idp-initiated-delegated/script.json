@@ -13,8 +13,6 @@
 
     "--logging.level.org.apereo.cas=info",
 
-
-
     "--cas.http-client.host-name-verifier=none",
     
     "--cas.authn.pac4j.core.groovy-redirection-strategy.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/Redirect.groovy",

@@ -10,9 +10,6 @@
     "--logging.level.org.apereo.cas=info",
     "--logging.level.PROTOCOL_MESSAGE=info",
     
-
-
-    
     "--cas.authn.attribute-repository.stub.attributes.name=casuser",
     "--cas.authn.attribute-repository.stub.attributes.email=cas@example.org",
     "--cas.authn.attribute-repository.stub.attributes.family_name=Apereo",
@@ -31,7 +28,4 @@
   ],
   "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }
-
-
-
 

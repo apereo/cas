@@ -13,5 +13,3 @@
   "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }
 
-
-

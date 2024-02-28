@@ -7,7 +7,6 @@
 
   "properties": [
 
-
     "--cas.authn.mfa.triggers.global.global-provider-id=mfa-duo",
     
     "--cas.authn.attribute-repository.stub.attributes.uid=casuser",

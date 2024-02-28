@@ -8,7 +8,6 @@
     "--cas.authn.attribute-repository.stub.attributes.phone=13477464523",
     "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
 
-
     "--spring.mail.host=localhost",
     "--spring.mail.port=25000",
 
@@ -23,7 +22,4 @@
   ],
   "initScript": "${PWD}/ci/tests/mail/run-mail-server.sh"
 }
-
-
-
 

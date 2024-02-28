@@ -9,9 +9,6 @@
 
     "--logging.level.org.apereo.cas=info",
 
-
-
-
     "--cas.authn.attribute-repository.stub.attributes.locale=german",
     "--cas.authn.attribute-repository.stub.attributes.name=casoidc",
     "--cas.authn.attribute-repository.stub.attributes.email=cas@apereo.org",

@@ -3,7 +3,6 @@
 
   "properties": [
 
-
     "--cas.authn.mfa.gauth.crypto.enabled=false",
     "--cas.authn.mfa.gauth.core.trusted-device-enabled=true",
     "--cas.authn.mfa.gauth.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
@@ -23,6 +22,4 @@
     "--logging.level.org.apereo.cas=info"
   ]
 }
-
-
 

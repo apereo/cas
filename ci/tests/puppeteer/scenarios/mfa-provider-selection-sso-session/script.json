@@ -5,9 +5,6 @@
     "--logging.level.org.apereo.cas=info",
     "--logging.level.org.springframework.webflow=info",
 
-
-
-
     "--cas.authn.mfa.yubikey.client-id=18420",
     "--cas.authn.mfa.yubikey.secret-key=iBIehjui22aK8x82oe6qzGeb0As=",
 
@@ -29,6 +26,4 @@
     "--cas.authn.mfa.core.provider-selection.provider-selection-enabled=true"
   ]
 }
-
-
 

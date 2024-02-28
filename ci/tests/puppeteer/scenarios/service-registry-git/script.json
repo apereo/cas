@@ -7,7 +7,6 @@
 
     "--cas.service-registry.core.init-from-json=false",
 
-
     "--cas.service-registry.git.root-directory=production",
     "--cas.service-registry.git.repository-url=https://github.com/mmoayyed/sample-data",
     "--cas.service-registry.git.active-branch=production",

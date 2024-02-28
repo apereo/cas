@@ -7,7 +7,6 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
 
-
     "--cas.authn.mfa.core.authentication-context-attribute=authenticationContext",
 
     "--cas.authn.mfa.yubikey.client-id=18421",

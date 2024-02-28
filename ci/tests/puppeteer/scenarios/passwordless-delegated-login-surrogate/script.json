@@ -13,8 +13,6 @@
     "--cas.server.prefix=https://localhost:8443/cas",
     
     "--cas.service-registry.core.init-from-json=true",
-    
-
 
     "--cas.http-client.host-name-verifier=none",
     

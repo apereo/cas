@@ -7,7 +7,6 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
 
-
     "--cas.service-registry.templates.directory.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/templates",
     
     "--cas.service-registry.core.init-from-json=false",

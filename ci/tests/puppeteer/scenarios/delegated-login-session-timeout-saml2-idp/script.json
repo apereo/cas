@@ -8,7 +8,6 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=https://localhost:8443/cas",
 
-
     "--cas.ticket.tst.time-to-kill-in-seconds=1",
 
     "--cas.authn.pac4j.cookie.enabled=true",
@@ -28,5 +27,4 @@
   ],
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
 }
-
 

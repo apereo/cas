@@ -3,7 +3,6 @@
 
   "properties": [
 
-
     "--cas.interrupt.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/interrupt.json",
     "--cas.interrupt.core.trigger-mode=AFTER_AUTHENTICATION",
     

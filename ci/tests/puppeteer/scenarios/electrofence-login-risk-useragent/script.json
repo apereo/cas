@@ -12,7 +12,6 @@
     
     "--cas.http-client.host-name-verifier=none",
 
-
     "--cas.authn.adaptive.risk.core.threshold=0.2",
     "--cas.authn.adaptive.risk.agent.enabled=true",
     "--cas.authn.adaptive.risk.response.mfa-provider=mfa-simple",

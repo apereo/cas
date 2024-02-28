@@ -9,9 +9,6 @@
 
     "--logging.level.org.apereo.cas=info",
 
-
-
-
     "--cas.authn.attribute-repository.stub.attributes.groups=director,admin",
     "--cas.authn.attribute-repository.stub.attributes.my_email=cas@example.org",
 

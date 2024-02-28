@@ -4,7 +4,6 @@
     "--cas.interrupt.core.trigger-mode=AFTER_SSO",
     "--cas.interrupt.groovy.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/interrupt.groovy",
 
-
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
     

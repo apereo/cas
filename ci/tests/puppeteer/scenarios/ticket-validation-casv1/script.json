@@ -7,7 +7,6 @@
 
     "--cas.ticket.crypto.enabled=true",
 
-
     "--cas.audit.engine.include-validation-assertion=true"
   ]
 }
