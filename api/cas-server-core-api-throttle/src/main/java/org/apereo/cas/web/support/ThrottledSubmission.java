@@ -3,6 +3,7 @@ package org.apereo.cas.web.support;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import lombok.val;
 
@@ -19,6 +20,7 @@ import java.time.ZonedDateTime;
  */
 @Data
 @SuperBuilder
+@Setter
 public class ThrottledSubmission implements Serializable {
     @Serial
     private static final long serialVersionUID = -853401483455717926L;
@@ -32,7 +34,7 @@ public class ThrottledSubmission implements Serializable {
 
     private final String clientIpAddress;
 
-    private final ZonedDateTime expiration;
+    private ZonedDateTime expiration;
 
     /**
      * Compares the current time with the expiration time to determine

@@ -1,6 +1,7 @@
 package org.apereo.cas.web.support;
 
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlan;
 import org.apereo.cas.util.DateTimeUtils;
 import lombok.AccessLevel;
@@ -17,8 +18,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -65,13 +68,24 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
         }
 
         val throttled = throttleRequest(request, response) || exceedsThreshold(request);
+
         if (throttled) {
             val throttle = getConfigurationContext().getCasProperties().getAuthn().getThrottle().getFailure();
             LOGGER.warn("Throttling submission from [{}]. More than [{}] failed login attempts within [{}] seconds. "
                         + "Authentication attempt exceeds the failure threshold [{}]", request.getRemoteAddr(),
-                this.thresholdRate, throttle.getRangeSeconds(), throttle.getThreshold());
-
+                thresholdRate, throttle.getRangeSeconds(), throttle.getThreshold());
             recordThrottle(request);
+
+            val duration = Beans.newDuration(getConfigurationContext().getCasProperties()
+                .getAuthn().getThrottle().getFailure().getThrottleWindowSeconds());
+            val expiration = ZonedDateTime.now(Clock.systemUTC()).plusSeconds(duration.getSeconds());
+            val submission = (ThrottledSubmission) request.getAttribute(ThrottledSubmission.class.getName());
+            if (submission != null && !submission.isStillInExpirationWindow()) {
+                submission.setExpiration(expiration);
+                LOGGER.info("Updated throttled submission: [{}]", submission);
+                getConfigurationContext().getThrottledSubmissionStore().put(submission);
+            }
+
             return configurationContext.getThrottledRequestResponseHandler().handle(request, response);
         }
         return true;
@@ -87,7 +101,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
 
         val recordEvent = shouldResponseBeRecordedAsFailure(response);
         if (recordEvent) {
-            LOGGER.debug("Recording submission failure for [{}]", request.getRequestURI());
+            LOGGER.debug("Post handle => Recording submission failure for [{}]", request.getRequestURI());
             recordSubmissionFailure(request);
         } else {
             LOGGER.trace("Skipping to record submission failure for [{}] with response status [{}]",
@@ -95,21 +109,6 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
         }
     }
 
-    @Override
-    public void afterCompletion(final HttpServletRequest request, final HttpServletResponse response,
-                                final Object handler, final Exception e) throws Exception {
-        if (!isRequestIgnoredForThrottling(request, response) && shouldResponseBeRecordedAsFailure(response)) {
-            recordSubmissionFailure(request);
-        }
-    }
-
-    /**
-     * Is request throttled.
-     *
-     * @param request  the request
-     * @param response the response
-     * @return true if the request is throttled. False otherwise, letting it proceed.
-     */
     protected boolean throttleRequest(final HttpServletRequest request, final HttpServletResponse response) {
         val executor = configurationContext.getThrottledRequestExecutor();
         return executor != null && executor.throttle(request, response);

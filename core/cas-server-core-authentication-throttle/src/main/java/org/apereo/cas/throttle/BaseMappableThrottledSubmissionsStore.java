@@ -84,7 +84,12 @@ public abstract class BaseMappableThrottledSubmissionsStore<T extends ThrottledS
     public boolean exceedsThreshold(final String key, final double thresholdRate) {
         val submissionEntry = get(key);
         LOGGER.debug("Last throttling date time for key [{}] is [{}]", key, submissionEntry);
-        return submissionEntry != null && submissionRate(ZonedDateTime.now(ZoneOffset.UTC), submissionEntry.getValue()) > thresholdRate;
+        if (submissionEntry == null) {
+            return false;
+        }
+        val submissionRate = submissionRate(ZonedDateTime.now(ZoneOffset.UTC), submissionEntry.getValue());
+        LOGGER.debug("Key [{}], Submission rate [{}], thresholdRate [{}]", key, submissionRate, thresholdRate);
+        return submissionRate > thresholdRate;
     }
 
     @Override
