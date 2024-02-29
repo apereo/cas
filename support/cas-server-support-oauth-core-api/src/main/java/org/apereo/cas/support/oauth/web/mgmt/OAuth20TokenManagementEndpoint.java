@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.annotation.DeleteOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
@@ -32,13 +33,13 @@ import java.util.stream.Collectors;
 @Slf4j
 public class OAuth20TokenManagementEndpoint extends BaseCasActuatorEndpoint {
 
-    private final TicketRegistry ticketRegistry;
+    private final ObjectProvider<TicketRegistry> ticketRegistry;
 
-    private final JwtBuilder accessTokenJwtBuilder;
+    private final ObjectProvider<JwtBuilder> accessTokenJwtBuilder;
 
     public OAuth20TokenManagementEndpoint(final CasConfigurationProperties casProperties,
-                                          final TicketRegistry ticketRegistry,
-                                          final JwtBuilder accessTokenJwtBuilder) {
+                                          final ObjectProvider<TicketRegistry> ticketRegistry,
+                                          final ObjectProvider<JwtBuilder> accessTokenJwtBuilder) {
         super(casProperties);
         this.ticketRegistry = ticketRegistry;
         this.accessTokenJwtBuilder = accessTokenJwtBuilder;
@@ -52,7 +53,7 @@ public class OAuth20TokenManagementEndpoint extends BaseCasActuatorEndpoint {
     @ReadOperation
     @Operation(summary = "Get access and/or refresh tokens")
     public Collection<Ticket> getTokens() {
-        return ticketRegistry.getTickets(ticket -> (ticket instanceof OAuth20AccessToken || ticket instanceof OAuth20RefreshToken) && !ticket.isExpired())
+        return ticketRegistry.getObject().getTickets(ticket -> (ticket instanceof OAuth20AccessToken || ticket instanceof OAuth20RefreshToken) && !ticket.isExpired())
             .sorted(Comparator.comparing(Ticket::getId))
             .collect(Collectors.toList());
     }
@@ -69,7 +70,7 @@ public class OAuth20TokenManagementEndpoint extends BaseCasActuatorEndpoint {
     public Ticket getToken(@Selector final String token) {
         try {
             val ticketId = extractAccessTokenFrom(token);
-            return ticketRegistry.getTicket(ticketId, Ticket.class);
+            return ticketRegistry.getObject().getTicket(ticketId, Ticket.class);
         } catch (final Exception e) {
             LOGGER.debug("Ticket [{}] is has expired or cannot be found", token);
             return null;

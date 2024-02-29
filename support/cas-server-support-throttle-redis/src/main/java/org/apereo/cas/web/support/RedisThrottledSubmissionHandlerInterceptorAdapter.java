@@ -2,6 +2,8 @@ package org.apereo.cas.web.support;
 
 import org.apereo.cas.audit.RedisAuditTrailManager;
 import org.apereo.cas.redis.core.CasRedisTemplate;
+import org.apereo.cas.throttle.AbstractInspektrAuditHandlerInterceptorAdapter;
+import org.apereo.cas.throttle.ThrottledSubmissionHandlerConfigurationContext;
 
 
 import lombok.val;

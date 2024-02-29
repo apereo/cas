@@ -10,7 +10,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.support.MongoDbThrottledSubmissionHandlerInterceptorAdapter;
-import org.apereo.cas.web.support.ThrottledSubmissionHandlerConfigurationContext;
+import org.apereo.cas.throttle.ThrottledSubmissionHandlerConfigurationContext;
 import org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;

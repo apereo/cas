@@ -88,7 +88,7 @@ exports.newBrowser = async (options) => {
     const maxRetries = 5;
     while (retry < maxRetries) {
         try {
-            await this.logg(`Attempt ${retry} to launch browser...`);
+            await this.logg(`Attempt #${retry} to launch browser...`);
             browser = await puppeteer.launch(options);
             await this.sleep();
             await this.logg(`Browser ${await browser.version()} / ${await browser.userAgent()} is launched...`);

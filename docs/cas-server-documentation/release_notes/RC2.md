@@ -138,3 +138,7 @@ Furthermore, [passwordless authentication](../authentication/Passwordless-Authen
 - PostgreSQL
 - Apache Cassandra
 - Zipkin Brave
+- Grouper
+- MongoDb
+- ACME
+- Apache Kafka

@@ -7,7 +7,7 @@ import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.support.JdbcThrottledSubmissionHandlerInterceptorAdapter;
-import org.apereo.cas.web.support.ThrottledSubmissionHandlerConfigurationContext;
+import org.apereo.cas.throttle.ThrottledSubmissionHandlerConfigurationContext;
 import org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;

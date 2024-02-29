@@ -1,14 +1,14 @@
-package org.apereo.cas.web.support;
+package org.apereo.cas.throttle;
 
-import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.web.support.InMemoryThrottledSubmissionHandlerInterceptor;
+import org.apereo.cas.web.support.ThrottledSubmission;
+import org.apereo.cas.web.support.ThrottledSubmissionReceiver;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jooq.lambda.Unchecked;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import jakarta.servlet.http.HttpServletRequest;
-import java.time.Clock;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -25,7 +25,8 @@ import java.util.stream.Collectors;
  * @since 3.0.0
  */
 @Slf4j
-public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter extends AbstractThrottledSubmissionHandlerInterceptorAdapter
+public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter
+    extends AbstractThrottledSubmissionHandlerInterceptorAdapter
     implements InMemoryThrottledSubmissionHandlerInterceptor {
 
     private final List<ThrottledSubmissionReceiver> throttledSubmissionReceivers;
@@ -48,21 +49,11 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
             .key(key)
             .username(getUsernameParameterFromRequest(request))
             .clientIpAddress(ClientInfoHolder.getClientInfo().getClientIpAddress())
-            .expiration(determineThrottledSubmissionExpiration(key))
             .build();
         LOGGER.info("Recording submission failure entry [{}]", submission);
         getConfigurationContext().getThrottledSubmissionStore().put(submission);
         throttledSubmissionReceivers.forEach(Unchecked.consumer(receiver -> receiver.receive(submission)));
-    }
-
-    protected ZonedDateTime determineThrottledSubmissionExpiration(final String key) {
-        val store = getConfigurationContext().getThrottledSubmissionStore();
-        if (store.exceedsThreshold(key, getThresholdRate())) {
-            val duration = Beans.newDuration(getConfigurationContext().getCasProperties()
-                .getAuthn().getThrottle().getFailure().getThrottleWindowSeconds());
-            return ZonedDateTime.now(Clock.systemUTC()).plusSeconds(duration.getSeconds());
-        }
-        return null;
+        LOGGER.info("Recorded submission failure [{}] for [{}]", submission, key);
     }
 
     @Override

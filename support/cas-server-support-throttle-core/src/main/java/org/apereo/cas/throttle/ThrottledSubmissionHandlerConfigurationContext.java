@@ -1,9 +1,9 @@
-package org.apereo.cas.web.support;
+package org.apereo.cas.throttle;
 
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.throttle.ThrottledRequestExecutor;
-import org.apereo.cas.throttle.ThrottledRequestResponseHandler;
+import org.apereo.cas.web.support.ThrottledSubmission;
+import org.apereo.cas.web.support.ThrottledSubmissionsStore;
 
 import lombok.Getter;
 import lombok.Setter;

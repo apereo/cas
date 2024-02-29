@@ -6,7 +6,7 @@ import org.apereo.cas.util.LdapConnectionFactory;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.support.LdapThrottledSubmissionReceiver;
-import org.apereo.cas.web.support.ThrottledSubmissionHandlerConfigurationContext;
+import org.apereo.cas.throttle.ThrottledSubmissionHandlerConfigurationContext;
 import org.apereo.cas.web.support.ThrottledSubmissionReceiver;
 
 import lombok.val;
