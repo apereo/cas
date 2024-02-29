@@ -1,10 +1,10 @@
-{%- assign min = 1 -%} 
-{%- assign max = 999999 -%} 
-{%- assign diff = max | minus: min -%} 
-{%- assign rbrace = "}" -%} 
-{%- assign lbrace = "{" -%} 
-{%- assign actuatorEndpointRandomNumber = include.endpoints | remove: "," | truncate: 50, '' -%} 
-{%- assign endpoints = include.endpoints | split: "," -%} 
+{%- assign min = 1 -%}
+{%- assign max = 999999 -%}
+{%- assign diff = max | minus: min -%}
+{%- assign rbrace = "}" -%}
+{%- assign lbrace = "{" -%}
+{%- assign actuatorEndpointRandomNumber = include.endpoints | remove: "," | truncate: 50, '' -%}
+{%- assign endpoints = include.endpoints | split: "," -%}
 {% capture troubleshooting %}
 ```xml
 <Logger name="org.pac4j" level="debug" additivity="false">
@@ -88,12 +88,12 @@ properties="cas.monitor.endpoints.form-login-enabled,cas.monitor.endpoints.endpo
 <div class="accordion" id="{{ actuatorEndpointRandomNumber }}">
     {%- assign showClass = "show" -%}
 
-    {%- for endpoint in endpoints -%} 
+    {%- for endpoint in endpoints -%}
 
-    {%- for configblock in site.data[siteDataVersion].actuators[endpoint] -%} 
-    {%- assign config = configblock[1] | sort: "method" -%} 
+    {%- for configblock in site.data[siteDataVersion].actuators[endpoint] -%}
+    {%- assign config = configblock[1] | sort: "method" -%}
 
-    {%- for cfg in config -%} 
+    {%- for cfg in config -%}
 
     {%- assign key = cfg.path
     | append: cfg.method
@@ -103,7 +103,7 @@ properties="cas.monitor.endpoints.form-login-enabled,cas.monitor.endpoints.endpo
     | remove: '/'
     | remove: '$'
     | remove: rbrace
-    | remove: lbrace -%} 
+    | remove: lbrace -%}
 
     <span class="accordion-header" id="heading{{key}}">
         <button {% if showClass contains "show" %} class="accordion-button" {% else %}
@@ -160,47 +160,46 @@ properties="cas.monitor.endpoints.form-login-enabled,cas.monitor.endpoints.endpo
             {%- if cfg.returnType.size > 0 -%}
             {%- assign io = "Return Type: <code>" | append: cfg.returnType | append: "</code><p>" -%}
             {%- endif -%}
-            
+
             {%- if cfg.consumes.size > 0 -%}
             {%- assign io = io | append: "Content Type: <code>" | append: cfg.consumes | append: "</code><p>" -%}
-            {%- endif -%} 
-            
+            {%- endif -%}
+
             {%- if cfg.produces.size > 0 -%}
             {%- assign io = io | append: "Accept: <code>" | append: cfg.produces | append: "</code><p>" -%}
-            {%- endif -%} 
+            {%- endif -%}
 
-            {%- if cfg.deprecated == true -%} 
+            {%- if cfg.deprecated == true -%}
             {%- assign io = io | append: "Deprecated<p>" -%}
-            {%- endif -%} 
+            {%- endif -%}
 
             {%- assign io = io | append: "Signature: <code>" | append: cfg.signature | markdownify | append: "</code><p>" -%}
 
             {%- assign io = io | append: "Owner: <code>" | append: cfg.owner | append: "</code><p>" -%}
 
             <p class="small text-left">
-                <a tabindex="0" class="btn btn-sm btn-info" role="button" data-bs-toggle="popover" data-bs-trigger="hover" 
-                    title="Input & Output" data-bs-html="true" data-bs-content='{{io}}'> 
-                    <i aria-hidden="true" class="fa fa-question"></i> 
+                <a tabindex="0" class="btn btn-sm btn-info" role="button" data-bs-toggle="popover" data-bs-trigger="hover"
+                   title="Input & Output" data-bs-html="true" data-bs-content='{{io}}'>
+                    <i aria-hidden="true" class="fa fa-question"></i>
                 </a>
                 <a tabindex="0" title="Endpoint Details" class="btn btn-sm btn-success" role="button"
-                    data-bs-toggle="modal" data-bs-target="#{{key}}ModalConfig">
-                    <i aria-hidden="true" class="fa fa-book-open"></i> 
+                   data-bs-toggle="modal" data-bs-target="#{{key}}ModalConfig">
+                    <i aria-hidden="true" class="fa fa-book-open"></i>
                 </a>
-            &nbsp;
+                &nbsp;
                 {%- if cfg.summary.size > 0 -%}
                 {{cfg.summary}}
                 {%- else -%}
                 {%- unless cfg.casEndpoint == true -%}
                 There is no documentation available for this endpoint. The functionality presented here is provided to
-                CAS
-                via a third-party library or framework, which provides no documentation as part of endpoint definition's
+                CAS via a third-party library or framework, which provides no documentation as part of endpoint definition's
                 metadata.
                 {% endunless -%}
                 {%- endif -%}
             </p>
 
             <p>
-            
+
 
             <div class="modal fade" id="{{key}}ModalConfig" tabindex="-1" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
@@ -245,31 +244,47 @@ properties="cas.monitor.endpoints.form-login-enabled,cas.monitor.endpoints.endpo
                             <div class='tab-content'>
                                 <div class="tab-pane fade active show" id="endpointintro{{key}}">
                                     <br />
-
+                                    {%- assign allParams="" -%}
                                     {%- if cfg.parameters.size > 0 -%}
                                     <p>Endpoint Parameters:</p>
                                     <ul>
-                                        {% for param in cfg.parameters -%} 
+                                        {% for param in cfg.parameters -%}
                                         <li>
-                                            {%- if param.required -%} 
-                                            {%- assign paramTitle = "Parameter is required." -%} 
-                                            {%- else -%} 
-                                            {%- assign paramTitle = "Parameter is optional." -%} 
-                                            {%- endif -%} 
+                                            {%- if param.required == true -%}
+                                            {%- assign paramTitle = "Parameter is required." -%}
+                                            {%- else -%}
+                                            {%- assign paramTitle = "Parameter is optional." -%}
+                                            {%- endif -%}
 
-                                            {%- if param.selector -%} 
-                                            {%- assign paramTitle = paramTitle | append: " This parameter can be specified as a path variable." -%} 
-                                            {%- else -%} 
-                                            {%- assign paramTitle = paramTitle | append: " This parameter can be specified as a query parameter." -%} 
-                                            {%- endif -%} 
+                                            {%- if param.selector == true -%}
+                                            {%- assign paramTitle = paramTitle | append: " This parameter can be specified as a path variable." -%}
+                                            {%- else -%}
+                                            {%- assign paramTitle = paramTitle | append: " This parameter can be specified as a query parameter." -%}
+                                            {%- endif -%}
                                             <i class="fas fa-info-circle" data-bs-toggle="tooltip"
                                                data-bs-placment="top" data-bs-html="true"
                                                title="{{ paramTitle }}"></i>
-                                            <code>{{param.type}} {{ param.name }}</code>{%- if param.description.size > 0 -%} - <sub>{{ param.description }}</sub>{%- endif -%} 
+                                            <code>{{param.type}} {{ param.name }}</code>
+                                            {%- if param.description.size > 0 -%} - <sub>{{ param.description }}</sub>{%- endif -%}
+                                            {%- assign allParams = allParams | append: param.name | append: "=...&" -%}
                                         </li>
-                                        {%- endfor -%} 
+                                        {%- endfor -%}
                                     </ul>
                                     {%- endif -%}
+
+
+                                    <div>
+                                        <p>Once the endpoint is available, here is an example of how you could use it with <code>curl</code>: </p>
+{%- capture curlrequest -%}
+```bash
+curl -u "username:password" \
+    -X {{ cfg.method }} \
+    -X "Content-Type: {{ cfg.consumes[0] | default: 'application/json' }}" \
+    -X "Accept: {{ cfg.produces[0] | default: 'application/json' }}" \
+    "https://sso.example.org/cas/actuator/{{ cfg.path }}?{{ allParams }}"
+```{%- endcapture -%}
+{{ curlrequest | markdownify }}
+                                    </div>
 
                                     <p>CAS, being a Spring-Boot application at heart, includes a number of endpoints to help you monitor and manage the server when it’s pushed to production. You can choose to manage and monitor the deployment using HTTP endpoints, referred to as actuators.</p>
                                     <p>
@@ -298,7 +313,7 @@ properties="cas.monitor.endpoints.form-login-enabled,cas.monitor.endpoints.endpo
                                         exposed over the web</strong> in CAS settings in order to allow access.
                                     </p></div>
 
-                                    {%- if cfg.name == "metrics" -%} 
+                                    {%- if cfg.name == "metrics" -%}
                                     <p>
                                         Navigating to this endpoint displays a list of available meter names. You can drill down to view information about a
                                         particular meter by providing its name as a selector, e.g. <code>/metrics/jvm.memory.max</code>. The name you use here should match the name used in the code, not the name after it has been naming-convention normalized for a monitoring system it is shipped to.
@@ -331,13 +346,13 @@ properties="cas.monitor.endpoints.form-login-enabled,cas.monitor.endpoints.endpo
 
 
                                     <p>To enable and expose an actuator endpoint:</p>
-{%- capture epc -%}```properties
-management.endpoint.{{ cfg.name }}.enabled=true
-management.endpoints.web.exposure.include={{ cfg.name }}
+                                    {%- capture epc -%}```properties
+                                    management.endpoint.{{ cfg.name }}.enabled=true
+                                    management.endpoints.web.exposure.include={{ cfg.name }}
 
-# Choose the proper security access level...
-# cas.monitor.endpoints.endpoint.{{ cfg.name }}.access=PERMIT
-```{%- endcapture -%}
+                                    # Choose the proper security access level...
+                                    # cas.monitor.endpoints.endpoint.{{ cfg.name }}.access=PERMIT
+                                    ```{%- endcapture -%}
                                     <div>
                                         {{ epc | markdownify }}
                                     </div>
@@ -352,9 +367,9 @@ management.endpoints.web.exposure.include={{ cfg.name }}
                                         to remap the <code>health</code> endpoint to <code>healthcheck</code>,
                                         specify the following settings:
 
-{%- capture health -%}```properties
-management.endpoints.web.path-mapping.health=healthcheck
-```{%- endcapture -%}
+                                        {%- capture health -%}```properties
+                                        management.endpoints.web.path-mapping.health=healthcheck
+                                        ```{%- endcapture -%}
                                         <span>
 {{ health | markdownify }}
 </span>
@@ -386,9 +401,9 @@ management.endpoints.web.path-mapping.health=healthcheck
                                         <script>
                                             function collapseSecurityPanels{{ key }}(el) {
                                                 $('#collapseSecurityDiv{{ key }} div.collapse').removeClass('show');
-                                                document.getElementById(el + '{{ key }}')
-                                                    .addEventListener('shown.bs.collapse', function () {
-                                                        let elementId = ".modal-body #" + el + "{{ key }} .nav-item a.nav-link:first";
+                                                document.getElementById(`${el}{{ key }}`)
+                                                    .addEventListener('shown.bs.collapse', () => {
+                                                        let elementId = `.modal-body #${el}{{ key }} .nav-item a.nav-link:first`;
                                                         $(elementId).addClass("active")
                                                         $(elementId).click();
                                                     });
@@ -489,33 +504,6 @@ management.endpoints.web.path-mapping.health=healthcheck
                                 </div>
                             </div>
                         </div>
-                        <!-- <div class="modal-footer">
-                            <button type="button" class="btn btn-primary copy-button"
-                                data-clipboard-target="#copyAreaThirdPartyProperties{{ actuatorEndpointRandomNumber }}"
-                                data-bs-dismiss="modal" id="{{key}}CopyButton">Copy</button>
-
-
-                            <script type="text/javascript">
-                                setTimeout(function () {
-                                    new ClipboardJS('#{{key}}CopyButton', {
-                                        container: document.getElementById('{{key}}ModalConfig'),
-
-                                        text: function (trigger) {
-                                            let txt = $("#copyAreaThirdPartyProperties{{ actuatorEndpointRandomNumber }}").val()
-                                            console.log("Copying text: " + txt);
-                                            return txt;
-                                        }
-                                    })
-                                        .on('success', function (e) {
-                                            $("#{{key}}CloseButton").click();
-                                        });
-
-                                }, 500);
-                            </script>
-
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
-                                id="{{key}}CloseButton">Close</button>
-                        </div> -->
                     </div>
                 </div>
             </div>

@@ -13,6 +13,7 @@ import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import lombok.Getter;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -738,6 +739,7 @@ public class CasDocumentationApplication {
                         paramData.put("description", "Path variable selector");
                         paramData.put("required", pathAnn.required());
                         paramData.put("defaultValue", pathAnn.value());
+                        paramData.put("selector", true);
                         parameters.add(paramData);
                     }
                     var requestParamAnn = parameter.getAnnotation(RequestParam.class);
@@ -749,6 +751,7 @@ public class CasDocumentationApplication {
                         paramData.put("description", "Request query parameter");
                         paramData.put("required", requestParamAnn.required());
                         paramData.put("defaultValue", requestParamAnn.defaultValue());
+                        paramData.put("query", true);
                         parameters.add(paramData);
                     }
                     var selectorAnn = parameter.getAnnotation(Selector.class);
@@ -757,6 +760,7 @@ public class CasDocumentationApplication {
                         paramData.put("name", RandomUtils.randomNumeric(4));
                         paramData.put("description", "Path variable selector");
                         paramData.put("required", true);
+                        paramData.put("selector", true);
                         parameters.add(paramData);
                     }
                 }
@@ -775,6 +779,12 @@ public class CasDocumentationApplication {
                     paramData.put("description", parameter.description());
                 }
                 paramData.put("required", parameter.required());
+
+                if (Objects.requireNonNull(parameter.in()) == ParameterIn.PATH) {
+                    paramData.put("selector", true);
+                } else {
+                    paramData.put("query", true);
+                }
                 parameters.add(paramData);
             }
         } else {
