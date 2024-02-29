@@ -33,7 +33,7 @@ env:
   NODE_CURRENT: '21.6.2'
   MAX_ATTEMPTS: 3
   RETRY_MINUTES: 10
-  SCENARIO_REGEX: "saml2.*idp.*"
+  SCENARIO_REGEX: ".*"
 
 on:
   workflow_dispatch:
@@ -145,7 +145,8 @@ jobs:
           command: |
             export RUNNER_OS=${{ runner.os }}
             ./ci/tests/puppeteer/run.sh --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
-      - uses: actions/upload-artifact@v4
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: screenshots-${{matrix.scenario}}
@@ -194,7 +195,8 @@ jobs:
           command: |
             export RUNNER_OS=${{ runner.os }}
             ./ci/tests/puppeteer/run.sh --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
-      - uses: actions/upload-artifact@v4
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: screenshots-${{matrix.scenario}}
