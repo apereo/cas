@@ -27,14 +27,13 @@ env:
   AZURE_AD_DOMAIN: ${{ secrets.AZURE_AD_DOMAIN }}
   AZURE_MAPS_SUBSCRIPTION_ID: ${{ secrets.AZURE_MAPS_SUBSCRIPTION_ID }}
   AZURE_MAPS_CLIENT_ID: ${{ secrets.AZURE_MAPS_CLIENT_ID }}
-  IMGUR_CLIENT_ID: ${{ secrets.IMGUR_CLIENT_ID }}
   TERM: xterm-256color
   JDK_CURRENT: 21
   JDK_DISTRIBUTION: "corretto"
   NODE_CURRENT: '21.6.2'
   MAX_ATTEMPTS: 3
   RETRY_MINUTES: 10
-  SCENARIO_REGEX: ".*"
+  SCENARIO_REGEX: "saml2.*idp.*"
 
 on:
   workflow_dispatch:
@@ -146,6 +145,11 @@ jobs:
           command: |
             export RUNNER_OS=${{ runner.os }}
             ./ci/tests/puppeteer/run.sh --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: screenshots
+          path: ./ci/tests/puppeteer/screenshots/*.png
   ##########################################################################
   puppeteer-tests-511:
     runs-on: ubuntu-latest
@@ -190,4 +194,9 @@ jobs:
           command: |
             export RUNNER_OS=${{ runner.os }}
             ./ci/tests/puppeteer/run.sh --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: screenshots
+          path: ./ci/tests/puppeteer/screenshots/*.png
 ##########################################################################

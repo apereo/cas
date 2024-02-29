@@ -18,12 +18,13 @@ const assert = require("assert");
     await page.keyboard.press("Tab");
     await page.focus("#password");
     await page.keyboard.press("Tab");
-
+    await cas.screenshot(page);
     await cas.assertVisibility(page, "#usernameValidationMessage");
     await cas.assertVisibility(page, "#passwordValidationMessage");
 
     await cas.loginWith(page);
-
+    await cas.sleep(1000);
+    await cas.screenshot(page);
     await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
@@ -33,7 +34,7 @@ const assert = require("assert");
 
     await cas.gotoLogout(page);
     await cas.gotoLogin(page, "https://anything-matches-here");
+    await cas.screenshot(page);
     await cas.assertVisibility(page, "#wildcardService");
-
     await browser.close();
 })();

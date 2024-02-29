@@ -7,7 +7,6 @@ const JwtOps = require("jsonwebtoken");
 const colors = require("colors");
 const fs = require("fs");
 const util = require("util");
-const {ImgurClient} = require("imgur");
 const path = require("path");
 const mockServer = require("mock-json-server");
 const {Buffer} = require("buffer");
@@ -208,20 +207,6 @@ exports.inputValue = async (page, selector) => {
     const text = await page.evaluate((element) => element.value, element);
     await this.log(`Input value for selector [${selector}] is: [${text}]`);
     return text;
-};
-
-exports.uploadImage = async (imagePath) => {
-    const clientId = process.env.IMGUR_CLIENT_ID;
-    if (clientId !== null && clientId !== undefined) {
-        const client = new ImgurClient({clientId: clientId});
-        await this.logg(`Uploading image ${imagePath}`);
-        client.on("uploadProgress", (progress) => this.log(progress));
-        const response = await client.upload({
-            image: fs.createReadStream(imagePath),
-            type: "stream"
-        });
-        await this.logg(`Uploaded image is at ${response.data}`);
-    }
 };
 
 exports.waitForElement = async (page, selector, timeout = 10000) => page.waitForSelector(selector, {timeout: timeout});
@@ -749,22 +734,22 @@ exports.base64Decode = async (data) => {
 };
 
 exports.screenshot = async (page) => {
-    if (await this.isCiEnvironment()) {
-        const index = Date.now();
-        const filePath = path.join(__dirname, `/screenshot-${index}.png`);
-        try {
-            const url = await page.url();
-            await this.log(`Page URL when capturing screenshot: ${url}`);
-            await this.log(`Attempting to take a screenshot and save at ${filePath}`);
-            await page.setViewport({width: 1920, height: 1080});
-            await page.screenshot({path: filePath, captureBeyondViewport: true, fullPage: true});
-            this.logg(`Screenshot saved at ${filePath}`);
-            await this.uploadImage(filePath);
-        } catch (e) {
-            this.logr(`Unable to capture screenshot ${filePath}: ${e}`);
-        }
-    } else {
-        await this.log("Capturing screenshots is disabled in non-CI environments");
+    const screenshotsDir = path.join(__dirname, "screenshots");
+    if (!fs.existsSync(screenshotsDir)) {
+        fs.mkdirSync(screenshotsDir);
+        await this.log(`Created screenshots directory: ${screenshotsDir}`);
+    }
+    const index = Date.now();
+    const filePath = path.join(screenshotsDir, `${process.env.SCENARIO}-${index}.png`);
+    try {
+        const url = await page.url();
+        await this.log(`Page URL when capturing screenshot: ${url}`);
+        await this.log(`Attempting to take a screenshot and save at ${filePath}`);
+        await page.setViewport({width: 1920, height: 1080});
+        await page.screenshot({path: filePath, captureBeyondViewport: true, fullPage: true});
+        this.logg(`Screenshot saved at ${filePath}`);
+    } catch (e) {
+        this.logr(`Unable to capture screenshot ${filePath}: ${e}`);
     }
 };
 
