@@ -8,7 +8,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
-import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -18,6 +17,8 @@ import org.springframework.core.Ordered;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -36,20 +37,9 @@ class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTests ext
             oauthRequestParameterResolver);
     }
 
-    private static OAuthRegisteredService buildRegisteredService(final ServicesManager serviceManager) {
-        val service = new OAuthRegisteredService();
-        service.setId(1000);
-        service.setName("OAuth");
-        service.setClientId("client");
-        service.setClientSecret("secret");
-        service.setServiceId("https://.+");
-        serviceManager.save(service);
-        return service;
-    }
-
     @Test
     void verifyUnsignedRequestParameter() throws Throwable {
-        buildRegisteredService(servicesManager);
+        addRegisteredService(Set.of(), "client", UUID.randomUUID().toString(), "https://.+");
         val validator = getValidator(servicesManager);
 
         val request = new MockHttpServletRequest();
@@ -70,7 +60,7 @@ class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTests ext
 
     @Test
     void verifyValidator() throws Throwable {
-        val service = buildRegisteredService(servicesManager);
+        val service = addRegisteredService("https://.+", UUID.randomUUID().toString());
         val validator = getValidator(servicesManager);
 
         val request = new MockHttpServletRequest();
@@ -86,7 +76,7 @@ class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTests ext
         assertFalse(validator.supports(context));
 
         request.removeAttribute(OAuth20Constants.ERROR);
-        request.setParameter(OAuth20Constants.CLIENT_ID, "client");
+        request.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
         assertFalse(validator.supports(context));
         assertTrue(context.getRequestAttribute(OAuth20Constants.ERROR).isPresent());
         assertEquals(OAuth20Constants.INVALID_REQUEST, context.getRequestAttribute(OAuth20Constants.ERROR).get().toString());

@@ -1,0 +1,15 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "https://www.google.com",
+  "name": "Google",
+  "id": 10000002,
+  "description": "This is google",
+  "evaluationOrder": 1,
+  "authenticationPolicy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicy",
+    "requiredAuthenticationHandlers" : ["java.util.TreeSet", [ "JSON" ]],
+    "criteria": {
+      "@class": "org.apereo.cas.services.AllowedAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria"
+    }
+  }
+}

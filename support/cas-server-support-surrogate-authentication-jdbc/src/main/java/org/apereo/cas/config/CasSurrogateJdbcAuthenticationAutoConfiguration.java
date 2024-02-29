@@ -9,6 +9,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -40,10 +41,10 @@ public class CasSurrogateJdbcAuthenticationAutoConfiguration {
         final DataSource surrogateAuthenticationJdbcDataSource,
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
+        val su = casProperties.getAuthn().getSurrogate();
         return BeanSupplier.of(SurrogateAuthenticationService.class)
-            .when(() -> casProperties.getAuthn().getSurrogate().getGroovy().getLocation() != null)
+            .when(() -> StringUtils.isNotBlank(su.getJdbc().getSurrogateSearchQuery()))
             .supply(Unchecked.supplier(() -> {
-                val su = casProperties.getAuthn().getSurrogate();
                 return new SurrogateJdbcAuthenticationService(su.getJdbc().getSurrogateSearchQuery(),
                     new JdbcTemplate(surrogateAuthenticationJdbcDataSource),
                     su.getJdbc().getSurrogateAccountQuery(), servicesManager);
