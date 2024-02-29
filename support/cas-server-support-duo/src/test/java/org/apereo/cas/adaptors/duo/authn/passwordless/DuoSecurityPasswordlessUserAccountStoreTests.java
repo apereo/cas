@@ -74,7 +74,7 @@ public class DuoSecurityPasswordlessUserAccountStoreTests {
 
             val request = PasswordlessAuthenticationRequest.builder().username("casuser").build();
             val user = passwordlessUserAccountStore.findUser(request).orElseThrow();
-            assertEquals("duosecurityuser", user.getUsername());
+            assertEquals("jsmith", user.getUsername());
             assertEquals("jsmith@example.com", user.getEmail());
             assertEquals(props.getId(), user.getSource());
             assertNotNull(duoSecurityVerifyPasswordlessAuthenticationAction);

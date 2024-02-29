@@ -31,7 +31,6 @@ A sample service definition follows:
   "id" : 1,
   "accessStrategy" : {
     "@class" : "org.apereo.cas.services.SurrogateRegisteredServiceAccessStrategy",
-    "surrogateEnabled" : true,
     "surrogateRequiredAttributes" : {
       "@class" : "java.util.HashMap",
       "givenName" : [ "java.util.HashSet", [ "Administrator" ] ]

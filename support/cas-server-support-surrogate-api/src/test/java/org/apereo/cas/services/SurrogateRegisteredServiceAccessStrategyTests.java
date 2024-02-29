@@ -19,39 +19,35 @@ import static org.junit.jupiter.api.Assertions.*;
 class SurrogateRegisteredServiceAccessStrategyTests {
     @Test
     void verifySurrogateDisabled() throws Throwable {
-        val a = new SurrogateRegisteredServiceAccessStrategy();
-        a.setSurrogateEnabled(false);
-        assertFalse(executeStrategy(a));
-    }
-
-    private static boolean executeStrategy(final SurrogateRegisteredServiceAccessStrategy a) {
-        val request = RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
-            .attributes(CollectionUtils.wrap(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED, true))
-            .build();
-        return a.authorizeRequest(request);
+        val strategy = new SurrogateRegisteredServiceAccessStrategy();
+        assertTrue(executeStrategy(strategy));
     }
 
     @Test
     void verifySurrogateDisabledWithAttributes() throws Throwable {
-        val a = new SurrogateRegisteredServiceAccessStrategy();
-        a.setSurrogateEnabled(true);
-        a.setSurrogateRequiredAttributes(CollectionUtils.wrap("surrogateA", "surrogateV"));
-        assertFalse(executeStrategy(a));
+        val strategy = new SurrogateRegisteredServiceAccessStrategy();
+        strategy.setSurrogateRequiredAttributes(CollectionUtils.wrap("surrogateA", "surrogateV"));
+        assertFalse(executeStrategy(strategy));
     }
 
     @Test
     void verifySurrogateAttributesNotAvail() throws Throwable {
-        val a = new SurrogateRegisteredServiceAccessStrategy();
-        a.setSurrogateEnabled(true);
-        a.setSurrogateRequiredAttributes(CollectionUtils.wrap("surrogateA", "surrogateV",
+        val strategy = new SurrogateRegisteredServiceAccessStrategy();
+        strategy.setSurrogateRequiredAttributes(CollectionUtils.wrap("surrogateA", "surrogateV",
             "surrogateB", "surrogateZ"));
-        assertFalse(executeStrategy(a));
+        assertFalse(executeStrategy(strategy));
     }
 
     @Test
     void verifySurrogateAllowed() throws Throwable {
-        val a = new SurrogateRegisteredServiceAccessStrategy();
-        a.setSurrogateEnabled(true);
-        assertTrue(executeStrategy(a));
+        val strategy = new SurrogateRegisteredServiceAccessStrategy();
+        assertTrue(executeStrategy(strategy));
+    }
+
+    private static boolean executeStrategy(final RegisteredServiceAccessStrategy strategy) throws Throwable {
+        val request = RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
+            .attributes(CollectionUtils.wrap(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED, true))
+            .build();
+        return strategy.authorizeRequest(request);
     }
 }

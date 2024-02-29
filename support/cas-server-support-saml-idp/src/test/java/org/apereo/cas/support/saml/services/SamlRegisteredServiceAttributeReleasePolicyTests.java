@@ -10,7 +10,6 @@ import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.CachedMetadataResolverResult;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.http.HttpRequestUtils;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -115,7 +114,7 @@ class SamlRegisteredServiceAttributeReleasePolicyTests {
             val policy = new EduPersonTargetedIdAttributeReleasePolicy();
             val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
                 .registeredService(registeredService)
-                .applicationContext(ApplicationContextProvider.getApplicationContext())
+                .applicationContext(applicationContext)
                 .service(CoreAuthenticationTestUtils.getService("https://sp.testshib.org/shibboleth-sp"))
                 .principal(CoreAuthenticationTestUtils.getPrincipal("casuser"))
                 .build();
