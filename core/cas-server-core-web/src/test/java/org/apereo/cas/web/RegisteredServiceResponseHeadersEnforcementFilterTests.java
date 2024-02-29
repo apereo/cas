@@ -4,40 +4,39 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
-import org.apereo.cas.services.DefaultServicesManagerRegisteredServiceLocator;
-import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.services.RegisteredServicesTemplatesManager;
-import org.apereo.cas.services.ServicesManagerConfigurationContext;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
-import org.apereo.cas.services.mgmt.DefaultServicesManager;
 import org.apereo.cas.services.web.support.RegisteredServiceResponseHeadersEnforcementFilter;
 import org.apereo.cas.util.spring.DirectObjectProvider;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
 import org.apereo.cas.web.support.filters.ResponseHeadersEnforcementFilter;
-import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.hc.core5.http.HttpStatus;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.StaticApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockFilterConfig;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * This is {@link RegisteredServiceResponseHeadersEnforcementFilterTests}.
@@ -46,26 +45,25 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("RegisteredService")
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
+    CasCoreServicesAutoConfiguration.class,
+    CasCoreWebAutoConfiguration.class
+})
 class RegisteredServiceResponseHeadersEnforcementFilterTests {
+    @Autowired
+    @Qualifier(ServicesManager.BEAN_NAME)
+    protected ServicesManager servicesManager;
 
-    private static RegisteredServiceResponseHeadersEnforcementFilter getFilterForProperty(final RegisteredServiceProperties p) {
-        return getFilterForProperty(Pair.of(p, "true"));
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
+    private RegisteredServiceResponseHeadersEnforcementFilter getFilterForProperty(final RegisteredServiceProperties property) {
+        return getFilterForProperty(Pair.of(property, "true"));
     }
 
-    private static RegisteredServiceResponseHeadersEnforcementFilter getFilterForProperty(final Pair<RegisteredServiceProperties, String>... properties) {
-        val appCtx = new StaticApplicationContext();
-        appCtx.refresh();
-
-        val context = ServicesManagerConfigurationContext.builder()
-            .serviceRegistry(new InMemoryServiceRegistry(appCtx))
-            .applicationContext(appCtx)
-            .registeredServicesTemplatesManager(mock(RegisteredServicesTemplatesManager.class))
-            .environments(new HashSet<>(0))
-            .servicesCache(Caffeine.newBuilder().build())
-            .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))
-            .build();
-
-        val servicesManager = new DefaultServicesManager(context);
+    private RegisteredServiceResponseHeadersEnforcementFilter getFilterForProperty(final Pair<RegisteredServiceProperties, String>... properties) {
         val argumentExtractor = new DefaultArgumentExtractor(new WebApplicationServiceFactory());
 
         val service = RegisteredServiceTestUtils.getRegisteredService("service-0", Map.of());
@@ -82,7 +80,7 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
             new DirectObjectProvider<>(servicesManager),
             new DirectObjectProvider<>(argumentExtractor),
             new DirectObjectProvider<>(new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy())),
-            new DirectObjectProvider<>(new RegisteredServiceAccessStrategyAuditableEnforcer(appCtx)));
+            new DirectObjectProvider<>(new RegisteredServiceAccessStrategyAuditableEnforcer(applicationContext)));
     }
 
     @Test

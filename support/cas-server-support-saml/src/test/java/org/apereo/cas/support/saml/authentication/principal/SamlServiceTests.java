@@ -44,7 +44,7 @@ class SamlServiceTests extends AbstractOpenSamlTests {
 
 
     @Autowired
-    @Qualifier("servicesManagerConfigurationContext")
+    @Qualifier(ServicesManagerConfigurationContext.BEAN_NAME)
     private ServicesManagerConfigurationContext servicesManagerConfigurationContext;
 
     @Autowired

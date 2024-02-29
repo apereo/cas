@@ -1,25 +1,18 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
-import org.apereo.cas.services.mgmt.DefaultServicesManager;
 import org.apereo.cas.util.RandomUtils;
 
-import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.StaticApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.IntStream;
@@ -34,45 +27,39 @@ import static org.mockito.Mockito.*;
  * @since 5.2.0
  */
 @Slf4j
-public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
-    private static final String TEST = "test";
-
-    protected final ServiceFactory<WebApplicationService> serviceFactory = new WebApplicationServiceFactory();
-
-    protected final List<RegisteredService> listOfDefaultServices = new ArrayList<>();
-
+public abstract class AbstractServicesManagerTests{
+    @Autowired
+    @Qualifier(ServiceRegistry.BEAN_NAME)
     protected ServiceRegistry serviceRegistry;
 
+    @Autowired
+    @Qualifier(ServicesManager.BEAN_NAME)
     protected ServicesManager servicesManager;
-
-    protected AbstractServicesManagerTests() {
-        val r = new CasRegisteredService();
-        r.setId(2500);
-        r.setServiceId("serviceId");
-        r.setName("serviceName");
-        r.setEvaluationOrder(1000);
-        listOfDefaultServices.add(r);
-    }
-
+    
     @BeforeEach
     public void initialize() {
-        serviceRegistry = getServiceRegistryInstance();
-        servicesManager = getServicesManagerInstance();
+        val registeredService = new CasRegisteredService();
+        registeredService.setId(RandomUtils.nextLong());
+        registeredService.setServiceId("https://app.example.org/cas");
+        registeredService.setName(UUID.randomUUID().toString());
+        registeredService.setEvaluationOrder(1000);
+
         servicesManager.deleteAll();
         servicesManager.load();
+        servicesManager.save(registeredService);
     }
 
     @Test
     void verifySaveAndGet() throws Throwable {
-        val services = new CasRegisteredService();
-        services.setId(1100);
-        services.setName(TEST);
-        services.setServiceId(TEST);
-        servicesManager.save(services);
-        assertNotNull(servicesManager.findServiceBy(1100));
-        assertNotNull(servicesManager.findServiceBy(1100, CasRegisteredService.class));
-        assertNotNull(servicesManager.findServiceByName(TEST));
-        assertNotNull(servicesManager.findServiceByName(TEST, CasRegisteredService.class));
+        val registeredService = new CasRegisteredService();
+        registeredService.setId(RandomUtils.nextLong());
+        registeredService.setName(UUID.randomUUID().toString());
+        registeredService.setServiceId(registeredService.getName());
+        servicesManager.save(registeredService);
+        assertNotNull(servicesManager.findServiceBy(registeredService.getId()));
+        assertNotNull(servicesManager.findServiceBy(registeredService.getId(), CasRegisteredService.class));
+        assertNotNull(servicesManager.findServiceByName(registeredService.getName()));
+        assertNotNull(servicesManager.findServiceByName(registeredService.getName(), CasRegisteredService.class));
         assertTrue(servicesManager.count() > 0);
         assertFalse(servicesManager.getAllServicesOfType(CasRegisteredService.class).isEmpty());
 
@@ -82,73 +69,73 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
 
     @Test
     void verifySaveInRegistryAndGetById() throws Throwable {
-        val service = new CasRegisteredService();
-        service.setId(2100);
-        service.setName(TEST);
-        service.setServiceId(TEST);
-        assertFalse(isServiceInCache(null, 2100));
-        serviceRegistry.save(service);
-        assertNotNull(serviceRegistry.findServiceById(2100));
-        assertNotNull(servicesManager.findServiceBy(2100));
-        assertTrue(isServiceInCache(null, 2100));
+        val registeredService = new CasRegisteredService();
+        registeredService.setId(RandomUtils.nextLong());
+        registeredService.setName(UUID.randomUUID().toString());
+        registeredService.setServiceId(registeredService.getName());
+        assertFalse(isServiceInCache(null, registeredService.getId()));
+        serviceRegistry.save(registeredService);
+        assertNotNull(serviceRegistry.findServiceById(registeredService.getId()));
+        assertNotNull(servicesManager.findServiceBy(registeredService.getId()));
+        assertTrue(isServiceInCache(null, registeredService.getId()));
     }
 
     @Test
     void verifySaveInRegistryAndGetByServiceId() throws Throwable {
-        val service = new CasRegisteredService();
-        service.setId(3100);
-        service.setName(TEST);
-        service.setServiceId(TEST);
-        assertFalse(isServiceInCache(TEST, 0));
-        serviceRegistry.save(service);
-        assertNotNull(serviceRegistry.findServiceByExactServiceId(TEST));
-        val svc = new WebApplicationServiceFactory().createService(TEST);
+        val registeredService = new CasRegisteredService();
+        registeredService.setId(RandomUtils.nextLong());
+        registeredService.setName(UUID.randomUUID().toString());
+        registeredService.setServiceId(registeredService.getName());
+        assertFalse(isServiceInCache(registeredService.getName(), 0));
+        serviceRegistry.save(registeredService);
+        assertNotNull(serviceRegistry.findServiceByExactServiceId(registeredService.getName()));
+        val svc = new WebApplicationServiceFactory().createService(registeredService.getName());
         assertNotNull(servicesManager.findServiceBy(svc, CasRegisteredService.class));
-        assertTrue(isServiceInCache(TEST, 0));
+        assertTrue(isServiceInCache(registeredService.getName(), 0));
     }
 
     @Test
     void verifyDelete() throws Throwable {
-        val r = new CasRegisteredService();
-        r.setId(1000);
-        r.setName(TEST);
-        r.setServiceId(TEST);
-        servicesManager.save(r);
-        assertTrue(isServiceInCache(null, 1000));
-        assertNotNull(servicesManager.findServiceBy(serviceFactory.createService(r.getServiceId())));
-        servicesManager.delete(r);
-        assertNull(servicesManager.findServiceBy(r.getId()));
-        assertFalse(isServiceInCache(null, 1000));
+        val registeredService = new CasRegisteredService();
+        registeredService.setId(RandomUtils.nextLong());
+        registeredService.setName(UUID.randomUUID().toString());
+        registeredService.setServiceId(registeredService.getName());
+        servicesManager.save(registeredService);
+        assertTrue(isServiceInCache(null, registeredService.getId()));
+        assertNotNull(servicesManager.findServiceBy(RegisteredServiceTestUtils.getService(registeredService.getServiceId())));
+        servicesManager.delete(registeredService);
+        assertNull(servicesManager.findServiceBy(registeredService.getId()));
+        assertFalse(isServiceInCache(null, registeredService.getId()));
     }
 
     @Test
     void verifyExpiredNotify() throws Throwable {
-        val r = new CasRegisteredService();
-        r.setId(2000);
-        r.setName(TEST);
-        r.setServiceId(TEST);
+        val registeredService = new CasRegisteredService();
+        registeredService.setId(RandomUtils.nextLong());
+        registeredService.setName(UUID.randomUUID().toString());
+        registeredService.setServiceId(registeredService.getName());
         val expirationPolicy = new DefaultRegisteredServiceExpirationPolicy();
         expirationPolicy.setNotifyWhenExpired(true);
         expirationPolicy.setExpirationDate(LocalDateTime.now(ZoneOffset.UTC).minusDays(2).toString());
-        r.setExpirationPolicy(expirationPolicy);
-        servicesManager.save(r);
-        assertNotNull(servicesManager.findServiceBy(serviceFactory.createService(r.getServiceId())));
+        registeredService.setExpirationPolicy(expirationPolicy);
+        servicesManager.save(registeredService);
+        assertNotNull(servicesManager.findServiceBy(RegisteredServiceTestUtils.getService(registeredService.getServiceId())));
     }
 
     @Test
     void verifyExpiredNotifyAndDelete() throws Throwable {
-        val r = new CasRegisteredService();
-        r.setId(2001);
-        r.setName(TEST);
-        r.setServiceId(TEST);
+        val registeredService = new CasRegisteredService();
+        registeredService.setId(RandomUtils.nextLong());
+        registeredService.setName(UUID.randomUUID().toString());
+        registeredService.setServiceId(registeredService.getName());
         val expirationPolicy = new DefaultRegisteredServiceExpirationPolicy();
         expirationPolicy.setNotifyWhenExpired(true);
         expirationPolicy.setExpirationDate(LocalDateTime.now(ZoneOffset.UTC).minusDays(2).toString());
         expirationPolicy.setDeleteWhenExpired(true);
         expirationPolicy.setNotifyWhenDeleted(true);
-        r.setExpirationPolicy(expirationPolicy);
-        servicesManager.save(r);
-        assertNull(servicesManager.findServiceBy(serviceFactory.createService(r.getServiceId())));
+        registeredService.setExpirationPolicy(expirationPolicy);
+        servicesManager.save(registeredService);
+        assertNull(servicesManager.findServiceBy(RegisteredServiceTestUtils.getService(registeredService.getServiceId())));
     }
 
     /**
@@ -179,35 +166,12 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
         }));
         loadingThread.start();
 
-        val testService = serviceFactory.createService("https://test.edu/path/");
+        val testService = RegisteredServiceTestUtils.getService("https://test.edu/path/");
         IntStream.rangeClosed(1, 5).forEach(i -> {
             LOGGER.debug("Checking for previously-saved service attempt [{}]", i);
             assertNotNull(servicesManager.findServiceBy(testService));
         });
         loadingThread.join();
-    }
-
-    protected ServicesManager getServicesManagerInstance() {
-        return new DefaultServicesManager(getConfigurationContext());
-    }
-
-    protected ServicesManagerConfigurationContext getConfigurationContext() {
-        val applicationContext = new StaticApplicationContext();
-        applicationContext.refresh();
-        return ServicesManagerConfigurationContext.builder()
-            .serviceRegistry(serviceRegistry)
-            .registeredServicesTemplatesManager(mock(RegisteredServicesTemplatesManager.class))
-            .applicationContext(applicationContext)
-            .environments(new HashSet<>(0))
-            .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))
-            .servicesCache(Caffeine.newBuilder().expireAfterWrite(Duration.ofSeconds(2)).build())
-            .build();
-    }
-
-    protected ServiceRegistry getServiceRegistryInstance() {
-        val appCtx = new StaticApplicationContext();
-        appCtx.refresh();
-        return new InMemoryServiceRegistry(appCtx, listOfDefaultServices, new ArrayList<>());
     }
 
     protected boolean isServiceInCache(final String serviceId, final long id) {

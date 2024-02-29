@@ -22,8 +22,7 @@ const cas = require("../../cas.js");
     const profileId = await cas.innerText(page, "#profilesTable tr td code");
     await cas.log(profileId);
     await cas.submitForm(page, `#profilesTable #form-${profileId}`);
-    await cas.sleep(2000);
-
+    await cas.sleep(6000);
     await cas.assertCookie(page);
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
     const principalId = await cas.innerText(page, "span#principalId");

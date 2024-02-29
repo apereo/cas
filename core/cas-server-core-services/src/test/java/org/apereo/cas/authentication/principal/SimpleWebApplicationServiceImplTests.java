@@ -1,32 +1,23 @@
 package org.apereo.cas.authentication.principal;
 
 import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.services.DefaultServicesManagerRegisteredServiceLocator;
+import org.apereo.cas.config.BaseAutoConfigurationTests;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.services.RegisteredServicesTemplatesManager;
-import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.services.ServicesManagerConfigurationContext;
-import org.apereo.cas.services.mgmt.DefaultServicesManager;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.SimpleUrlValidator;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.StaticApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
-
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * @author Scott Battaglia
@@ -34,23 +25,16 @@ import static org.mockito.Mockito.*;
  * @since 3.1
  */
 @Tag("Authentication")
+@SpringBootTest(classes = BaseAutoConfigurationTests.SharedTestConfiguration.class)
 class SimpleWebApplicationServiceImplTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "simpleWebApplicationServiceImpl.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
-    private static ServicesManager getServicesManager(final StaticApplicationContext applicationContext) {
-        val context = ServicesManagerConfigurationContext.builder()
-            .registeredServicesTemplatesManager(mock(RegisteredServicesTemplatesManager.class))
-            .serviceRegistry(mock(ServiceRegistry.class))
-            .applicationContext(applicationContext)
-            .environments(new HashSet<>(0))
-            .servicesCache(Caffeine.newBuilder().build())
-            .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))
-            .build();
-        return new DefaultServicesManager(context);
-    }
+    @Autowired
+    @Qualifier(ServicesManager.BEAN_NAME)
+    protected ServicesManager servicesManager;
 
     @Test
     void verifySerializeACompletePrincipalToJson() throws IOException {
@@ -64,14 +48,11 @@ class SimpleWebApplicationServiceImplTests {
 
     @Test
     void verifyResponse() throws Throwable {
-        val applicationContext = new StaticApplicationContext();
-        applicationContext.refresh();
-
         val request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.CONST_TEST_URL);
         val impl = new WebApplicationServiceFactory().createService(request);
 
-        val response = new WebApplicationServiceResponseBuilder(getServicesManager(applicationContext), SimpleUrlValidator.getInstance())
+        val response = new WebApplicationServiceResponseBuilder(servicesManager, SimpleUrlValidator.getInstance())
             .build(impl, "ticketId", RegisteredServiceTestUtils.getAuthentication());
         assertNotNull(response);
         assertEquals(Response.ResponseType.REDIRECT, response.responseType());
@@ -100,10 +81,7 @@ class SimpleWebApplicationServiceImplTests {
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.CONST_TEST_URL);
         val impl = new WebApplicationServiceFactory().createService(request);
 
-        val applicationContext = new StaticApplicationContext();
-        applicationContext.refresh();
-
-        val response = new WebApplicationServiceResponseBuilder(getServicesManager(applicationContext), SimpleUrlValidator.getInstance())
+        val response = new WebApplicationServiceResponseBuilder(servicesManager, SimpleUrlValidator.getInstance())
             .build(impl, null, RegisteredServiceTestUtils.getAuthentication());
         assertNotNull(response);
         assertEquals(Response.ResponseType.REDIRECT, response.responseType());
@@ -112,13 +90,10 @@ class SimpleWebApplicationServiceImplTests {
 
     @Test
     void verifyResponseWithNoTicketAndNoParameterInServiceURL() throws Throwable {
-        val applicationContext = new StaticApplicationContext();
-        applicationContext.refresh();
-
         val request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "http://foo.com/");
         val impl = new WebApplicationServiceFactory().createService(request);
-        val response = new WebApplicationServiceResponseBuilder(getServicesManager(applicationContext), SimpleUrlValidator.getInstance())
+        val response = new WebApplicationServiceResponseBuilder(servicesManager, SimpleUrlValidator.getInstance())
             .build(impl, null,
                 RegisteredServiceTestUtils.getAuthentication());
         assertNotNull(response);
@@ -129,13 +104,10 @@ class SimpleWebApplicationServiceImplTests {
 
     @Test
     void verifyResponseWithNoTicketAndOneParameterInServiceURL() throws Throwable {
-        val applicationContext = new StaticApplicationContext();
-        applicationContext.refresh();
-
         val request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "http://foo.com/?param=test");
         val impl = new WebApplicationServiceFactory().createService(request);
-        val response = new WebApplicationServiceResponseBuilder(getServicesManager(applicationContext), SimpleUrlValidator.getInstance())
+        val response = new WebApplicationServiceResponseBuilder(servicesManager, SimpleUrlValidator.getInstance())
             .build(impl, null, RegisteredServiceTestUtils.getAuthentication());
         assertNotNull(response);
         assertEquals(Response.ResponseType.REDIRECT, response.responseType());

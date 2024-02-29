@@ -6,26 +6,17 @@ import org.apereo.cas.logout.slo.ChainingSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
-import org.apereo.cas.services.DefaultServicesManagerRegisteredServiceLocator;
-import org.apereo.cas.services.InMemoryServiceRegistry;
-import org.apereo.cas.services.RegisteredServicesTemplatesManager;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.services.ServicesManagerConfigurationContext;
-import org.apereo.cas.services.mgmt.DefaultServicesManager;
 import org.apereo.cas.web.SimpleUrlValidator;
-
-import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.StaticApplicationContext;
-
-import java.util.HashSet;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.SpringBootTest;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -36,29 +27,16 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Logout")
+@SpringBootTest(classes = CasCoreLogoutAutoConfigurationTests.SharedTestConfiguration.class)
 class ChainingSingleLogoutServiceLogoutUrlBuilderTests {
-    private ServicesManager servicesManager;
-
-    @BeforeEach
-    public void beforeEach() {
-        val appCtx = new StaticApplicationContext();
-        appCtx.refresh();
-        val context = ServicesManagerConfigurationContext.builder()
-            .serviceRegistry(new InMemoryServiceRegistry(appCtx))
-            .registeredServicesTemplatesManager(mock(RegisteredServicesTemplatesManager.class))
-            .applicationContext(appCtx)
-            .environments(new HashSet<>(0))
-            .servicesCache(Caffeine.newBuilder().build())
-            .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))
-            .build();
-        this.servicesManager = new DefaultServicesManager(context);
-    }
+    @Autowired
+    @Qualifier(ServicesManager.BEAN_NAME)
+    protected ServicesManager servicesManager;
 
     @Test
     void verifyOperation() throws Throwable {
         val builder = new ChainingSingleLogoutServiceLogoutUrlBuilder(
             List.of(new DefaultSingleLogoutServiceLogoutUrlBuilder(servicesManager, SimpleUrlValidator.getInstance())));
-
         val service = CoreAuthenticationTestUtils.getWebApplicationService();
         val registeredService = mock(CasRegisteredService.class);
         when(registeredService.matches(any(Service.class))).thenReturn(Boolean.TRUE);

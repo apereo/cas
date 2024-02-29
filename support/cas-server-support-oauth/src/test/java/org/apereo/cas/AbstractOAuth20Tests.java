@@ -216,6 +216,10 @@ public abstract class AbstractOAuth20Tests {
     protected RegisteredServicesTemplatesManager registeredServicesTemplatesManager;
 
     @Autowired
+    @Qualifier(ServicesManager.BEAN_NAME)
+    protected ServicesManager servicesManager;
+    
+    @Autowired
     @Qualifier("oauthSecConfig")
     protected Config oauthSecConfig;
 
@@ -236,7 +240,7 @@ public abstract class AbstractOAuth20Tests {
     protected HandlerInterceptor oauthHandlerInterceptorAdapter;
 
     @Autowired
-    @Qualifier("servicesManagerConfigurationContext")
+    @Qualifier(ServicesManagerConfigurationContext.BEAN_NAME)
     protected ServicesManagerConfigurationContext servicesManagerConfigurationContext;
 
     @Autowired
@@ -274,10 +278,6 @@ public abstract class AbstractOAuth20Tests {
     @Autowired
     @Qualifier("oauthResourceOwnerCredentialsResponseBuilder")
     protected OAuth20AuthorizationResponseBuilder oauthResourceOwnerCredentialsResponseBuilder;
-
-    @Autowired
-    @Qualifier(ServicesManager.BEAN_NAME)
-    protected ServicesManager servicesManager;
 
     @Autowired
     @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
