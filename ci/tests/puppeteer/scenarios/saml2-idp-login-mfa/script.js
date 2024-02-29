@@ -12,9 +12,8 @@ const assert = require("assert");
     await cas.loginWith(page);
     
     await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
-    await cas.sleep(6000);
+    await cas.sleep(8000);
     await cas.screenshot(page);
-
     const code = await cas.extractFromEmail(browser);
 
     await page.bringToFront();
