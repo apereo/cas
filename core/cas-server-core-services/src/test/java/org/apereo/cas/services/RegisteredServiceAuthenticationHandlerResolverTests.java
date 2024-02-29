@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.0.0
  */
 @Tag("RegisteredService")
-@SpringBootTest(classes = BaseAutoConfigurationTests.SharedTestConfiguration.class )
+@SpringBootTest(classes = BaseAutoConfigurationTests.SharedTestConfiguration.class)
 class RegisteredServiceAuthenticationHandlerResolverTests {
 
     @Autowired
