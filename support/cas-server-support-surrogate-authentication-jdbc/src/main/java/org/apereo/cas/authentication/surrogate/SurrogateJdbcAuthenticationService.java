@@ -46,16 +46,15 @@ public class SurrogateJdbcAuthenticationService extends BaseSurrogateAuthenticat
     }
 
     @Override
-    public boolean canImpersonateInternal(final String username, final Principal surrogate, final Optional<Service> service) {
+    public boolean canImpersonateInternal(final String username, final Principal surrogate, final Optional<? extends Service> service) {
         LOGGER.debug("Executing SQL query [{}]", surrogateSearchQuery);
         val count = this.jdbcTemplate.queryForObject(surrogateSearchQuery, Integer.class, surrogate.getId(), username);
         return Objects.requireNonNull(count) > 0;
     }
 
     @Override
-    public Collection<String> getImpersonationAccounts(final String username) {
-        val results = this.jdbcTemplate.query(this.surrogateAccountQuery,
-            new BeanPropertyRowMapper<>(SurrogateAccount.class), username);
+    public Collection<String> getImpersonationAccounts(final String username, final Optional<? extends Service> service) {
+        val results = jdbcTemplate.query(this.surrogateAccountQuery, new BeanPropertyRowMapper<>(SurrogateAccount.class), username);
         return results.stream().map(SurrogateAccount::getSurrogateAccount).collect(Collectors.toList());
     }
 

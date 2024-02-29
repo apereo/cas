@@ -57,6 +57,7 @@ class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrategyTest
         val authenticationExecutionPlan = new DefaultAuthenticationEventExecutionPlan();
         authenticationExecutionPlan.registerAuthenticationHandler(new SimpleTestUsernamePasswordAuthenticationHandler());
 
+        servicesManager.save(registeredService);
         return new RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrategy(servicesManager,
             new DefaultTicketRegistrySupport(ticketRegistry),
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()),

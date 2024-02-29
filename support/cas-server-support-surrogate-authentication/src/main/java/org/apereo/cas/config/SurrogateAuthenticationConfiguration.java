@@ -82,7 +82,8 @@ class SurrogateAuthenticationConfiguration {
             @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
             final AuditableExecution registeredServiceAccessStrategyEnforcer,
             @Qualifier("surrogateEligibilityAuditableExecution")
-            final AuditableExecution surrogateEligibilityAuditableExecution, final ConfigurableApplicationContext applicationContext) throws Exception {
+            final AuditableExecution surrogateEligibilityAuditableExecution,
+            final ConfigurableApplicationContext applicationContext) throws Exception {
             return new SurrogateAuthenticationPostProcessor(surrogateAuthenticationService,
                 servicesManager, applicationContext, registeredServiceAccessStrategyEnforcer,
                 surrogateEligibilityAuditableExecution);
@@ -157,14 +158,16 @@ class SurrogateAuthenticationConfiguration {
         @ConditionalOnMissingBean(name = SurrogateAuthenticationService.BEAN_NAME)
         @Bean
         public SurrogateAuthenticationService surrogateAuthenticationService(
-            final List<BeanSupplier<SurrogateAuthenticationService>> surrogateServiceSuppliers) throws Exception {
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            final List<BeanSupplier<SurrogateAuthenticationService>> surrogateServiceSuppliers) {
             val allServices = surrogateServiceSuppliers
                 .stream()
                 .map(BeanSupplier::get)
                 .filter(BeanSupplier::isNotProxy)
                 .sorted(AnnotationAwareOrderComparator.INSTANCE)
                 .toList();
-            return new ChainingSurrogateAuthenticationService(allServices);
+            return new ChainingSurrogateAuthenticationService(allServices, servicesManager);
         }
 
         @Bean

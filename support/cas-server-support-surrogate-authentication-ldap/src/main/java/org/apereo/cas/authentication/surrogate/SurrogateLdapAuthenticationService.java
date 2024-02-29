@@ -46,13 +46,13 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
     }
 
     @Override
-    public boolean isWildcardedAccount(final String surrogate, final Principal principal) throws Throwable {
-        return super.isWildcardedAccount(surrogate, principal)
+    public boolean isWildcardedAccount(final String surrogate, final Principal principal, final Optional<? extends Service> service) throws Throwable {
+        return super.isWildcardedAccount(surrogate, principal, service)
             && doesSurrogateAccountExistInLdap(surrogate);
     }
 
     @Override
-    public boolean canImpersonateInternal(final String surrogate, final Principal principal, final Optional<Service> service) {
+    public boolean canImpersonateInternal(final String surrogate, final Principal principal, final Optional<? extends Service> service) {
         try {
             val id = principal.getId();
             val searchFilter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getSurrogateSearchFilter(),
@@ -84,7 +84,7 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
     }
 
     @Override
-    public Collection<String> getImpersonationAccounts(final String username) {
+    public Collection<String> getImpersonationAccounts(final String username, final Optional<? extends Service> service) {
         try {
             val filter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getSearchFilter(), CollectionUtils.wrap(username));
             LOGGER.debug("Using search filter to find eligible accounts: [{}]", filter);

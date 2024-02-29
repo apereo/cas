@@ -32,6 +32,7 @@ import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.DefaultRegisteredServiceProxyGrantingTicketExpirationPolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceProxyTicketExpirationPolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceServiceTicketExpirationPolicy;
+import org.apereo.cas.services.DefaultRegisteredServiceSurrogatePolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.DefaultRegisteredServiceWebflowInterruptPolicy;
@@ -152,6 +153,7 @@ class CasCoreServicesComponentSerializationConfiguration {
             plan.registerSerializableClass(PatternMatchingAttributeReleasePolicy.Rule.class);
 
             plan.registerSerializableClass(DefaultRegisteredServicePasswordlessPolicy.class);
+            plan.registerSerializableClass(DefaultRegisteredServiceSurrogatePolicy.class);
             plan.registerSerializableClass(DefaultRegisteredServiceMultifactorPolicy.class);
             plan.registerSerializableClass(BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.class);
 

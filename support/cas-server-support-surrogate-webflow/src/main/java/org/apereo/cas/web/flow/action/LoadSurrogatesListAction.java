@@ -19,6 +19,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -40,14 +41,15 @@ public class LoadSurrogatesListAction extends BaseCasWebflowAction {
         if (credential != null) {
             val username = credential.getId();
             LOGGER.debug("Loading eligible accounts for [{}] to proxy", username);
-            val surrogates = surrogateService.getImpersonationAccounts(username)
+            val service = Optional.ofNullable(WebUtils.getService(requestContext));
+            val surrogates = surrogateService.getImpersonationAccounts(username, service)
                 .stream()
                 .sorted()
                 .distinct()
                 .collect(Collectors.toCollection(ArrayList::new));
             LOGGER.debug("Surrogate accounts found are [{}]", surrogates);
             if (!surrogates.isEmpty()) {
-                if (!surrogates.contains(username) && !surrogateService.isWildcardedAccount(surrogates)) {
+                if (!surrogates.contains(username) && !surrogateService.isWildcardedAccount(surrogates, service)) {
                     surrogates.add(0, username);
                 }
                 WebUtils.putSurrogateAuthenticationAccounts(requestContext, surrogates);
@@ -96,7 +98,8 @@ public class LoadSurrogatesListAction extends BaseCasWebflowAction {
         val eventFactorySupport = new EventFactorySupport();
         if (loadSurrogates(requestContext)) {
             val accounts = WebUtils.getSurrogateAuthenticationAccounts(requestContext);
-            if (surrogateService.isWildcardedAccount(accounts)) {
+            val service = Optional.ofNullable(WebUtils.getService(requestContext));
+            if (surrogateService.isWildcardedAccount(accounts, service)) {
                 return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_SURROGATE_WILDCARD_VIEW);
             }
             return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_SURROGATE_VIEW);
