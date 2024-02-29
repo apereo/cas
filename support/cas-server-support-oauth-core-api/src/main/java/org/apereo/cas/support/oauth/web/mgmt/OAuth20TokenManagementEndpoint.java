@@ -88,11 +88,11 @@ public class OAuth20TokenManagementEndpoint extends BaseCasActuatorEndpoint {
     public void deleteToken(@Selector final String ticketId) throws Exception {
         val ticket = getToken(ticketId);
         if (ticket != null) {
-            ticketRegistry.deleteTicket(ticket.getId());
+            ticketRegistry.getObject().deleteTicket(ticket.getId());
         }
     }
 
     protected String extractAccessTokenFrom(final String token) {
-        return OAuth20JwtAccessTokenEncoder.toDecodableCipher(accessTokenJwtBuilder).decode(token);
+        return OAuth20JwtAccessTokenEncoder.toDecodableCipher(accessTokenJwtBuilder.getObject()).decode(token);
     }
 }

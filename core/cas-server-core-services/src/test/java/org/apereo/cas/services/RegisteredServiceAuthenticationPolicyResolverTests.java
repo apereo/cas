@@ -9,21 +9,15 @@ import org.apereo.cas.authentication.policy.GroovyScriptAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.NotPreventedAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.RegisteredServiceAuthenticationPolicyResolver;
 import org.apereo.cas.authentication.policy.RestfulAuthenticationPolicy;
-import org.apereo.cas.services.mgmt.DefaultServicesManager;
-
-import com.github.benmanes.caffeine.cache.Caffeine;
+import org.apereo.cas.config.BaseAutoConfigurationTests;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.StaticApplicationContext;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.SpringBootTest;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * This is {@link RegisteredServiceAuthenticationPolicyResolverTests}.
@@ -32,38 +26,39 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("RegisteredService")
+@SpringBootTest(classes = BaseAutoConfigurationTests.SharedTestConfiguration.class)
 class RegisteredServiceAuthenticationPolicyResolverTests {
-    private ServicesManager servicesManager;
+    @Autowired
+    @Qualifier(ServicesManager.BEAN_NAME)
+    protected ServicesManager servicesManager;
 
     @BeforeEach
     public void initialize() {
-        val list = new ArrayList<RegisteredService>();
-
         val svc1 = RegisteredServiceTestUtils.getRegisteredService("serviceid1");
         val p1 = new DefaultRegisteredServiceAuthenticationPolicy();
         val cr1 = new AnyAuthenticationHandlerRegisteredServiceAuthenticationPolicyCriteria();
         cr1.setTryAll(true);
         p1.setCriteria(cr1);
         svc1.setAuthenticationPolicy(p1);
-        list.add(svc1);
+        servicesManager.save(svc1);
 
         val svc2 = RegisteredServiceTestUtils.getRegisteredService("serviceid2");
         svc2.setAuthenticationPolicy(new DefaultRegisteredServiceAuthenticationPolicy());
-        list.add(svc2);
+        servicesManager.save(svc2);
 
         val svc3 = RegisteredServiceTestUtils.getRegisteredService("serviceid3");
         val p3 = new DefaultRegisteredServiceAuthenticationPolicy();
         val cr3 = new AllAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria();
         p3.setCriteria(cr3);
         svc3.setAuthenticationPolicy(p3);
-        list.add(svc3);
+        servicesManager.save(svc3);
 
         val svc4 = RegisteredServiceTestUtils.getRegisteredService("serviceid4");
         val p4 = new DefaultRegisteredServiceAuthenticationPolicy();
         val cr4 = new NotPreventedRegisteredServiceAuthenticationPolicyCriteria();
         p4.setCriteria(cr4);
         svc4.setAuthenticationPolicy(p4);
-        list.add(svc4);
+        servicesManager.save(svc4);
 
         val svc5 = RegisteredServiceTestUtils.getRegisteredService("serviceid5");
         val p5 = new DefaultRegisteredServiceAuthenticationPolicy();
@@ -71,7 +66,7 @@ class RegisteredServiceAuthenticationPolicyResolverTests {
         cr5.setScript("groovy { return Optional.empty() }");
         p5.setCriteria(cr5);
         svc5.setAuthenticationPolicy(p5);
-        list.add(svc5);
+        servicesManager.save(svc5);
 
         val svc6 = RegisteredServiceTestUtils.getRegisteredService("serviceid6");
         val p6 = new DefaultRegisteredServiceAuthenticationPolicy();
@@ -81,23 +76,7 @@ class RegisteredServiceAuthenticationPolicyResolverTests {
         cr6.setBasicAuthUsername("password");
         p6.setCriteria(cr6);
         svc6.setAuthenticationPolicy(p6);
-        list.add(svc6);
-
-        val appCtx = new StaticApplicationContext();
-        appCtx.refresh();
-
-        val dao = new InMemoryServiceRegistry(appCtx, list, new ArrayList<>());
-
-        val context = ServicesManagerConfigurationContext.builder()
-            .serviceRegistry(dao)
-            .applicationContext(appCtx)
-            .registeredServicesTemplatesManager(mock(RegisteredServicesTemplatesManager.class))
-            .environments(new HashSet<>(0))
-            .servicesCache(Caffeine.newBuilder().build())
-            .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))
-            .build();
-        this.servicesManager = new DefaultServicesManager(context);
-        this.servicesManager.load();
+        servicesManager.save(svc6);
     }
 
     @Test

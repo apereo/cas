@@ -3,32 +3,21 @@ package org.apereo.cas.support.oauth.validator.authorization;
 import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
-import org.apereo.cas.services.DefaultServicesManagerRegisteredServiceLocator;
-import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.services.ServicesManagerConfigurationContext;
-import org.apereo.cas.services.mgmt.DefaultServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
-
-import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.jee.context.JEEContext;
-import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.core.Ordered;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
-import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -39,19 +28,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OAuth")
 class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTests extends AbstractOAuth20Tests {
-    private ServicesManager getServicesManager(final StaticApplicationContext applicationContext) {
-        val context = ServicesManagerConfigurationContext.builder()
-            .serviceRegistry(new InMemoryServiceRegistry(applicationContext))
-            .applicationContext(applicationContext)
-            .registeredServicesTemplatesManager(registeredServicesTemplatesManager)
-            .environments(new HashSet<>(0))
-            .servicesCache(Caffeine.newBuilder().build())
-            .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))
-            .build();
-        return new DefaultServicesManager(context);
-    }
-
-    private OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator getValidator(final ServicesManager serviceManager) {
+    private OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator getValidator(
+        final ServicesManager serviceManager) {
         return new OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator(serviceManager,
             new WebApplicationServiceFactory(),
             new RegisteredServiceAccessStrategyAuditableEnforcer(applicationContext),
@@ -71,13 +49,8 @@ class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTests ext
 
     @Test
     void verifyUnsignedRequestParameter() throws Throwable {
-        val ctx = new StaticApplicationContext();
-        ctx.refresh();
-        val serviceManager = getServicesManager(ctx);
-
-        buildRegisteredService(serviceManager);
-
-        val validator = getValidator(serviceManager);
+        buildRegisteredService(servicesManager);
+        val validator = getValidator(servicesManager);
 
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -97,12 +70,8 @@ class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTests ext
 
     @Test
     void verifyValidator() throws Throwable {
-        val ctx = new StaticApplicationContext();
-        ctx.refresh();
-        val serviceManager = getServicesManager(ctx);
-        val service = buildRegisteredService(serviceManager);
-
-        val validator = getValidator(serviceManager);
+        val service = buildRegisteredService(servicesManager);
+        val validator = getValidator(servicesManager);
 
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
