@@ -148,7 +148,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: screenshots
+          name: screenshots-${{matrix.scenario}}
           path: ./ci/tests/puppeteer/screenshots/*.png
   ##########################################################################
   puppeteer-tests-511:
@@ -197,6 +197,6 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: screenshots
+          name: screenshots-${{matrix.scenario}}
           path: ./ci/tests/puppeteer/screenshots/*.png
 ##########################################################################
