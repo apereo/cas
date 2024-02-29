@@ -9,16 +9,14 @@ import org.apereo.cas.configuration.model.support.surrogate.SurrogateAuthenticat
 import org.apereo.cas.rest.factory.UsernamePasswordRestHttpRequestCredentialFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.MultiValueMap;
-
 import jakarta.servlet.http.HttpServletRequest;
-
 import java.util.List;
+import java.util.Optional;
 
 /**
  * This is {@link SurrogateAuthenticationRestHttpRequestCredentialFactory}.
@@ -56,7 +54,7 @@ public class SurrogateAuthenticationRestHttpRequestCredentialFactory extends Use
             LOGGER.trace("Not a surrogate authentication attempt, returning parent class credentials");
             return credentials;
         }
-        val surrogateAccounts = surrogateAuthenticationService.getImpersonationAccounts(credential.getId());
+        val surrogateAccounts = surrogateAuthenticationService.getImpersonationAccounts(credential.getId(), Optional.empty());
         val surrogateUsername = credential.getCredentialMetadata().getTrait(SurrogateCredentialTrait.class)
             .map(SurrogateCredentialTrait::getSurrogateUsername)
             .orElseThrow();
@@ -68,7 +66,7 @@ public class SurrogateAuthenticationRestHttpRequestCredentialFactory extends Use
     }
 
     protected MutableCredential extractCredential(final HttpServletRequest request,
-                                           final List<Credential> credentials) throws Exception {
+                                                  final List<Credential> credentials) throws Exception {
         val credential = (MutableCredential) credentials.getFirst();
         if (credential != null) {
             var surrogateUsername = request.getHeader(REQUEST_HEADER_SURROGATE_PRINCIPAL);

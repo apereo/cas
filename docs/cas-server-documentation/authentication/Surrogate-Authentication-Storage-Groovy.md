@@ -14,21 +14,21 @@ specified via the CAS configuration. The body of the script may be defined as su
 import org.apereo.cas.authentication.principal.*
 
 def isWildcardAuthorized(Object... args) {
-    def (surrogate,principal,logger) = args
+    def (surrogate,principal,service,logger) = args
     logger.info("Checking wildcard access {}", surrogate)
     return false
 }
 
 def canAuthenticate(Object... args) {
     def (surrogate,principal,service,logger) = args
-    logger.info("Checking surrogate access for {}", surrogate)
-    def accounts = getAccounts(principal.id, logger)
+    logger.info("Checking surrogate access for {} and service ${service?.id}", surrogate)
+    def accounts = getAccounts(principal.id, service, logger)
     return accounts.contains(surrogate)
 }
 
 def getAccounts(Object... args) {
-    def (user,logger) = args
-    logger.info("Getting authorized accounts for {}", user)
+    def (user,service,logger) = args
+    logger.info("Getting authorized accounts for {} and service ${service?.id}", user)
     return []
 }
 ```

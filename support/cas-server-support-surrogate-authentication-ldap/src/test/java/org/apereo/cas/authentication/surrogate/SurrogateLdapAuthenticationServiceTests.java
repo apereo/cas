@@ -116,7 +116,7 @@ class SurrogateLdapAuthenticationServiceTests extends BaseSurrogateAuthenticatio
         BeanUtils.copyProperties(su.getLdap(), props);
         props.setMemberAttributeName("unknown");
         val ldapService = new SurrogateLdapAuthenticationService(surrogateLdapConnectionFactory, props, servicesManager);
-        assertTrue(ldapService.getImpersonationAccounts(USER).isEmpty());
+        assertTrue(ldapService.getImpersonationAccounts(USER, Optional.empty()).isEmpty());
         ldapService.destroy();
     }
 
@@ -128,7 +128,7 @@ class SurrogateLdapAuthenticationServiceTests extends BaseSurrogateAuthenticatio
         BeanUtils.copyProperties(su.getLdap(), props);
         props.setMemberAttributeName("unknown");
         val ldapService = new SurrogateLdapAuthenticationService(factory, props, servicesManager);
-        assertTrue(ldapService.getImpersonationAccounts(USER).isEmpty());
+        assertTrue(ldapService.getImpersonationAccounts(USER, Optional.empty()).isEmpty());
         ldapService.destroy();
     }
 }

@@ -23,11 +23,11 @@ public abstract class BaseSurrogateAuthenticationService implements SurrogateAut
     protected final ServicesManager servicesManager;
 
     @Override
-    public final boolean canImpersonate(final String surrogate, final Principal principal, final Optional<Service> service) throws Throwable {
+    public final boolean canImpersonate(final String surrogate, final Principal principal, final Optional<? extends Service> service) throws Throwable {
         return surrogate.equalsIgnoreCase(principal.getId())
-               || isWildcardedAccount(surrogate, principal)
+               || isWildcardedAccount(surrogate, principal, service)
                || canImpersonateInternal(surrogate, principal, service);
     }
 
-    protected abstract boolean canImpersonateInternal(String surrogate, Principal principal, Optional<Service> service) throws Throwable;
+    protected abstract boolean canImpersonateInternal(String surrogate, Principal principal, Optional<? extends Service> service) throws Throwable;
 }

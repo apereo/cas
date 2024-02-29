@@ -31,7 +31,7 @@ public class SimpleSurrogateAuthenticationService extends BaseSurrogateAuthentic
     }
 
     @Override
-    public boolean canImpersonateInternal(final String surrogate, final Principal principal, final Optional<Service> service) {
+    public boolean canImpersonateInternal(final String surrogate, final Principal principal, final Optional<? extends Service> service) {
         if (this.eligibleAccounts.containsKey(principal.getId())) {
             val surrogates = this.eligibleAccounts.get(principal.getId());
             LOGGER.debug("Surrogate accounts authorized for [{}] are [{}]", principal.getId(), surrogates);
@@ -42,7 +42,7 @@ public class SimpleSurrogateAuthenticationService extends BaseSurrogateAuthentic
     }
 
     @Override
-    public Collection<String> getImpersonationAccounts(final String username) {
+    public Collection<String> getImpersonationAccounts(final String username, final Optional<? extends Service> service) {
         if (this.eligibleAccounts.containsKey(username)) {
             return this.eligibleAccounts.get(username);
         }

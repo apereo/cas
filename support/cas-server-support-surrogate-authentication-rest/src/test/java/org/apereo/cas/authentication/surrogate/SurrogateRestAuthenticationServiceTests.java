@@ -80,12 +80,11 @@ class SurrogateRestAuthenticationServiceTests extends BaseSurrogateAuthenticatio
     @Test
     void verifyProxying() throws Throwable {
         var data = MAPPER.writeValueAsString(CollectionUtils.wrapList("casuser", "otheruser"));
-        try (val webServer = new MockWebServer(9310,
-            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
+        try (val webServer = new MockWebServer(data)) {
             webServer.start();
 
             val props = new CasConfigurationProperties();
-            props.getAuthn().getSurrogate().getRest().setUrl("http://localhost:9310");
+            props.getAuthn().getSurrogate().getRest().setUrl("http://localhost:%s".formatted(webServer.getPort()));
             val surrogateService = new SurrogateRestAuthenticationService(props.getAuthn().getSurrogate().getRest(), servicesManager);
 
             val result = surrogateService.canImpersonate("cassurrogate",
@@ -102,15 +101,12 @@ class SurrogateRestAuthenticationServiceTests extends BaseSurrogateAuthenticatio
     @Test
     void verifyBadResponse() throws Throwable {
         var data = MAPPER.writeValueAsString("@@@");
-        try (val webServer = new MockWebServer(9310,
-            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
+        try (val webServer = new MockWebServer(data)) {
             webServer.start();
-
             val props = new CasConfigurationProperties();
-            props.getAuthn().getSurrogate().getRest().setUrl("http://localhost:9310");
+            props.getAuthn().getSurrogate().getRest().setUrl("http://localhost:%s".formatted(webServer.getPort()));
             val surrogateService = new SurrogateRestAuthenticationService(props.getAuthn().getSurrogate().getRest(), servicesManager);
-
-            val result = surrogateService.getImpersonationAccounts("cassurrogate");
+            val result = surrogateService.getImpersonationAccounts("cassurrogate", Optional.empty());
             assertTrue(result.isEmpty());
         }
     }

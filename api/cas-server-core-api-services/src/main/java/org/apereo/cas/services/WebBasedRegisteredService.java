@@ -27,6 +27,13 @@ public interface WebBasedRegisteredService extends RegisteredService {
     RegisteredServicePasswordlessPolicy getPasswordlessPolicy();
 
     /**
+     * Gets surrogate/impersonation authentication policy that is assigned to this service.
+     *
+     * @return the passwordless policy
+     */
+    RegisteredServiceSurrogatePolicy getSurrogatePolicy();
+
+    /**
      * Get the acceptable usage policy linked to this application.
      *
      * @return an instance of {@link RegisteredServiceAcceptableUsagePolicy}
