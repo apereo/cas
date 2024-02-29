@@ -14,32 +14,30 @@ const assert = require("assert");
     let url = await page.url();
     assert(url.startsWith("https://localhost:8444/cas/login"));
     await cas.loginWith(page);
-    await cas.sleep(4000);
+    await cas.sleep(8000);
     await cas.assertTicketParameter(page);
-    url = await page.url();
-    await cas.log(url);
+    await cas.logPage(page);
     await cas.sleep(2000);
 
     await cas.log("Checking for SSO availability of our CAS server...");
     await cas.gotoLogin(page);
+    await cas.logPage(page);
     url = await page.url();
-    await cas.log(url);
     assert(url.startsWith("https://localhost:8443/cas/login"));
     await cas.sleep(2000);
     await cas.assertCookie(page);
 
     await cas.log("Checking for SSO availability of external CAS server...");
     await cas.goto(page, "https://localhost:8444/cas/login");
+    await cas.logPage(page);
     url = await page.url();
-    await cas.log(url);
     assert(url.startsWith("https://localhost:8444/cas/login"));
     await cas.sleep(2000);
     await cas.assertCookie(page, true, "TGCEXT");
 
     await cas.log("Attempting to login based on existing SSO session");
     await cas.gotoLogin(page, "https://localhost:9859/anything/cas");
-    url = await page.url();
-    await cas.log(url);
+    await cas.logPage(page);
     await cas.sleep(4000);
     await cas.assertTicketParameter(page);
 
@@ -49,8 +47,7 @@ const assert = require("assert");
     await cas.log("Attempting to login for a different 2nd service");
     await cas.gotoLogin(page, "https://localhost:9859/anything/sample");
     await cas.log("Checking for page URL...");
-    url = await page.url();
-    await cas.log(url);
+    await cas.logPage(page);
     await cas.sleep(2000);
 
     await cas.log("External CAS server has no SSO, since logout request was propagated from our CAS server");
