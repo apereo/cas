@@ -6,7 +6,7 @@ def run(Object[] args) {
     def logger = args[1]
     logger.info("Testing username $request")
 
-    if (request.equals("unknown")) {
+    if (request.username.equals("unknown")) {
         return null
     }
 

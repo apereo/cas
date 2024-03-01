@@ -11,12 +11,5 @@
       "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
       "values" : [ "java.util.HashSet", [ "true" ] ]
     }
-  },
-  "authenticationPolicy" : {
-    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicy",
-    "requiredAuthenticationHandlers" : ["java.util.TreeSet", [ "STATIC" ]],
-    "criteria": {
-      "@class": "org.apereo.cas.services.AllowedAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria"
-    }
   }
 }

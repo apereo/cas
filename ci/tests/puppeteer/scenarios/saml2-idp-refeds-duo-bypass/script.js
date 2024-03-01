@@ -32,12 +32,11 @@ async function cleanUp() {
             await cas.sleep(3000);
             await cas.assertInnerText(page, "#principal", "casuser@example.org");
             await cas.assertInnerText(page, "#authnContextClass", "https://refeds.org/profile/mfa");
+            await cleanUp();
         } finally {
             await browser.close();
-            await cleanUp();
         }
     }, async (error) => {
-        await cleanUp();
         await cas.log(error);
         throw error;
     });

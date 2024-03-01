@@ -1,5 +1,6 @@
 
 const cas = require("../../cas.js");
+const path = require("path");
 
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
@@ -32,9 +33,8 @@ const cas = require("../../cas.js");
         await cas.sleep(3000);
         await page2.waitForSelector("#table_with_attributes", {visible: true});
         await cas.assertVisibility(page2, "#table_with_attributes");
-
+        await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
     } finally {
-        // await cas.removeDirectory(path.join(__dirname, '/saml-md'));
         await browser.close();
     }
 })();

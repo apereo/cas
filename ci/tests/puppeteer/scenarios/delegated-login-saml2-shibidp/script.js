@@ -35,8 +35,8 @@ const assert = require("assert");
         await cas.assertCookie(page);
         await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
         await cas.assertInnerText(page, "#content div h2", "Log In Successful");
-    } finally {
         await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
+    } finally {
         await browser.close();
     }
 })();

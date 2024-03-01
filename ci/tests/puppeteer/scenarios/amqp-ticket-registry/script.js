@@ -38,9 +38,8 @@ const path = require("path");
         await cas.goto(page, "https://localhost:8444/cas/login");
         await cas.sleep(2000);
         await cas.assertCookie(page);
-
-    } finally {
         await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
+    } finally {
         await browser.close();
     }
 })();

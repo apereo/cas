@@ -38,7 +38,6 @@ async function cleanUp() {
         await browser.close();
         await cleanUp();
     }, async (error) => {
-        await cleanUp();
         await cas.log(error);
         throw error;
     });
