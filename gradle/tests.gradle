@@ -58,7 +58,7 @@ enum TestCategories {
     MFA(true, true),
     MFAProvider(true, true),
     MFATrigger(true, true),
-    MFATrustedDevices(true, true),
+    MFATrustedDevices(false, true),
     MongoDb(false, true),
     MongoDbMFA(false, true),
     MsSqlServer(false, true),
