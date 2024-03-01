@@ -314,7 +314,7 @@ public class CasSupportActionsAutoConfiguration {
             final ServicesManager servicesManager,
             @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-            @Qualifier("warnCookieGenerator")
+            @Qualifier(CasCookieBuilder.BEAN_NAME_WARN_COOKIE_BUILDER)
             final CasCookieBuilder warnCookieGenerator,
             @Qualifier(TicketRegistrySupport.BEAN_NAME)
             final TicketRegistrySupport ticketRegistrySupport,
@@ -525,7 +525,7 @@ public class CasSupportActionsAutoConfiguration {
             final LogoutManager logoutManager,
             @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-            @Qualifier("warnCookieGenerator")
+            @Qualifier(CasCookieBuilder.BEAN_NAME_WARN_COOKIE_BUILDER)
             final CasCookieBuilder warnCookieGenerator,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
@@ -603,7 +603,7 @@ public class CasSupportActionsAutoConfiguration {
         public Action serviceWarningAction(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier("warnCookieGenerator")
+            @Qualifier(CasCookieBuilder.BEAN_NAME_WARN_COOKIE_BUILDER)
             final CasCookieBuilder warnCookieGenerator,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,

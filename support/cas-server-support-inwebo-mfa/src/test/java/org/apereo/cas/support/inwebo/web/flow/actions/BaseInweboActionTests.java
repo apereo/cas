@@ -77,7 +77,10 @@ public abstract class BaseInweboActionTests {
         val authenticationManager = new DefaultAuthenticationManager(authenticationEventExecutionPlan,
             new DirectObjectProvider<>(authenticationSystemSupport), true, applicationContext);
         authenticationSystemSupport = CoreAuthenticationTestUtils.getAuthenticationSystemSupport(authenticationManager, mock(ServicesManager.class));
-        val configurationContext = CasWebflowEventResolutionConfigurationContext.builder().authenticationSystemSupport(authenticationSystemSupport).build();
+        val configurationContext = CasWebflowEventResolutionConfigurationContext
+            .builder()
+            .authenticationSystemSupport(authenticationSystemSupport)
+            .build();
         resolver = new FinalMultifactorAuthenticationTransactionWebflowEventResolver(configurationContext);
         setAuthenticationInContext(LOGIN);
     }

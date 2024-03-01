@@ -38,7 +38,9 @@ import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowCredentialProvider;
 import org.apereo.cas.web.flow.ChainingSingleSignOnParticipationStrategy;
+import org.apereo.cas.web.flow.DefaultSingleSignOnBuildingStrategy;
 import org.apereo.cas.web.flow.DefaultSingleSignOnParticipationStrategy;
+import org.apereo.cas.web.flow.SingleSignOnBuildingStrategy;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategyConfigurer;
 import org.apereo.cas.web.flow.actions.AuthenticationExceptionHandlerAction;
@@ -165,12 +167,14 @@ class CasCoreWebflowConfiguration {
             final AuthenticationEventExecutionPlan authenticationEventExecutionPlan,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
-            @Qualifier("warnCookieGenerator")
+            @Qualifier(CasCookieBuilder.BEAN_NAME_WARN_COOKIE_BUILDER)
             final CasCookieBuilder warnCookieGenerator,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             @Qualifier(SingleSignOnParticipationStrategy.BEAN_NAME)
             final SingleSignOnParticipationStrategy webflowSingleSignOnParticipationStrategy,
+            @Qualifier(SingleSignOnBuildingStrategy.BEAN_NAME)
+            final SingleSignOnBuildingStrategy singleSignOnBuildingStrategy,
             @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
             final AuditableExecution registeredServiceAccessStrategyEnforcer,
             @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
@@ -179,7 +183,8 @@ class CasCoreWebflowConfiguration {
             final ArgumentExtractor argumentExtractor,
             @Qualifier(CasWebflowCredentialProvider.BEAN_NAME)
             final CasWebflowCredentialProvider casWebflowCredentialProvider) {
-            return CasWebflowEventResolutionConfigurationContext.builder()
+            return CasWebflowEventResolutionConfigurationContext
+                .builder()
                 .casWebflowCredentialProvider(casWebflowCredentialProvider)
                 .authenticationContextValidator(authenticationContextValidator)
                 .authenticationSystemSupport(authenticationSystemSupport)
@@ -193,6 +198,7 @@ class CasCoreWebflowConfiguration {
                 .casProperties(casProperties)
                 .ticketRegistry(ticketRegistry)
                 .singleSignOnParticipationStrategy(webflowSingleSignOnParticipationStrategy)
+                .singleSignOnBuildingStrategy(singleSignOnBuildingStrategy)
                 .applicationContext(applicationContext)
                 .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator)
                 .authenticationEventExecutionPlan(authenticationEventExecutionPlan)
@@ -418,6 +424,17 @@ class CasCoreWebflowConfiguration {
             val chain = new ChainingSingleSignOnParticipationStrategy();
             providers.forEach(provider -> provider.configureStrategy(chain));
             return chain;
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = SingleSignOnBuildingStrategy.BEAN_NAME)
+        public SingleSignOnBuildingStrategy singleSignOnBuildingStrategy(
+            @Qualifier(TicketRegistrySupport.BEAN_NAME)
+            final TicketRegistrySupport ticketRegistrySupport,
+            @Qualifier(CentralAuthenticationService.BEAN_NAME)
+            final CentralAuthenticationService centralAuthenticationService) {
+            return new DefaultSingleSignOnBuildingStrategy(ticketRegistrySupport, centralAuthenticationService);
         }
 
         @Bean

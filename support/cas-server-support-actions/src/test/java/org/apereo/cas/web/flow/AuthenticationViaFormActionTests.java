@@ -35,7 +35,7 @@ class AuthenticationViaFormActionTests extends AbstractWebflowActionsTests {
     private Action action;
 
     @Autowired
-    @Qualifier("warnCookieGenerator")
+    @Qualifier(CasCookieBuilder.BEAN_NAME_WARN_COOKIE_BUILDER)
     private CasCookieBuilder warnCookieGenerator;
 
     @Test
