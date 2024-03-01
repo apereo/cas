@@ -840,9 +840,9 @@ exports.pageVariable = async (page, name) => page.evaluate(name);
 exports.extractFromEmail = async (browser) => {
     const page = await browser.newPage();
     await page.goto("http://localhost:8282");
-    await this.sleep(1000);
+    await this.sleep(2000);
     await this.click(page, "table tbody td a");
-    await this.sleep(1000);
+    await this.sleep(2000);
     const text = await this.textContent(page, "div[name=bodyPlainText] .well");
     await page.close();
     await this.log(`Extracted from email: ${text}`);
