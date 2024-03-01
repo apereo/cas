@@ -31,8 +31,8 @@ env:
   JDK_CURRENT: 21
   JDK_DISTRIBUTION: "corretto"
   NODE_CURRENT: '21.6.2'
-  MAX_ATTEMPTS: 3
-  RETRY_MINUTES: 10
+  MAX_ATTEMPTS: 2
+  RETRY_MINUTES: 8
   SCENARIO_REGEX: ".*"
 
 on:
@@ -151,6 +151,8 @@ jobs:
         with:
           name: screenshots-${{matrix.scenario}}
           path: ./ci/tests/puppeteer/screenshots/*.png
+          if-no-files-found: ignore
+          retention-days: 2
   ##########################################################################
   puppeteer-tests-511:
     runs-on: ubuntu-latest
@@ -201,4 +203,6 @@ jobs:
         with:
           name: screenshots-${{matrix.scenario}}
           path: ./ci/tests/puppeteer/screenshots/*.png
+          if-no-files-found: ignore
+          retention-days: 2
 ##########################################################################
