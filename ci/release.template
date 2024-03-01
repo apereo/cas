@@ -1,0 +1,16 @@
+# :star: Release Notes
+
+- [Documentation](https://apereo.github.io/cas/{branch})
+- [Commit Log](https://github.com/apereo/cas/commits/{branch})
+- [Pull Requests](https://github.com/apereo/cas/pulls?q=is%3Apr+milestone%3A{release}+is%3Aclosed+sort%3Aupdated-desc)
+- [Maintenance Policy](https://apereo.github.io/cas/developer/Maintenance-Policy.html)
+- [Release Policy](https://apereo.github.io/cas/developer/Release-Policy.html)
+- [Release Schedule](https://github.com/apereo/cas/milestones)
+
+# :couple: Contributions
+
+Special thanks to the following individuals for their excellent contributions:
+
+{contributors}
+
+To learn how to contribute to the project, [please see this guide](https://apereo.github.io/cas/developer/Contributor-Guidelines.html).
