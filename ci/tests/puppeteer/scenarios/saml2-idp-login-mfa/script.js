@@ -10,7 +10,7 @@ const assert = require("assert");
     await cas.log("Establishing SSO session...");
     await cas.gotoLogin(page);
     await cas.loginWith(page);
-    
+    await cas.sleep(1000);
     await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
     await cas.sleep(8000);
     await cas.screenshot(page);
@@ -37,7 +37,7 @@ const assert = require("assert");
     });
     
     await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
-    await cas.sleep(3000);
+    await cas.sleep(4000);
 
     authData = JSON.parse(await cas.innerHTML(page, "details pre"));
     await cas.log(authData);
