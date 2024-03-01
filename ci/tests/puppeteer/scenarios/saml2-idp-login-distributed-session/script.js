@@ -21,9 +21,9 @@ const cas = require("../../cas.js");
         console.dir(authData, {depth: null, colors: true});
         await cas.gotoLogin(page);
         await cas.assertCookie(page, true, "DISSESSION");
+        await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
     } finally {
         await cas.screenshot(page);
-        await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
+        await browser.close();
     }
-    await browser.close();
 })();

@@ -55,7 +55,6 @@ async function cleanUp() {
         await cleanUp();
         process.exit();
     }, async (error) => {
-        await cleanUp();
         await cas.log(error);
         throw error;
     });

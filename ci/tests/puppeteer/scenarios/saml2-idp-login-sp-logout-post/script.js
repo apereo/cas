@@ -39,8 +39,8 @@ async function getActuatorEndpoint(entityId) {
         const url = await page.url();
         await cas.sleep(1000);
         assert(url === "http://localhost:9443/simplesaml/module.php/saml/sp/saml2-logout.php/default-sp");
-    } finally {
         await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
+    } finally {
         await browser.close();
     }
 })();

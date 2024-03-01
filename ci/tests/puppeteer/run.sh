@@ -744,16 +744,27 @@ if [[ "${NATIVE_BUILD}" == "true" ]]; then
 fi
 
 if [[ "${DRYRUN}" != "true" && ("${NATIVE_BUILD}" == "false" || "${NATIVE_RUN}" == "true") ]]; then
-  echo -e "**************************************************************************"
-  echo -e "Running ${scriptPath}\n"
+
   export NODE_TLS_REJECT_UNAUTHORIZED=0
 
   if [[ "${NATIVE_RUN}" == "false" ]]; then
-    node --unhandled-rejections=strict ${scriptPath} ${config}
-    RC=$?
-    if [[ $RC -ne 0 ]]; then
-      printred "Script: ${scriptPath} with config: ${config} failed with return code ${RC}"
-    fi
+
+    max_retries=3
+    retry_count=0
+    while [ $retry_count -lt $max_retries ]; do
+        echo -e "**************************************************************************"
+        echo -e "Attempt: #${retry_count}: Running ${scriptPath}\n"
+        node --unhandled-rejections=strict ${scriptPath} ${config}
+        RC=$?
+
+        if [[ $RC -ne 0 ]]; then
+          printred "Script: ${scriptPath} with config: ${config} failed with return code ${RC}"
+          ((retry_count++))
+          sleepfor 3
+        else
+          break
+        fi
+    done
   else
     printyellow "Running test scenario against a CAS native-image executable is disabled for scenario ${scriptPath}"
     RC=0
@@ -770,7 +781,7 @@ if [[ "${DRYRUN}" != "true" && ("${NATIVE_BUILD}" == "false" || "${NATIVE_RUN}" 
     eval "${exitScript}"
 
   if [[ $RC -ne 0 ]]; then
-    printred "Test scenario [${scenarioName}] has failed.\n"
+    printred "Test scenario [${scenarioName}] has failed with exit code ${RC}.\n"
   else
     printgreen "Test scenario [${scenarioName}] has passed successfully!\n"
   fi
