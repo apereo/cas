@@ -81,7 +81,7 @@ class SurrogateLdapAuthenticationServiceTests extends BaseSurrogateAuthenticatio
     }
 
     @Test
-    void verifyUserAllowedToProxy() throws Throwable {
+    void verifyUserDisabled() throws Throwable {
         assertTrue(getService().getImpersonationAccounts("banderson", Optional.empty()).isEmpty());
         assertTrue(getService().getImpersonationAccounts("nomail", Optional.empty()).isEmpty());
     }
