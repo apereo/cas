@@ -100,6 +100,16 @@ Notable changes in this area include:
 [Duo Security](../authentication/Passwordless-Authentication-Storage-DuoSecurity.html) can now 
 act as a passwordless authentication account store to verify and locate passwordless accounts.
 Furthermore, [passwordless authentication](../authentication/Passwordless-Authentication.html) can now be selectively controlled per application.
+ 
+### Surrogate Authentication
+
+Multiple [surrogate account stores](../authentication/Surrogate-Authentication.html) can be used simultaneously to verify and locate surrogate accounts.
+Furthermore, the [surrogate access strategy](../authentication/Surrogate-Authentication-AccessStrategy.html) has removed the `surrogateEnabled` flag and is 
+also modified to allow the strategy to authorize the request for non-surrogate requests. You now have the ability to disable surrogate authentication requests
+for specific services by using a dedicated [surrogate authentication policy](../authentication/Surrogate-Authentication-AccessStrategy.html).
+
+Finally, multiple [LDAP surrogate account stores](../authentication/Surrogate-Authentication-Storage-LDAP.html) 
+can now be configured to locate accounts.
 
 ## Other Stuff
 
