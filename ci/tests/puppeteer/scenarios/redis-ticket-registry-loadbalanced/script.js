@@ -46,6 +46,7 @@ async function checkTicketValidationAcrossNodes(browser) {
     await cas.gotoLogin(page, service);
     await cas.sleep(1000);
     await cas.loginWith(page);
+    await cas.sleep(2000);
     const ticket = await cas.assertTicketParameter(page);
 
     await cas.log("Validating ticket on second node");
@@ -96,6 +97,7 @@ async function checkSessionsAreSynced(browser) {
     await cas.gotoLogin(page, s1);
     await cas.sleep(1000);
     await cas.loginWith(page);
+    await cas.sleep(2000);
     const ticket1 = await cas.assertTicketParameter(page);
 
     await cas.log("Getting second ticket");

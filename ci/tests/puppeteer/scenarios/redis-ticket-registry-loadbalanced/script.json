@@ -19,6 +19,8 @@
     "--management.endpoints.enabled-by-default=true",
     "--management.endpoint.health.show-details=always",
 
+    "--cas.ticket.st.time-to-kill-in-seconds=30",
+
     "--cas.webflow.crypto.signing.key=Q4tQGAuJSmuJ5WA0zByB9P6hYr5dpTd2JJifyy6Tm_CJ35pkbdhFvcgG-3igDjA4CTjau6Z0yMft-dhVUbRnPQ",
     "--cas.webflow.crypto.encryption.key=g-Rk2ZvexS6tdooIiDh0IQ",
     
