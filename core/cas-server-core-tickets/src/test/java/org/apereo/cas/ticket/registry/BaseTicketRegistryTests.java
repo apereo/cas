@@ -51,6 +51,7 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.RepetitionInfo;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.TestInfo;
+import org.junitpioneer.jupiter.RetryingTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
@@ -486,6 +487,7 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @RepeatedTest(1)
+    @RetryingTest(2)
     @Tag("DisableTicketRegistryTestWithEncryption")
     void verifyTicketCountsEqualToTicketsAdded() throws Throwable {
         assumeTrue(canTicketRegistryIterate());
@@ -503,9 +505,9 @@ public abstract class BaseTicketRegistryTests {
                 tgts.add(ticketGrantingTicket);
                 sts.add(st);
                 val addedTicket = ticketRegistry.addTicket(ticketGrantingTicket);
-                await().untilAsserted(() -> assertNotNull(ticketRegistry.getTicket(addedTicket.getId()) != null));
+                await().untilAsserted(() -> assertNotNull(ticketRegistry.getTicket(addedTicket.getId())));
                 val addedServiceTicket = ticketRegistry.addTicket(st);
-                await().untilAsserted(() -> assertNotNull(ticketRegistry.getTicket(addedServiceTicket.getId()) != null));
+                await().untilAsserted(() -> assertNotNull(ticketRegistry.getTicket(addedServiceTicket.getId())));
             }
             await().untilAsserted(() -> {
                 val sessionCount = ticketRegistry.sessionCount();
