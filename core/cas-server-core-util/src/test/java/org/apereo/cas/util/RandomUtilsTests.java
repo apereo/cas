@@ -49,10 +49,10 @@ class RandomUtilsTests {
     @Test
     void verifyInt() throws Throwable {
         var value = RandomUtils.nextInt();
-        assertNotNull(value);
+        assertTrue(value >= 0);
 
         value = RandomUtils.nextInt(5, 5);
-        assertNotNull(value);
+        assertTrue(value >= 0);
     }
 
     @Test
@@ -64,10 +64,10 @@ class RandomUtilsTests {
     @Test
     void verifyDouble() throws Throwable {
         var value = RandomUtils.nextDouble();
-        assertNotNull(value);
+        assertTrue(value >= 0);
 
         value = RandomUtils.nextDouble(5, 5);
-        assertNotNull(value);
+        assertTrue(value >= 0);
     }
 
     @Test
