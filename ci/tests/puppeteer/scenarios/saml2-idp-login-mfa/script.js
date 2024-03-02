@@ -1,4 +1,4 @@
-            const path = require("path");
+const path = require("path");
 const cas = require("../../cas.js");
 const assert = require("assert");
 
@@ -28,14 +28,14 @@ const assert = require("assert");
     const initialAuthData = authData.AuthnInstant;
     await cas.logg(`Initial authentication instant: ${initialAuthData}`);
     const allCookies = await page.cookies();
-    allCookies.forEach((cookie) => {
-        cas.log(`Deleting cookie ${cookie.name}`);
-        page.deleteCookie({
+    for (const cookie of allCookies) {
+        await cas.log(`Deleting cookie ${cookie.name}`);
+        await page.deleteCookie({
             name : cookie.name,
             domain : cookie.domain
         });
-    });
-    
+    }
+
     await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
     await cas.sleep(4000);
 
