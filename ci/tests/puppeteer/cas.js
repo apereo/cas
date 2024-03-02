@@ -746,7 +746,7 @@ exports.screenshot = async (page) => {
         await this.log(`Page URL when capturing screenshot: ${url}`);
         await this.log(`Attempting to take a screenshot and save at ${filePath}`);
         await page.setViewport({width: 1920, height: 1080});
-        await page.screenshot({path: filePath, captureBeyondViewport: true, fullPage: true});
+        await page.screenshot({path: filePath, captureBeyondViewport: true, fullPage: true, optimizeForSpeed: true});
         this.logg(`Screenshot saved at ${filePath}`);
     } catch (e) {
         this.logr(`Unable to capture screenshot ${filePath}: ${e}`);
