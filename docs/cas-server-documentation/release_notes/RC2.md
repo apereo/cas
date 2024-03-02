@@ -69,10 +69,10 @@ by approximately `8~10` minutes for every run of the test suite by removing unne
 [OAuth Token Exchange](../authentication/OAuth-ProtocolFlow-TokenExchange.html) protocol can now support ID token exchanges
 when CAS is running as an OpenID Connect provider..
   
-### Devlocity Predictive Test Selection
+### Develocity Predictive Test Selection
 
-[Develocity Predictive Test Selection](https://develocity.apereo.org/scans/test-selection) is now turned on for certain number
-of CAS unit test categories. This feature saves testing time by identifying, prioritizing, and running only 
+[Develocity Predictive Test Selection](https://develocity.apereo.org/scans/test-selection) is now turned on for all 
+CAS unit test categories. This feature saves testing time by identifying, prioritizing, and running only 
 tests that are likely to provide useful feedback during test runs and it accomplishes 
 this by applying a machine learning model that uniquely incorporates fine-grained code snapshots, 
 comprehensive test analytics, and flaky test data.
@@ -82,7 +82,7 @@ The scheduled workflow runs disable the predictive test selection feature and in
 avoid accidents and mistakes made when a test run is incorrectly skipped. As the number of runs increase, 
 we expect the model to improve and learn more efficiently.
 
-This capability is provided by [Devlocity](https://gradle.com/develocity/) to the Apereo CAS project for free and is proving
+This capability is provided by [Develocity](https://gradle.com/develocity/) to the Apereo CAS project for free and is proving
 to be extremely valuable in cutting down test execution time and therefor resulting in a quicker feedback loop. 
 
 ### Startup Time Improvements
@@ -110,6 +110,11 @@ for specific services by using a dedicated [surrogate authentication policy](../
 
 Finally, multiple [LDAP surrogate account stores](../authentication/Surrogate-Authentication-Storage-LDAP.html) 
 can now be configured to locate accounts.
+
+### Attribute Definitions
+
+[JSON attribute definitions](../integration/Attribute-Definitions.html) that are taught to CAS via settings 
+are given the ability to override attribute definitions that ship directly with CAS.
 
 ## Other Stuff
 
@@ -152,3 +157,5 @@ can now be configured to locate accounts.
 - MongoDb
 - ACME
 - Apache Kafka
+- Sentry
+- IP GeoLocation
