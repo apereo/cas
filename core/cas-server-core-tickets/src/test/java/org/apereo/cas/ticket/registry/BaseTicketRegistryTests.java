@@ -51,7 +51,6 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.RepetitionInfo;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.TestInfo;
-import org.junitpioneer.jupiter.RetryingTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
@@ -487,7 +486,6 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @RepeatedTest(1)
-    @RetryingTest(2)
     @Tag("DisableTicketRegistryTestWithEncryption")
     void verifyTicketCountsEqualToTicketsAdded() throws Throwable {
         assumeTrue(canTicketRegistryIterate());
