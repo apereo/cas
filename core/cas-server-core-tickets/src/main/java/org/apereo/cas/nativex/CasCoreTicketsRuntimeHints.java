@@ -35,7 +35,7 @@ public class CasCoreTicketsRuntimeHints implements CasRuntimeHintsRegistrar {
 
         val ticketCompactors = findSubclassesInPackage(TicketCompactor.class, CentralAuthenticationService.NAMESPACE);
         registerReflectionHints(hints, ticketCompactors);
-        registerProxyHints(hints, ticketCompactors);
+        registerProxyHints(hints, TicketCompactor.class);
 
         registerReflectionHints(hints, findSubclassesInPackage(CipherExecutor.class, CentralAuthenticationService.NAMESPACE));
     }

@@ -252,7 +252,7 @@ config="${scenario}/script.json"
 echo "Using scenario configuration file: ${config}"
 jq '.' "${config}" -e >/dev/null
 if [ $? -ne 0 ]; then
- printred "\nFailed to parse scenario configuration file ${config}"
+ printred "Failed to parse scenario configuration file ${config}"
  exit 1
 fi
 
@@ -453,6 +453,7 @@ if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
     BUILD_TASKS="${BUILD_TASKS} :webapp:cas-server-webapp-${project}:nativeCompile -DaotSpringActiveProfiles=none"
   fi
 
+  rm -rf ${targetArtifact}
   BUILD_COMMAND=$(printf '%s' \
       "./gradlew ${BUILD_TASKS} -DskipNestedConfigMetadataGen=true -x check -x test -x javadoc --build-cache --configure-on-demand --parallel \
       ${BUILD_SCRIPT} ${DAEMON} -DcasModules="${dependencies}" --no-watch-fs --max-workers=8 ${BUILDFLAGS}")
@@ -490,11 +491,11 @@ if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
     done
     wait $pid
     if [ $? -ne 0 ]; then
-      printred "\nFailed to build CAS web application. Examine the build output."
+      printred "Failed to build CAS web application. Examine the build output."
       cat build.log
       exit 2
     else
-      printgreen "\nBackground build successful. Build output was:"
+      printgreen "Background build successful. Build output was:"
       cat build.log
       rm build.log
     fi
@@ -503,8 +504,8 @@ if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
     $BUILD_COMMAND
     pid=$!
     wait $pid
-    if [ $? -ne 0 ]; then
-      printred "\nFailed to build CAS web application."
+    if [[ ! -e "${targetArtifact}" ]]; then
+      printred "Failed to build CAS web application: ${targetArtifact}."
       exit 2
     fi
   fi
