@@ -41,10 +41,10 @@ public PrincipalElectionStrategyConflictResolver defaultPrincipalElectionStrateg
 }
 ```
 
-<div class="alert alert-warning">:warning: <strong>Ahoy, Daring Adventurer! </strong> Let's put it bluntly: tinkering with 
+<div class="alert alert-warning">:warning: <strong>Ahoy, Daring Adventurer! </strong><p>Let's put it bluntly: tinkering with 
 these components and/or overriding their definition in your CAS build is like trying to teach a squirrel 
 algebra – yes, it's possible, but the odds are stacked against you, and it's guaranteed to lead to 
-hilariously unfortunate results. Resist the temptation to make changes here.</div>
+hilariously unfortunate results. Resist the temptation to make changes here.</p></div>
 
 [See this guide](../configuration/Configuration-Management-Extensions.html) to
 learn more about how to register configurations into the CAS runtime.
