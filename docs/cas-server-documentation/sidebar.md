@@ -813,7 +813,6 @@ layout: null
     *   [Amazon Web Services](/cas/{{ version }}/integration/AWS-Integration.html)
     *   [CAS Clients](/cas/{{ version }}/integration/CAS-Clients.html)
     *   [Swagger](/cas/{{ version }}/integration/Swagger-Integration.html)
-    *   [Swagger](/cas/{{ version }}/integration/Swagger-Integration.html)
     *   [JMX](/cas/{{ version }}/integration/JMX-Integration.html)
     *   [Shibboleth Identity Provider](/cas/{{ version }}/integration/Shibboleth.html)
     *   [JDBC Drivers](/cas/{{ version }}/installation/JDBC-Drivers.html)
