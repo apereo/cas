@@ -8,6 +8,7 @@ import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationP
 import org.apereo.cas.services.RegisteredService;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.util.StringUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.Serial;
@@ -27,8 +28,9 @@ public class AuthenticationMultifactorAuthenticationProviderBypassEvaluator exte
 
     public AuthenticationMultifactorAuthenticationProviderBypassEvaluator(
         final MultifactorAuthenticationProviderBypassProperties bypassProperties,
-        final String providerId) {
-        super(providerId);
+        final String providerId,
+        final ConfigurableApplicationContext applicationContext) {
+        super(providerId, applicationContext);
         this.bypassProperties = bypassProperties;
     }
 

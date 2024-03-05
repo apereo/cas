@@ -32,7 +32,7 @@ class HttpRequestMultifactorAuthenticationProviderBypassEvaluatorTests {
         applicationContext.refresh();
 
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
-        val eval = new HttpRequestMultifactorAuthenticationProviderBypassEvaluator(properties, provider.getId());
+        val eval = new HttpRequestMultifactorAuthenticationProviderBypassEvaluator(properties, provider.getId(), applicationContext);
 
         val principal = CoreAuthenticationTestUtils.getPrincipal(Map.of("cn", List.of("example")));
         val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);

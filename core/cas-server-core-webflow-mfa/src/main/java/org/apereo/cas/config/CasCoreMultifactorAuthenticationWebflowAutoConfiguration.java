@@ -417,7 +417,9 @@ public class CasCoreMultifactorAuthenticationWebflowAutoConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector(
-            @Qualifier("failureModeEvaluator") final MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator,
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier("failureModeEvaluator")
+            final MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator,
             final CasConfigurationProperties casProperties) {
             val mfa = casProperties.getAuthn().getMfa();
             val script = mfa.getCore().getProviderSelection().getProviderSelectorGroovyScript();
@@ -425,7 +427,7 @@ public class CasCoreMultifactorAuthenticationWebflowAutoConfiguration {
                 return new GroovyScriptMultifactorAuthenticationProviderSelector(script.getLocation());
             }
             if (mfa.getCore().getProviderSelection().isProviderSelectionEnabled()) {
-                return new ChainingMultifactorAuthenticationProviderSelector(failureModeEvaluator);
+                return new ChainingMultifactorAuthenticationProviderSelector(applicationContext, failureModeEvaluator);
             }
             return new RankedMultifactorAuthenticationProviderSelector();
         }

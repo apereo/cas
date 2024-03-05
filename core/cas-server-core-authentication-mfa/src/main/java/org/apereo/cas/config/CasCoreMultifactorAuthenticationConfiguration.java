@@ -41,9 +41,12 @@ class CasCoreMultifactorAuthenticationConfiguration {
         @ConditionalOnMissingBean(name = "requestedContextValidator")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public RequestedAuthenticationContextValidator requestedContextValidator(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
-            @Qualifier(MultifactorAuthenticationTriggerSelectionStrategy.BEAN_NAME) final MultifactorAuthenticationTriggerSelectionStrategy multifactorTriggerSelectionStrategy,
-            @Qualifier(MultifactorAuthenticationContextValidator.BEAN_NAME) final MultifactorAuthenticationContextValidator authenticationContextValidator) {
+            @Qualifier(MultifactorAuthenticationTriggerSelectionStrategy.BEAN_NAME)
+            final MultifactorAuthenticationTriggerSelectionStrategy multifactorTriggerSelectionStrategy,
+            @Qualifier(MultifactorAuthenticationContextValidator.BEAN_NAME)
+            final MultifactorAuthenticationContextValidator authenticationContextValidator) {
             return new DefaultRequestedAuthenticationContextValidator(servicesManager,
                 multifactorTriggerSelectionStrategy, authenticationContextValidator);
         }

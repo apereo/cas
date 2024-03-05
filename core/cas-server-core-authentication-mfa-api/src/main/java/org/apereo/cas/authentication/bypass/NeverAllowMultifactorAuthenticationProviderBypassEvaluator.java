@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationContext;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.io.Serial;
@@ -20,23 +21,8 @@ public class NeverAllowMultifactorAuthenticationProviderBypassEvaluator extends 
     @Serial
     private static final long serialVersionUID = -2433888418344342672L;
 
-    private static MultifactorAuthenticationProviderBypassEvaluator INSTANCE;
-
-    protected NeverAllowMultifactorAuthenticationProviderBypassEvaluator() {
-        super(NeverAllowMultifactorAuthenticationProviderBypassEvaluator.class.getSimpleName());
-    }
-
-
-    /**
-     * Gets instance.
-     *
-     * @return the instance
-     */
-    public static MultifactorAuthenticationProviderBypassEvaluator getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new NeverAllowMultifactorAuthenticationProviderBypassEvaluator();
-        }
-        return INSTANCE;
+    public NeverAllowMultifactorAuthenticationProviderBypassEvaluator(final ApplicationContext applicationContext) {
+        super(NeverAllowMultifactorAuthenticationProviderBypassEvaluator.class.getName(), applicationContext);
     }
 
     @Override

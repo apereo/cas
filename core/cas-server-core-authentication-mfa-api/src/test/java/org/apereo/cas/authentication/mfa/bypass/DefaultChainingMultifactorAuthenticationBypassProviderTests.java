@@ -39,10 +39,12 @@ class DefaultChainingMultifactorAuthenticationBypassProviderTests {
 
     @Test
     void verifyChain() throws Throwable {
-        val p = new DefaultChainingMultifactorAuthenticationBypassProvider();
-        p.addMultifactorAuthenticationProviderBypassEvaluator(
-            new MultifactorAuthenticationProviderBypassEvaluator[]{NeverAllowMultifactorAuthenticationProviderBypassEvaluator.getInstance()});
-        assertFalse(p.isEmpty());
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+        val provider = new DefaultChainingMultifactorAuthenticationBypassProvider(applicationContext);
+        provider.addMultifactorAuthenticationProviderBypassEvaluator(
+            new MultifactorAuthenticationProviderBypassEvaluator[]{new NeverAllowMultifactorAuthenticationProviderBypassEvaluator(applicationContext)});
+        assertFalse(provider.isEmpty());
     }
 
     @Test
@@ -50,7 +52,7 @@ class DefaultChainingMultifactorAuthenticationBypassProviderTests {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 
-        val p = new DefaultChainingMultifactorAuthenticationBypassProvider();
+        val p = new DefaultChainingMultifactorAuthenticationBypassProvider(applicationContext);
         val res = p.filterMultifactorAuthenticationProviderBypassEvaluatorsBy("unknown");
 
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
@@ -75,9 +77,9 @@ class DefaultChainingMultifactorAuthenticationBypassProviderTests {
         val principal = MultifactorAuthenticationTestUtils.getPrincipal("casuser");
         val authentication = MultifactorAuthenticationTestUtils.getAuthentication(principal);
 
-        val p = new DefaultChainingMultifactorAuthenticationBypassProvider();
+        val p = new DefaultChainingMultifactorAuthenticationBypassProvider(applicationContext);
         p.addMultifactorAuthenticationProviderBypassEvaluator(
-            new HttpRequestMultifactorAuthenticationProviderBypassEvaluator(props, provider.getId()));
+            new HttpRequestMultifactorAuthenticationProviderBypassEvaluator(props, provider.getId(), applicationContext));
         assertFalse(p.isEmpty());
         assertNotNull(p.getId());
         assertNotNull(p.getProviderId());

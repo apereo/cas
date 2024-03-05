@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 
+import org.springframework.context.ConfigurableApplicationContext;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.io.Serial;
@@ -18,8 +19,8 @@ public class RegisteredServiceMultifactorAuthenticationProviderBypassEvaluator e
     @Serial
     private static final long serialVersionUID = -3553888418344342672L;
 
-    public RegisteredServiceMultifactorAuthenticationProviderBypassEvaluator(final String providerId) {
-        super(providerId);
+    public RegisteredServiceMultifactorAuthenticationProviderBypassEvaluator(final String providerId, final ConfigurableApplicationContext applicationContext) {
+        super(providerId, applicationContext);
     }
 
     @Override

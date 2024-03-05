@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -26,8 +27,8 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationProvide
     private static final long serialVersionUID = -6123435418344342672L;
 
 
-    public RegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator(final String providerId) {
-        super(providerId);
+    public RegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator(final String providerId, final ConfigurableApplicationContext applicationContext) {
+        super(providerId, applicationContext);
     }
 
     @Override
