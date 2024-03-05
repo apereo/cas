@@ -18,9 +18,9 @@ public interface RequestedAuthenticationContextValidator {
     /**
      * Inspect the current authentication to validate the current requested context.
      *
-     * @param assertion - the assertion
-     * @param request   - the request
-     * @param response  the response
+     * @param assertion          - the assertion
+     * @param request            - the request
+     * @param response           the response
      * @return - status
      * @throws Throwable the throwable
      */
@@ -30,11 +30,11 @@ public interface RequestedAuthenticationContextValidator {
     /**
      * Validate authentication context.
      *
-     * @param request           the request
-     * @param response          the response
-     * @param registeredService the registered service
-     * @param authentication    the authentication
-     * @param service           the service
+     * @param request            the request
+     * @param response           the response
+     * @param registeredService  the registered service
+     * @param authentication     the authentication
+     * @param service            the service
      * @return the authentication context validation result
      * @throws Throwable the throwable
      */

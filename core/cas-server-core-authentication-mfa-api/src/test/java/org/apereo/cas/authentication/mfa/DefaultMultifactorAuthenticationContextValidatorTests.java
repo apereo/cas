@@ -79,7 +79,7 @@ class DefaultMultifactorAuthenticationContextValidatorTests {
         casProperties.getAuthn().getMfa().getCore()
             .setGlobalFailureMode(BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.OPEN);
         val failureEvaluator = new DefaultMultifactorAuthenticationFailureModeEvaluator(casProperties);
-        val chainProvider = new DefaultChainingMultifactorAuthenticationProvider(failureEvaluator);
+        val chainProvider = new DefaultChainingMultifactorAuthenticationProvider(applicationContext, failureEvaluator);
 
         val provider1 = new TestMultifactorAuthenticationProvider("mfa-first");
         provider1.setOrder(10);

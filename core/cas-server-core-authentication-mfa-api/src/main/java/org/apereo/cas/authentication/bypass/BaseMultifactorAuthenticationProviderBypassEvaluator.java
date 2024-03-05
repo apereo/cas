@@ -4,13 +4,13 @@ import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -20,10 +20,13 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.springframework.context.ApplicationContext;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.io.Serial;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -47,6 +50,8 @@ public abstract class BaseMultifactorAuthenticationProviderBypassEvaluator imple
     private final String providerId;
 
     private final String id = this.getClass().getSimpleName();
+
+    private final ApplicationContext applicationContext;
 
     protected static boolean locateMatchingAttributeValue(final String attrName,
                                                           final Set<String> attrValue,
@@ -98,8 +103,10 @@ public abstract class BaseMultifactorAuthenticationProviderBypassEvaluator imple
         actionResolverName = AuditActionResolvers.MULTIFACTOR_AUTHENTICATION_BYPASS_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.MULTIFACTOR_AUTHENTICATION_BYPASS_RESOURCE_RESOLVER)
     @Override
-    public boolean shouldMultifactorAuthenticationProviderExecute(final Authentication authentication, final RegisteredService registeredService,
-                                                                  final MultifactorAuthenticationProvider provider, final HttpServletRequest request,
+    public boolean shouldMultifactorAuthenticationProviderExecute(final Authentication authentication,
+                                                                  final RegisteredService registeredService,
+                                                                  final MultifactorAuthenticationProvider provider,
+                                                                  final HttpServletRequest request,
                                                                   final Service service) {
         return shouldMultifactorAuthenticationProviderExecuteInternal(authentication, registeredService, provider, request);
     }
@@ -149,7 +156,8 @@ public abstract class BaseMultifactorAuthenticationProviderBypassEvaluator imple
                                                                                       HttpServletRequest request);
 
     protected Principal resolvePrincipal(final Principal principal) {
-        val resolvers = ApplicationContextProvider.getMultifactorAuthenticationPrincipalResolvers();
+        val resolvers = new ArrayList<>(applicationContext.getBeansOfType(MultifactorAuthenticationPrincipalResolver.class).values());
+        AnnotationAwareOrderComparator.sort(resolvers);
         return resolvers
             .stream()
             .filter(resolver -> resolver.supports(principal))

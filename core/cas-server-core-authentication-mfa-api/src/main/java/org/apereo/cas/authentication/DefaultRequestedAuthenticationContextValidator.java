@@ -7,14 +7,11 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.AuthenticationContextValidationResult;
 import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -39,12 +36,13 @@ public class DefaultRequestedAuthenticationContextValidator implements Requested
         return AuthenticationContextValidationResult.builder().success(true).build();
     }
 
-    protected static AuthenticationContextValidationResult validateMultifactorProviderBypass(
+    protected AuthenticationContextValidationResult validateMultifactorProviderBypass(
         final MultifactorAuthenticationProvider provider,
         final RegisteredService registeredService,
         final Authentication authentication,
         final Service service,
         final HttpServletRequest request) {
+        
         if (provider.isAvailable(registeredService)) {
             val bypassEvaluator = provider.getBypassEvaluator();
             if (bypassEvaluator != null) {
@@ -89,6 +87,7 @@ public class DefaultRequestedAuthenticationContextValidator implements Requested
         final RegisteredService registeredService,
         final Authentication authentication,
         final Service service) throws Throwable {
+        
         if (registeredService != null && registeredService.getMultifactorAuthenticationPolicy().isBypassEnabled()) {
             LOGGER.debug("Multifactor authentication execution is ignored for [{}]", registeredService.getName());
             return toSuccessfulResult();
@@ -119,8 +118,7 @@ public class DefaultRequestedAuthenticationContextValidator implements Requested
         LOGGER.debug("Multifactor providers eligible for validation are [{}]", providers);
         return providers.stream()
             .sorted(Comparator.comparing(MultifactorAuthenticationProvider::getOrder))
-            .map(provider -> authenticationContextValidator.validate(authentication,
-                provider.getId(),
+            .map(provider -> authenticationContextValidator.validate(authentication, provider.getId(),
                 Optional.ofNullable(registeredService)))
             .filter(MultifactorAuthenticationContextValidationResult::isSuccess)
             .findAny()

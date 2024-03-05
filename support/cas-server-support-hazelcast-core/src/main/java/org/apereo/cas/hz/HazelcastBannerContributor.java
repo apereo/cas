@@ -1,11 +1,9 @@
 package org.apereo.cas.hz;
 
 import org.apereo.cas.util.spring.boot.BannerContributor;
-
 import com.hazelcast.instance.BuildInfoProvider;
 import lombok.val;
 import org.springframework.core.env.Environment;
-
 import java.util.Formatter;
 
 /**

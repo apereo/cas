@@ -10,6 +10,7 @@ import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,8 +32,9 @@ public class RestMultifactorAuthenticationProviderBypassEvaluator extends BaseMu
     private final MultifactorAuthenticationProviderBypassProperties bypassProperties;
 
     public RestMultifactorAuthenticationProviderBypassEvaluator(final MultifactorAuthenticationProviderBypassProperties bypassProperties,
-                                                                final String providerId) {
-        super(providerId);
+                                                                final String providerId,
+                                                                final ConfigurableApplicationContext applicationContext) {
+        super(providerId, applicationContext);
         this.bypassProperties = bypassProperties;
     }
 

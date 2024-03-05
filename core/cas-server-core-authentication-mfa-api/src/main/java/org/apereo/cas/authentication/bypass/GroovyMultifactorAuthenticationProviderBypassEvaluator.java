@@ -9,6 +9,7 @@ import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -28,8 +29,9 @@ public class GroovyMultifactorAuthenticationProviderBypassEvaluator extends Base
     private final transient WatchableGroovyScriptResource watchableScript;
 
     public GroovyMultifactorAuthenticationProviderBypassEvaluator(final MultifactorAuthenticationProviderBypassProperties bypassProperties,
-                                                                  final String providerId) {
-        super(providerId);
+                                                                  final String providerId,
+                                                                  final ConfigurableApplicationContext applicationContext) {
+        super(providerId, applicationContext);
         val groovyScript = bypassProperties.getGroovy().getLocation();
         this.watchableScript = new WatchableGroovyScriptResource(groovyScript);
     }

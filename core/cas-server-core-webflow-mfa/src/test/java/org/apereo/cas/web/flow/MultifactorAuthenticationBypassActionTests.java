@@ -21,6 +21,7 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.webflow.engine.Transition;
@@ -42,26 +43,30 @@ class MultifactorAuthenticationBypassActionTests {
     @TestConfiguration(value = "MultifactorAuthenticationTestConfiguration", proxyBeanMethods = false)
     static class MultifactorAuthenticationTestConfiguration {
         @Bean
-        public MultifactorAuthenticationProvider dummyProviderNeverBypass(final CasConfigurationProperties casProperties) {
+        public MultifactorAuthenticationProvider dummyProviderNeverBypass(final ConfigurableApplicationContext applicationContext, final CasConfigurationProperties casProperties) {
             val provider = new TestMultifactorAuthenticationProvider("mfa-never");
-            provider.setBypassEvaluator(NeverAllowMultifactorAuthenticationProviderBypassEvaluator.getInstance());
+            provider.setBypassEvaluator(new NeverAllowMultifactorAuthenticationProviderBypassEvaluator(applicationContext));
             provider.setFailureModeEvaluator(new DefaultMultifactorAuthenticationFailureModeEvaluator(casProperties));
             return provider;
         }
 
         @Bean
-        public MultifactorAuthenticationProvider dummyProviderUnavailable(final CasConfigurationProperties casProperties) {
+        public MultifactorAuthenticationProvider dummyProviderUnavailable(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties) {
             val provider = new TestMultifactorAuthenticationProvider("mfa-unavailable");
             provider.setAvailable(false);
-            provider.setBypassEvaluator(NeverAllowMultifactorAuthenticationProviderBypassEvaluator.getInstance());
+            provider.setBypassEvaluator(new NeverAllowMultifactorAuthenticationProviderBypassEvaluator(applicationContext));
             provider.setFailureModeEvaluator(new DefaultMultifactorAuthenticationFailureModeEvaluator(casProperties));
             return provider;
         }
 
         @Bean
-        public MultifactorAuthenticationProvider dummyProviderAlwaysBypass(final CasConfigurationProperties casProperties) {
+        public MultifactorAuthenticationProvider dummyProviderAlwaysBypass(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties) {
             val provider = new TestMultifactorAuthenticationProvider("mfa-always");
-            provider.setBypassEvaluator(AlwaysAllowMultifactorAuthenticationProviderBypassEvaluator.getInstance());
+            provider.setBypassEvaluator(new AlwaysAllowMultifactorAuthenticationProviderBypassEvaluator(applicationContext));
             provider.setFailureModeEvaluator(new DefaultMultifactorAuthenticationFailureModeEvaluator(casProperties));
             return provider;
         }

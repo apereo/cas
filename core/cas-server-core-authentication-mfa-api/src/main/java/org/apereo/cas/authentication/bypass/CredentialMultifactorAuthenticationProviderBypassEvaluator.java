@@ -8,6 +8,7 @@ import org.apereo.cas.services.RegisteredService;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -28,8 +29,9 @@ public class CredentialMultifactorAuthenticationProviderBypassEvaluator extends 
     private final MultifactorAuthenticationProviderBypassProperties bypassProperties;
 
     public CredentialMultifactorAuthenticationProviderBypassEvaluator(final MultifactorAuthenticationProviderBypassProperties bypassProperties,
-                                                                      final String providerId) {
-        super(providerId);
+                                                                      final String providerId,
+                                                                      final ConfigurableApplicationContext applicationContext) {
+        super(providerId, applicationContext);
         this.bypassProperties = bypassProperties;
     }
 
