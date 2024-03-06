@@ -725,6 +725,4 @@ public class CollectionUtils {
         Arrays.stream(attributes).forEach(result::putAll);
         return result;
     }
-
-
 }

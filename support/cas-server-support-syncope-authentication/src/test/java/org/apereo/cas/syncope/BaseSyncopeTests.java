@@ -57,7 +57,6 @@ public abstract class BaseSyncopeTests {
         return webServer;
     }
 
-    @SuppressWarnings("JavaUtilDate")
     protected static ObjectNode user() {
         val user = MAPPER.createObjectNode();
         user.put("key", UUID.randomUUID().toString());

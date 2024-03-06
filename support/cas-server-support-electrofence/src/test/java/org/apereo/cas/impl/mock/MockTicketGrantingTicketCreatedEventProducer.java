@@ -6,12 +6,10 @@ import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
-
 import lombok.NoArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.lambda.Unchecked;
-
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
@@ -27,7 +25,6 @@ import java.util.stream.IntStream;
  * @since 5.1.0
  */
 @NoArgsConstructor
-@SuppressWarnings("JavaUtilDate")
 public class MockTicketGrantingTicketCreatedEventProducer {
 
     private static final List<String> ALL_USER_AGENTS = CollectionUtils.wrapList(
@@ -93,7 +90,7 @@ public class MockTicketGrantingTicketCreatedEventProducer {
         casEventRepository.save(dto);
         return dto;
     }
-    
+
     public static void createEvent(final int i, final CasEventRepository casEventRepository) throws Throwable {
         createEvent("casuser", i, casEventRepository);
     }

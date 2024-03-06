@@ -5,12 +5,10 @@ import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustR
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecordKeyGenerator;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
-
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.LinkedHashSet;
@@ -43,7 +41,6 @@ public class InMemoryMultifactorAuthenticationTrustStorage extends BaseMultifact
     }
 
     @Override
-    @SuppressWarnings("JavaUtilDate")
     public void remove(final ZonedDateTime expirationDate) {
         val results = storage.asMap()
             .values()

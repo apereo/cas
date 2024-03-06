@@ -6,7 +6,6 @@ import org.apereo.cas.dynamodb.DynamoDbTableUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +22,6 @@ import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
 import software.amazon.awssdk.services.dynamodb.model.KeyType;
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
-
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.HashMap;
@@ -39,7 +37,6 @@ import java.util.stream.Collectors;
  * @since 6.1.0
  */
 @Slf4j
-@SuppressWarnings("JavaUtilDate")
 public record DynamoDbAuditTrailManagerFacilitator(AuditDynamoDbProperties dynamoDbProperties, DynamoDbClient amazonDynamoDBClient) {
     /**
      * Build table attribute values map.
@@ -110,7 +107,6 @@ public record DynamoDbAuditTrailManagerFacilitator(AuditDynamoDbProperties dynam
      * @param whereClause the where clause
      * @return the audit records
      */
-    @SuppressWarnings("JavaUtilDate")
     public Set<? extends AuditActionContext> getAuditRecords(final Map<AuditTrailManager.WhereClauseFields, Object> whereClause) {
         val localDate = (LocalDate) whereClause.get(AuditTrailManager.WhereClauseFields.DATE);
         val time = DateTimeUtils.dateOf(localDate).getTime();

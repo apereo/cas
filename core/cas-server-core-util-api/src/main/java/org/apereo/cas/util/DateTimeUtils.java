@@ -1,10 +1,8 @@
 package org.apereo.cas.util;
 
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.experimental.UtilityClass;
 import lombok.val;
-
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -31,7 +29,6 @@ import java.util.concurrent.TimeUnit;
  * @author Timur Duehr timur.duehr@nccgroup.trust
  * @since 5.0.0
  */
-@SuppressWarnings("JavaUtilDate")
 @UtilityClass
 public class DateTimeUtils {
 

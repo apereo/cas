@@ -8,6 +8,7 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.util.function.FunctionUtils;
 import com.nimbusds.jose.proc.SimpleSecurityContext;
 import com.nimbusds.jwt.proc.BadJWTException;
 import com.nimbusds.jwt.proc.DefaultJWTClaimsVerifier;
@@ -61,13 +62,17 @@ public class OAuth20TokenExchangeGrantTypeTokenRequestValidator extends BaseOAut
             return false;
         }
 
+        val actorToken = requestParameterResolver.resolveRequestParameter(webContext, OAuth20Constants.ACTOR_TOKEN);
+        val actorTokenType = requestParameterResolver.resolveRequestParameter(webContext, OAuth20Constants.ACTOR_TOKEN_TYPE).map(OAuth20TokenExchangeTypes::from);
+        FunctionUtils.throwIf(actorToken.isPresent() && actorTokenType.isEmpty(),
+            () -> new IllegalArgumentException("Actor token type cannot be undefined when actor token is provided"));
+
         val resourceAndAudience = requestParameterResolver.resolveRequestParameters(
             List.of(OAuth20Constants.RESOURCE, OAuth20Constants.AUDIENCE), webContext);
         val resources = resourceAndAudience.getOrDefault(OAuth20Constants.RESOURCE, Set.of());
         val audience = resourceAndAudience.getOrDefault(OAuth20Constants.AUDIENCE, Set.of());
         val tokenExchangePolicy = registeredService.getTokenExchangePolicy();
-        return tokenExchangePolicy == null
-            || tokenExchangePolicy.isTokenExchangeAllowed(registeredService, resources, audience, requestedTokenType);
+        return tokenExchangePolicy == null || tokenExchangePolicy.isTokenExchangeAllowed(registeredService, resources, audience, requestedTokenType);
     }
 
     protected OAuthRegisteredService extractRegisteredService(final String subjectTokenType,

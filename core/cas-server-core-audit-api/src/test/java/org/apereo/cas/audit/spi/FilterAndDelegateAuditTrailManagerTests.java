@@ -7,7 +7,6 @@ import org.apereo.inspektr.audit.FilterAndDelegateAuditTrailManager;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -15,7 +14,6 @@ import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -25,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("Audits")
-@SuppressWarnings("JavaUtilDate")
 class FilterAndDelegateAuditTrailManagerTests {
 
     @Test
