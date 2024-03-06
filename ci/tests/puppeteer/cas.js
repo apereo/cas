@@ -244,10 +244,15 @@ exports.fetchGoogleAuthenticatorScratchCode = async (user = "casuser") => {
 };
 
 exports.isVisible = async (page, selector) => {
-    const element = await page.$(selector);
-    const result = (element !== null && await element.boundingBox() !== null);
-    await this.log(`Checking element visibility for ${selector} while on page ${page.url()}: ${result}`);
-    return result;
+    try {
+        const element = await page.$(selector);
+        const result = (element !== null && await element.boundingBox() !== null);
+        await this.log(`Checking element visibility for ${selector} while on page ${page.url()}: ${result}`);
+        return result;
+    } catch (e) {
+        await this.logr(e);
+        return false;
+    }
 };
 
 exports.assertVisibility = async (page, selector) => {
