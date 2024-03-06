@@ -71,12 +71,6 @@ public abstract class BaseJpaTicketRegistryTests extends BaseTicketRegistryTests
     @Qualifier("dataSourceTicket")
     protected CloseableDataSource dataSourceTicket;
 
-    @AfterAll
-    public static void afterAllTests() throws Throwable {
-        ApplicationContextProvider.getApplicationContext()
-            .getBean("dataSourceTicket", CloseableDataSource.class).close();
-    }
-
     @AfterEach
     public void cleanup() {
         assertNotNull(dataSourceTicket);
@@ -92,13 +86,13 @@ public abstract class BaseJpaTicketRegistryTests extends BaseTicketRegistryTests
                 CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
         }).limit(COUNT);
 
-        var stopwatch = new StopWatch();
+        val stopwatch = new StopWatch();
         stopwatch.start();
         newTicketRegistry.addTicket(ticketGrantingTickets);
 
         assertEquals(COUNT, newTicketRegistry.getTickets().size());
         stopwatch.stop();
-        var time = stopwatch.getTime(TimeUnit.SECONDS);
+        val time = stopwatch.getTime(TimeUnit.SECONDS);
         assertTrue(time <= 20);
     }
 
@@ -112,14 +106,14 @@ public abstract class BaseJpaTicketRegistryTests extends BaseTicketRegistryTests
         val ticketGrantingTicketId = TestTicketIdentifiers.generate().ticketGrantingTicketId();
         val tgt = new TicketGrantingTicketImpl(ticketGrantingTicketId,
             originalAuthn, NeverExpiresExpirationPolicy.INSTANCE);
-        this.newTicketRegistry.addTicket(tgt);
+        newTicketRegistry.addTicket(tgt);
 
         val token = securityTokenTicketFactory.create(tgt, "dummy-token".getBytes(StandardCharsets.UTF_8));
-        this.newTicketRegistry.addTicket(token);
+        newTicketRegistry.addTicket(token);
 
-        assertNotNull(this.newTicketRegistry.getTicket(token.getId()));
-        this.newTicketRegistry.deleteTicket(token);
-        assertNull(this.newTicketRegistry.getTicket(token.getId()));
+        assertNotNull(newTicketRegistry.getTicket(token.getId()));
+        newTicketRegistry.deleteTicket(token);
+        assertNull(newTicketRegistry.getTicket(token.getId()));
     }
 
     @RepeatedTest(2)
@@ -128,18 +122,19 @@ public abstract class BaseJpaTicketRegistryTests extends BaseTicketRegistryTests
         val tgtFactory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
         val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
             RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);
-        this.newTicketRegistry.addTicket(tgt);
+        newTicketRegistry.addTicket(tgt);
 
         val oAuthCode = oAuthCodeFactory.create(RegisteredServiceTestUtils.getService(),
-            originalAuthn, tgt, Collections.emptySet(), "challenge", "challenge_method",
+            originalAuthn, tgt, Collections.emptySet(),
+            "challenge", "challenge_method",
             "client_id", Collections.emptyMap(),
             OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
 
-        this.newTicketRegistry.addTicket(oAuthCode);
+        newTicketRegistry.addTicket(oAuthCode);
 
-        assertNotNull(this.newTicketRegistry.getTicket(oAuthCode.getId()));
-        this.newTicketRegistry.deleteTicket(tgt.getId());
-        assertNull(this.newTicketRegistry.getTicket(oAuthCode.getId()));
+        assertNotNull(newTicketRegistry.getTicket(oAuthCode.getId()));
+        newTicketRegistry.deleteTicket(tgt.getId());
+        assertNull(newTicketRegistry.getTicket(oAuthCode.getId()));
     }
 
     @RepeatedTest(2)
