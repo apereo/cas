@@ -29,7 +29,7 @@ buildCache {
 */
 
 buildCache {
-    local { enabled = false }
+    local { enabled = true }
     remote(gradleEnterprise.buildCache) {
         enabled = true
         // Also check access key to avoid warning logs
