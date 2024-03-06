@@ -29,7 +29,6 @@ public class NullableReturnValueAuditResourceResolver implements AuditResourceRe
     private AuditTrailManager.AuditFormats auditFormat = AuditTrailManager.AuditFormats.DEFAULT;
 
     @Override
-    @SuppressWarnings("JavaUtilDate")
     public String[] resolveFrom(final JoinPoint joinPoint, final Object returnValue) {
         if (returnValue == null) {
             return ArrayUtils.EMPTY_STRING_ARRAY;

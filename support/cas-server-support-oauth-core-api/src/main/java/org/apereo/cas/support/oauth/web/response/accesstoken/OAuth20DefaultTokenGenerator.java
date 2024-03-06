@@ -29,6 +29,7 @@ import org.apereo.cas.ticket.device.OAuth20DeviceUserCodeFactory;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
@@ -97,7 +98,8 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
                 LOGGER.debug("Provided user code [{}] linked to device code [{}] is approved", deviceCodeTicket.getId(), deviceCode);
                 ticketRegistry.deleteTicket(deviceCode);
 
-                val deviceResult = AccessTokenRequestContext.builder()
+                val deviceResult = AccessTokenRequestContext
+                    .builder()
                     .service(tokenRequestContext.getService())
                     .authentication(tokenRequestContext.getAuthentication())
                     .registeredService(tokenRequestContext.getRegisteredService())
@@ -156,7 +158,6 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
             __ -> authnBuilder.addAttribute(OAuth20Constants.DPOP, tokenRequestContext.getDpop()));
         FunctionUtils.doIfNotNull(tokenRequestContext.getDpopConfirmation(),
             __ -> authnBuilder.addAttribute(OAuth20Constants.DPOP_CONFIRMATION, tokenRequestContext.getDpopConfirmation()));
-
         return authnBuilder.build();
     }
 
@@ -225,13 +226,17 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         }
         val exchangedPrincipal = profileScopeToAttributesFilter.filter(service, resolvedPrincipal,
             tokenRequestContext.getRegisteredService(), scopes, accessToken);
-        val authentication = DefaultAuthenticationBuilder.newInstance(exchangedPrincipal)
-            .addAttribute(OAuth20Constants.GRANT_TYPE, accessToken.getGrantType().getType()).build();
 
+        val exchangedAuthentication = DefaultAuthenticationBuilder.newInstance(exchangedPrincipal)
+            .addAttribute(OAuth20Constants.GRANT_TYPE, accessToken.getGrantType().getType());
+        if (tokenRequestContext.getActorToken() != null) {
+            exchangedAuthentication.addAttribute(OAuth20Constants.CLAIM_ACT,
+                CollectionUtils.wrap(OAuth20Constants.CLAIM_SUB, tokenRequestContext.getActorToken().getPrincipal().getId()));
+        }
         val accessTokenFactory = (OAuth20AccessTokenFactory) ticketFactory.get(OAuth20AccessToken.class);
         return accessTokenFactory.create(
             service,
-            authentication,
+            exchangedAuthentication.build(),
             accessToken.getTicketGrantingTicket(),
             scopes,
             accessToken.getId(),
@@ -340,7 +345,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
 
         val deviceTokenFactory = (OAuth20DeviceTokenFactory) ticketFactory.get(OAuth20DeviceToken.class);
         val deviceUserCodeFactory = (OAuth20DeviceUserCodeFactory) ticketFactory.get(OAuth20DeviceUserCode.class);
-        
+
         val deviceToken = deviceTokenFactory.createDeviceCode(tokenRequestContext.getService());
         LOGGER.debug("Created device code token [{}]", deviceToken.getId());
 

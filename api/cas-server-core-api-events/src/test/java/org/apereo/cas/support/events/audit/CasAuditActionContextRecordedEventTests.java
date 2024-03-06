@@ -24,7 +24,6 @@ class CasAuditActionContextRecordedEventTests {
     void verifyOperation() throws Throwable {
         assertDoesNotThrow(new Executable() {
             @Override
-            @SuppressWarnings("JavaUtilDate")
             public void execute() {
                 val ctx = new AuditActionContext("casuser", "TEST", "TEST",
                     "CAS", LocalDateTime.now(Clock.systemUTC()),

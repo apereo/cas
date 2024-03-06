@@ -44,10 +44,6 @@ public interface OidcConstants {
     String REQUEST_URI = "request_uri";
 
     /**
-     * The sub claim.
-     */
-    String CLAIM_SUB = "sub";
-    /**
      * The preferred username claim.
      */
     String CLAIM_PREFERRED_USERNAME = "preferred_username";

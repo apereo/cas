@@ -114,7 +114,6 @@ public class MultifactorAuthenticationTrustedDevicesReportEndpoint extends BaseC
      * @param date the date
      * @return the integer
      */
-    @SuppressWarnings("JavaUtilDate")
     @Operation(summary = "Remove expired trusted devices given an expiration date as a threshold",
         parameters = @Parameter(name = "date", required = true, in = ParameterIn.QUERY))
     @DeleteMapping(value = "/expire", produces = MediaType.APPLICATION_JSON_VALUE)

@@ -49,6 +49,8 @@ public class AccessTokenRequestContext implements Serializable {
 
     private final Authentication authentication;
 
+    private final Authentication actorToken;
+
     private final OAuth20Token token;
 
     private final boolean generateRefreshToken;

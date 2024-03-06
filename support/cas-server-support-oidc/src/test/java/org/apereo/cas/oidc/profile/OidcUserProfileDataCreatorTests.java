@@ -48,7 +48,7 @@ class OidcUserProfileDataCreatorTests {
 
             val registeredService = getOidcRegisteredService(accessToken.getClientId(), "https://oauth.example.org");
             servicesManager.save(registeredService);
-            
+
             val data = oidcUserProfileDataCreator.createFrom(accessToken, context);
             val attrs = (Map) data.get(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ATTRIBUTES);
             assertFalse(attrs.containsKey("email-address"));
@@ -72,7 +72,7 @@ class OidcUserProfileDataCreatorTests {
             assertFalse(data.isEmpty());
             assertEquals(((AuthenticationAwareTicket) accessToken.getTicketGrantingTicket()).getAuthentication()
                 .getAuthenticationDate().toEpochSecond(), (long) data.get(OidcConstants.CLAIM_AUTH_TIME));
-            assertTrue(data.containsKey(OidcConstants.CLAIM_SUB));
+            assertTrue(data.containsKey(OAuth20Constants.CLAIM_SUB));
             assertTrue(data.containsKey(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ID));
             assertTrue(data.containsKey(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_CLIENT_ID));
             assertTrue(data.containsKey(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ATTRIBUTES));
@@ -96,7 +96,7 @@ class OidcUserProfileDataCreatorTests {
             ticketRegistry.addTicket(accessToken);
             val data = oidcUserProfileDataCreator.createFrom(accessToken, context);
             assertFalse(data.isEmpty());
-            assertTrue(data.containsKey(OidcConstants.CLAIM_SUB));
+            assertTrue(data.containsKey(OAuth20Constants.CLAIM_SUB));
         }
     }
 }

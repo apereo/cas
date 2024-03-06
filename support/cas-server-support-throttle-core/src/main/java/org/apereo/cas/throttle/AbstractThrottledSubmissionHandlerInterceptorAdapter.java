@@ -117,7 +117,6 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
     protected void recordThrottle(final HttpServletRequest request) {
     }
 
-    @SuppressWarnings("JavaUtilDate")
     protected boolean calculateFailureThresholdRateAndCompare(final List<? extends ThrottledSubmission> failures) {
         if (failures.size() >= 2) {
             val lastTime = DateTimeUtils.dateOf(failures.getFirst().getValue()).getTime();

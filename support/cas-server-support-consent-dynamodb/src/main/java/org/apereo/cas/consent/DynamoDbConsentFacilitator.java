@@ -9,7 +9,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +23,6 @@ import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
 import software.amazon.awssdk.services.dynamodb.model.KeyType;
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -40,7 +38,6 @@ import java.util.stream.Stream;
  * @since 6.5.0
  */
 @Slf4j
-@SuppressWarnings("JavaUtilDate")
 public record DynamoDbConsentFacilitator(DynamoDbConsentProperties dynamoDbProperties, DynamoDbClient amazonDynamoDBClient) {
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()

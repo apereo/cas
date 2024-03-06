@@ -2,13 +2,11 @@ package org.apereo.cas.audit;
 
 import org.apereo.cas.audit.spi.AbstractAuditTrailManager;
 import org.apereo.cas.redis.core.CasRedisTemplate;
-
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
-
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.Map;
@@ -26,7 +24,6 @@ import java.util.stream.Stream;
 @Slf4j
 @Setter
 @RequiredArgsConstructor
-@SuppressWarnings("JavaUtilDate")
 public class RedisAuditTrailManager extends AbstractAuditTrailManager {
     /**
      * Redis key prefix.

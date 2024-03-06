@@ -3,10 +3,10 @@ package org.apereo.cas.oidc.profile;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.jose4j.jws.AlgorithmIdentifiers;
@@ -17,10 +17,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
-
 import java.util.Map;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -50,7 +48,7 @@ class OidcUserProfileViewRendererFlatTests extends AbstractOidcTests {
         assertNotNull(entity.getBody());
         val result = MAPPER.readValue(entity.getBody().toString(), Map.class);
         assertTrue(result.containsKey(OidcConstants.CLAIM_AUTH_TIME));
-        assertTrue(result.containsKey(OidcConstants.CLAIM_SUB));
+        assertTrue(result.containsKey(OAuth20Constants.CLAIM_SUB));
         assertTrue(result.containsKey(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ID));
         assertTrue(result.containsKey(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_CLIENT_ID));
         assertTrue(result.containsKey(CasProtocolConstants.PARAMETER_SERVICE));

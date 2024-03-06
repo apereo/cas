@@ -14,7 +14,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import com.nimbusds.jose.JOSEObjectType;
 import com.nimbusds.jose.PlainHeader;
 import com.nimbusds.jwt.EncryptedJWT;
@@ -32,7 +31,6 @@ import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ApplicationContext;
-
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -194,7 +192,7 @@ public class JwtBuilder {
             });
         claims.expirationTime(payload.getValidUntilDate());
         val claimsSet = finalizeClaims(claims.build(), payload);
-        
+
         LOGGER.trace("Locating service [{}] in service registry", serviceAudience);
         val registeredService = payload.getRegisteredService()
             .orElseGet(() -> serviceAudience.stream()
@@ -252,14 +250,13 @@ public class JwtBuilder {
     protected Map<String, List<Object>> collectClaims(final JwtRequest payload) throws Throwable {
         return payload.getAttributes();
     }
-    
+
     /**
      * The type Jwt request that allows the builder to create JWTs.
      */
     @SuperBuilder
     @Getter
     @ToString
-    @SuppressWarnings("JavaUtilDate")
     @AllArgsConstructor
     @With
     public static class JwtRequest {
@@ -277,7 +274,7 @@ public class JwtBuilder {
         private final String issuer;
 
         private boolean resolveSubject;
-        
+
         @Builder.Default
         private final Map<String, List<Object>> attributes = new LinkedHashMap<>();
 

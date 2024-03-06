@@ -5,16 +5,15 @@ import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfileDataCreator;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.CollectionUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,8 +58,8 @@ public class OidcUserProfileDataCreator extends DefaultOAuth20UserProfileDataCre
                 modelAttributes.keySet().retainAll(CollectionUtils.wrapList(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ATTRIBUTES));
             }
         }
-        if (!modelAttributes.containsKey(OidcConstants.CLAIM_SUB)) {
-            modelAttributes.put(OidcConstants.CLAIM_SUB, principal.getId());
+        if (!modelAttributes.containsKey(OAuth20Constants.CLAIM_SUB)) {
+            modelAttributes.put(OAuth20Constants.CLAIM_SUB, principal.getId());
         }
         LOGGER.trace("Finalized user profile data as [{}] for access token [{}]", modelAttributes, accessToken.getId());
     }

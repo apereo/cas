@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.audit.AuditTrailManager;
-
 import java.time.LocalDate;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -27,7 +26,6 @@ public class MockAuditTrailManager implements AuditTrailManager {
     }
 
     @Override
-    @SuppressWarnings("JavaUtilDate")
     public Set<? extends AuditActionContext> getAuditRecords(final Map<WhereClauseFields, Object> whereClause) {
         val localDate = (LocalDate) whereClause.get(WhereClauseFields.DATE);
         return auditRecords
