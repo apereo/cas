@@ -195,7 +195,7 @@ TestCategories.values().each({ testCategory ->
                     predictiveSelection {
                         enabled = true
                         mode = PredictiveTestSelectionMode.valueOf(System.getenv("PTS_MODE") ?: "RELEVANT_TESTS")
-                        profile = PredictiveTestSelectionProfile.valueOf(System.getenv("PTS_PROFILE") ?: "STANDARD")
+                        profile = PredictiveTestSelectionProfile.valueOf(System.getenv("PTS_PROFILE") ?: "FAST")
                     }
                 }
 
