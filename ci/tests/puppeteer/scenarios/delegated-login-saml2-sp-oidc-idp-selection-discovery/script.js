@@ -12,6 +12,7 @@ const assert = require("assert");
 })();
 
 async function startWithCasSp(page) {
+    await cas.log("Starting with CAS SP");
     const service = "https://localhost:9859/anything/cas";
     await cas.gotoLogout(page);
     await cas.sleep(1000);
@@ -21,9 +22,9 @@ async function startWithCasSp(page) {
     await cas.sleep(4000);
     await cas.type(page, "#username", "casuser@heroku.org");
     await cas.submitForm(page, "#discoverySelectionForm");
-    await cas.sleep(5000);
+    await cas.sleep(7000);
     await cas.loginWith(page);
-    await cas.sleep(5000);
+    await cas.sleep(7000);
     const ticket = await cas.assertTicketParameter(page);
     const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}`);
     await cas.log(body);
@@ -31,6 +32,7 @@ async function startWithCasSp(page) {
 }
 
 async function startWithSamlSp(page) {
+    await cas.log("Starting with SAML SP");
     await cas.gotoLogout(page);
 
     await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");

@@ -12,7 +12,7 @@
     <logger name="org.apereo.cas" level="info" />
     <Logger name="PROTOCOL_MESSAGE" level="info" />
 
-    <logger name="org.apereo.inspektr.audit.support" level="info" />
+    <logger name="org.apereo.inspektr" level="info" />
     <logger name="org.springframework.boot" level="info" />
     <logger name="org.springframework.webflow" level="info"/>
 
