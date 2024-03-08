@@ -1,7 +1,6 @@
 package org.apereo.cas.nativex;
 
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
-import org.apereo.cas.web.BrowserStorage;
 import org.apereo.cas.web.DefaultBrowserStorage;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.TypeReference;
