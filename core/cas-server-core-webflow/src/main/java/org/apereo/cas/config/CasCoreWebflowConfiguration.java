@@ -117,6 +117,7 @@ class CasCoreWebflowConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "webflowCipherExecutor")
         public CipherExecutor webflowCipherExecutor(final CasConfigurationProperties casProperties) {
             val webflow = casProperties.getWebflow();
             val crypto = webflow.getCrypto();
