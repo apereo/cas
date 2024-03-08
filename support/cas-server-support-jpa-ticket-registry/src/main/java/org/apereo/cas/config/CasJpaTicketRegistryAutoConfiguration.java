@@ -145,6 +145,7 @@ public class CasJpaTicketRegistryAutoConfiguration {
     @Configuration(value = "JpaTicketRegistryCoreConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class JpaTicketRegistryCoreConfiguration {
+        
         @ConditionalOnMissingBean(name = "jpaTicketCatalogConfigurationValuesProvider")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

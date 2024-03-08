@@ -6,7 +6,6 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMe
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.util.CollectionUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -23,12 +22,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -39,7 +36,6 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("SAMLResponse")
-@SuppressWarnings("JavaUtilDate")
 class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("samlProfileSamlNameIdBuilder")
@@ -135,7 +131,7 @@ class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationTests {
         val authnRequest = getAuthnRequestFor(service);
 
         val adaptor = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver,
-            service, service.getServiceId()).get();
+            service, service.getServiceId()).orElseThrow();
         val buildContext = SamlProfileBuilderContext.builder()
             .samlRequest(authnRequest)
             .httpRequest(new MockHttpServletRequest())
@@ -172,7 +168,7 @@ class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationTests {
         when(attributeQuery.getSubject()).thenReturn(aqSubject);
 
         val adaptor = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver,
-            service, service.getServiceId()).get();
+            service, service.getServiceId()).orElseThrow();
         val buildContext = SamlProfileBuilderContext.builder()
             .samlRequest(attributeQuery)
             .httpRequest(new MockHttpServletRequest())
@@ -200,7 +196,7 @@ class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationTests {
         val authnRequest = getAuthnRequestFor(service);
 
         val adaptor = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver,
-            service, service.getServiceId()).get();
+            service, service.getServiceId()).orElseThrow();
 
         val buildContext = SamlProfileBuilderContext.builder()
             .samlRequest(authnRequest)
@@ -229,7 +225,7 @@ class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationTests {
 
         val authnRequest = getAuthnRequestFor(service);
         val adaptor = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver,
-            service, service.getServiceId()).get();
+            service, service.getServiceId()).orElseThrow();
 
         val buildContext = SamlProfileBuilderContext.builder()
             .samlRequest(authnRequest)
@@ -250,7 +246,6 @@ class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationTests {
 
 
     @Test
-    @SuppressWarnings("JavaUtilDate")
     void verifyEncryptedNameIdFormat() throws Throwable {
         val service = getSamlRegisteredServiceForTestShib();
         service.setRequiredNameIdFormat(NameIDType.ENCRYPTED);
@@ -259,7 +254,7 @@ class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationTests {
         val authnRequest = getAuthnRequestFor(service);
 
         val adaptor = SamlRegisteredServiceMetadataAdaptor.get(this.samlRegisteredServiceCachingMetadataResolver,
-            service, service.getServiceId()).get();
+            service, service.getServiceId()).orElseThrow();
 
         val request = new MockHttpServletRequest();
         val buildContext = SamlProfileBuilderContext.builder()

@@ -9,9 +9,6 @@
 
     "--logging.level.org.apereo.cas=info",
 
-    "--cas.audit.engine.enabled=true",
-    "--cas.audit.slf4j.use-single-line=true",
-
     "--cas.authn.attribute-repository.stub.attributes.cn=casuser",
     "--cas.authn.attribute-repository.stub.attributes.mail=cas@example.org",
     "--cas.authn.attribute-repository.stub.attributes.sn=Apereo",
@@ -33,6 +30,4 @@
   ],
   "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }
-
-
 

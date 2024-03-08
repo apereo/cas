@@ -4,9 +4,6 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
 
-    "--cas.audit.engine.enabled=true",
-    "--cas.audit.slf4j.use-single-line=true",
-
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=*",
     "--management.endpoints.enabled-by-default=true",
@@ -24,8 +21,4 @@
     "--logging.level.org.apereo.cas.web.support.AbstractThrottledSubmissionHandlerInterceptorAdapter=trace"
   ]
 }
-
-
-
-
 

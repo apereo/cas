@@ -1,6 +1,6 @@
 package org.apereo.cas.nativex;
 
-import org.apereo.cas.ticket.registry.HazelcastTicketHolder;
+import org.apereo.cas.ticket.registry.HazelcastTicketDocument;
 import org.apereo.cas.ticket.registry.MapAttributeValueExtractor;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import com.hazelcast.internal.serialization.DataSerializerHook;
@@ -198,7 +198,7 @@ public class HazelcastTicketRegistryRuntimeHints implements CasRuntimeHintsRegis
         registerProxyHints(hints,
             findSubclassesInPackage(CalciteResource.class, "com.hazelcast"));
 
-        registerSerializationHints(hints, List.of(HazelcastTicketHolder.class));
+        registerSerializationHints(hints, List.of(HazelcastTicketDocument.class));
 
         hints.resources()
             .registerPattern("com.hazelcast.shaded.org.codehaus.commons.compiler.properties")

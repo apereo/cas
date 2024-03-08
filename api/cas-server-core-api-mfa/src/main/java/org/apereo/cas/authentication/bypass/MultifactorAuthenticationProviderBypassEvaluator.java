@@ -33,11 +33,11 @@ public interface MultifactorAuthenticationProviderBypassEvaluator extends Serial
     /**
      * Eval current bypass rules for the provider.
      *
-     * @param authentication    the authentication
-     * @param registeredService the registered service in question
-     * @param provider          the provider
-     * @param request           the request
-     * @param service           the service
+     * @param authentication     the authentication
+     * @param registeredService  the registered service in question
+     * @param provider           the provider
+     * @param request            the request
+     * @param service            the service
      * @return false is request isn't supported and can be bypassed. true otherwise.
      */
     boolean shouldMultifactorAuthenticationProviderExecute(Authentication authentication,

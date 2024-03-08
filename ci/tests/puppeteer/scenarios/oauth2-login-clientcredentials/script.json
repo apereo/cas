@@ -4,7 +4,6 @@
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
-    "--cas.audit.slf4j.use-single-line=true",
 
     "--cas.authn.attribute-repository.stub.attributes.email=casuser@apereo.org",
 
@@ -15,6 +14,4 @@
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
   ]
 }
-
-
 

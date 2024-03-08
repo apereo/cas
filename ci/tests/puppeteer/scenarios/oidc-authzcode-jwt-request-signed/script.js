@@ -1,9 +1,9 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 const assert = require("assert");
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
 
     const request = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjEyMzQ1Njc4OTAiLCJvcmcuYXBlcmVvLmNhcy5zZXJ2aWNlcy5SZWdpc3RlcmVkU2VydmljZSI6IjIxMzMyNDg2MjEifQ.CnsKICAic3ViIjogImNhc3VzZXIiLAogICJzY29wZSI6ICJvcGVuaWQiLAogICJpc3MiOiAiaHR0cHM6Ly9jYXMuZXhhbXBsZS5vcmciLAogICJyZXNwb25zZV90eXBlIjogImNvZGUiLAogICJyZWRpcmVjdF91cmkiOiAiaHR0cHM6Ly9sb2NhbGhvc3Q6OTg1OS9hbnl0aGluZy9jYXMiLAogICJpYXQiOiAxNjQ2NzMxODE5LAogICJqdGkiOiAiZWVkY2Q5Y2ItNDA1MS00ODAyLWFmYWUtYmFkMzU1NDNiYjU3IiwKICAiY2xpZW50X2lkIjogImNsaWVudCIKfQo.x1LLYmH_8jAbdfiYlQ5hreI2IY3m2olGbBM4Hi2O5wUE_fRPhFD3Z_YsMbK4Qp9Us1aqn3VdYaEovnBzr0W37WJhzTysWId2cffajH_z9xF47DIlkc5PXWNeWo0g8N_lMvFWkcQQNw1inU8J9370-sGZXyJSggLmCcbNjWrWGvFKtSBLMY-v-_HSnFKCDq9LK6mLN9HFqzWG3GhDrcCtl8JIsd1JC44QSoJ4WsxWIoUtto_j6EFwNyMC_2xI6E68L9uAbFfknXz3siuzp9NN9_M_peRGKXigKrZg8et9ggsRHqSHj2j5T-P9FmaFDlJz-rmCHytKE0KgKiYBkWG9Cg";
@@ -15,7 +15,7 @@ const assert = require("assert");
 
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
-        await page.waitForNavigation();
+        await cas.waitForNavigation(page);
     }
 
     const code = await cas.assertParameter(page, "code");
@@ -56,7 +56,6 @@ const assert = require("assert");
     }, (error) => {
         throw `Operation failed to obtain access token: ${error}`;
     });
-
     
     await browser.close();
 })();

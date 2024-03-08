@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 const YAML = require("yaml");
 const fs = require("fs");
@@ -30,7 +30,7 @@ async function callAuditLog() {
     const file = fs.readFileSync(configFilePath, "utf8");
     const configFile = YAML.parse(file);
 
-    let browser = await puppeteer.launch(cas.browserOptions());
+    let browser = await cas.newBrowser(cas.browserOptions());
     let page = await cas.newPage(browser);
     await cas.gotoLogin(page);
     await cas.loginWith(page);
@@ -38,7 +38,7 @@ async function callAuditLog() {
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
     await cas.gotoLogout(page);
-    await page.waitForTimeout(6000);
+    await cas.sleep(6000);
     await browser.close();
 
     await callAuditLog();
@@ -50,7 +50,7 @@ async function callAuditLog() {
     await cas.refreshContext();
 
     await cas.log("Testing authentication after refresh...");
-    browser = await puppeteer.launch(cas.browserOptions());
+    browser = await cas.newBrowser(cas.browserOptions());
     page = await cas.newPage(browser);
     await cas.gotoLogin(page, "https://localhost:9859/anything/cas");
     await cas.loginWith(page);

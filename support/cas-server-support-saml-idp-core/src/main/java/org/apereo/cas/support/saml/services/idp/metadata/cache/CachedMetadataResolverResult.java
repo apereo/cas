@@ -1,11 +1,13 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 
+import jakarta.validation.constraints.NotNull;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Clock;
@@ -28,5 +30,16 @@ public class CachedMetadataResolverResult implements Serializable {
     @Builder.Default
     private final Instant cachedInstant = Instant.now(Clock.systemUTC());
 
+    @NotNull
     private final MetadataResolver metadataResolver;
+
+    /**
+     * Is metadata resolver available?
+     *
+     * @return the boolean
+     */
+    @JsonIgnore
+    public boolean isResolved() {
+        return metadataResolver != null;
+    }
 }

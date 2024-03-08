@@ -20,7 +20,10 @@ dependencies {
     implementation project(":support:cas-server-support-duo-core-mfa")
     implementation project(":support:cas-server-support-trusted-mfa-core")
     implementation project(":support:cas-server-support-pac4j-api")
-    
+
+    compileOnly project(":support:cas-server-support-passwordless-api")
+    compileOnly project(":support:cas-server-support-passwordless-webflow")
+
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-authentication")
     

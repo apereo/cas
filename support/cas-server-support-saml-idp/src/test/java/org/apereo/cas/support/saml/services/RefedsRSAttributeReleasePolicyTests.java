@@ -5,17 +5,17 @@ import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
-import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -31,8 +31,6 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata10"
 })
 class RefedsRSAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTests {
-    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "RefedsRSAttributeReleasePolicyTests.json");
-
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
@@ -56,9 +54,10 @@ class RefedsRSAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTests 
 
     @Test
     void verifySerializationToJson() throws IOException {
+        val jsonFile = Files.createTempFile(RandomUtils.randomAlphabetic(8), ".json").toFile();
         val filter = new RefedsRSAttributeReleasePolicy();
-        MAPPER.writeValue(JSON_FILE, filter);
-        val strategyRead = MAPPER.readValue(JSON_FILE, RefedsRSAttributeReleasePolicy.class);
+        MAPPER.writeValue(jsonFile, filter);
+        val strategyRead = MAPPER.readValue(jsonFile, RefedsRSAttributeReleasePolicy.class);
         assertEquals(filter, strategyRead);
     }
 }

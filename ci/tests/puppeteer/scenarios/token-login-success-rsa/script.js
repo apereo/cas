@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 const assert = require("assert");
 
@@ -6,7 +6,7 @@ async function loginWithToken(page, service, token) {
     await cas.log(`Logging in with SSO token to service ${service}`);
     await cas.gotoLogout(page);
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}&token=${token}`);
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.assertTicketParameter(page);
     await cas.gotoLogin(page);
     await cas.assertCookie(page);
@@ -16,7 +16,7 @@ async function loginWithToken(page, service, token) {
 
 (async () => {
     const service = "https://apereo.github.io";
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.gotoLogout(page);
 

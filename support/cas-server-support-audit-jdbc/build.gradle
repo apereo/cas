@@ -1,6 +1,6 @@
 description = "Apereo CAS JDBC Audit Support"
 ext {
-    maxParallelForksForTests = 1
+
     publishMetadata = true
     projectMetadata = [
             category: "Audits",

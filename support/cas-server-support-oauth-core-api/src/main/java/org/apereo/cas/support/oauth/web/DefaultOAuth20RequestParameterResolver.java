@@ -118,9 +118,10 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
         val service = OAuth20Utils.getRegisteredOAuthServiceByClientId(jwtBuilder.getServicesManager(), id);
         return FunctionUtils.doUnchecked(() -> resolveJwtRequestParameter(jwtRequest, service, name, clazz));
     }
+
     @Override
     public Map<String, Set<String>> resolveRequestParameters(final Collection<String> attributes,
-                                                        final WebContext context) {
+                                                             final WebContext context) {
         return attributes
             .stream()
             .map(name -> {
@@ -132,12 +133,13 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
             })
             .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
     }
-    
+
     @Override
     public Optional<String> resolveRequestParameter(final WebContext context,
                                                     final String name) {
         return resolveRequestParameter(context, name, String.class);
     }
+
     @Override
     public <T> Optional<T> resolveRequestParameter(final WebContext context,
                                                    final String name,
@@ -161,6 +163,7 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
                 return Optional.empty();
             });
     }
+
     @Override
     public Collection<String> resolveRequestedScopes(final WebContext context) {
         val map = resolveRequestParameters(CollectionUtils.wrap(OAuth20Constants.SCOPE), context);
@@ -168,10 +171,11 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
             return new ArrayList<>(0);
         }
         val supported = jwtBuilder.getCasProperties().getAuthn().getOidc().getDiscovery().getScopes();
-        val results = new LinkedHashSet<>((Collection<String>) map.get(OAuth20Constants.SCOPE));
+        val results = new LinkedHashSet<>(map.get(OAuth20Constants.SCOPE));
         results.retainAll(supported);
         return results;
     }
+
     @Override
     public boolean isAuthorizedGrantTypeForService(final WebContext context,
                                                    final OAuthRegisteredService registeredService) {
@@ -179,6 +183,7 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
             .map(String::valueOf).orElse(StringUtils.EMPTY);
         return OAuth20RequestParameterResolver.isAuthorizedGrantTypeForService(grantType, registeredService);
     }
+
     @Override
     public boolean isAuthorizedResponseTypeForService(final WebContext context,
                                                       final OAuthRegisteredService registeredService) {
@@ -193,8 +198,8 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
             return false;
         }
         LOGGER.warn("Registered service [{}] does not define any authorized/supported response types. "
-                    + "It is STRONGLY recommended that you authorize and assign response types to the service definition. "
-                    + "While just a warning for now, this behavior will be enforced by CAS in future versions.", registeredService.getName());
+            + "It is STRONGLY recommended that you authorize and assign response types to the service definition. "
+            + "While just a warning for now, this behavior will be enforced by CAS in future versions.", registeredService.getName());
         return true;
     }
 
@@ -224,6 +229,7 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
         results.retainAll(supported);
         return results;
     }
+
     @Override
     public Map<String, Map<String, Object>> resolveRequestClaims(final WebContext context) throws Exception {
         val supported = jwtBuilder.getCasProperties().getAuthn().getOidc().getDiscovery().isClaimsParameterSupported();

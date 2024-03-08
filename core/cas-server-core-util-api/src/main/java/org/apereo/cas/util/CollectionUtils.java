@@ -76,6 +76,22 @@ public class CollectionUtils {
     }
 
     /**
+     * From comma delimited values.
+     *
+     * @param attributes the attributes
+     * @return the map
+     */
+    public static Map<String, List<Object>> fromCommaDelimitedValues(final Map<String, String> attributes) {
+        val entries = attributes.entrySet();
+        return entries
+            .stream()
+            .collect(Collectors.toMap(Map.Entry::getKey, entry -> {
+                val value = org.springframework.util.StringUtils.commaDelimitedListToSet(entry.getValue());
+                return toCollection(value, ArrayList.class);
+            }));
+    }
+
+    /**
      * Distinct by key predicate.
      *
      * @param <T>          the type parameter
@@ -709,6 +725,4 @@ public class CollectionUtils {
         Arrays.stream(attributes).forEach(result::putAll);
         return result;
     }
-
-
 }

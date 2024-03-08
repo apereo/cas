@@ -1,9 +1,9 @@
-const puppeteer = require("puppeteer");
+
 const assert = require("assert");
 const cas = require("../../cas.js");
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     const service = "https://apereo.github.io";
     
@@ -12,21 +12,21 @@ const cas = require("../../cas.js");
 
     await cas.assertVisibility(page, "li #AzureClient");
     await cas.click(page, "li #AzureClient");
-    await page.waitForNavigation();
-    await page.waitForTimeout(4000);
+    await cas.waitForNavigation(page);
+    await cas.sleep(4000);
     await cas.screenshot(page);
 
     const username = `castest@${process.env.AZURE_AD_DOMAIN}`;
     await cas.type(page, "input[name=loginfmt]", username, true);
     await cas.pressEnter(page);
     
-    await page.waitForTimeout(3000);
+    await cas.sleep(3000);
     await cas.type(page, "input[name=passwd]", process.env.AZURE_AD_USER_PASSWORD, true);
     await cas.pressEnter(page);
-    await page.waitForTimeout(4000);
+    await cas.sleep(4000);
     await cas.screenshot(page);
     await cas.click(page, "#idBtn_Back");
-    await page.waitForTimeout(7000);
+    await cas.sleep(7000);
 
     await cas.logPage(page);
     const result = new URL(page.url());

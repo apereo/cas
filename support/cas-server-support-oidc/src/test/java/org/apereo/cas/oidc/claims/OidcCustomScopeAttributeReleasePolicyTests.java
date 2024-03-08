@@ -16,6 +16,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -35,7 +36,8 @@ class OidcCustomScopeAttributeReleasePolicyTests extends AbstractOidcTests {
         val policy = new OidcCustomScopeAttributeReleasePolicy("groups", CollectionUtils.wrap("groups"));
         assertEquals(OidcConstants.CUSTOM_SCOPE_TYPE, policy.getScopeType());
         assertNotNull(policy.getAllowedAttributes());
-        val principal = CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("groups", List.of("admin", "user")));
+        val principal = CoreAuthenticationTestUtils.getPrincipal(UUID.randomUUID().toString(),
+            CollectionUtils.wrap("groups", List.of("admin", "user")));
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
             .service(CoreAuthenticationTestUtils.getService())

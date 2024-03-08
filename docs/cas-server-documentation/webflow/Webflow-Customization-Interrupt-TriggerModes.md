@@ -49,3 +49,7 @@ should be able to take advantage of the established single sign-on session.</p>
 {% endtab %}
 
 {% endtabs %}
+     
+Note that as of this writing, interrupt trigger modes are global and cannot be controlled or defined on a per-application basis.
+The construction of the authentication interrupt workflow is burned into the CAS webflow at initialization time and is not
+alterable at runtime depending on the application or the user.

@@ -39,7 +39,7 @@ class OidcClientIdClientSecretAuthenticatorTests extends AbstractOidcTests {
 
     @Test
     void verifyWithoutRequestingScopes() throws Throwable {
-        val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+        val registeredService = getOidcRegisteredService(UUID.randomUUID().toString(), randomServiceUrl());
         servicesManager.save(registeredService);
         val credentials = new UsernamePasswordCredentials(registeredService.getClientId(), registeredService.getClientSecret());
         val request = new MockHttpServletRequest();
@@ -55,7 +55,7 @@ class OidcClientIdClientSecretAuthenticatorTests extends AbstractOidcTests {
 
     @Test
     void verifyWithRequestingScopes() throws Throwable {
-        val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+        val registeredService = getOidcRegisteredService(UUID.randomUUID().toString(), randomServiceUrl());
         registeredService.setScopes(Set.of("openid", "MyScope"));
         servicesManager.save(registeredService);
         val credentials = new UsernamePasswordCredentials(registeredService.getClientId(), registeredService.getClientSecret());
@@ -66,8 +66,9 @@ class OidcClientIdClientSecretAuthenticatorTests extends AbstractOidcTests {
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         authenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
         assertNotNull(credentials.getUserProfile());
-        assertEquals(2, credentials.getUserProfile().getAttributes().size());
-        assertTrue(credentials.getUserProfile().getAttributes().containsKey(OAuth20Constants.CLIENT_ID));
-        assertTrue(credentials.getUserProfile().getAttributes().containsKey("uid"));
+        val attributes = credentials.getUserProfile().getAttributes();
+        assertEquals(2, attributes.size());
+        assertTrue(attributes.containsKey(OAuth20Constants.CLIENT_ID));
+        assertTrue(attributes.containsKey("uid"));
     }
 }

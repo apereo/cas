@@ -86,7 +86,7 @@ Metadata location can use the [Spring Expression Language](../configuration/Conf
 }
 ```
 
-CAS may attempt to reuse the metadata from a previously-downloaded backup file on disk if the metadata file is still seen as valid. 
+Multiple locations may be comma-separated. CAS may attempt to reuse the metadata from a previously-downloaded backup file on disk if the metadata file is still seen as valid. 
 This capability will require the forceful fetching of the metadata over HTTP to be disabled.
 
 <div class="alert alert-info">:information_source: <strong>Usage</strong>
@@ -115,6 +115,8 @@ Metadata files for SAML2 service providers can be found on the file system direc
   "metadataLocation" : "/path/to/metadata.xml"
 }
 ```
+
+Multiple locations may be comma-separated.
 
 {% endtab %}
 

@@ -1,20 +1,20 @@
-const puppeteer = require("puppeteer");
+
 const path = require("path");
 const cas = require("../../cas.js");
 const assert = require("assert");
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     const response = await cas.goto(page, "https://localhost:8443/cas/idp/metadata");
     await cas.log(`${response.status()} ${response.statusText()}`);
     assert(response.ok());
 
     await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=refeds-sp");
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
 
     await cas.loginWith(page);
-    await page.waitForTimeout(2000);
+    await cas.sleep(2000);
 
     await cas.log("Fetching Scratch codes from /cas/actuator...");
     const scratch = await cas.fetchGoogleAuthenticatorScratchCode();
@@ -22,9 +22,9 @@ const assert = require("assert");
     await cas.screenshot(page);
     await cas.type(page,"#token", scratch);
     await cas.pressEnter(page);
-    await page.waitForNavigation();
+    await cas.waitForNavigation(page);
     await cas.logPage(page);
-    await page.waitForTimeout(3000);
+    await cas.sleep(3000);
     await cas.screenshot(page);
 
     await page.waitForSelector("#table_with_attributes", {visible: true});

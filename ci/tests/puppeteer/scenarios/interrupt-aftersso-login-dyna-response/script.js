@@ -1,8 +1,8 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
 
     await cas.gotoLogin(page, "https://localhost:9859/anything/1");
@@ -14,7 +14,7 @@ const cas = require("../../cas.js");
 
     await cas.submitForm(page, "#fm1");
     await cas.logPage(page);
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.assertTicketParameter(page);
 
     await cas.gotoLogin(page, "https://localhost:9859/anything/2");
@@ -23,7 +23,7 @@ const cas = require("../../cas.js");
     await cas.assertTextContent(page, "#interruptMessage", "Hello from admin");
     await cas.submitForm(page, "#fm1");
     await cas.logPage(page);
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.assertTicketParameter(page);
     
     await browser.close();

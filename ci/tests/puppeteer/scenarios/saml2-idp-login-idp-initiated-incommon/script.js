@@ -1,10 +1,10 @@
-const puppeteer = require("puppeteer");
+
 const performance = require("perf_hooks").performance;
 const cas = require("../../cas.js");
 const path = require("path");
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
 
     const entityIds = [
@@ -57,11 +57,11 @@ async function sendRequest(page, entityIds) {
                 await cas.logr("Request took longer than expected");
             }
 
-            await page.waitForTimeout(1000);
+            await cas.sleep(1000);
             await cas.assertVisibility(page, "#username");
             await cas.assertVisibility(page, "#password");
             await cas.loginWith(page);
-            await page.waitForTimeout(1000);
+            await cas.sleep(1000);
             count++;
         } catch (e) {
             await cas.logr(e);

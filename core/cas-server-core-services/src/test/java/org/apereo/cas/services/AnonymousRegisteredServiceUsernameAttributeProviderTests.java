@@ -5,17 +5,17 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
-import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,8 +27,6 @@ import static org.mockito.Mockito.*;
  */
 @Tag("RegisteredService")
 class AnonymousRegisteredServiceUsernameAttributeProviderTests {
-
-    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "anonymousRegisteredServiceUsernameAttributeProvider.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
@@ -71,10 +69,11 @@ class AnonymousRegisteredServiceUsernameAttributeProviderTests {
 
     @Test
     void verifySerializeADefaultRegisteredServiceUsernameProviderToJson() throws IOException {
+        val jsonFile = Files.createTempFile(RandomUtils.randomAlphabetic(8), ".json").toFile();
         val providerWritten = new AnonymousRegisteredServiceUsernameAttributeProvider(
             new ShibbolethCompatiblePersistentIdGenerator(CASROX));
-        MAPPER.writeValue(JSON_FILE, providerWritten);
-        val providerRead = MAPPER.readValue(JSON_FILE, AnonymousRegisteredServiceUsernameAttributeProvider.class);
+        MAPPER.writeValue(jsonFile, providerWritten);
+        val providerRead = MAPPER.readValue(jsonFile, AnonymousRegisteredServiceUsernameAttributeProvider.class);
         assertEquals(providerWritten, providerRead);
     }
 

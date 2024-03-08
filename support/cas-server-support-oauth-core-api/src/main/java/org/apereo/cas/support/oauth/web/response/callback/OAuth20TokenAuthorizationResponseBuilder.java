@@ -11,7 +11,7 @@ import org.apereo.cas.support.oauth.web.response.OAuth20AuthorizationRequest;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.CollectionUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -62,9 +62,7 @@ public class OAuth20TokenAuthorizationResponseBuilder<T extends OAuth20Configura
     protected ModelAndView buildCallbackUrlResponseType(final AccessTokenRequestContext tokenRequestContext,
                                                         final Ticket givenAccessToken, final Ticket givenRefreshToken, final List<NameValuePair> parameters) throws Throwable {
         val attributes = tokenRequestContext.getAuthentication().getAttributes();
-        val state = attributes.get(OAuth20Constants.STATE).getFirst().toString();
-        val nonce = attributes.get(OAuth20Constants.NONCE).getFirst().toString();
-
+        
         val accessToken = resolveAccessToken(givenAccessToken);
         val builder = new URIBuilder(tokenRequestContext.getRedirectUri());
 
@@ -83,8 +81,9 @@ public class OAuth20TokenAuthorizationResponseBuilder<T extends OAuth20Configura
             val refreshToken = resolveRefreshToken(givenRefreshToken);
             builder.addParameter(OAuth20Constants.REFRESH_TOKEN, refreshToken.getId());
         }
-        FunctionUtils.doIfNotBlank(state, __ -> builder.addParameter(OAuth20Constants.STATE, state));
-        FunctionUtils.doIfNotBlank(nonce, __ -> builder.addParameter(OAuth20Constants.NONCE, nonce));
+
+        CollectionUtils.firstElement(attributes.get(OAuth20Constants.STATE)).ifPresent(state -> builder.addParameter(OAuth20Constants.STATE, state.toString()));
+        CollectionUtils.firstElement(attributes.get(OAuth20Constants.NONCE)).ifPresent(nonce -> builder.addParameter(OAuth20Constants.NONCE, nonce.toString()));
         builder.addParameters(parameters);
 
         val parameterList = builder.getQueryParams()

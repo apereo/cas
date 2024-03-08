@@ -45,7 +45,7 @@ class SearchModeSearchDatabaseAuthenticationHandlerTests extends BaseDatabaseAut
     private DataSource dataSource;
 
     private static String getSqlInsertStatementToCreateUserAccount(final int i) {
-        return String.format("insert into cassearchusers (username, password) values('%s', '%s');", "user" + i, "psw" + i);
+        return String.format("insert into cassearchusers (username, password) values('%s', '%s');", "user%d".formatted(i), "psw%d".formatted(i));
     }
 
     @BeforeEach

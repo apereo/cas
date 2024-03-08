@@ -1,9 +1,8 @@
-const puppeteer = require("puppeteer");
 
 const cas = require("../../cas.js");
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.gotoLogin(page);
     await cas.loginWith(page);
@@ -20,6 +19,6 @@ const cas = require("../../cas.js");
         }, 200);
     }
     await cas.goto(page, "http://localhost:9411/zipkin");
-    await page.waitForTimeout(4000);
+    await cas.sleep(4000);
     await browser.close();
 })();

@@ -14,12 +14,6 @@ public abstract class BaseSurrogateRegisteredServiceAccessStrategy extends BaseR
     @Serial
     private static final long serialVersionUID = -3975861635454453130L;
 
-    /**
-     * Is surrogate authentication session?.
-     *
-     * @param request the request
-     * @return true /false
-     */
     protected boolean isSurrogateAuthenticationSession(final RegisteredServiceAccessStrategyRequest request) {
         return request.getAttributes().containsKey(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED);
     }

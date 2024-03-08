@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import java.util.Collection;
@@ -61,6 +62,16 @@ public interface CasWebflowExecutionPlan {
 
     /**
      * Execute the plan.
+     *
+     * @return the cas webflow execution plan
      */
-    void execute();
+    @CanIgnoreReturnValue
+    CasWebflowExecutionPlan execute();
+
+    /**
+     * Is plan initialized and ready?
+     *
+     * @return the boolean
+     */
+    boolean isInitialized();
 }

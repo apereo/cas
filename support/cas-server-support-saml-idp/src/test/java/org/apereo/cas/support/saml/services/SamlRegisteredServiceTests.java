@@ -1,23 +1,20 @@
 package org.apereo.cas.support.saml.services;
 
-import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
-import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.JsonServiceRegistry;
-import org.apereo.cas.services.ServicesManagerConfigurationContext;
-import org.apereo.cas.services.mgmt.DefaultServicesManager;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.io.WatcherService;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.file.PathUtils;
@@ -30,9 +27,9 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -44,8 +41,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("SAML2")
 class SamlRegisteredServiceTests extends BaseSamlIdPConfigurationTests {
-
-    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "samlRegisteredService.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
@@ -115,39 +110,28 @@ class SamlRegisteredServiceTests extends BaseSamlIdPConfigurationTests {
 
     @Test
     void checkPattern() {
-        val appCtx = new StaticApplicationContext();
-        appCtx.refresh();
         val registeredService = new SamlRegisteredService();
+        registeredService.setId(RandomUtils.nextLong());
         registeredService.setName(SAML_SERVICE);
         registeredService.setServiceId("^http://.+");
         registeredService.setMetadataLocation(METADATA_LOCATION);
-        val dao = new InMemoryServiceRegistry(appCtx, List.of(registeredService), new ArrayList<>());
-        val context = ServicesManagerConfigurationContext.builder()
-            .serviceRegistry(dao)
-            .registeredServicesTemplatesManager(registeredServicesTemplatesManager)
-            .applicationContext(appCtx)
-            .environments(new HashSet<>(0))
-            .servicesCache(Caffeine.newBuilder().build())
-            .registeredServiceLocators(List.of(samlIdPServicesManagerRegisteredServiceLocator))
-            .build();
-        val impl = new DefaultServicesManager(context);
-        impl.load();
-
-        val service = new WebApplicationServiceFactory().createService("http://mmoayyed.unicon.net:8081/sp/saml/SSO");
+        servicesManager.save(registeredService);
+        val service = RegisteredServiceTestUtils.getService("http://mmoayyed.unicon.net:8081/sp/saml/SSO");
         service.getAttributes().put(SamlProtocolConstants.PARAMETER_ENTITY_ID, List.of(registeredService.getServiceId()));
-        val foundService = impl.findServiceBy(service);
+        val foundService = servicesManager.findServiceBy(service);
         assertNotNull(foundService);
     }
 
     @Test
     void verifySerializeAReturnMappedAttributeReleasePolicyToJson() throws IOException {
+        val jsonFile = Files.createTempFile(RandomUtils.randomAlphabetic(8), ".json").toFile();
         val serviceWritten = new SamlRegisteredService();
         serviceWritten.setName(SAML_SERVICE);
         serviceWritten.setServiceId("http://mmoayyed.unicon.net");
         serviceWritten.setMetadataLocation(METADATA_LOCATION);
         serviceWritten.setSignAssertions(TriStateBoolean.UNDEFINED);
-        MAPPER.writeValue(JSON_FILE, serviceWritten);
-        val serviceRead = MAPPER.readValue(JSON_FILE, SamlRegisteredService.class);
+        MAPPER.writeValue(jsonFile, serviceWritten);
+        val serviceRead = MAPPER.readValue(jsonFile, SamlRegisteredService.class);
         assertEquals(serviceWritten, serviceRead);
     }
 

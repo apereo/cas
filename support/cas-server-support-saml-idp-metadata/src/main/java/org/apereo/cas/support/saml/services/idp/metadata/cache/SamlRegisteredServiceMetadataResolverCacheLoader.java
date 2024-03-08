@@ -62,8 +62,9 @@ public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLo
             }
 
             val metadataResolver = initializeChainingMetadataResolver(metadataResolvers);
-            LOGGER.debug("Metadata resolvers active for this request are [{}]", metadataResolvers);
-            return CachedMetadataResolverResult.builder()
+            LOGGER.debug("Metadata resolvers active for this request are [{}]", Objects.requireNonNull(metadataResolvers));
+            return CachedMetadataResolverResult
+                .builder()
                 .cachedInstant(Instant.now(Clock.systemUTC()))
                 .metadataResolver(metadataResolver)
                 .build();

@@ -74,7 +74,7 @@ class UrlResourceMetadataResolverTests {
                 val service = new SamlRegisteredService();
                 service.setName(RandomUtils.randomAlphabetic(12));
                 service.setId(RandomUtils.nextInt());
-                service.setMetadataLocation("http://localhost:%s".formatted(webServer.getPort()));
+                service.setMetadataLocation("https://expired.badssl.com/,http://localhost:%s".formatted(webServer.getPort()));
 
                 val results = resolver.resolve(service);
                 assertFalse(results.isEmpty());

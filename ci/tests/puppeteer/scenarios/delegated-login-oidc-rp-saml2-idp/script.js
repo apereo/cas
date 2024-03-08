@@ -1,14 +1,14 @@
-const puppeteer = require("puppeteer");
+
 const assert = require("assert");
 const cas = require("../../cas.js");
 const path = require("path");
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
 
     await cas.gotoLogin(page);
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
 
     const url = "https://localhost:8443/cas/oidc/oidcAuthorize?" +
         "client_id=client&" +
@@ -21,14 +21,14 @@ const path = require("path");
 
     await cas.assertVisibility(page, "li #SAML2Client");
     await cas.click(page, "li #SAML2Client");
-    await page.waitForTimeout(3000);
+    await cas.sleep(3000);
 
     await cas.loginWith(page, "user1", "password");
-    await page.waitForTimeout(2000);
+    await cas.sleep(2000);
 
     await cas.log("Checking for page URL...");
     await cas.logPage(page);
-    await page.waitForTimeout(2000);
+    await cas.sleep(2000);
 
     await cas.log("Allowing release of scopes and claims...");
     await cas.logPage(page);
@@ -42,7 +42,7 @@ const path = require("path");
     assert(result.searchParams.has("scope"));
 
     await cas.click(page, "#allow");
-    await page.waitForTimeout(3000);
+    await cas.sleep(3000);
     await cas.assertTextContent(page, "h1.green-text", "Success!");
 
     await cas.logPage(page);

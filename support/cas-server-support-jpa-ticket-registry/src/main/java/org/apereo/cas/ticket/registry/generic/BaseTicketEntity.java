@@ -49,6 +49,9 @@ public abstract class BaseTicketEntity implements Serializable {
     @Column(length = 1024)
     private String principalId;
 
+    @Column(length = 2048)
+    private String service;
+
     @Column(nullable = false, length = 1024)
     private String type;
 

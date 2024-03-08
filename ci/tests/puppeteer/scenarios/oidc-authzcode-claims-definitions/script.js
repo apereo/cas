@@ -1,28 +1,27 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 const assert = require("assert");
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     const redirectUri = "https://localhost:9859/anything/cas";
     const url = `https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=client&scope=${encodeURIComponent("openid profile email")}&redirect_uri=${redirectUri}`;
 
     await cas.goto(page, url);
     await cas.logPage(page);
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.loginWith(page);
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
-        await page.waitForNavigation();
+        await cas.waitForNavigation(page);
     }
 
     const code = await cas.assertParameter(page, "code");
     await cas.log(`Current code is ${code}`);
     const accessTokenUrl = "https://localhost:8443/cas/oidc/token?grant_type=authorization_code"
         + `&client_id=client&client_secret=secret&redirect_uri=${redirectUri}&code=${code}`;
-
 
     const payload = await cas.doPost(accessTokenUrl, "", {
         "Content-Type": "application/json"

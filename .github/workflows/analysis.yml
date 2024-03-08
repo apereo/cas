@@ -22,15 +22,25 @@ concurrency:
 on:
   workflow_dispatch:
   push:
-    branches: [ master, pr-* ]
+    branches:
+      - master
+      - '!**.**.**'
+      - '!heroku-*'
   pull_request:
     types: [ labeled ]
-    branches: [ master ]
+    branches: [ master, pr-* ]
 
 ##########################################################################
 
 jobs:
+  trigger-ci:
+    if: ${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'CI')) && !contains(github.event.pull_request.labels.*.name, 'Renovate') && !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger CI
+        run: echo "CI Triggered"
   initialize:
+    needs: [trigger-ci]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

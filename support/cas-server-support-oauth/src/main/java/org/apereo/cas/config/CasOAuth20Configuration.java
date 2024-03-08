@@ -377,16 +377,17 @@ class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20TokenGenerator oauthTokenGenerator(
-            @Qualifier("defaultDeviceUserCodeFactory") final OAuth20DeviceUserCodeFactory defaultDeviceUserCodeFactory,
-            @Qualifier("defaultDeviceTokenFactory") final OAuth20DeviceTokenFactory defaultDeviceTokenFactory,
-            @Qualifier("defaultRefreshTokenFactory") final OAuth20RefreshTokenFactory defaultRefreshTokenFactory,
-            @Qualifier("defaultAccessTokenFactory") final OAuth20AccessTokenFactory defaultAccessTokenFactory,
-            @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry,
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+            final PrincipalResolver principalResolver,
+            @Qualifier(OAuth20ProfileScopeToAttributesFilter.BEAN_NAME)
+            final OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter,
+            @Qualifier(TicketFactory.BEAN_NAME)
+            final TicketFactory ticketFactory,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
             final CasConfigurationProperties casProperties) {
-            return new OAuth20DefaultTokenGenerator(
-                defaultAccessTokenFactory, defaultDeviceTokenFactory,
-                defaultDeviceUserCodeFactory, defaultRefreshTokenFactory,
-                ticketRegistry, casProperties);
+            return new OAuth20DefaultTokenGenerator(ticketFactory, ticketRegistry,
+                principalResolver, profileScopeToAttributesFilter, casProperties);
         }
 
         @ConditionalOnMissingBean(name = "accessTokenResponseGenerator")
@@ -685,7 +686,7 @@ class CasOAuth20Configuration {
             final CasConfigurationProperties casProperties) {
             val cookie = casProperties.getAuthn().getOauth().getSessionReplication().getCookie();
             if (StringUtils.isBlank(cookie.getName())) {
-                cookie.setName(CookieSessionReplicationProperties.DEFAULT_COOKIE_NAME + OAUTH_OIDC_SERVER_SUPPORT_PREFIX);
+                cookie.setName("%s%s".formatted(CookieSessionReplicationProperties.DEFAULT_COOKIE_NAME, OAUTH_OIDC_SERVER_SUPPORT_PREFIX));
             }
             return CookieUtils.buildCookieRetrievingGenerator(cookie,
                 new DefaultCasCookieValueManager(oauthDistributedSessionCookieCipherExecutor, geoLocationService,
@@ -1208,10 +1209,11 @@ class CasOAuth20Configuration {
                 @Qualifier("refreshTokenIdGenerator") final UniqueTicketIdGenerator refreshTokenIdGenerator,
                 @Qualifier("refreshTokenExpirationPolicy") final ExpirationPolicyBuilder refreshTokenExpirationPolicy,
                 @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
+                @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry,
                 @Qualifier(TicketTrackingPolicy.BEAN_NAME_DESCENDANT_TICKET_TRACKING)
                 final TicketTrackingPolicy descendantTicketsTrackingPolicy,
                 final CasConfigurationProperties casProperties) {
-            return new OAuth20DefaultRefreshTokenFactory(refreshTokenIdGenerator,
+            return new OAuth20DefaultRefreshTokenFactory(refreshTokenIdGenerator, ticketRegistry,
                 refreshTokenExpirationPolicy, servicesManager, descendantTicketsTrackingPolicy, casProperties);
         }
 
@@ -1223,10 +1225,12 @@ class CasOAuth20Configuration {
             @Qualifier("accessTokenExpirationPolicy") final ExpirationPolicyBuilder accessTokenExpirationPolicy,
             @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
             @Qualifier("accessTokenJwtBuilder") final JwtBuilder accessTokenJwtBuilder,
+            @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry,
             @Qualifier(TicketTrackingPolicy.BEAN_NAME_DESCENDANT_TICKET_TRACKING)
             final TicketTrackingPolicy descendantTicketsTrackingPolicy) {
             return new OAuth20DefaultAccessTokenFactory(accessTokenIdGenerator,
-                accessTokenExpirationPolicy, accessTokenJwtBuilder, servicesManager, descendantTicketsTrackingPolicy);
+                ticketRegistry, accessTokenExpirationPolicy, accessTokenJwtBuilder,
+                servicesManager, descendantTicketsTrackingPolicy);
         }
 
         @Bean

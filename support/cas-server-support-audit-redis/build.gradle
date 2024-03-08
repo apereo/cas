@@ -1,6 +1,6 @@
 description = "Apereo CAS Redis Audit Support"
 ext {
-    maxParallelForksForTests = 1
+
     publishMetadata = true
     projectMetadata = [
             category: "Audits",

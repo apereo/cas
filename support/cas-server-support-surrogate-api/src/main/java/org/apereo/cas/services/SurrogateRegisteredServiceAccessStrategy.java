@@ -37,19 +37,13 @@ public class SurrogateRegisteredServiceAccessStrategy extends BaseSurrogateRegis
      * should be done in a case-insensitive manner.
      */
     protected boolean caseInsensitive;
-
-    private boolean surrogateEnabled;
-
+    
     private Map<String, Set<String>> surrogateRequiredAttributes = new HashMap<>(0);
 
     @Override
     public boolean authorizeRequest(final RegisteredServiceAccessStrategyRequest request) {
-        if (isSurrogateAuthenticationSession(request)) {
-            return isSurrogateEnabled() && doPrincipalAttributesAllowSurrogateServiceAccess(request);
-        }
-        return true;
+        return !isSurrogateAuthenticationSession(request) || doPrincipalAttributesAllowSurrogateServiceAccess(request);
     }
-
 
     protected boolean doPrincipalAttributesAllowSurrogateServiceAccess(final RegisteredServiceAccessStrategyRequest request) {
         return RegisteredServiceAccessStrategyEvaluator.builder()

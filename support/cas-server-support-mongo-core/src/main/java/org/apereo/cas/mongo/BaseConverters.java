@@ -2,7 +2,6 @@ package org.apereo.cas.mongo;
 
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.RegexUtils;
-
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -27,7 +26,6 @@ import org.slf4j.Logger;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.convert.ReadingConverter;
 import org.springframework.data.convert.WritingConverter;
-
 import jakarta.annotation.Nonnull;
 import java.lang.ref.ReferenceQueue;
 import java.security.cert.CertPath;
@@ -57,8 +55,7 @@ public abstract class BaseConverters {
 
         @Override
         public O convert(
-            @Nonnull
-            final I i) {
+            @Nonnull final I i) {
             return null;
         }
     }
@@ -164,12 +161,10 @@ public abstract class BaseConverters {
     /**
      * The type Date to zoned date time converter.
      */
-    @SuppressWarnings("JavaUtilDate")
     public static class DateToZonedDateTimeConverter implements Converter<Date, ZonedDateTime> {
         @Override
         public ZonedDateTime convert(
-            @Nonnull
-            final Date source) {
+            @Nonnull final Date source) {
             return Optional.ofNullable(source)
                 .map(date -> ZonedDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault()))
                 .orElse(null);
@@ -183,8 +178,7 @@ public abstract class BaseConverters {
     static class StringToZonedDateTimeConverter implements Converter<String, ZonedDateTime> {
         @Override
         public ZonedDateTime convert(
-            @Nonnull
-            final String source) {
+            @Nonnull final String source) {
             if (StringUtils.isBlank(source)) {
                 return null;
             }
@@ -205,10 +199,8 @@ public abstract class BaseConverters {
      */
     public static class ZonedDateTimeToDateConverter implements Converter<ZonedDateTime, Date> {
         @Override
-        @SuppressWarnings("JavaUtilDate")
         public Date convert(
-            @Nonnull
-            final ZonedDateTime source) {
+            @Nonnull final ZonedDateTime source) {
             return Optional.ofNullable(source).map(zonedDateTime -> Date.from(zonedDateTime.toInstant())).orElse(null);
         }
     }
@@ -220,8 +212,7 @@ public abstract class BaseConverters {
     public static class ZonedDateTimeToStringConverter implements Converter<ZonedDateTime, String> {
         @Override
         public String convert(
-            @Nonnull
-            final ZonedDateTime source) {
+            @Nonnull final ZonedDateTime source) {
             return Optional.of(source).map(ZonedDateTime::toString).orElse(null);
         }
     }
@@ -231,7 +222,6 @@ public abstract class BaseConverters {
      */
     public static class BsonTimestampToDateConverter implements Converter<BsonTimestamp, Date> {
         @Override
-        @SuppressWarnings("JavaUtilDate")
         public Date convert(final BsonTimestamp source) {
             return new Date(source.getTime());
         }
@@ -241,8 +231,7 @@ public abstract class BaseConverters {
     static class StringToPatternConverter implements Converter<String, Pattern> {
         @Override
         public Pattern convert(
-            @Nonnull
-            final String source) {
+            @Nonnull final String source) {
             if (StringUtils.isBlank(source)) {
                 return null;
             }
@@ -266,7 +255,6 @@ public abstract class BaseConverters {
      */
     public static class BsonTimestampToStringConverter implements Converter<BsonTimestamp, String> {
         @Override
-        @SuppressWarnings("JavaUtilDate")
         public String convert(final BsonTimestamp source) {
             return String.valueOf(source.getTime());
         }
@@ -294,7 +282,7 @@ public abstract class BaseConverters {
             }
             return null;
         }
-        @SuppressWarnings("JavaUtilDate")
+
         private static final class ZonedDateTimeCodec implements Codec<ZonedDateTime> {
             @Override
             public ZonedDateTime decode(final BsonReader reader, final DecoderContext decoderContext) {

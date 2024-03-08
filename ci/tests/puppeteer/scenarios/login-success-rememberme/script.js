@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 const assert = require("assert");
 
@@ -8,7 +8,7 @@ async function loginAndVerify(browser) {
     await cas.gotoLogin(page);
     await cas.click(page, "#rememberMe");
     await cas.loginWith(page);
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     let tgc = await cas.assertCookie(page);
     let date = new Date(tgc.expires * 1000);
     await cas.logg(`TGC expiration date: ${date}`);
@@ -33,7 +33,7 @@ async function loginAndVerify(browser) {
 }
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     await loginAndVerify(browser);
     await cas.refreshContext();
     await loginAndVerify(browser);

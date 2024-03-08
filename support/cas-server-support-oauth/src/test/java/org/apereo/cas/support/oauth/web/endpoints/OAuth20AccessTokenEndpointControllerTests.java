@@ -89,7 +89,7 @@ class OAuth20AccessTokenEndpointControllerTests {
             mvc.perform(post("/cas" + CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL)
                     .queryParam(OAuth20Constants.CLIENT_ID, service.getClientId())
                     .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.CLIENT_CREDENTIALS.name())
-                .requestAttr("jakarta.servlet.request.X509Certificate", new X509Certificate[] {certificate}))
+                    .requestAttr("jakarta.servlet.request.X509Certificate", new X509Certificate[]{certificate}))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.access_token").exists())
                 .andReturn();
@@ -104,7 +104,7 @@ class OAuth20AccessTokenEndpointControllerTests {
             mvc.perform(post("/cas" + CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL)
                     .queryParam(OAuth20Constants.CLIENT_ID, service.getClientId())
                     .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.CLIENT_CREDENTIALS.name())
-                    .requestAttr("jakarta.servlet.request.X509Certificate", new X509Certificate[] {certificate}))
+                    .requestAttr("jakarta.servlet.request.X509Certificate", new X509Certificate[]{certificate}))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.access_token").doesNotExist())
                 .andReturn();
@@ -121,7 +121,7 @@ class OAuth20AccessTokenEndpointControllerTests {
             mvc.perform(post("/cas" + CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL)
                     .queryParam(OAuth20Constants.CLIENT_ID, service.getClientId())
                     .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.CLIENT_CREDENTIALS.name())
-                    .requestAttr("jakarta.servlet.request.X509Certificate", new X509Certificate[] {certificate}))
+                    .requestAttr("jakarta.servlet.request.X509Certificate", new X509Certificate[]{certificate}))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.access_token").doesNotExist());
         }
@@ -136,7 +136,7 @@ class OAuth20AccessTokenEndpointControllerTests {
             val accessToken = mvc.perform(post("/cas" + CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL)
                     .queryParam(OAuth20Constants.CLIENT_ID, service.getClientId())
                     .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.CLIENT_CREDENTIALS.name())
-                    .requestAttr("jakarta.servlet.request.X509Certificate", new X509Certificate[] {certificate}))
+                    .requestAttr("jakarta.servlet.request.X509Certificate", new X509Certificate[]{certificate}))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.access_token").exists())
                 .andExpect(request().attribute(OAuth20Constants.REQUEST_ATTRIBUTE_ACCESS_TOKEN_REQUEST, Boolean.TRUE))
@@ -598,7 +598,7 @@ class OAuth20AccessTokenEndpointControllerTests {
             val authentication = getAuthentication(principal);
             val expiringOAuthCodeFactory = new OAuth20DefaultOAuthCodeFactory(new DefaultUniqueTicketIdGenerator(),
                 alwaysExpiresExpirationPolicyBuilder(), servicesManager, CipherExecutor.noOpOfStringToString(),
-                    descendantTicketsTrackingPolicy);
+                descendantTicketsTrackingPolicy);
             val factory = new WebApplicationServiceFactory();
             val service = factory.createService(registeredService.getServiceId());
             val code = expiringOAuthCodeFactory.create(service, authentication,
@@ -690,28 +690,28 @@ class OAuth20AccessTokenEndpointControllerTests {
 
         @Test
         void verifyClientAuthByParameterWithRefreshToken() throws Throwable {
-            val service = addRegisteredService(CollectionUtils.wrapSet(OAuth20GrantTypes.AUTHORIZATION_CODE));
+            val service = addRegisteredService(Set.of(OAuth20GrantTypes.AUTHORIZATION_CODE), randomServiceUrl());
             service.setGenerateRefreshToken(true);
             assertClientOK(service, true);
         }
 
         @Test
         void verifyClientAuthByHeaderWithRefreshToken() throws Throwable {
-            val service = addRegisteredService(CollectionUtils.wrapSet(OAuth20GrantTypes.AUTHORIZATION_CODE));
+            val service = addRegisteredService(Set.of(OAuth20GrantTypes.AUTHORIZATION_CODE), randomServiceUrl());
             service.setGenerateRefreshToken(true);
             assertClientOK(service, true);
         }
 
         @Test
         void verifyClientAuthJsonByParameterWithRefreshToken() throws Throwable {
-            val service = addRegisteredService(CollectionUtils.wrapSet(OAuth20GrantTypes.AUTHORIZATION_CODE));
+            val service = addRegisteredService(Set.of(OAuth20GrantTypes.AUTHORIZATION_CODE), randomServiceUrl());
             service.setGenerateRefreshToken(true);
             assertClientOK(service, true);
         }
 
         @Test
         void verifyClientAuthJsonByHeaderWithRefreshToken() throws Throwable {
-            val service = addRegisteredService(CollectionUtils.wrapSet(OAuth20GrantTypes.AUTHORIZATION_CODE));
+            val service = addRegisteredService(Set.of(OAuth20GrantTypes.AUTHORIZATION_CODE), randomServiceUrl());
             service.setGenerateRefreshToken(true);
             assertClientOK(service, true);
         }
@@ -783,10 +783,10 @@ class OAuth20AccessTokenEndpointControllerTests {
 
         @Test
         void verifyUserBadAuthorizationCode() throws Throwable {
-            val service = addRegisteredService(CollectionUtils.wrapSet(OAuth20GrantTypes.AUTHORIZATION_CODE));
+            val service = addRegisteredService(Set.of(OAuth20GrantTypes.AUTHORIZATION_CODE), UUID.randomUUID().toString(), randomServiceUrl());
             val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
             mockRequest.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
-            mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, CLIENT_SECRET);
+            mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, service.getClientSecret());
             mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase(Locale.ENGLISH));
             mockRequest.setParameter(USERNAME, GOOD_USERNAME);
             mockRequest.setParameter(PASSWORD, GOOD_PASSWORD);
@@ -799,7 +799,7 @@ class OAuth20AccessTokenEndpointControllerTests {
 
         @Test
         void verifyUserBadCredentials() throws Throwable {
-            val service = addRegisteredService(CollectionUtils.wrapSet(OAuth20GrantTypes.PASSWORD));
+            val service = addRegisteredService(Set.of(OAuth20GrantTypes.PASSWORD), UUID.randomUUID().toString(), randomServiceUrl());
             val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
             mockRequest.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
             mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.PASSWORD.name().toLowerCase(Locale.ENGLISH));
@@ -826,20 +826,20 @@ class OAuth20AccessTokenEndpointControllerTests {
 
         @Test
         void verifyUserAuthWithRefreshToken() throws Throwable {
-            val registeredService = addRegisteredService(CollectionUtils.wrapSet(OAuth20GrantTypes.PASSWORD));
+            val registeredService = addRegisteredService(Set.of(OAuth20GrantTypes.PASSWORD), UUID.randomUUID().toString(), randomServiceUrl());
             registeredService.setGenerateRefreshToken(true);
             assertUserAuth(true, true, registeredService);
         }
 
         @Test
         void verifyJsonUserAuth() throws Throwable {
-            val registeredService = addRegisteredService(CollectionUtils.wrapSet(OAuth20GrantTypes.PASSWORD));
+            val registeredService = addRegisteredService(Set.of(OAuth20GrantTypes.PASSWORD), UUID.randomUUID().toString(), randomServiceUrl());
             assertUserAuth(false, true, registeredService);
         }
 
         @Test
         void verifyJsonUserAuthWithRefreshToken() throws Throwable {
-            val registeredService = addRegisteredService(CollectionUtils.wrapSet(OAuth20GrantTypes.PASSWORD));
+            val registeredService = addRegisteredService(Set.of(OAuth20GrantTypes.PASSWORD), UUID.randomUUID().toString(), randomServiceUrl());
             registeredService.setGenerateRefreshToken(true);
             assertUserAuth(true, true, registeredService);
         }
@@ -847,12 +847,14 @@ class OAuth20AccessTokenEndpointControllerTests {
         @Test
         void verifyRefreshTokenExpiredToken() throws Throwable {
             val principal = createPrincipal();
-            val registeredService = addRegisteredService(CollectionUtils.wrapSet(OAuth20GrantTypes.REFRESH_TOKEN));
+            val registeredService = addRegisteredService(Set.of(OAuth20GrantTypes.REFRESH_TOKEN), UUID.randomUUID().toString(),
+                randomServiceUrl());
             val authentication = getAuthentication(principal);
             val factory = new WebApplicationServiceFactory();
             val service = factory.createService(registeredService.getServiceId());
             val expiringRefreshTokenFactory = new OAuth20DefaultRefreshTokenFactory(
-                alwaysExpiresExpirationPolicyBuilder(), servicesManager, descendantTicketsTrackingPolicy, casProperties);
+                alwaysExpiresExpirationPolicyBuilder(), ticketRegistry,
+                servicesManager, descendantTicketsTrackingPolicy, casProperties);
             val refreshToken = expiringRefreshTokenFactory.create(service, authentication,
                 new MockTicketGrantingTicket("casuser"), new ArrayList<>(), registeredService.getClientId(), StringUtils.EMPTY, new HashMap<>(),
                 OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
@@ -861,7 +863,7 @@ class OAuth20AccessTokenEndpointControllerTests {
             val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
             mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.name().toLowerCase(Locale.ENGLISH));
             mockRequest.setParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
-            mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, CLIENT_SECRET);
+            mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecret());
             mockRequest.setParameter(OAuth20Constants.REFRESH_TOKEN, refreshToken.getId());
             val mockResponse = new MockHttpServletResponse();
             requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
@@ -873,7 +875,7 @@ class OAuth20AccessTokenEndpointControllerTests {
         @Test
         void verifyRefreshTokenBadCredentials() throws Throwable {
             val principal = createPrincipal();
-            val service = addRegisteredService(CollectionUtils.wrapSet(OAuth20GrantTypes.REFRESH_TOKEN));
+            val service = addRegisteredService(Set.of(OAuth20GrantTypes.REFRESH_TOKEN), UUID.randomUUID().toString(), randomServiceUrl());
             val refreshToken = addRefreshToken(principal, service);
 
             val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
@@ -891,7 +893,7 @@ class OAuth20AccessTokenEndpointControllerTests {
         @Test
         void verifyRefreshTokenEmptySecret() throws Throwable {
             val principal = createPrincipal();
-            val service = addRegisteredService(CollectionUtils.wrapSet(OAuth20GrantTypes.REFRESH_TOKEN), StringUtils.EMPTY);
+            val service = addRegisteredService(Set.of(OAuth20GrantTypes.REFRESH_TOKEN), UUID.randomUUID().toString(), StringUtils.EMPTY, randomServiceUrl());
             val refreshToken = addRefreshToken(principal, service);
 
             val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
@@ -908,12 +910,12 @@ class OAuth20AccessTokenEndpointControllerTests {
 
         @Test
         void verifyRefreshTokenMissingToken() throws Throwable {
-            val service = addRegisteredService(CollectionUtils.wrapSet(OAuth20GrantTypes.REFRESH_TOKEN));
+            val service = addRegisteredService(Set.of(OAuth20GrantTypes.REFRESH_TOKEN), UUID.randomUUID().toString(), randomServiceUrl());
 
             val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
             mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.name().toLowerCase(Locale.ENGLISH));
             mockRequest.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
-            mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, CLIENT_SECRET);
+            mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, service.getClientSecret());
             val mockResponse = new MockHttpServletResponse();
             requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
             val mv = accessTokenController.handleRequest(mockRequest, mockResponse);
@@ -924,16 +926,14 @@ class OAuth20AccessTokenEndpointControllerTests {
         @Test
         void verifyRefreshTokenOKWithExpiredTicketGrantingTicket() throws Throwable {
             val principal = createPrincipal();
-            val service = addRegisteredService(
-                CollectionUtils.wrapSet(OAuth20GrantTypes.REFRESH_TOKEN));
+            val service = addRegisteredService(Set.of(OAuth20GrantTypes.REFRESH_TOKEN), UUID.randomUUID().toString(), randomServiceUrl());
             val refreshToken = addRefreshToken(principal, service);
 
             refreshToken.getTicketGrantingTicket().markTicketExpired();
-
             val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
             mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.name().toLowerCase(Locale.ENGLISH));
             mockRequest.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
-            mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, CLIENT_SECRET);
+            mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, service.getClientSecret());
             mockRequest.setParameter(OAuth20Constants.REFRESH_TOKEN, refreshToken.getId());
             val mockResponse = new MockHttpServletResponse();
             requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
@@ -951,27 +951,27 @@ class OAuth20AccessTokenEndpointControllerTests {
 
         @Test
         void verifyRefreshTokenOK() throws Throwable {
-            val service = addRegisteredService(CollectionUtils.wrapSet(OAuth20GrantTypes.REFRESH_TOKEN));
+            val service = addRegisteredService(Set.of(OAuth20GrantTypes.REFRESH_TOKEN), UUID.randomUUID().toString(), randomServiceUrl());
             assertRefreshTokenOk(service);
         }
 
         @Test
         void verifyRefreshTokenOKCustomizedWithNullAuthentication() throws Throwable {
-            val registeredService = addRegisteredService(CollectionUtils.wrapSet(OAuth20GrantTypes.REFRESH_TOKEN));
+            val registeredService = addRegisteredService(Set.of(OAuth20GrantTypes.REFRESH_TOKEN), UUID.randomUUID().toString(), randomServiceUrl());
             val principal = createPrincipal();
             val factory = new WebApplicationServiceFactory();
             val service = factory.createService(registeredService.getServiceId());
             val refreshToken = defaultRefreshTokenFactory.create(service, null,
-                    new MockTicketGrantingTicket("casuser"),
-                    new ArrayList<>(), registeredService.getClientId(), StringUtils.EMPTY, new HashMap<>(),
-                    OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
+                new MockTicketGrantingTicket("casuser"),
+                new ArrayList<>(), registeredService.getClientId(), StringUtils.EMPTY, new HashMap<>(),
+                OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
             this.ticketRegistry.addTicket(refreshToken);
             assertRefreshTokenOk(registeredService, refreshToken, principal);
         }
 
         @Test
         void verifyRefreshTokenOKWithRefreshToken() throws Throwable {
-            val service = addRegisteredService(CollectionUtils.wrapSet(OAuth20GrantTypes.REFRESH_TOKEN));
+            val service = addRegisteredService(Set.of(OAuth20GrantTypes.REFRESH_TOKEN), UUID.randomUUID().toString(), randomServiceUrl());
             service.setGenerateRefreshToken(true);
             service.setRenewRefreshToken(true);
             assertRefreshTokenOk(service);
@@ -979,13 +979,13 @@ class OAuth20AccessTokenEndpointControllerTests {
 
         @Test
         void verifyJsonRefreshTokenOK() throws Throwable {
-            val service = addRegisteredService(CollectionUtils.wrapSet(OAuth20GrantTypes.REFRESH_TOKEN));
+            val service = addRegisteredService(Set.of(OAuth20GrantTypes.REFRESH_TOKEN), UUID.randomUUID().toString(), randomServiceUrl());
             assertRefreshTokenOk(service);
         }
 
         @Test
         void verifyJsonRefreshTokenOKWithRefreshToken() throws Throwable {
-            val service = addRegisteredService(CollectionUtils.wrapSet(OAuth20GrantTypes.REFRESH_TOKEN));
+            val service = addRegisteredService(Set.of(OAuth20GrantTypes.REFRESH_TOKEN), UUID.randomUUID().toString(), randomServiceUrl());
             service.setGenerateRefreshToken(true);
             service.setRenewRefreshToken(true);
             assertRefreshTokenOk(service);
@@ -993,14 +993,14 @@ class OAuth20AccessTokenEndpointControllerTests {
 
         @Test
         void verifyAccessTokenRequestWithRefreshTokenCannotExceedScopes() throws Throwable {
-            val service = addRegisteredService(CollectionUtils.wrapSet(OAuth20GrantTypes.REFRESH_TOKEN));
+            val service = addRegisteredService(Set.of(OAuth20GrantTypes.REFRESH_TOKEN), UUID.randomUUID().toString(), randomServiceUrl());
             val principal = createPrincipal();
             val refreshToken = addRefreshTokenWithScope(principal, List.of("profile"), service);
 
             val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
             mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.name().toLowerCase(Locale.ENGLISH));
             mockRequest.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
-            mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, CLIENT_SECRET);
+            mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, service.getClientSecret());
             mockRequest.setParameter(OAuth20Constants.REFRESH_TOKEN, refreshToken.getId());
             mockRequest.setParameter(OAuth20Constants.SCOPE, "email");
 
@@ -1055,7 +1055,7 @@ class OAuth20AccessTokenEndpointControllerTests {
             val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
             mockRequest.setParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
             if (withClientSecret) {
-                mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, CLIENT_SECRET);
+                mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecret());
             }
             mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.PASSWORD.name().toLowerCase(Locale.ENGLISH));
             mockRequest.setParameter(USERNAME, GOOD_USERNAME);

@@ -1,15 +1,16 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
-import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
+import java.nio.file.Files;
 import java.util.Set;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,19 +22,18 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("RegisteredService")
 class DefaultRegisteredServiceAuthenticationPolicyTests {
-    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "ServiceAuthenticationPolicy.json");
-
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
     private static void verify(final RegisteredServiceAuthenticationPolicyCriteria criteria) throws Exception {
-        var svc = RegisteredServiceTestUtils.getRegisteredService("serviceidauth");
+        val jsonFile = Files.createTempFile(RandomUtils.randomAlphabetic(8), ".json").toFile();
+        var svc = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
         val policy = new DefaultRegisteredServiceAuthenticationPolicy();
         policy.setRequiredAuthenticationHandlers(Set.of("handler1", "handler2"));
         policy.setCriteria(criteria);
         svc.setAuthenticationPolicy(policy);
-        MAPPER.writerWithDefaultPrettyPrinter().writeValue(JSON_FILE, svc);
-        val svc2 = MAPPER.readValue(JSON_FILE, BaseRegisteredService.class);
+        MAPPER.writerWithDefaultPrettyPrinter().writeValue(jsonFile, svc);
+        val svc2 = MAPPER.readValue(jsonFile, BaseRegisteredService.class);
         assertEquals(svc, svc2);
     }
 
@@ -58,7 +58,7 @@ class DefaultRegisteredServiceAuthenticationPolicyTests {
     }
 
     @Test
-    void verifyRestfulerializeToJson() throws Throwable {
+    void verifyRestfulSerializeToJson() throws Throwable {
         val criteria = new RestfulRegisteredServiceAuthenticationPolicyCriteria();
         criteria.setUrl("https://example.org");
         verify(criteria);

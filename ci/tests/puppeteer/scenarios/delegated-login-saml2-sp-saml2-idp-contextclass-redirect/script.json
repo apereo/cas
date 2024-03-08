@@ -14,9 +14,6 @@
     "--cas.server.prefix=https://localhost:8443/cas",
     "--cas.server.scope=example.net",
     
-    "--cas.audit.engine.enabled=true",
-    "--cas.audit.slf4j.use-single-line=true",
-    
     "--cas.authn.accept.name=STATIC",
 
     "--logging.level.org.apereo.cas=info",
@@ -38,7 +35,4 @@
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",
   "readyScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/ready.sh"
 }
-
-
-
 

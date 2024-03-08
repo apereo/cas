@@ -253,8 +253,8 @@ public class MongoDbConnectionFactory {
                 })
                 .applyToSocketSettings(builder -> {
                     val socket = SocketSettings.builder()
-                        .connectTimeout((int) Beans.newDuration(mongo.getTimeout()).toMillis(), TimeUnit.MILLISECONDS)
-                        .readTimeout((int) Beans.newDuration(mongo.getTimeout()).toMillis(), TimeUnit.MILLISECONDS)
+                        .connectTimeout(Beans.newDuration(mongo.getTimeout()).toMillis(), TimeUnit.MILLISECONDS)
+                        .readTimeout(Beans.newDuration(mongo.getTimeout()).toMillis(), TimeUnit.MILLISECONDS)
                         .build();
                     builder.applySettings(socket);
                 })

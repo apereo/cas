@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const assert = require("assert");
 const cas = require("../../cas.js");
 
@@ -8,9 +8,9 @@ async function verifyNormalFlows(page) {
 
     await cas.goto(page, url);
     await cas.logPage(page);
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.loginWith(page);
-    await page.waitForTimeout(3000);
+    await cas.sleep(3000);
 
     const code = await cas.assertParameter(page, "code");
     await cas.log(`OAuth code ${code}`);
@@ -34,7 +34,6 @@ async function verifyNormalFlows(page) {
     });
     assert(accessToken !== undefined);
     assert(refreshToken !== undefined);
-
 
     const value = "client:secret";
     const buff = Buffer.alloc(value.length, value);
@@ -103,9 +102,9 @@ async function verifyJwtAccessToken(page) {
 
     await cas.goto(page, url);
     await cas.logPage(page);
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.loginWith(page);
-    await page.waitForTimeout(4000);
+    await cas.sleep(4000);
 
     const code = await cas.assertParameter(page, "code");
     await cas.log(`OAuth code ${code}`);
@@ -128,7 +127,6 @@ async function verifyJwtAccessToken(page) {
         });
     assert(accessToken !== undefined);
     assert(refreshToken !== undefined);
-
 
     await cas.doGet("https://localhost:8443/cas/oidc/jwks",
         (res) => {
@@ -157,14 +155,14 @@ async function verifyJwtAccessToken(page) {
 }
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     try {
-        let context = await browser.createIncognitoBrowserContext();
+        let context = await browser.createBrowserContext();
         let page = await cas.newPage(context);
         await verifyNormalFlows(page);
         await context.close();
 
-        context = await browser.createIncognitoBrowserContext();
+        context = await browser.createBrowserContext();
         page = await cas.newPage(context);
         await verifyJwtAccessToken(page);
         await context.close();

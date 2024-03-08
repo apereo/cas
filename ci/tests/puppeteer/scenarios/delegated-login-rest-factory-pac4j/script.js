@@ -1,8 +1,8 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const properties = {
         callbackUrl: "https://localhost:8443/cas/login",
         properties: {
@@ -18,7 +18,7 @@ const cas = require("../../cas.js");
     const mockServer = await cas.mockJsonServer(payload, 5432);
     const page = await cas.newPage(browser);
     await cas.gotoLogin(page);
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.assertVisibility(page, "#loginProviders");
     await cas.assertVisibility(page, "li #CasClient");
     mockServer.stop();

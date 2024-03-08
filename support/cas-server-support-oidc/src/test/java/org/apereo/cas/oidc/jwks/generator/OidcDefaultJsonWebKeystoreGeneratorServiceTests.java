@@ -28,7 +28,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("OIDC")
-@SuppressWarnings("JavaUtilDate")
 class OidcDefaultJsonWebKeystoreGeneratorServiceTests {
     static {
         System.setProperty(CasConfigurationJasyptCipherExecutor.JasyptEncryptionParameters.PASSWORD.getPropertyName(), "P@$$w0rd");

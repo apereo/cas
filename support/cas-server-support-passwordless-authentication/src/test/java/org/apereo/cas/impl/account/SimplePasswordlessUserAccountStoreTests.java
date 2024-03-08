@@ -1,5 +1,6 @@
 package org.apereo.cas.impl.account;
 
+import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.impl.BasePasswordlessUserAccountStoreTests;
 
@@ -29,7 +30,13 @@ class SimplePasswordlessUserAccountStoreTests extends BasePasswordlessUserAccoun
 
     @Test
     void verifyAction() throws Throwable {
-        assertTrue(passwordlessUserAccountStore.findUser("casuser").isPresent());
-        assertTrue(passwordlessUserAccountStore.findUser("other").isEmpty());
+        assertTrue(passwordlessUserAccountStore.findUser(PasswordlessAuthenticationRequest
+            .builder()
+            .username("casuser")
+            .build()).isPresent());
+        assertTrue(passwordlessUserAccountStore.findUser(PasswordlessAuthenticationRequest
+            .builder()
+            .username("other")
+            .build()).isEmpty());
     }
 }

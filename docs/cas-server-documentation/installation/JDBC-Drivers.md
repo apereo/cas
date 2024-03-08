@@ -27,7 +27,7 @@ language. It provides a framework for mapping an object-oriented domain model to
 
 ### EclipseLink
 
-[EclipseLink](https://www.eclipse.org/eclipselink/) is the open source Eclipse Persistence Services Project from the 
+[EclipseLink](https://projects.eclipse.org/projects/ee4j.eclipselink) is the open source Eclipse Persistence Services Project from the 
 Eclipse Foundation. The software provides an extensible framework that allows 
 Java developers to interact with various data services, including databases, 
 web services, Object XML mapping, and enterprise information systems.

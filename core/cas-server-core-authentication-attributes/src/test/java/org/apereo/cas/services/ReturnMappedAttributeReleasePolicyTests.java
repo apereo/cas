@@ -403,7 +403,7 @@ class ReturnMappedAttributeReleasePolicyTests {
             IntStream.range(0, 1000).forEach(Unchecked.intConsumer(count -> {
                 val future = service.submit(Unchecked.runnable(() -> {
                     val principalAttributes = new HashMap<String, List<Object>>();
-                    val uid = "user" + count;
+                    val uid = "user%d".formatted(count);
                     principalAttributes.put("uid", List.of(uid));
                     principalAttributes.put("fiscalNumber", List.of(uid + '-' + RandomUtils.randomAlphabetic(9)));
                     val principal = CoreAttributesTestUtils.getPrincipal(uid, principalAttributes);

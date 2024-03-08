@@ -1,6 +1,8 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.monitor.Monitorable;
+import org.apereo.cas.ticket.ServiceAwareTicket;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
@@ -11,11 +13,9 @@ import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import com.mongodb.client.MongoCollection;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
@@ -27,7 +27,6 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.TextCriteria;
 import org.springframework.data.mongodb.core.query.TextQuery;
 import org.springframework.data.mongodb.core.query.Update;
-
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Collection;
@@ -271,12 +270,14 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             .stream()
             .map(this::getTicketCollectionInstanceByMetadata)
             .flatMap(map -> {
-                val limit = criteria.getCount() != null ? Limit.of(criteria.getCount().intValue()) : Limit.unlimited();
+                val limit = criteria.getCount() > 0 ? Limit.of(Long.valueOf(criteria.getCount()).intValue()) : Limit.unlimited();
                 val query = new Query().limit(limit);
                 return mongoTemplate.stream(query, MongoDbTicketDocument.class, map);
             })
+            .filter(document -> StringUtils.isBlank(criteria.getPrincipal())
+                || StringUtils.equalsIgnoreCase(criteria.getPrincipal(), document.getPrincipal()))
             .map(document -> {
-                if (BooleanUtils.isTrue(criteria.getDecode())) {
+                if (criteria.isDecode()) {
                     val ticket = decodeTicket(deserializeTicket(document.getJson(), document.getType()));
                     return ticket != null ? !ticket.isExpired() : null;
                 }
@@ -284,6 +285,25 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             })
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
+    }
+
+
+    @Override
+    public long countTicketsFor(final Service service) {
+        return ticketCatalog
+            .findAll()
+            .stream()
+            .map(this::getTicketCollectionInstanceByMetadata)
+            .flatMap(map -> {
+                val query = new Query(Criteria.where(MongoDbTicketDocument.FIELD_NAME_SERVICE).is(service.getId()));
+                return mongoTemplate.stream(query, MongoDbTicketDocument.class, map);
+            })
+            .map(document -> {
+                val ticket = decodeTicket(deserializeTicket(document.getJson(), document.getType()));
+                return ticket != null ? !ticket.isExpired() : null;
+            })
+            .filter(Objects::nonNull)
+            .count();
     }
 
     protected long countTicketsByTicketType(final Class<? extends Ticket> ticketType) {
@@ -297,7 +317,6 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
 
     protected MongoDbTicketDocument buildTicketAsDocument(final Ticket ticket) throws Throwable {
         val encTicket = encodeTicket(ticket);
-
         val json = serializeTicket(encTicket);
         FunctionUtils.throwIf(StringUtils.isBlank(json),
             () -> new IllegalArgumentException("Ticket " + ticket.getId() + " cannot be serialized to JSON"));
@@ -308,12 +327,14 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
         LOGGER.trace("Calculated expiration date for ticket ttl as [{}]", expireAt);
 
         val principal = getPrincipalIdFrom(ticket);
-        return MongoDbTicketDocument.builder()
+        return MongoDbTicketDocument
+            .builder()
             .expireAt(expireAt)
             .type(encTicket.getClass().getName())
             .ticketId(encTicket.getId())
             .json(json)
             .principal(digestIdentifier(principal))
+            .service(ticket instanceof final ServiceAwareTicket sat && Objects.nonNull(sat.getService()) ? sat.getService().getId() : null)
             .attributes(collectAndDigestTicketAttributes(ticket))
             .build();
     }

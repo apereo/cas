@@ -64,8 +64,10 @@ webapp/resources/static/js/*-bundle.js
 ci/tests/puppeteer/package-*.json
 ci/tests/puppeteer/overlay
 ci/tests/puppeteer/scenarios/**/screenshot*.png
+ci/tests/puppeteer/screenshots/**/*.png
 ci/tests/puppeteer/**/screenshot*.png
 ci/tests/puppeteer/**/*.jwks
+ci/tests/puppeteer/chromium/user-data-dir
 ci/tests/puppeteer/scenarios/pac4j-delegated-login-saml2-shibidp/shibcasauthn
 ci/tests/puppeteer/scenarios/pac4j-delegated-login-saml2-shibidp/saml-md
 ci/tests/puppeteer/scenarios/wsfed-idp-login/wsfed-sp/

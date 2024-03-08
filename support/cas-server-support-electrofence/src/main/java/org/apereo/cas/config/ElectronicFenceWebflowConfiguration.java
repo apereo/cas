@@ -163,6 +163,7 @@ class ElectronicFenceWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public HandlerAdapter riskVerificationWebflowHandlerAdapter(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("riskVerificationFlowExecutor") final FlowExecutor riskVerificationFlowExecutor) {
             val handler = new CasFlowHandlerAdapter(CasWebflowConfigurer.FLOW_ID_RISK_VERIFICATION);
             handler.setFlowExecutor(riskVerificationFlowExecutor);

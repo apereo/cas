@@ -70,6 +70,7 @@ class MongoDbTicketRegistryTests extends BaseTicketRegistryTests {
     @RepeatedTest(2)
     void verifyUpdateFirstAndClean() throws Throwable {
         val originalAuthn = CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString());
+        val ticketGrantingTicketId = TestTicketIdentifiers.generate().ticketGrantingTicketId();
         val result = newTicketRegistry.updateTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId,
             originalAuthn, NeverExpiresExpirationPolicy.INSTANCE));
         assertNull(result);

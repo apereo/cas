@@ -1,11 +1,11 @@
-const puppeteer = require("puppeteer");
+
 const assert = require("assert");
 const cas = require("../../cas.js");
 const fs = require("fs");
 const request = require("request");
 
 (async () => {
-    let browser = await puppeteer.launch(cas.browserOptions());
+    let browser = await cas.newBrowser(cas.browserOptions());
     let page = await cas.newPage(browser);
     await cas.gotoLogin(page);
     await cas.loginWith(page, "aburr", "P@ssw0rd");
@@ -17,13 +17,12 @@ const request = require("request");
     assert(attributesldap.includes("ldap-dn"));
     await browser.close();
 
-    browser = await puppeteer.launch(cas.browserOptions());
+    browser = await cas.newBrowser(cas.browserOptions());
     page = await cas.newPage(browser);
 
     await page.setRequestInterception(true);
     const args = process.argv.slice(2);
     const config = JSON.parse(fs.readFileSync(args[0]));
-
 
     await cas.log(`Certificate file: ${config.trustStoreCertificateFile}`);
     await cas.log(`Private key file: ${config.trustStorePrivateKeyFile}`);
@@ -58,7 +57,7 @@ const request = require("request");
     });
 
     await cas.gotoLogin(page);
-    await page.waitForTimeout(5000);
+    await cas.sleep(5000);
 
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
     await cas.assertInnerTextContains(page, "#content div p", "1234567890@college.edu");

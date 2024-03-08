@@ -51,7 +51,7 @@ public interface SurrogateAuthenticationService {
      * @return true if the given surrogate can authenticate as the user
      * @throws Throwable the throwable
      */
-    default boolean canImpersonate(final String surrogate, final Principal principal, final Optional<Service> service) throws Throwable {
+    default boolean canImpersonate(final String surrogate, final Principal principal, final Optional<? extends Service> service) throws Throwable {
         return false;
     }
 
@@ -59,31 +59,34 @@ public interface SurrogateAuthenticationService {
      * Gets a collection of account names a surrogate can authenticate as.
      *
      * @param username The username of the surrogate
+     * @param service  the service
      * @return collection of usernames
      * @throws Throwable the throwable
      */
-    Collection<String> getImpersonationAccounts(String username) throws Throwable;
+    Collection<String> getImpersonationAccounts(String username, Optional<? extends Service> service) throws Throwable;
 
     /**
      * Is wildcarded account authorized?.
      *
      * @param surrogate the surrogate
      * @param principal the principal
+     * @param service   the service
      * @return true /false
      * @throws Throwable the throwable
      */
-    default boolean isWildcardedAccount(final String surrogate, final Principal principal) throws Throwable{
-        val accounts = getImpersonationAccounts(principal.getId());
-        return isWildcardedAccount(accounts);
+    default boolean isWildcardedAccount(final String surrogate, final Principal principal, final Optional<? extends Service> service) throws Throwable{
+        val accounts = getImpersonationAccounts(principal.getId(), service);
+        return isWildcardedAccount(accounts, service);
     }
 
     /**
      * Is wildcarded account acepted and found in the given accounts?.
      *
      * @param accounts the accounts
-     * @return true/false
+     * @param service  the service
+     * @return true /false
      */
-    default boolean isWildcardedAccount(final Collection<String> accounts) {
+    default boolean isWildcardedAccount(final Collection<String> accounts, final Optional<? extends Service> service) {
         return accounts.size() == 1 && accounts.contains(SurrogateAuthenticationService.WILDCARD_ACCOUNT);
     }
 }

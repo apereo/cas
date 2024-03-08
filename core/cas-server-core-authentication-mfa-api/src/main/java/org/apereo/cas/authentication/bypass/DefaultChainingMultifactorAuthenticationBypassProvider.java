@@ -9,9 +9,10 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -27,13 +28,14 @@ import java.util.Optional;
  * @since 5.3.4
  */
 @Getter
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class DefaultChainingMultifactorAuthenticationBypassProvider implements ChainingMultifactorAuthenticationProviderBypassEvaluator {
     @Serial
     private static final long serialVersionUID = 2397239625822397286L;
 
-    private final List<MultifactorAuthenticationProviderBypassEvaluator> multifactorAuthenticationProviderBypassEvaluators
-        = new ArrayList<>(0);
+    private final ConfigurableApplicationContext applicationContext;
+
+    private final List<MultifactorAuthenticationProviderBypassEvaluator> multifactorAuthenticationProviderBypassEvaluators = new ArrayList<>(0);
 
     @Audit(action = AuditableActions.MULTIFACTOR_AUTHENTICATION_BYPASS,
         actionResolverName = AuditActionResolvers.MULTIFACTOR_AUTHENTICATION_BYPASS_ACTION_RESOLVER,
@@ -111,14 +113,14 @@ public class DefaultChainingMultifactorAuthenticationBypassProvider implements C
 
     @Override
     public MultifactorAuthenticationProviderBypassEvaluator filterMultifactorAuthenticationProviderBypassEvaluatorsBy(final String providerId) {
-        val chain = new DefaultChainingMultifactorAuthenticationBypassProvider();
+        val chain = new DefaultChainingMultifactorAuthenticationBypassProvider(applicationContext);
         multifactorAuthenticationProviderBypassEvaluators
             .stream()
             .filter(bp -> bp.belongsToMultifactorAuthenticationProvider(providerId).isPresent())
             .forEach(chain::addMultifactorAuthenticationProviderBypassEvaluator);
 
         if (chain.isEmpty()) {
-            return NeverAllowMultifactorAuthenticationProviderBypassEvaluator.getInstance();
+            return new NeverAllowMultifactorAuthenticationProviderBypassEvaluator(applicationContext);
         }
         return chain;
     }

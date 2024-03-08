@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const path = require("path");
 const cas = require("../../cas.js");
 const assert = require("assert");
@@ -8,7 +8,7 @@ async function cleanUp() {
 }
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     const response = await cas.goto(page, "https://localhost:8443/cas/idp/metadata");
     await cas.log(`${response.status()} ${response.statusText()}`);
@@ -24,7 +24,7 @@ async function cleanUp() {
 
         await cas.log(`Navigating to ${url}`);
         await cas.goto(page, url);
-        await page.waitForTimeout(5000);
+        await cas.sleep(5000);
 
         const resultUrl = await page.url();
         await cas.logg(`Page url: ${resultUrl}`);
@@ -34,12 +34,11 @@ async function cleanUp() {
         await cas.gotoLogin(page);
         await cas.assertCookie(page);
         await cas.assertInnerText(page, "#content div h2", "Log In Successful");
-        await page.waitForTimeout(1000);
+        await cas.sleep(1000);
         
         await browser.close();
         await cleanUp();
     }, async (error) => {
-        await cleanUp();
         await cas.log(error);
         throw error;
     });

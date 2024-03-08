@@ -5,7 +5,7 @@
     "--cas.server.prefix=${cas.server.name}/cas",
     "--cas.authn.core.engine.groovy-post-processor.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/GroovyPostProcessor.groovy",
     "--cas.service-registry.core.init-from-json=true",
-    "--cas.audit.slf4j.use-single-line=true",
+
     "--cas.audit.engine.audit-format=JSON"
   ],
   "buildScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/include.gradle"

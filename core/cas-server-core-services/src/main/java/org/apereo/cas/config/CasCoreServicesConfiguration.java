@@ -10,7 +10,6 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceResponseBuilder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.configuration.model.core.services.ServiceRegistryCoreProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.services.ChainingServiceRegistry;
@@ -39,8 +38,6 @@ import org.apereo.cas.services.ServicesManagerConfigurationContext;
 import org.apereo.cas.services.ServicesManagerExecutionPlanConfigurer;
 import org.apereo.cas.services.ServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.services.ServicesManagerScheduledLoader;
-import org.apereo.cas.services.domain.DefaultDomainAwareServicesManager;
-import org.apereo.cas.services.domain.DefaultRegisteredServiceDomainExtractor;
 import org.apereo.cas.services.mgmt.DefaultChainingServicesManager;
 import org.apereo.cas.services.mgmt.DefaultServicesManager;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
@@ -282,6 +279,7 @@ class CasCoreServicesConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ServicesManagerConfigurationContext servicesManagerConfigurationContext(
+            final CasConfigurationProperties casProperties,
             @Qualifier(RegisteredServicesTemplatesManager.BEAN_NAME)
             final RegisteredServicesTemplatesManager registeredServicesTemplatesManager,
             @Qualifier(ServiceRegistry.BEAN_NAME)
@@ -291,15 +289,18 @@ class CasCoreServicesConfiguration {
             final List<ServicesManagerRegisteredServiceLocator> servicesManagerRegisteredServiceLocators,
             final Environment environment,
             final ConfigurableApplicationContext applicationContext) {
+
             AnnotationAwareOrderComparator.sortIfNecessary(servicesManagerRegisteredServiceLocators);
             val activeProfiles = Arrays.stream(environment.getActiveProfiles()).collect(Collectors.toSet());
-            return ServicesManagerConfigurationContext.builder()
+            return ServicesManagerConfigurationContext
+                .builder()
                 .serviceRegistry(serviceRegistry)
                 .applicationContext(applicationContext)
                 .environments(activeProfiles)
                 .servicesCache(servicesManagerCache)
                 .registeredServicesTemplatesManager(registeredServicesTemplatesManager)
                 .registeredServiceLocators(servicesManagerRegisteredServiceLocators)
+                .casProperties(casProperties)
                 .build();
         }
 
@@ -308,18 +309,9 @@ class CasCoreServicesConfiguration {
         @ConditionalOnMissingBean(name = "defaultServicesManagerExecutionPlanConfigurer")
         public ServicesManagerExecutionPlanConfigurer defaultServicesManagerExecutionPlanConfigurer(
             final CasConfigurationProperties casProperties,
-            @Qualifier("servicesManagerConfigurationContext")
+            @Qualifier(ServicesManagerConfigurationContext.BEAN_NAME)
             final ServicesManagerConfigurationContext configurationContext) {
-            return BeanSupplier.of(ServicesManagerExecutionPlanConfigurer.class)
-                .alwaysMatch()
-                .supply(() -> {
-                    val managementType = casProperties.getServiceRegistry().getCore().getManagementType();
-                    if (managementType == ServiceRegistryCoreProperties.ServiceManagementTypes.DOMAIN) {
-                        return () -> new DefaultDomainAwareServicesManager(configurationContext, new DefaultRegisteredServiceDomainExtractor());
-                    }
-                    return () -> new DefaultServicesManager(configurationContext);
-                })
-                .get();
+            return () -> new DefaultServicesManager(configurationContext);
         }
 
         @Bean

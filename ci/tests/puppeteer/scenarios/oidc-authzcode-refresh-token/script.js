@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 const assert = require("assert");
 
@@ -7,13 +7,13 @@ async function fetchRefreshToken(page, clientId, redirectUrl) {
 
     await cas.log(`Navigating to ${url}`);
     await cas.goto(page, url);
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.loginWith(page);
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
 
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
-        await page.waitForNavigation();
+        await cas.waitForNavigation(page);
     }
 
     const code = await cas.assertParameter(page, "code");
@@ -64,7 +64,7 @@ async function exchangeToken(refreshToken, clientId, successHandler, errorHandle
 }
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
 
     await cas.logg("Fetching first refresh token");
@@ -109,7 +109,7 @@ async function exchangeToken(refreshToken, clientId, successHandler, errorHandle
         });
 
     await cas.log("Let's wait 5 seconds for the TGT to expire, RTs should be still alive");
-    await page.waitForTimeout(5000);
+    await cas.sleep(5000);
 
     await exchangeToken(refreshToken1, "client",
         (res) => {

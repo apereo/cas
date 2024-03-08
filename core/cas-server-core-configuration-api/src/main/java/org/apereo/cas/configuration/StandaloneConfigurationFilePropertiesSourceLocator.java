@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
 import org.apereo.cas.configuration.loader.ConfigurationPropertiesLoaderFactory;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -25,6 +26,7 @@ import java.util.Optional;
  */
 @RequiredArgsConstructor
 @Order(Ordered.HIGHEST_PRECEDENCE)
+@Slf4j
 public class StandaloneConfigurationFilePropertiesSourceLocator implements CasConfigurationPropertiesSourceLocator {
     private final ConfigurationPropertiesLoaderFactory configurationPropertiesLoaderFactory;
 
@@ -32,6 +34,7 @@ public class StandaloneConfigurationFilePropertiesSourceLocator implements CasCo
     public Optional<PropertySource<?>> locate(final Environment environment, final ResourceLoader resourceLoader) {
         val compositePropertySource = new CompositePropertySource(getClass().getSimpleName());
         val configFile = CasConfigurationPropertiesSourceLocator.getStandaloneProfileConfigurationFile(environment);
+        LOGGER.info("Loading standalone configuration properties from [{}]", configFile);
         if (configFile != null) {
             val sourceStandalone = loadSettingsFromStandaloneConfigFile(configFile);
             compositePropertySource.addPropertySource(sourceStandalone);

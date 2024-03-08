@@ -17,7 +17,10 @@ dependencies {
     implementation project(":core:cas-server-core-configuration-api")
 
     implementation libraries.log4j
-    
+
+    testImplementation project(":core:cas-server-core-cookie")
+    testImplementation project(":core:cas-server-core-tickets")
+
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
 }

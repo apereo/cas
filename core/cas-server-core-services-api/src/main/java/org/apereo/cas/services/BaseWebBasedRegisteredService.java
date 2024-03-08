@@ -26,4 +26,8 @@ public abstract class BaseWebBasedRegisteredService extends BaseRegisteredServic
     private RegisteredServiceSingleSignOnParticipationPolicy singleSignOnParticipationPolicy;
 
     private RegisteredServiceWebflowInterruptPolicy webflowInterruptPolicy = new DefaultRegisteredServiceWebflowInterruptPolicy();
+
+    private RegisteredServicePasswordlessPolicy passwordlessPolicy = new DefaultRegisteredServicePasswordlessPolicy();
+
+    private RegisteredServiceSurrogatePolicy surrogatePolicy = new DefaultRegisteredServiceSurrogatePolicy();
 }

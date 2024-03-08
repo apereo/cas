@@ -1,11 +1,12 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.gotoLogin(page, "https://apereo.github.io");
     await cas.loginWith(page);
+    await cas.sleep(1000);
     await cas.assertTextContent(page, "#content h1", "Authentication Interrupt");
     await cas.assertTextContentStartsWith(page, "#content p", "The authentication flow has been interrupted");
     await cas.assertTextContent(page, "#interruptMessage", "We interrupted your login");
@@ -19,7 +20,7 @@ const cas = require("../../cas.js");
     await cas.assertInvisibility(page, "#cancel");
     await cas.submitForm(page, "#fm1");
     await cas.logPage(page);
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.assertTicketParameter(page);
 
     await cas.log("Attempt to log into the application again with the same user");
@@ -39,7 +40,7 @@ const cas = require("../../cas.js");
     await cas.assertTextContent(page, "#content h1", "Authentication Interrupt");
     await cas.assertTextContentStartsWith(page, "#content p", "The authentication flow has been interrupted");
     await cas.assertTextContent(page, "#interruptMessage", "You are blocked");
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.logPage(page);
     await cas.assertCookie(page);
     await cas.assertInvisibility(page, "#fm1");
@@ -56,7 +57,7 @@ const cas = require("../../cas.js");
         `;
     });
     await cas.submitForm(page, "#fmblocked", undefined, 200);
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.assertInnerText(page, "#content h2", "Application Not Authorized to Use CAS");
     await cas.logPage(page);
 

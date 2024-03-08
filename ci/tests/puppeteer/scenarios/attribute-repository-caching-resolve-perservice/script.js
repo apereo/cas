@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const assert = require("assert");
 const cas = require("../../cas.js");
 const fs = require("fs");
@@ -14,7 +14,7 @@ const path = require("path");
             throw error;
         }, { "Content-Type": "application/json" });
 
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     const service = "https://apereo.github.io";
     await cas.gotoLogin(page, service);

@@ -35,11 +35,11 @@ class CredentialMultifactorAuthenticationProviderBypassEvaluatorTests {
 
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
 
-        val eval = new DefaultChainingMultifactorAuthenticationBypassProvider();
+        val eval = new DefaultChainingMultifactorAuthenticationBypassProvider(applicationContext);
         val bypassProps = new MultifactorAuthenticationProviderBypassProperties();
         bypassProps.setCredentialClassType(UsernamePasswordCredential.class.getName());
         eval.addMultifactorAuthenticationProviderBypassEvaluator(
-            new CredentialMultifactorAuthenticationProviderBypassEvaluator(bypassProps, TestMultifactorAuthenticationProvider.ID));
+            new CredentialMultifactorAuthenticationProviderBypassEvaluator(bypassProps, TestMultifactorAuthenticationProvider.ID, applicationContext));
 
         val principal = CoreAuthenticationTestUtils.getPrincipal(Map.of("cn", List.of("example")));
         val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);

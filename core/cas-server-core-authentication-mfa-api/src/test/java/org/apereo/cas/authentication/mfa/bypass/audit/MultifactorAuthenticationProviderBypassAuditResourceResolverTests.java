@@ -37,7 +37,7 @@ class MultifactorAuthenticationProviderBypassAuditResourceResolverTests {
             TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext)
         };
         when(jp.getArgs()).thenReturn(args);
-        when(jp.getTarget()).thenReturn(AlwaysAllowMultifactorAuthenticationProviderBypassEvaluator.getInstance());
+        when(jp.getTarget()).thenReturn(new AlwaysAllowMultifactorAuthenticationProviderBypassEvaluator(applicationContext));
         val outcome = resolver.resolveFrom(jp, new Object());
         assertTrue(outcome.length > 0);
         assertNotNull(resolver.resolveFrom(jp, new RuntimeException("failed")));
@@ -61,7 +61,7 @@ class MultifactorAuthenticationProviderBypassAuditResourceResolverTests {
             TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext)
         };
         when(jp.getArgs()).thenReturn(args);
-        when(jp.getTarget()).thenReturn(AlwaysAllowMultifactorAuthenticationProviderBypassEvaluator.getInstance());
+        when(jp.getTarget()).thenReturn(new AlwaysAllowMultifactorAuthenticationProviderBypassEvaluator(applicationContext));
         val outcome = resolver.resolveFrom(jp, new Object());
         assertTrue(outcome.length > 0);
         assertNotNull(resolver.resolveFrom(jp, new RuntimeException("failed")));

@@ -6,7 +6,6 @@
     "--cas.server.prefix=${cas.server.name}/cas",
 
     "--cas.service-registry.core.init-from-json=false",
-    "--cas.audit.slf4j.use-single-line=true",
 
     "--cas.service-registry.git.root-directory=production",
     "--cas.service-registry.git.repository-url=https://github.com/mmoayyed/sample-data",

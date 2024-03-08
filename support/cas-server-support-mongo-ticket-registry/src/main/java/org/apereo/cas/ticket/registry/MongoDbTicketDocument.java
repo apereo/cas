@@ -53,6 +53,11 @@ public class MongoDbTicketDocument implements Serializable {
     public static final String FIELD_NAME_PRINCIPAL = "principal";
 
     /**
+     * Field name to hold the service url.
+     */
+    public static final String FIELD_NAME_SERVICE = "service";
+
+    /**
      * Field name to hold the principal/authentication attributes.
      */
     public static final String FIELD_NAME_ATTRIBUTES = "attributes";
@@ -71,6 +76,9 @@ public class MongoDbTicketDocument implements Serializable {
 
     @JsonProperty
     private String principal;
+
+    @JsonProperty
+    private String service;
 
     @JsonProperty
     private Map<String, ?> attributes;

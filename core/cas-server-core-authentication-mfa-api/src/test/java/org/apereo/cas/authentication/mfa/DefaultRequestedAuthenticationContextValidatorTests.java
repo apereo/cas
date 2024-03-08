@@ -77,7 +77,7 @@ class DefaultRequestedAuthenticationContextValidatorTests {
 
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         val props = MultifactorAuthenticationTestUtils.getAuthenticationBypassProperties();
-        val bypass = new AuthenticationMultifactorAuthenticationProviderBypassEvaluator(props, provider.getId());
+        val bypass = new AuthenticationMultifactorAuthenticationProviderBypassEvaluator(props, provider.getId(), applicationContext);
         provider.setBypassEvaluator(bypass);
         val servicesManager = mock(ServicesManager.class);
         val validator = MultifactorAuthenticationTestUtils.mockRequestAuthnContextValidator(servicesManager,
@@ -110,7 +110,7 @@ class DefaultRequestedAuthenticationContextValidatorTests {
         casProperties.getAuthn().getMfa().getCore()
             .setGlobalFailureMode(BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.OPEN);
         val failureEvaluator = new DefaultMultifactorAuthenticationFailureModeEvaluator(casProperties);
-        val chainProvider = new DefaultChainingMultifactorAuthenticationProvider(failureEvaluator);
+        val chainProvider = new DefaultChainingMultifactorAuthenticationProvider(applicationContext, failureEvaluator);
 
         val provider1 = new TestMultifactorAuthenticationProvider("mfa-first");
         val provider2 = new TestMultifactorAuthenticationProvider("mfa-second");
@@ -139,7 +139,7 @@ class DefaultRequestedAuthenticationContextValidatorTests {
 
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         val props = MultifactorAuthenticationTestUtils.getAuthenticationBypassProperties();
-        val bypass = new AuthenticationMultifactorAuthenticationProviderBypassEvaluator(props, provider.getId());
+        val bypass = new AuthenticationMultifactorAuthenticationProviderBypassEvaluator(props, provider.getId(), applicationContext);
         provider.setBypassEvaluator(bypass);
         val servicesManager = mock(ServicesManager.class);
         val validator = MultifactorAuthenticationTestUtils.mockRequestAuthnContextValidator(servicesManager,
@@ -160,7 +160,7 @@ class DefaultRequestedAuthenticationContextValidatorTests {
         val props = new MultifactorAuthenticationProviderBypassProperties();
         props.setAuthenticationAttributeName("givenName");
         props.setAuthenticationAttributeValue("Not Bypassed");
-        val bypass = new AuthenticationMultifactorAuthenticationProviderBypassEvaluator(props, TestMultifactorAuthenticationProvider.ID);
+        val bypass = new AuthenticationMultifactorAuthenticationProviderBypassEvaluator(props, TestMultifactorAuthenticationProvider.ID, applicationContext);
         provider.setBypassEvaluator(bypass);
         val servicesManager = mock(ServicesManager.class);
         val validator = MultifactorAuthenticationTestUtils.mockRequestAuthnContextValidator(servicesManager,
@@ -182,7 +182,7 @@ class DefaultRequestedAuthenticationContextValidatorTests {
         val props = new MultifactorAuthenticationProviderBypassProperties();
         props.setAuthenticationAttributeName("givenName");
         props.setAuthenticationAttributeValue("Not Bypassed");
-        val bypass = new AuthenticationMultifactorAuthenticationProviderBypassEvaluator(props, TestMultifactorAuthenticationProvider.ID);
+        val bypass = new AuthenticationMultifactorAuthenticationProviderBypassEvaluator(props, TestMultifactorAuthenticationProvider.ID, applicationContext);
         provider.setBypassEvaluator(bypass);
         val servicesManager = mock(ServicesManager.class);
         val validator = MultifactorAuthenticationTestUtils.mockRequestAuthnContextValidator(servicesManager,

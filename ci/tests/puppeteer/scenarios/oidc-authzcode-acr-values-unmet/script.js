@@ -1,9 +1,9 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 const assert = require("assert");
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
 
     const redirectUrl = "https://apereo.github.io";
@@ -12,9 +12,9 @@ const assert = require("assert");
     url += "&nonce=3d3a7457f9ad3&state=1735fd6c43c14&acr_values=mfa-gauth";
     await cas.log(`Navigating to ${url}`);
     await cas.goto(page, url);
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.loginWith(page);
-    await page.waitForTimeout(2000);
+    await cas.sleep(2000);
     await cas.log(`Page URL: ${await page.url()}`);
     assert(await page.url() === "https://apereo.github.io/?error=unmet_authentication_requirements");
     await browser.close();

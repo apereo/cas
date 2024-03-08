@@ -7,18 +7,16 @@ import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.InMemoryResourceMetadataResolver;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
-import org.jooq.lambda.fi.util.function.CheckedFunction;
 import org.opensaml.core.xml.persist.FilesystemLoadSaveManager;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.AbstractMetadataResolver;
@@ -26,7 +24,6 @@ import org.opensaml.saml.metadata.resolver.impl.DefaultLocalDynamicSourceKeyGene
 import org.opensaml.saml.metadata.resolver.impl.LocalDynamicMetadataResolver;
 import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.FileSystemResource;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -49,24 +46,39 @@ public class FileSystemResourceMetadataResolver extends BaseSamlRegisteredServic
         resourceResolverName = AuditResourceResolvers.SAML2_METADATA_RESOLUTION_RESOURCE_RESOLVER)
     @Override
     public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
-        return FunctionUtils.doAndHandle(() -> {
-            val metadataLocation = SpringExpressionLanguageValueResolver.getInstance().resolve(service.getMetadataLocation());
-            LOGGER.info("Loading SAML metadata from [{}]", metadataLocation);
-            val metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
-            val metadataFile = metadataResource.getFile();
-            val metadataResolver = getMetadataResolver(metadataResource, metadataFile);
-            configureAndInitializeSingleMetadataResolver(metadataResolver, service);
-            return CollectionUtils.wrap(metadataResolver);
-        }, (CheckedFunction<Throwable, Collection<? extends MetadataResolver>>) throwable -> new ArrayList<>(0)).get();
+        val listOfResolvers = new ArrayList<MetadataResolver>();
+        try {
+            val metadataLocations = org.springframework.util.StringUtils.commaDelimitedListToSet(
+                SpringExpressionLanguageValueResolver.getInstance().resolve(service.getMetadataLocation())
+            );
+            for (val metadataLocation : metadataLocations) {
+                if (isMetadataFileSystemResource(metadataLocation)) {
+                    LOGGER.info("Loading SAML metadata from [{}]", metadataLocation);
+                    val metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
+                    val metadataFile = metadataResource.getFile();
+                    val metadataResolver = getMetadataResolver(metadataResource, metadataFile);
+                    configureAndInitializeSingleMetadataResolver(metadataResolver, service);
+                    listOfResolvers.add(metadataResolver);
+                }
+            }
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        }
+        return listOfResolvers;
     }
 
     @Override
     public boolean supports(final SamlRegisteredService service) {
         return FunctionUtils.doAndHandle(() -> {
             val metadataLocation = SpringExpressionLanguageValueResolver.getInstance().resolve(service.getMetadataLocation());
-            val metadataResource = ResourceUtils.isUrl(metadataLocation) ? null : ResourceUtils.getResourceFrom(metadataLocation);
-            return metadataResource instanceof FileSystemResource && !ScriptingUtils.isGroovyScript(metadataLocation);
+            val metadataLocations = org.springframework.util.StringUtils.commaDelimitedListToSet(metadataLocation);
+            return metadataLocations.stream().anyMatch(FileSystemResourceMetadataResolver::isMetadataFileSystemResource);
         }, throwable -> false).get();
+    }
+
+    private static boolean isMetadataFileSystemResource(final String location) {
+        val metadataResource = FunctionUtils.doUnchecked(() -> ResourceUtils.isUrl(location) ? null : ResourceUtils.getResourceFrom(location));
+        return metadataResource instanceof FileSystemResource && !ScriptingUtils.isGroovyScript(location);
     }
 
     @Override

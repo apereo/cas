@@ -11,7 +11,7 @@
 
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
-    "--cas.audit.engine.enabled=true",
+
     "--logging.level.org.apereo.cas=info",
     
     "--cas.service-registry.core.init-from-json=true",
@@ -47,5 +47,4 @@
   ],
   "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }
-
 

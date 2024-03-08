@@ -2,7 +2,6 @@
   "dependencies": "throttle",
 
   "properties": [
-    "--cas.audit.engine.enabled=true",
     
     "--cas.authn.throttle.failure.threshold=2",
     "--cas.authn.throttle.failure.range-seconds=10",
@@ -12,8 +11,4 @@
     "--logging.level.org.apereo.cas.web.support=debug"
   ]
 }
-
-
-
-
 

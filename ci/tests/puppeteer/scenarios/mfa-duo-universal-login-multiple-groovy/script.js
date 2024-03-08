@@ -1,28 +1,28 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     
     await login(page, "https://localhost:9859/anything/sample", "mfa-duo");
-    await page.waitForTimeout(2000);
+    await cas.sleep(2000);
 
     await login(page, "https://localhost:9859/anything/open", "mfa-duo-alt");
-    await page.waitForTimeout(2000);
+    await cas.sleep(2000);
 
     await browser.close();
 })();
 
 async function login(page, service, providerId) {
     await cas.gotoLogout(page);
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.assertCookie(page, false);
     await cas.log(`Trying with service ${service}`);
     await cas.gotoLogin(page, service);
-    await page.waitForTimeout(2000);
+    await cas.sleep(2000);
     await cas.loginWith(page, "duobypass", "Mellon");
-    await page.waitForTimeout(4000);
+    await cas.sleep(4000);
     await cas.screenshot(page);
 
     await cas.gotoLogin(page);

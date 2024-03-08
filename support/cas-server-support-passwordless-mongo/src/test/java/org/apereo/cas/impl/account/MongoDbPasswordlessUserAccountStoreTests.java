@@ -1,16 +1,14 @@
 package org.apereo.cas.impl.account;
 
+import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.impl.BaseMongoDbPasswordlessTests;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
 import java.util.List;
 import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -35,7 +33,11 @@ class MongoDbPasswordlessUserAccountStoreTests extends BaseMongoDbPasswordlessTe
         val mongo = casProperties.getAuthn().getPasswordless().getAccounts().getMongo();
         mongoDbTemplate.save(account, mongo.getCollection());
 
-        val user = passwordlessUserAccountStore.findUser("passwordlessuser");
+        val user = passwordlessUserAccountStore.findUser(
+            PasswordlessAuthenticationRequest
+                .builder()
+                .username("passwordlessuser")
+                .build());
         assertTrue(user.isPresent());
         assertEquals("passwordlessuser@example.org", user.get().getEmail());
         assertEquals("1234567890", user.get().getPhone());

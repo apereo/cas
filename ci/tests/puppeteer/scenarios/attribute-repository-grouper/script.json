@@ -7,7 +7,6 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
     "--cas.http-client.host-name-verifier=none",
-    "--cas.audit.engine.enabled=true",
 
     "--cas.authn.attribute-repository.grouper.id=Grouper",
     "--cas.authn.attribute-repository.grouper.subject-type=SUBJECT_ID",
@@ -21,5 +20,4 @@
   "buildScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/include.gradle",
   "initScript": "${PWD}/ci/tests/grouper/run-grouper-server.sh,${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }
-
 

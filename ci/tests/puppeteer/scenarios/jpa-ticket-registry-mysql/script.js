@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 const assert = require("assert");
 const path = require("path");
@@ -18,15 +18,15 @@ const YAML = require("yaml");
     await cas.refreshContext();
     await cas.sleep(5000);
 
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     const response = await cas.gotoLogin(page);
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.log(`${response.status()} ${response.statusText()}`);
     assert(response.ok());
     
     await cas.loginWith(page);
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
@@ -37,12 +37,11 @@ const YAML = require("yaml");
     const url = await page.url();
     assert(url === "https://localhost:8443/cas/logout");
 
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.assertCookie(page, false);
 
     await browser.close();
 })();
-
 
 function updateConfig(configFile, configFilePath, data) {
     const config = {

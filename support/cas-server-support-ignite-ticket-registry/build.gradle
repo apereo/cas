@@ -1,7 +1,6 @@
 description = "Apereo CAS Ignite Integration"
 
 ext {
-    maxParallelForksForTests = 1
     publishMetadata = true
     projectMetadata = [
             category: "Ticket Registries",

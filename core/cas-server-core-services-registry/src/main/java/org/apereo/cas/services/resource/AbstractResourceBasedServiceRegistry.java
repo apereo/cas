@@ -72,9 +72,6 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
         new File(CasConfigurationPropertiesSourceLocator.DEFAULT_CAS_CONFIG_DIRECTORIES.getFirst(), "services");
 
 
-    /**
-     * The Service registry directory.
-     */
     @Getter
     protected Path serviceRegistryDirectory;
     
@@ -253,7 +250,11 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
     public Collection<RegisteredService> load() {
         return lock.tryLock(() -> {
             LOGGER.trace("Loading files from [{}]", this.serviceRegistryDirectory);
-            val files = FileUtils.listFiles(this.serviceRegistryDirectory.toFile(), getExtensions(), true);
+            val serviceRegistryDirectoryFile = serviceRegistryDirectory.toFile();
+            val files = serviceRegistryDirectoryFile.exists()
+                ? FileUtils.listFiles(serviceRegistryDirectoryFile, getExtensions(), true)
+                : List.<File>of();
+            
             LOGGER.trace("Located [{}] files from [{}] are [{}]", getExtensions(), this.serviceRegistryDirectory, files);
             val clientInfo = ClientInfoHolder.getClientInfo();
 
@@ -270,7 +271,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
                         return s1;
                     }, LinkedHashMap::new));
             val listedServices = new ArrayList<>(this.services.values());
-            val results = this.registeredServiceReplicationStrategy.updateLoadedRegisteredServicesFromCache(listedServices, this);
+            val results = registeredServiceReplicationStrategy.updateLoadedRegisteredServicesFromCache(listedServices, this);
             results.forEach(service -> publishEvent(new CasRegisteredServiceLoadedEvent(this, service, clientInfo)));
             return results;
         });

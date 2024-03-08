@@ -6,7 +6,7 @@ import org.apereo.cas.hz.HazelcastConfigurationFactory;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.catalog.CasTicketCatalogConfigurationValuesProvider;
-import org.apereo.cas.ticket.registry.HazelcastTicketHolder;
+import org.apereo.cas.ticket.registry.HazelcastTicketDocument;
 import org.apereo.cas.ticket.registry.HazelcastTicketRegistry;
 import org.apereo.cas.ticket.registry.MapAttributeValueExtractor;
 import org.apereo.cas.ticket.registry.NoOpTicketRegistryCleaner;
@@ -126,7 +126,7 @@ public class CasHazelcastTicketRegistryAutoConfiguration {
         builder.append("'keyFormat' = 'java',");
         builder.append("'keyJavaClass' = 'java.lang.String',");
         builder.append("'valueFormat' = 'java',");
-        builder.append(String.format("'valueJavaClass' = '%s'", HazelcastTicketHolder.class.getName()));
+        builder.append(String.format("'valueJavaClass' = '%s'", HazelcastTicketDocument.class.getName()));
         builder.append(')');
         return builder.toString();
     }

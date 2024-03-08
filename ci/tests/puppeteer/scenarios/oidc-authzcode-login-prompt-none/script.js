@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const assert = require("assert");
 const cas = require("../../cas.js");
 
@@ -18,14 +18,14 @@ async function login(page, redirectUrl, params) {
 }
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.gotoLogout(page);
     
     const redirectUrl = "https://localhost:9859/post";
     await login(page, redirectUrl, "response_mode=form_post");
     await cas.logPage(page);
-    await page.waitForTimeout(2000);
+    await cas.sleep(2000);
     await cas.log("Waiting for page content body to render...");
     await page.waitForSelector("body pre", { visible: true });
     let content = await cas.textContent(page, "body pre");
@@ -41,7 +41,7 @@ async function login(page, redirectUrl, params) {
 
     await login(page, redirectUrl, "response_mode=form_post");
     await cas.logPage(page);
-    await page.waitForTimeout(2000);
+    await cas.sleep(2000);
     await cas.log("Waiting for page content body to render...");
     await page.waitForSelector("body pre", { visible: true });
 

@@ -9,7 +9,6 @@ import org.apereo.cas.services.RegisteredServiceLogoutType;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 
 import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,14 +46,9 @@ class OidcSingleLogoutServiceMessageHandlerTests extends AbstractOidcTests {
     void verifyUnknownRequestsBackChannel() throws Throwable {
         verifyCreateLogoutRequests(RegisteredServiceLogoutType.BACK_CHANNEL, LOGOUT_URL_BAD);
     }
-
-    @BeforeEach
-    public void setup() {
-        this.servicesManager.deleteAll();
-    }
-
+    
     private void verifyCreateLogoutRequests(final RegisteredServiceLogoutType type, final String logoutUrl) {
-        val registeredService = getOidcRegisteredService("clientid", logoutUrl + ".*");
+        val registeredService = getOidcRegisteredService(UUID.randomUUID().toString(), logoutUrl + ".*");
         registeredService.setLogoutType(type);
         registeredService.setLogoutUrl(logoutUrl);
         val service = RegisteredServiceTestUtils.getService(logoutUrl + "?client_id=" + registeredService.getClientId());

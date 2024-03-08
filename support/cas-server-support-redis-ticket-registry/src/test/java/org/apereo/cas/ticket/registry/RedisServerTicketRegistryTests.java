@@ -3,11 +3,13 @@ package org.apereo.cas.ticket.registry;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasRedisCoreAutoConfiguration;
 import org.apereo.cas.config.CasRedisTicketRegistryAutoConfiguration;
+import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.util.ServiceTicketIdGenerator;
 import org.apereo.cas.util.TicketGrantingTicketIdGenerator;
@@ -242,6 +244,7 @@ class RedisServerTicketRegistryTests {
 
         @RepeatedTest(1)
         void verifyFailure() throws Throwable {
+            val ticketGrantingTicketId = TestTicketIdentifiers.generate().ticketGrantingTicketId();
             val originalAuthn = CoreAuthenticationTestUtils.getAuthentication();
             getNewTicketRegistry().addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId,
                 originalAuthn, NeverExpiresExpirationPolicy.INSTANCE));
@@ -290,11 +293,53 @@ class RedisServerTicketRegistryTests {
 
     @Nested
     @SpringBootTest(
-            classes = {
-                    CasRedisCoreAutoConfiguration.class,
-                    CasRedisTicketRegistryAutoConfiguration.class,
-                    BaseTicketRegistryTests.SharedTestConfiguration.class
-            }, properties = {
+        classes = {
+            CasRedisCoreAutoConfiguration.class,
+            CasRedisTicketRegistryAutoConfiguration.class,
+            BaseTicketRegistryTests.SharedTestConfiguration.class
+        }, properties = {
+            "cas.ticket.tgt.core.only-track-most-recent-session=false",
+            "cas.ticket.registry.redis.host=localhost",
+            "cas.ticket.registry.redis.port=6379",
+            "cas.ticket.registry.redis.crypto.enabled=false"
+    })
+    class TrackAllSessionsTests {
+        @Autowired
+        @Qualifier(TicketRegistry.BEAN_NAME)
+        private TicketRegistry ticketRegistry;
+
+        @Autowired
+        @Qualifier("ticketRedisTemplate")
+        private CasRedisTemplate<String, RedisTicketDocument> ticketRedisTemplate;
+
+        @Test
+        void verifyDifferentLoginSamePrincipal() throws Throwable {
+            val principalId = UUID.randomUUID().toString();
+            for (var i = 0; i < 3; i++) {
+                addTicketAndWait(principalId);
+            }
+            val key = RedisCompositeKey.forPrincipal().withQuery(principalId).toKeyPattern();
+            assertEquals(1, ticketRedisTemplate.boundZSetOps(key).size());
+            assertEquals(1, ticketRegistry.countSessionsFor(principalId));
+        }
+
+        private void addTicketAndWait(final String principalId) throws Throwable {
+            val authentication = CoreAuthenticationTestUtils.getAuthentication(principalId);
+            val tgtId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
+                    .getNewTicketId(TicketGrantingTicket.PREFIX);
+            val tgt = new TicketGrantingTicketImpl(tgtId, authentication, new HardTimeoutExpirationPolicy(2));
+            ticketRegistry.addTicket(tgt);
+            Thread.sleep(1000);
+        }
+    }
+
+    @Nested
+    @SpringBootTest(
+        classes = {
+            CasRedisCoreAutoConfiguration.class,
+            CasRedisTicketRegistryAutoConfiguration.class,
+            BaseTicketRegistryTests.SharedTestConfiguration.class
+        }, properties = {
             "cas.ticket.tgt.core.only-track-most-recent-session=true",
             "cas.ticket.registry.redis.host=localhost",
             "cas.ticket.registry.redis.port=6379"

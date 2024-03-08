@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 const assert = require("assert");
 
@@ -7,13 +7,13 @@ async function testService(page, clientId, oidc = true) {
     const redirectUrl = "https://localhost:9859/anything/cas";
     const url = `https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=${clientId}&scope=${encodeURIComponent("openid profile")}&redirect_uri=${redirectUrl}`;
     await cas.goto(page, url);
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.loginWith(page);
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
 
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
-        await page.waitForNavigation();
+        await cas.waitForNavigation(page);
     }
 
     const code = await cas.assertParameter(page, "code");
@@ -44,12 +44,12 @@ async function testService(page, clientId, oidc = true) {
     }
     
     await cas.goto(page, "https://localhost:8443/cas/logout");
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.log("=========================================================");
 }
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     await testService(page, "client", true);
     await testService(page, "oauth-clientid", false);

@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -66,7 +67,7 @@ class OidcDefaultAttributeToScopeClaimMapperTests {
             val mapper = new OidcDefaultAttributeToScopeClaimMapper(
                 CollectionUtils.wrap("active1", "status1", "active2", "status2",
                     "active3", "status3"));
-            val principal = RegisteredServiceTestUtils.getPrincipal("casuser",
+            val principal = RegisteredServiceTestUtils.getPrincipal(UUID.randomUUID().toString(),
                 CollectionUtils.wrap("status1", "true",
                     "status2", false, "status3", 1));
             var value = mapper.mapClaim("active1", oidcRegisteredService, principal, null).getFirst();
@@ -90,8 +91,10 @@ class OidcDefaultAttributeToScopeClaimMapperTests {
             val policy = new OidcEmailScopeAttributeReleasePolicy();
             assertEquals(OidcConstants.StandardScopes.EMAIL.getScope(), policy.getScopeType());
             assertNotNull(policy.getAllowedAttributes());
-            val principal = CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("mail", List.of("cas@example.org"),
-                "mail_confirmed", List.of("cas@example.org")));
+            val principal = CoreAuthenticationTestUtils.getPrincipal(
+                UUID.randomUUID().toString(),
+                CollectionUtils.wrap("mail", List.of("cas@example.org"),
+                    "mail_confirmed", List.of("cas@example.org")));
 
             val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
                 .registeredService(CoreAuthenticationTestUtils.getRegisteredService())

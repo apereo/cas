@@ -1,9 +1,9 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 const assert = require("assert");
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     const redirectUrl = "https://localhost:9859/post";
     const url = "https://localhost:8443/cas/oidc/oidcAuthorize?" +
@@ -17,8 +17,8 @@ const assert = require("assert");
     await cas.goto(page, url);
     await cas.loginWith(page);
     await cas.click(page, "#allow");
-    await page.waitForNavigation();
-    await page.waitForTimeout(3000);
+    await cas.waitForNavigation(page);
+    await cas.sleep(3000);
     await cas.logPage(page);
     await cas.screenshot(page);
 
@@ -33,5 +33,4 @@ const assert = require("assert");
     assert(!fragment.includes("access_token="));
     await browser.close();
 })();
-
 

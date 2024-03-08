@@ -8,8 +8,6 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
 
-    "--cas.audit.engine.enabled=true",
-
     "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",
 
     "--cas.authn.oidc.jwks.jpa.driver-class=org.postgresql.Driver",
@@ -25,7 +23,4 @@
   ],
   "initScript": "${PWD}/ci/tests/postgres/run-postgres-server.sh"
 }
-
-
-
 

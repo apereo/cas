@@ -1,6 +1,6 @@
 description = "Apereo CAS Azure Cosmos DB Ticket Registry"
 ext {
-    maxParallelForksForTests = 1
+
     publishMetadata = true
     projectMetadata = [
             category: "Ticket Registries",

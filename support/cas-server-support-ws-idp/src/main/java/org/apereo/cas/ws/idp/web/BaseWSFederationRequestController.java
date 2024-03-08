@@ -8,7 +8,6 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
-
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +20,6 @@ import org.apache.hc.core5.net.URIBuilder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Date;
@@ -37,7 +35,6 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-@SuppressWarnings("JavaUtilDate")
 public abstract class BaseWSFederationRequestController {
     private final WSFederationRequestConfigurationContext configContext;
 

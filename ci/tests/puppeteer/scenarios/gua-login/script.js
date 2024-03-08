@@ -1,8 +1,8 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.gotoLogin(page);
 
@@ -12,14 +12,14 @@ const cas = require("../../cas.js");
 
     await cas.type(page,"#username", "casuser");
     await cas.pressEnter(page);
-    await page.waitForNavigation();
+    await cas.waitForNavigation(page);
     await cas.assertTextContent(page, "#login h2", "casuser");
     await cas.assertTextContent(page, "#guaInfo", "If you do not recognize this image as yours, do NOT continue.");
     await cas.assertVisibility(page, "#guaImage");
     await cas.submitForm(page, "#fm1");
     await cas.type(page,"#password", "Mellon");
     await cas.pressEnter(page);
-    await page.waitForNavigation();
+    await cas.waitForNavigation(page);
     await cas.assertCookie(page);
     await browser.close();
 })();

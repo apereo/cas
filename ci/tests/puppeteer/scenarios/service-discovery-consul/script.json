@@ -7,7 +7,6 @@
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
-    "--cas.audit.engine.enabled=true",
 
     "--spring.cloud.consul.enabled=true",
     "--spring.cloud.consul.port=8500",

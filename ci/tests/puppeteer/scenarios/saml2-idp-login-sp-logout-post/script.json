@@ -4,7 +4,6 @@
     "docker": "true"
   },
   "properties": [
-
     
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=samlPostProfileResponse",
@@ -18,8 +17,6 @@
     "--cas.server.scope=example.net",
 
     "--cas.authn.accept.name=STATIC",
-    "--cas.audit.engine.enabled=true",
-    "--cas.audit.slf4j.use-single-line=true",
 
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",

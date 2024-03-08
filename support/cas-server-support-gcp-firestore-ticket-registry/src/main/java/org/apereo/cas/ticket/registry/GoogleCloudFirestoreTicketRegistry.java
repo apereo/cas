@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.ticket.ServiceAwareTicket;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
@@ -26,6 +28,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -200,6 +203,24 @@ public class GoogleCloudFirestoreTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
+    public long countTicketsFor(final Service service) {
+        return ticketCatalog
+            .findAll()
+            .stream()
+            .map(Unchecked.function(definition -> {
+                val collection = getTicketCollectionInstanceByMetadata(definition);
+                val spliterator = firestore.collection(collection)
+                    .whereEqualTo("service", service.getId())
+                    .get()
+                    .get()
+                    .spliterator();
+                return StreamSupport.stream(spliterator, false);
+            }))
+            .mapToLong(Stream::count)
+            .sum();
+    }
+
+    @Override
     public Stream<? extends Ticket> getSessionsWithAttributes(final Map<String, List<Object>> queryAttributes) {
         val ticketDefinitions = ticketCatalog.findTicketDefinition(TicketGrantingTicket.class);
         return ticketDefinitions
@@ -266,6 +287,7 @@ public class GoogleCloudFirestoreTicketRegistry extends AbstractTicketRegistry {
             .principal(digestIdentifier(principal))
             .attributes(collectAndDigestTicketAttributes(ticket))
             .expireAt(expireAt)
+            .service(ticket instanceof final ServiceAwareTicket sat && Objects.nonNull(sat.getService()) ? sat.getService().getId() : StringUtils.EMPTY)
             .build();
     }
 

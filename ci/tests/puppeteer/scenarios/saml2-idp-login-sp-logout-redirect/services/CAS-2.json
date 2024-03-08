@@ -1,0 +1,11 @@
+{
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
+  "serviceId" : "^https://localhost:9859/anything/cas.*",
+  "name" : "CAS",
+  "id" : 2,
+  "evaluationOrder" : 2,
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
+  },
+  "logoutType": "FRONT_CHANNEL"
+}

@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.duo.web.flow.action;
 
+import org.apereo.cas.adaptors.duo.DuoSecurityUserAccount;
 import org.apereo.cas.adaptors.duo.DuoSecurityUserAccountStatus;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationRegistrationCipherExecutor;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
@@ -12,7 +13,6 @@ import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.AbstractMultifactorAuthenticationAction;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -21,7 +21,6 @@ import org.apache.hc.core5.net.URIBuilder;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
 import java.util.Set;
 import java.util.UUID;
 
@@ -45,10 +44,7 @@ public class DuoSecurityDetermineUserAccountAction extends AbstractMultifactorAu
     protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         val authentication = WebUtils.getAuthentication(requestContext);
         val principal = resolvePrincipal(authentication.getPrincipal(), requestContext);
-
-        val duoAuthenticationService = provider.getDuoAuthenticationService();
-        val account = duoAuthenticationService.getUserAccount(principal.getId());
-
+        val account = getDuoSecurityUserAccount(principal);
         val eventFactorySupport = new EventFactorySupport();
         if (account.getStatus() == DuoSecurityUserAccountStatus.ENROLL) {
             if (StringUtils.isNotBlank(provider.getRegistration().getRegistrationUrl())) {
@@ -69,6 +65,17 @@ public class DuoSecurityDetermineUserAccountAction extends AbstractMultifactorAu
         }
 
         return success();
+    }
+
+    protected DuoSecurityUserAccount getDuoSecurityUserAccount(final Principal principal) {
+        val duoAuthenticationService = provider.getDuoAuthenticationService();
+        if (!duoAuthenticationService.getProperties().isAccountStatusEnabled()) {
+            LOGGER.debug("Checking Duo Security for user's [{}] account status is disabled", principal.getId());
+            val account = new DuoSecurityUserAccount(principal.getId());
+            account.setStatus(DuoSecurityUserAccountStatus.AUTH);
+            return account;
+        }
+        return duoAuthenticationService.getUserAccount(principal.getId());
     }
 
     protected String buildDuoRegistrationUrlFor(final RequestContext requestContext,

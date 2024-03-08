@@ -1,6 +1,6 @@
 description = "Apereo CAS Consent Support via Redis"
 ext {
-    maxParallelForksForTests = 1
+
     publishMetadata = true
     projectMetadata = [
             title: "Attribute Consent via Redis",

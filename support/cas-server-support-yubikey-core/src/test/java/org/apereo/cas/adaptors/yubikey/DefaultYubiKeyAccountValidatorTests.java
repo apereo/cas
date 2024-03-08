@@ -6,9 +6,7 @@ import com.yubico.client.v2.YubicoClient;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
 import java.util.Date;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -19,7 +17,6 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("MFAProvider")
-@SuppressWarnings("JavaUtilDate")
 class DefaultYubiKeyAccountValidatorTests {
     @Test
     void verifyAction() throws Throwable {

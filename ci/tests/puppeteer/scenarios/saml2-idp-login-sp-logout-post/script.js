@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 const assert = require("assert");
 const path = require("path");
@@ -11,12 +11,12 @@ async function getActuatorEndpoint(entityId) {
 }
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     try {
         const page = await cas.newPage(browser);
         const service = "https://localhost:9859/anything/cas";
         await cas.gotoLogin(page, service);
-        await page.waitForTimeout(1000);
+        await cas.sleep(1000);
         await cas.loginWith(page);
 
         const ticket = await cas.assertTicketParameter(page);
@@ -34,13 +34,13 @@ async function getActuatorEndpoint(entityId) {
         await cas.log(`Logout page is written to ${sloFile}`);
 
         await cas.goto(page, `file://${sloFile}`);
-        await page.waitForTimeout(4000);
+        await cas.sleep(4000);
         await cas.logPage(page);
         const url = await page.url();
-        await page.waitForTimeout(1000);
+        await cas.sleep(1000);
         assert(url === "http://localhost:9443/simplesaml/module.php/saml/sp/saml2-logout.php/default-sp");
-    } finally {
         await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
+    } finally {
         await browser.close();
     }
 })();

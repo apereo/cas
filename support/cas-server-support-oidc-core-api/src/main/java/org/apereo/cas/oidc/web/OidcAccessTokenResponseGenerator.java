@@ -4,6 +4,9 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.services.OidcRegisteredService;
+import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.OAuth20TokenExchangeTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseResult;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20DefaultAccessTokenResponseGenerator;
@@ -15,6 +18,7 @@ import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -47,24 +51,39 @@ public class OidcAccessTokenResponseGenerator extends OAuth20DefaultAccessTokenR
             .filter(OidcRegisteredService.class::isInstance)
             .map(OidcRegisteredService.class::cast);
         val oidcIssuer = oidcIssuerService.determineIssuer(oidcRegisteredService);
-        val cipher = OAuth20JwtAccessTokenEncoder.toEncodableCipher(accessTokenJwtBuilder,
-            result.getRegisteredService(), accessToken, result.getService(), oidcIssuer, casProperties);
+        val cipher = OAuth20JwtAccessTokenEncoder.toEncodableCipher(accessTokenJwtBuilder, result,
+            accessToken, oidcIssuer, casProperties);
         return cipher.encode(accessToken.getId(), new Object[]{accessToken, result});
     }
 
     @Override
     protected Map<String, Object> getAccessTokenResponseModel(final OAuth20AccessTokenResponseResult result) {
-        val model = super.getAccessTokenResponseModel(result);
         val accessToken = result.getGeneratedToken().getAccessToken();
-        accessToken
-            .map(this::resolveAccessToken)
-            .ifPresent(token -> {
-                if (result.getRegisteredService() instanceof OidcRegisteredService
-                    && !token.getScopes().contains(OidcConstants.CLIENT_REGISTRATION_SCOPE)) {
-                    val idToken = generateIdToken(result, token);
-                    FunctionUtils.doIfNotBlank(idToken, __ -> model.put(OidcConstants.ID_TOKEN, idToken));
-                }
-            });
+
+        if (result.getGrantType() == OAuth20GrantTypes.TOKEN_EXCHANGE) {
+            if (result.getRequestedTokenType() == OAuth20TokenExchangeTypes.ID_TOKEN) {
+                return accessToken
+                    .map(OAuth20AccessToken.class::cast)
+                    .map(token -> {
+                        val idToken = generateIdToken(result, token);
+                        val model = new HashMap<String, Object>();
+                        FunctionUtils.doIfNotBlank(idToken, __ -> model.put(OidcConstants.ID_TOKEN, idToken));
+                        model.put(OAuth20Constants.ISSUED_TOKEN_TYPE, result.getRequestedTokenType().getType());
+                        return model;
+                    })
+                    .orElseThrow();
+            }
+            return super.getAccessTokenResponseModel(result);
+        }
+
+        val model = super.getAccessTokenResponseModel(result);
+        accessToken.map(this::resolveAccessToken).ifPresent(token -> {
+            if (result.getRegisteredService() instanceof OidcRegisteredService
+                && !token.getScopes().contains(OidcConstants.CLIENT_REGISTRATION_SCOPE)) {
+                val idToken = generateIdToken(result, token);
+                FunctionUtils.doIfNotBlank(idToken, __ -> model.put(OidcConstants.ID_TOKEN, idToken));
+            }
+        });
         return model;
     }
 

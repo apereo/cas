@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 const assert = require("assert");
 const express = require("express");
@@ -31,7 +31,7 @@ const express = require("express");
     });
     
     const server = app.listen(5544, async () => {
-        const browser = await puppeteer.launch(cas.browserOptions());
+        const browser = await cas.newBrowser(cas.browserOptions());
         const page = await cas.newPage(browser);
         const service = "http://localhost:9889/anything/app1";
         await cas.gotoLogin(page, service);
@@ -39,9 +39,9 @@ const express = require("express");
         await cas.assertTextContent(page, "#main-content #login #fm1 h3", "Acceptable Usage Policy");
         await cas.assertVisibility(page, "button[name=submit]");
         await cas.assertVisibility(page, "button[name=cancel]");
-        await page.waitForTimeout(1000);
+        await cas.sleep(1000);
         await cas.click(page, "#aupSubmit");
-        await page.waitForNavigation();
+        await cas.waitForNavigation(page);
         const ticket = await cas.assertTicketParameter(page);
         const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
         await cas.logg(body);
@@ -50,12 +50,14 @@ const express = require("express");
 
         await cas.log("Logging in again, now with SSO");
         await cas.gotoLogin(page, service);
+        await cas.sleep(1000);
         await cas.assertTicketParameter(page);
         await cas.goto(page, "https://localhost:8443/cas/logout");
 
         await cas.log("Logging in again, now without SSO");
         await cas.gotoLogin(page, service);
         await cas.loginWith(page);
+        await cas.sleep(1000);
         await cas.assertTicketParameter(page);
 
         server.close(() => {

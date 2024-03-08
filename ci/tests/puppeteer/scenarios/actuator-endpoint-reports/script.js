@@ -1,9 +1,10 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions({args: ["--incognito"]}));
-    const page = await cas.newPage(browser);
+    const browser = await cas.newBrowser(cas.browserOptions());
+    const context = await browser.createBrowserContext();
+    const page = await cas.newPage(context);
 
     await cas.gotoLogin(page);
     await cas.loginWith(page);
@@ -116,6 +117,8 @@ const cas = require("../../cas.js");
             "Content-Type": "application/json"
         }, 200);
     }
+    
+    await context.close();
     await browser.close();
 })();
 

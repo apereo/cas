@@ -9,6 +9,7 @@ package org.apereo.cas.authentication;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@FunctionalInterface
 public interface AuthenticationTransactionManager {
     /**
      * Handle authentication transaction manager.
@@ -20,11 +21,4 @@ public interface AuthenticationTransactionManager {
      */
     AuthenticationTransactionManager handle(AuthenticationTransaction authenticationTransaction,
                                             AuthenticationResultBuilder authenticationResultBuilder) throws Throwable;
-
-    /**
-     * Gets authentication manager.
-     *
-     * @return the authentication manager
-     */
-    AuthenticationManager authenticationManager();
 }

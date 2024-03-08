@@ -1,5 +1,6 @@
 package org.apereo.cas.impl.account;
 
+import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.configuration.model.support.passwordless.account.PasswordlessAuthenticationRestAccountsProperties;
@@ -38,17 +39,17 @@ public class RestfulPasswordlessUserAccountStore implements PasswordlessUserAcco
     private final PasswordlessAuthenticationRestAccountsProperties restProperties;
 
     @Override
-    public Optional<PasswordlessUserAccount> findUser(final String username) {
+    public Optional<PasswordlessUserAccount> findUser(final PasswordlessAuthenticationRequest request) {
         HttpResponse response = null;
         try {
             val parameters = new HashMap<String, String>();
-            parameters.put("username", username);
+            parameters.put("username", request.getUsername());
 
             val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(restProperties.getBasicAuthPassword())
                 .basicAuthUsername(restProperties.getBasicAuthUsername())
                 .method(HttpMethod.valueOf(restProperties.getMethod().toUpperCase(Locale.ENGLISH).trim()))
-                .url(StringUtils.appendIfMissing(restProperties.getUrl(), "/").concat(username))
+                .url(StringUtils.appendIfMissing(restProperties.getUrl(), "/").concat(request.getUsername()))
                 .parameters(parameters)
                 .build();
             response = HttpUtils.execute(exec);

@@ -1,7 +1,7 @@
 description = "Apereo CAS LDAP Service Registry Support"
 
 ext {
-    maxParallelForksForTests = 1
+
 }
 
 dependencies {

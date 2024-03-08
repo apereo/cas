@@ -98,6 +98,8 @@ class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
         val tgt = new MockTicketGrantingTicket("casuser");
         newTicketRegistry.addTicket(tgt);
         val service = RegisteredServiceTestUtils.getService();
+
+        val serviceTicketId = TestTicketIdentifiers.generate().serviceTicketId();
         val st = new MockServiceTicket(serviceTicketId, service, tgt);
         newTicketRegistry.addTicket(st);
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(new HashMap());

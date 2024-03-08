@@ -137,7 +137,11 @@ configurations.configureEach {
                     details.useVersion("${commonsBeansVersion}")
                 }
                 if (requested.group == "ch.qos.logback")  {
-                    details.useVersion("${logbackVersion}")
+                    if (requested.name == "logback-access") {
+                        details.useVersion("${logbackAccessVersion}")
+                    } else {
+                        details.useVersion("${logbackVersion}")
+                    }
                 }
                 if (requested.group.startsWith("jakarta.xml.bind"))  {
                     details.useVersion("${jaxbApiVersion}")

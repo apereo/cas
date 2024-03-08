@@ -1,5 +1,6 @@
 package org.apereo.cas.web.support;
 
+import org.apereo.cas.throttle.ThrottledSubmissionHandlerEndpoint;
 import org.apereo.cas.web.report.AbstractCasEndpointTests;
 
 import lombok.val;
@@ -49,6 +50,7 @@ class ThrottledSubmissionHandlerEndpointTests extends AbstractCasEndpointTests {
 
         throttle.recordSubmissionFailure(request);
         assertFalse(throttledSubmissionHandlerEndpoint.getRecords().isEmpty());
-        assertDoesNotThrow(() -> throttledSubmissionHandlerEndpoint.release());
+        assertDoesNotThrow(() -> throttledSubmissionHandlerEndpoint.release(false));
+        assertDoesNotThrow(() -> throttledSubmissionHandlerEndpoint.release(true));
     }
 }

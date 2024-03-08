@@ -2,13 +2,12 @@ package org.apereo.cas.web.support;
 
 import org.apereo.cas.audit.RedisAuditTrailManager;
 import org.apereo.cas.redis.core.CasRedisTemplate;
-
-
+import org.apereo.cas.throttle.AbstractInspektrAuditHandlerInterceptorAdapter;
+import org.apereo.cas.throttle.ThrottledSubmissionHandlerConfigurationContext;
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.data.redis.core.BoundValueOperations;
-
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Comparator;
 import java.util.function.Function;
@@ -21,7 +20,6 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@SuppressWarnings("JavaUtilDate")
 public class RedisThrottledSubmissionHandlerInterceptorAdapter extends AbstractInspektrAuditHandlerInterceptorAdapter {
     private final CasRedisTemplate<String, Object> redisTemplate;
 
@@ -49,10 +47,10 @@ public class RedisThrottledSubmissionHandlerInterceptorAdapter extends AbstractI
                 .map(AuditActionContext.class::cast)
                 .filter(audit ->
                     audit.getPrincipal().equalsIgnoreCase(username)
-                    && audit.getClientInfo().getClientIpAddress().equalsIgnoreCase(remoteAddress)
-                    && audit.getActionPerformed().equalsIgnoreCase(throttle.getFailure().getCode())
-                    && audit.getApplicationCode().equalsIgnoreCase(throttle.getCore().getAppCode())
-                    && audit.getWhenActionWasPerformed().isAfter(getFailureInRangeCutOffDate()))
+                        && audit.getClientInfo().getClientIpAddress().equalsIgnoreCase(remoteAddress)
+                        && audit.getActionPerformed().equalsIgnoreCase(throttle.getFailure().getCode())
+                        && audit.getApplicationCode().equalsIgnoreCase(throttle.getCore().getAppCode())
+                        && audit.getWhenActionWasPerformed().isAfter(getFailureInRangeCutOffDate()))
                 .sorted(Comparator.comparing(AuditActionContext::getWhenActionWasPerformed).reversed())
                 .limit(2)
                 .map(this::toThrottledSubmission)

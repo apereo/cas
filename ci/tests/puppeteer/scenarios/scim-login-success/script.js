@@ -1,9 +1,9 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 const assert = require("assert");
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.gotoLogin(page);
 
@@ -24,7 +24,6 @@ const assert = require("assert");
         (error) => {
             throw error;
         }, { "Authorization": "Basic c2NpbS11c2VyOmNoYW5nZWl0" });
-
     
     await browser.close();
 })();

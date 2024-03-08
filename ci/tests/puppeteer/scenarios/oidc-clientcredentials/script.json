@@ -3,8 +3,6 @@
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
-
-    "--cas.audit.slf4j.use-single-line=true",
     
     "--logging.level.PROTOCOL_MESSAGE=info",
 
@@ -25,6 +23,4 @@
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
   ]
 }
-
-
 

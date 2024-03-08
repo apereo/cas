@@ -1,15 +1,15 @@
-const puppeteer = require("puppeteer");
+
 const assert = require("assert");
 const cas = require("../../cas.js");
 const querystring = require("querystring");
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.gotoLogin(page);
     await cas.loginWith(page);
     await cas.goto(page, "https://localhost:8443/cas/actuator/health");
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.doGet("https://localhost:8443/cas/actuator/health",
         (res) => {
             assert(res.data.components.redis !== undefined);
@@ -74,5 +74,4 @@ const querystring = require("querystring");
     });
     
 })();
-
 

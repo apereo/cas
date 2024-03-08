@@ -35,8 +35,8 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.attribute-repository.ldap[0].search-filter=cn={0}",
         "cas.authn.attribute-repository.ldap[0].bind-dn=cn=Directory Manager",
         "cas.authn.attribute-repository.ldap[0].bind-credential=password",
-        "cas.authn.attribute-repository.ldap[0].attributes.cn=cn",
-        "cas.authn.attribute-repository.ldap[0].attributes.mail=mail"
+        "cas.authn.attribute-repository.ldap[0].attributes.cn=cn,common-name",
+        "cas.authn.attribute-repository.ldap[0].attributes.mail=mail,email,primaryEmail"
     })
 @Tag("LdapAttributes")
 @EnabledIfListeningOnPort(port = 10389)
@@ -62,7 +62,11 @@ class DefaultPersonDirectoryAttributeRepositoryPlanLdapTests {
         val creds = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(CN, "Mellon");
         val principal = personDirectoryPrincipalResolver.resolve(creds);
         assertNotNull(principal);
-        assertTrue(principal.getAttributes().containsKey("cn"));
-        assertTrue(principal.getAttributes().containsKey("mail"));
+        val attributes = principal.getAttributes();
+        assertTrue(attributes.containsKey("cn"));
+        assertTrue(attributes.containsKey("common-name"));
+        assertTrue(attributes.containsKey("email"));
+        assertTrue(attributes.containsKey("mail"));
+        assertTrue(attributes.containsKey("primaryEmail"));
     }
 }

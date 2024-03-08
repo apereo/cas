@@ -1,6 +1,6 @@
 description = "Apereo CAS WebAuthN Redis Support"
 ext {
-    maxParallelForksForTests = 1
+
     publishMetadata = true
     projectMetadata = [
             category: "WebAuthN & FIDO2 Multifactor Authentication",

@@ -6,8 +6,6 @@
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
-    "--cas.audit.slf4j.use-single-line=true",
-    "--cas.audit.engine.enabled=true",
 
     "--cas.authn.attribute-repository.stub.attributes.name=casuser",
     "--cas.authn.attribute-repository.stub.attributes.given_name=CAS",
@@ -26,6 +24,4 @@
   ],
   "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }
-
-
 

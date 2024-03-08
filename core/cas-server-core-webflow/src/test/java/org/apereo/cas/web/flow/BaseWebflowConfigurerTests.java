@@ -19,6 +19,7 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
@@ -75,6 +76,11 @@ public abstract class BaseWebflowConfigurerTests {
     @Qualifier(CasWebflowConstants.BEAN_NAME_LOGOUT_FLOW_DEFINITION_REGISTRY)
     protected FlowDefinitionRegistry logoutFlowDefinitionRegistry;
 
+    @BeforeEach
+    void setup() {
+        casWebflowExecutionPlan.execute();
+    }
+    
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         SecurityAutoConfiguration.class,

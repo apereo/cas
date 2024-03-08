@@ -1,9 +1,9 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 const assert = require("assert");
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
 
     const redirectUrl = "https://apereo.github.io";
@@ -19,7 +19,7 @@ const assert = require("assert");
     await cas.goto(page, url);
     await cas.loginWith(page);
     await cas.click(page, "#allow");
-    await page.waitForNavigation();
+    await cas.waitForNavigation(page);
 
     const code = await cas.assertParameter(page, "code");
     await cas.log(`OAuth code ${code}`);

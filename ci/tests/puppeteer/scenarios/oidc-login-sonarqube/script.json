@@ -9,7 +9,6 @@
 
     "--cas.server.name=https://host.k3d.internal:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
-    "--cas.audit.engine.enabled=true",
 
     "--cas.authn.oidc.core.issuer=https://host.k3d.internal:8443/cas/oidc",
     "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/keystore.jwks",
@@ -20,6 +19,4 @@
   "bootstrapScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",
   "exitScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/exit.sh"
 }
-
-
 

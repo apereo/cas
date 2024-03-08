@@ -50,12 +50,12 @@ public abstract class BaseSurrogateAuthenticationServiceTests {
 
     @Test
     void verifyUserAllowedToProxy() throws Throwable {
-        assertFalse(getService().getImpersonationAccounts(getTestUser()).isEmpty());
+        assertFalse(getService().getImpersonationAccounts(getTestUser(), Optional.empty()).isEmpty());
     }
 
     @Test
     void verifyUserNotAllowedToProxy() throws Throwable {
-        assertTrue(getService().getImpersonationAccounts("unknown-user").isEmpty());
+        assertTrue(getService().getImpersonationAccounts("unknown-user", Optional.empty()).isEmpty());
     }
 
     @Test
@@ -73,7 +73,7 @@ public abstract class BaseSurrogateAuthenticationServiceTests {
         val service = Optional.of(CoreAuthenticationTestUtils.getService());
         val admin = CoreAuthenticationTestUtils.getPrincipal(getAdminUser());
         assertTrue(getService().canImpersonate(BANDERSON, admin, service));
-        assertTrue(getService().isWildcardedAccount(BANDERSON, admin));
+        assertTrue(getService().isWildcardedAccount(BANDERSON, admin, service));
     }
 
     public String getAdminUser() {

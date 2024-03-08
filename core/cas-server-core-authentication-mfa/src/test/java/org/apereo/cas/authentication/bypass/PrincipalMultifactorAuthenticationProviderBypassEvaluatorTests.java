@@ -38,9 +38,10 @@ class PrincipalMultifactorAuthenticationProviderBypassEvaluatorTests {
             MultifactorAuthenticationPrincipalResolver.identical(), UUID.randomUUID().toString());
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
 
-        val eval = new DefaultChainingMultifactorAuthenticationBypassProvider();
+        val eval = new DefaultChainingMultifactorAuthenticationBypassProvider(applicationContext);
         eval.addMultifactorAuthenticationProviderBypassEvaluator(
-            new PrincipalMultifactorAuthenticationProviderBypassEvaluator("cn", "exam.+", TestMultifactorAuthenticationProvider.ID));
+            new PrincipalMultifactorAuthenticationProviderBypassEvaluator("cn", "exam.+",
+                TestMultifactorAuthenticationProvider.ID, applicationContext));
 
         val principal = CoreAuthenticationTestUtils.getPrincipal(Map.of("cn", List.of("unknown")));
         val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
@@ -61,9 +62,10 @@ class PrincipalMultifactorAuthenticationProviderBypassEvaluatorTests {
             MultifactorAuthenticationPrincipalResolver.identical(), UUID.randomUUID().toString());
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
 
-        val eval = new DefaultChainingMultifactorAuthenticationBypassProvider();
+        val eval = new DefaultChainingMultifactorAuthenticationBypassProvider(applicationContext);
         eval.addMultifactorAuthenticationProviderBypassEvaluator(
-            new PrincipalMultifactorAuthenticationProviderBypassEvaluator("cn", "exam.+", TestMultifactorAuthenticationProvider.ID));
+            new PrincipalMultifactorAuthenticationProviderBypassEvaluator("cn", "exam.+",
+                TestMultifactorAuthenticationProvider.ID, applicationContext));
 
         val principal = CoreAuthenticationTestUtils.getPrincipal(Map.of("cn", List.of("example")));
         val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
@@ -85,11 +87,12 @@ class PrincipalMultifactorAuthenticationProviderBypassEvaluatorTests {
 
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
 
-        val eval = new DefaultChainingMultifactorAuthenticationBypassProvider();
+        val eval = new DefaultChainingMultifactorAuthenticationBypassProvider(applicationContext);
         val bypassProps = new MultifactorAuthenticationProviderBypassProperties();
         bypassProps.setPrincipalAttributeName("cn");
         bypassProps.setAuthenticationAttributeValue("ex.+");
-        eval.addMultifactorAuthenticationProviderBypassEvaluator(new PrincipalMultifactorAuthenticationProviderBypassEvaluator(bypassProps, TestMultifactorAuthenticationProvider.ID));
+        eval.addMultifactorAuthenticationProviderBypassEvaluator(new PrincipalMultifactorAuthenticationProviderBypassEvaluator(
+            bypassProps, TestMultifactorAuthenticationProvider.ID, applicationContext));
 
         val principal = CoreAuthenticationTestUtils.getPrincipal(Map.of("cn", List.of("example")));
         val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);

@@ -65,7 +65,7 @@ class DefaultAuthenticationManagerTests {
     }
 
     private static AuthenticationHandler newMockHandler(final boolean success, final boolean error) throws Throwable {
-        val name = "MockAuthenticationHandler" + UUID.randomUUID();
+        val name = "MockAuthenticationHandler%s".formatted(UUID.randomUUID());
         return newMockHandler(name, success, error);
     }
 
@@ -125,6 +125,17 @@ class DefaultAuthenticationManagerTests {
     @Test
     void verifyNoHandlers() throws Throwable {
         val map = new HashMap<AuthenticationHandler, PrincipalResolver>();
+        val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
+        val manager = getAuthenticationManager(authenticationExecutionPlan);
+        assertThrows(AuthenticationException.class, () -> manager.authenticate(transaction));
+    }
+
+    @Test
+    void verifyHandlerDoesNotSupportCredential() throws Throwable {
+        val map = new HashMap<AuthenticationHandler, PrincipalResolver>();
+        val handler = newMockHandler(true);
+        when(handler.supports(any(Credential.class))).thenReturn(Boolean.FALSE);
+        map.put(handler, null);
         val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
         val manager = getAuthenticationManager(authenticationExecutionPlan);
         assertThrows(AuthenticationException.class, () -> manager.authenticate(transaction));

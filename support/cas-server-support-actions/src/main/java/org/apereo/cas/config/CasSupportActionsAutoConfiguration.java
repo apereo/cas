@@ -32,7 +32,7 @@ import org.apereo.cas.web.flow.GenerateServiceTicketAction;
 import org.apereo.cas.web.flow.PopulateSpringSecurityContextAction;
 import org.apereo.cas.web.flow.ServiceAuthorizationCheckAction;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
-import org.apereo.cas.web.flow.account.AccountProfileRemoveSingleSignOnSession;
+import org.apereo.cas.web.flow.account.AccountProfileRemoveSingleSignOnSessionAction;
 import org.apereo.cas.web.flow.account.PrepareAccountProfileViewAction;
 import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
 import org.apereo.cas.web.flow.actions.FetchTicketGrantingTicketAction;
@@ -314,7 +314,7 @@ public class CasSupportActionsAutoConfiguration {
             final ServicesManager servicesManager,
             @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-            @Qualifier("warnCookieGenerator")
+            @Qualifier(CasCookieBuilder.BEAN_NAME_WARN_COOKIE_BUILDER)
             final CasCookieBuilder warnCookieGenerator,
             @Qualifier(TicketRegistrySupport.BEAN_NAME)
             final TicketRegistrySupport ticketRegistrySupport,
@@ -525,7 +525,7 @@ public class CasSupportActionsAutoConfiguration {
             final LogoutManager logoutManager,
             @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-            @Qualifier("warnCookieGenerator")
+            @Qualifier(CasCookieBuilder.BEAN_NAME_WARN_COOKIE_BUILDER)
             final CasCookieBuilder warnCookieGenerator,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
@@ -603,7 +603,7 @@ public class CasSupportActionsAutoConfiguration {
         public Action serviceWarningAction(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier("warnCookieGenerator")
+            @Qualifier(CasCookieBuilder.BEAN_NAME_WARN_COOKIE_BUILDER)
             final CasCookieBuilder warnCookieGenerator,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
@@ -660,7 +660,7 @@ public class CasSupportActionsAutoConfiguration {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
-                .withAction(() -> new AccountProfileRemoveSingleSignOnSession(ticketRegistry))
+                .withAction(() -> new AccountProfileRemoveSingleSignOnSessionAction(ticketRegistry))
                 .withId(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_REMOVE_SINGLE_SIGNON_SESSION)
                 .build()
                 .get();

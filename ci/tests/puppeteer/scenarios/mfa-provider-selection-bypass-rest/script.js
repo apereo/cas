@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 const express = require("express");
 
@@ -6,11 +6,11 @@ const express = require("express");
     const app = express();
     await app.get("/bypass", (req, res) => res.status(400).send("Bad Request"));
     const server = app.listen(3000, async () => {
-        const browser = await puppeteer.launch(cas.browserOptions());
+        const browser = await cas.newBrowser(cas.browserOptions());
         const page = await cas.newPage(browser);
         await cas.gotoLogin(page, "https://google.com");
         await cas.loginWith(page);
-        await page.waitForTimeout(1000);
+        await cas.sleep(1000);
         await cas.log("Selecting mfa-gauth");
         await cas.assertInvisibility(page, "#mfa-gauth");
         await cas.assertInvisibility(page, "#mfa-yubikey");

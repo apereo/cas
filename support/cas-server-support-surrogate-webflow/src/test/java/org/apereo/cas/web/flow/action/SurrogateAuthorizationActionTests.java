@@ -37,6 +37,7 @@ class SurrogateAuthorizationActionTests {
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
+    
     @Test
     void verifyAuthorized() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
@@ -62,11 +63,9 @@ class SurrogateAuthorizationActionTests {
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(principal), context);
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         val strategy = new SurrogateRegisteredServiceAccessStrategy();
-        strategy.setSurrogateEnabled(true);
         strategy.setSurrogateRequiredAttributes(CollectionUtils.wrap("surrogateAttribute", CollectionUtils.wrapSet("someValue")));
         registeredService.setAccessStrategy(strategy);
         WebUtils.putRegisteredService(context, registeredService);
-
         assertThrows(PrincipalException.class, () -> surrogateAuthorizationCheck.execute(context));
     }
 }

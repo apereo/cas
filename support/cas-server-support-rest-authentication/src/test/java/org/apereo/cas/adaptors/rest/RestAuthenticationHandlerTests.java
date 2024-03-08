@@ -16,10 +16,10 @@ import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasRestAuthenticationAutoConfiguration;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +33,7 @@ import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
+import java.net.URI;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
@@ -63,9 +64,12 @@ import static org.mockito.Mockito.*;
     CasCoreNotificationsAutoConfiguration.class,
     CasCoreAutoConfiguration.class
 },
-    properties = "cas.authn.rest[0].uri=http://localhost:8081/authn")
+    properties = "cas.authn.rest[0].uri=http://localhost:${random.int[3000,9000]}/authn")
 @Tag("RestfulApiAuthentication")
 class RestAuthenticationHandlerTests {
+    @Autowired
+    private CasConfigurationProperties casProperties;
+
     @Autowired
     @Qualifier("restAuthenticationHandler")
     private BeanContainer<AuthenticationHandler> authenticationHandler;
@@ -75,90 +79,58 @@ class RestAuthenticationHandlerTests {
     }
 
     @Test
-    void verifySuccess() throws Throwable {
+    void verifyOperations() throws Throwable {
+        val port = URI.create(casProperties.getAuthn().getRest().get(0).getUri()).getPort();
         val instant = Instant.now(Clock.systemUTC()).plus(10, ChronoUnit.DAYS);
         val formatted = DateTimeFormatter.RFC_1123_DATE_TIME
             .withZone(ZoneOffset.UTC)
             .format(instant);
 
-        val headers = new HashMap<String, String>();
-        headers.put(RestAuthenticationHandler.HEADER_NAME_CAS_PASSWORD_EXPIRATION_DATE, formatted);
-        headers.put(RestAuthenticationHandler.HEADER_NAME_CAS_WARNING, "warning1");
 
-        try (val webServer = new MockWebServer(8081, PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("casuser"), headers, HttpStatus.OK)) {
+        try (val webServer = new MockWebServer(port)) {
             webServer.start();
+            webServer.responseBodyJson(PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("casuser"));
+
+            val headers = new HashMap<String, String>();
+            headers.put(RestAuthenticationHandler.HEADER_NAME_CAS_PASSWORD_EXPIRATION_DATE, formatted);
+            headers.put(RestAuthenticationHandler.HEADER_NAME_CAS_WARNING, "warning1");
+
+            webServer.headers(headers);
+            webServer.responseStatus(HttpStatus.OK);
+
             val res = getFirstHandler().authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), mock(Service.class));
             assertEquals("casuser", res.getPrincipal().getId());
-        }
-    }
 
-    @Test
-    void verifyNoPrincipal() throws Throwable {
-        try (val webServer = new MockWebServer(8081, StringUtils.EMPTY)) {
-            webServer.start();
+            webServer.responseBody("{}");
             assertThrows(FailedLoginException.class,
                 () -> getFirstHandler().authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), mock(Service.class)));
-        }
-    }
 
-    @Test
-    void verifyDisabledAccount() throws Throwable {
-        try (val webServer = new MockWebServer(8081, HttpStatus.FORBIDDEN)) {
-            webServer.start();
+            webServer.responseStatus(HttpStatus.FORBIDDEN);
             assertThrows(AccountDisabledException.class,
                 () -> getFirstHandler().authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), mock(Service.class)));
-        }
-    }
 
-    @Test
-    void verifyUnauthorized() throws Throwable {
-        try (val webServer = new MockWebServer(8081, HttpStatus.UNAUTHORIZED)) {
-            webServer.start();
+
+            webServer.responseStatus(HttpStatus.UNAUTHORIZED);
             assertThrows(FailedLoginException.class,
                 () -> getFirstHandler().authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), mock(Service.class)));
-        }
-    }
 
-    @Test
-    void verifyOther() throws Throwable {
-        try (val webServer = new MockWebServer(8081, HttpStatus.REQUEST_TIMEOUT)) {
-            webServer.start();
+            webServer.responseStatus(HttpStatus.REQUEST_TIMEOUT);
             assertThrows(FailedLoginException.class,
                 () -> getFirstHandler().authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), mock(Service.class)));
-        }
-    }
 
-    @Test
-    void verifyLocked() throws Throwable {
-        try (val webServer = new MockWebServer(8081, HttpStatus.LOCKED)) {
-            webServer.start();
+            webServer.responseStatus(HttpStatus.LOCKED);
             assertThrows(AccountLockedException.class,
                 () -> getFirstHandler().authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), mock(Service.class)));
-        }
-    }
 
-    @Test
-    void verifyConditionReq() throws Throwable {
-        try (val webServer = new MockWebServer(8081, HttpStatus.PRECONDITION_REQUIRED)) {
-            webServer.start();
+            webServer.responseStatus(HttpStatus.PRECONDITION_REQUIRED);
             assertThrows(AccountPasswordMustChangeException.class,
                 () -> getFirstHandler().authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), mock(Service.class)));
-        }
-    }
 
-    @Test
-    void verifyConditionFail() throws Throwable {
-        try (val webServer = new MockWebServer(8081, HttpStatus.PRECONDITION_FAILED)) {
-            webServer.start();
+            webServer.responseStatus(HttpStatus.PRECONDITION_FAILED);
             assertThrows(AccountExpiredException.class,
                 () -> getFirstHandler().authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), mock(Service.class)));
-        }
-    }
 
-    @Test
-    void verifyNotFound() throws Throwable {
-        try (val webServer = new MockWebServer(8081, HttpStatus.NOT_FOUND)) {
-            webServer.start();
+            webServer.responseStatus(HttpStatus.NOT_FOUND);
             assertThrows(AccountNotFoundException.class,
                 () -> getFirstHandler().authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), mock(Service.class)));
         }

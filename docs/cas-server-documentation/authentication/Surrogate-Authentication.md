@@ -37,6 +37,9 @@ The following account stores may be configured and used to locate surrogates aut
 | REST    | [See this guide](Surrogate-Authentication-Storage-REST.html).   |
 | Groovy  | [See this guide](Surrogate-Authentication-Storage-Groovy.html). |
 | Custom  | [See this guide](Surrogate-Authentication-Storage-Custom.html). |
+     
+Note that multiple account stores may be combined and can function simultaneously together to locate
+accounts from different stores.
 
 ## Account Selection
 

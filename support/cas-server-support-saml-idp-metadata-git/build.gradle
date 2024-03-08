@@ -1,5 +1,5 @@
 ext {
-    maxParallelForksForTests = 1
+
     publishMetadata = true
     projectMetadata = [
             category: "SAML2 Metadata Management",

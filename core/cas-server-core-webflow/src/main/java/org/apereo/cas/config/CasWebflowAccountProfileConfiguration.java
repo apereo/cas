@@ -98,6 +98,7 @@ class CasWebflowAccountProfileConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     public HandlerAdapter accountProfileWebflowHandlerAdapter(
+        final ConfigurableApplicationContext applicationContext,
         @Qualifier("accountProfileFlowExecutor") final FlowExecutor accountProfileFlowExecutor) {
         val handler = new CasFlowHandlerAdapter(CasWebflowConfigurer.FLOW_ID_ACCOUNT);
         handler.setFlowExecutor(accountProfileFlowExecutor);
@@ -109,7 +110,8 @@ class CasWebflowAccountProfileConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public HandlerMapping accountProfileFlowHandlerMapping(
         @Qualifier(CasWebflowExecutionPlan.BEAN_NAME) final CasWebflowExecutionPlan webflowExecutionPlan,
-        @Qualifier(CasWebflowConstants.BEAN_NAME_ACCOUNT_PROFILE_FLOW_DEFINITION_REGISTRY) final FlowDefinitionRegistry accountProfileFlowRegistry) {
+        @Qualifier(CasWebflowConstants.BEAN_NAME_ACCOUNT_PROFILE_FLOW_DEFINITION_REGISTRY)
+        final FlowDefinitionRegistry accountProfileFlowRegistry) {
         val handler = new CasFlowHandlerMapping();
         handler.setOrder(0);
         handler.setFlowRegistry(accountProfileFlowRegistry);

@@ -2,7 +2,6 @@
   "dependencies": "reports,token-webflow",
 
   "properties": [
-    "--cas.audit.engine.enabled=true",
 
     "--cas.authn.token.sso-token-enabled=true",
     

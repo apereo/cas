@@ -280,7 +280,7 @@ public abstract class AbstractOidcTests {
     protected AuditableExecution registeredServiceAccessStrategyEnforcer;
 
     @Autowired
-    @Qualifier(CasWebflowConstants.ACTION_ID_OIDC_REGSTERED_SERVICE_UI)
+    @Qualifier(CasWebflowConstants.ACTION_ID_OIDC_REGISTERED_SERVICE_UI)
     protected Action oidcRegisteredServiceUIAction;
 
     @Autowired
@@ -332,12 +332,12 @@ public abstract class AbstractOidcTests {
         return getOidcRegisteredService("clientid", "https://oauth\\.example\\.org.*", sign, encrypt);
     }
 
-    protected static OidcRegisteredService getOidcRegisteredService(final String clientid, final String redirectUri) {
-        return getOidcRegisteredService(clientid, redirectUri, true, true);
+    protected static OidcRegisteredService getOidcRegisteredService(final String clientId, final String redirectUri) {
+        return getOidcRegisteredService(clientId, redirectUri, true, true);
     }
 
-    protected static OidcRegisteredService getOidcRegisteredService(final String clientid) {
-        return getOidcRegisteredService(clientid, "https://oauth\\.example\\.org.*", true, true);
+    protected static OidcRegisteredService getOidcRegisteredService(final String clientId) {
+        return getOidcRegisteredService(clientId, "https://oauth\\.example\\.org.*", true, true);
     }
 
     protected static OidcRegisteredService getOidcRegisteredService(final String clientId,
@@ -346,7 +346,7 @@ public abstract class AbstractOidcTests {
                                                                     final boolean encrypt) {
         val svc = new OidcRegisteredService();
         svc.setClientId(clientId);
-        svc.setName("oauth");
+        svc.setName("oauth-%s".formatted(UUID.randomUUID().toString()));
         svc.setDescription("description");
         svc.setClientSecret("secret");
         svc.setServiceId(redirectUri);
@@ -359,7 +359,9 @@ public abstract class AbstractOidcTests {
         svc.setJwks("classpath:keystore.jwks");
         svc.setLogoutUrl("https://oauth.example.org/logout,https://logout,https://www.acme.com/.*");
         svc.setLogoutType(RegisteredServiceLogoutType.BACK_CHANNEL);
-        svc.setScopes(CollectionUtils.wrapSet(OidcConstants.StandardScopes.EMAIL.getScope(),
+        svc.setScopes(CollectionUtils.wrapSet(
+            OidcConstants.StandardScopes.OPENID.getScope(),
+            OidcConstants.StandardScopes.EMAIL.getScope(),
             OidcConstants.StandardScopes.PROFILE.getScope()));
         return svc;
     }
@@ -478,7 +480,12 @@ public abstract class AbstractOidcTests {
         when(accessToken.getToken()).thenReturn(code.getId());
         when(accessToken.getIdToken()).thenReturn(idToken);
         when(accessToken.getExpiresIn()).thenReturn(Duration.ofDays(365 * 5).toSeconds());
+        when(accessToken.getGrantType()).thenReturn(OAuth20GrantTypes.AUTHORIZATION_CODE);
         return accessToken;
+    }
+
+    protected String randomServiceUrl() {
+        return "https://app.example.org/%s".formatted(RandomUtils.randomAlphabetic(8));
     }
 
     protected OAuth20Code addCode(final Principal principal,

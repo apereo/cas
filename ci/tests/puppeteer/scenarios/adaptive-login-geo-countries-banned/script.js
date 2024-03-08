@@ -1,8 +1,8 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     const context = browser.defaultBrowserContext();
     
@@ -10,7 +10,7 @@ const cas = require("../../cas.js");
     await page.setGeolocation({latitude: 90, longitude: 20});
 
     await cas.gotoLogin(page);
-    await page.waitForTimeout(2000);
+    await cas.sleep(2000);
 
     await cas.loginWith(page);
     await cas.assertTextContent(page, "#content h2", "Authentication attempt is blocked.");

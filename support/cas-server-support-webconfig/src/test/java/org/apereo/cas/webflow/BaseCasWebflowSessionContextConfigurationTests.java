@@ -27,9 +27,11 @@ import org.apereo.cas.config.CasWebAppAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,6 +102,15 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 public abstract class BaseCasWebflowSessionContextConfigurationTests {
+
+    @Autowired
+    @Qualifier(CasWebflowExecutionPlan.BEAN_NAME)
+    protected CasWebflowExecutionPlan casWebflowExecutionPlan;
+
+    @BeforeEach
+    void setup() {
+        casWebflowExecutionPlan.execute();
+    }
 
     @Test
     void verifyExecutorsAreBeans() {

@@ -45,7 +45,6 @@ import java.util.stream.IntStream;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Getter
 @Tag("JDBC")
-@SuppressWarnings("JavaUtilDate")
 class CasJdbcAuditConfigurationTests extends BaseAuditConfigurationTests {
 
     @Autowired

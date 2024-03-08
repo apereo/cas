@@ -86,11 +86,11 @@ Application access requests and authorization decisions can now be submitted to 
 A new [stateless ticket registry](../ticketing/Stateless-Ticket-Registry.html) option is now available that 
 does not track or store tickets in a persistent manner via a backend storage technology. 
   
-### Gradle & Devlocity 
+### Gradle & Develocity 
 
-Throughout a series of experiments and while working with the Devlocity team, several changes are now made to the CAS Gradle build 
+Throughout a series of experiments and while working with the Develocity team, several changes are now made to the CAS Gradle build 
 to allow more efficient caching of configuration and build artifacts and reduce overall build times. The Gradle remote build cache
-that was previously set up and run on Heroku is now retired and replaced with a dedicated Devlocity server and is now publicly available.
+that was previously set up and run on Heroku is now retired and replaced with a dedicated Develocity server and is now publicly available.
 
 You can see the [build scan results here](https://develocity.apereo.org/). 
  

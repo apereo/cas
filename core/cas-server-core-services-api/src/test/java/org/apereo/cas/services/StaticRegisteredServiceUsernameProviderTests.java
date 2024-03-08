@@ -1,16 +1,16 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
-import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
 
-import java.io.File;
+import java.nio.file.Files;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,9 +22,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("RegisteredService")
 class StaticRegisteredServiceUsernameProviderTests {
-    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(),
-        "StaticRegisteredServiceUsernameProviderTests.json");
-
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
@@ -44,8 +41,9 @@ class StaticRegisteredServiceUsernameProviderTests {
         provider.setValue("${#systemProperties['CAS_UID']}");
         assertEquals("casuser", provider.resolveUsername(usernameContext));
 
-        MAPPER.writeValue(JSON_FILE, provider);
-        val policyRead = MAPPER.readValue(JSON_FILE, StaticRegisteredServiceUsernameProvider.class);
+        val jsonFile = Files.createTempFile(RandomUtils.randomAlphabetic(8), ".json").toFile();
+        MAPPER.writeValue(jsonFile, provider);
+        val policyRead = MAPPER.readValue(jsonFile, StaticRegisteredServiceUsernameProvider.class);
         assertEquals(provider, policyRead);
     }
 }

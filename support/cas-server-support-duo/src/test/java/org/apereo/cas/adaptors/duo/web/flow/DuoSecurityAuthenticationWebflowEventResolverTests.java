@@ -25,7 +25,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = BaseDuoSecurityTests.SharedTestConfiguration.class,
     properties = {
         "cas.authn.mfa.duo[0].duo-secret-key=aGKL0OndjtknbnVOWaFKosiqinNFEKXHxgXCJEBr",
-        "cas.authn.mfa.duo[0].application-key=my134nfd46m89",
         "cas.authn.mfa.duo[0].duo-integration-key=SIOXVQQD3UMZ8XXMNZQ8",
         "cas.authn.mfa.duo[0].duo-api-host=theapi.duosecurity.com"
     })

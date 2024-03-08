@@ -1,6 +1,6 @@
 description = "Apereo CAS Redis Authentication"
 ext {
-    maxParallelForksForTests = 1
+
     publishMetadata = true
     projectMetadata = [
             category: "Authentication",

@@ -1,5 +1,4 @@
 #!/bin/bash
-clear
 type="$1"
 
 case "$1" in
@@ -81,7 +80,6 @@ sleep 5
 kill -9 $pid
 rm -Rf ${CATALINA_HOME}
 rm -Rf apache-tomcat-${tomcatVersion}.zip
-clear
 if [ "$rc" == 200 ]; then
     echo "Deployed the web application successfully."
     exit 0

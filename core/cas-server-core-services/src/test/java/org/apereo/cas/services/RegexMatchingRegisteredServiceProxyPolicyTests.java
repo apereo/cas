@@ -1,15 +1,15 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
-import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.net.URI;
+import java.nio.file.Files;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,19 +19,18 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("RegisteredService")
 class RegexMatchingRegisteredServiceProxyPolicyTests {
-    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "regexMatchingRegisteredServiceProxyPolicy.json");
-
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
     void verifySerializeARegexMatchingRegisteredServiceProxyPolicyToJson() throws Throwable {
+        val jsonFile = Files.createTempFile(RandomUtils.randomAlphabetic(8), ".json").toFile();
         val policy = new RegexMatchingRegisteredServiceProxyPolicy();
         policy.setPattern("pattern");
         policy.setExactMatch(true);
         policy.setUseServiceId(true);
-        MAPPER.writeValue(JSON_FILE, policy);
-        val policyRead = MAPPER.readValue(JSON_FILE, RegexMatchingRegisteredServiceProxyPolicy.class);
+        MAPPER.writeValue(jsonFile, policy);
+        val policyRead = MAPPER.readValue(jsonFile, RegexMatchingRegisteredServiceProxyPolicy.class);
         assertEquals(policy, policyRead);
     }
 

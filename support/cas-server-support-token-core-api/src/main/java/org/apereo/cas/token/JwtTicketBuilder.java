@@ -45,9 +45,8 @@ public class JwtTicketBuilder implements TokenTicketBuilder {
     private final ServicesManager servicesManager;
 
     private final CasConfigurationProperties casProperties;
-    
+
     @Override
-    @SuppressWarnings("JavaUtilDate")
     public String build(final String serviceTicketId, final WebApplicationService webApplicationService) throws Throwable {
         val assertion = FunctionUtils.doUnchecked(() -> ticketValidator.validate(serviceTicketId, webApplicationService.getId()));
         val attributes = new LinkedHashMap(assertion.getAttributes());

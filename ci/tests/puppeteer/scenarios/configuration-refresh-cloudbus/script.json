@@ -4,12 +4,10 @@
     "docker": "true"
   },
   "properties": [
-
     
     "--logging.level.org.springframework.amqp=info",
     "--logging.level.org.springframework.cloud.bus=info",
 
-    "--cas.audit.engine.enabled=true",
     "--cas.server.prefix=${cas.server.name}/cas",
 
     "--cas.tgc.crypto.encryption.key=u696jJnPvm1DHLR7yVCSKMMzzoPoFxJZW4-MP1CkM5w",

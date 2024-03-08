@@ -85,7 +85,7 @@ public class CasCoreCookieAutoConfiguration {
     static class CasCookieGeneratorConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "warnCookieGenerator")
+        @ConditionalOnMissingBean(name = CasCookieBuilder.BEAN_NAME_WARN_COOKIE_BUILDER)
         public CasCookieBuilder warnCookieGenerator(final CasConfigurationProperties casProperties) {
             val props = casProperties.getWarningCookie();
             return new CookieRetrievingCookieGenerator(CookieUtils.buildCookieGenerationContext(props));

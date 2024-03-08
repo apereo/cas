@@ -59,21 +59,21 @@ ext {
     ci = System.getenv("CI") || providers.systemProperty("CI").present
 
     excludedFilesFromTestCoverage = [
-        '**/docs/**',
-        '**/org/springframework/**',
-        '**/soap/generated/**',
-        '**/com/duosecurity/**',
-        '**/org/apereo/inspektr/**',
-        '**/net/jradius/**',
-        '**/com/yubico/**',
-        '**/saml/sts/SamlToken**',
-        '**/**ConfigurationMetadata**',
-        '**/**NimbusOAuthJacksonModule**',
-        '**/**Application**',
-        '**/**Application$**',
-        '**/**Exception$**',
-        '**/**Properties**',
-        '**/**Properties$**'
+            '**/docs/**',
+            '**/org/springframework/**',
+            '**/soap/generated/**',
+            '**/com/duosecurity/**',
+            '**/org/apereo/inspektr/**',
+            '**/net/jradius/**',
+            '**/com/yubico/**',
+            '**/saml/sts/SamlToken**',
+            '**/**ConfigurationMetadata**',
+            '**/**NimbusOAuthJacksonModule**',
+            '**/**Application**',
+            '**/**Application$**',
+            '**/**Exception$**',
+            '**/**Properties**',
+            '**/**Properties$**'
     ]
 }
 
@@ -340,7 +340,7 @@ subprojects {
 
     ext.buildJarFile = new File(project.layout.buildDirectory.getAsFile().get(), "libs/${project.name}-${project.version}.jar")
 
-    [compileTestJava, compileJava].each {        
+    [compileTestJava, compileJava].each {
         if (rootProject.generateGitProperties) {
             it.dependsOn("generateGitProperties")
         }
@@ -361,6 +361,7 @@ subprojects {
             it.options.errorprone.errorproneArgs = ['-Xep:StatementSwitchToExpressionSwitch:OFF',
                                                     '-Xep:ClassCanBeStatic:OFF',
                                                     '-Xep:NotJavadoc:OFF',
+                                                    '-Xep:JavaUtilDate:OFF',
                                                     '-Xep:AddressSelection:OFF']
             casCompilerArgs.add("-XDcompilePolicy=byfile")
         }
@@ -427,7 +428,7 @@ subprojects {
         api libraries.springintegration
         api libraries.springwebflow
         api libraries.jakarta
-        
+
         annotationProcessor libraries.springindexer
 
         if (!providers.systemProperty("skipErrorProneCompiler").present) {
@@ -437,7 +438,7 @@ subprojects {
         testImplementation libraries.tests
         testImplementation libraries.log4j
         testImplementation libraries.hibernatevalidator
-        
+
         runtimeOnly libraries.httpclient4
     }
 }
@@ -485,16 +486,18 @@ if (gradle.startParameter.taskNames.any { task -> task.startsWith("jacoco") }) {
     tasks.register('jacocoRootReport', JacocoReport) {
         outputs.cacheIf { true }
 
-        subprojects.each {subproject -> {
-            if (!subproject.path.contains(":docs")) {
-                subproject.tasks.withType(Test).each{ task ->
-                    dependsOn(task)
-                    mustRunAfter(task)
+        subprojects.each { subproject ->
+            {
+                if (!subproject.path.contains(":docs")) {
+                    subproject.tasks.withType(Test).each { task ->
+                        dependsOn(task)
+                        mustRunAfter(task)
+                    }
                 }
             }
-        }}
-        
-        def executions = subprojects.collect {subproject ->
+        }
+
+        def executions = subprojects.collect { subproject ->
             def execFiles = subproject.layout.buildDirectory.asFileTree.matching { include "**/jacoco/jacoco-*.exec" }
             execFiles.each {
                 logger.info "${subproject.name} with execution file ${it}"
@@ -508,7 +511,6 @@ if (gradle.startParameter.taskNames.any { task -> task.startsWith("jacoco") }) {
         executionData.from(executions)
         inputs.files(executions)
         outputs.files(rootProject.layout.buildDirectory.file('reports/jacoco/jacocoRootReport/jacocoRootReport.xml').get().asFile)
-        
 
         reports {
             html.required.set(true)
@@ -570,11 +572,11 @@ tasks.register('publishProjectModules') {
                 metadata.put("selectable", true)
             }
             results += [
-                name: it.name,
-                version: it.version,
-                group: it.group,
-                description: it.description,
-                details: metadata
+                    name       : it.name,
+                    version    : it.version,
+                    group      : it.group,
+                    description: it.description,
+                    details    : metadata
             ]
         }
     }

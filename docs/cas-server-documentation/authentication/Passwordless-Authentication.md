@@ -25,13 +25,15 @@ account stores that hold user records who qualify for passwordless authenticatio
 Similarly, CAS must be configured to manage issued tokens in order to execute find, 
 validate, expire or save operations in appropriate data stores.
 
+Qualifying passwordless accounts may also directly be routed to selected [multifactor authentication](Passwordless-Authentication-MFA.html) providers
+or [delegated to external identity providers](Passwordless-Authentication-Delegation.html) for further verification.
+
 ## Passwordless Variants
 
 Passwordless authentication can also be activated using [QR Code Authentication](QRCode-Authentication.html),
 allowing end users to login by scanning a QR code using a mobile device.
 
-Passwordless authentication can also be 
-achieved via [FIDO2 WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) which lets users 
+Passwordless authentication can also be achieved via [FIDO2 WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) which lets users 
 verify their identities without passwords and login using FIDO2-enabled devices.
 
 ## Overview
@@ -48,15 +50,18 @@ User records that qualify for passwordless authentication must
 be found by CAS using one of the following strategies. All strategies may be configured
 using CAS settings and are activated depending on the presence of configuration values.
 
-| Option  | Description                                                                |
-|---------|----------------------------------------------------------------------------|
-| Simple  | Please [see this guide](Passwordless-Authentication-Storage-Simple.html).  |
-| MongoDb | Please [see this guide](Passwordless-Authentication-Storage-MongoDb.html). |
-| LDAP    | Please [see this guide](Passwordless-Authentication-Storage-LDAP.html).    |
-| JSON    | Please [see this guide](Passwordless-Authentication-Storage-JSON.html).    |
-| Groovy  | Please [see this guide](Passwordless-Authentication-Storage-Groovy.html).  |
-| REST    | Please [see this guide](Passwordless-Authentication-Storage-Rest.html).    |
-| Custom  | Please [see this guide](Passwordless-Authentication-Storage-Custom.html).  |
+| Option       | Description                                                                    |
+|--------------|--------------------------------------------------------------------------------|
+| Simple       | Please [see this guide](Passwordless-Authentication-Storage-Simple.html).      |
+| MongoDb      | Please [see this guide](Passwordless-Authentication-Storage-MongoDb.html).     |
+| LDAP         | Please [see this guide](Passwordless-Authentication-Storage-LDAP.html).        |
+| JSON         | Please [see this guide](Passwordless-Authentication-Storage-JSON.html).        |
+| Groovy       | Please [see this guide](Passwordless-Authentication-Storage-Groovy.html).      |
+| REST         | Please [see this guide](Passwordless-Authentication-Storage-Rest.html).        |
+| Custom       | Please [see this guide](Passwordless-Authentication-Storage-Custom.html).      |
+| Duo Security | Please [see this guide](Passwordless-Authentication-Storage-DuoSecurity.html). |
+      
+Note that Multiple passwordless account stores can be used simultaneously to verify and locate passwordless accounts.
 
 ## Token Management
 
@@ -86,10 +91,26 @@ be disabled and skipped in favor of the more usual CAS authentication flow,
 challenging the user for a password. Support for this behavior may depend
 on each individual account store implementation.
 
-## Multifactor Authentication
+## Passwordless Authentication Per Application
 
-Please [see this](Passwordless-Authentication-MFA.html) for details.
+Passwordless authentication can be selectively controlled for specific applications. By default,
+all services and applications are eligible for passwordless authentication.
 
-## Delegated Authentication
+```json
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://app.example.org",
+  "name": "App",
+  "id": 1,
+  "passwordlessPolicy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServicePasswordlessPolicy",
+    "enabled": false
+  }
+}
+```
 
-Please [see this](Passwordless-Authentication-Delegation.html) for details.
+The following passwordless policy settings are supported:
+
+| Name      | Description                                                                        |
+|-----------|------------------------------------------------------------------------------------|
+| `enabled` | Boolean to define whether passwordless authentication is allowed for this service. |

@@ -49,7 +49,7 @@ class RegisteredServicePrincipalAttributeMultifactorAuthenticationTriggerTests e
         when(policy.getMultifactorAuthenticationProviders()).thenReturn(Set.of(provider1.getId(), provider2.getId()));
         when(registeredService.getMultifactorAuthenticationPolicy()).thenReturn(policy);
 
-        val chain = new DefaultChainingMultifactorAuthenticationProvider(mock(MultifactorAuthenticationFailureModeEvaluator.class));
+        val chain = new DefaultChainingMultifactorAuthenticationProvider(appCtx, mock(MultifactorAuthenticationFailureModeEvaluator.class));
         chain.addMultifactorAuthenticationProviders(provider1, provider1);
         val selector = mock(MultifactorAuthenticationProviderSelector.class);
         when(selector.resolve(any(Collection.class), any(RegisteredService.class), any(Principal.class))).thenReturn(chain);

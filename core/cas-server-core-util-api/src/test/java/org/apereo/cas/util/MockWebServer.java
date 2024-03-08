@@ -2,6 +2,7 @@ package org.apereo.cas.util;
 
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -53,6 +54,14 @@ public class MockWebServer implements Closeable {
     private final Worker worker;
 
     private Thread workerThread;
+
+    public MockWebServer(final boolean ssl, final int port, final Resource resource) {
+        try {
+            this.worker = new Worker(getServerSocket(port, ssl), resource, MediaType.APPLICATION_JSON_VALUE, HttpStatus.OK);
+        } catch (final Exception e) {
+            throw new IllegalArgumentException("Cannot create Web server on port " + port, e);
+        }
+    }
 
     public MockWebServer(final boolean ssl, final String resource) {
         val port = getRandomPort();
@@ -113,7 +122,7 @@ public class MockWebServer implements Closeable {
 
     public MockWebServer(final int port, final Object body) {
         try {
-            val data = MAPPER.writeValueAsString(body);
+            val data = toJsonString(body);
             val resource = new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output");
             this.worker = new Worker(getServerSocket(port, false), resource,
                 HttpStatus.OK, MediaType.APPLICATION_JSON_VALUE, Map.of());
@@ -122,9 +131,13 @@ public class MockWebServer implements Closeable {
         }
     }
 
+    public MockWebServer(final Map body) {
+        this(toJsonString(body));
+    }
+
     public MockWebServer(final int port, final Object body, final Map headers, final HttpStatus status) {
         try {
-            val data = MAPPER.writeValueAsString(body);
+            val data = toJsonString(body);
             val resource = new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output");
             this.worker = new Worker(getServerSocket(port, false), resource, status, MediaType.APPLICATION_JSON_VALUE, headers);
         } catch (final Exception e) {
@@ -173,6 +186,14 @@ public class MockWebServer implements Closeable {
         }
     }
 
+    public void responseStatus(final HttpStatus httpStatus) {
+        this.worker.setStatus(httpStatus);
+    }
+
+    public void setContentType(final String value) {
+        this.worker.setContentType(value);
+    }
+
     private static ServerSocket getServerSocket(final int port, final boolean ssl) throws Exception {
         if (port == 8443 || ssl) {
             val sslContext = SSLContext.getInstance("SSL");
@@ -197,9 +218,9 @@ public class MockWebServer implements Closeable {
             val addr = new InetSocketAddress("0.0.0.0", port);
             return sslContext.getServerSocketFactory().createServerSocket(port, 0, addr.getAddress());
         }
-        val ss = new ServerSocket(port);
-        ss.setSoTimeout(30000);
-        return ss;
+        val serverSocket = new ServerSocket(port);
+        serverSocket.setSoTimeout(30000);
+        return serverSocket;
     }
 
     public int getPort() {
@@ -208,9 +229,24 @@ public class MockWebServer implements Closeable {
 
     public void responseBody(final String data) {
         this.worker.setResource(new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8)));
+        this.worker.setResourceSupplier(null);
+    }
+
+    public void responseBodyJson(final Object body) throws Exception {
+        try {
+            val data = toJsonString(body);
+            responseBody(data);
+        } catch (final Exception e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
+
+    public void headers(final Map<String, String> headers) {
+        this.worker.getHeaders().putAll(headers);
     }
 
     public void responseBodySupplier(final Supplier<Resource> sup) {
+        this.worker.setResource(null);
         this.worker.setResourceSupplier(sup);
     }
 
@@ -229,6 +265,7 @@ public class MockWebServer implements Closeable {
         try {
             this.worker.stop();
             this.workerThread.join();
+            ALL_PORTS.remove(getPort());
         } catch (final InterruptedException e) {
             LoggingUtils.error(LOGGER, e);
         }
@@ -263,15 +300,18 @@ public class MockWebServer implements Closeable {
          */
         private static final int BUFFER_SIZE = 2048;
 
+        @Getter
         private final Map<String, String> headers = new HashMap<>();
 
         private final ServerSocket serverSocket;
 
-        private final String contentType;
+        @Setter
+        private String contentType;
 
         private final Function<Socket, Object> functionToExecute;
 
-        private final HttpStatus status;
+        @Setter
+        private HttpStatus status;
 
         @Setter
         private Resource resource;
@@ -406,5 +446,13 @@ public class MockWebServer implements Closeable {
         }
         ALL_PORTS.add(port);
         return port;
+    }
+
+    private static String toJsonString(final Object body) {
+        try {
+            return MAPPER.writeValueAsString(body);
+        } catch (final Exception e) {
+            throw new IllegalArgumentException("Cannot convert object to JSON ", e);
+        }
     }
 }

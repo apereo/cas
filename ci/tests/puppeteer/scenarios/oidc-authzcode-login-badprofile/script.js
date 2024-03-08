@@ -1,11 +1,11 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 const assert = require("assert");
 
 (async () => {
     const redirectUrl = "https://localhost:9859/anything/cas";
 
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     const url = "https://localhost:8443/cas/oidc/oidcAuthorize?response_type=code"
         + `&client_id=client&scope=${encodeURIComponent("openid badprofile")}&`
@@ -14,10 +14,10 @@ const assert = require("assert");
         + "%22%3A%20true%7D%2C%22phone_number%22%3A%20%7B%22essential%22%3A%20true%7D%7D%7D";
 
     await cas.goto(page, url);
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.loginWith(page);
 
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.assertVisibility(page, "#userInfoClaims");
     await cas.assertVisibility(page, "#scopes");
     await cas.assertVisibility(page, "#openid");
@@ -28,7 +28,7 @@ const assert = require("assert");
 
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
-        await page.waitForNavigation();
+        await cas.waitForNavigation(page);
     }
 
     const code = await cas.assertParameter(page, "code");

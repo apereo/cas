@@ -53,7 +53,7 @@ class QueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthentication
 
     private static String getSqlInsertStatementToCreateUserAccount(final int i, final String expired, final String disabled) {
         return String.format("insert into casusers (username, password, expired, disabled, phone) values('%s', '%s', '%s', '%s', '%s');",
-            "user" + i, "psw" + i, expired, disabled, "123456789");
+            "user%d".formatted(i), "psw%d".formatted(i), expired, disabled, "123456789");
     }
 
     @BeforeEach

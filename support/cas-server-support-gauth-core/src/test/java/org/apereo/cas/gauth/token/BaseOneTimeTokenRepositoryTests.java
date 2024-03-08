@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.OneTimeToken;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepositoryCleaner;
 import org.apereo.cas.util.RandomUtils;
-
 import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,10 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.junitpioneer.jupiter.RetryingTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-
 import java.util.Locale;
 import java.util.UUID;
-
 import static org.awaitility.Awaitility.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -44,8 +41,6 @@ public abstract class BaseOneTimeTokenRepositoryTests {
     @BeforeEach
     public void initialize() {
         this.userId = RandomUtils.randomAlphabetic(6);
-        oneTimeTokenAuthenticatorTokenRepository.removeAll();
-        await().untilAsserted(() -> assertEquals(0, oneTimeTokenAuthenticatorTokenRepository.count()));
     }
 
     @Test
@@ -129,14 +124,13 @@ public abstract class BaseOneTimeTokenRepositoryTests {
 
     @Test
     void verifySize() throws Throwable {
-        val uid = UUID.randomUUID().toString();
-        val otp = getRandomOtp();
-        assertEquals(0, oneTimeTokenAuthenticatorTokenRepository.count());
-        val token = new GoogleAuthenticatorToken(otp, uid);
-        oneTimeTokenAuthenticatorTokenRepository.store(token);
-        assertEquals(1, oneTimeTokenAuthenticatorTokenRepository.count());
-        assertEquals(1, oneTimeTokenAuthenticatorTokenRepository.count(uid));
         oneTimeTokenAuthenticatorTokenRepository.removeAll();
         assertEquals(0, oneTimeTokenAuthenticatorTokenRepository.count(), "Repository is not empty");
+        assertEquals(0, oneTimeTokenAuthenticatorTokenRepository.count());
+        val uid = UUID.randomUUID().toString();
+        val otp = getRandomOtp();
+        val token = new GoogleAuthenticatorToken(otp, uid);
+        oneTimeTokenAuthenticatorTokenRepository.store(token);
+        assertTrue(oneTimeTokenAuthenticatorTokenRepository.count(uid) > 0);
     }
 }

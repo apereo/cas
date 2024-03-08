@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const assert = require("assert");
 const cas = require("../../cas.js");
 
@@ -23,13 +23,13 @@ async function getProxyTicket(service, ticket) {
 }
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     const service = "https://localhost:9859/anything/cas";
 
     await cas.gotoLogin(page, service);
     await cas.loginWith(page);
-    await page.waitForTimeout(3000);
+    await cas.sleep(3000);
 
     let ticket = await cas.assertTicketParameter(page);
     let body = await proxyValidateTicket(service, ticket);

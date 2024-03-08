@@ -1,7 +1,7 @@
 description = "Apereo CAS Apache Cassandra Authentication Support"
 
 ext {
-    maxParallelForksForTests = 1
+
     publishMetadata = true
     projectMetadata = [
             category: "Authentication",

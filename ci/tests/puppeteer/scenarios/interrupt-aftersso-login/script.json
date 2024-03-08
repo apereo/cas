@@ -3,7 +3,7 @@
   "properties": [
     "--cas.interrupt.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
     "--cas.interrupt.core.trigger-mode=AFTER_SSO",
-    "--cas.audit.slf4j.use-single-line=true",
+
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
     "--cas.authn.accept.users=casuser::Mellon,casblock::Mellon",

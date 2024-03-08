@@ -1,8 +1,8 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 
 (async () => {
-    let browser = await puppeteer.launch(cas.browserOptions());
+    let browser = await cas.newBrowser(cas.browserOptions());
     let page = await cas.newPage(browser);
     await cas.gotoLogin(page);
     const eventId = await cas.elementValue(page, "input[name=_eventId]");
@@ -11,7 +11,7 @@ const cas = require("../../cas.js");
     await cas.log(`Event ID: ${eventId}, Execution: ${execution}, GeoLocation: ${geolocation}`);
     await browser.close();
 
-    browser = await puppeteer.launch(cas.browserOptions());
+    browser = await cas.newBrowser(cas.browserOptions());
     page = await cas.newPage(browser);
     await cas.goto(page, "https://localhost:8444/cas/login");
     await cas.elementValue(page, "input[name=_eventId]", eventId);

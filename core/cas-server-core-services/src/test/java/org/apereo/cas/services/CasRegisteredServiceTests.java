@@ -3,19 +3,21 @@ package org.apereo.cas.services;
 import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
-import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import java.io.File;
-import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,9 +31,8 @@ import static org.mockito.Mockito.*;
  * @since 3.4.0
  */
 @Tag("RegisteredService")
+@Execution(ExecutionMode.SAME_THREAD)
 class CasRegisteredServiceTests {
-
-    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "CasRegisteredService.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
@@ -87,6 +88,8 @@ class CasRegisteredServiceTests {
     private static RegisteredService newService(final String id) {
         val service = new CasRegisteredService();
         service.setServiceId(id);
+        service.setName(UUID.randomUUID().toString());
+        service.setId(RandomUtils.nextLong());
         service.setLogoutType(RegisteredServiceLogoutType.FRONT_CHANNEL);
         service.setServiceTicketExpirationPolicy(
             new DefaultRegisteredServiceServiceTicketExpirationPolicy(100, "100"));
@@ -110,22 +113,13 @@ class CasRegisteredServiceTests {
 
     @ParameterizedTest
     @MethodSource("getParameters")
-    void verifyMatches(final CasRegisteredService service,
-                       final String serviceToMatch,
-                       final boolean expectedResult) {
+    void verifyMatches(final CasRegisteredService service, final String serviceToMatch, final boolean expectedResult) throws Exception {
+        val jsonFile = Files.createTempFile(RandomUtils.randomAlphabetic(8), ".json").toFile();
         val testService = Optional.ofNullable(serviceToMatch).map(RegisteredServiceTestUtils::getService).orElse(null);
-        assertEquals(expectedResult, service.matches(testService));
-    }
-
-    @ParameterizedTest
-    @MethodSource("getParameters")
-    void verifySerialization(final CasRegisteredService service,
-                             final String serviceToMatch,
-                             final boolean expectedResult) throws IOException {
-        MAPPER.writeValue(JSON_FILE, service);
-        val serviceRead = MAPPER.readValue(JSON_FILE, CasRegisteredService.class);
+        assertEquals(expectedResult, service.matches(testService), () -> "Service: " + service + " cannot match " + testService);
+        MAPPER.writeValue(jsonFile, service);
+        val serviceRead = MAPPER.readValue(jsonFile, CasRegisteredService.class);
         assertEquals(service, serviceRead);
-        val testService = Optional.ofNullable(serviceToMatch).map(RegisteredServiceTestUtils::getService).orElse(null);
         assertEquals(expectedResult, serviceRead.matches(testService));
     }
 

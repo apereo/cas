@@ -9,7 +9,6 @@ const cas = require("../../cas.js");
     const url = `https://localhost:8443/cas/oidc/token?${params}`;
     await cas.log(`Calling ${url}`);
 
-
     await cas.doPost(url, "", {
         "Content-Type": "application/json",
         "Authorization": `Basic ${btoa("client:secret")}`

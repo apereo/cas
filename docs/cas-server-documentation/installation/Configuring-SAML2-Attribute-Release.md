@@ -362,4 +362,29 @@ to service providers that contain the entity attribute value `https://refeds.org
 
 {% endtab %}
 
+{% tab saml2attrrel Entities Group %}
+
+A specific attribute release policy that will compare the defined group as a regular expression with the name of the
+`EntitiesDescriptor` element as well as any `AffiliationDescriptor` owners or identifiers.
+
+```json
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": "entity-ids-allowed-via-regex",
+  "name": "SAML",
+  "id": 10,
+  "metadataLocation": "path/to/incommon/metadata.xml",
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
+    "policies": [ "java.util.ArrayList",
+      [
+         {"@class": "org.apereo.cas.support.saml.services.MetadataEntityGroupAttributeReleasePolicy"}
+      ]
+    ]
+  }
+}
+```
+
+{% endtab %}
+
 {% endtabs %}

@@ -46,7 +46,10 @@ public class RiskAuthenticationCheckTokenActionTests extends BaseWebflowConfigur
     private AuthenticationRiskNotifier authenticationRiskEmailNotifier;
 
     @BeforeEach
-    public void setup() {
+    @Override
+    void setup() {
+        super.setup();
+        
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("1.2.3.4");
         request.setLocalAddr("1.2.3.4");

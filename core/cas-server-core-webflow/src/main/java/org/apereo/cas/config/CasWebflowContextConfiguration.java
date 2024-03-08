@@ -29,20 +29,19 @@ import org.apereo.cas.web.flow.resolver.CasMvcViewFactoryCreator;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.CasLocaleChangeInterceptor;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.context.event.EventListener;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.annotation.Order;
@@ -106,6 +105,7 @@ class CasWebflowContextConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public HandlerAdapter logoutHandlerAdapter(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("logoutFlowUrlHandler") final FlowUrlHandler logoutFlowUrlHandler,
             @Qualifier("logoutFlowExecutor") final FlowExecutor logoutFlowExecutor) {
             val handler = new CasFlowHandlerAdapter(CasWebflowConfigurer.FLOW_ID_LOGOUT);
@@ -129,6 +129,7 @@ class CasWebflowContextConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public HandlerAdapter loginHandlerAdapter(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("loginFlowExecutor") final FlowExecutor loginFlowExecutor,
             @Qualifier("loginFlowUrlHandler") final FlowUrlHandler loginFlowUrlHandler) {
             val handler = new CasFlowHandlerAdapter(CasWebflowConfigurer.FLOW_ID_LOGIN);
@@ -368,25 +369,20 @@ class CasWebflowContextConfiguration {
     }
 
     @Configuration(value = "CasWebflowExecutionConfiguration", proxyBeanMethods = false)
+    @Slf4j
     static class CasWebflowExecutionConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public CasWebflowExecutionPlan casWebflowExecutionPlan(final ConfigurableApplicationContext applicationContext) {
-            val configurers = applicationContext.getBeansOfType(CasWebflowExecutionPlanConfigurer.class)
-                .values()
+        @ConditionalOnMissingBean(name = CasWebflowExecutionPlan.BEAN_NAME)
+        public CasWebflowExecutionPlan casWebflowExecutionPlan(
+            final ConfigurableApplicationContext applicationContext,
+            final List<CasWebflowExecutionPlanConfigurer> configurers) {
+            val plan = new DefaultCasWebflowExecutionPlan(applicationContext);
+            configurers
                 .stream()
                 .filter(BeanSupplier::isNotProxy)
-                .toList();
-            val plan = new DefaultCasWebflowExecutionPlan();
-            configurers.forEach(cfg -> cfg.configureWebflowExecutionPlan(plan));
-            plan.execute();
+                .forEach(cfg -> cfg.configureWebflowExecutionPlan(plan));
             return plan;
-        }
-
-        @EventListener
-        public void handleApplicationReadyEvent(final ApplicationReadyEvent event) {
-            val webflowExecutionPlan = event.getApplicationContext().getBean(CasWebflowExecutionPlan.BEAN_NAME, CasWebflowExecutionPlan.class);
-            webflowExecutionPlan.getWebflowConfigurers().forEach(cfg -> cfg.postInitialization(event.getApplicationContext()));
         }
     }
 }

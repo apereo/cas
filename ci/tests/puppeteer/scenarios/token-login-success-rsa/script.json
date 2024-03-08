@@ -3,9 +3,6 @@
 
   "properties": [
 
-    
-    "--cas.audit.engine.enabled=true",
-
     "--cas.authn.token.sso-token-enabled=true",
     
     "--cas.server.name=https://localhost:8443",

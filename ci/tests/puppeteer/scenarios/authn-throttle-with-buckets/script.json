@@ -4,8 +4,6 @@
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
-    "--cas.audit.engine.enabled=true",
-    "--cas.audit.slf4j.use-single-line=true",
 
     "--cas.authn.throttle.failure.threshold=1",
     "--cas.authn.throttle.failure.range-seconds=5",
@@ -17,8 +15,4 @@
     "--logging.level.org.apereo.cas=info"
   ]
 }
-
-
-
-
 

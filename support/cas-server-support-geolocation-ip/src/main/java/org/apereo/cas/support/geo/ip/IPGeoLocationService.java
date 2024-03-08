@@ -22,8 +22,11 @@ public class IPGeoLocationService extends AbstractGeoLocationService {
 
     @Override
     public GeoLocationResponse locate(final InetAddress address) {
-        val geoParams = new GeolocationParams(address.getHostAddress(), "en",
-            "geo", null, false, false, false, false, false);
+        val geoParams = GeolocationParams.builder()
+            .withIPAddress(address.getHostAddress())
+            .withLang("en")
+            .withFields("geo")
+            .build();
         LOGGER.debug("Fetching geolocation results for [{}]", geoParams.getIPAddress());
         val geolocation = api.getGeolocation(geoParams);
         LOGGER.debug("Geolocation results for [{}] are [{}]", geoParams.getIPAddress(), geolocation);
