@@ -24,17 +24,22 @@ env:
   JDK_CURRENT: 21
   JDK_DISTRIBUTION: "corretto"
   RETRY_ATTEMPTS: 2
-  RETRY_MINUTES: 25
+  RETRY_MINUTES: 30
   CATEGORY_REGEX: ".*"
 ##########################################################################
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'
   push:
-    branches: [ master, pr-* ]
+    branches:
+      - master
+      - '!**.**.**'
+      - '!heroku-*'
   pull_request:
     types: [ labeled ]
-    branches: [ master ]
+    branches: [ master, pr-* ]
 
 concurrency:
   group: "workflow = ${{ github.workflow }}, ref = ${{ github.event.ref }}, pr = ${{ github.event.pull_request.id }}"
@@ -43,7 +48,15 @@ concurrency:
 ##########################################################################
 
 jobs:
+  trigger-ci:
+    if: ${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' || contains(github.event.pull_request.labels.*.name, 'CI')) && !contains(github.event.pull_request.labels.*.name, 'Renovate') && !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger CI
+        run: echo "CI Triggered"
+  ##########################################################################
   initialize:
+    needs: [trigger-ci]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -101,6 +114,11 @@ jobs:
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
         shell: bash
+      - name: Configure Environment
+        if: github.event_name == 'schedule'
+        run: |
+          echo "Running on schedule..."
+          export PTS_ENABLED=false
       - name: Run Tests
         uses: nick-fields/retry@v3
         with:

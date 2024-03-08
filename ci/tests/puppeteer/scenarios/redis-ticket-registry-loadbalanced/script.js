@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const assert = require("assert");
 const cas = require("../../cas.js");
 
@@ -16,10 +16,12 @@ async function ensureNoSsoSessionsExistAfterLogout(page, port) {
 async function testBasicLoginLogout(browser) {
     const page = await cas.newPage(browser);
     await logoutEverywhere(page);
-    const service = "https://apereo.github.io";
+    const service = "https://localhost:9859/anything/cas";
     await cas.gotoLogin(page, service);
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.loginWith(page);
+    await cas.sleep(8000);
+    await cas.screenshot(page);
     const ticket = await cas.assertTicketParameter(page);
     await page.goto(`https://localhost:8444/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
     const content = await cas.textContent(page, "body");
@@ -42,8 +44,9 @@ async function checkTicketValidationAcrossNodes(browser) {
 
     const service = "https://localhost:9859/anything/100";
     await cas.gotoLogin(page, service);
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.loginWith(page);
+    await cas.sleep(4000);
     const ticket = await cas.assertTicketParameter(page);
 
     await cas.log("Validating ticket on second node");
@@ -87,23 +90,24 @@ async function checkSessionsAreSynced(browser) {
     await logoutEverywhere(page);
 
     const s1 = "https://localhost:9859/anything/1";
-    const s2 = "https://apereo.github.io";
-    const s3 = "https://example.org";
+    const s2 = "https://localhost:9859/anything/2";
+    const s3 = "https://localhost:9859/anything/3";
 
     await cas.log("Getting first ticket");
     await cas.gotoLogin(page, s1);
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.loginWith(page);
+    await cas.sleep(4000);
     const ticket1 = await cas.assertTicketParameter(page);
 
     await cas.log("Getting second ticket");
     await cas.gotoLogin(page, s2);
-    await page.waitForTimeout(1000);
+    await cas.sleep(3000);
     const ticket2 = await cas.assertTicketParameter(page);
 
     await cas.log("Getting third ticket");
     await cas.gotoLogin(page, s3);
-    await page.waitForTimeout(1000);
+    await cas.sleep(3000);
     const ticket3 = await cas.assertTicketParameter(page);
 
     const conditions = {
@@ -111,7 +115,7 @@ async function checkSessionsAreSynced(browser) {
         [ticket2]: s2,
         [ticket3]: s3
     };
-    await page.waitForTimeout(1000);
+    await cas.sleep(3000);
     await ensureSessionsRecorded(page, 8443, conditions);
     await ensureSessionsRecorded(page, 8444, conditions);
 
@@ -121,7 +125,7 @@ async function checkSessionsAreSynced(browser) {
 (async () => {
     let failed = false;
     try {
-        const browser = await puppeteer.launch(cas.browserOptions());
+        const browser = await cas.newBrowser(cas.browserOptions());
         await checkSessionsAreSynced(browser);
         await testBasicLoginLogout(browser);
         await checkTicketValidationAcrossNodes(browser);

@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const assert = require("assert");
 const cas = require("../../cas.js");
 const YAML = require("yaml");
@@ -6,7 +6,7 @@ const fs = require("fs");
 const path = require("path");
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     const url = "https://localhost:8443/cas/login?authn_method=mfa-webauthn";
     await cas.goto(page, url);
@@ -18,16 +18,16 @@ const path = require("path");
     const file = fs.readFileSync(configFilePath, "utf8");
     const configFile = YAML.parse(file);
     await updateConfig(configFile, configFilePath, true);
-    await page.waitForTimeout(5000);
+    await cas.sleep(5000);
 
     try {
         await cas.refreshContext();
-        await page.waitForTimeout(2000);
+        await cas.sleep(2000);
 
         await cas.gotoLogout(page);
         await cas.goto(page, url);
         await cas.loginWith(page);
-        await page.waitForTimeout(4000);
+        await cas.sleep(4000);
         await cas.assertTextContent(page, "#status", "Login with FIDO2-enabled Device");
 
         await cas.log("Checking for presence of errors...");
@@ -54,7 +54,6 @@ const path = require("path");
     
     await browser.close();
 })();
-
 
 async function updateConfig(configFile, configFilePath, data) {
     const config = {

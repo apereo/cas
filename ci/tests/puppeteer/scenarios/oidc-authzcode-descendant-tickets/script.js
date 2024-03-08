@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 const assert = require("assert");
 
@@ -9,13 +9,13 @@ async function fetchCode(page) {
 
     await cas.log(`Navigating to ${url}`);
     await cas.goto(page, url);
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.loginWith(page);
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
 
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
-        await page.waitForNavigation();
+        await cas.waitForNavigation(page);
     }
 
     const code = await cas.assertParameter(page, "code");
@@ -91,7 +91,7 @@ async function refreshTokens(refreshToken, clientId, successHandler, errorHandle
 }
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
 
     const code = await fetchCode(page);
@@ -101,7 +101,6 @@ async function refreshTokens(refreshToken, clientId, successHandler, errorHandle
         (res) => assert(res.status === 200), (error) => {
             throw `Operation should fail but instead produced: ${error}`;
         });
-
 
     await cas.logg("Logging out, removing all tokens...");
     await cas.gotoLogout(page);

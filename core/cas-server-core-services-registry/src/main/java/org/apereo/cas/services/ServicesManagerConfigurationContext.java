@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,6 +23,12 @@ import java.util.Set;
 @SuperBuilder
 @Getter
 public class ServicesManagerConfigurationContext {
+
+    /**
+     * Implementation bean name.
+     */
+    public static final String BEAN_NAME = "servicesManagerConfigurationContext";
+
     @Nonnull
     private final ServiceRegistry serviceRegistry;
 
@@ -39,4 +46,7 @@ public class ServicesManagerConfigurationContext {
 
     @Nonnull
     private final RegisteredServicesTemplatesManager registeredServicesTemplatesManager;
+
+    @Nonnull
+    private final CasConfigurationProperties casProperties;
 }

@@ -2,7 +2,6 @@
   "dependencies": "gauth,trusted-mfa",
 
   "properties": [
-    "--cas.audit.engine.enabled=true",
 
     "--cas.authn.mfa.gauth.crypto.enabled=false",
     "--cas.authn.mfa.gauth.core.trusted-device-enabled=true",
@@ -23,6 +22,4 @@
     "--logging.level.org.apereo.cas=info"
   ]
 }
-
-
 

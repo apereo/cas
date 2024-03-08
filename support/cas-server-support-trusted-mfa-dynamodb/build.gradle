@@ -1,7 +1,7 @@
 description = "Apereo CAS Trusted MFA Browser/Device DynamoDb Support"
 
 ext {
-    maxParallelForksForTests = 1
+
     publishMetadata = true
     projectMetadata = [
             category: "Multifactor Authentication Trusted Devices",

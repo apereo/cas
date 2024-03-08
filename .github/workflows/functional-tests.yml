@@ -27,13 +27,12 @@ env:
   AZURE_AD_DOMAIN: ${{ secrets.AZURE_AD_DOMAIN }}
   AZURE_MAPS_SUBSCRIPTION_ID: ${{ secrets.AZURE_MAPS_SUBSCRIPTION_ID }}
   AZURE_MAPS_CLIENT_ID: ${{ secrets.AZURE_MAPS_CLIENT_ID }}
-  IMGUR_CLIENT_ID: ${{ secrets.IMGUR_CLIENT_ID }}
   TERM: xterm-256color
   JDK_CURRENT: 21
   JDK_DISTRIBUTION: "corretto"
-  NODE_CURRENT: '20.10.0'
+  NODE_CURRENT: '21.6.2'
   MAX_ATTEMPTS: 2
-  RETRY_MINUTES: 15
+  RETRY_MINUTES: 8
   SCENARIO_REGEX: ".*"
 
 on:
@@ -42,11 +41,12 @@ on:
     branches:
       - master
       - '!**.**.**'
-      - 'pr-*'
+      - '!heroku-*'
   pull_request:
     types: [ labeled ]
     branches:
       - master
+      - 'pr-*'
       - '!**.**.**'
 
 concurrency:
@@ -56,7 +56,14 @@ concurrency:
 ##########################################################################
 
 jobs:
+  trigger-ci:
+    if: ${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'CI')) && !contains(github.event.pull_request.labels.*.name, 'Renovate') && !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger CI
+        run: echo "CI Triggered"
   initialize:
+    needs: [trigger-ci]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -138,6 +145,14 @@ jobs:
           command: |
             export RUNNER_OS=${{ runner.os }}
             ./ci/tests/puppeteer/run.sh --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: screenshots-${{matrix.scenario}}
+          path: ./ci/tests/puppeteer/screenshots/*.png
+          if-no-files-found: ignore
+          retention-days: 2
   ##########################################################################
   puppeteer-tests-511:
     runs-on: ubuntu-latest
@@ -182,4 +197,12 @@ jobs:
           command: |
             export RUNNER_OS=${{ runner.os }}
             ./ci/tests/puppeteer/run.sh --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: screenshots-${{matrix.scenario}}
+          path: ./ci/tests/puppeteer/screenshots/*.png
+          if-no-files-found: ignore
+          retention-days: 2
 ##########################################################################

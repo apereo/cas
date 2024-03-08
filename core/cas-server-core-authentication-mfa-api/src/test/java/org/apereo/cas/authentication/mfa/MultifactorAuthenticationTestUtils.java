@@ -18,16 +18,13 @@ import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
-
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
 import static org.mockito.Mockito.*;
 
 /**
@@ -110,9 +107,9 @@ public class MultifactorAuthenticationTestUtils {
         when(multifactorTrigger.resolve(any(), any(), any(), any(), any())).thenReturn(provider);
 
         val multifactorContextValidator = new DefaultMultifactorAuthenticationContextValidator(
-            "authn_method",
-            "trusted_authn", applicationContext);
-        return new DefaultRequestedAuthenticationContextValidator(servicesManager, multifactorTrigger, multifactorContextValidator);
+            "authn_method", "trusted_authn", applicationContext);
+        return new DefaultRequestedAuthenticationContextValidator(servicesManager,
+            multifactorTrigger, multifactorContextValidator);
     }
 
     public static MultifactorAuthenticationProviderBypassProperties getAuthenticationBypassProperties() {

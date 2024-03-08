@@ -9,13 +9,8 @@ import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.support.DefaultCasProtocolAttributeEncoder;
 import org.apereo.cas.authentication.support.NoOpProtocolAttributeEncoder;
-import org.apereo.cas.services.DefaultServicesManagerRegisteredServiceLocator;
-import org.apereo.cas.services.InMemoryServiceRegistry;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServicePublicKeyCipherExecutor;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.services.ServicesManagerConfigurationContext;
-import org.apereo.cas.services.mgmt.DefaultServicesManager;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
 import org.apereo.cas.support.saml.authentication.SamlResponseBuilder;
@@ -27,19 +22,16 @@ import org.apereo.cas.validation.DefaultAssertionBuilder;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
 import org.apereo.cas.web.view.attributes.NoOpProtocolAttributesRenderer;
 
-import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -64,32 +56,15 @@ class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
 
     @BeforeEach
     public void initialize() {
-        val appCtx = new StaticApplicationContext();
-        appCtx.refresh();
-
-        val list = new ArrayList<RegisteredService>();
-        list.add(RegisteredServiceTestUtils.getRegisteredService("https://.+"));
-        val dao = new InMemoryServiceRegistry(appCtx, list, new ArrayList<>());
-
-        val context = ServicesManagerConfigurationContext.builder()
-            .serviceRegistry(dao)
-            .registeredServicesTemplatesManager(registeredServicesTemplatesManager)
-            .applicationContext(appCtx)
-            .environments(new HashSet<>(0))
-            .servicesCache(Caffeine.newBuilder().build())
-            .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))
-            .build();
-        val mgmr = new DefaultServicesManager(context);
-        mgmr.load();
-
-        val protocolAttributeEncoder = new DefaultCasProtocolAttributeEncoder(mgmr,
+        servicesManager.save(RegisteredServiceTestUtils.getRegisteredService("https://.+"));
+        val protocolAttributeEncoder = new DefaultCasProtocolAttributeEncoder(servicesManager,
             RegisteredServicePublicKeyCipherExecutor.INSTANCE, CipherExecutor.noOpOfStringToString());
         val builder = new Saml10ObjectBuilder(configBean);
         val samlResponseBuilder = new SamlResponseBuilder(builder, "testIssuer",
             "whatever", "PT1000S", "PT30S",
-            new NoOpProtocolAttributeEncoder(), mgmr);
+            new NoOpProtocolAttributeEncoder(), servicesManager);
         this.response = new Saml10SuccessResponseView(protocolAttributeEncoder,
-            mgmr,
+            servicesManager,
             new DefaultArgumentExtractor(new SamlServiceFactory()),
             new DefaultAuthenticationAttributeReleasePolicy("attribute"),
             new DefaultAuthenticationServiceSelectionPlan(),

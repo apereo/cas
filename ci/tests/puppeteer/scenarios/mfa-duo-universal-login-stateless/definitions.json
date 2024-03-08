@@ -9,5 +9,5 @@
     "@class" : "org.apereo.cas.authentication.attribute.DefaultAttributeDefinition",
     "key": "cn",
     "singleValue": true
-  },
+  }
 }

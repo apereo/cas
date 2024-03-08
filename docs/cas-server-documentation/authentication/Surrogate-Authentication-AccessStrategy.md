@@ -31,7 +31,6 @@ A sample service definition follows:
   "id" : 1,
   "accessStrategy" : {
     "@class" : "org.apereo.cas.services.SurrogateRegisteredServiceAccessStrategy",
-    "surrogateEnabled" : true,
     "surrogateRequiredAttributes" : {
       "@class" : "java.util.HashMap",
       "givenName" : [ "java.util.HashSet", [ "Administrator" ] ]
@@ -91,3 +90,27 @@ The parameters passed are as follows:
 {% endtab %}
           
 {% endtabs %}
+  
+## Surrogate Authentication Per Application
+
+Surrogate authentication can be selectively controlled for specific applications. By default,
+all services and applications are eligible for surrogate authentication and impersonation.
+
+```json
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://app.example.org",
+  "name": "App",
+  "id": 1,
+  "surrogatePolicy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceSurrogatePolicy",
+    "enabled": false
+  }
+}
+```
+
+The following passwordless policy settings are supported:
+
+| Name      | Description                                                                     |
+|-----------|---------------------------------------------------------------------------------|
+| `enabled` | Boolean to define whether surrogate authentication is allowed for this service. |

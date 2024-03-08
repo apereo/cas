@@ -21,6 +21,7 @@
     "--spring.mail.port=25000",
     "--logging.level.org.apereo=debug",
 
+    "--cas.authn.mfa.simple.token.core.time-to-kill-in-seconds=60",
     "--cas.authn.mfa.simple.mail.html=false",
     "--cas.authn.mfa.simple.mail.from=cas@example.com",
     "--cas.authn.mfa.simple.mail.subject=CAS Token",
@@ -32,7 +33,4 @@
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",
   "readyScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/ready.sh"
 }
-
-
-
 

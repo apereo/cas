@@ -2,7 +2,6 @@ package org.apereo.cas.support.saml.idp.metadata.writer;
 
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.val;
@@ -17,7 +16,6 @@ import org.bouncycastle.cert.jcajce.JcaX509ExtensionUtils;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
 import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
-
 import java.io.Writer;
 import java.math.BigInteger;
 import java.security.KeyPair;
@@ -77,7 +75,6 @@ public class DefaultSamlIdPCertificateAndKeyWriter implements SamlIdPCertificate
         });
     }
 
-    @SuppressWarnings("JavaUtilDate")
     private X509Certificate generateCertificate(final KeyPair keypair) throws Exception {
         val dn = new X500Name("CN=" + hostname);
         val notBefore = new GregorianCalendar();

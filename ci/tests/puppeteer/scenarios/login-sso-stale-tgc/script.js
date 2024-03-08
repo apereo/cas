@@ -1,9 +1,9 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 const assert = require("assert");
 
 (async () => {
-    let browser = await puppeteer.launch(cas.browserOptions());
+    let browser = await cas.newBrowser(cas.browserOptions());
     let page = await cas.newPage(browser);
     const cookie0 = await buildCookie(page, "TGT-09876", "/cas");
     const cookie1 = await buildCookie(page, "TGT-12345", "/cas/");
@@ -17,7 +17,7 @@ const assert = require("assert");
     assert(tgc.path === "/cas");
     await browser.close();
 
-    browser = await puppeteer.launch(cas.browserOptions());
+    browser = await cas.newBrowser(cas.browserOptions());
     page = await cas.newPage(browser);
     tgc.path = "/cas/";
     await page.setCookie(tgc, cookie3);

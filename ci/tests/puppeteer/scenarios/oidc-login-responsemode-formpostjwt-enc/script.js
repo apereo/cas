@@ -1,21 +1,21 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 const assert = require("assert");
 const fs = require("fs");
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     const redirectUri = "https://localhost:9859/post";
     const url = `https://localhost:8443/cas/oidc/oidcAuthorize?state=1001&client_id=client&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent("openid profile")}&response_type=code&nonce=vn4qulthnx`;
     await cas.goto(page, url);
 
     await cas.loginWith(page);
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
 
     await cas.click(page, "#allow");
-    await page.waitForNavigation();
-    await page.waitForTimeout(5000);
+    await cas.waitForNavigation(page);
+    await cas.sleep(5000);
     const content = await cas.textContent(page, "body pre");
     const payload = JSON.parse(content);
     // await cas.log(payload);

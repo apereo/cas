@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 const assert = require("assert");
 
@@ -15,7 +15,7 @@ async function fetchIdentityProviders() {
 }
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const properties = {
         "cas.authn.pac4j.cas[0].login-url": "https://localhost:8444/cas/login",
         "cas.authn.pac4j.cas[0].protocol": "CAS30",
@@ -34,12 +34,12 @@ async function fetchIdentityProviders() {
     const mockServer = await cas.mockJsonServer(payload, 5432);
     const page = await cas.newPage(browser);
     await cas.gotoLogin(page);
-    await page.waitForTimeout(3000);
+    await cas.sleep(3000);
     await cas.assertVisibility(page, "#loginProviders");
     await cas.assertVisibility(page, "li #CasClient");
     await cas.assertVisibility(page, "li #OidcClient");
     await cas.log("Wait for the cache to expire and reload providers again...");
-    await page.waitForTimeout(3000);
+    await cas.sleep(3000);
     await cas.gotoLogin(page);
     await fetchIdentityProviders();
     await cas.doRequest("https://localhost:8443/cas/actuator/delegatedClients", "DELETE");

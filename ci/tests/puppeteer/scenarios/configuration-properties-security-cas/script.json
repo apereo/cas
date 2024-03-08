@@ -4,7 +4,6 @@
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
-    "--cas.audit.engine.enabled=true",
     
     "--cas.standalone.configuration-security.alg=PBEWithMD5AndTripleDES",
     "--cas.standalone.configuration-security.iterations=1000",

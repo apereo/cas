@@ -82,7 +82,6 @@ DEBUG_SUSPEND="n"
 DAEMON=""
 BUILDFLAGS=""
 DRYRUN=""
-CLEAR="true"
 INITONLY="false"
 NATIVE_BUILD="false"
 NATIVE_RUN="false"
@@ -97,7 +96,6 @@ while (( "$#" )); do
     NATIVE_BUILD="true"
     BUILDFLAGS="${BUILDFLAGS} --no-configuration-cache"
     QUIT_QUIETLY="true"
-    CLEAR=""
     shift 1;
     ;;
   --nr|--native-run)
@@ -224,10 +222,6 @@ while (( "$#" )); do
     DISABLE_LINTER="true"
     shift 1;
     ;;
-  --noclear|--nc|--ncl|--no-clear)
-    CLEAR=""
-    shift 1;
-    ;;
   *)
     BUILDFLAGS="${BUILDFLAGS} $1"
     shift 1;
@@ -258,7 +252,7 @@ config="${scenario}/script.json"
 echo "Using scenario configuration file: ${config}"
 jq '.' "${config}" -e >/dev/null
 if [ $? -ne 0 ]; then
- printred "\nFailed to parse scenario configuration file ${config}"
+ printred "Failed to parse scenario configuration file ${config}"
  exit 1
 fi
 
@@ -350,8 +344,7 @@ random=$(openssl rand -hex 8)
 if [[ ! -d "${PUPPETEER_DIR}/node_modules/puppeteer" || "${INSTALL_PUPPETEER}" == "true" ]]; then
   printgreen "Installing Puppeteer"
   cd "$PUPPETEER_DIR"
-  npm_install_cmd="npm install"
-  eval $npm_install_cmd || eval $npm_install_cmd || eval $npm_install_cmd
+  npm install --fetch-timeout 5000 --fetch-retries 3 --fetch-retry-maxtimeout 30000 --no-audit
   cd -
 else
   printgreen "Using existing Puppeteer modules..."
@@ -460,6 +453,7 @@ if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
     BUILD_TASKS="${BUILD_TASKS} :webapp:cas-server-webapp-${project}:nativeCompile -DaotSpringActiveProfiles=none"
   fi
 
+  rm -rf ${targetArtifact}
   BUILD_COMMAND=$(printf '%s' \
       "./gradlew ${BUILD_TASKS} -DskipNestedConfigMetadataGen=true -x check -x test -x javadoc --build-cache --configure-on-demand --parallel \
       ${BUILD_SCRIPT} ${DAEMON} -DcasModules="${dependencies}" --no-watch-fs --max-workers=8 ${BUILDFLAGS}")
@@ -497,11 +491,11 @@ if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
     done
     wait $pid
     if [ $? -ne 0 ]; then
-      printred "\nFailed to build CAS web application. Examine the build output."
+      printred "Failed to build CAS web application. Examine the build output."
       cat build.log
       exit 2
     else
-      printgreen "\nBackground build successful. Build output was:"
+      printgreen "Background build successful. Build output was:"
       cat build.log
       rm build.log
     fi
@@ -510,8 +504,8 @@ if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
     $BUILD_COMMAND
     pid=$!
     wait $pid
-    if [ $? -ne 0 ]; then
-      printred "\nFailed to build CAS web application."
+    if [[ ! -e "${targetArtifact}" ]]; then
+      printred "Failed to build CAS web application: ${targetArtifact}."
       exit 2
     fi
   fi
@@ -694,32 +688,25 @@ if [[ "${RERUN}" != "true" && ("${NATIVE_BUILD}" == "false" || "${NATIVE_RUN}" =
       else
         printcyan "Launching CAS instance #${c} under port ${serverPort} from "$PWD"/cas.${projectType}"
         java ${runArgs} -Dlog.console.stacktraces=true -jar "$PWD"/cas.${projectType} \
-           -Dcom.sun.net.ssl.checkRevocation=false --server.port=${serverPort} \
+           -Dcom.sun.net.ssl.checkRevocation=false \
+           --server.port=${serverPort} \
            --spring.main.lazy-initialization=false \
            --spring.profiles.active=none \
            --management.endpoints.web.discovery.enabled=true \
            --server.ssl.key-store="$keystore" \
+           --cas.audit.engine.enabled=true \
+           --cas.audit.slf4j.use-single-line=true \
            ${properties} &
       fi
       pid=$!
       printcyan "Waiting for CAS instance #${c} under process id ${pid}"
       casLogin="https://localhost:${serverPort}/cas/login"
 
-      if [[ "${CI}" == "true" ]]; then
-        timeout=$(jq -j '.timeout // 70' "${config}")
-        sleepfor $timeout
-
-        printcyan "Checking CAS server's status @ ${casLogin}"
-        curl -k -L --connect-timeout 10 --output /dev/null --silent --fail $casLogin
-        RC=$?
-      else
-        # We cannot do this in Github Actions/CI; curl seems to hang indefinitely
-        until curl -I -k -L --connect-timeout 10 --output /dev/null --silent --fail $casLogin; do
-           echo -n '.'
-           sleep 1
-        done
-        RC=0
-      fi
+      until curl -I -k --connect-timeout 10 --output /dev/null --silent --fail $casLogin; do
+         echo -n '.'
+         sleep 2
+      done
+      RC=0
 
       if [[ $RC -ne 0 ]]; then
         printred "Unable to launch CAS instance #${c} under process id ${pid}."
@@ -758,19 +745,27 @@ if [[ "${NATIVE_BUILD}" == "true" ]]; then
 fi
 
 if [[ "${DRYRUN}" != "true" && ("${NATIVE_BUILD}" == "false" || "${NATIVE_RUN}" == "true") ]]; then
-  if [[ "${CLEAR}" == "true" ]]; then
-    clear
-  fi
-  echo -e "**************************************************************************"
-  echo -e "Running ${scriptPath}\n"
+
   export NODE_TLS_REJECT_UNAUTHORIZED=0
 
   if [[ "${NATIVE_RUN}" == "false" ]]; then
-    node --unhandled-rejections=strict ${scriptPath} ${config}
-    RC=$?
-    if [[ $RC -ne 0 ]]; then
-      printred "Script: ${scriptPath} with config: ${config} failed with return code ${RC}"
-    fi
+
+    max_retries=3
+    retry_count=0
+    while [ $retry_count -lt $max_retries ]; do
+        echo -e "**************************************************************************"
+        echo -e "Attempt: #${retry_count}: Running ${scriptPath}\n"
+        node --unhandled-rejections=strict ${scriptPath} ${config}
+        RC=$?
+
+        if [[ $RC -ne 0 ]]; then
+          printred "Script: ${scriptPath} with config: ${config} failed with return code ${RC}"
+          ((retry_count++))
+          sleepfor 3
+        else
+          break
+        fi
+    done
   else
     printyellow "Running test scenario against a CAS native-image executable is disabled for scenario ${scriptPath}"
     RC=0
@@ -787,7 +782,7 @@ if [[ "${DRYRUN}" != "true" && ("${NATIVE_BUILD}" == "false" || "${NATIVE_RUN}" 
     eval "${exitScript}"
 
   if [[ $RC -ne 0 ]]; then
-    printred "Test scenario [${scenarioName}] has failed.\n"
+    printred "Test scenario [${scenarioName}] has failed with exit code ${RC}.\n"
   else
     printgreen "Test scenario [${scenarioName}] has passed successfully!\n"
   fi

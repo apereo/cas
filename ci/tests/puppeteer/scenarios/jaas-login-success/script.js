@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 
 async function execLogin(page, uid) {
@@ -12,7 +12,7 @@ async function execLogin(page, uid) {
 }
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     await execLogin(page, "casacct1");
     await execLogin(page, "casacct2");

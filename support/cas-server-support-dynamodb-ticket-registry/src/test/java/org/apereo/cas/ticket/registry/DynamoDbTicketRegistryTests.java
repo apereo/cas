@@ -110,7 +110,8 @@ class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
         val code = createOAuthCode();
         val jwtBuilder = new JwtBuilder(CipherExecutor.noOpOfSerializableToString(),
             applicationContext, servicesManager, principalResolver, RegisteredServiceCipherExecutor.noOp(), casProperties);
-        val token = new OAuth20DefaultAccessTokenFactory(neverExpiresExpirationPolicyBuilder(), jwtBuilder,
+        val token = new OAuth20DefaultAccessTokenFactory(
+            newTicketRegistry, neverExpiresExpirationPolicyBuilder(), jwtBuilder,
             servicesManager, TicketTrackingPolicy.noOp())
             .create(RegisteredServiceTestUtils.getService(),
                 RegisteredServiceTestUtils.getAuthentication(), new MockTicketGrantingTicket("casuser"),
@@ -131,6 +132,16 @@ class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
         newTicketRegistry.addTicket(token);
         assertSame(1, newTicketRegistry.deleteTicket(token.getId()), "Wrong ticket count");
         assertNull(newTicketRegistry.getTicket(token.getId()));
+    }
+
+    @RepeatedTest(2)
+    void verifyRegistryQuery() throws Throwable {
+        val tgt = new TicketGrantingTicketImpl("TGT-115500",
+            CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
+        val registry = getNewTicketRegistry();
+        registry.addTicket(tgt);
+        assertEquals(1, registry.query(TicketRegistryQueryCriteria.builder()
+            .count(1L).type(TicketGrantingTicket.PREFIX).decode(true).build()).size());
     }
 
     @RepeatedTest(2)

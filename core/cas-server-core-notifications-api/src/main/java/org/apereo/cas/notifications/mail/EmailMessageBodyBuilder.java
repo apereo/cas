@@ -100,12 +100,7 @@ public class EmailMessageBodyBuilder implements Supplier<String> {
         val sub = new StringSubstitutor(this.parameters, "${", "}");
         return sub.replace(contents);
     }
-
-    /**
-     * Determine email template file.
-     *
-     * @return the file
-     */
+    
     protected File determineEmailTemplateFile() {
         return locale.map(Unchecked.function(loc -> {
             val originalFile = new File(properties.getText());

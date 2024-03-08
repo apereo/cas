@@ -296,12 +296,12 @@ ext.libraries = [
                 }
         ],
         cassandra                  : [
-                dependencies.create("com.datastax.oss:java-driver-core:$apacheCassandraVersion") {
+                dependencies.create("org.apache.cassandra:java-driver-core:$apacheCassandraVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.codehaus.groovy", module: "groovy-json")
                     exclude(group: "org.codehaus.groovy", module: "groovy")
                 },
-                dependencies.create("com.datastax.oss:java-driver-mapper-runtime:$apacheCassandraVersion") {
+                dependencies.create("org.apache.cassandra:java-driver-mapper-runtime:$apacheCassandraVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.codehaus.groovy", module: "groovy-json")
                     exclude(group: "org.codehaus.groovy", module: "groovy")
@@ -1199,17 +1199,17 @@ ext.libraries = [
                 }
         ],
         azurekeyvault              : [
-                dependencies.create("com.azure.spring:spring-cloud-azure-starter-keyvault-secrets:$azureSpringCloudVersion") {
+                dependencies.create("com.azure.spring:spring-cloud-azure-starter-keyvault-secrets:$springCloudAzureVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.nimbusds", module: "nimbus-jose-jwt")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                 },
-                dependencies.create("com.azure.spring:spring-cloud-azure-starter-keyvault:$azureSpringCloudVersion") {
+                dependencies.create("com.azure.spring:spring-cloud-azure-starter-keyvault:$springCloudAzureVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.nimbusds", module: "nimbus-jose-jwt")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                 },
-                dependencies.create("com.azure.spring:spring-cloud-azure-starter-actuator:$azureSpringCloudVersion") {
+                dependencies.create("com.azure.spring:spring-cloud-azure-starter-actuator:$springCloudAzureVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.nimbusds", module: "nimbus-jose-jwt")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
@@ -2343,7 +2343,7 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "log4j-over-slf4j")
                     exclude(group: "org.slf4j", module: "jul-to-slf4j")
                 },
-                dependencies.create("ch.qos.logback:logback-access:$logbackVersion") {
+                dependencies.create("ch.qos.logback:logback-access:$logbackAccessVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.slf4j", module: "log4j-over-slf4j")
                     exclude(group: "org.slf4j", module: "jul-to-slf4j")
@@ -3520,11 +3520,6 @@ ext.libraries = [
                 }
         ],
         webjars                    : [
-                dependencies.create("org.webjars:webjars-locator-core:$webjarLocatorVersion") {
-                    exclude(group: "io.github.classgraph", module: "classgraph")
-                },
-                dependencies.create("org.webjars:hal-explorer:$halVersion") {
-                },
                 dependencies.create("org.webjars:jquery:$jqueryVersion") {},
                 dependencies.create("org.webjars:highlightjs:$highlightJsVersion") {},
                 dependencies.create("org.webjars:zxcvbn:$zxcvbnVersion") {

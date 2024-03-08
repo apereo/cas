@@ -15,9 +15,7 @@
     "--management.endpoints.web.exposure.include=*",
     "--management.endpoint.health.show-details=always",
     "--management.endpoints.enabled-by-default=true",
-    
-    "--cas.audit.engine.enabled=true",
-    "--cas.audit.slf4j.use-single-line=true",
+
     "--cas.audit.engine.audit-format=JSON",
     "--cas.audit.engine.include-validation-assertion=true",
 

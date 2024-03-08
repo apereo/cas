@@ -4,10 +4,13 @@ import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20TokenExchangeTypes;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.util.function.FunctionUtils;
 import com.nimbusds.jose.proc.SimpleSecurityContext;
+import com.nimbusds.jwt.proc.BadJWTException;
 import com.nimbusds.jwt.proc.DefaultJWTClaimsVerifier;
 import com.nimbusds.jwt.proc.JWTClaimsSetVerifier;
 import lombok.extern.slf4j.Slf4j;
@@ -47,19 +50,7 @@ public class OAuth20TokenExchangeGrantTypeTokenRequestValidator extends BaseOAut
         val requestedTokenType = requestParameterResolver.resolveRequestParameter(webContext, OAuth20Constants.REQUESTED_TOKEN_TYPE)
             .orElseGet(OAuth20TokenExchangeTypes.ACCESS_TOKEN::getType);
 
-        val registeredService = switch (OAuth20TokenExchangeTypes.from(subjectTokenType)) {
-            case ACCESS_TOKEN -> {
-                val accessToken = getConfigurationContext().getTicketRegistry().getTicket(subjectToken, OAuth20AccessToken.class);
-                yield OAuth20Utils.getRegisteredOAuthServiceByClientId(getConfigurationContext().getServicesManager(), accessToken.getClientId());
-            }
-            case JWT -> {
-                val claimSet = getConfigurationContext().getAccessTokenJwtBuilder().unpack(Optional.empty(), subjectToken);
-                jwtClaimsSetVerifier.verify(claimSet, new SimpleSecurityContext());
-                val service = getConfigurationContext().getWebApplicationServiceServiceFactory().createService(claimSet.getIssuer());
-                service.getAttributes().put(OAuth20Constants.CLIENT_ID, List.of(claimSet.getSubject()));
-                yield OAuth20Utils.getRegisteredOAuthServiceByClientId(getConfigurationContext().getServicesManager(), claimSet.getSubject());
-            }
-        };
+        val registeredService = extractRegisteredService(subjectTokenType, subjectToken);
 
         val audit = AuditableContext.builder().registeredService(registeredService).build();
         val accessResult = getConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
@@ -71,13 +62,35 @@ public class OAuth20TokenExchangeGrantTypeTokenRequestValidator extends BaseOAut
             return false;
         }
 
+        val actorToken = requestParameterResolver.resolveRequestParameter(webContext, OAuth20Constants.ACTOR_TOKEN);
+        val actorTokenType = requestParameterResolver.resolveRequestParameter(webContext, OAuth20Constants.ACTOR_TOKEN_TYPE).map(OAuth20TokenExchangeTypes::from);
+        FunctionUtils.throwIf(actorToken.isPresent() && actorTokenType.isEmpty(),
+            () -> new IllegalArgumentException("Actor token type cannot be undefined when actor token is provided"));
+
         val resourceAndAudience = requestParameterResolver.resolveRequestParameters(
             List.of(OAuth20Constants.RESOURCE, OAuth20Constants.AUDIENCE), webContext);
         val resources = resourceAndAudience.getOrDefault(OAuth20Constants.RESOURCE, Set.of());
         val audience = resourceAndAudience.getOrDefault(OAuth20Constants.AUDIENCE, Set.of());
         val tokenExchangePolicy = registeredService.getTokenExchangePolicy();
-        return tokenExchangePolicy == null
-            || tokenExchangePolicy.isTokenExchangeAllowed(registeredService, resources, audience, requestedTokenType);
+        return tokenExchangePolicy == null || tokenExchangePolicy.isTokenExchangeAllowed(registeredService, resources, audience, requestedTokenType);
+    }
+
+    protected OAuthRegisteredService extractRegisteredService(final String subjectTokenType,
+                                                              final String subjectToken) throws BadJWTException {
+        return switch (OAuth20TokenExchangeTypes.from(subjectTokenType)) {
+            case ACCESS_TOKEN -> {
+                val accessToken = getConfigurationContext().getTicketRegistry().getTicket(subjectToken, OAuth20AccessToken.class);
+                yield OAuth20Utils.getRegisteredOAuthServiceByClientId(getConfigurationContext().getServicesManager(), accessToken.getClientId());
+            }
+            case JWT -> {
+                val claimSet = getConfigurationContext().getAccessTokenJwtBuilder().unpack(Optional.empty(), subjectToken);
+                jwtClaimsSetVerifier.verify(claimSet, new SimpleSecurityContext());
+                val service = getConfigurationContext().getWebApplicationServiceServiceFactory().createService(claimSet.getIssuer());
+                service.getAttributes().put(OAuth20Constants.CLIENT_ID, List.of(claimSet.getSubject()));
+                yield OAuth20Utils.getRegisteredOAuthServiceByClientId(getConfigurationContext().getServicesManager(), claimSet.getSubject());
+            }
+            default -> throw new IllegalArgumentException("Subject token type %s is not supported".formatted(subjectTokenType));
+        };
     }
 
     @Override

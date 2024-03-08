@@ -1,7 +1,7 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 const assert = require("assert");
-const archiver = require("archiver");
+
 const fs = require("fs");
 
 async function getAllEvents() {
@@ -9,7 +9,7 @@ async function getAllEvents() {
 }
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     const context = browser.defaultBrowserContext();
     await context.overridePermissions("https://localhost:8443/cas/login", ["geolocation"]);
@@ -24,33 +24,29 @@ async function getAllEvents() {
         const user = (Math.random() + 1).toString(36).substring(4);
         const password = (Math.random() + 1).toString(36).substring(4);
         await cas.loginWith(page, user, password);
-        await page.waitForTimeout(1000);
+        await cas.sleep(1000);
     }
 
     await cas.gotoLogin(page);
     await cas.loginWith(page);
     await cas.assertCookie(page);
     await cas.log("Getting events...");
-    let body = await getAllEvents();
+    const body = await getAllEvents();
 
     let count = Object.keys(body[1]).length;
     await cas.log(`Total event records found ${count}`);
     assert(count === totalAttempts + 1);
 
     fs.rmSync(`${__dirname}/events.zip`, {force: true});
-    const zip = fs.createWriteStream(`${__dirname}/events.zip`);
-    const archive = archiver("zip", {
-        zlib: { level: 9 }
+    await cas.createZipFile(`${__dirname}/events.zip`, async (archive) => {
+        body[1].forEach((entry) => archive.append(JSON.stringify(entry), { name: `event-${entry.id}.json`}));
     });
-    archive.pipe(zip);
-    body[1].forEach((entry) => archive.append(JSON.stringify(entry), { name: `event-${entry.id}.json`}));
-    await archive.finalize();
     
     await cas.log("Deleting all events...");
     await cas.doRequest("https://localhost:8443/cas/actuator/events", "DELETE");
     await cas.log("Checking events...");
-    body = await getAllEvents();
-    assert(Object.keys(body[1]).length === 0);
+    let allEvents = await getAllEvents();
+    assert(Object.keys(allEvents[1]).length === 0);
 
     await cas.log("Uploading events...");
     const zipFileContent = fs.readFileSync(`${__dirname}/events.zip`);
@@ -62,8 +58,8 @@ async function getAllEvents() {
         zipFileContent);
 
     fs.rmSync(`${__dirname}/events.zip`, {force: true});
-    body = await getAllEvents();
-    count = Object.keys(body[1]).length;
+    allEvents = await getAllEvents();
+    count = Object.keys(allEvents[1]).length;
     await cas.log(`Total event records found ${count}`);
     assert(count === totalAttempts + 1);
 

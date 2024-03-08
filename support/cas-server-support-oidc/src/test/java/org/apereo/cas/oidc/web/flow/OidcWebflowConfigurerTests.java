@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.web.flow;
 
+import org.apereo.cas.config.CasAccountManagementWebflowAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasOAuth20AutoConfiguration;
@@ -38,9 +39,11 @@ import static org.junit.jupiter.api.Assertions.*;
     CasOAuth20AutoConfiguration.class,
     CasOAuth20WebflowAutoConfiguration.class,
     CasCoreMultifactorAuthenticationAutoConfiguration.class,
+    CasAccountManagementWebflowAutoConfiguration.class,
     CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class
 })
 @TestPropertySource(properties = {
+    "CasFeatureModule.AccountManagement.enabled=true",
     "spring.mvc.pathmatch.matching-strategy=ant-path-matcher",
     "cas.authn.oidc.jwks.file-system.jwks-file=classpath:keystore.jwks"
 })
@@ -54,7 +57,7 @@ class OidcWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     void verifyOperation() throws Throwable {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
-        val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
+        val flow = (Flow) loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);
 
         val request = new MockHttpServletRequest();

@@ -3,9 +3,6 @@
   "properties": [
     "--CasFeatureModule.AccountManagement.enabled=true",
     
-    "--cas.audit.engine.enabled=true",
-    "--cas.audit.slf4j.use-single-line=true",
-    
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
 

@@ -1,10 +1,10 @@
-const puppeteer = require("puppeteer");
+
 const assert = require("assert");
 const cas = require("../../cas.js");
 const fs = require("fs");
 
 (async () => {
-    let browser = await puppeteer.launch(cas.browserOptions());
+    let browser = await cas.newBrowser(cas.browserOptions());
     let page = await cas.newPage(browser);
     await cas.gotoLogin(page);
     
@@ -17,7 +17,7 @@ const fs = require("fs");
     assert(attributesldap.includes("uid"));
     await browser.close();
 
-    browser = await puppeteer.launch(cas.browserOptions());
+    browser = await cas.newBrowser(cas.browserOptions());
     page = await cas.newPage(browser);
 
     await page.setRequestInterception(true);
@@ -44,20 +44,19 @@ const fs = require("fs");
     });
 
     await cas.gotoLogin(page);
-    await page.waitForTimeout(5000);
+    await cas.sleep(5000);
 
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
     await cas.assertInnerTextContains(page, "#content div p", "1234567890@college.edu");
 
     await cas.gotoLogin(page, "https://localhost:9859/anything/cas");
-    await page.waitForTimeout(5000);
+    await cas.sleep(5000);
     await assertFailure(page);
     await browser.close();
 })();
 
 async function assertFailure(page) {
     await cas.assertInnerText(page, "#loginErrorsPanel p", "Service access denied due to missing privileges.");
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
 }
-
 

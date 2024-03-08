@@ -50,34 +50,36 @@ public abstract class AbstractYubiKeyAccountRegistryTests {
 
     @Test
     void verifyAccountNotRegisteredWithBadToken() throws Throwable {
-        val request = YubiKeyDeviceRegistrationRequest.builder().username("casuser")
+        val casuser = UUID.randomUUID().toString();
+        val request = YubiKeyDeviceRegistrationRequest.builder().username(casuser)
             .token(BAD_TOKEN).name(UUID.randomUUID().toString()).build();
         assertFalse(registerAccount(request));
-        assertFalse(isYubiKeyRegisteredFor("casuser", null));
+        assertFalse(isYubiKeyRegisteredFor(casuser, null));
     }
 
     @Test
     void verifyAccountRegistered() throws Throwable {
+        val casuser = UUID.randomUUID().toString();
         val request1 = YubiKeyDeviceRegistrationRequest.builder().username("casuser2")
             .token(OTP).name(UUID.randomUUID().toString()).build();
         assertTrue(registerAccount(request1));
 
-        val request2 = YubiKeyDeviceRegistrationRequest.builder().username("casuser")
+        val request2 = YubiKeyDeviceRegistrationRequest.builder().username(casuser)
             .token(OTP).name(UUID.randomUUID().toString()).build();
         assertTrue(registerAccount(request2));
 
-        val request3 = YubiKeyDeviceRegistrationRequest.builder().username("casuser")
-            .token(OTP + OTP).name(UUID.randomUUID().toString()).build();
+        val request3 = YubiKeyDeviceRegistrationRequest.builder().username(casuser)
+            .token("%s%s".formatted(OTP, OTP)).name(UUID.randomUUID().toString()).build();
         assertTrue(registerAccount(request3));
 
-        assertTrue(isYubiKeyRegisteredFor("casuser", null));
-        assertEquals(2, getAccounts().size());
-        val account = getAccount("casuser");
+        assertTrue(isYubiKeyRegisteredFor(casuser, null));
+        val account = getAccount(casuser);
         account.ifPresent(acct -> assertEquals(2, acct.getDevices().size()));
 
-        getYubiKeyAccountRegistry().delete("casuser");
-        assertTrue(getAccount("casuser").isEmpty());
+        getYubiKeyAccountRegistry().delete(casuser);
+        assertTrue(getAccount(casuser).isEmpty());
         getYubiKeyAccountRegistry().deleteAll();
+        assertEquals(0, getAccounts().size());
     }
 
     @Test

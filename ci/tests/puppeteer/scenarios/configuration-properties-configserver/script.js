@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 const assert = require("assert");
 
@@ -8,7 +8,7 @@ const assert = require("assert");
         (res) => assert(res.status === 200), (err) => {
             throw err;
         });
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.gotoLogin(page, "https://apereo.github.io");
     await cas.loginWith(page, "configserver", "p@SSword");

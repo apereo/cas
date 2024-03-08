@@ -1,5 +1,6 @@
 package org.apereo.cas.web.support;
 
+import org.apereo.cas.throttle.DefaultThrottledSubmissionHandlerInterceptorAdapter;
 import lombok.Getter;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;

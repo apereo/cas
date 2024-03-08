@@ -30,7 +30,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("Delegation")
-@SuppressWarnings("JavaUtilDate")
 class DelegatedClientSerializationTests {
     private static final AbstractJacksonBackedStringSerializer TST_SERIALIZER = new TransientSessionTicketStringSerializer();
     private static final AbstractJacksonBackedStringSerializer TGT_SERIALIZER = new TicketGrantingTicketStringSerializer();

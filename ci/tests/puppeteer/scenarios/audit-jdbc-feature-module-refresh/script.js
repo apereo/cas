@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 const assert = require("assert");
 const path = require("path");
@@ -10,7 +10,7 @@ const YAML = require("yaml");
     const file = fs.readFileSync(configFilePath, "utf8");
     const configFile = YAML.parse(file);
     
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.gotoLogin(page);
     await cas.loginWith(page, "unknown", "Mellon");
@@ -24,7 +24,7 @@ const YAML = require("yaml");
     const name = (Math.random() + 1).toString(36).substring(4);
     await cas.log("Updating configuration and waiting for changes to reload...");
     await updateConfig(configFile, configFilePath, `jdbc:hsqldb:file:/tmp/db/${name}`);
-    await page.waitForTimeout(5000);
+    await cas.sleep(5000);
 
     await cas.refreshContext();
 
@@ -42,7 +42,6 @@ const YAML = require("yaml");
     }
     await browser.close();
 })();
-
 
 async function updateConfig(configFile, configFilePath, data) {
     const config = {

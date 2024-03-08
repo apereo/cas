@@ -1,7 +1,6 @@
 {
   "dependencies": "reports,jpa-service-registry",
   "properties": [
-    "--cas.audit.engine.enabled=true",
 
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--cas.service-registry.core.init-from-json=false",
@@ -13,8 +12,6 @@
     "--management.endpoints.web.exposure.include=*",
     "--management.endpoint.health.show-details=always",
     "--management.endpoints.enabled-by-default=true",
-
-
 
     "--cas.service-registry.jpa.ddl-auto=create",
     "--cas.service-registry.jpa.user=root",

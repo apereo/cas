@@ -19,6 +19,3 @@
   "exitScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/exit.sh"
 }
 
-
-
-

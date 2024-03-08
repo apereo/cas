@@ -11,6 +11,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
+import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -35,15 +36,15 @@ public class CasSamlServiceProvidersAutoConfiguration {
 
     private static void processSamlServiceProvider(final AbstractSamlSPProperties provider,
                                                    final ServicesManager servicesManager,
-                                                   final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver) {
-        processSamlServiceProvider(provider, servicesManager, samlRegisteredServiceCachingMetadataResolver, s -> null, s -> null);
+                                                   final SamlRegisteredServiceCachingMetadataResolver resolver) throws Exception {
+        processSamlServiceProvider(provider, servicesManager, resolver, __ -> null, __ -> null);
     }
 
     private static void processSamlServiceProvider(final AbstractSamlSPProperties provider,
                                                    final ServicesManager servicesManager,
-                                                   final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver,
-                                                   final Function<SamlRegisteredService, Void> afterSave) {
-        processSamlServiceProvider(provider, servicesManager, samlRegisteredServiceCachingMetadataResolver, s -> null, afterSave);
+                                                   final SamlRegisteredServiceCachingMetadataResolver resolver,
+                                                   final Function<SamlRegisteredService, Void> afterSave) throws Exception {
+        processSamlServiceProvider(provider, servicesManager, resolver, __ -> null, afterSave);
     }
 
     private static void processSamlServiceProvider(
@@ -51,7 +52,7 @@ public class CasSamlServiceProvidersAutoConfiguration {
         final ServicesManager servicesManager,
         final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver,
         final Function<SamlRegisteredService, Void> beforeSave,
-        final Function<SamlRegisteredService, Void> afterSave) {
+        final Function<SamlRegisteredService, Void> afterSave) throws Exception {
         val service = SamlSPUtils.newSamlServiceProviderService(provider, samlRegisteredServiceCachingMetadataResolver);
         if (service != null) {
             LOGGER.trace("Constructed service definition [{}]", service);
@@ -68,76 +69,76 @@ public class CasSamlServiceProvidersAutoConfiguration {
         final ServicesManager servicesManager,
         final CasConfigurationProperties casProperties,
         @Qualifier(SamlRegisteredServiceCachingMetadataResolver.BEAN_NAME)
-        final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver) {
+        final SamlRegisteredServiceCachingMetadataResolver resolver) {
         return () -> {
             val preloadMetadata = (Function<SamlRegisteredService, Void>) service -> {
                 LOGGER.info("Launching background thread to load the metadata. This might take a while...");
-                Thread.startVirtualThread(() -> {
+                Thread.startVirtualThread(Unchecked.runnable(() -> {
                     LOGGER.debug("Loading metadata at [{}]...", service.getMetadataLocation());
-                    samlRegisteredServiceCachingMetadataResolver.resolve(service, new CriteriaSet());
-                });
+                    resolver.resolve(service, new CriteriaSet());
+                }));
                 return null;
             };
 
             val samlSp = casProperties.getSamlSp();
-            processSamlServiceProvider(samlSp.getAcademicHealthPlans(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getAdobeCloud(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getAmazon(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getAppDynamics(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getArcGIS(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getArmsSoftware(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getAsana(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getBenefitFocus(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getBlackBaud(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getBox(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getBynder(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getCccco(), servicesManager, samlRegisteredServiceCachingMetadataResolver, preloadMetadata);
-            processSamlServiceProvider(samlSp.getCherWell(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getConcurSolutions(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getConfluence(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getCraniumCafe(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getCrashPlan(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getDocuSign(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getDropbox(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getEasyIep(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getEgnyte(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getEmma(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getEverBridge(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getEvernote(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getFamis(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getGartner(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getGitlab(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getGiveCampus(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getInCommon(), servicesManager, samlRegisteredServiceCachingMetadataResolver, preloadMetadata);
-            processSamlServiceProvider(samlSp.getInfiniteCampus(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getJira(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getNeoGov(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getNetPartner(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getNewRelic(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getOffice365(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getOpenAthens(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getPagerDuty(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getPollEverywhere(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getQualtrics(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getRocketChat(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getSafariOnline(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getSalesforce(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getSaManage(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getSansSth(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getServiceNow(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getSlack(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getTopHat(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getSserca(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getSymplicity(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getTableau(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getWarpWire(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getWebAdvisor(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getWebex(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getWorkday(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getYuja(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getZendesk(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getZimbra(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getZoom(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
+            processSamlServiceProvider(samlSp.getAcademicHealthPlans(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getAdobeCloud(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getAmazon(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getAppDynamics(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getArcGIS(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getArmsSoftware(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getAsana(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getBenefitFocus(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getBlackBaud(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getBox(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getBynder(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getCccco(), servicesManager, resolver, preloadMetadata);
+            processSamlServiceProvider(samlSp.getCherWell(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getConcurSolutions(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getConfluence(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getCraniumCafe(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getCrashPlan(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getDocuSign(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getDropbox(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getEasyIep(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getEgnyte(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getEmma(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getEverBridge(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getEvernote(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getFamis(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getGartner(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getGitlab(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getGiveCampus(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getInCommon(), servicesManager, resolver, preloadMetadata);
+            processSamlServiceProvider(samlSp.getInfiniteCampus(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getJira(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getNeoGov(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getNetPartner(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getNewRelic(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getOffice365(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getOpenAthens(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getPagerDuty(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getPollEverywhere(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getQualtrics(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getRocketChat(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getSafariOnline(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getSalesforce(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getSaManage(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getSansSth(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getServiceNow(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getSlack(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getTopHat(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getSserca(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getSymplicity(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getTableau(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getWarpWire(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getWebAdvisor(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getWebex(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getWorkday(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getYuja(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getZendesk(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getZimbra(), servicesManager, resolver);
+            processSamlServiceProvider(samlSp.getZoom(), servicesManager, resolver);
         };
     }
 }

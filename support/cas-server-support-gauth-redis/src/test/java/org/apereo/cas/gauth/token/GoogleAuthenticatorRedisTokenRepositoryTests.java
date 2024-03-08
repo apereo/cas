@@ -17,7 +17,6 @@ import org.apereo.cas.config.CasGoogleAuthenticatorRedisAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
@@ -63,11 +62,4 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Getter
 @EnabledIfListeningOnPort(port = 6379)
 class GoogleAuthenticatorRedisTokenRepositoryTests extends BaseOneTimeTokenRepositoryTests {
-
-    @Override
-    @BeforeEach
-    public void initialize() {
-        super.initialize();
-        oneTimeTokenAuthenticatorTokenRepository.removeAll();
-    }
 }

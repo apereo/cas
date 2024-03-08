@@ -62,7 +62,6 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.monitor.mongo[0].database-name=monitor"
     })
 @EnabledIfListeningOnPort(port = 27017)
-@SuppressWarnings("JavaUtilDate")
 class MongoDbHealthIndicatorTests {
     @Autowired
     @Qualifier("mongoHealthIndicator")

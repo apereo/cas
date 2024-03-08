@@ -9,6 +9,7 @@ import org.apereo.cas.util.RegexUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.ApplicationContext;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -36,8 +37,8 @@ public class HttpRequestMultifactorAuthenticationProviderBypassEvaluator extends
     private final Set<Pattern> httpRequestHeaderPatterns;
 
     public HttpRequestMultifactorAuthenticationProviderBypassEvaluator(final MultifactorAuthenticationProviderBypassProperties bypassProperties,
-                                                                       final String providerId) {
-        super(providerId);
+                                                                       final String providerId, final ApplicationContext applicationContext) {
+        super(providerId, applicationContext);
         this.bypassProperties = bypassProperties;
         if (StringUtils.isNotBlank(bypassProperties.getHttpRequestRemoteAddress())) {
             this.httpRequestRemoteAddressPattern = RegexUtils.createPattern(bypassProperties.getHttpRequestRemoteAddress());

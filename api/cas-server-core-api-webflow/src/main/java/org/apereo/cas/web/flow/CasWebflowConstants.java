@@ -99,6 +99,10 @@ public interface CasWebflowConstants {
      * The transition state 'passwordlessGetUserId'.
      */
     String TRANSITION_ID_PASSWORDLESS_GET_USERID = "passwordlessGetUserId";
+    /**
+     * The transition state 'passwordlessSkip'.
+     */
+    String TRANSITION_ID_PASSWORDLESS_SKIP = "passwordlessSkip";
 
     /**
      * The transition state 'discovery'.
@@ -139,6 +143,11 @@ public interface CasWebflowConstants {
      * The transition state 'prompt'.
      */
     String TRANSITION_ID_PROMPT = "prompt";
+
+    /**
+     * The transition state 'create'.
+     */
+    String TRANSITION_ID_CREATE = "create";
 
     /**
      * The transition state 'finalize'.
@@ -544,6 +553,10 @@ public interface CasWebflowConstants {
      * The state id 'createTicketGrantingTicket'.
      */
     String STATE_ID_CREATE_TICKET_GRANTING_TICKET = "createTicketGrantingTicket";
+    /**
+     * The state id 'startRemoteAuthentication'.
+     */
+    String STATE_ID_REMOTE_AUTHN_START = "startRemoteAuthentication";
 
     /**
      * The state 'initializeLoginForm'.
@@ -594,6 +607,11 @@ public interface CasWebflowConstants {
      * The state 'duoUniversalPromptPrepareValidate'.
      */
     String STATE_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN = "duoUniversalPromptPrepareValidate";
+
+    /**
+     * The state 'duoSecurityPasswordlessVerifyAccount'.
+     */
+    String STATE_ID_DUO_PASSWORDLESS_VERIFY = "duoSecurityPasswordlessVerifyAccount";
 
     /**
      * The state 'viewAccountSignUp'.
@@ -970,6 +988,11 @@ public interface CasWebflowConstants {
      * The state id 'interruptView'.
      */
     String STATE_ID_INTERRUPT_VIEW = "interruptView";
+
+    /**
+     * The state id 'oidcRevokeAccessToken'.
+     */
+    String STATE_ID_REVOKE_OIDC_ACCESS_TOKEN = "oidcRevokeAccessToken";
 
     /**
      * The state id 'startSpnegoAuthenticate'.
@@ -1465,6 +1488,12 @@ public interface CasWebflowConstants {
      * Action id 'readBrowserStorageAction'.
      */
     String ACTION_ID_READ_BROWSER_STORAGE = "readBrowserStorageAction";
+
+    /**
+     * Action id 'accountProfileOidcRemoveAccessTokenAction'.
+     */
+    String ACTION_ID_ACCOUNT_PROFILE_REMOVE_OIDC_ACCESS_TOKEN = "accountProfileOidcRemoveAccessTokenAction";
+
     /**
      * Action id 'putBrowserStorageAction'.
      */
@@ -1610,7 +1639,6 @@ public interface CasWebflowConstants {
      */
     String ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_LOGOUT = "delegatedAuthenticationClientLogoutAction";
 
-
     /**
      * Action id `delegatedAuthenticationClientFinishLogoutAction`.
      */
@@ -1695,6 +1723,12 @@ public interface CasWebflowConstants {
      * Action id 'selectSurrogateAction .
      */
     String ACTION_ID_SELECT_SURROGATE_ACTION = "selectSurrogateAction";
+
+    /**
+     * Action id 'duoSecurityVerifyPasswordlessAuthenticationAction .
+     */
+    String ACTION_ID_DUO_PASSWORDLESS_VERIFY = "duoSecurityVerifyPasswordlessAuthenticationAction";
+
     /**
      * Action id 'duoUniversalPromptValidateLoginAction .
      */
@@ -1769,11 +1803,15 @@ public interface CasWebflowConstants {
      * Action id 'displayBeforePasswordlessAuthenticationAction .
      */
     String ACTION_ID_DISPLAY_BEFORE_PASSWORDLESS_AUTHN = "displayBeforePasswordlessAuthenticationAction";
+    /**
+     * Action id 'createPasswordlessAuthenticationTokenAction .
+     */
+    String ACTION_ID_CREATE_PASSWORDLESS_AUTHN_TOKEN = "createPasswordlessAuthenticationTokenAction";
 
     /**
-     * Action id 'passswordPrepareLoginAction .
+     * Action id 'passwordlessPrepareLoginAction .
      */
-    String ACTION_ID_PASSWORDLESS_PREPARE_LOGIN = "passswordPrepareLoginAction";
+    String ACTION_ID_PASSWORDLESS_PREPARE_LOGIN = "passwordlessPrepareLoginAction";
 
     /**
      * Action id 'verifyPasswordlessAccountAuthenticationAction .
@@ -1803,6 +1841,11 @@ public interface CasWebflowConstants {
      * Action id 'webAuthnPopulateCsrfTokenAction .
      */
     String ACTION_ID_WEBAUTHN_POPULATE_CSRF_TOKEN = "webAuthnPopulateCsrfTokenAction";
+
+    /**
+     * Action id `oidcAccountProfileAccessTokensAction`.
+     */
+    String ACTION_ID_ACCOUNT_PROFILE_ACCESS_TOKENS = "oidcAccountProfileAccessTokensAction";
 
     /**
      * Action id 'webAuthnAccountProfileRegistrationAction .
@@ -2063,7 +2106,7 @@ public interface CasWebflowConstants {
     /**
      * Action id 'oidcRegisteredServiceUIAction'.
      */
-    String ACTION_ID_OIDC_REGSTERED_SERVICE_UI = "oidcRegisteredServiceUIAction";
+    String ACTION_ID_OIDC_REGISTERED_SERVICE_UI = "oidcRegisteredServiceUIAction";
 
     /**
      * Action id 'oauth20RegisteredServiceUIAction'.

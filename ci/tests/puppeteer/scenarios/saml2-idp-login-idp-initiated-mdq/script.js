@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const performance = require("perf_hooks").performance;
 const cas = require("../../cas.js");
 const path = require("path");
@@ -15,7 +15,7 @@ async function tryServiceProviders(entityIds, page, timeout) {
         await cas.log(`Navigating to ${url}`);
         const s = performance.now();
         await cas.goto(page, url);
-        await page.waitForTimeout(2000);
+        await cas.sleep(2000);
         await cas.screenshot(page);
         const e = performance.now();
         const duration = (e - s) / 1000;
@@ -25,7 +25,7 @@ async function tryServiceProviders(entityIds, page, timeout) {
             throw `Request took longer than expected:${duration}`;
         }
 
-        await page.waitForTimeout(2000);
+        await cas.sleep(2000);
         await cas.assertVisibility(page, "#username");
         await cas.assertVisibility(page, "#password");
         await cas.log("=====================================");
@@ -34,7 +34,7 @@ async function tryServiceProviders(entityIds, page, timeout) {
 }
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
 
     const entityIds = [
@@ -52,5 +52,4 @@ async function tryServiceProviders(entityIds, page, timeout) {
     await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
     await browser.close();
 })();
-
 

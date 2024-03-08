@@ -32,24 +32,12 @@ import java.util.Set;
 @Slf4j
 @RequiredArgsConstructor
 public class DefaultDelegatedClientIdentityProviderRedirectionStrategy implements DelegatedClientIdentityProviderRedirectionStrategy {
-    /**
-     * The Services manager.
-     */
     protected final ServicesManager servicesManager;
 
-    /**
-     * Delegated authentication cookie builder.
-     */
     protected final CasCookieBuilder delegatedAuthenticationCookieBuilder;
 
-    /**
-     * CAS properties.
-     */
     protected final CasConfigurationProperties casProperties;
 
-    /**
-     * Application context.
-     */
     protected final ConfigurableApplicationContext applicationContext;
 
     @Override

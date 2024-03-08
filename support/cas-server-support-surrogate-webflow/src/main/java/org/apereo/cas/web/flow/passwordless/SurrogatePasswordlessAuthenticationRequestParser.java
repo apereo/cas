@@ -31,7 +31,8 @@ public class SurrogatePasswordlessAuthenticationRequestParser implements Passwor
         val result = surrogateCredentialParser.parse(credential);
         if (result.isPresent()) {
             val sr = result.get();
-            return PasswordlessAuthenticationRequest.builder()
+            return PasswordlessAuthenticationRequest
+                .builder()
                 .providedUsername(username)
                 .username(sr.getUsername())
                 .properties(CollectionUtils.wrap(PROPORTY_SURROGATE_USERNAME, sr.getSurrogateUsername()))

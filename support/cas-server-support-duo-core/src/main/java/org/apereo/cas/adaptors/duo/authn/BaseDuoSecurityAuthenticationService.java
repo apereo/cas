@@ -83,13 +83,6 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
 
     @Override
     public DuoSecurityUserAccount getUserAccount(final String username) {
-        if (!properties.isAccountStatusEnabled()) {
-            LOGGER.debug("Checking Duo Security for user's [{}] account status is disabled", username);
-            val account = new DuoSecurityUserAccount(username);
-            account.setStatus(DuoSecurityUserAccountStatus.AUTH);
-            return account;
-        }
-
         val userAccountCachedMap = userAccountCache.asMap();
         if (userAccountCachedMap.containsKey(username)) {
             val account = userAccountCachedMap.get(username);
@@ -119,6 +112,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
                 val authResult = response.get(RESULT_KEY_RESULT).asText().toUpperCase(Locale.ENGLISH);
 
                 val status = DuoSecurityUserAccountStatus.valueOf(authResult);
+                account.setProviderId(properties.getId());
                 account.setStatus(status);
                 account.setMessage(response.get(RESULT_KEY_STATUS_MESSAGE).asText());
                 if (status == DuoSecurityUserAccountStatus.ENROLL) {
@@ -180,13 +174,15 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
 
     private Http buildHttpRequest(final String format) throws Exception {
         val originalHost = SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getDuoApiHost());
-        val host = new URI("https://" + originalHost).getHost();
+        val host = new URI(StringUtils.prependIfMissing(originalHost, "https://"));
         val request = new CasHttpBuilder(HttpMethod.POST.name(),
-            host, String.format(format, AUTH_API_VERSION)).build();
+            host.getHost(), String.format(format, AUTH_API_VERSION)).build();
 
         val hostField = ReflectionUtils.findField(request.getClass(), "host");
         ReflectionUtils.makeAccessible(Objects.requireNonNull(hostField));
-        ReflectionUtils.setField(hostField, request, originalHost);
+
+        val resultingHost = host.getHost() + (host.getPort() > 0 ? ":" + host.getPort() : StringUtils.EMPTY);
+        ReflectionUtils.setField(hostField, request, resultingHost);
 
         val factory = httpClient.httpClientFactory();
         val clientInstanceBuilder = new OkHttpClient.Builder()
@@ -194,7 +190,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
             .readTimeout(DEFAULT_HTTP_TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .writeTimeout(DEFAULT_HTTP_TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .hostnameVerifier(factory.getHostnameVerifier());
-        if ("localhost".equalsIgnoreCase(host)) {
+        if ("localhost".equalsIgnoreCase(host.getHost())) {
             clientInstanceBuilder
                 .certificatePinner(CertificatePinner.DEFAULT)
                 .sslSocketFactory(factory.getSslContext().getSocketFactory(), (X509TrustManager) factory.getTrustManagers()[0]);
@@ -202,7 +198,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
             val caCertificatesField = ReflectionUtils.findField(Http.class, "DEFAULT_CA_CERTS");
             ReflectionUtils.makeAccessible(Objects.requireNonNull(caCertificatesField));
             val certificates = (String[]) ReflectionUtils.getField(caCertificatesField, request);
-            val pinner = Util.createPinner(host, certificates);
+            val pinner = Util.createPinner(host.getHost(), certificates);
             clientInstanceBuilder.certificatePinner(pinner);
         }
         val httpClientField = ReflectionUtils.findField(Http.class, "httpClient");
@@ -227,7 +223,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
             val request = buildHttpPostAuthRequest();
             signHttpAuthRequest(request, principal.getId());
             val result = executeDuoApiRequest(request);
-            LOGGER.debug("Duo authentication response: [{}]", result);
+            LOGGER.debug("Duo Security authentication response: [{}]", result);
             if ("allow".equalsIgnoreCase(result.getString("result"))) {
                 return DuoSecurityAuthenticationResult.builder().success(true).username(credential.getId()).build();
             }
@@ -237,13 +233,6 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
         return DuoSecurityAuthenticationResult.builder().success(false).username(credential.getId()).build();
     }
 
-    /**
-     * Execute duo api request.
-     *
-     * @param request the request
-     * @return the json object
-     * @throws Exception the exception
-     */
     protected JSONObject executeDuoApiRequest(final Http request) throws Exception {
         return (JSONObject) request.executeRequest();
     }

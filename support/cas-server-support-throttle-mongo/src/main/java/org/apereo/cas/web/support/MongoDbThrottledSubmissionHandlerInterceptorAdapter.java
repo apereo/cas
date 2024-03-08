@@ -1,5 +1,7 @@
 package org.apereo.cas.web.support;
 
+import org.apereo.cas.throttle.AbstractInspektrAuditHandlerInterceptorAdapter;
+import org.apereo.cas.throttle.ThrottledSubmissionHandlerConfigurationContext;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;

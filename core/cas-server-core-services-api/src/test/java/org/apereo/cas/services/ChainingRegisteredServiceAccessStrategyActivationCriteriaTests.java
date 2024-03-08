@@ -1,15 +1,15 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
-import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -24,9 +24,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("RegisteredService")
 class ChainingRegisteredServiceAccessStrategyActivationCriteriaTests {
-    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(),
-        "ChainingRegisteredServiceAccessStrategyActivationCriteriaTests.json");
-
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
@@ -70,8 +67,10 @@ class ChainingRegisteredServiceAccessStrategyActivationCriteriaTests {
             .setGroovyScript("groovy { return false }");
         chain.addConditions(criteria1, criteria2);
         chain.setOperator(LogicalOperatorTypes.AND);
-        MAPPER.writeValue(JSON_FILE, chain);
-        val policyRead = MAPPER.readValue(JSON_FILE, RegisteredServiceAccessStrategyActivationCriteria.class);
+
+        val jsonFile = Files.createTempFile(RandomUtils.randomAlphabetic(8), ".json").toFile();
+        MAPPER.writeValue(jsonFile, chain);
+        val policyRead = MAPPER.readValue(jsonFile, RegisteredServiceAccessStrategyActivationCriteria.class);
         assertEquals(chain, policyRead);
     }
 }

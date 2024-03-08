@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 const YAML = require("yaml");
 const fs = require("fs");
@@ -11,12 +11,12 @@ const path = require("path");
     const users = configFile.cas.authn.accept.users;
     await cas.log(`Current users: ${users}`);
 
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     try {
         const page = await cas.newPage(browser);
         await cas.log("Updating configuration and waiting for changes to reload...");
         await updateConfig(configFile, configFilePath, "casrefresh::p@$$word");
-        await page.waitForTimeout(5000);
+        await cas.sleep(5000);
         await cas.refreshBusContext();
         await cas.log("Attempting to login with new updated credentials...");
         await cas.goto(page, "https://localhost:8444/cas/logout");

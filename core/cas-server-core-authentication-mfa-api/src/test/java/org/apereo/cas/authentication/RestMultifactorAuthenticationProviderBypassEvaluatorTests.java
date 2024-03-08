@@ -8,7 +8,7 @@ import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import lombok.val;
 import okhttp3.mockwebserver.MockResponse;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
@@ -25,10 +25,11 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("RestfulApiAuthentication")
 class RestMultifactorAuthenticationProviderBypassEvaluatorTests {
+    private StaticApplicationContext applicationContext;
 
-    @BeforeAll
-    public static void setup() {
-        val applicationContext = new StaticApplicationContext();
+    @BeforeEach
+    public void setup() {
+        applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         ApplicationContextProvider.holdApplicationContext(applicationContext);
         ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
@@ -42,7 +43,7 @@ class RestMultifactorAuthenticationProviderBypassEvaluatorTests {
             val props = new MultifactorAuthenticationProviderBypassProperties();
             props.getRest().setUrl("http://localhost:%s".formatted(webServer.getPort()));
             val provider = new TestMultifactorAuthenticationProvider();
-            val evaluator = new RestMultifactorAuthenticationProviderBypassEvaluator(props, provider.getId());
+            val evaluator = new RestMultifactorAuthenticationProviderBypassEvaluator(props, provider.getId(), applicationContext);
             val res = evaluator.shouldMultifactorAuthenticationProviderExecute(MultifactorAuthenticationTestUtils.getAuthentication("casuser"),
                 MultifactorAuthenticationTestUtils.getRegisteredService(), provider,
                 new MockHttpServletRequest(), MultifactorAuthenticationTestUtils.getService("service"));
@@ -57,7 +58,7 @@ class RestMultifactorAuthenticationProviderBypassEvaluatorTests {
             val props = new MultifactorAuthenticationProviderBypassProperties();
             props.getRest().setUrl("http://localhost:%s".formatted(webServer.getPort()));
             val provider = new TestMultifactorAuthenticationProvider();
-            val evaluator = new RestMultifactorAuthenticationProviderBypassEvaluator(props, provider.getId());
+            val evaluator = new RestMultifactorAuthenticationProviderBypassEvaluator(props, provider.getId(), applicationContext);
             val res = evaluator.shouldMultifactorAuthenticationProviderExecute(MultifactorAuthenticationTestUtils.getAuthentication("casuser"),
                 MultifactorAuthenticationTestUtils.getRegisteredService(), null,
                 new MockHttpServletRequest(), MultifactorAuthenticationTestUtils.getService("service"));
@@ -75,7 +76,7 @@ class RestMultifactorAuthenticationProviderBypassEvaluatorTests {
             val props = new MultifactorAuthenticationProviderBypassProperties();
             props.getRest().setUrl("http://localhost:" + port);
             val provider = new TestMultifactorAuthenticationProvider();
-            val r = new RestMultifactorAuthenticationProviderBypassEvaluator(props, provider.getId());
+            val r = new RestMultifactorAuthenticationProviderBypassEvaluator(props, provider.getId(), applicationContext);
             val request = new MockHttpServletRequest();
             val registeredService = MultifactorAuthenticationTestUtils.getRegisteredService();
             val res = r.shouldMultifactorAuthenticationProviderExecute(MultifactorAuthenticationTestUtils.getAuthentication("casuser"),

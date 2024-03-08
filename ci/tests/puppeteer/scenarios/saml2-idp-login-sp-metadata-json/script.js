@@ -1,9 +1,9 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 const assert = require("assert");
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     const entityId = "https://localhost:9859/anything";
     let url = "https://localhost:8443/cas/idp/profile/SAML2/Unsolicited/SSO";
@@ -11,7 +11,7 @@ const assert = require("assert");
     await cas.log(`Navigating to ${url}`);
     await cas.goto(page, url);
     await cas.screenshot(page);
-    await page.waitForTimeout(4000);
+    await cas.sleep(4000);
     await cas.loginWith(page);
     await cas.waitForElement(page, "body");
     const content = JSON.parse(await cas.innerText(page, "body"));
@@ -19,5 +19,4 @@ const assert = require("assert");
     assert(content.form.SAMLResponse !== undefined);
     await browser.close();
 })();
-
 

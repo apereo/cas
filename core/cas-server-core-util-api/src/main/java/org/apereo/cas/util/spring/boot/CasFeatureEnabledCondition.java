@@ -75,11 +75,11 @@ public class CasFeatureEnabledCondition extends SpringBootCondition {
             val property = feature.toProperty(module);
             featureIsSelected = selectedFeatures.stream().anyMatch(feat -> feat.startsWith(property) && feat.endsWith(".enabled=true"));
             if (!featureIsSelected) {
-                featureIsSelected = CasFeatureModule.baseline().contains(feature);
+                featureIsSelected = StringUtils.isBlank(module) && CasFeatureModule.baseline().contains(feature);
             }
             if (!featureIsSelected) {
                 val message = "CAS feature " + property + " is not selected and will be enabled.";
-                LOGGER.debug(message);
+                LOGGER.info(message);
                 return ConditionOutcome.noMatch(message);
             }
             val message = "CAS feature " + property + " is selected and will be enabled.";

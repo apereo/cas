@@ -1,8 +1,8 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 
 (async () => {
-    let browser = await puppeteer.launch(cas.browserOptions());
+    let browser = await cas.newBrowser(cas.browserOptions());
     let page = await cas.newPage(browser);
 
     await cas.log("Log in attempt: #1");
@@ -18,7 +18,7 @@ const cas = require("../../cas.js");
     await cas.log("Closing page and trying again with bad credentials...");
     await browser.close();
 
-    browser = await puppeteer.launch(cas.browserOptions());
+    browser = await cas.newBrowser(cas.browserOptions());
     page = await cas.newPage(browser);
     await cas.log("Log in attempt: #2");
     await submitLoginFailure(page);
@@ -30,5 +30,4 @@ async function submitLoginFailure(page) {
     await cas.gotoLogin(page);
     await cas.loginWith(page, "casuser", "BadPassword1");
 }
-
 

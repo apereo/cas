@@ -7,8 +7,6 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
 
-    "--cas.audit.engine.enabled=true",
-
     "--cas.authn.accept.users=testcasva::password",
 
     "--cas.authn.mfa.inwebo.service-id=7046",

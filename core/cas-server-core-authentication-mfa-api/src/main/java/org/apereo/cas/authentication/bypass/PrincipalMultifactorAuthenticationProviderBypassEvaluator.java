@@ -8,6 +8,7 @@ import org.apereo.cas.services.RegisteredService;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.context.ApplicationContext;
 import org.springframework.util.StringUtils;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,14 +32,13 @@ public class PrincipalMultifactorAuthenticationProviderBypassEvaluator extends B
     private final String attributeValue;
 
     public PrincipalMultifactorAuthenticationProviderBypassEvaluator(final MultifactorAuthenticationProviderBypassProperties bypassProperties,
-                                                                     final String providerId) {
-        this(bypassProperties.getPrincipalAttributeName(), bypassProperties.getPrincipalAttributeValue(), providerId);
+                                                                     final String providerId, final ApplicationContext applicationContext) {
+        this(bypassProperties.getPrincipalAttributeName(), bypassProperties.getPrincipalAttributeValue(), providerId, applicationContext);
     }
 
-    public PrincipalMultifactorAuthenticationProviderBypassEvaluator(final String attributeName,
-                                                                     final String attributeValue,
-                                                                     final String providerId) {
-        super(providerId);
+    public PrincipalMultifactorAuthenticationProviderBypassEvaluator(final String attributeName, final String attributeValue,
+                                                                     final String providerId, final ApplicationContext applicationContext) {
+        super(providerId, applicationContext);
         this.attributeName = attributeName;
         this.attributeValue = attributeValue;
     }

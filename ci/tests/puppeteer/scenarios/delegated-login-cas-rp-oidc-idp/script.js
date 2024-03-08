@@ -1,9 +1,9 @@
-const puppeteer = require("puppeteer");
+
 const assert = require("assert");
 const cas = require("../../cas.js");
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     const service = "https://apereo.github.io";
     
@@ -12,11 +12,11 @@ const cas = require("../../cas.js");
 
     await cas.assertVisibility(page, "li #Keycloak");
     await cas.click(page, "li #Keycloak");
-    await page.waitForNavigation();
-    await page.waitForTimeout(3000);
+    await cas.waitForNavigation(page);
+    await cas.sleep(3000);
     await cas.screenshot(page);
     await cas.loginWith(page, "caskeycloak", "r2RlZXz6f2h5");
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
 
     await cas.logPage(page);
     const result = new URL(page.url());

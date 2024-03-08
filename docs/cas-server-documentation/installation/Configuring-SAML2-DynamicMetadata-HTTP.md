@@ -9,6 +9,7 @@ category: Protocols
 # HTTP/HTTPS - SAML2 Metadata Management
 
 A metadata location for a SAML service definition may download SAML2 metadata from http or https URLs.
+Multiple locations may be comma-separated.
 
 ```json
 {

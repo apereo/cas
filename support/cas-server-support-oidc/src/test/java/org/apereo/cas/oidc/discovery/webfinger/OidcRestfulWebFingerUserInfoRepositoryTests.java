@@ -4,17 +4,9 @@ import org.apereo.cas.configuration.model.RestEndpointProperties;
 import org.apereo.cas.oidc.discovery.webfinger.userinfo.OidcRestfulWebFingerUserInfoRepository;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
-import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.MediaType;
-
-import java.nio.charset.StandardCharsets;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -25,20 +17,16 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("RestfulApi")
 class OidcRestfulWebFingerUserInfoRepositoryTests {
-    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .defaultTypingEnabled(false).build().toObjectMapper();
-
     private MockWebServer webServer;
 
     @Test
     void verifyBadPayload() throws Throwable {
-        try (val webServer = new MockWebServer(9312,
-            new ByteArrayResource("-@@-".getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
+        try (val webServer = new MockWebServer("-@@-")) {
             this.webServer = webServer;
             this.webServer.start();
             assertTrue(this.webServer.isRunning());
             val props = new RestEndpointProperties();
-            props.setUrl("http://localhost:9312");
+            props.setUrl("http://localhost:%s".formatted(webServer.getPort()));
             val repo = new OidcRestfulWebFingerUserInfoRepository(props);
             val results = repo.findByEmailAddress("cas@example.org");
             assertTrue(results.isEmpty());
@@ -47,15 +35,13 @@ class OidcRestfulWebFingerUserInfoRepositoryTests {
 
     @Test
     void verifyFindByEmail() throws Throwable {
-        var data = MAPPER.writeValueAsString(CollectionUtils.wrap("email", "cas@example.org"));
-        try (val webServer = new MockWebServer(9312,
-            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
+        try (val webServer = new MockWebServer(CollectionUtils.wrap("email", "cas@example.org"))) {
             this.webServer = webServer;
             this.webServer.start();
-            assertTrue(this.webServer.isRunning());
+            assertTrue(webServer.isRunning());
 
             val props = new RestEndpointProperties();
-            props.setUrl("http://localhost:9312");
+            props.setUrl("http://localhost:%s".formatted(webServer.getPort()));
             val repo = new OidcRestfulWebFingerUserInfoRepository(props);
             val results = repo.findByEmailAddress("cas@example.org");
             assertNotNull(results);
@@ -66,15 +52,12 @@ class OidcRestfulWebFingerUserInfoRepositoryTests {
 
     @Test
     void verifyFindByUsername() throws Throwable {
-        var data = MAPPER.writeValueAsString(CollectionUtils.wrap("username", "casuser"));
-        try (val webServer = new MockWebServer(9312,
-            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
+        try (val webServer = new MockWebServer(CollectionUtils.wrap("username", "casuser"))) {
             this.webServer = webServer;
             this.webServer.start();
             assertTrue(this.webServer.isRunning());
-
             val props = new RestEndpointProperties();
-            props.setUrl("http://localhost:9312");
+            props.setUrl("http://localhost:%s".formatted(webServer.getPort()));
             val repo = new OidcRestfulWebFingerUserInfoRepository(props);
             val results = repo.findByUsername("casuser");
             assertNotNull(results);

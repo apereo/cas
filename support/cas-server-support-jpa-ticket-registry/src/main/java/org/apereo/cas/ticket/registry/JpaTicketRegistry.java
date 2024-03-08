@@ -1,8 +1,10 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.jpa.JpaBeanFactory;
 import org.apereo.cas.monitor.Monitorable;
+import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
@@ -25,6 +27,7 @@ import jakarta.persistence.LockModeType;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -82,16 +85,6 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
             LOGGER.debug("Added ticket [{}] to registry.", ticketEntity.getId());
         }));
         return ticket;
-    }
-
-    protected BaseTicketEntity getTicketEntityFrom(final Ticket ticket) {
-        return FunctionUtils.doUnchecked(() -> {
-            val encodeTicket = encodeTicket(ticket);
-            return getJpaTicketEntityFactory()
-                .fromTicket(encodeTicket)
-                .setPrincipalId(digestIdentifier(getPrincipalIdFrom(ticket)))
-                .setAttributes(collectAndDigestTicketAttributes(ticket));
-        });
     }
 
     @Override
@@ -204,6 +197,30 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
+    public List<? extends Serializable> query(final TicketRegistryQueryCriteria criteria) {
+        val factory = getJpaTicketEntityFactory();
+        val sql = String.format("SELECT t FROM %s t WHERE t.type=:type", factory.getEntityName());
+        val definition = ticketCatalog.find(criteria.getType());
+        val query = entityManager.createQuery(sql, factory.getType())
+            .setParameter("type", getTicketTypeName(definition.getApiClass()));
+        if (criteria.getCount() > 0) {
+            query.setMaxResults(Long.valueOf(criteria.getCount()).intValue());
+        }
+        query.setLockMode(LockModeType.NONE);
+
+        return jpaBeanFactory
+            .streamQuery(query)
+            .map(BaseTicketEntity.class::cast)
+            .map(factory::toTicket)
+            .map(ticket -> criteria.isDecode() ? decodeTicket(ticket) : ticket)
+            .filter(ticket -> StringUtils.isBlank(criteria.getPrincipal())
+                || (ticket instanceof final AuthenticationAwareTicket aat
+                && StringUtils.equalsIgnoreCase(criteria.getPrincipal(), aat.getAuthentication().getPrincipal().getId())))
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
+    }
+
+    @Override
     public Stream<? extends Ticket> getSessionsWithAttributes(final Map<String, List<Object>> queryAttributes) {
         val factory = getJpaTicketEntityFactory();
         val criterias = queryAttributes.entrySet()
@@ -260,6 +277,16 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
             .filter(ticket -> !ticket.isExpired());
     }
 
+    @Override
+    public long countTicketsFor(final Service service) {
+        return transactionTemplate.execute(status -> {
+            val factory = getJpaTicketEntityFactory();
+            val sql = String.format("SELECT COUNT(t.id) FROM %s t WHERE t.service = :service", factory.getEntityName());
+            val query = entityManager.createQuery(sql).setParameter("service", service.getId());
+            return countToLong(query.getSingleResult());
+        });
+    }
+
     protected String getTicketTypeName(final Class<? extends Ticket> clazz) {
         return isCipherExecutorEnabled()
             ? DefaultEncodedTicket.class.getName()
@@ -298,6 +325,16 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         return Objects.requireNonNull(result);
     }
 
+    protected BaseTicketEntity getTicketEntityFrom(final Ticket ticket) {
+        return FunctionUtils.doUnchecked(() -> {
+            val encodeTicket = encodeTicket(ticket);
+            return getJpaTicketEntityFactory()
+                .fromTicket(encodeTicket, ticket)
+                .setPrincipalId(digestIdentifier(getPrincipalIdFrom(ticket)))
+                .setAttributes(collectAndDigestTicketAttributes(ticket));
+        });
+    }
+    
     protected JpaTicketEntityFactory getJpaTicketEntityFactory() {
         val jpa = casProperties.getTicket().getRegistry().getJpa();
         return new JpaTicketEntityFactory(jpa.getDialect());

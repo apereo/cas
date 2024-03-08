@@ -2,7 +2,6 @@ const assert = require("assert");
 const cas = require("../../cas.js");
 const fs = require("fs");
 const path = require("path");
-const puppeteer = require("puppeteer");
 
 const TOTAL = 10;
 const BASE_URL = "https://localhost:8443/cas/actuator/registeredServices";
@@ -29,7 +28,6 @@ async function verifyServices() {
             }, {"Content-Type": "application/json"});
     }
 }
-
 
 async function importServices() {
     const template = path.join(__dirname, "registered-service.json");
@@ -58,7 +56,7 @@ async function importServices() {
 
         await verifyServices();
 
-        const browser = await puppeteer.launch(cas.browserOptions());
+        const browser = await cas.newBrowser(cas.browserOptions());
         const page = await cas.newPage(browser);
         const service = "https://apereo.github.io";
         await cas.gotoLogin(page, service);

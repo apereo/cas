@@ -52,7 +52,7 @@ class JpaConsentRepositoryTests extends BaseConsentRepositoryTests {
             val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
             val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId());
             val decision = BUILDER.build(service, registeredService, principal,
-                CollectionUtils.wrap("attribute" + i, List.of("value" + i)));
+                CollectionUtils.wrap("attribute%d".formatted(i), List.of("value%d".formatted(i))));
             repository.storeConsentDecision(decision);
         }
 

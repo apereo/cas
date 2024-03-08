@@ -56,7 +56,7 @@ public class PrincipalAttributeMultifactorAuthenticationProperties implements Se
     private String globalPrincipalAttributeNameTriggers;
 
     /**
-     * The regular expression that is cross matches against the principal attribute to determine
+     * The regular expression that is cross matched against the principal attribute to determine
      * if the account is qualified for multifactor authentication.
      * Matching and comparison operations are case insensitive.
      */

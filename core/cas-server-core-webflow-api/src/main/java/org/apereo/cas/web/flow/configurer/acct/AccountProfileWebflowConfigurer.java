@@ -42,7 +42,8 @@ public class AccountProfileWebflowConfigurer extends AbstractCasWebflowConfigure
         myAccountView.getRenderActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_PREPARE_ACCOUNT_PROFILE));
         createTransitionForState(myAccountView, CasWebflowConstants.TRANSITION_ID_RESET_PASSWORD, CasWebflowConstants.STATE_ID_PASSWORD_CHANGE_REQUEST);
         createTransitionForState(myAccountView, CasWebflowConstants.TRANSITION_ID_UPDATE_SECURITY_QUESTIONS, CasWebflowConstants.STATE_ID_UPDATE_SECURITY_QUESTIONS);
-        createTransitionForState(myAccountView, CasWebflowConstants.TRANSITION_ID_DELETE, CasWebflowConstants.STATE_ID_REMOVE_SINGLE_SIGNON_SESSION);
+        createTransitionForState(myAccountView, "deleteSession", CasWebflowConstants.STATE_ID_REMOVE_SINGLE_SIGNON_SESSION);
+        createTransitionForState(myAccountView, "revokeAccessToken", CasWebflowConstants.STATE_ID_REVOKE_OIDC_ACCESS_TOKEN);
 
         val updateQuestions = createActionState(accountFlow, CasWebflowConstants.STATE_ID_UPDATE_SECURITY_QUESTIONS,
             CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_UPDATE_SECURITY_QUESTIONS);
@@ -80,10 +81,14 @@ public class AccountProfileWebflowConfigurer extends AbstractCasWebflowConfigure
         val expression = createExpression(String.format("'%s'", accountFlow.getId()));
         successView.getEntryActionList().add(new ExternalRedirectAction(expression));
 
-
         val readStorage = createViewState(accountFlow, CasWebflowConstants.STATE_ID_BROWSER_STORAGE_READ, CasWebflowConstants.VIEW_ID_BROWSER_STORAGE_READ);
         readStorage.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_READ_BROWSER_STORAGE));
         createStateDefaultTransition(readStorage, accountFlow.getStartState());
+
+        val revokeSession = createActionState(accountFlow, CasWebflowConstants.STATE_ID_REVOKE_OIDC_ACCESS_TOKEN,
+            CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_REMOVE_OIDC_ACCESS_TOKEN);
+        createTransitionForState(revokeSession, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_MY_ACCOUNT_PROFILE_VIEW);
+        createTransitionForState(revokeSession, CasWebflowConstants.TRANSITION_ID_ERROR, accountFlow.getStartState().getId());
     }
 
 }

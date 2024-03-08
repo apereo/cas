@@ -13,6 +13,7 @@ import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.thread.Cleanable;
 import lombok.val;
 import org.springframework.aot.hint.RuntimeHints;
+import org.springframework.beans.factory.DisposableBean;
 
 /**
  * This is {@link CasCoreTicketsRuntimeHints}.
@@ -27,6 +28,7 @@ public class CasCoreTicketsRuntimeHints implements CasRuntimeHintsRegistrar {
 
         registerSpringProxy(hints, Cleanable.class, TicketRegistry.class);
         registerSpringProxy(hints, QueueableTicketRegistry.class, TicketRegistry.class);
+        registerSpringProxy(hints, AutoCloseable.class, DisposableBean.class, TicketRegistry.class);
 
         registerSerializationHints(hints, findSubclassesInPackage(Ticket.class, CentralAuthenticationService.NAMESPACE));
         val expirationPolicyClasses = findSubclassesInPackage(ExpirationPolicy.class, CentralAuthenticationService.NAMESPACE);
@@ -35,7 +37,7 @@ public class CasCoreTicketsRuntimeHints implements CasRuntimeHintsRegistrar {
 
         val ticketCompactors = findSubclassesInPackage(TicketCompactor.class, CentralAuthenticationService.NAMESPACE);
         registerReflectionHints(hints, ticketCompactors);
-        registerProxyHints(hints, ticketCompactors);
+        registerProxyHints(hints, TicketCompactor.class);
 
         registerReflectionHints(hints, findSubclassesInPackage(CipherExecutor.class, CentralAuthenticationService.NAMESPACE));
     }

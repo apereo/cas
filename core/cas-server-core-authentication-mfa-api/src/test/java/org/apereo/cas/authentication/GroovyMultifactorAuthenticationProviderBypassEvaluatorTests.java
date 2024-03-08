@@ -26,25 +26,25 @@ import static org.mockito.Mockito.*;
 @Tag("GroovyAuthentication")
 class GroovyMultifactorAuthenticationProviderBypassEvaluatorTests {
     private static boolean runGroovyBypassFor(final Authentication authentication) {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+
         val request = new MockHttpServletRequest();
         val properties = new MultifactorAuthenticationProviderBypassProperties();
         properties.getGroovy().setLocation(new ClassPathResource("GroovyBypass.groovy"));
         val provider = new TestMultifactorAuthenticationProvider();
-        val groovy = new GroovyMultifactorAuthenticationProviderBypassEvaluator(properties, provider.getId());
+        val groovy = new GroovyMultifactorAuthenticationProviderBypassEvaluator(properties, provider.getId(), applicationContext);
 
         val registeredService = mock(RegisteredService.class);
         when(registeredService.getName()).thenReturn("Service");
         when(registeredService.getServiceId()).thenReturn("http://app.org");
         when(registeredService.getId()).thenReturn(1000L);
 
-        val applicationContext = new StaticApplicationContext();
-        applicationContext.refresh();
         ApplicationContextProvider.holdApplicationContext(applicationContext);
         ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
             MultifactorAuthenticationPrincipalResolver.identical(), UUID.randomUUID().toString());
 
-        return groovy.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService,
-            provider, request, mock(Service.class));
+        return groovy.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider, request, mock(Service.class));
     }
 
     private static Authentication getAuthentication(final String username) {

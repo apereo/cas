@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 
 function getShibbolethUrlForEntityId(entityId) {
@@ -6,18 +6,18 @@ function getShibbolethUrlForEntityId(entityId) {
 }
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.goto(page, getShibbolethUrlForEntityId("google.com"));
     await cas.loginWith(page);
-    await page.waitForTimeout(1000);
+    await cas.sleep(2000);
     await cas.assertInnerTextStartsWith(page, "#login h2", "Your account is not registered");
     await cas.assertVisibility(page, "img#imageQRCode");
     await cas.assertVisibility(page, "#scratchcodes");
 
     await cas.goto(page, getShibbolethUrlForEntityId("github.com"));
     await cas.loginWith(page);
-    await page.waitForTimeout(1000);
+    await cas.sleep(5000);
     await cas.assertVisibility(page, "#token");
     await cas.assertVisibility(page, "#resendButton");
     await cas.assertVisibility(page, "#loginButton");

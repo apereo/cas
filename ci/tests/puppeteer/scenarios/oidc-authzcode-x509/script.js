@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const assert = require("assert");
 const cas = require("../../cas.js");
 const fs = require("fs");
@@ -9,14 +9,13 @@ const request = require("request");
     const args = process.argv.slice(2);
     const config = JSON.parse(fs.readFileSync(args[0]));
 
-
     await cas.log(`Certificate file: ${config.trustStoreCertificateFile}`);
     await cas.log(`Private key file: ${config.trustStorePrivateKeyFile}`);
 
     const cert = fs.readFileSync(config.trustStoreCertificateFile);
     const key = fs.readFileSync(config.trustStorePrivateKeyFile);
 
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     await page.setRequestInterception(true);
     page.on("request", (interceptedRequest) => {
@@ -60,14 +59,14 @@ const request = require("request");
     const redirectUri = "https://localhost:9859/anything/oidc";
     const url = `https://localhost:8443/cas/oidc/oidcAuthorize?client_id=client&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent("openid profile")}&response_type=code&nonce=vn4qulthnx`;
     await cas.goto(page, url);
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.screenshot(page);
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
-        await page.waitForNavigation();
+        await cas.waitForNavigation(page);
     }
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.logPage(page);
     await cas.assertPageUrlStartsWith(page, "https://localhost:9859/anything/oidc");
     const code = await cas.assertParameter(page, "code");

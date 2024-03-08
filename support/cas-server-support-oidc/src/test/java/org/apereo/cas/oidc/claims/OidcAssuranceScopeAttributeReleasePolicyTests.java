@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 import java.util.List;
+import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -31,10 +32,16 @@ public class OidcAssuranceScopeAttributeReleasePolicyTests extends AbstractOidcT
         val policy = new OidcAssuranceScopeAttributeReleasePolicy();
         assertEquals(OidcConstants.StandardScopes.ASSURANCE.getScope(), policy.getScopeType());
         assertNotNull(policy.getAllowedAttributes());
-        val principal = CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("birth_family_name", List.of("Johnson"),
-            "title", List.of("MRS"), "place_of_birth", List.of("London")));
+        val attributes = CollectionUtils.<String, List<Object>>wrap("birth_family_name", List.of("Johnson"),
+            "title", List.of("MRS"), "place_of_birth", List.of("London"));
+        val principal = CoreAuthenticationTestUtils.getPrincipal(UUID.randomUUID().toString(), attributes);
+
+        val registeredService = getOidcRegisteredService(UUID.randomUUID().toString(), randomServiceUrl());
+        registeredService.setAttributeReleasePolicy(policy);
+        servicesManager.save(registeredService);
+        
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
-            .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
+            .registeredService(registeredService)
             .service(CoreAuthenticationTestUtils.getService())
             .principal(principal)
             .applicationContext(applicationContext)

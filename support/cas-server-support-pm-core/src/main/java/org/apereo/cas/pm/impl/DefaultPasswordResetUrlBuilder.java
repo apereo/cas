@@ -37,24 +37,12 @@ import java.nio.charset.StandardCharsets;
 @RequiredArgsConstructor
 @Slf4j
 public class DefaultPasswordResetUrlBuilder implements PasswordResetUrlBuilder {
-    /**
-     * The password management service.
-     */
     protected final PasswordManagementService passwordManagementService;
 
-    /**
-     * Ticket registry instance to hold onto the token.
-     */
     protected final TicketRegistry ticketRegistry;
 
-    /**
-     * Ticket factory instance.
-     */
     protected final TicketFactory ticketFactory;
 
-    /**
-     * The CAS configuration properties.
-     */
     protected final CasConfigurationProperties casProperties;
 
     @Override
@@ -89,18 +77,13 @@ public class DefaultPasswordResetUrlBuilder implements PasswordResetUrlBuilder {
         return null;
     }
 
-    /**
-     * Compute the expiration policy.
-     *
-     * @return the expiration policy
-     */
     protected ExpirationPolicy computeExpirationPolicy() {
         val reset = casProperties.getAuthn().getPm().getReset();
         val numberOfUses = reset.getNumberOfUses();
         val seconds = Beans.newDuration(reset.getExpiration()).toSeconds();
 
         if (numberOfUses >= 1) {
-            LOGGER.debug("Password reset URL shall expire after [{}] uses and [{}] second(s)", numberOfUses, seconds);
+            LOGGER.debug("Password reset URL shall expire after [{}] uses and in [{}] second(s)", numberOfUses, seconds);
             return new MultiTimeUseOrTimeoutExpirationPolicy(numberOfUses, seconds);
         }
 

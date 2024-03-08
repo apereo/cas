@@ -7,7 +7,6 @@ const startPuppeteerLoadTest = require("puppeteer-loadtest");
 const args = process.argv.slice(2);
 const config = JSON.parse(fs.readFileSync(args[0]));
 
-
 const paramOptions = {
     file: config.loadScript,
     samplesRequested: config.samplesRequested,

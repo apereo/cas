@@ -19,11 +19,11 @@ public interface PasswordlessUserAccountStore {
     /**
      * Find user passwordless user account.
      *
-     * @param username the username
+     * @param request the username
      * @return the passwordless user account
      * @throws Throwable the throwable
      */
-    Optional<PasswordlessUserAccount> findUser(String username) throws Throwable;
+    Optional<? extends PasswordlessUserAccount> findUser(PasswordlessAuthenticationRequest request) throws Throwable;
 
     /**
      * Load.

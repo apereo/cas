@@ -1,12 +1,14 @@
 package org.apereo.cas.api;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.With;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serial;
@@ -27,11 +29,14 @@ import java.util.Map;
 @NoArgsConstructor(force = true)
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @SuperBuilder
+@AllArgsConstructor
+@With
 public class PasswordlessAuthenticationRequest implements Serializable {
     @Serial
     private static final long serialVersionUID = -1992873518520202699L;
 
     private final String username;
+
     private final String providedUsername;
 
     @Builder.Default

@@ -14,18 +14,19 @@ of the script may be defined as such:
 import org.apereo.cas.api.*
 
 def run(Object[] args) {
-    def (username,logger) = args
+    def (passwordlessRequest,logger) = args
     
-    logger.info("Locating user record for user $username")
+    logger.info("Locating user record for user $passwordlessRequest")
     
     /*
      ...
-     Locate the record for the given username, and return the result back to CAS.
+     Locate the record for the given username, 
+     and return the result back to CAS.
      ...
     */
     
     def account = new PasswordlessUserAccount()
-    account.setUsername(username)
+    account.setUsername(passwordlessRequest.username)
     account.setEmail("username@example.org")
     account.setName("TestUser")
     account.setPhone("123-456-7890") 
@@ -37,3 +38,10 @@ def run(Object[] args) {
 ```
 
 {% include_cached casproperties.html properties="cas.authn.passwordless.accounts.groovy" %}
+
+The following parameters are passed to the script:
+
+| Parameter             | Description                                                                |
+|-----------------------|----------------------------------------------------------------------------|
+| `passwordlessRequest` | The `PasswordlessAuthenticationRequest` object that represents the user.   |
+| `logger`              | The object responsible for issuing log messages such as `logger.info(...)` |

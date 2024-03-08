@@ -1,10 +1,10 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 const assert = require("assert");
 const path = require("path");
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
 
     const entityIds = [
@@ -16,9 +16,9 @@ const path = require("path");
         await cas.log(`Navigating to ${url}`);
         await cas.goto(page, url);
         await cas.screenshot(page);
-        await page.waitForTimeout(2000);
+        await cas.sleep(2000);
         await cas.loginWith(page);
-        await cas.waitForElement(page, "body");
+        await cas.sleep(3000);
         const content = JSON.parse(await cas.innerText(page, "body"));
         await cas.log(content);
         assert(content.form.SAMLResponse !== undefined);
@@ -27,5 +27,4 @@ const path = require("path");
     await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
     await browser.close();
 })();
-
 

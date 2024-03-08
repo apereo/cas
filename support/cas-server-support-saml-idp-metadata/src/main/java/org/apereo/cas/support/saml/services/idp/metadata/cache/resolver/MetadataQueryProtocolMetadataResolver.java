@@ -12,6 +12,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
@@ -30,7 +31,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.attribute.UserDefinedFileAttributeView;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 /**
@@ -50,7 +54,10 @@ public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataRe
 
     @Override
     public boolean supports(final SamlRegisteredService service) {
-        return SamlUtils.isDynamicMetadataQueryConfigured(service.getMetadataLocation());
+        val locations = org.springframework.util.StringUtils.commaDelimitedListToSet(
+            SpringExpressionLanguageValueResolver.getInstance().resolve(service.getMetadataLocation())
+        );
+        return locations.stream().anyMatch(SamlUtils::isDynamicMetadataQueryConfigured);
     }
 
     @Override
@@ -79,14 +86,6 @@ public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataRe
         }
         EntityUtils.consume(entity);
         return new InMemoryResourceMetadataResolver(backupFile, configBean);
-    }
-
-    private static void setFileAttribute(final HttpResponse response, final File backupFile) {
-        FunctionUtils.doAndHandle(t -> {
-            val path = backupFile.toPath();
-            val etag = response.getFirstHeader("ETag").getValue();
-            Files.setAttribute(path, "user:ETag", ByteBuffer.wrap(etag.getBytes(StandardCharsets.UTF_8)));
-        });
     }
 
     @Override
@@ -121,7 +120,7 @@ public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataRe
     }
 
     @Override
-    protected String getMetadataLocationForService(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
+    protected Set<String> getMetadataLocationsForService(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
         LOGGER.trace("Getting metadata location dynamically for [{}] based on criteria [{}]", service.getName(), criteriaSet);
         val entityIdCriteria = criteriaSet.get(EntityIdCriterion.class);
         val entityId = Optional.ofNullable(entityIdCriteria)
@@ -130,7 +129,18 @@ public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataRe
         if (StringUtils.isBlank(entityId)) {
             throw new SamlException("Unable to determine entity id to fetch metadata via MDQ for " + service.getName());
         }
-        val location = super.getMetadataLocationForService(service, criteriaSet);
-        return location.replace("{0}", EncodingUtils.urlEncode(entityId));
+        val locations = super.getMetadataLocationsForService(service, criteriaSet);
+        return locations
+            .stream()
+            .map(location -> location.replace("{0}", EncodingUtils.urlEncode(entityId)))
+            .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    private static void setFileAttribute(final HttpResponse response, final File backupFile) {
+        FunctionUtils.doAndHandle(t -> {
+            val path = backupFile.toPath();
+            val etag = response.getFirstHeader("ETag").getValue();
+            Files.setAttribute(path, "user:ETag", ByteBuffer.wrap(etag.getBytes(StandardCharsets.UTF_8)));
+        });
     }
 }

@@ -1,12 +1,14 @@
+import org.apereo.cas.api.PasswordlessAuthenticationRequest
 import org.apereo.cas.api.PasswordlessUserAccount
 
 def run(Object[] args) {
-    def username = args[0]
+    def request = args[0] as PasswordlessAuthenticationRequest
     def logger = args[1]
     
-    logger.info("Testing username $username")
+    logger.info("Testing username $request")
 
-    return PasswordlessUserAccount.builder()
+    return PasswordlessUserAccount
+            .builder()
             .email("casuser@example.org")
             .phone("1234567890")
             .username("casuser")

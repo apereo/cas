@@ -68,7 +68,7 @@ public interface RegisteredServiceDelegatedAuthenticationPolicy extends Serializ
     @JsonIgnore
     default boolean isProviderRequired() {
         return isExclusive() && getAllowedProviders() != null
-               && (!getAllowedProviders().isEmpty() || (getAllowedProviders().isEmpty() && !isPermitUndefined()));
+            && (!getAllowedProviders().isEmpty() || (getAllowedProviders().isEmpty() && !isPermitUndefined()));
     }
 
     /**

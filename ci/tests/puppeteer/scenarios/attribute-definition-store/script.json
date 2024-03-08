@@ -8,7 +8,6 @@
     "--cas.authn.attribute-repository.stub.attributes.sn=CAS",
     
     "--cas.authn.attribute-repository.attribute-definition-store.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/definitions.json",
-    "--cas.audit.slf4j.use-single-line=true",
 
     "--logging.level.org.apereo.cas=info",
     
@@ -19,7 +18,4 @@
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
   ]
 }
-
-
-
 

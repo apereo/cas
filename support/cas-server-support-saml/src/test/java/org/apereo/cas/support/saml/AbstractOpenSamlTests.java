@@ -22,6 +22,7 @@ import org.apereo.cas.config.CasThemesAutoConfiguration;
 import org.apereo.cas.config.CasThymeleafAutoConfiguration;
 import org.apereo.cas.config.CasValidationAutoConfiguration;
 import org.apereo.cas.services.RegisteredServicesTemplatesManager;
+import org.apereo.cas.services.ServicesManager;
 import net.shibboleth.shared.xml.ParserPool;
 import org.junit.jupiter.api.Test;
 import org.opensaml.core.xml.XMLObjectBuilderFactory;
@@ -88,6 +89,10 @@ public abstract class AbstractOpenSamlTests {
     @Autowired
     @Qualifier(AttributeDefinitionStore.BEAN_NAME)
     protected AttributeDefinitionStore attributeDefinitionStore;
+
+    @Autowired
+    @Qualifier(ServicesManager.BEAN_NAME)
+    protected ServicesManager servicesManager;
 
     @Test
     void autowireApplicationContext() {

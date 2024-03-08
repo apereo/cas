@@ -122,32 +122,32 @@ class DuoSecurityDetermineUserAccountActionTests extends BaseCasWebflowMultifact
     @TestConfiguration(value = "MultifactorTestConfiguration", proxyBeanMethods = false)
     static class MultifactorTestConfiguration {
         @Bean
-        public MultifactorAuthenticationProvider allowProvider() {
-            return buildProvider(DuoSecurityUserAccountStatus.ALLOW);
+        public MultifactorAuthenticationProvider allowProvider(final CasConfigurationProperties casProperties) {
+            return buildProvider(casProperties, DuoSecurityUserAccountStatus.ALLOW);
         }
 
         @Bean
-        public MultifactorAuthenticationProvider denyProvider() {
-            return buildProvider(DuoSecurityUserAccountStatus.DENY);
+        public MultifactorAuthenticationProvider denyProvider(final CasConfigurationProperties casProperties) {
+            return buildProvider(casProperties, DuoSecurityUserAccountStatus.DENY);
         }
 
         @Bean
-        public MultifactorAuthenticationProvider unavailableProvider() {
-            return buildProvider(DuoSecurityUserAccountStatus.UNAVAILABLE);
+        public MultifactorAuthenticationProvider unavailableProvider(final CasConfigurationProperties casProperties) {
+            return buildProvider(casProperties, DuoSecurityUserAccountStatus.UNAVAILABLE);
         }
 
         @Bean
-        public MultifactorAuthenticationProvider authProvider() {
-            return buildProvider(DuoSecurityUserAccountStatus.AUTH);
+        public MultifactorAuthenticationProvider authProvider(final CasConfigurationProperties casProperties) {
+            return buildProvider(casProperties, DuoSecurityUserAccountStatus.AUTH);
         }
 
         @Bean
-        public MultifactorAuthenticationProvider enrollProvider() {
-            return buildProvider(DuoSecurityUserAccountStatus.ENROLL);
+        public MultifactorAuthenticationProvider enrollProvider(final CasConfigurationProperties casProperties) {
+            return buildProvider(casProperties, DuoSecurityUserAccountStatus.ENROLL);
         }
 
         private static DuoSecurityMultifactorAuthenticationProvider buildProvider(
-            final DuoSecurityUserAccountStatus status) {
+            final CasConfigurationProperties casProperties, final DuoSecurityUserAccountStatus status) {
             val id = "mfa-%s".formatted(UUID.randomUUID().toString());
 
             val authentication = CoreAuthenticationTestUtils.getAuthentication();
@@ -155,14 +155,15 @@ class DuoSecurityDetermineUserAccountActionTests extends BaseCasWebflowMultifact
             val account = new DuoSecurityUserAccount(authentication.getPrincipal().getId());
             account.setStatus(status);
             account.setEnrollPortalUrl("https://example.org");
-            val registration = new DuoSecurityMultifactorAuthenticationRegistrationProperties()
-                .setRegistrationUrl("https://registration.duo.com");
+            val properties = new DuoSecurityMultifactorAuthenticationRegistrationProperties();
+            val registration = properties.setRegistrationUrl("https://registration.duo.com");
             registration.getCrypto().setEnabled(true);
             when(provider.getRegistration()).thenReturn(registration);
 
             when(provider.matches(anyString())).thenAnswer(answer -> answer.getArgument(0, String.class).equalsIgnoreCase(id));
             val duoService = mock(DuoSecurityAuthenticationService.class);
             when(duoService.getUserAccount(anyString())).thenReturn(account);
+            when(duoService.getProperties()).thenReturn(casProperties.getAuthn().getMfa().getDuo().getFirst());
             when(provider.getId()).thenReturn(id);
             when(provider.getDuoAuthenticationService()).thenReturn(duoService);
             return provider;

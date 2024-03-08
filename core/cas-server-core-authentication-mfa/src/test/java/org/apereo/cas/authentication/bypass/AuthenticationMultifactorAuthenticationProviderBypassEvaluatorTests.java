@@ -47,11 +47,12 @@ class AuthenticationMultifactorAuthenticationProviderBypassEvaluatorTests {
     @MethodSource("getTestAuthAttributes")
     void verifyOperationByAuthAttribute(final String attributeValuePattern, final List<Object> attributeValue) throws Throwable {
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
-        val eval = new DefaultChainingMultifactorAuthenticationBypassProvider();
+        val eval = new DefaultChainingMultifactorAuthenticationBypassProvider(applicationContext);
         val bypassProps = new MultifactorAuthenticationProviderBypassProperties();
         bypassProps.setAuthenticationAttributeName("cn");
         bypassProps.setAuthenticationAttributeValue(attributeValuePattern);
-        eval.addMultifactorAuthenticationProviderBypassEvaluator(new AuthenticationMultifactorAuthenticationProviderBypassEvaluator(bypassProps, TestMultifactorAuthenticationProvider.ID));
+        eval.addMultifactorAuthenticationProviderBypassEvaluator(new AuthenticationMultifactorAuthenticationProviderBypassEvaluator(
+            bypassProps, TestMultifactorAuthenticationProvider.ID, applicationContext));
         val authentication = CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString(), Map.of("cn", attributeValue));
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         val policy = new DefaultRegisteredServiceMultifactorPolicy();
@@ -64,10 +65,11 @@ class AuthenticationMultifactorAuthenticationProviderBypassEvaluatorTests {
     @MethodSource("getTestAuthHandlerNames")
     void verifyOperationByAuthAHandlerName(final String handlerNamePattern, final List<Object> handlerNames) throws Throwable {
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
-        val eval = new DefaultChainingMultifactorAuthenticationBypassProvider();
+        val eval = new DefaultChainingMultifactorAuthenticationBypassProvider(applicationContext);
         val bypassProps = new MultifactorAuthenticationProviderBypassProperties();
         bypassProps.setAuthenticationHandlerName(handlerNamePattern);
-        eval.addMultifactorAuthenticationProviderBypassEvaluator(new AuthenticationMultifactorAuthenticationProviderBypassEvaluator(bypassProps, TestMultifactorAuthenticationProvider.ID));
+        eval.addMultifactorAuthenticationProviderBypassEvaluator(new AuthenticationMultifactorAuthenticationProviderBypassEvaluator(
+            bypassProps, TestMultifactorAuthenticationProvider.ID, applicationContext));
         val authentication = CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString(),
             Map.of(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS, handlerNames));
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();

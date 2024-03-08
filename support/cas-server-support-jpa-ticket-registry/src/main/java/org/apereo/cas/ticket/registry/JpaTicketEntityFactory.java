@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.support.RelaxedPropertyNames;
 import org.apereo.cas.jpa.AbstractJpaEntityFactory;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
+import org.apereo.cas.ticket.ServiceAwareTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 import org.apereo.cas.ticket.registry.generic.BaseTicketEntity;
@@ -22,6 +23,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import jakarta.persistence.Table;
 import java.time.Clock;
 import java.time.ZonedDateTime;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -56,32 +58,34 @@ public class JpaTicketEntityFactory extends AbstractJpaEntityFactory<BaseTicketE
     }
 
     /**
-     * From.
+     * From tickets objects to entity.
      *
-     * @param ticket the ticket
+     * @param encodedTicket the ticket
+     * @param realTicket    the real ticket
      * @return the jpa ticket entity
      */
-    public BaseTicketEntity fromTicket(final Ticket ticket) {
-        val jsonBody = getTicketSerializationManager().serializeTicket(ticket);
-        val authentication = ticket instanceof final AuthenticationAwareTicket authAware
+    public BaseTicketEntity fromTicket(final Ticket encodedTicket, final Ticket realTicket) {
+        val jsonBody = getTicketSerializationManager().serializeTicket(encodedTicket);
+        val authentication = encodedTicket instanceof final AuthenticationAwareTicket authAware
             ? authAware.getAuthentication()
             : null;
 
-        val parentTicket = ticket instanceof final TicketGrantingTicketAwareTicket tgtAware
+        val parentTicket = encodedTicket instanceof final TicketGrantingTicketAwareTicket tgtAware
             ? tgtAware.getTicketGrantingTicket()
             : null;
 
         val entity = FunctionUtils.doUnchecked(() -> getEntityClass().getDeclaredConstructor().newInstance());
         return entity
-            .setId(ticket.getId())
+            .setId(encodedTicket.getId())
             .setParentId(Optional.ofNullable(parentTicket).map(Ticket::getId).orElse(null))
             .setBody(jsonBody)
-            .setType(ticket.getClass().getName())
+            .setType(encodedTicket.getClass().getName())
+            .setService(realTicket instanceof final ServiceAwareTicket sat && Objects.nonNull(sat.getService()) ? sat.getService().getId() : null)
             .setPrincipalId(Optional.ofNullable(authentication)
                 .map(Authentication::getPrincipal)
                 .map(Principal::getId)
                 .orElse(null))
-            .setCreationTime(ObjectUtils.defaultIfNull(ticket.getCreationTime(), ZonedDateTime.now(Clock.systemUTC())));
+            .setCreationTime(ObjectUtils.defaultIfNull(encodedTicket.getCreationTime(), ZonedDateTime.now(Clock.systemUTC())));
     }
 
     @Override

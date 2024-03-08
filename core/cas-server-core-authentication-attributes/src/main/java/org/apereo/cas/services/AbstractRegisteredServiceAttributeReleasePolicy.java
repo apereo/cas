@@ -103,9 +103,8 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
                 availableAttributes, context.getPrincipal().getId());
 
             val repository = getRegisteredServicePrincipalAttributesRepository(context);
-            repository.update(context.getPrincipal().getId(), availableAttributes, context);
-
             LOGGER.trace("Updating principal attributes repository cache for [{}] with [{}]", context.getPrincipal().getId(), availableAttributes);
+            repository.update(context.getPrincipal().getId(), availableAttributes, context);
 
             LOGGER.trace("Calling attribute policy [{}] to process attributes for [{}]",
                 getClass().getSimpleName(), context.getPrincipal().getId());

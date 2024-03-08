@@ -12,7 +12,6 @@
     "--logging.level.org.apereo.cas=info",
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
-    "--cas.audit.slf4j.use-single-line=true",
 
     "--cas.authn.mfa.gauth.core.trusted-device-enabled=true",
     "--cas.authn.mfa.gauth.crypto.enabled=false",

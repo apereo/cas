@@ -4,7 +4,6 @@
     "env": "DUO_SECURITY_UNIVERSAL_PROMPT_SKEY,DUO_SECURITY_UNIVERSAL_PROMPT_IKEY,DUO_SECURITY_API_HOST,DUO_SECURITY_ADMIN_SKEY,DUO_SECURITY_ADMIN_IKEY"
   },
   "properties": [
-    "--cas.audit.engine.enabled=true",
 
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",

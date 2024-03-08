@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const assert = require("assert");
 const cas = require("../../cas.js");
 
@@ -6,7 +6,7 @@ const cas = require("../../cas.js");
     for (const endpoint of ["validate", "serviceValidate", "p3/serviceValidate"]) {
         await cas.log(`Checking validation endpoint: ${endpoint}`);
 
-        const browser = await puppeteer.launch(cas.browserOptions());
+        const browser = await cas.newBrowser(cas.browserOptions());
         const page = await cas.newPage(browser);
 
         const service1 = "https://localhost:9859/get";

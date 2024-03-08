@@ -43,6 +43,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.CaptchaActivationStrategy;
 import org.apereo.cas.web.CaptchaValidator;
 import org.apereo.cas.web.DefaultCaptchaActivationStrategy;
+import org.apereo.cas.web.flow.CasFlowHandlerAdapter;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
@@ -71,8 +72,6 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.executor.FlowExecutor;
-import org.springframework.webflow.mvc.servlet.FlowHandler;
-import org.springframework.webflow.mvc.servlet.FlowHandlerAdapter;
 import java.util.List;
 
 /**
@@ -114,15 +113,11 @@ class PasswordManagementWebflowConfiguration {
     static class PasswordManagementWebflowAdapterConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
+        @ConditionalOnMissingBean(name = "passwordResetHandlerAdapter")
         public HandlerAdapter passwordResetHandlerAdapter(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("loginFlowExecutor") final FlowExecutor loginFlowExecutor) {
-            val handler = new FlowHandlerAdapter() {
-                @Override
-                public boolean supports(final Object handler) {
-                    return super.supports(handler) && ((FlowHandler) handler)
-                        .getFlowId().equals(CasWebflowConfigurer.FLOW_ID_PASSWORD_RESET);
-                }
-            };
+            val handler = new CasFlowHandlerAdapter(CasWebflowConfigurer.FLOW_ID_PASSWORD_RESET);
             handler.setFlowExecutor(loginFlowExecutor);
             return handler;
         }

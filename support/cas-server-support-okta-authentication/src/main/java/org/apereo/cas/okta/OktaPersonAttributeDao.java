@@ -2,7 +2,6 @@ package org.apereo.cas.okta;
 
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import com.okta.sdk.client.Client;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +13,6 @@ import org.apereo.services.persondir.support.BasePersonAttributeDao;
 import org.apereo.services.persondir.support.CaseInsensitiveNamedPersonImpl;
 import org.apereo.services.persondir.support.IUsernameAttributeProvider;
 import org.apereo.services.persondir.support.SimpleUsernameAttributeProvider;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -36,7 +34,7 @@ public class OktaPersonAttributeDao extends BasePersonAttributeDao {
     private IUsernameAttributeProvider usernameAttributeProvider = new SimpleUsernameAttributeProvider();
 
     private final Client oktaClient;
-    
+
     private static Map<String, List<Object>> stuffAttributesIntoList(final Map<String, ?> personAttributesMap) {
         val entries = (Set<? extends Map.Entry<String, ?>>) personAttributesMap.entrySet();
         return entries.stream()
@@ -44,7 +42,6 @@ public class OktaPersonAttributeDao extends BasePersonAttributeDao {
     }
 
     @Override
-    @SuppressWarnings("JavaUtilDate")
     public IPersonAttributes getPerson(final String uid, final Set<IPersonAttributes> resolvedPeople,
                                        final IPersonAttributeDaoFilter filter) {
         val attributes = new HashMap<String, Object>();

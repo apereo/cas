@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -26,13 +27,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 @RestControllerEndpoint(id = "redisTicketsCache", enableByDefault = false)
 public class RedisTicketRegistryCacheEndpoint extends BaseCasActuatorEndpoint {
 
-    private final TicketRegistry ticketRegistry;
+    private final ObjectProvider<TicketRegistry> ticketRegistry;
 
-    private final Cache<String, Ticket> ticketCache;
+    private final ObjectProvider<Cache<String, Ticket>> ticketCache;
 
     public RedisTicketRegistryCacheEndpoint(final CasConfigurationProperties casProperties,
-                                            final TicketRegistry ticketRegistry,
-                                            final Cache<String, Ticket> ticketCache) {
+                                            final ObjectProvider<TicketRegistry> ticketRegistry,
+                                            final ObjectProvider<Cache<String, Ticket>> ticketCache) {
         super(casProperties);
         this.ticketRegistry = ticketRegistry;
         this.ticketCache = ticketCache;
@@ -54,9 +55,9 @@ public class RedisTicketRegistryCacheEndpoint extends BaseCasActuatorEndpoint {
         final String ticketId) {
         val prefix = StringUtils.substring(ticketId, 0, ticketId.indexOf(UniqueTicketIdGenerator.SEPARATOR));
         val redisTicketsKey = RedisCompositeKey.forTickets()
-            .withTicketId(prefix, ticketRegistry.digestIdentifier(ticketId));
-        val ticketInCache = ticketCache.getIfPresent(redisTicketsKey.getQuery());
-        ticketCache.invalidate(redisTicketsKey.getQuery());
+            .withTicketId(prefix, ticketRegistry.getObject().digestIdentifier(ticketId));
+        val ticketInCache = ticketCache.getObject().getIfPresent(redisTicketsKey.getQuery());
+        ticketCache.getObject().invalidate(redisTicketsKey.getQuery());
         return ticketInCache != null
             ? ResponseEntity.ok(ticketInCache)
             : ResponseEntity.notFound().build();
@@ -76,8 +77,8 @@ public class RedisTicketRegistryCacheEndpoint extends BaseCasActuatorEndpoint {
         final String ticketId) {
         val prefix = StringUtils.substring(ticketId, 0, ticketId.indexOf(UniqueTicketIdGenerator.SEPARATOR));
         val redisTicketsKey = RedisCompositeKey.forTickets()
-            .withTicketId(prefix, ticketRegistry.digestIdentifier(ticketId));
-        val ticketInCache = ticketCache.getIfPresent(redisTicketsKey.getQuery());
+            .withTicketId(prefix, ticketRegistry.getObject().digestIdentifier(ticketId));
+        val ticketInCache = ticketCache.getObject().getIfPresent(redisTicketsKey.getQuery());
         return ticketInCache != null
             ? ResponseEntity.ok(ticketInCache)
             : ResponseEntity.notFound().build();

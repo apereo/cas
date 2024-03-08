@@ -57,10 +57,12 @@ public abstract class AbstractCasEventRepositoryTests {
         val col = getEventRepository().load().toList();
         assertEquals(2, col.size());
 
-        assertNotEquals(dto2.getEventId(), dto1.getEventId(), "Created Event IDs are equal");
+        assertNotEquals(dto2.getEventId(), dto1.getEventId(), "Created event IDs are equal but they should not be");
 
         val load2 = getEventRepository().load();
-        assertEquals(2, load2.map(CasEvent::getEventId).distinct().count(), "Stored event IDs are equal");
+        val loadedEvents = load2.map(CasEvent::getEventId).distinct().toList();
+        assertTrue(loadedEvents.stream().anyMatch(dto1.getEventId()::equals));
+        assertTrue(loadedEvents.stream().anyMatch(dto2.getEventId()::equals));
 
         val load3 = getEventRepository().load();
         load3.forEach(event -> {
@@ -92,7 +94,6 @@ public abstract class AbstractCasEventRepositoryTests {
     private CasEvent getCasEvent(final String user) {
         val ticket = new MockTicketGrantingTicket(user);
         val event = new CasTicketGrantingTicketCreatedEvent(this, ticket, null);
-
         val dto = new CasEvent();
         dto.setType(event.getClass().getCanonicalName());
         dto.putTimestamp(event.getTimestamp());

@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const assert = require("assert");
 const cas = require("../../cas.js");
 const fs = require("fs");
@@ -6,7 +6,7 @@ const path = require("path");
 const os = require("os");
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
 
     await cas.gotoLogin(page);
@@ -24,7 +24,7 @@ const os = require("os");
 
     await cas.screenshot(page);
     await cas.click(page, "#optionsButton");
-    await page.waitForTimeout(2000);
+    await cas.sleep(2000);
 
     await cas.screenshot(page);
     let opt = await page.$("#optionAlways");
@@ -45,7 +45,7 @@ const os = require("os");
     const confirm = await page.$("#confirm");
     assert(confirm !== null);
     await cas.click(page, "#confirm");
-    await page.waitForNavigation();
+    await cas.waitForNavigation(page);
     await cas.assertTicketParameter(page);
 
     const baseUrl = "https://localhost:8443/cas/actuator/attributeConsent";
@@ -80,5 +80,4 @@ const os = require("os");
 
     await browser.close();
 })();
-
 

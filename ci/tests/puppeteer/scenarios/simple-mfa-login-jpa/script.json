@@ -17,8 +17,7 @@
     "--cas.authn.mfa.simple.mail.from=cas@example.com",
     "--cas.authn.mfa.simple.mail.subject=Token",
     "--cas.authn.mfa.simple.mail.text=${token}",
-    
-    "--cas.audit.engine.enabled=true",
+
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=https://localhost:8443/cas",
 
@@ -32,7 +31,4 @@
   ],
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
 }
-
-
-
 

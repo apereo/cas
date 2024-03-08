@@ -8,14 +8,12 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceUsernameProviderContext;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ApplicationContext;
-
 import java.io.Serial;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -69,7 +67,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
      * Authentication date.
      */
     private ZonedDateTime authenticationDate;
-    
+
     public DefaultAuthenticationBuilder() {
         this.authenticationDate = ZonedDateTime.now(ZoneOffset.UTC);
     }
@@ -199,6 +197,12 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     @Override
     @CanIgnoreReturnValue
     public AuthenticationBuilder addAttribute(final String key, final Object value) {
+        if (value instanceof final Map mappedValue) {
+            val list = new ArrayList<>();
+            list.add(mappedValue);
+            this.attributes.put(key, list);
+            return this;
+        }
         return addAttribute(key, CollectionUtils.toCollection(value, ArrayList.class));
     }
 

@@ -1,5 +1,6 @@
 package org.apereo.cas.impl.account;
 
+import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 
@@ -24,9 +25,9 @@ public class SimplePasswordlessUserAccountStore implements PasswordlessUserAccou
     protected final Map<String, PasswordlessUserAccount> accounts;
 
     @Override
-    public Optional<PasswordlessUserAccount> findUser(final String username) {
-        if (accounts.containsKey(username)) {
-            return Optional.of(accounts.get(username));
+    public Optional<PasswordlessUserAccount> findUser(final PasswordlessAuthenticationRequest request) {
+        if (accounts.containsKey(request.getUsername())) {
+            return Optional.of(accounts.get(request.getUsername()));
         }
         return Optional.empty();
     }

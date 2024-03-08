@@ -6,10 +6,6 @@
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
-
-    "--cas.audit.engine.enabled=false",
-    "--cas.audit.slf4j.use-single-line=true",
-
     "--cas.service-registry.core.init-from-json=true",
 
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",

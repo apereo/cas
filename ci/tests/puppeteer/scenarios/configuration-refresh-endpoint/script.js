@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 const YAML = require("yaml");
 const fs = require("fs");
@@ -6,7 +6,7 @@ const path = require("path");
 
 (async () => {
 
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
 
     await cas.log("Attempting to login with default credentials...");
@@ -22,7 +22,7 @@ const path = require("path");
 
     await cas.log("Updating configuration and waiting for changes to reload...");
     await updateConfig(configFile, configFilePath, "casrefresh::p@$$word");
-    await page.waitForTimeout(5000);
+    await cas.sleep(5000);
 
     await cas.refreshContext();
 

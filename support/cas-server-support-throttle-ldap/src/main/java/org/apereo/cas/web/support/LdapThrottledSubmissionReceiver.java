@@ -1,5 +1,6 @@
 package org.apereo.cas.web.support;
 
+import org.apereo.cas.throttle.ThrottledSubmissionHandlerConfigurationContext;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapConnectionFactory;
 import org.apereo.cas.util.LdapUtils;

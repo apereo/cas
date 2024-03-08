@@ -11,9 +11,6 @@
 
     "--logging.level.org.apereo.cas=info",
 
-    "--cas.audit.engine.enabled=true",
-    "--cas.audit.slf4j.use-single-line=true",
-
     "--cas.authn.attribute-repository.stub.attributes.cn=CasSSO",
     "--cas.authn.attribute-repository.stub.attributes.mail=cas@example.org",
     "--cas.authn.attribute-repository.stub.attributes.sn=Apereo",
@@ -35,6 +32,4 @@
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
   ]
 }
-
-
 

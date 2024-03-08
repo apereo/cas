@@ -32,7 +32,7 @@ public class GoogleCloudTicketRegistryQueuePublisher implements QueueableTicketR
     /**
      * The dead-letter topic name.
      */
-    public static final String DEAD_LETTER_TOPIC = QUEUE_TOPIC + "DeadLetter";
+    public static final String DEAD_LETTER_TOPIC = "%sDeadLetter".formatted(QUEUE_TOPIC);
 
     private final PubSubTemplate pubSubTemplate;
 

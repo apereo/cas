@@ -3,9 +3,7 @@
 
   "properties": [
     "--logging.level.org.apereo.cas=info",
-    
-    "--cas.audit.engine.enabled=true",
-    "--cas.audit.slf4j.use-single-line=true",
+
     "--cas.ticket.crypto.enabled=true",
 
     "--cas.server.name=https://localhost:8443",
@@ -27,6 +25,4 @@
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
   ]
 }
-
-
 

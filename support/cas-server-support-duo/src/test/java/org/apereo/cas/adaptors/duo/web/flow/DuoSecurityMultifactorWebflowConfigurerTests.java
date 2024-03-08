@@ -2,6 +2,8 @@ package org.apereo.cas.adaptors.duo.web.flow;
 
 import org.apereo.cas.adaptors.duo.BaseDuoSecurityTests;
 import org.apereo.cas.adaptors.duo.web.DuoSecurityAdminApiEndpoint;
+import org.apereo.cas.config.CasPasswordlessAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasPasswordlessAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.web.flow.configurer.BaseMultifactorWebflowConfigurerTests;
@@ -24,7 +26,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@SpringBootTest(classes = BaseDuoSecurityTests.SharedTestConfiguration.class,
+@SpringBootTest(classes = {
+    CasPasswordlessAuthenticationWebflowAutoConfiguration.class,
+    CasPasswordlessAuthenticationAutoConfiguration.class,
+    BaseDuoSecurityTests.SharedTestConfiguration.class
+},
     properties = {
         "management.endpoint.duoAdmin.enabled=true",
         "management.endpoints.web.exposure.include=*",
@@ -35,6 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.duo[0].duo-integration-key=DIZXVRQD3OMZ6XXMNFQ9",
         "cas.authn.mfa.duo[0].duo-api-host=theapi.duosecurity.com",
         "cas.authn.mfa.duo[0].trusted-device-enabled=true",
+        "cas.authn.mfa.duo[0].passwordless-authentication-enabled=true",
         "cas.authn.mfa.trusted.core.device-registration-enabled=true"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)

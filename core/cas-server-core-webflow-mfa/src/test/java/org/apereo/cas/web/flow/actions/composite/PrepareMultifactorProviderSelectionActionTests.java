@@ -49,10 +49,10 @@ class PrepareMultifactorProviderSelectionActionTests extends BaseCasWebflowMulti
         val context = MockRequestContext.create(applicationContext);
         context.setFlowExecutionContext(exec);
 
-        val chain = new DefaultChainingMultifactorAuthenticationProvider(
+        val chain = new DefaultChainingMultifactorAuthenticationProvider(applicationContext,
             new DefaultMultifactorAuthenticationFailureModeEvaluator(casProperties));
         val provider = new TestMultifactorAuthenticationProvider();
-        provider.setBypassEvaluator(new DefaultChainingMultifactorAuthenticationBypassProvider());
+        provider.setBypassEvaluator(new DefaultChainingMultifactorAuthenticationBypassProvider(applicationContext));
         chain.addMultifactorAuthenticationProvider(provider);
         val attributes = new LocalAttributeMap(RegisteredService.class.getName(), RegisteredServiceTestUtils.getRegisteredService());
         attributes.put(MultifactorAuthenticationProvider.class.getName(), chain);

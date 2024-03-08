@@ -1,9 +1,9 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 const assert = require("assert");
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.gotoLogin(page, "https://apereo.github.io");
 
@@ -20,7 +20,7 @@ const assert = require("assert");
     await cas.log(`Found session cookie ${sessionCookie.name}`);
     const cookieValue = await cas.base64Decode(sessionCookie.value);
     await cas.log(`Session cookie value ${cookieValue}`);
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.doGet(`https://localhost:8443/cas/actuator/sessions/${cookieValue}`,
         (res) => {
             assert(res.data.id !== undefined);

@@ -1,15 +1,16 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
+const assert = require("assert");
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.gotoLogin(page);
 
-    await page.waitForTimeout(2000);
+    await cas.sleep(2000);
     await cas.assertTextContent(page, "#accountSignUpLink", "Sign Up");
     await cas.submitForm(page, "#accountMgmtSignupForm");
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
 
     await cas.assertInnerText(page, "#content h2", "Account Registration");
     await cas.type(page,"#username", "casuser");
@@ -17,31 +18,28 @@ const cas = require("../../cas.js");
     await cas.type(page,"#lastName", "Person");
     await cas.type(page,"#email", "cas@example.org");
     await cas.type(page,"#phone", "+1 347 745 1234");
+    await cas.screenshot(page);
     await cas.click(page, "#submit");
-    await page.waitForNavigation();
+    await cas.waitForNavigation(page);
     await cas.assertInnerText(page, "#content h2", "Account Registration");
     await cas.assertInnerTextStartsWith(page, "#content p", "Account activation instructions are successfully sent");
 
-    await cas.goto(page, "http://localhost:8282");
-    await page.waitForTimeout(1000);
-    await cas.click(page, "table tbody td a");
-    await page.waitForTimeout(1000);
-    const link = await cas.textContent(page, "div[name=bodyPlainText] .well");
-    await cas.log(`Activation link is ${link}`);
+    const link = await cas.extractFromEmail(browser);
+    assert(link !== undefined);
     await cas.goto(page, link);
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.assertInnerText(page, "#content h2", "Account Registration");
     await cas.assertInnerTextStartsWith(page, "#content p", "Welcome back!");
 
     await typePassword(page, "EaP8R&iX$eK4nb8eAI", "EaP8R&iX$eK4nb8eAI");
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
 
     for (let i = 1; i <= 2; i++) {
         await cas.type(page, `#securityquestion${i}`, `Security question ${i}`);
         await cas.type(page, `#securityanswer${i}`, `Security answer ${i}`);
     }
     await cas.click(page, "#submit");
-    await page.waitForTimeout(5000);
+    await cas.sleep(5000);
     await cas.assertInnerText(page, "#content h2", "Account Registration");
     await cas.assertInnerTextStartsWith(page, "#content p", "Thank you! Your account is now activated");
     await browser.close();

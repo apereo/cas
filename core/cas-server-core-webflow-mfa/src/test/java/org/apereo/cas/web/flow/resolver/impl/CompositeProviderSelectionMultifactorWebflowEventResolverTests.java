@@ -79,7 +79,7 @@ class CompositeProviderSelectionMultifactorWebflowEventResolverTests {
         @Test
         void verifyCompositeBypass() throws Throwable {
             val context = MockRequestContext.create();
-            val provider = new DefaultChainingMultifactorAuthenticationProvider(
+            val provider = new DefaultChainingMultifactorAuthenticationProvider(applicationContext,
                 new DefaultMultifactorAuthenticationFailureModeEvaluator(casProperties));
             val event = new EventFactorySupport().event(this,
                 ChainingMultifactorAuthenticationProvider.DEFAULT_IDENTIFIER,
@@ -112,7 +112,7 @@ class CompositeProviderSelectionMultifactorWebflowEventResolverTests {
                 context.getHttpServletResponse(), TestMultifactorAuthenticationProvider.ID);
             context.setRequestCookiesFromResponse();
 
-            val provider = new DefaultChainingMultifactorAuthenticationProvider(
+            val provider = new DefaultChainingMultifactorAuthenticationProvider(applicationContext,
                 new DefaultMultifactorAuthenticationFailureModeEvaluator(casProperties));
 
             val mfa = new TestMultifactorAuthenticationProvider();
@@ -132,7 +132,7 @@ class CompositeProviderSelectionMultifactorWebflowEventResolverTests {
 
         @Test
         void verifyComposite() throws Throwable {
-            val provider = new DefaultChainingMultifactorAuthenticationProvider(
+            val provider = new DefaultChainingMultifactorAuthenticationProvider(applicationContext,
                 new DefaultMultifactorAuthenticationFailureModeEvaluator(casProperties));
 
             val mfa = new TestMultifactorAuthenticationProvider();
@@ -154,7 +154,7 @@ class CompositeProviderSelectionMultifactorWebflowEventResolverTests {
         void verifyCompositeWithAuthnContextValidated() throws Throwable {
             TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
 
-            val provider = new DefaultChainingMultifactorAuthenticationProvider(
+            val provider = new DefaultChainingMultifactorAuthenticationProvider(applicationContext,
                 new DefaultMultifactorAuthenticationFailureModeEvaluator(casProperties));
             provider.addMultifactorAuthenticationProvider(new TestMultifactorAuthenticationProvider());
 

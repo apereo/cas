@@ -1,9 +1,9 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 const assert = require("assert");
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     await startWithCasSp(page);
     await browser.close();
@@ -12,17 +12,17 @@ const assert = require("assert");
 async function startWithCasSp(page) {
     const service = "https://localhost:9859/anything/cas";
     await cas.gotoLogout(page);
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.gotoLogin(page, service);
     await cas.assertVisibility(page, "#selectProviderButton");
     await cas.submitForm(page, "#providerDiscoveryForm");
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     await cas.type(page, "#username", "casuser");
     
     await cas.submitForm(page, "#discoverySelectionForm");
-    await page.waitForTimeout(2000);
+    await cas.sleep(2000);
     await cas.loginWith(page);
-    await page.waitForTimeout(1000);
+    await cas.sleep(1000);
     const ticket = await cas.assertTicketParameter(page);
     const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}`);
     await cas.log(body);

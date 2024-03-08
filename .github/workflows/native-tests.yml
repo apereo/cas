@@ -140,7 +140,7 @@ jobs:
         if: ${{ env.NATIVE_RUN_ENABLED == 'true' }}
         with:
           max_attempts: ${{ env.MAX_ATTEMPTS }}
-          timeout_minutes: ${{ env.RETRY_MINUTES }}
+          timeout_minutes: 5
           retry_on: error
           shell: bash
           command: |
@@ -195,7 +195,7 @@ jobs:
         if: ${{ env.NATIVE_RUN_ENABLED == 'true' }}
         with:
           max_attempts: ${{ env.MAX_ATTEMPTS }}
-          timeout_minutes: ${{ env.RETRY_MINUTES }}
+          timeout_minutes: 5
           retry_on: error
           shell: bash
           command: |

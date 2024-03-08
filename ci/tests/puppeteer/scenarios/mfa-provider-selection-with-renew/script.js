@@ -1,8 +1,8 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
 
     await cas.log("Logging into application without MFA requirement");
@@ -19,7 +19,7 @@ const cas = require("../../cas.js");
     await cas.assertInvisibility(page, "button[name=register]");
     await cas.type(page, "#token", "12345678901234567890123456789012345");
     await cas.submitForm(page, "#yubiKeyForm", (response) => response.status() === 200);
-    await page.waitForTimeout(2000);
+    await cas.sleep(2000);
     await cas.assertTextContentStartsWith(page, "div .banner-danger span", "Credentials are rejected/invalid");
     await browser.close();
 })();

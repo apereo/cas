@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+
 const cas = require("../../cas.js");
 const jimp = require("jimp");
 const fs = require("fs");
@@ -8,7 +8,7 @@ const StompJS = require("@stomp/stompjs");
 const querystring = require("querystring");
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.gotoLogin(page);
 
@@ -40,7 +40,6 @@ const querystring = require("querystring");
     });
     await browser.close();
 })();
-
 
 async function connectAndLogin(channelId, page) {
     const client = new StompJS.Client({
@@ -93,7 +92,6 @@ async function connectAndLogin(channelId, page) {
 
     client.activate();
 }
-
 
 async function executeRequest(url, statusCode, requestBody) {
     return cas.doRequest(url, "POST", {

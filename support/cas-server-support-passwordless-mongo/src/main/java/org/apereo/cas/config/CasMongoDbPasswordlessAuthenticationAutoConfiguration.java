@@ -58,12 +58,16 @@ public class CasMongoDbPasswordlessAuthenticationAutoConfiguration {
         }
 
         @Bean
+        @ConditionalOnMissingBean(name = "mongoDbPasswordlessUserAccountStore")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public PasswordlessUserAccountStore passwordlessUserAccountStore(
-            @Qualifier("mongoDbPasswordlessAuthenticationTemplate") final MongoOperations mongoDbPasswordlessAuthenticationTemplate,
+        public BeanSupplier<PasswordlessUserAccountStore> mongoDbPasswordlessUserAccountStore(
+            @Qualifier("mongoDbPasswordlessAuthenticationTemplate")
+            final MongoOperations mongoDbPasswordlessAuthenticationTemplate,
             final CasConfigurationProperties casProperties) {
             val accounts = casProperties.getAuthn().getPasswordless().getAccounts();
-            return new MongoDbPasswordlessUserAccountStore(mongoDbPasswordlessAuthenticationTemplate, accounts.getMongo());
+            return BeanSupplier.of(PasswordlessUserAccountStore.class)
+                .alwaysMatch()
+                .supply(() -> new MongoDbPasswordlessUserAccountStore(mongoDbPasswordlessAuthenticationTemplate, accounts.getMongo()));
         }
     }
 

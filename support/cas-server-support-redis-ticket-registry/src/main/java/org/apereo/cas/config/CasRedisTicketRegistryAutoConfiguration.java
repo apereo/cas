@@ -34,6 +34,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.redis.lettucemod.api.sync.RedisModulesCommands;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -80,9 +81,9 @@ public class CasRedisTicketRegistryAutoConfiguration {
         public RedisTicketRegistryCacheEndpoint redisTicketRegistryCacheEndpoint(
             final CasConfigurationProperties casProperties,
             @Qualifier(TicketRegistry.BEAN_NAME)
-            final TicketRegistry ticketRegistry,
+            final ObjectProvider<TicketRegistry> ticketRegistry,
             @Qualifier("redisTicketRegistryCache")
-            final Cache<String, Ticket> redisTicketRegistryCache) {
+            final ObjectProvider<Cache<String, Ticket>> redisTicketRegistryCache) {
             return new RedisTicketRegistryCacheEndpoint(casProperties, ticketRegistry, redisTicketRegistryCache);
         }
 

@@ -4,7 +4,6 @@ import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +18,6 @@ import org.springframework.boot.actuate.endpoint.annotation.Selector;
 import org.springframework.boot.actuate.endpoint.annotation.WriteOperation;
 import org.springframework.http.MediaType;
 import org.springframework.lang.Nullable;
-
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -55,12 +53,10 @@ public class AuditLogEndpoint extends BaseCasActuatorEndpoint {
      * @return the auditlog
      */
     @ReadOperation
-    @SuppressWarnings("JavaUtilDate")
     @Operation(summary = "Provide a report of the audit log using a given interval",
-               parameters = @Parameter(name = "interval", description = "Accepts the duration syntax, such as PT1H"))
+        parameters = @Parameter(name = "interval", description = "Accepts the duration syntax, such as PT1H"))
     public Set<AuditActionContext> getAuditLog(
-        @Selector
-        final String interval) {
+        @Selector final String interval) {
         if (StringUtils.isBlank(interval)) {
             val sinceDate = LocalDate.now(ZoneId.systemDefault())
                 .minusDays(casProperties.getAudit().getEngine().getNumberOfDaysInHistory());
@@ -102,16 +98,11 @@ public class AuditLogEndpoint extends BaseCasActuatorEndpoint {
             @Parameter(name = "resourceOperatedUpon")
         })
     public Set<AuditActionContext> getAuditLog(
-        @Nullable
-        final String interval,
-        @Nullable
-        final String actionPerformed,
-        @Nullable
-        final String clientIpAddress,
-        @Nullable
-        final String principal,
-        @Nullable
-        final String resourceOperatedUpon) {
+        @Nullable final String interval,
+        @Nullable final String actionPerformed,
+        @Nullable final String clientIpAddress,
+        @Nullable final String principal,
+        @Nullable final String resourceOperatedUpon) {
         return getAuditLog(interval)
             .stream()
             .filter(e -> StringUtils.isBlank(actionPerformed) || e.getActionPerformed().matches(actionPerformed))
