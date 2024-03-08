@@ -30,13 +30,15 @@ env:
   TERM: xterm-256color
   JDK_CURRENT: 21
   JDK_DISTRIBUTION: "corretto"
-  NODE_CURRENT: '21.6.2'
+  NODE_CURRENT: '21.7.0'
   MAX_ATTEMPTS: 2
   RETRY_MINUTES: 8
   SCENARIO_REGEX: ".*"
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '0 4 * * *'
   push:
     branches:
       - master
