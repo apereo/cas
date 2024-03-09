@@ -28,8 +28,7 @@ import java.util.stream.Collectors;
 /**
  * Action that handles the {@link TicketGrantingTicket} creation and destruction. If the
  * action is given a {@link TicketGrantingTicket} and one also already exists, the old
- * one is destroyed and replaced with the new one. This action always returns
- * "success".
+ * one is destroyed and replaced with the new one conditionally.
  *
  * @author Scott Battaglia
  * @since 3.0.0
@@ -73,8 +72,6 @@ public class CreateTicketGrantingTicketAction extends BaseCasWebflowAction {
     protected Authentication buildFinalAuthentication(final AuthenticationResult authenticationResult) {
         return authenticationResult.getAuthentication();
     }
-    
-
 
     protected String determineTicketGrantingTicketId(final RequestContext context) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);

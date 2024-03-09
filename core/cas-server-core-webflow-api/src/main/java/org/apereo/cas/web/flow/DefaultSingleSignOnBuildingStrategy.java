@@ -23,8 +23,8 @@ import org.apache.commons.lang3.StringUtils;
 @Slf4j
 @RequiredArgsConstructor
 public class DefaultSingleSignOnBuildingStrategy implements SingleSignOnBuildingStrategy {
-    private final TicketRegistrySupport ticketRegistrySupport;
-    private final CentralAuthenticationService centralAuthenticationService;
+    protected final TicketRegistrySupport ticketRegistrySupport;
+    protected final CentralAuthenticationService centralAuthenticationService;
 
     @Override
     public Ticket buildTicketGrantingTicket(final AuthenticationResult authenticationResult,
@@ -53,11 +53,15 @@ public class DefaultSingleSignOnBuildingStrategy implements SingleSignOnBuilding
         return centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
     }
 
-    protected Ticket updateTicketGrantingTicket(final Authentication authentication, final String ticketGrantingTicket) throws Exception {
-        LOGGER.debug("Updating existing ticket-granting ticket [{}]...", ticketGrantingTicket);
-        val tgt = ticketRegistrySupport.getTicketRegistry().getTicket(ticketGrantingTicket, TicketGrantingTicket.class);
-        tgt.getAuthentication().updateAttributes(authentication);
-        return ticketRegistrySupport.getTicketRegistry().updateTicket(tgt);
+    protected Ticket updateTicketGrantingTicket(final Authentication authentication, final String ticketGrantingTicketId) throws Exception {
+        LOGGER.debug("Updating existing ticket-granting ticket [{}]...", ticketGrantingTicketId);
+        val grantingTicket = ticketRegistrySupport.getTicketRegistry().getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
+        updateAuthentication(grantingTicket, authentication);
+        return ticketRegistrySupport.getTicketRegistry().updateTicket(grantingTicket);
+    }
+
+    protected static void updateAuthentication(final TicketGrantingTicket ticketGrantingTicket, final Authentication authentication) {
+        ticketGrantingTicket.getAuthentication().updateAttributes(authentication);
     }
 
     protected boolean shouldIssueTicketGrantingTicket(final Authentication authentication,
@@ -73,7 +77,12 @@ public class DefaultSingleSignOnBuildingStrategy implements SingleSignOnBuilding
             return true;
         }
 
-        if (authentication.isEqualTo(authenticationFromTgt)) {
+        return isAuthenticationAttemptTheSame(authentication, authenticationFromTgt);
+    }
+
+    protected boolean isAuthenticationAttemptTheSame(final Authentication currentAuthentication,
+                                                     final Authentication previousAuthentication) {
+        if (currentAuthentication.isEqualTo(previousAuthentication)) {
             LOGGER.debug("Resulting authentication matches the authentication from context");
             return false;
         }
