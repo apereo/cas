@@ -29,7 +29,7 @@ const cas = require("../../cas.js");
     await cas.type(page,"#token", scratch);
     await cas.pressEnter(page);
     await cas.waitForNavigation(page);
-
+    await cas.sleep(1000);
     await cas.assertTicketParameter(page);
 
     await cas.gotoLogin(page);

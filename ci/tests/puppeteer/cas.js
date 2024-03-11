@@ -854,7 +854,7 @@ exports.extractFromEmail = async (browser) => {
     return text;
 };
 
-exports.waitForNavigation = async (page) => page.waitForNavigation({timeout: 5000});
+exports.waitForNavigation = async (page) => page.waitForNavigation({timeout: 8000});
 
 exports.goto = async (page, url, retryCount = 5) => {
     let response = null;
