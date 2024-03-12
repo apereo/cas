@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
  * @since 7.1.0
  */
 @RequiredArgsConstructor
+@SuppressWarnings("EnumOrdinal")
 public class OAuth20RefreshTokenCompactor implements TicketCompactor<OAuth20RefreshToken> {
     private final ObjectProvider<TicketFactory> ticketFactory;
     private final ServiceFactory serviceFactory;
