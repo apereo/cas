@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
  * @since 7.1.0
  */
 @RequiredArgsConstructor
+@SuppressWarnings("EnumOrdinal")
 public class OAuth20AccessTokenCompactor implements TicketCompactor<OAuth20AccessToken> {
     private final ObjectProvider<TicketFactory> ticketFactory;
     private final ServiceFactory serviceFactory;
