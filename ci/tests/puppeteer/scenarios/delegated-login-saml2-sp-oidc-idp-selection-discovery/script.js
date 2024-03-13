@@ -9,6 +9,7 @@ const assert = require("assert");
     await startWithSamlSp(page);
     await startWithCasSp(page);
     await browser.close();
+    await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
 })();
 
 async function startWithCasSp(page) {
@@ -56,5 +57,4 @@ async function startWithSamlSp(page) {
     await cas.gotoLogin(page);
     await cas.sleep(2000);
     await cas.assertCookie(page);
-    await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
 }

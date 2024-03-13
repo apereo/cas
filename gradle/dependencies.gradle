@@ -2369,7 +2369,8 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-context-support")
                     exclude(group: "org.springframework", module: "spring-beans")
                 },
-                dependencies.create("com.sun.mail:jakarta.mail:$jakartaMailVersion")
+                dependencies.create("org.eclipse.angus:jakarta.mail:$eclipseAngusMailVersion"),
+                dependencies.create("org.eclipse.angus:angus-mail:$eclipseAngusMailVersion")
         ],
         springbootpropertymigrator : [
                 dependencies.create("org.springframework.boot:spring-boot-properties-migrator:$springBootVersion") {
