@@ -70,3 +70,14 @@ are now configured to run with parallelism enabled.
 - Yubico WebAuthN
 - Google Cloud Monitoring
 - Amazon SDK
+- Gradle
+- OpenSAML
+- Twilio
+- Jackson
+- ErrorProne
+- SpringDoc
+- Apache ZooKeeper
+- Apache CXF
+- Micrometer
+- Spring Boot
+- Spring Framework
