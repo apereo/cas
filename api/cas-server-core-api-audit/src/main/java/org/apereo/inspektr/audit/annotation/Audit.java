@@ -19,13 +19,6 @@ import java.lang.annotation.Target;
 public @interface Audit {
 
     /**
-     * Identifier for this particular application in the audit trail logs.  This attribute should only be used
-     * to override the basic application code when you want to differentiate a section of the code.
-     * @return the application code or an empty String if none is set.
-     */
-    String applicationCode() default StringUtils.EMPTY;
-
-    /**
      * The action to write to the log when we audit this method.  Value must be defined.
      * @return the action to write to the logs.
      */

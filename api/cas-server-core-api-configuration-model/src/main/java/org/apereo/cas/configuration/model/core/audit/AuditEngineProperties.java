@@ -49,15 +49,6 @@ public class AuditEngineProperties implements Serializable {
     private boolean includeValidationAssertion;
 
     /**
-     * Application code to use in the audit logs.
-     * <p>
-     * This is a unique code that acts as the identifier for the application.
-     * In case audit logs are aggregated in a central location. This makes it easy
-     * to identify the application and filter results based on the code.
-     */
-    private String appCode = "CAS";
-
-    /**
      * Request header to use identify the server address.
      */
     private String alternateServerAddrHeaderName;
