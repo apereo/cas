@@ -50,15 +50,7 @@ public class DuoSecurityConfiguration {
     @Configuration(value = "DuoSecurityCoreWebflowConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class DuoSecurityCoreWebflowConfiguration {
-
-        @ConditionalOnMissingBean(name = "duoUniversalPromptSessionStore")
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public BrowserWebStorageSessionStore duoUniversalPromptSessionStore(@Qualifier("webflowCipherExecutor")
-                                                                            final CipherExecutor webflowCipherExecutor) {
-            return new BrowserWebStorageSessionStore(webflowCipherExecutor);
-        }
-
+        
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_DUO_NON_WEB_AUTHENTICATION)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -123,8 +115,8 @@ public class DuoSecurityConfiguration {
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("duoAuthenticationWebflowEventResolver")
             final CasWebflowEventResolver duoAuthenticationWebflowEventResolver,
-            @Qualifier("duoUniversalPromptSessionStore")
-            final BrowserWebStorageSessionStore duoUniversalPromptSessionStore,
+            @Qualifier("webflowCipherExecutor")
+            final CipherExecutor webflowCipherExecutor,
             @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
             final AuthenticationSystemSupport authenticationSystemSupport) {
             return WebflowActionBeanSupplier.builder()
@@ -133,7 +125,7 @@ public class DuoSecurityConfiguration {
                 .withAction(() -> BeanSupplier.of(Action.class)
                     .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
                     .supply(() -> new DuoSecurityUniversalPromptValidateLoginAction(
-                        duoAuthenticationWebflowEventResolver, duoUniversalPromptSessionStore,
+                        duoAuthenticationWebflowEventResolver, webflowCipherExecutor,
                         applicationContext, authenticationSystemSupport))
                     .otherwiseProxy()
                     .get())

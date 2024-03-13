@@ -10,6 +10,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.pac4j.BrowserWebStorageSessionStore;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.BrowserSessionStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -47,19 +48,19 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
 
     static final String REQUEST_PARAMETER_STATE = "state";
 
-    private final BrowserWebStorageSessionStore sessionStore;
-
     private final ConfigurableApplicationContext applicationContext;
 
     private final AuthenticationSystemSupport authenticationSystemSupport;
 
+    private final CipherExecutor webflowCipherExecutor;
+
     public DuoSecurityUniversalPromptValidateLoginAction(
         final CasWebflowEventResolver duoAuthenticationWebflowEventResolver,
-        final BrowserWebStorageSessionStore sessionStore,
+        final CipherExecutor webflowCipherExecutor,
         final ConfigurableApplicationContext applicationContext,
         final AuthenticationSystemSupport authenticationSystemSupport) {
         super(duoAuthenticationWebflowEventResolver);
-        this.sessionStore = sessionStore;
+        this.webflowCipherExecutor = webflowCipherExecutor;
         this.applicationContext = applicationContext;
         this.authenticationSystemSupport = authenticationSystemSupport;
     }
@@ -89,7 +90,9 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
 
             val storage = requestParameters.get(BrowserSessionStorage.KEY_SESSION_STORAGE);
             val context = new JEEContext(request, response);
-            browserSessionStore = this.sessionStore
+            
+            val sessionStorage = new BrowserWebStorageSessionStore(webflowCipherExecutor);
+            browserSessionStore = sessionStorage
                 .buildFromTrackableSession(context, storage)
                 .map(BrowserWebStorageSessionStore.class::cast)
                 .orElseThrow(() -> new IllegalArgumentException("Unable to determine Duo authentication context from session store"));
@@ -132,8 +135,10 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
     protected void populateContextWithService(final RequestContext requestContext,
                                               final BrowserWebStorageSessionStore sessionStorage) {
         val registeredService = (RegisteredService) sessionStorage.getSessionAttributes().get(RegisteredService.class.getSimpleName());
+        LOGGER.debug("Putting registered service into the request context: [{}]", registeredService);
         WebUtils.putRegisteredService(requestContext, registeredService);
         val service = (Service) sessionStorage.getSessionAttributes().get(Service.class.getSimpleName());
+        LOGGER.debug("Putting service into the request context: [{}]", service);
         WebUtils.putServiceIntoFlowScope(requestContext, service);
     }
 

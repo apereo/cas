@@ -57,8 +57,10 @@ public class DuoSecurityUniversalPromptPrepareLoginAction extends AbstractMultif
             .getDuoClient()
             .map(Client.class::cast)
             .orElseThrow(() -> new RuntimeException("Unable to locate Duo Security client for provider id " + duoSecurityIdentifier));
+
         val state = client.generateState();
         val service = WebUtils.getService(requestContext);
+        LOGGER.debug("Generated state [{}] for service [{}]", state, service);
 
         val properties = new LinkedHashMap<String, Object>();
         properties.put("duoProviderId", duoSecurityIdentifier);
