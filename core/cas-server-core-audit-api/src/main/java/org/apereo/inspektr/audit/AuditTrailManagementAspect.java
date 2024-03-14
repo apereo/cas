@@ -95,7 +95,7 @@ public class AuditTrailManagementAspect {
             throw t;
         } finally {
             for (var i = 0; i < audits.value().length; i++) {
-                executeAuditCode(currentPrincipal, auditableResources[i], joinPoint, retVal, actions[i], audits.value()[i]);
+                executeAuditCode(currentPrincipal, auditableResources[i], joinPoint, retVal, actions[i]);
             }
         }
     }
@@ -138,7 +138,7 @@ public class AuditTrailManagementAspect {
             action = auditActionResolver.resolveFrom(joinPoint, e, audit);
             throw t;
         } finally {
-            executeAuditCode(currentPrincipal, auditResource, joinPoint, retVal, action, audit);
+            executeAuditCode(currentPrincipal, auditResource, joinPoint, retVal, action);
         }
     }
 
@@ -172,8 +172,7 @@ public class AuditTrailManagementAspect {
     }
 
     private void executeAuditCode(final String currentPrincipal, final String[] auditableResources,
-                                  final ProceedingJoinPoint joinPoint, final Object retVal,
-                                  final String action, final Audit audit) {
+                                  final ProceedingJoinPoint joinPoint, final Object retVal, final String action) {
         val clientInfo = clientInfoResolver.resolveFrom(joinPoint, retVal);
         val actionDate = auditActionDateProvider.get();
         val runtimeInfo = new AspectJAuditPointRuntimeInfo(joinPoint);

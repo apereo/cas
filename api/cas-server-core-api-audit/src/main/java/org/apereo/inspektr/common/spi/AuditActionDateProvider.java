@@ -26,6 +26,7 @@ public interface AuditActionDateProvider extends Supplier<LocalDateTime> {
      *
      * @return the audit action date provider
      */
+    @SuppressWarnings("JavaTimeDefaultTimeZone")
     static AuditActionDateProvider system() {
         return () -> LocalDateTime.now(Clock.systemDefaultZone());
     }
