@@ -1,0 +1,2 @@
+    {% capture version %}{{ page.url | replace:'/',' ' | truncatewords: 1 | strip | remove:'...' }}{% endcapture %}
+    {% capture siteDataVersion %}{{ version | remove: "." }}{% endcapture %}
