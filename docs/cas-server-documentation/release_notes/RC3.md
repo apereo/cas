@@ -81,3 +81,6 @@ are now configured to run with parallelism enabled.
 - Micrometer
 - Spring Boot
 - Spring Framework
+- Spring Data
+- Slack
+- Azure Identity
