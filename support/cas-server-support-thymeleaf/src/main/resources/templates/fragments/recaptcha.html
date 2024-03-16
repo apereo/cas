@@ -34,9 +34,9 @@
                 <input type="hidden" id="g-recaptcha-token" name="g-recaptcha-token"/>
 
                 <script type="text/javascript" th:inline="javascript">
-                    grecaptcha.ready(function () {
+                    grecaptcha.ready(() => {
                         grecaptcha.execute(/*[[${recaptchaSiteKey}]]*/, { action: 'login' })
-                            .then(function (token) {
+                            .then(token => {
                                 $('#g-recaptcha-token').val(token);
                             });
                     });
