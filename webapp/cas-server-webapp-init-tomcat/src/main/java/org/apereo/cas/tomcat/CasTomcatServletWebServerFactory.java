@@ -27,6 +27,7 @@ import org.apache.catalina.tribes.membership.cloud.CloudMembershipService;
 import org.apache.catalina.tribes.transport.ReplicationTransmitter;
 import org.apache.catalina.tribes.transport.nio.NioReceiver;
 import org.apache.catalina.tribes.transport.nio.PooledParallelSender;
+import org.apache.catalina.webresources.ExtractingRoot;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tomcat.util.descriptor.web.SecurityCollection;
 import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
@@ -73,6 +74,8 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
                 securityConstraint.addCollection(collection);
                 context.addConstraint(securityConstraint);
             });
+        context.setReloadable(false);
+        context.setResources(new ExtractingRoot());
     }
 
     @Override
