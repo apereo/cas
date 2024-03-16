@@ -133,9 +133,9 @@
             new mdc.dataTable.MDCDataTable(div);
 
             var btn = document.getElementById('authnButton');
-            btn.addEventListener('click', function (event) {
+            btn.addEventListener('click', event => {
                 $("#errorPanel").hide();
-                var username = '[[${principal?.id}]]';
+                let username = '[[${principal?.id}]]';
                 if (username === '') {
                    username = $("#fm1 #username").val();
                 }

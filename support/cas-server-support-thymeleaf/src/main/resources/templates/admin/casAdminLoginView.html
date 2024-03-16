@@ -6,7 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
 
     <title th:text="#{cas.login.pagetitle}">CAS Admin Login View</title>
-    <link href="../../static/css/cas.css" rel="stylesheet" th:href="@{${#themes.code('cas.standard.css.file')}}"/>
+    <span th:remove="tag" th:each="file : ${#strings.arraySplit(#themes.code('cas.standard.css.file'), ',')}">
+        <link rel="stylesheet" type="text/css" href="../static/css/cas.css" th:href="@{${file}}" />
+    </span>
 </head>
 
 <body class="login">
