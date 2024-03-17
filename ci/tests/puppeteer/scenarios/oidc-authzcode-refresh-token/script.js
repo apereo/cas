@@ -9,13 +9,13 @@ async function fetchRefreshToken(page, clientId, redirectUrl) {
     await cas.goto(page, url);
     await cas.sleep(1000);
     await cas.loginWith(page);
-    await cas.sleep(1000);
+    await cas.sleep(2000);
 
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
         await cas.waitForNavigation(page);
     }
-    await cas.sleep(1000);
+    await cas.sleep(2000);
     const code = await cas.assertParameter(page, "code");
     await cas.log(`OAuth code ${code}`);
 
