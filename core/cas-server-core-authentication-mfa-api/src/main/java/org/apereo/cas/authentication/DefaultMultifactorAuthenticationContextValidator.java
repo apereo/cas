@@ -2,6 +2,7 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -30,7 +31,10 @@ public record DefaultMultifactorAuthenticationContextValidator(String authentica
 
     private static Optional<MultifactorAuthenticationProvider> locateRequestedProvider(
         final Collection<MultifactorAuthenticationProvider> providersArray, final String requestedProvider) {
-        return providersArray.stream().filter(provider -> provider.getId().equals(requestedProvider)).findFirst();
+        return providersArray.stream()
+            .filter(BeanSupplier::isNotProxy)
+            .filter(provider -> StringUtils.equalsIgnoreCase(provider.getId(), requestedProvider))
+            .findFirst();
     }
 
     /**
