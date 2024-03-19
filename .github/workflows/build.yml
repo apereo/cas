@@ -127,5 +127,5 @@ jobs:
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Build with Gradle
-        timeout-minutes: 90
+        timeout-minutes: 10
         run: chmod +x ./ci/tests/native/build.sh && ./ci/tests/native/build.sh

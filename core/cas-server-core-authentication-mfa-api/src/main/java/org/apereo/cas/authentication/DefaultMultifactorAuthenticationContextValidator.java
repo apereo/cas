@@ -2,6 +2,7 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +42,7 @@ public class DefaultMultifactorAuthenticationContextValidator implements Multifa
         final Collection<MultifactorAuthenticationProvider> providersArray, final String requestedProvider) {
         return providersArray
             .stream()
+            .filter(BeanSupplier::isNotProxy)
             .filter(provider -> StringUtils.equalsIgnoreCase(provider.getId(), requestedProvider))
             .findFirst();
     }
