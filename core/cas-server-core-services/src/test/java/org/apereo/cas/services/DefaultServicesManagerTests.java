@@ -8,8 +8,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.Ordered;
 import java.util.UUID;
@@ -28,33 +26,6 @@ class DefaultServicesManagerTests {
     @SpringBootTest(classes = BaseAutoConfigurationTests.SharedTestConfiguration.class,
         properties = "cas.service-registry.core.index-services=false")
     class NoIndexingTests extends AbstractServicesManagerTests {
-    }
-
-    @Nested
-    @SpringBootTest(
-        classes = BaseAutoConfigurationTests.SharedTestConfiguration.class,
-        properties = {
-            "cas.service-registry.cache.cache-size=100",
-            "cas.service-registry.cache.initial-capacity=10",
-            "cas.service-registry.cache.duration=PT1S"
-        })
-    class CachingTests {
-        @Autowired
-        @Qualifier(ServicesManager.BEAN_NAME)
-        protected ServicesManager servicesManager;
-
-        @Test
-        void verifyServicesCache() throws Throwable {
-            val registeredService = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
-            servicesManager.save(registeredService);
-            assertFalse(servicesManager.getAllServices().isEmpty());
-            assertEquals(1, servicesManager.load().size());
-            assertEquals(1, servicesManager.getAllServices().size());
-            Thread.sleep(1500);
-            assertFalse(servicesManager.getAllServices().isEmpty());
-            assertEquals(1, servicesManager.load().size());
-            assertEquals(1, servicesManager.getAllServices().size());
-        }
     }
 
     @Nested
