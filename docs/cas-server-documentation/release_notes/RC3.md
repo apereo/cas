@@ -47,6 +47,11 @@ The migration of the entire codebase to Spring Boot `3.3` is ongoing, and at the
 moment is waiting for the wider ecosystem of supporting frameworks and libraries to catch up to
 changes. We anticipate the work to finalize in the next few release candidates and certainly prior to the final release.
 
+### Java 22
+
+CAS is able to successfully build and run with Java `22`, should you decide to switch. All compatible distributions
+such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicitly supported.
+
 ### Graal VM Native Images
 
 A CAS server installation and deployment process can be tuned to build and run
@@ -60,8 +65,6 @@ The collection of end-to-end [browser tests based via Puppeteer](../../developer
 and scenarios. At the moment, total number of jobs stands at approximately `475` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`. Furthermore, a large number of test categories that group internal unit tests
 are now configured to run with parallelism enabled.
-
-## Other Stuff
 
 ## Library Upgrades
 
