@@ -12,8 +12,8 @@ env:
   GH_PACKAGE_REGISTRY_TOKEN: ${{ secrets.GH_PACKAGE_REGISTRY_TOKEN }}
   GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
   JDK_CURRENT: 21
-  JDK_LATEST: 21
-  JDK_DISTRIBUTION: "corretto"
+  JDK_LATEST: 22
+  JDK_DISTRIBUTION: "oracle"
 
 ##########################################################################
 
@@ -112,7 +112,7 @@ jobs:
       - uses: graalvm/setup-graalvm@v1
         with:
           distribution: 'graalvm'
-          java-version: ${{ env.JDK_CURRENT }}
+          java-version: ${{ env.JDK_LATEST }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           cache: 'gradle'
           set-java-home: 'true'
