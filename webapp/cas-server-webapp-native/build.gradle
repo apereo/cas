@@ -22,7 +22,6 @@ ext {
 
 configurations {
     configureEach {
-        exclude(group: "org.apache.groovy", module: "groovy-templates")
         /*
             Log4j does not support Graal VM and leads to com.oracle.svm.core.jdk.UnsupportedFeatureError:
             Defining hidden classes at runtime is not supported. We use logback instead.
@@ -153,6 +152,7 @@ graalvmNative {
             buildArgs.add('--initialize-at-build-time=org.codehaus.groovy')
             buildArgs.add('--initialize-at-build-time=org.apache.groovy')
             buildArgs.add('--initialize-at-build-time=groovy.lang')
+            buildArgs.add('--initialize-at-build-time=groovyjarjarasm.asm.Type')
 
             buildArgs.add('--initialize-at-run-time=com.sun.xml.ws')
             buildArgs.add('--initialize-at-run-time=groovy.grape.GrapeIvy')
