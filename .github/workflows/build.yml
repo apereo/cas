@@ -52,7 +52,6 @@ jobs:
   ##########################################################################
 
   build:
-    if: ${{ (github.event_name == 'schedule' || contains(github.event.pull_request.labels.*.name, 'Bot')) }}
     needs: [initialize]
     continue-on-error: false
     strategy:
@@ -125,5 +124,5 @@ jobs:
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Build with Gradle
-        timeout-minutes: 10
+        timeout-minutes: 20
         run: chmod +x ./ci/tests/native/build.sh && ./ci/tests/native/build.sh
