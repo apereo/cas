@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.Ordered;
 import java.util.UUID;
@@ -20,6 +22,7 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @Tag("RegisteredService")
+@Execution(ExecutionMode.SAME_THREAD)
 class DefaultServicesManagerTests {
 
     @Nested
