@@ -12,6 +12,7 @@ import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.ldaptive.auth.AuthenticationHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,6 +20,7 @@ import org.springframework.core.io.ClassPathResource;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -60,7 +62,9 @@ class DefaultPersonDirectoryAttributeRepositoryPlanLdapTests {
     @Test
     void verifyOperation() throws Throwable {
         val creds = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(CN, "Mellon");
-        val principal = personDirectoryPrincipalResolver.resolve(creds);
+        val principal = personDirectoryPrincipalResolver.resolve(creds, Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
+            Optional.of(new AcceptUsersAuthenticationHandler("handler")), Optional.of(CoreAuthenticationTestUtils.getService()));
+
         assertNotNull(principal);
         val attributes = principal.getAttributes();
         assertTrue(attributes.containsKey("cn"));
