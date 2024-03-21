@@ -218,7 +218,7 @@ while (( "$#" )); do
     export HEADLESS="true"
     shift 1;
     ;;
-  --nolint|--no-lint|--nol)
+  --nolint|--no-lint|--nol|--nl)
     DISABLE_LINTER="true"
     shift 1;
     ;;

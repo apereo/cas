@@ -57,6 +57,7 @@ import java.io.Serializable;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -1284,7 +1285,13 @@ public class WebUtils {
      */
     public static void putInitialHttpRequestPostParameters(final RequestContext context) {
         val request = getHttpServletRequestFromExternalWebflowContext(context);
-        context.getFlashScope().put("httpRequestInitialPostParameters", request.getParameterMap());
+        val queryParams = StringUtils.defaultString(request.getQueryString());
+        val parameters = request.getParameterMap()
+            .entrySet()
+            .stream()
+            .filter(param -> !queryParams.contains(param.getKey() + '='))
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        context.getFlashScope().put("httpRequestInitialPostParameters", parameters);
     }
 
     /**
