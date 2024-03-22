@@ -74,7 +74,7 @@ public record ChainingAWSCredentialsProvider(List<AwsCredentialsProvider> chain)
         chain.add(InstanceProfileCredentialsProvider.create());
 
         if (StringUtils.isNotBlank(profilePath) && StringUtils.isNotBlank(profileName)) {
-            addProviderToChain(nothing -> {
+            addProviderToChain(__ -> {
                 chain.add(ProfileCredentialsProvider.builder()
                     .profileName(profileName)
                     .profileFile(ProfileFile.builder().content(Path.of(profilePath)).build())
@@ -82,18 +82,18 @@ public record ChainingAWSCredentialsProvider(List<AwsCredentialsProvider> chain)
                 return null;
             });
         }
-        addProviderToChain(nothing -> {
+        addProviderToChain(__ -> {
             chain.add(SystemPropertyCredentialsProvider.create());
             return null;
         });
 
-        addProviderToChain(nothing -> {
+        addProviderToChain(__ -> {
             chain.add(EnvironmentVariableCredentialsProvider.create());
             return null;
         });
 
         if (StringUtils.isNotBlank(credentialAccessKey) && StringUtils.isNotBlank(credentialSecretKey)) {
-            addProviderToChain(nothing -> {
+            addProviderToChain(__ -> {
                 val resolver = SpringExpressionLanguageValueResolver.getInstance();
                 val credentials = AwsBasicCredentials.create(resolver.resolve(credentialAccessKey), resolver.resolve(credentialSecretKey));
                 chain.add(StaticCredentialsProvider.create(credentials));
@@ -101,12 +101,12 @@ public record ChainingAWSCredentialsProvider(List<AwsCredentialsProvider> chain)
             });
         }
 
-        addProviderToChain(nothing -> {
+        addProviderToChain(__ -> {
             chain.add(ContainerCredentialsProvider.builder().build());
             return null;
         });
 
-        addProviderToChain(nothing -> {
+        addProviderToChain(__ -> {
             chain.add(InstanceProfileCredentialsProvider.builder().build());
             return null;
         });

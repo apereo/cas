@@ -39,7 +39,7 @@ class CloudWatchAppenderSpecTests {
     }
 
     private static DescribeLogGroupsResponse createDescribeLogGroupsResult() {
-        var logGroup = LogGroup.builder().logGroupName("test").build();
+        val logGroup = LogGroup.builder().logGroupName("test").build();
         return DescribeLogGroupsResponse.builder().logGroups(logGroup).build();
     }
 
@@ -142,7 +142,7 @@ class CloudWatchAppenderSpecTests {
 
     }
 
-    private static final class TestCase {
+    private static class TestCase {
         private final Boolean createIfNeeded;
 
         private final Boolean createLogGroupIfNeeded;

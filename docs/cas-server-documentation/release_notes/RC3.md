@@ -66,6 +66,10 @@ and scenarios. At the moment, total number of jobs stands at approximately `475`
 test coverage of the CAS codebase is approximately `94%`. Furthermore, a large number of test categories that group internal unit tests
 are now configured to run with parallelism enabled.
 
+### AWS Cloudwatch Metrics
+
+CAS metrics can now be exported to [AWS Cloudwatch](../monitoring/Configuring-Metrics-Storage-Cloudwatch.html).
+
 ## Library Upgrades
 
 - Sentry

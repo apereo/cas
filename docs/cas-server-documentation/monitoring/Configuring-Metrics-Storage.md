@@ -8,21 +8,20 @@ category: Monitoring & Statistics
 
 # Storage - CAS Metrics
 
-CAS metrics may be routed to varying types of databases for 
-storage and analytics. The following options are available:
+CAS metrics may be routed to varying types of databases for storage and analytics. The following options are available:
 
-- Simple (In Memory)
+- Simple (Memory)
 - Graphite
 - Ganglia
-- JMX
 - Atlas
-- Signal FX
+- SignalFx
 - Statsd
 - InfluxDb
 - Prometheus
 - Wavefront
 - New Relic
-- CloudWatch
+- AWS CloudWatch
 - ...
-
-{% include_cached {{ version }}/metrics-configuration.md %}
+  
+Metrics are largely handled by [Micrometer](https://micrometer.io/). Choose the appropriate storage 
+technology that best fits your needs and requirements.
