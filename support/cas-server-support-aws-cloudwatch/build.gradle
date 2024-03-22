@@ -1,8 +1,8 @@
-description = "Apereo CAS Core Logging AWS CloudWatch"
+description = "Apereo CAS AWS CloudWatch"
 ext {
     publishMetadata = true
     projectMetadata = [
-            category: "Logging",
+            category: "Monitoring",
             title: "AWS CloudWatch"
     ]
 }
@@ -11,10 +11,13 @@ dependencies {
 
     implementation libraries.awscloudwatch
     implementation libraries.log4j
+    implementation libraries.metrics
 
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-logging-api")
+    
+    implementation project(":support:cas-server-support-metrics")
     implementation project(":support:cas-server-support-aws")
 
     annotationProcessor libraries.log4j
