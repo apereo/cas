@@ -6,7 +6,7 @@ dependencies {
     implementation libraries.opensaml
     implementation libraries.dropwizard
     implementation libraries.shibutiljavasupport
-    implementation libraries.persondirectory
+
 
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-configuration-api")

@@ -1,10 +1,16 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.attribute.CaseCanonicalizationMode;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.core.authentication.AttributeRepositoryStates;
 import org.apereo.cas.configuration.model.support.jdbc.JdbcPrincipalAttributesProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
+import org.apereo.cas.jdbc.AbstractJdbcPersonAttributeDao;
+import org.apereo.cas.jdbc.MultiRowJdbcPersonAttributeDao;
+import org.apereo.cas.jdbc.QueryType;
+import org.apereo.cas.jdbc.SingleRowJdbcPersonAttributeDao;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -17,12 +23,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apereo.services.persondir.IPersonAttributeDao;
-import org.apereo.services.persondir.support.QueryType;
-import org.apereo.services.persondir.support.jdbc.AbstractJdbcPersonAttributeDao;
-import org.apereo.services.persondir.support.jdbc.MultiRowJdbcPersonAttributeDao;
-import org.apereo.services.persondir.support.jdbc.SingleRowJdbcPersonAttributeDao;
-import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -56,13 +56,13 @@ class CasPersonDirectoryJdbcConfiguration {
         @ConditionalOnMissingBean(name = "jdbcAttributeRepositories")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public BeanContainer<IPersonAttributeDao> jdbcAttributeRepositories(
+        public BeanContainer<PersonAttributeDao> jdbcAttributeRepositories(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
             return BeanSupplier.of(BeanContainer.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
-                    val list = new ArrayList<IPersonAttributeDao>();
+                    val list = new ArrayList<PersonAttributeDao>();
                     val attrs = casProperties.getAuthn().getAttributeRepository();
                     attrs.getJdbc()
                         .stream()
@@ -139,13 +139,14 @@ class CasPersonDirectoryJdbcConfiguration {
         @ConditionalOnMissingBean(name = "jdbcPersonDirectoryAttributeRepositoryPlanConfigurer")
         public PersonDirectoryAttributeRepositoryPlanConfigurer jdbcPersonDirectoryAttributeRepositoryPlanConfigurer(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("jdbcAttributeRepositories") final BeanContainer<IPersonAttributeDao> jdbcAttributeRepositories) {
+            @Qualifier("jdbcAttributeRepositories")
+            final BeanContainer<PersonAttributeDao> jdbcAttributeRepositories) {
             return BeanSupplier.of(PersonDirectoryAttributeRepositoryPlanConfigurer.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> plan -> {
                     val results = jdbcAttributeRepositories.toList()
                         .stream()
-                        .filter(IPersonAttributeDao::isEnabled)
+                        .filter(PersonAttributeDao::isEnabled)
                         .collect(Collectors.toList());
                     plan.registerAttributeRepositories(results);
                 })

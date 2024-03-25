@@ -1,24 +1,18 @@
 package org.apereo.cas.syncope;
 
+import org.apereo.cas.authentication.attribute.BasePersonAttributeDao;
+import org.apereo.cas.authentication.attribute.SimplePersonAttributes;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDaoFilter;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
 import org.apereo.cas.configuration.model.support.syncope.SyncopePrincipalAttributesProperties;
-import org.apereo.cas.util.CollectionUtils;
-
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apereo.services.persondir.IPersonAttributeDaoFilter;
-import org.apereo.services.persondir.IPersonAttributes;
-import org.apereo.services.persondir.support.BasePersonAttributeDao;
-import org.apereo.services.persondir.support.NamedPersonImpl;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link SyncopePersonAttributeDao}.
@@ -26,36 +20,29 @@ import java.util.stream.Collectors;
  * @author Francesco Chicchiriccò
  * @since 6.5.0
  */
-@Slf4j
 @RequiredArgsConstructor
 public class SyncopePersonAttributeDao extends BasePersonAttributeDao {
 
     private final SyncopePrincipalAttributesProperties properties;
 
-    private static Map<String, List<Object>> stuffAttributesIntoList(final Map<String, ?> map) {
-        return map.entrySet()
-            .stream()
-            .collect(Collectors.toMap(Map.Entry::getKey, entry -> CollectionUtils.toCollection(entry.getValue(), ArrayList.class)));
-    }
-
     @Override
-    public IPersonAttributes getPerson(final String uid, final Set<IPersonAttributes> resolvedPeople, final IPersonAttributeDaoFilter filter) {
+    public PersonAttributes getPerson(final String uid, final Set<PersonAttributes> resolvedPeople, final PersonAttributeDaoFilter filter) {
         val attributes = new HashMap<String, List<Object>>();
         val results = syncopeSearch(uid);
         results.forEach(attributes::putAll);
-        return new NamedPersonImpl(uid, attributes);
+        return new SimplePersonAttributes(uid, attributes);
     }
 
     @Override
-    public Set<IPersonAttributes> getPeople(final Map<String, Object> map, final IPersonAttributeDaoFilter filter,
-                                            final Set<IPersonAttributes> resolvedPeople) {
-        return getPeopleWithMultivaluedAttributes(stuffAttributesIntoList(map), filter);
+    public Set<PersonAttributes> getPeople(final Map<String, Object> map, final PersonAttributeDaoFilter filter,
+                                           final Set<PersonAttributes> resolvedPeople) {
+        return getPeopleWithMultivaluedAttributes(stuffAttributesIntoList(map, filter), filter);
     }
 
     @Override
-    public Set<IPersonAttributes> getPeopleWithMultivaluedAttributes(
-        final Map<String, List<Object>> map, final IPersonAttributeDaoFilter filter,
-        final Set<IPersonAttributes> resolvedPeople) {
+    public Set<PersonAttributes> getPeopleWithMultivaluedAttributes(
+        final Map<String, List<Object>> map, final PersonAttributeDaoFilter filter,
+        final Set<PersonAttributes> resolvedPeople) {
         return map.entrySet()
             .stream()
             .filter(e -> Objects.nonNull(e.getValue()))

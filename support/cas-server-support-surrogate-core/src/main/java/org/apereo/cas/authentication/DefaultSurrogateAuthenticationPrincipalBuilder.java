@@ -3,16 +3,14 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.attribute.PrincipalAttributeRepositoryFetcher;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.authentication.surrogate.SurrogateCredentialTrait;
 import org.apereo.cas.services.RegisteredService;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apereo.services.persondir.IPersonAttributeDao;
-
 import java.util.HashSet;
 import java.util.Optional;
 
@@ -29,7 +27,7 @@ public class DefaultSurrogateAuthenticationPrincipalBuilder implements Surrogate
 
     private final PrincipalFactory principalFactory;
 
-    private final IPersonAttributeDao attributeRepository;
+    private final PersonAttributeDao attributeRepository;
 
     private final SurrogateAuthenticationService surrogateAuthenticationService;
 

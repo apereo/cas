@@ -63,7 +63,7 @@ public class ConvertPropertiesToYAMLCommand {
         for (var i = 0; i < parts.size() - 1; i++) {
             currentMap = getOrCreateSubMap(currentMap, parts.get(i));
         }
-        currentMap.put(parts.get(parts.size() - 1), value);
+        currentMap.put(parts.getLast(), value);
     }
 
     private static Map<String, Object> getOrCreateSubMap(final Map<String, Object> map, final String key) {

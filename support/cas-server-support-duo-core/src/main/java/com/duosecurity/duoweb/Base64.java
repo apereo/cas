@@ -448,8 +448,8 @@ public class Base64 {
 	} // end encode3to4
 
 	/**
-	 * Performs Base64 encoding on the <code>raw</code> ByteBuffer, writing it
-	 * to the <code>encoded</code> ByteBuffer. This is an experimental feature.
+	 * Performs Base64 encoding on the {@code raw} ByteBuffer, writing it
+	 * to the {@code encoded} ByteBuffer. This is an experimental feature.
 	 * Currently it does not pass along any options (such as
 	 * {@link #DO_BREAK_LINES} or {@link #GZIP}.
 	 * 
@@ -473,8 +473,8 @@ public class Base64 {
 	}
 
 	/**
-	 * Performs Base64 encoding on the <code>raw</code> ByteBuffer, writing it
-	 * to the <code>encoded</code> CharBuffer. This is an experimental feature.
+	 * Performs Base64 encoding on the {@code raw} ByteBuffer, writing it
+	 * to the {@code encoded} CharBuffer. This is an experimental feature.
 	 * Currently it does not pass along any options (such as
 	 * {@link #DO_BREAK_LINES} or {@link #GZIP}.
 	 * 
@@ -546,10 +546,10 @@ public class Base64 {
 	 *   DO_BREAK_LINES: break lines at 76 characters
 	 * </pre>
 	 * <p>
-	 * Example: <code>encodeObject( myObj, Base64.GZIP )</code> or
+	 * Example: {@code encodeObject( myObj, Base64.GZIP )} or
 	 * <p>
 	 * Example:
-	 * <code>encodeObject( myObj, Base64.GZIP | Base64.DO_BREAK_LINES )</code>
+	 * {@code encodeObject( myObj, Base64.GZIP | Base64.DO_BREAK_LINES )}
 	 * 
 	 * @param serializableObject
 	 *            The object to encode
@@ -659,10 +659,10 @@ public class Base64 {
 	 *     <i>Note: Technically, this makes your encoding non-compliant.</i>
 	 * </pre>
 	 * <p>
-	 * Example: <code>encodeBytes( myData, Base64.GZIP )</code> or
+	 * Example: {@code encodeBytes( myData, Base64.GZIP )} or
 	 * <p>
 	 * Example:
-	 * <code>encodeBytes( myData, Base64.GZIP | Base64.DO_BREAK_LINES )</code>
+	 * {@code encodeBytes( myData, Base64.GZIP | Base64.DO_BREAK_LINES )}
 	 * <p>
 	 * 
 	 * <p>
@@ -740,10 +740,10 @@ public class Base64 {
 	 *     <i>Note: Technically, this makes your encoding non-compliant.</i>
 	 * </pre>
 	 * <p>
-	 * Example: <code>encodeBytes( myData, Base64.GZIP )</code> or
+	 * Example: {@code encodeBytes( myData, Base64.GZIP )} or
 	 * <p>
 	 * Example:
-	 * <code>encodeBytes( myData, Base64.GZIP | Base64.DO_BREAK_LINES )</code>
+	 * {@code encodeBytes( myData, Base64.GZIP | Base64.DO_BREAK_LINES )}
 	 * <p>
 	 * 
 	 * <p>
@@ -1339,7 +1339,7 @@ public class Base64 {
 		 *     (only meaningful when encoding)</i>
 		 * </pre>
 		 * <p>
-		 * Example: <code>new Base64.OutputStream( out, Base64.ENCODE )</code>
+		 * Example: {@code new Base64.OutputStream( out, Base64.ENCODE )}
 		 * 
 		 * @param out
 		 *            the <tt>java.io.OutputStream</tt> to which data will be

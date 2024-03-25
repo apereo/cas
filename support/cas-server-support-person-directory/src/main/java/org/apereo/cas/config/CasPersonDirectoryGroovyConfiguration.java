@@ -1,10 +1,12 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.authentication.principal.resolvers.InternalGroovyScriptDao;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.core.authentication.AttributeRepositoryStates;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
+import org.apereo.cas.persondir.groovy.GroovyPersonAttributeDao;
+import org.apereo.cas.persondir.groovy.InternalGroovyScriptDao;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanContainer;
@@ -13,8 +15,6 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.util.spring.boot.ConditionalOnMissingGraalVMNativeImage;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apereo.services.persondir.IPersonAttributeDao;
-import org.apereo.services.persondir.support.GroovyPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -46,19 +46,18 @@ class CasPersonDirectoryGroovyConfiguration {
         @ConditionalOnMissingBean(name = "groovyAttributeRepositories")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public BeanContainer<IPersonAttributeDao> groovyAttributeRepositories(
+        public BeanContainer<PersonAttributeDao> groovyAttributeRepositories(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
             return BeanSupplier.of(BeanContainer.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
-                    val list = new ArrayList<IPersonAttributeDao>();
+                    val list = new ArrayList<PersonAttributeDao>();
                     casProperties.getAuthn().getAttributeRepository().getGroovy()
                         .stream()
                         .filter(groovy -> groovy.getLocation() != null)
                         .forEach(groovy -> {
                             val dao = new GroovyPersonAttributeDao(new InternalGroovyScriptDao(applicationContext, casProperties, groovy));
-                            dao.setCaseInsensitiveUsername(groovy.isCaseInsensitive());
                             dao.setOrder(groovy.getOrder());
                             dao.setEnabled(groovy.getState() != AttributeRepositoryStates.DISABLED);
                             dao.putTag(PersonDirectoryAttributeRepositoryPlanConfigurer.class.getSimpleName(),
@@ -83,13 +82,13 @@ class CasPersonDirectoryGroovyConfiguration {
         public PersonDirectoryAttributeRepositoryPlanConfigurer groovyPersonDirectoryAttributeRepositoryPlanConfigurer(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("groovyAttributeRepositories")
-            final BeanContainer<IPersonAttributeDao> groovyAttributeRepositories) {
+            final BeanContainer<PersonAttributeDao> groovyAttributeRepositories) {
             return BeanSupplier.of(PersonDirectoryAttributeRepositoryPlanConfigurer.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> plan -> {
                     val results = groovyAttributeRepositories.toList()
                         .stream()
-                        .filter(IPersonAttributeDao::isEnabled)
+                        .filter(PersonAttributeDao::isEnabled)
                         .collect(Collectors.toList());
                     plan.registerAttributeRepositories(results);
                 })

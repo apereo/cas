@@ -1,18 +1,16 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
-
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.Cleanup;
 import lombok.val;
-import org.apereo.services.persondir.IPersonAttributeDao;
 import org.junit.jupiter.api.BeforeAll;
 import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.Credential;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
@@ -37,7 +35,7 @@ class BasePrincipalAttributeRepositoryFetcherLdapTests {
 
     @Autowired
     @Qualifier("aggregatingAttributeRepository")
-    protected IPersonAttributeDao aggregatingAttributeRepository;
+    protected PersonAttributeDao aggregatingAttributeRepository;
 
     @BeforeAll
     public static void beforeAll() throws Exception {

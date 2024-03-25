@@ -3,6 +3,8 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDaoFilter;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.discovery.CasServerDiscoveryProfileEndpoint;
@@ -11,8 +13,6 @@ import org.apereo.cas.discovery.DefaultCasServerProfileRegistrar;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.val;
-import org.apereo.services.persondir.IPersonAttributeDao;
-import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
@@ -82,11 +82,11 @@ public class CasDiscoveryProfileAutoConfiguration {
         @ConditionalOnMissingBean(name = "discoveryProfileAvailableAttributes")
         public BeanContainer<String> discoveryProfileAvailableAttributes(
             final CasConfigurationProperties casProperties,
-            @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY) final ObjectProvider<IPersonAttributeDao> attributeRepository) {
+            @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY) final ObjectProvider<PersonAttributeDao> attributeRepository) {
 
             val attributes = new LinkedHashSet<String>(0);
             attributeRepository.ifAvailable(repository -> {
-                val possibleUserAttributeNames = repository.getPossibleUserAttributeNames(IPersonAttributeDaoFilter.alwaysChoose());
+                val possibleUserAttributeNames = repository.getPossibleUserAttributeNames(PersonAttributeDaoFilter.alwaysChoose());
                 if (possibleUserAttributeNames != null) {
                     attributes.addAll(possibleUserAttributeNames);
                 }

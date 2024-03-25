@@ -21,6 +21,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolutionExecutionPlanConfigurer;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.authentication.surrogate.ChainingSurrogateAuthenticationService;
 import org.apereo.cas.authentication.surrogate.GroovySurrogateAuthenticationService;
@@ -37,7 +38,6 @@ import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apereo.services.persondir.IPersonAttributeDao;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -253,7 +253,7 @@ class SurrogateAuthenticationConfiguration {
             @Qualifier("surrogatePrincipalFactory")
             final PrincipalFactory surrogatePrincipalFactory,
             @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
-            final IPersonAttributeDao attributeRepository) throws Exception {
+            final PersonAttributeDao attributeRepository) throws Exception {
             return new DefaultSurrogateAuthenticationPrincipalBuilder(surrogatePrincipalFactory,
                 attributeRepository, surrogateAuthenticationService);
         }
@@ -279,7 +279,7 @@ class SurrogateAuthenticationConfiguration {
             @Qualifier(SurrogateAuthenticationPrincipalBuilder.BEAN_NAME)
             final SurrogateAuthenticationPrincipalBuilder surrogatePrincipalBuilder,
             @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
-            final IPersonAttributeDao attributeRepository,
+            final PersonAttributeDao attributeRepository,
             @Qualifier(AttributeRepositoryResolver.BEAN_NAME)
             final AttributeRepositoryResolver attributeRepositoryResolver) {
             val principal = casProperties.getAuthn().getSurrogate().getPrincipal();

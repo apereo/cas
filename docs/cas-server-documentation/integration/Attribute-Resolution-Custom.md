@@ -20,14 +20,14 @@ package org.apereo.cas.custom;
 public class MyConfiguration {
 
     @Bean
-    public IPersonAttributeDao myPersonAttributeDao() {
+    public PersonAttributeDao myPersonAttributeDao() {
         return new MyPersonAttributeDao(...);
     }
 
     @Bean
     public PersonDirectoryAttributeRepositoryPlanConfigurer myAttributeRepositoryPlanConfigurer(
         @Qualifier("myPersonAttributeDao")
-        final IPersonAttributeDao myPersonAttributeDao) {
+        final PersonAttributeDao myPersonAttributeDao) {
         return plan -> plan.registerAttributeRepository(myPersonAttributeDao);
     }
 }

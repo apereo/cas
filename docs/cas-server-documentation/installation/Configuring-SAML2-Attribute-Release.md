@@ -362,7 +362,7 @@ to service providers that contain the entity attribute value `https://refeds.org
 
 {% endtab %}
 
-{% tab saml2attrrel Entities Group %}
+{% tab saml2attrrel Entity Group %}
 
 A specific attribute release policy that will compare the defined group as a regular expression with the name of the
 `EntitiesDescriptor` element as well as any `AffiliationDescriptor` owners or identifiers.

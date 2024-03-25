@@ -32,6 +32,7 @@ import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
@@ -45,7 +46,6 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -75,7 +75,7 @@ public class CasX509AuthenticationAutoConfiguration {
     private static X509SerialNumberPrincipalResolver getX509SerialNumberPrincipalResolver(
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
-        final IPersonAttributeDao attributeRepository,
+        final PersonAttributeDao attributeRepository,
         final X509AttributeExtractor x509AttributeExtractor,
         final PrincipalFactory x509PrincipalFactory,
         final ServicesManager servicesManager,
@@ -287,7 +287,7 @@ public class CasX509AuthenticationAutoConfiguration {
         @Qualifier("x509AttributeExtractor")
         final X509AttributeExtractor x509AttributeExtractor,
         @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
-        final IPersonAttributeDao attributeRepository,
+        final PersonAttributeDao attributeRepository,
         @Qualifier(AttributeRepositoryResolver.BEAN_NAME)
         final AttributeRepositoryResolver attributeRepositoryResolver) {
         val personDirectory = casProperties.getPersonDirectory();
@@ -316,7 +316,7 @@ public class CasX509AuthenticationAutoConfiguration {
         @Qualifier("x509AttributeExtractor")
         final X509AttributeExtractor x509AttributeExtractor,
         @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
-        final IPersonAttributeDao attributeRepository,
+        final PersonAttributeDao attributeRepository,
         @Qualifier(AttributeRepositoryResolver.BEAN_NAME)
         final AttributeRepositoryResolver attributeRepositoryResolver) {
         val x509 = casProperties.getAuthn().getX509();
@@ -347,7 +347,7 @@ public class CasX509AuthenticationAutoConfiguration {
         @Qualifier("x509AttributeExtractor")
         final X509AttributeExtractor x509AttributeExtractor,
         @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
-        final IPersonAttributeDao attributeRepository,
+        final PersonAttributeDao attributeRepository,
         @Qualifier(AttributeRepositoryResolver.BEAN_NAME)
         final AttributeRepositoryResolver attributeRepositoryResolver) {
         val x509 = casProperties.getAuthn().getX509();
@@ -378,7 +378,7 @@ public class CasX509AuthenticationAutoConfiguration {
         @Qualifier("x509AttributeExtractor")
         final X509AttributeExtractor x509AttributeExtractor,
         @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
-        final IPersonAttributeDao attributeRepository,
+        final PersonAttributeDao attributeRepository,
         @Qualifier(AttributeRepositoryResolver.BEAN_NAME)
         final AttributeRepositoryResolver attributeRepositoryResolver) {
         val x509 = casProperties.getAuthn().getX509();
@@ -409,7 +409,7 @@ public class CasX509AuthenticationAutoConfiguration {
         @Qualifier("x509AttributeExtractor")
         final X509AttributeExtractor x509AttributeExtractor,
         @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
-        final IPersonAttributeDao attributeRepository,
+        final PersonAttributeDao attributeRepository,
         @Qualifier(AttributeRepositoryResolver.BEAN_NAME)
         final AttributeRepositoryResolver attributeRepositoryResolver) {
         return getX509SerialNumberPrincipalResolver(applicationContext, casProperties, attributeRepository,
@@ -440,7 +440,7 @@ public class CasX509AuthenticationAutoConfiguration {
         @Qualifier(AttributeRepositoryResolver.BEAN_NAME)
         final AttributeRepositoryResolver attributeRepositoryResolver,
         @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
-        final IPersonAttributeDao attributeRepository) {
+        final PersonAttributeDao attributeRepository) {
         val x509 = casProperties.getAuthn().getX509();
         val serialNoDnProperties = x509.getSerialNoDn();
         val principal = x509.getPrincipal();
@@ -470,7 +470,7 @@ public class CasX509AuthenticationAutoConfiguration {
         @Qualifier("x509AttributeExtractor")
         final X509AttributeExtractor x509AttributeExtractor,
         @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
-        final IPersonAttributeDao attributeRepository,
+        final PersonAttributeDao attributeRepository,
         @Qualifier(AttributeRepositoryResolver.BEAN_NAME)
         final AttributeRepositoryResolver attributeRepositoryResolver) {
         val x509 = casProperties.getAuthn().getX509();

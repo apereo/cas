@@ -1,19 +1,17 @@
 package org.apereo.cas.redis;
 
+import org.apereo.cas.authentication.attribute.BasePersonAttributeDao;
+import org.apereo.cas.authentication.attribute.SimplePersonAttributes;
+import org.apereo.cas.authentication.attribute.SimpleUsernameAttributeProvider;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDaoFilter;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
+import org.apereo.cas.authentication.principal.attribute.UsernameAttributeProvider;
 import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.util.CollectionUtils;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.val;
-import org.apereo.services.persondir.IPersonAttributeDaoFilter;
-import org.apereo.services.persondir.IPersonAttributes;
-import org.apereo.services.persondir.support.BasePersonAttributeDao;
-import org.apereo.services.persondir.support.CaseInsensitiveNamedPersonImpl;
-import org.apereo.services.persondir.support.IUsernameAttributeProvider;
-import org.apereo.services.persondir.support.SimpleUsernameAttributeProvider;
-
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -31,7 +29,7 @@ import java.util.stream.Collectors;
 @Getter
 public class RedisPersonAttributeDao extends BasePersonAttributeDao {
     @Setter
-    private IUsernameAttributeProvider usernameAttributeProvider = new SimpleUsernameAttributeProvider();
+    private UsernameAttributeProvider usernameAttributeProvider = new SimpleUsernameAttributeProvider();
 
     private final CasRedisTemplate redisTemplate;
 
@@ -42,39 +40,29 @@ public class RedisPersonAttributeDao extends BasePersonAttributeDao {
     }
 
     @Override
-    public IPersonAttributes getPerson(final String uid, final Set<IPersonAttributes> resolvedPeople,
-                                       final IPersonAttributeDaoFilter filter) {
+    public PersonAttributes getPerson(final String uid, final Set<PersonAttributes> resolvedPeople,
+                                      final PersonAttributeDaoFilter filter) {
         val attributes = redisTemplate.opsForHash().entries(uid);
-        return new CaseInsensitiveNamedPersonImpl(uid, stuffAttributesIntoList(attributes));
+        return new SimplePersonAttributes(uid, stuffAttributesIntoList(attributes));
     }
 
     @Override
-    public Set<IPersonAttributes> getPeople(final Map<String, Object> map, final IPersonAttributeDaoFilter filter,
-                                            final Set<IPersonAttributes> resolvedPeople) {
+    public Set<PersonAttributes> getPeople(final Map<String, Object> map, final PersonAttributeDaoFilter filter,
+                                           final Set<PersonAttributes> resolvedPeople) {
         return getPeopleWithMultivaluedAttributes(stuffAttributesIntoList(map), filter, resolvedPeople);
     }
 
     @Override
-    public Set<IPersonAttributes> getPeopleWithMultivaluedAttributes(final Map<String, List<Object>> map,
-                                                                     final IPersonAttributeDaoFilter filter,
-                                                                     final Set<IPersonAttributes> resolvedPeople) {
-        val people = new LinkedHashSet<IPersonAttributes>();
+    public Set<PersonAttributes> getPeopleWithMultivaluedAttributes(final Map<String, List<Object>> map,
+                                                                    final PersonAttributeDaoFilter filter,
+                                                                    final Set<PersonAttributes> resolvedPeople) {
+        val people = new LinkedHashSet<PersonAttributes>();
         val username = this.usernameAttributeProvider.getUsernameFromQuery(map);
         val person = this.getPerson(username, resolvedPeople, filter);
         if (person != null) {
             people.add(person);
         }
         return people;
-    }
-
-    @Override
-    public Set<String> getPossibleUserAttributeNames(final IPersonAttributeDaoFilter filter) {
-        return new LinkedHashSet<>(0);
-    }
-    
-    @Override
-    public Set<String> getAvailableQueryAttributes(final IPersonAttributeDaoFilter filter) {
-        return new LinkedHashSet<>(0);
     }
 }
 

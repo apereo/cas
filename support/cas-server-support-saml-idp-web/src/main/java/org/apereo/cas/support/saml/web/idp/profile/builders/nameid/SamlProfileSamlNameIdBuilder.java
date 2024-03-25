@@ -66,7 +66,7 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
         }
         if (StringUtils.isNotBlank(context.getRegisteredService().getRequiredNameIdFormat())) {
             val fmt = parseAndBuildRequiredNameIdFormat(context.getRegisteredService());
-            supportedNameFormats.add(0, fmt);
+            supportedNameFormats.addFirst(fmt);
             LOGGER.debug("Added required nameId format [{}] based on saml service configuration for [{}]",
                 fmt, context.getRegisteredService().getServiceId());
         }

@@ -10,6 +10,8 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
+import org.apereo.cas.authentication.principal.merger.AttributeMerger;
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.apereo.cas.services.ServicesManager;
@@ -24,8 +26,6 @@ import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.services.persondir.IPersonAttributeDao;
-import org.apereo.services.persondir.support.merger.IAttributeMerger;
 import org.jooq.lambda.Unchecked;
 import org.springframework.context.ConfigurableApplicationContext;
 import java.util.ArrayList;
@@ -109,7 +109,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     }
 
     @Override
-    public IPersonAttributeDao getAttributeRepository() {
+    public PersonAttributeDao getAttributeRepository() {
         return context.getAttributeRepository();
     }
 
@@ -261,8 +261,8 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     public static PrincipalResolver newPersonDirectoryPrincipalResolver(
         final ConfigurableApplicationContext applicationContext,
         final PrincipalFactory principalFactory,
-        final IPersonAttributeDao attributeRepository,
-        final IAttributeMerger attributeMerger,
+        final PersonAttributeDao attributeRepository,
+        final AttributeMerger attributeMerger,
         final ServicesManager servicesManager,
         final AttributeDefinitionStore attributeDefinitionStore,
         final AttributeRepositoryResolver attributeRepositoryResolver,
@@ -289,8 +289,8 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     public static <T extends PrincipalResolver> T newPersonDirectoryPrincipalResolver(
         final ConfigurableApplicationContext applicationContext,
         final PrincipalFactory principalFactory,
-        final IPersonAttributeDao attributeRepository,
-        final IAttributeMerger attributeMerger,
+        final PersonAttributeDao attributeRepository,
+        final AttributeMerger attributeMerger,
         final Class<T> resolverClass,
         final ServicesManager servicesManager,
         final AttributeDefinitionStore attributeDefinitionStore,
@@ -333,8 +333,8 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     public static PrincipalResolutionContext buildPrincipalResolutionContext(
         final ConfigurableApplicationContext applicationContext,
         final PrincipalFactory principalFactory,
-        final IPersonAttributeDao attributeRepository,
-        final IAttributeMerger attributeMerger,
+        final PersonAttributeDao attributeRepository,
+        final AttributeMerger attributeMerger,
         final ServicesManager servicesManager,
         final AttributeDefinitionStore attributeDefinitionStore,
         final AttributeRepositoryResolver attributeRepositoryResolver,

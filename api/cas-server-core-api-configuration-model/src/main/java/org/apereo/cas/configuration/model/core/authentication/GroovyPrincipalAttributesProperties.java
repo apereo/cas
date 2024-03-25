@@ -27,12 +27,6 @@ public class GroovyPrincipalAttributesProperties extends SpringResourcePropertie
     private static final long serialVersionUID = 7901595963842506684L;
 
     /**
-     * Whether attribute repository should consider the underlying
-     * attribute names in a case-insensitive manner.
-     */
-    private boolean caseInsensitive;
-
-    /**
      * The order of this attribute repository in the chain of repositories.
      * Can be used to explicitly position this source in chain and affects
      * merging strategies.

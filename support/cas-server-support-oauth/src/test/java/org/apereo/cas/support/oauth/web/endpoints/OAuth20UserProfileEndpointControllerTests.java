@@ -163,7 +163,7 @@ class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Tests {
         val receivedBody = (Map) entity.getBody();
         assertEquals(ID, receivedBody.get("id"));
         val attributes = (Map<String, List>) receivedBody.get("attributes");
-        assertEquals(VALUE, attributes.get(NAME).get(0));
+        assertEquals(VALUE, attributes.get(NAME).getFirst());
         assertEquals(list, attributes.get(NAME2));
     }
     
@@ -206,7 +206,7 @@ class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Tests {
         val receivedBody = (Map) entity.getBody();
         assertEquals(ID, receivedBody.get("id"));
         val attributes = (Map<String, List>) receivedBody.get("attributes");
-        assertEquals(VALUE, attributes.get(NAME).get(0));
+        assertEquals(VALUE, attributes.get(NAME).getFirst());
         assertEquals(list, attributes.get(NAME2));
     }
 
@@ -236,7 +236,7 @@ class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Tests {
         val receivedBody = (Map) entity.getBody();
         assertEquals(ID, receivedBody.get("id"));
         val attributes = (Map<String, List>) receivedBody.get("attributes");
-        assertEquals(VALUE, attributes.get(NAME).get(0));
+        assertEquals(VALUE, attributes.get(NAME).getFirst());
         assertEquals(list, attributes.get(NAME2));
     }
 }

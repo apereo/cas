@@ -3,14 +3,14 @@ package org.apereo.cas.authentication.principal;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.PrincipalElectionStrategyConflictResolver;
+import org.apereo.cas.authentication.principal.merger.AttributeMerger;
+import org.apereo.cas.authentication.principal.merger.ReplacingAttributeAdder;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apereo.services.persondir.support.merger.IAttributeMerger;
-import org.apereo.services.persondir.support.merger.ReplacingAttributeAdder;
 import org.springframework.core.Ordered;
 
 import java.io.Serial;
@@ -42,7 +42,7 @@ public class DefaultPrincipalElectionStrategy implements PrincipalElectionStrate
 
     private final PrincipalElectionStrategyConflictResolver principalElectionConflictResolver;
 
-    private IAttributeMerger attributeMerger = new ReplacingAttributeAdder();
+    private AttributeMerger attributeMerger = new ReplacingAttributeAdder();
 
     private int order = Ordered.LOWEST_PRECEDENCE;
 
