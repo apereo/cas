@@ -4,12 +4,12 @@ import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
+import org.apereo.cas.authentication.principal.merger.AttributeMerger;
 import org.apereo.cas.services.ServicesManager;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
-import org.apereo.services.persondir.IPersonAttributeDao;
-import org.apereo.services.persondir.support.merger.IAttributeMerger;
 import org.springframework.context.ApplicationContext;
 import java.util.HashSet;
 import java.util.Set;
@@ -26,7 +26,7 @@ public class PrincipalResolutionContext {
     /**
      * Repository of principal attributes to be retrieved.
      */
-    private final IPersonAttributeDao attributeRepository;
+    private final PersonAttributeDao attributeRepository;
 
     /**
      * Factory to create the principal type.
@@ -65,7 +65,7 @@ public class PrincipalResolutionContext {
     @Builder.Default
     private final Set<String> activeAttributeRepositoryIdentifiers = new HashSet<>();
 
-    private final IAttributeMerger attributeMerger;
+    private final AttributeMerger attributeMerger;
 
     private final ServicesManager servicesManager;
 

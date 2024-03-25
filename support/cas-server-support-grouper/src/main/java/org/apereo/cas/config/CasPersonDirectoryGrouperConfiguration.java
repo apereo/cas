@@ -1,17 +1,17 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.attribute.SimpleUsernameAttributeProvider;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.core.authentication.AttributeRepositoryStates;
+import org.apereo.cas.persondir.GrouperPersonAttributeDao;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apereo.services.persondir.IPersonAttributeDao;
-import org.apereo.services.persondir.support.GrouperPersonAttributeDao;
-import org.apereo.services.persondir.support.SimpleUsernameAttributeProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -39,9 +39,9 @@ class CasPersonDirectoryGrouperConfiguration {
         @ConditionalOnMissingBean(name = "grouperAttributeRepositories")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public BeanContainer<IPersonAttributeDao> grouperAttributeRepositories(
+        public BeanContainer<PersonAttributeDao> grouperAttributeRepositories(
             final CasConfigurationProperties casProperties) {
-            val list = new ArrayList<IPersonAttributeDao>();
+            val list = new ArrayList<PersonAttributeDao>();
             val gp = casProperties.getAuthn().getAttributeRepository().getGrouper();
             val dao = new GrouperPersonAttributeDao();
             dao.setOrder(gp.getOrder());
@@ -66,11 +66,11 @@ class CasPersonDirectoryGrouperConfiguration {
         @ConditionalOnMissingBean(name = "grouperPersonDirectoryAttributeRepositoryPlanConfigurer")
         public PersonDirectoryAttributeRepositoryPlanConfigurer grouperPersonDirectoryAttributeRepositoryPlanConfigurer(
             @Qualifier("grouperAttributeRepositories")
-            final BeanContainer<IPersonAttributeDao> grouperAttributeRepositories) {
+            final BeanContainer<PersonAttributeDao> grouperAttributeRepositories) {
             return plan -> {
                 val results = grouperAttributeRepositories.toList()
                     .stream()
-                    .filter(IPersonAttributeDao::isEnabled)
+                    .filter(PersonAttributeDao::isEnabled)
                     .collect(Collectors.toList());
                 plan.registerAttributeRepositories(results);
             };

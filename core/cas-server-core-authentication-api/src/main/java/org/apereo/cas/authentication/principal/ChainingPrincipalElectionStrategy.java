@@ -2,14 +2,14 @@ package org.apereo.cas.authentication.principal;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
+import org.apereo.cas.authentication.principal.merger.AttributeMerger;
+import org.apereo.cas.authentication.principal.merger.ReplacingAttributeAdder;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apereo.services.persondir.support.merger.IAttributeMerger;
-import org.apereo.services.persondir.support.merger.ReplacingAttributeAdder;
 import org.jooq.lambda.Unchecked;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
@@ -38,7 +38,7 @@ public class ChainingPrincipalElectionStrategy implements PrincipalElectionStrat
 
     private final List<PrincipalElectionStrategy> chain;
 
-    private IAttributeMerger attributeMerger = new ReplacingAttributeAdder();
+    private AttributeMerger attributeMerger = new ReplacingAttributeAdder();
 
     public ChainingPrincipalElectionStrategy(final PrincipalElectionStrategy... chain) {
         this.chain = Stream.of(chain).collect(Collectors.toList());

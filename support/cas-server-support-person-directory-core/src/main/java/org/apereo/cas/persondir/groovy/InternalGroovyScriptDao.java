@@ -1,20 +1,17 @@
-package org.apereo.cas.authentication.principal.resolvers;
+package org.apereo.cas.persondir.groovy;
 
+import org.apereo.cas.authentication.attribute.SimpleUsernameAttributeProvider;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
+import org.apereo.cas.authentication.principal.attribute.UsernameAttributeProvider;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.authentication.GroovyPrincipalAttributesProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.scripting.ScriptingUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.services.persondir.IPersonAttributes;
-import org.apereo.services.persondir.support.BaseGroovyScriptDaoImpl;
-import org.apereo.services.persondir.support.IUsernameAttributeProvider;
-import org.apereo.services.persondir.support.SimpleUsernameAttributeProvider;
 import org.springframework.context.ApplicationContext;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,12 +22,12 @@ import java.util.Set;
  * This is {@link InternalGroovyScriptDao}.
  *
  * @author Misagh Moayyed
- * @since 5.1.0
+ * @since 7.1.0
  */
 @Slf4j
 @RequiredArgsConstructor
-public class InternalGroovyScriptDao extends BaseGroovyScriptDaoImpl {
-    private final IUsernameAttributeProvider usernameAttributeProvider = new SimpleUsernameAttributeProvider("username");
+public class InternalGroovyScriptDao implements PersonAttributeScriptDao {
+    private final UsernameAttributeProvider usernameAttributeProvider = new SimpleUsernameAttributeProvider("username");
 
     private final ApplicationContext applicationContext;
 
@@ -40,7 +37,7 @@ public class InternalGroovyScriptDao extends BaseGroovyScriptDaoImpl {
 
     @Override
     public Map<String, List<Object>> getPersonAttributesFromMultivaluedAttributes(final Map<String, List<Object>> attributes,
-                                                                                  final Set<IPersonAttributes> resultPeople) {
+                                                                                  final Set<PersonAttributes> resultPeople) {
         val username = usernameAttributeProvider.getUsernameFromQuery(attributes);
         val results = new HashMap<String, List<Object>>();
         if (StringUtils.isNotBlank(username)) {

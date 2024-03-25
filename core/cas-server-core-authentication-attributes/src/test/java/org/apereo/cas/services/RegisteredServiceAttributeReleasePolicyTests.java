@@ -2,12 +2,16 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.CoreAttributesTestUtils;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.attribute.MergingPersonAttributeDaoImpl;
+import org.apereo.cas.authentication.attribute.StubPersonAttributeDao;
 import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalAttributesRepositoryCache;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.RegisteredServicePrincipalAttributesRepository;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.cache.DefaultPrincipalAttributesRepositoryCache;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
@@ -16,10 +20,6 @@ import org.apereo.cas.util.serialization.SerializationUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import com.google.common.collect.ArrayListMultimap;
 import lombok.val;
-import org.apereo.services.persondir.IPersonAttributeDao;
-import org.apereo.services.persondir.IPersonAttributes;
-import org.apereo.services.persondir.support.MergingPersonAttributeDaoImpl;
-import org.apereo.services.persondir.support.StubPersonAttributeDao;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -277,7 +277,7 @@ class RegisteredServiceAttributeReleasePolicyTests {
             attributes.put("cn", Arrays.asList(new Object[]{"commonName"}));
             attributes.put("username", Arrays.asList(new Object[]{"uid"}));
 
-            val person = mock(IPersonAttributes.class);
+            val person = mock(PersonAttributes.class);
             when(person.getName()).thenReturn("uid");
             when(person.getAttributes()).thenReturn(attributes);
 
@@ -383,13 +383,13 @@ class RegisteredServiceAttributeReleasePolicyTests {
         @TestConfiguration(proxyBeanMethods = false)
         public static class AttributeRepositoryTestConfiguration {
             @Bean
-            public IPersonAttributeDao attributeRepository() {
+            public PersonAttributeDao attributeRepository() {
                 val attributes = new HashMap<String, List<Object>>();
                 attributes.put("values", Arrays.asList(new Object[]{"v1", "v2", "v3"}));
                 attributes.put("cn", Arrays.asList(new Object[]{"commonName"}));
                 attributes.put("username", Arrays.asList(new Object[]{"uid"}));
 
-                val person = mock(IPersonAttributes.class);
+                val person = mock(PersonAttributes.class);
                 when(person.getName()).thenReturn("uid");
                 when(person.getAttributes()).thenReturn(attributes);
 

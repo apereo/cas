@@ -1,15 +1,13 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.BasePrincipalAttributeRepositoryTests;
-
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import lombok.val;
-import org.apereo.services.persondir.IPersonAttributeDao;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -27,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CasPersonDirectoryConfigurationCachingAttributeRepositoryTests {
     @Autowired
     @Qualifier("cachingAttributeRepository")
-    private IPersonAttributeDao cachingAttributeRepository;
+    private PersonAttributeDao cachingAttributeRepository;
 
     /**
      * These two username produce the same hashcode

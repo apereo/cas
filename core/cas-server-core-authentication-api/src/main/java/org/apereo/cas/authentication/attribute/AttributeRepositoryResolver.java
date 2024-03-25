@@ -3,11 +3,11 @@ package org.apereo.cas.authentication.attribute;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.With;
 import lombok.experimental.SuperBuilder;
-import org.apereo.services.persondir.IPersonAttributeDao;
 import java.util.Set;
 
 /**
@@ -48,6 +48,6 @@ public interface AttributeRepositoryResolver {
      * @return the attribute repository resolver
      */
     static AttributeRepositoryResolver allAttributeRepositories() {
-        return query -> Set.of(IPersonAttributeDao.WILDCARD);
+        return query -> Set.of(PersonAttributeDao.WILDCARD);
     }
 }

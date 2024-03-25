@@ -3,12 +3,12 @@ package org.apereo.cas.jdbc;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.services.ServicesManager;
 import lombok.Cleanup;
 import lombok.val;
-import org.apereo.services.persondir.IPersonAttributeDao;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mock;
@@ -30,7 +30,7 @@ import java.sql.Statement;
 public abstract class BaseJdbcAttributeRepositoryTests {
     @Autowired
     @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
-    protected IPersonAttributeDao attributeRepository;
+    protected PersonAttributeDao attributeRepository;
 
     @Autowired
     protected ConfigurableApplicationContext applicationContext;

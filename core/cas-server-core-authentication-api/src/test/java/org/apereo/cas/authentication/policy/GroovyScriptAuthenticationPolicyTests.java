@@ -31,7 +31,7 @@ class GroovyScriptAuthenticationPolicyTests {
         FileUtils.write(scriptFile, script, StandardCharsets.UTF_8);
         val policy = new GroovyScriptAuthenticationPolicy("file:" + scriptFile.getCanonicalPath());
         val authentication = CoreAuthenticationTestUtils.getAuthentication();
-        authentication.getCredentials().get(0).getCredentialMetadata().putProperty("mustFail", "true");
+        authentication.getCredentials().getFirst().getCredentialMetadata().putProperty("mustFail", "true");
         assertThrows(GeneralSecurityException.class, () -> policy.isSatisfiedBy(authentication, mock(ConfigurableApplicationContext.class)));
     }
 

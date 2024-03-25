@@ -37,15 +37,15 @@ public class MetadataObject {
     private static final ObjectMapper OBJECT_MAPPER = JacksonCodecs.json();
 
     private static final TypeReference<Map<String, String>> MAP_STRING_STRING_TYPE =
-        new TypeReference<Map<String, String>>() {
+        new TypeReference<>() {
         };
 
     private static final TypeReference<List<String>> LIST_STRING_TYPE =
-        new TypeReference<List<String>>() {
+        new TypeReference<>() {
         };
 
     private static final TypeReference<List<JsonNode>> LIST_JSONNODE_TYPE =
-        new TypeReference<List<JsonNode>>() {
+        new TypeReference<>() {
         };
 
     private final JsonNode data;

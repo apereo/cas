@@ -8,7 +8,7 @@ package org.apereo.inspektr.common.web;
  */
 public class ClientInfoHolder {
 
-    private static final ThreadLocal<ClientInfo> CLIENT_INFO_HOLDER = new InheritableThreadLocal<ClientInfo>();
+    private static final ThreadLocal<ClientInfo> CLIENT_INFO_HOLDER = new InheritableThreadLocal<>();
 
     /**
      * Sets client info.

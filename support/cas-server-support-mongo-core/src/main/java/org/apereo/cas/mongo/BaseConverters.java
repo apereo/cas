@@ -1,5 +1,6 @@
 package org.apereo.cas.mongo;
 
+import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.RegexUtils;
 import com.google.common.cache.Cache;
@@ -11,7 +12,6 @@ import lombok.NoArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
-import org.apereo.services.persondir.IPersonAttributes;
 import org.bson.BsonReader;
 import org.bson.BsonTimestamp;
 import org.bson.BsonWriter;
@@ -87,7 +87,7 @@ public abstract class BaseConverters {
      *
      * @since 4.1
      */
-    public static class PersonAttributesConverter extends NullConverter<IPersonAttributes, DBObject> {
+    public static class PersonAttributesConverter extends NullConverter<PersonAttributes, DBObject> {
     }
 
     /**

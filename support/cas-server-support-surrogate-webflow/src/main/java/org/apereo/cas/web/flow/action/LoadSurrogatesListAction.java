@@ -50,7 +50,7 @@ public class LoadSurrogatesListAction extends BaseCasWebflowAction {
             LOGGER.debug("Surrogate accounts found are [{}]", surrogates);
             if (!surrogates.isEmpty()) {
                 if (!surrogates.contains(username) && !surrogateService.isWildcardedAccount(surrogates, service)) {
-                    surrogates.add(0, username);
+                    surrogates.addFirst(username);
                 }
                 WebUtils.putSurrogateAuthenticationAccounts(requestContext, surrogates);
                 return true;

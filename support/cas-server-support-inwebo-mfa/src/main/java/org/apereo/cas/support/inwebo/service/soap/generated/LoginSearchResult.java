@@ -149,7 +149,7 @@ public class LoginSearchResult {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the id property.
+     * This is why there is not a {@code set} method for the id property.
      *
      * <p>
      * For example, to add a new item, do as follows:
@@ -166,7 +166,7 @@ public class LoginSearchResult {
      */
     public List<Long> getId() {
         if (id == null) {
-            id = new ArrayList<Long>();
+            id = new ArrayList<>();
         }
         return this.id;
     }
@@ -178,7 +178,7 @@ public class LoginSearchResult {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the login property.
+     * This is why there is not a {@code set} method for the login property.
      *
      * <p>
      * For example, to add a new item, do as follows:
@@ -195,7 +195,7 @@ public class LoginSearchResult {
      */
     public List<String> getLogin() {
         if (login == null) {
-            login = new ArrayList<String>();
+            login = new ArrayList<>();
         }
         return this.login;
     }
@@ -207,7 +207,7 @@ public class LoginSearchResult {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the code property.
+     * This is why there is not a {@code set} method for the code property.
      *
      * <p>
      * For example, to add a new item, do as follows:
@@ -224,7 +224,7 @@ public class LoginSearchResult {
      */
     public List<String> getCode() {
         if (code == null) {
-            code = new ArrayList<String>();
+            code = new ArrayList<>();
         }
         return this.code;
     }
@@ -236,7 +236,7 @@ public class LoginSearchResult {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the status property.
+     * This is why there is not a {@code set} method for the status property.
      *
      * <p>
      * For example, to add a new item, do as follows:
@@ -253,7 +253,7 @@ public class LoginSearchResult {
      */
     public List<Long> getStatus() {
         if (status == null) {
-            status = new ArrayList<Long>();
+            status = new ArrayList<>();
         }
         return this.status;
     }
@@ -265,7 +265,7 @@ public class LoginSearchResult {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the role property.
+     * This is why there is not a {@code set} method for the role property.
      *
      * <p>
      * For example, to add a new item, do as follows:
@@ -282,7 +282,7 @@ public class LoginSearchResult {
      */
     public List<Long> getRole() {
         if (role == null) {
-            role = new ArrayList<Long>();
+            role = new ArrayList<>();
         }
         return this.role;
     }
@@ -294,7 +294,7 @@ public class LoginSearchResult {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the firstname property.
+     * This is why there is not a {@code set} method for the firstname property.
      *
      * <p>
      * For example, to add a new item, do as follows:
@@ -311,7 +311,7 @@ public class LoginSearchResult {
      */
     public List<String> getFirstname() {
         if (firstname == null) {
-            firstname = new ArrayList<String>();
+            firstname = new ArrayList<>();
         }
         return this.firstname;
     }
@@ -323,7 +323,7 @@ public class LoginSearchResult {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the name property.
+     * This is why there is not a {@code set} method for the name property.
      *
      * <p>
      * For example, to add a new item, do as follows:
@@ -340,7 +340,7 @@ public class LoginSearchResult {
      */
     public List<String> getName() {
         if (name == null) {
-            name = new ArrayList<String>();
+            name = new ArrayList<>();
         }
         return this.name;
     }
@@ -352,7 +352,7 @@ public class LoginSearchResult {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the mail property.
+     * This is why there is not a {@code set} method for the mail property.
      *
      * <p>
      * For example, to add a new item, do as follows:
@@ -369,7 +369,7 @@ public class LoginSearchResult {
      */
     public List<String> getMail() {
         if (mail == null) {
-            mail = new ArrayList<String>();
+            mail = new ArrayList<>();
         }
         return this.mail;
     }
@@ -381,7 +381,7 @@ public class LoginSearchResult {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the phone property.
+     * This is why there is not a {@code set} method for the phone property.
      *
      * <p>
      * For example, to add a new item, do as follows:
@@ -398,7 +398,7 @@ public class LoginSearchResult {
      */
     public List<String> getPhone() {
         if (phone == null) {
-            phone = new ArrayList<String>();
+            phone = new ArrayList<>();
         }
         return this.phone;
     }
@@ -410,7 +410,7 @@ public class LoginSearchResult {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the extrafields property.
+     * This is why there is not a {@code set} method for the extrafields property.
      *
      * <p>
      * For example, to add a new item, do as follows:
@@ -427,7 +427,7 @@ public class LoginSearchResult {
      */
     public List<String> getExtrafields() {
         if (extrafields == null) {
-            extrafields = new ArrayList<String>();
+            extrafields = new ArrayList<>();
         }
         return this.extrafields;
     }
@@ -439,7 +439,7 @@ public class LoginSearchResult {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the createdby property.
+     * This is why there is not a {@code set} method for the createdby property.
      *
      * <p>
      * For example, to add a new item, do as follows:
@@ -456,7 +456,7 @@ public class LoginSearchResult {
      */
     public List<Long> getCreatedby() {
         if (createdby == null) {
-            createdby = new ArrayList<Long>();
+            createdby = new ArrayList<>();
         }
         return this.createdby;
     }
@@ -468,7 +468,7 @@ public class LoginSearchResult {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the activationStatus property.
+     * This is why there is not a {@code set} method for the activationStatus property.
      *
      * <p>
      * For example, to add a new item, do as follows:
@@ -485,7 +485,7 @@ public class LoginSearchResult {
      */
     public List<Long> getActivationStatus() {
         if (activationStatus == null) {
-            activationStatus = new ArrayList<Long>();
+            activationStatus = new ArrayList<>();
         }
         return this.activationStatus;
     }

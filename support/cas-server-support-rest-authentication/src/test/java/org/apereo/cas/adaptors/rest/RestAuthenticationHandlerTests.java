@@ -80,7 +80,7 @@ class RestAuthenticationHandlerTests {
 
     @Test
     void verifyOperations() throws Throwable {
-        val port = URI.create(casProperties.getAuthn().getRest().get(0).getUri()).getPort();
+        val port = URI.create(casProperties.getAuthn().getRest().getFirst().getUri()).getPort();
         val instant = Instant.now(Clock.systemUTC()).plus(10, ChronoUnit.DAYS);
         val formatted = DateTimeFormatter.RFC_1123_DATE_TIME
             .withZone(ZoneOffset.UTC)

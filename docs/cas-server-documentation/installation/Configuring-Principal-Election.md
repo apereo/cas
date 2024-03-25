@@ -11,12 +11,12 @@ Each step or branch in the CAS authentication flow may decide to produce an auth
 and/or collect attributes and metadata about the authentication event itself. These objects or subjects are eventually
 collected and assembled into one canonical authentication object that represents a combination of all attempts, with
 all data and attributes merged into a single container. You can of course override the merging strategy by registering
-your own `IAttributeMerger` component with the runtime context:
+your own `AttributeMerger` component with the runtime context:
 
 ```java
 @Bean
-public IAttributeMerger principalElectionAttributeMerger() {
-    return new MyIAttributeMerger();
+public AttributeMerger principalElectionAttributeMerger() {
+    return new MyAttributeMerger();
 }
 ```
  

@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.attribute.StubPersonAttributeDao;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.core.authentication.AttributeRepositoryStates;
@@ -9,8 +11,6 @@ import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
-import org.apereo.services.persondir.IPersonAttributeDao;
-import org.apereo.services.persondir.support.NamedStubPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -42,8 +42,8 @@ class CasPersonDirectoryStubConfiguration {
         @ConditionalOnMissingBean(name = "stubAttributeRepositories")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public BeanContainer<IPersonAttributeDao> stubAttributeRepositories(final CasConfigurationProperties casProperties) {
-            val list = new ArrayList<IPersonAttributeDao>();
+        public BeanContainer<PersonAttributeDao> stubAttributeRepositories(final CasConfigurationProperties casProperties) {
+            val list = new ArrayList<PersonAttributeDao>();
             val stub = casProperties.getAuthn().getAttributeRepository().getStub();
             val attrs = stub.getAttributes();
             if (!attrs.isEmpty()) {
@@ -53,8 +53,8 @@ class CasPersonDirectoryStubConfiguration {
             return BeanContainer.of(list);
         }
 
-        private static IPersonAttributeDao newStubAttributeRepository(final PrincipalAttributesProperties properties) {
-            val dao = new NamedStubPersonAttributeDao();
+        private static PersonAttributeDao newStubAttributeRepository(final PrincipalAttributesProperties properties) {
+            val dao = new StubPersonAttributeDao();
             val backingMap = new LinkedHashMap<String, List<Object>>();
             val stub = properties.getStub();
             stub.getAttributes().forEach((key, value) -> {
@@ -88,11 +88,11 @@ class CasPersonDirectoryStubConfiguration {
         @ConditionalOnMissingBean(name = "stubPersonDirectoryAttributeRepositoryPlanConfigurer")
         public PersonDirectoryAttributeRepositoryPlanConfigurer stubPersonDirectoryAttributeRepositoryPlanConfigurer(
             @Qualifier("stubAttributeRepositories")
-            final BeanContainer<IPersonAttributeDao> stubAttributeRepositories) {
+            final BeanContainer<PersonAttributeDao> stubAttributeRepositories) {
             return plan -> {
                 val results = stubAttributeRepositories.toList()
                     .stream()
-                    .filter(IPersonAttributeDao::isEnabled)
+                    .filter(PersonAttributeDao::isEnabled)
                     .collect(Collectors.toList());
                 plan.registerAttributeRepositories(results);
             };

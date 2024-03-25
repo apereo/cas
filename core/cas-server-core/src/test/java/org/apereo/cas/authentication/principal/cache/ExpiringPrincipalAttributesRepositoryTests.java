@@ -4,14 +4,14 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalAttributesRepositoryCache;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDaoFilter;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.val;
-import org.apereo.services.persondir.IPersonAttributeDao;
-import org.apereo.services.persondir.IPersonAttributeDaoFilter;
-import org.apereo.services.persondir.IPersonAttributes;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -120,13 +120,13 @@ class ExpiringPrincipalAttributesRepositoryTests {
     @TestConfiguration
     static class CacheTestConfiguration {
         @Bean
-        public IPersonAttributeDao attributeRepository() {
-            val dao = mock(IPersonAttributeDao.class);
-            val person = mock(IPersonAttributes.class);
+        public PersonAttributeDao attributeRepository() {
+            val dao = mock(PersonAttributeDao.class);
+            val person = mock(PersonAttributes.class);
             when(person.getName()).thenReturn("uid");
             when(person.getAttributes()).thenReturn(REPOSITORY_ATTRIBUTES);
-            when(dao.getPerson(any(String.class), any(), any(IPersonAttributeDaoFilter.class))).thenReturn(person);
-            when(dao.getPeople(any(Map.class), any(IPersonAttributeDaoFilter.class))).thenReturn(Set.of(person));
+            when(dao.getPerson(any(String.class), any(), any(PersonAttributeDaoFilter.class))).thenReturn(person);
+            when(dao.getPeople(any(Map.class), any(PersonAttributeDaoFilter.class))).thenReturn(Set.of(person));
             when(dao.getId()).thenReturn(new String[]{"Stub"});
             return dao;
         }

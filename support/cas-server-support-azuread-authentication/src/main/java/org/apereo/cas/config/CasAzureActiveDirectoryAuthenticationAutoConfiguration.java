@@ -7,8 +7,10 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.azure.ad.authentication.AzureActiveDirectoryAuthenticationHandler;
+import org.apereo.cas.azure.ad.authentication.MicrosoftGraphPersonAttributeDao;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
@@ -20,8 +22,6 @@ import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.services.persondir.IPersonAttributeDao;
-import org.apereo.services.persondir.support.MicrosoftGraphPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -51,9 +51,9 @@ public class CasAzureActiveDirectoryAuthenticationAutoConfiguration {
         @ConditionalOnMissingBean(name = "microsoftAzureActiveDirectoryAttributeRepositories")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public List<IPersonAttributeDao> microsoftAzureActiveDirectoryAttributeRepositories(final CasConfigurationProperties casProperties) {
+        public List<PersonAttributeDao> microsoftAzureActiveDirectoryAttributeRepositories(final CasConfigurationProperties casProperties) {
             val resolver = SpringExpressionLanguageValueResolver.getInstance();
-            val list = new ArrayList<IPersonAttributeDao>();
+            val list = new ArrayList<PersonAttributeDao>();
             val attrs = casProperties.getAuthn().getAttributeRepository();
             attrs.getAzureActiveDirectory().stream()
                 .filter(msft -> StringUtils.isNotBlank(msft.getClientId()) && StringUtils.isNotBlank(msft.getClientSecret()))
@@ -84,8 +84,8 @@ public class CasAzureActiveDirectoryAuthenticationAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PersonDirectoryAttributeRepositoryPlanConfigurer microsoftAzureActiveDirectoryAttributeRepositoryPlanConfigurer(
             @Qualifier("microsoftAzureActiveDirectoryAttributeRepositories")
-            final List<IPersonAttributeDao> repositories) {
-            return plan -> repositories.stream().filter(IPersonAttributeDao::isEnabled).forEach(plan::registerAttributeRepository);
+            final List<PersonAttributeDao> repositories) {
+            return plan -> repositories.stream().filter(PersonAttributeDao::isEnabled).forEach(plan::registerAttributeRepository);
         }
 
     }

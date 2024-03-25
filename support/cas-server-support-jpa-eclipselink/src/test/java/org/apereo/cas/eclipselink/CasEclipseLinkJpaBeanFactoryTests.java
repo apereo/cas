@@ -46,7 +46,7 @@ class CasEclipseLinkJpaBeanFactoryTests {
     @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
     private JpaBeanFactory jpaBeanFactory;
 
-        private static DataSource dataSource() {
+    private static DataSource dataSource() {
         return JpaBeans.newDataSource("org.hsqldb.jdbcDriver", "sa", StringUtils.EMPTY, "jdbc:hsqldb:mem:cas");
     }
 

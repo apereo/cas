@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordA
 import org.apereo.cas.authentication.principal.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.DefaultPrincipalResolutionExecutionPlan;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.principal.resolvers.ChainingPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
@@ -17,7 +18,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.services.persondir.IPersonAttributeDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -100,7 +100,7 @@ class SurrogatePrincipalResolverTests {
 
     @Test
     void verifyResolverWithNoAttributes() throws Throwable {
-        val context = getPrincipalResolutionContext(StringUtils.EMPTY, mock(IPersonAttributeDao.class));
+        val context = getPrincipalResolutionContext(StringUtils.EMPTY, mock(PersonAttributeDao.class));
         val surrogatePrincipalBuilder = new DefaultSurrogateAuthenticationPrincipalBuilder(PrincipalFactoryUtils.newPrincipalFactory(),
             context.getAttributeRepository(),
             new SimpleSurrogateAuthenticationService(Map.of("test", List.of("surrogate")), mock(ServicesManager.class)));
@@ -201,7 +201,7 @@ class SurrogatePrincipalResolverTests {
 
     private PrincipalResolutionContext getPrincipalResolutionContext(
         final String principalAttributes,
-        final IPersonAttributeDao attributeRepository) {
+        final PersonAttributeDao attributeRepository) {
         return PrincipalResolutionContext.builder()
             .attributeDefinitionStore(attributeDefinitionStore)
             .servicesManager(servicesManager)
@@ -215,7 +215,7 @@ class SurrogatePrincipalResolverTests {
             .useCurrentPrincipalId(false)
             .resolveAttributes(true)
             .principalAttributeNames(principalAttributes)
-            .activeAttributeRepositoryIdentifiers(CollectionUtils.wrapSet(IPersonAttributeDao.WILDCARD))
+            .activeAttributeRepositoryIdentifiers(CollectionUtils.wrapSet(PersonAttributeDao.WILDCARD))
             .build();
     }
 }
