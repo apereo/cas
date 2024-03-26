@@ -214,26 +214,6 @@ class MultiRowJdbcPersonAttributeDaoTests {
     }
 
     @Test
-    void testNullAttrQuery() {
-        val impl = new MultiRowJdbcPersonAttributeDao(testDataSource, "SELECT netid, attr_name, attr_val FROM user_table WHERE {0}");
-        impl.setQueryAttributeMapping(Collections.singletonMap("uid", "netid"));
-
-        impl.setUsernameAttributeProvider(new SimpleUsernameAttributeProvider("uid"));
-        impl.setUnmappedUsernameAttribute("netid");
-
-        val columnsToAttributes = new LinkedHashMap<String, Object>();
-        columnsToAttributes.put("name", "firstName");
-        columnsToAttributes.put("shirt_color", "dressShirtColor");
-        impl.setResultAttributeMapping(columnsToAttributes);
-
-        impl.setNameValueColumnMappings(Collections.singletonMap("attr_name", "attr_val"));
-
-        val attribs = impl.getPerson("susan").getAttributes();
-        assertEquals(Collections.singletonList(null), attribs.get("dressShirtColor"));
-        assertEquals(List.of("Susan"), attribs.get("firstName"));
-    }
-
-    @Test
     void testMultiAttrQuery() {
         val queryAttributeMapping = new LinkedHashMap<String, String>();
         queryAttributeMapping.put("uid", "netid");

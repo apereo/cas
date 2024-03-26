@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.principal.merger;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.Getter;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.1.0
  */
 @Getter
+@Tag("Attributes")
 class ReturnOriginalAttributeMergerTests extends AbstractAttributeMergerTests {
     private final AttributeMerger attributeMerger = new ReturnOriginalAttributeMerger();
 
