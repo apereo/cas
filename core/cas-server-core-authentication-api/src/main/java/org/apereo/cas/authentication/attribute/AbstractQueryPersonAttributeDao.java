@@ -255,7 +255,7 @@ public abstract class AbstractQueryPersonAttributeDao<QB> extends AbstractDefaul
         if (canonicalizationMode == null) {
             canonicalizationMode = defaultCaseCanonicalizationMode;
         }
-        val canonicalizedValues = new ArrayList<Object>(value.size());
+        val canonicalizedValues = new ArrayList<>(value.size());
         for (val origValue : value) {
             if (origValue instanceof String) {
                 canonicalizedValues.add(canonicalizationMode.canonicalize((String) origValue, Locale.ENGLISH));

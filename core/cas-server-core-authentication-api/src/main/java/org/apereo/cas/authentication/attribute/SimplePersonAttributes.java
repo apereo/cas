@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 /**
@@ -41,7 +42,7 @@ public class SimplePersonAttributes implements PersonAttributes {
         this.attributes = buildImmutableAttributeMap(attributes);
         this.name = attributes.containsKey("username")
             ? attributes.get("username").getFirst().toString()
-            : "unknown";
+            : UUID.randomUUID().toString();
     }
 
     public SimplePersonAttributes() {

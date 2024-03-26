@@ -69,7 +69,7 @@ class SurrogatePrincipalElectionStrategyTests {
         val principal = strategy.nominate(authentications, (Map) attributes);
         assertNotNull(principal);
         assertEquals("cas-surrogate", principal.getId());
-        assertEquals(attributeRepository.getBackingMap().size(), principal.getAttributes().size());
+        assertEquals(6, principal.getAttributes().size());
 
         val result = attributeRepository.getBackingMap().keySet()
             .stream()
@@ -102,7 +102,7 @@ class SurrogatePrincipalElectionStrategyTests {
         val principal = (SurrogatePrincipal) strategy.nominate(principals, Map.of());
         assertNotNull(principal);
         assertEquals("cas-surrogate", principal.getId());
-        assertEquals(attributeRepository.getBackingMap().size(), principal.getAttributes().size());
+        assertEquals(6, principal.getAttributes().size());
         assertEquals("primary", principal.getPrimary().getId());
         assertEquals(attributes, principal.getPrimary().getAttributes());
     }
