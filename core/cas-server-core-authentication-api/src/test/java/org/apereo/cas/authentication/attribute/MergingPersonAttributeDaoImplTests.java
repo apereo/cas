@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Attributes")
 public class MergingPersonAttributeDaoImplTests {
-    private static final String QUERY_ATTR = "ThisDoesntMatterForMock";
+    private static final String QUERY_ATTR = "username";
 
     private StubPersonAttributeDao sourceNull;
 
@@ -88,8 +88,10 @@ public class MergingPersonAttributeDaoImplTests {
         val queryMap = new HashMap<String, List<Object>>();
         queryMap.put(QUERY_ATTR, List.of("awp9"));
 
-        var result = impl.getPeopleWithMultivaluedAttributes(queryMap);
-        assertEquals(oneAndTwo, result.iterator().next().getAttributes());
+        val result = impl.getPeopleWithMultivaluedAttributes(queryMap);
+        val attributes = new HashMap<>(oneAndTwo);
+        attributes.putAll(queryMap);
+        assertEquals(attributes, result.iterator().next().getAttributes());
     }
 
     @Test
@@ -120,7 +122,9 @@ public class MergingPersonAttributeDaoImplTests {
         queryMap.put(QUERY_ATTR, List.of("awp9"));
 
         var result = impl.getPeopleWithMultivaluedAttributes(queryMap);
-        assertEquals(oneAndTwoAndThree, result.iterator().next().getAttributes());
+        val attributes = new HashMap<>(oneAndTwoAndThree);
+        attributes.putAll(queryMap);
+        assertEquals(attributes, result.iterator().next().getAttributes());
     }
 
     @Test
@@ -160,7 +164,9 @@ public class MergingPersonAttributeDaoImplTests {
         queryMap.put(QUERY_ATTR, List.of("awp9"));
 
         var result = impl.getPeopleWithMultivaluedAttributes(queryMap);
-        assertEquals(oneAndTwo, result.iterator().next().getAttributes());
+        val attributes = new HashMap<>(oneAndTwo);
+        attributes.putAll(queryMap);
+        assertEquals(attributes, result.iterator().next().getAttributes());
     }
 
     @Test
