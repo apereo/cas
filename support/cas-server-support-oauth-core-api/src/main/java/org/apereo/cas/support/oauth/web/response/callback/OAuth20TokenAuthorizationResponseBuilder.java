@@ -21,6 +21,9 @@ import org.apache.hc.core5.net.URIBuilder;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -88,7 +91,7 @@ public class OAuth20TokenAuthorizationResponseBuilder<T extends OAuth20Configura
 
         val parameterList = builder.getQueryParams()
             .stream()
-            .map(parameter -> String.format("%s=%s", parameter.getName(), parameter.getValue()))
+            .map(parameter -> String.format("%s=%s", parameter.getName(), URLEncoder.encode(parameter.getValue(), StandardCharsets.UTF_8)))
             .collect(Collectors.joining("&"));
 
         val url = UriComponentsBuilder.fromUriString(tokenRequestContext.getRedirectUri())

@@ -16,6 +16,8 @@ import org.springframework.core.Ordered;
 import org.springframework.web.servlet.view.AbstractUrlBasedView;
 import org.springframework.web.servlet.view.RedirectView;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.Collections;
@@ -36,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OAuth")
 class OAuth20TokenAuthorizationResponseBuilderTests extends AbstractOAuth20Tests {
-    private static final String STATE = "%123=";
+    private static final String STATE = "{\"d\":\"value\"}";
 
     private static final String NONCE = "%123=";
 
@@ -104,7 +106,7 @@ class OAuth20TokenAuthorizationResponseBuilderTests extends AbstractOAuth20Tests
         val redirectUrl = ((AbstractUrlBasedView) modelAndView.getView()).getUrl();
         val params = splitQuery(redirectUrl.substring(redirectUrl.indexOf('#') + 1));
 
-        verifyParam(params, OAuth20Constants.STATE, STATE);
-        verifyParam(params, OAuth20Constants.NONCE, NONCE);
+        verifyParam(params, OAuth20Constants.STATE, URLEncoder.encode(STATE, StandardCharsets.UTF_8));
+        verifyParam(params, OAuth20Constants.NONCE, URLEncoder.encode(NONCE, StandardCharsets.UTF_8));
     }
 }
