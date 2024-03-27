@@ -22,6 +22,8 @@ import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -83,7 +85,7 @@ public class OAuth20TokenAuthorizationResponseBuilder<T extends OAuth20Configura
         val expiresIn = accessToken.getExpiresIn();
         stringBuilder.append(OAuth20Constants.ACCESS_TOKEN)
             .append('=')
-            .append(encodedAccessToken)
+            .append(URLEncoder.encode(encodedAccessToken, StandardCharsets.UTF_8))
             .append('&')
             .append(OAuth20Constants.TOKEN_TYPE)
             .append('=')
@@ -97,25 +99,25 @@ public class OAuth20TokenAuthorizationResponseBuilder<T extends OAuth20Configura
             stringBuilder.append('&')
                 .append(OAuth20Constants.REFRESH_TOKEN)
                 .append('=')
-                .append(refreshToken.getId());
+                .append(URLEncoder.encode(refreshToken.getId(), StandardCharsets.UTF_8));
         }
 
         params.forEach(p -> stringBuilder.append('&')
             .append(p.getName())
             .append('=')
-            .append(p.getValue()));
+            .append(URLEncoder.encode(p.getValue(), StandardCharsets.UTF_8)));
 
         if (StringUtils.isNotBlank(state)) {
             stringBuilder.append('&')
                 .append(OAuth20Constants.STATE)
                 .append('=')
-                .append(state);
+                .append(URLEncoder.encode(state, StandardCharsets.UTF_8));
         }
         if (StringUtils.isNotBlank(nonce)) {
             stringBuilder.append('&')
                 .append(OAuth20Constants.NONCE)
                 .append('=')
-                .append(nonce);
+                .append(URLEncoder.encode(nonce, StandardCharsets.UTF_8));
         }
         val url = builder.fragment(stringBuilder.toString()).build().toUriString();
 
