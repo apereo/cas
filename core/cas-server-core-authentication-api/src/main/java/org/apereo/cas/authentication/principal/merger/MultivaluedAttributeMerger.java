@@ -24,7 +24,7 @@ import java.util.TreeSet;
 @Getter
 @Setter
 public class MultivaluedAttributeMerger extends BaseAdditiveAttributeMerger {
-    private boolean distinctValues;
+    private boolean distinctValues = true;
 
     @Override
     protected Map<String, List<Object>> mergePersonAttributes(final Map<String, List<Object>> toModify,

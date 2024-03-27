@@ -92,6 +92,7 @@ CAS metrics can now be exported to [AWS Cloudwatch](../monitoring/Configuring-Me
 - Spring Boot
 - Spring Boot Admin
 - Spring Data
+- Apache Tomcat
 - Slack
 - Pac4j
 - Azure Identity
