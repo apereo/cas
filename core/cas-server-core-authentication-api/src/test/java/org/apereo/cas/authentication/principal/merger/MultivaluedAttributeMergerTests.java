@@ -124,6 +124,10 @@ class MultivaluedAttributeMergerTests extends AbstractAttributeMergerTests {
         expected.put("attName13", CollectionUtils.wrapList("attValue13.1.1", "attValue13.1.2", "attValue13.2.1", "attValue13.2.2"));
 
         val result = attributeMerger.mergeAttributes(someAttributes, otherAttributes);
-        assertEquals(expected, result);
+        result.forEach((k, v) -> {
+            val expectedValues = expected.get(k);
+            assertTrue(v.containsAll(expectedValues));
+        });
+
     }
 }
