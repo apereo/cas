@@ -10,7 +10,6 @@ const util = require("util");
 const path = require("path");
 const mockServer = require("mock-json-server");
 const {Buffer} = require("buffer");
-const {PuppeteerScreenRecorder} = require("puppeteer-screen-recorder");
 const ps = require("ps-node");
 const NodeStaticAuth = require("node-static-auth");
 const operativeSystemModule = require("os");
@@ -611,24 +610,6 @@ exports.substring = async (text, word1, word2) => {
     const regex = new RegExp(`${word1}(.*?)${word2}`);
     const match = regex.exec(text);
     return match ? match[1].trim() : null;
-};
-
-exports.recordScreen = async (page) => {
-    const index = Math.floor(Math.random() * 10000);
-    const filePath = path.join(__dirname, `/recording-${index}.mp4`);
-    const config = {
-        followNewTab: true,
-        fps: 60,
-        videoFrame: {
-            width: 1024,
-            height: 768
-        },
-        aspectRatio: "4:3"
-    };
-    const recorder = new PuppeteerScreenRecorder(page, config);
-    await this.log(`Recording screen to ${filePath}`);
-    await recorder.start(filePath);
-    return recorder;
 };
 
 exports.createJwt = async (payload, key, alg = "RS256", options = {}) => {
