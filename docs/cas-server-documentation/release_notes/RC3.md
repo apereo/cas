@@ -62,13 +62,20 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 ### Testing Strategy
 
 The collection of end-to-end [browser tests based via Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `475` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `476` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`. Furthermore, a large number of test categories that group internal unit tests
 are now configured to run with parallelism enabled.
 
 ### AWS Cloudwatch Metrics
 
 CAS metrics can now be exported to [AWS Cloudwatch](../monitoring/Configuring-Metrics-Storage-Cloudwatch.html).
+
+### Person Directory
+
+The [Person Directory](https://github.com/apereo/person-directory) project is now cleaned up and merged into the CAS codebase.
+The separate project and repository will no longer be maintained or managed separately, and all relevant components, resolvers
+and features are refactored, cleaned up and hand-picked to be part of the CAS codebase. While changes should largely be invisible
+to the typical user, the refactoring and cleanup should make it significantly easier to maintain and manage the codebase moving forward.
 
 ## Library Upgrades
 
