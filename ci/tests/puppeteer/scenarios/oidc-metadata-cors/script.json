@@ -1,0 +1,18 @@
+{
+  "dependencies": "oidc",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--logging.level.org.apereo.cas=info",
+
+    "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",
+    "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/keystore.jwks",
+    
+    "--cas.authn.oidc.discovery.scopes=openid",
+    "--cas.authn.oidc.discovery.claims=sub,given_name,common_name,family_name,client_ip,authenticationDate,authenticationMethod",
+
+    "--cas.http-web-request.cors.enabled=true",
+    "--cas.http-web-request.cors.allow-origins[0]=https://myapp:4200"
+  ]
+}
