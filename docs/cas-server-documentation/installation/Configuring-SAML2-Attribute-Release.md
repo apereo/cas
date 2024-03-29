@@ -286,6 +286,27 @@ The `useFriendlyName` allows the filter to compare the requested attribute’s f
 
 {% endtab %}
 
+{% tab saml2attrrel Authentication Request Requester ID %}
+
+This attribute release policy authorizes the release of allowed attributes if the requester ID of the
+SAML2 authentication request inside its `Scoping` element matches the defined pattern:
+
+```json
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": "entity-ids-allowed-via-regex",
+  "name": "SAML",
+  "id": 10,
+  "metadataLocation": "path/to/metadata.xml",
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.support.saml.services.AuthnRequestRequesterIdAttributeReleasePolicy",
+    "allowedAttributes" : [ "java.util.ArrayList", [ "cn", "mail", "sn" ] ]
+    "requesterIdPattern" : ".*"
+  }
+}
+```
+
+{% endtab %}
 
 {% tab saml2attrrel Anonymous Access %}
 
