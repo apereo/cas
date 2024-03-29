@@ -8,12 +8,8 @@ category: Attributes
 
 # Attribute Resolution
 
-Attribute resolution strategies are controlled by
-the [Person Directory project](https://github.com/apereo/person-directory).
-The Person Directory dependency is automatically bundled with the CAS server. Therefore,
-declaring an additional dependency will not be required.
-This Person Directory project supports both LDAP and JDBC attribute resolution,
-caching, attribute aggregation from multiple attribute sources, etc.
+Attribute resolution strategies are controlled by the *Person Directory* family of components.
+The framework supports both LDAP and JDBC attribute resolution, caching, attribute aggregation from multiple attribute sources, etc.
 
 <div class="alert alert-info">:information_source: <strong>Default Caching Policy</strong><p>By default,
 attributes are cached to the length of the SSO session.
@@ -68,9 +64,6 @@ will then remove that attribute from the final collection.
 
 Note that by default, CAS auto-creates attribute repository sources that are appropriate for LDAP, JDBC, etc.
 If you need something more, you will need to resort to more elaborate measures of defining the bean configuration.
-
-More about the Person Directory and its configurable 
-sources [can be found here](https://github.com/apereo/person-directory).
 
 ### Attribute Repositories
 
