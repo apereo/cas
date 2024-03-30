@@ -138,6 +138,7 @@ graalvmNative {
             buildArgs.add('-J-Xmx12G')
             buildArgs.add('-J-Xms4G')
             buildArgs.add('--native-image-info')
+            buildArgs.add('--strict-image-heap')
 
             buildArgs.add('-march=native')
 //            buildArgs.add('--pgo-instrument')
@@ -155,6 +156,7 @@ graalvmNative {
             buildArgs.add('--initialize-at-build-time=org.apache.groovy')
             buildArgs.add('--initialize-at-build-time=groovy.lang')
             buildArgs.add('--initialize-at-build-time=groovyjarjarasm.asm.Type')
+            buildArgs.add('--initialize-at-build-time=groovyjarjarasm.asm.Handle')
 
             buildArgs.add('--initialize-at-run-time=com.sun.xml.ws')
             buildArgs.add('--initialize-at-run-time=groovy.grape.GrapeIvy')
