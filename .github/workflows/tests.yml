@@ -174,8 +174,8 @@ jobs:
           echo $files
           echo "SONAR_COVERAGE_REPORTS=${files}" >> $GITHUB_ENV
       - name: Upload Coverage to SonarCloud
-        if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' && env.SONARCLOUD_TOKEN != null }}
-        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel sonarqube -x javadoc -Dsonar.login="${SONARCLOUD_TOKEN}" -DskipNestedConfigMetadataGen=true -Dverbose=true -Dsonar.coverage.jacoco.xmlReportPaths="${SONAR_COVERAGE_REPORTS}"
+        if: ${{ !contains(github.head_ref, 'renovate') && env.SONARCLOUD_TOKEN != null }}
+        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel sonar -x javadoc -Dsonar.login="${SONARCLOUD_TOKEN}" -DskipNestedConfigMetadataGen=true -Dverbose=true -Dsonar.coverage.jacoco.xmlReportPaths="${SONAR_COVERAGE_REPORTS}"
       - name: "Collect Files for Codacy"
         run: |
           find $PWD -type f -name 'jacocoRootReport.xml'
@@ -185,7 +185,7 @@ jobs:
           echo $files
           echo "CODACY_COVERAGE_REPORTS=${files}" >> $GITHUB_ENV
       - name: Upload Coverage to Codacy
-        if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' && env.CODACY_PROJECT_TOKEN != null }}
+        if: ${{ !contains(github.head_ref, 'renovate') && env.CODACY_PROJECT_TOKEN != null }}
         uses: codacy/codacy-coverage-reporter-action@v1
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}

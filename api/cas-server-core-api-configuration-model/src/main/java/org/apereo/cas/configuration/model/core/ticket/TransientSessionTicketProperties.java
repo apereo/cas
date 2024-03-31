@@ -35,5 +35,5 @@ public class TransientSessionTicketProperties implements Serializable {
     /**
      * Number of seconds after which this ticket becomes invalid.
      */
-    private long timeToKillInSeconds = TimeUnit.MINUTES.toSeconds(5);
+    private long timeToKillInSeconds = TimeUnit.MINUTES.toSeconds(15);
 }
