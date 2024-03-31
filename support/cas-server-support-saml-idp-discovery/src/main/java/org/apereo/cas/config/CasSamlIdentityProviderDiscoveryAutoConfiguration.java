@@ -123,17 +123,20 @@ public class CasSamlIdentityProviderDiscoveryAutoConfiguration {
         @Qualifier(DelegatedIdentityProviders.BEAN_NAME)
         final DelegatedIdentityProviders identityProviders) {
         val parsers = new ArrayList<SamlIdentityProviderEntityParser>();
+
         val resource = casProperties.getAuthn().getPac4j().getSamlDiscovery().getResource();
         resource
             .stream()
             .filter(res -> res.getLocation() != null)
             .forEach(Unchecked.consumer(res -> parsers.add(new SamlIdentityProviderEntityParser(res.getLocation()))));
-        identityProviders.findAllClients()
+
+        identityProviders
+            .findAllClients()
             .stream()
             .filter(SAML2Client.class::isInstance)
             .map(SAML2Client.class::cast)
             .forEach(c -> {
-                c.init();
+                c.init(c.getIdentityProviderMetadataResolver() == null);
                 val entity = new SamlIdentityProviderEntity();
                 c.getIdentityProviderMetadataResolver().resolve();
                 entity.setEntityID(c.getIdentityProviderResolvedEntityId());
