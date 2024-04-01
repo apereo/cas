@@ -3550,6 +3550,9 @@ ext.libraries = [
                 },
                 dependencies.create("org.webjars.npm:base64-js:$base64JsVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                },
+                dependencies.create("org.webjars.npm:clientjs:${clientJsVersion}") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
                 }
         ]
 ]
