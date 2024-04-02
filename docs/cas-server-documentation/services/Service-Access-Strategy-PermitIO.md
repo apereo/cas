@@ -25,7 +25,7 @@ of the authorization request are taught to CAS using the settings typically defi
     "@class": "org.apereo.cas.services.PermitRegisteredServiceAccessStrategy",
     "action": "...",
     "resource": "...",
-    "apiKey", "...",
+    "apiKey": "...",
     "tenant": "default",
     "pdpAddress": "https://cloudpdp.api.permit.io",
     "emailAttributeName", "email",
