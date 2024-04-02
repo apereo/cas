@@ -45,6 +45,6 @@ public class X509WebflowAutoConfigurationProperties extends WebflowAutoConfigura
     private String clientAuth = "want";
 
     public X509WebflowAutoConfigurationProperties() {
-        setOrder(10);
+        setOrder(80);
     }
 }

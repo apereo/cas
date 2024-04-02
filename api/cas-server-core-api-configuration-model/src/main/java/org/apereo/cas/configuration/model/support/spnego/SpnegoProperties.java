@@ -145,7 +145,7 @@ public class SpnegoProperties implements Serializable {
      * The webflow configuration.
      */
     @NestedConfigurationProperty
-    private WebflowAutoConfigurationProperties webflow = new WebflowAutoConfigurationProperties().setOrder(100);
+    private WebflowAutoConfigurationProperties webflow = new WebflowAutoConfigurationProperties().setOrder(90);
 
     /**
      * The size of the pool used to validate SPNEGO tokens.
