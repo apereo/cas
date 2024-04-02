@@ -117,8 +117,8 @@ jobs:
       - name: Configure Environment
         if: github.event_name == 'schedule'
         run: |
-          echo "Running on schedule..."
-          export PTS_ENABLED=false
+          echo "Running on schedule with PTS disabled..."
+          echo "PTS_ENABLED=false" >> $GITHUB_ENV
       - name: Run Tests
         uses: nick-fields/retry@v3
         with:
