@@ -28,9 +28,9 @@ of the authorization request are taught to CAS using the settings typically defi
     "apiKey": "...",
     "tenant": "default",
     "pdpAddress": "https://cloudpdp.api.permit.io",
-    "emailAttributeName", "email",
-    "firstNameAttributeName", "firstname",
-    "lastNameAttributeName", "lastname",
+    "emailAttributeName": "email",
+    "firstNameAttributeName": "firstname",
+    "lastNameAttributeName": "lastname",
     "context" : {
       "@class" : "java.util.TreeMap",
       "param1" : "value1"
