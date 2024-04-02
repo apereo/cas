@@ -171,17 +171,12 @@ public class CasFiltersConfiguration {
         }
 
         @Bean
-        @ConditionalOnMissingBean(name = "casCorsFilter")
+        @ConditionalOnMissingBean(name = "corsFilter")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public FilterRegistrationBean<CorsFilter> casCorsFilter(
-            final CasConfigurationProperties casProperties,
-            @Qualifier("corsHttpWebRequestConfigurationSource") final CorsConfigurationSource corsHttpWebRequestConfigurationSource) {
-            val bean = new FilterRegistrationBean<>(new CorsFilter(corsHttpWebRequestConfigurationSource));
-            bean.setName("casCorsFilter");
-            bean.setAsyncSupported(true);
-            bean.setOrder(0);
-            bean.setEnabled(casProperties.getHttpWebRequest().getCors().isEnabled());
-            return bean;
+        public CorsFilter corsFilter(
+                final CasConfigurationProperties casProperties,
+                @Qualifier("corsHttpWebRequestConfigurationSource") final CorsConfigurationSource corsHttpWebRequestConfigurationSource) {
+            return new CorsFilter(corsHttpWebRequestConfigurationSource);
         }
 
     }
