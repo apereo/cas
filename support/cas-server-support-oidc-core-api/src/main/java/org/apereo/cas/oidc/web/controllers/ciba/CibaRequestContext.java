@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.web.controllers.ciba;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import java.util.Set;
@@ -21,5 +22,6 @@ public class CibaRequestContext {
     private String loginHintToken;
     private String idTokenHint;
     private String loginHint;
-    private long requestedExpiry;
+    @Builder.Default
+    private long requestedExpiry = 5;
 }
