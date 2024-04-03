@@ -79,6 +79,17 @@ class DefaultOAuth20RequestParameterResolverTests extends AbstractOAuth20Tests {
     }
 
     @Test
+    void verifyScopesCanBeExtracted() {
+        val request = new MockHttpServletRequest();
+        request.setParameter("scope", "openid profile email");
+        request.setParameter("keyword", "hello world");
+        val response = new MockHttpServletResponse();
+        val context = new JEEContext(request, response);
+        assertEquals(3, oauthRequestParameterResolver.resolveRequestScopes(context).size());
+        assertEquals(2, oauthRequestParameterResolver.resolveRequestParameters(context, "keyword").size());
+    }
+
+    @Test
     void verifyParameterIsNotOnQueryString() {
         val request = new MockHttpServletRequest();
         request.setQueryString("client_id=myid");

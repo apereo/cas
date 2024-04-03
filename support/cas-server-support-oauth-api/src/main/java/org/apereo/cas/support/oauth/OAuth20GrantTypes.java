@@ -44,8 +44,12 @@ public enum OAuth20GrantTypes {
     /**
      * UMA ticket grant type.
      */
-    UMA_TICKET("urn:ietf:params:oauth:grant-type:uma-ticket");
-
+    UMA_TICKET("urn:ietf:params:oauth:grant-type:uma-ticket"),
+    /**
+     * CIBA grant type.
+     */
+    CIBA("urn:openid:params:grant-type:ciba");
+    
     private final String type;
 
 }
