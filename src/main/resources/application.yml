@@ -13,6 +13,7 @@ casbot:
       name: cas
       url: https://github.com/apereo/cas
       admins: mmoayyed,apereocas-bot
+      committers: leleuj,mmoayyed,apereocas-bot
 
 spring:
   security:
