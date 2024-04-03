@@ -5,14 +5,14 @@ import lombok.experimental.SuperBuilder;
 import java.util.Set;
 
 /**
- * This is {@link CibaRequest}.
+ * This is {@link CibaRequestContext}.
  *
  * @author Misagh Moayyed
  * @since 7.1.0
  */
 @Getter
 @SuperBuilder
-public class CibaRequest {
+public class CibaRequestContext {
     private Set<String> scope;
     private String clientNotificationToken;
     private Set<String> acrValues;

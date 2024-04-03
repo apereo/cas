@@ -49,7 +49,7 @@ public class OidcCibaController extends BaseOidcController {
         val manager = new ProfileManager(context, getConfigurationContext().getSessionStore());
         val requestParameterResolver = getConfigurationContext().getRequestParameterResolver();
         val webContext = new JEEContext(request, response);
-        val cibaRequest = CibaRequest.builder()
+        val cibaRequest = CibaRequestContext.builder()
             .acrValues(requestParameterResolver.resolveRequestParameters(webContext, OidcConstants.ACR_VALUES))
             .bindingMessage(requestParameterResolver.resolveRequestParameter(webContext, OidcConstants.BINDING_MESSAGE).orElse(null))
             .clientNotificationToken(requestParameterResolver.resolveRequestParameter(webContext, OidcConstants.CLIENT_NOTIFICATION_TOKEN).orElse(null))
