@@ -1051,8 +1051,8 @@ class OidcConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "cibaRequestExpirationPolicy")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public ExpirationPolicyBuilder cibaRequestExpirationPolicy() {
-            return new OidcCibaRequestExpirationPolicyBuilder();
+        public ExpirationPolicyBuilder cibaRequestExpirationPolicy(final CasConfigurationProperties casProperties) {
+            return new OidcCibaRequestExpirationPolicyBuilder(casProperties);
         }
         
         @ConditionalOnMissingBean(name = "oidcCibaRequestFactory")

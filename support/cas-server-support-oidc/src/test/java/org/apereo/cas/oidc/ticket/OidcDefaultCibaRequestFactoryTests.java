@@ -27,7 +27,6 @@ public class OidcDefaultCibaRequestFactoryTests extends AbstractOidcTests {
         assertNotNull(ticket);
         assertTrue(ticket.getId().startsWith(OidcCibaRequest.PREFIX));
         assertSame(OidcCibaRequest.class, factory.getTicketType());
-        assertEquals(300, ticket.getExpirationPolicy().getTimeToLive());
     }
 
     @Test
@@ -41,6 +40,5 @@ public class OidcDefaultCibaRequestFactoryTests extends AbstractOidcTests {
         assertNotNull(ticket);
         assertTrue(ticket.getId().startsWith(OidcCibaRequest.PREFIX));
         assertSame(OidcCibaRequest.class, factory.getTicketType());
-        assertEquals(30, ticket.getExpirationPolicy().getTimeToLive());
     }
 }

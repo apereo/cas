@@ -4,7 +4,6 @@ import org.apereo.cas.oidc.web.controllers.ciba.CibaRequestContext;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
-import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -33,9 +32,7 @@ public class OidcDefaultCibaRequestFactory implements OidcCibaRequestFactory {
     @Override
     public OidcCibaRequest create(final CibaRequestContext holder) throws Throwable {
         val id = idGenerator.getNewTicketId(OidcCibaRequest.PREFIX);
-        val expirationPolicy = holder.getRequestedExpiry() > 0
-            ? new HardTimeoutExpirationPolicy(holder.getRequestedExpiry())
-            : expirationPolicyBuilder.buildTicketExpirationPolicy();
+        val expirationPolicy = expirationPolicyBuilder.buildTicketExpirationPolicy();
         return new OidcDefaultCibaRequest(id, expirationPolicy, holder.getScope(), holder.getClientNotificationToken());
     }
 }

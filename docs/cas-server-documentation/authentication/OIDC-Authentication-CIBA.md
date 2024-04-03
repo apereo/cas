@@ -18,6 +18,12 @@ communication from the Client to CAS without redirect through the user's browser
 
 Please study [the specification](https://openid.net/specs/openid-client-initiated-backchannel-authentication-core-1_0.html) to learn more.
 
+## Configuration
+
+{% include_cached casproperties.html properties="cas.authn.oidc.ciba" %}
+
+## Applications
+
 Applications that wish to take advantage of CIBA can be registered with CAS as follows:
 
 ```json
