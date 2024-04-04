@@ -27,6 +27,11 @@ public class X509WebflowAutoConfigurationProperties extends WebflowAutoConfigura
     private static final long serialVersionUID = 2744305877450488111L;
 
     /**
+     * Default order for webflow configuration.
+     */
+    private static final int DEFAULT_ORDER = 80;
+
+    /**
      * Port that is used to enact x509 client authentication
      * as a separate connector. Configuration of a separate server connector
      * and port allows the separation of client-auth functionality
@@ -45,6 +50,6 @@ public class X509WebflowAutoConfigurationProperties extends WebflowAutoConfigura
     private String clientAuth = "want";
 
     public X509WebflowAutoConfigurationProperties() {
-        setOrder(80);
+        setOrder(DEFAULT_ORDER);
     }
 }
