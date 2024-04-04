@@ -10,6 +10,7 @@ import org.apereo.cas.oidc.claims.OidcEmailScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcPhoneScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcProfileScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.ticket.OidcCibaRequest;
+import org.apereo.cas.oidc.ticket.OidcDefaultCibaRequest;
 import org.apereo.cas.oidc.ticket.OidcDefaultPushedAuthorizationRequest;
 import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequest;
 import org.apereo.cas.services.OidcRegisteredService;
@@ -45,6 +46,7 @@ class OidcComponentSerializationConfiguration {
     public TicketSerializationExecutionPlanConfigurer oidcTicketSerializationExecutionPlanConfigurer() {
         return plan -> {
             plan.registerTicketSerializer(new OidcPushedAuthorizationRequestSerializer());
+            plan.registerTicketSerializer(new OidcCibaRequestSerializer());
             plan.registerTicketSerializer(OidcPushedAuthorizationRequest.class.getName(), new OidcPushedAuthorizationRequestSerializer());
             plan.registerTicketSerializer(OidcCibaRequest.class.getName(), new OidcCibaRequestSerializer());
         };
@@ -70,7 +72,7 @@ class OidcComponentSerializationConfiguration {
     }
 
     private static final class OidcPushedAuthorizationRequestSerializer extends
-        AbstractJacksonBackedStringSerializer<OidcPushedAuthorizationRequest> {
+        AbstractJacksonBackedStringSerializer<OidcDefaultPushedAuthorizationRequest> {
         @Serial
         private static final long serialVersionUID = -6298623586274810263L;
 
@@ -79,13 +81,13 @@ class OidcComponentSerializationConfiguration {
         }
 
         @Override
-        public Class<OidcPushedAuthorizationRequest> getTypeToSerialize() {
-            return OidcPushedAuthorizationRequest.class;
+        public Class<OidcDefaultPushedAuthorizationRequest> getTypeToSerialize() {
+            return OidcDefaultPushedAuthorizationRequest.class;
         }
     }
 
     private static final class OidcCibaRequestSerializer extends
-        AbstractJacksonBackedStringSerializer<OidcCibaRequest> {
+        AbstractJacksonBackedStringSerializer<OidcDefaultCibaRequest> {
         @Serial
         private static final long serialVersionUID = -1298623586274810263L;
 
@@ -94,8 +96,8 @@ class OidcComponentSerializationConfiguration {
         }
 
         @Override
-        public Class<OidcCibaRequest> getTypeToSerialize() {
-            return OidcCibaRequest.class;
+        public Class<OidcDefaultCibaRequest> getTypeToSerialize() {
+            return OidcDefaultCibaRequest.class;
         }
     }
 }

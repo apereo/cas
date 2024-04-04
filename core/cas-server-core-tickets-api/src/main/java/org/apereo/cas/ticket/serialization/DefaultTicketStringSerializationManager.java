@@ -2,14 +2,11 @@ package org.apereo.cas.ticket.serialization;
 
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.util.LoggingUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
-
 import java.util.Objects;
 
 /**
@@ -25,14 +22,9 @@ public class DefaultTicketStringSerializationManager implements TicketSerializat
 
     @Override
     public String serializeTicket(final Ticket ticket) {
-        try {
-            val serializer = Objects.requireNonNull(ticketSerializationExecutionPlan.getTicketSerializer(ticket),
-                () -> "Unable to find ticket serializer for " + ticket.getId());
-            return serializer.toString(ticket);
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-            throw e;
-        }
+        val serializer = Objects.requireNonNull(ticketSerializationExecutionPlan.getTicketSerializer(ticket),
+            () -> "Unable to find ticket serializer for " + ticket.getId());
+        return serializer.toString(ticket);
     }
 
     @Override

@@ -36,7 +36,8 @@ class SamlIdPSingleLogoutRedirectionStrategyTests {
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
         "cas.authn.saml-idp.logout.send-logout-response=true",
-        "cas.authn.saml-idp.logout.sign-logout-response=true"
+        "cas.authn.saml-idp.logout.sign-logout-response=true",
+        "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata6414"
     })
     class SignResponsesGlobally extends BaseSamlIdPConfigurationTests {
         @Autowired
@@ -139,7 +140,10 @@ class SamlIdPSingleLogoutRedirectionStrategyTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    @TestPropertySource(properties = "cas.authn.saml-idp.logout.send-logout-response=true")
+    @TestPropertySource(properties = {
+        "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata956",
+        "cas.authn.saml-idp.logout.send-logout-response=true"
+    })
     class SignResponsesServices extends BaseSamlIdPConfigurationTests {
         @Autowired
         @Qualifier("samlIdPLogoutResponseObjectBuilder")
