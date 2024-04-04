@@ -49,7 +49,8 @@ class OidcUsernamePasswordAuthenticatorTests extends AbstractOidcTests {
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         authenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
         assertNotNull(credentials.getUserProfile());
-        assertTrue(credentials.getUserProfile().getAttributes().isEmpty());
+        assertEquals(1, credentials.getUserProfile().getAttributes().size());
+        assertTrue(credentials.getUserProfile().getAttributes().containsKey(OAuth20Constants.CLIENT_ID));
     }
 
     @Test
@@ -63,10 +64,11 @@ class OidcUsernamePasswordAuthenticatorTests extends AbstractOidcTests {
         request.addParameter(OAuth20Constants.SCOPE, "openid profile email");
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         authenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
-        assertNotNull(credentials.getUserProfile());
-        assertTrue(credentials.getUserProfile().getAttributes().containsKey("email"));
-        assertTrue(credentials.getUserProfile().getAttributes().containsKey("family_name"));
-        assertTrue(credentials.getUserProfile().getAttributes().containsKey("given_name"));
+        val userProfile = credentials.getUserProfile();
+        assertNotNull(userProfile);
+        assertTrue(userProfile.getAttributes().containsKey("email"));
+        assertTrue(userProfile.getAttributes().containsKey("family_name"));
+        assertTrue(userProfile.getAttributes().containsKey("given_name"));
     }
 
     @Test
@@ -81,7 +83,8 @@ class OidcUsernamePasswordAuthenticatorTests extends AbstractOidcTests {
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         authenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
         assertNotNull(credentials.getUserProfile());
-        assertTrue(credentials.getUserProfile().getAttributes().isEmpty());
+        assertEquals(1, credentials.getUserProfile().getAttributes().size());
+        assertTrue(credentials.getUserProfile().getAttributes().containsKey(OAuth20Constants.CLIENT_ID));
     }
 
     @Tag("OAuth")
