@@ -262,7 +262,7 @@ public class RedisTicketRegistryConfiguration {
         private static final BeanCondition CONDITION_LOCKING =
             BeanCondition.on("cas.ticket.registry.core.enable-locking").isTrue().evenIfMissing();
 
-        @Bean(destroyMethod = "destroy")
+        @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public LockRegistry casTicketRegistryRedisLockRegistry(
             final ConfigurableApplicationContext applicationContext,
