@@ -72,8 +72,8 @@ import org.springframework.core.annotation.Order;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
-import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 import org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import java.net.URI;
@@ -462,7 +462,7 @@ class WebAuthnConfiguration {
             @ConditionalOnMissingBean(name = "webAuthnCsrfTokenRepository")
             @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
             public CsrfTokenRepository webAuthnCsrfTokenRepository() {
-                return new HttpSessionCsrfTokenRepository();
+                return new CookieCsrfTokenRepository();
             }
 
             @Bean
