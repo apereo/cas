@@ -179,25 +179,26 @@ TestCategories.values().each({ testCategory ->
         def taskName = "test${testCategory.name()}"
         if (!tasks.getNames().contains(taskName)) {
             def jacocoTestExecutionResultsFile = project.layout.buildDirectory.file("jacoco/jacoco-${taskName}.exec").get().asFile
-            
+            def shouldWeTest = shouldTest(sourceTestDirs, testCategory.name())
+
             tasks.register(taskName, Test) {
                 description = "Run unit/integration tests to verify the test category: ${testCategory.name()}"
                 group = "CAS Tests"
-                enabled = shouldTest(sourceTestDirs, testCategory.name())
+
+                enabled = shouldWeTest
                 outputs.file(jacocoTestExecutionResultsFile)
 
                 useJUnitPlatform {
                     includeTags testCategory.name()
                 }
 
-                def ptsEnabled = testCategory.ptsEnabled && Boolean.valueOf(System.getenv("PTS_ENABLED") ?: "true") && !rootProject.publishReleases
-                if (ptsEnabled) {
-                    predictiveSelection {
-                        enabled = true
-                        mode = PredictiveTestSelectionMode.valueOf(System.getenv("PTS_MODE") ?: "RELEVANT_TESTS")
-                        profile = PredictiveTestSelectionProfile.valueOf(System.getenv("PTS_PROFILE") ?: "FAST")
-                    }
+                def ptsEnabled = shouldWeTest && testCategory.ptsEnabled && Boolean.valueOf(System.getenv("PTS_ENABLED") ?: "true") && !rootProject.publishReleases
+                predictiveSelection {
+                    enabled = ptsEnabled
+                    mode = PredictiveTestSelectionMode.valueOf(System.getenv("PTS_MODE") ?: "RELEVANT_TESTS")
+                    profile = PredictiveTestSelectionProfile.valueOf(System.getenv("PTS_PROFILE") ?: "FAST")
                 }
+                ansi.green "Predictive test selection for ${project.name} with task ${taskName} is ${ptsEnabled ? 'enabled' : 'disabled'}."
 
                 if (testCategory.parallelEnabled) {
                     systemProperty("junit.jupiter.execution.parallel.enabled", true)

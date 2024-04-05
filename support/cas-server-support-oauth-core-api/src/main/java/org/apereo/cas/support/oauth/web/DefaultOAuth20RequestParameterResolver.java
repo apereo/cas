@@ -34,6 +34,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -132,6 +133,11 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
                 return Pair.of(name, values);
             })
             .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+    }
+
+    @Override
+    public Set<String> resolveRequestParameters(final WebContext context, final String name) {
+        return resolveRequestParameters(List.of(name), context).getOrDefault(name, Set.of());
     }
 
     @Override

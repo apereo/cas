@@ -169,6 +169,10 @@ function readFromSessionStorage(browserStorage) {
     }
 }
 
+function loginFormSubmission() {
+    return true;
+}
+
 function resourceLoadedSuccessfully() {
     $(document).ready(() => {
         if (trackGeoLocation) {

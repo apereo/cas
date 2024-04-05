@@ -150,7 +150,21 @@ public class OidcServerDiscoverySettings {
 
     @JsonProperty("introspection_encryption_enc_values_supported")
     private Set<String> introspectionEncryptedResponseEncodingValuesSupported;
-    
+
+    @JsonProperty("backchannel_authentication_request_signing_alg_values_supported")
+    private Set<String> backchannelAuthenticationRequestSigningAlgValuesSupported;
+
+    @JsonProperty("backchannel_user_code_parameter_supported")
+    private boolean backchannelUserCodeParameterSupported;
+
+    @JsonProperty("backchannel_token_delivery_modes_supported")
+    private Set<String> backchannelTokenDeliveryModesSupported;
+
+    @JsonProperty("backchannel_authentication_endpoint")
+    public String getBackchannelAuthenticationEndpoint() {
+        return StringUtils.appendIfMissing(this.issuer, "/").concat(OidcConstants.CIBA_URL);
+    }
+
     @JsonProperty("authorization_endpoint")
     public String getAuthorizationEndpoint() {
         return StringUtils.appendIfMissing(this.issuer, "/").concat(OidcConstants.AUTHORIZE_URL);

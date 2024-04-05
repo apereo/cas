@@ -129,4 +129,17 @@ public class OidcClientRegistrationRequest implements Serializable {
 
     @JsonProperty("tls_client_auth_san_email")
     private String tlsClientAuthSanEmail;
+
+    @JsonProperty("backchannel_token_delivery_mode")
+    private String backchannelTokenDeliveryMode;
+
+    @JsonProperty("backchannel_client_notification_endpoint")
+    private String backchannelClientNotificationEndpoint;
+
+    @JsonProperty("backchannel_authentication_request_signing_alg")
+    private String backchannelAuthenticationRequestSigningAlg;
+
+    @JsonProperty("backchannel_user_code_parameter")
+    private boolean backchannelUserCodeParameterSupported;
+    
 }

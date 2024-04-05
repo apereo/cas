@@ -111,6 +111,10 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
         discovery.setDocumentsVerificationMethodsSupported(discoveryConfig.getDocumentsVerificationMethodsSupported());
         discovery.setElectronicRecordsSupported(discoveryConfig.getElectronicRecordsSupported());
         discovery.setClaimsInVerifiedClaimsSupported(discoveryConfig.getClaimsInVerifiedClaimsSupported());
+        
+        discovery.setBackchannelUserCodeParameterSupported(discoveryConfig.isBackchannelUserCodeParameterSupported());
+        discovery.setBackchannelTokenDeliveryModesSupported(new LinkedHashSet<>(discoveryConfig.getBackchannelTokenDeliveryModesSupported()));
+        discovery.setBackchannelAuthenticationRequestSigningAlgValuesSupported(new LinkedHashSet<>(discoveryConfig.getBackchannelAuthenticationRequestSigningAlgValuesSupported()));
 
         return discovery;
     }
