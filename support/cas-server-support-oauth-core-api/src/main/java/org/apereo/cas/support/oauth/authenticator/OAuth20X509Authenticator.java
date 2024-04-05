@@ -59,6 +59,7 @@ public class OAuth20X509Authenticator implements Authenticator {
             val digest = EncodingUtils.encodeBase64(DigestUtils.digest("SHA-256", certificate.getPublicKey().getEncoded()));
             profile.addAttribute(OAuth20Constants.X509_CERTIFICATE_DIGEST, digest);
             profile.addAttribute(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE, "X.509");
+            profile.addAttribute(OAuth20Constants.CLIENT_ID, clientIdAndSecret.getKey());
             
             val attributeMap = CollectionUtils.<String, String>wrap(
                 "x509-sanEmail", registeredService.getTlsClientAuthSanEmail(),

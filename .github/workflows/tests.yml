@@ -44,7 +44,7 @@ on:
 concurrency:
   group: "workflow = ${{ github.workflow }}, ref = ${{ github.event.ref }}, pr = ${{ github.event.pull_request.id }}"
   cancel-in-progress: ${{ github.event_name == 'pull_request' || github.repository != 'apereo/cas' }}
-  
+
 ##########################################################################
 
 jobs:
@@ -56,7 +56,7 @@ jobs:
         run: echo "CI Triggered"
   ##########################################################################
   initialize:
-    needs: [trigger-ci]
+    needs: [ trigger-ci ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -70,10 +70,10 @@ jobs:
       - name: Initialize
         run: ls ./ci && find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
 
-##########################################################################
+  ##########################################################################
 
   testcategories:
-    needs: [initialize]
+    needs: [ initialize ]
     runs-on: ubuntu-latest
     outputs:
       categories: ${{ steps.get-categories.outputs.categories }}
@@ -90,15 +90,15 @@ jobs:
         run: ./gradlew --build-cache --configure-on-demand --no-daemon -q testCategories
       - id: get-categories
         run: echo "categories=$(./gradlew --build-cache --configure-on-demand --no-daemon -q testCategories)" >> $GITHUB_OUTPUT
-##########################################################################
+  ##########################################################################
   
   tests:
-    needs: [testcategories]
+    needs: [ testcategories ]
     continue-on-error: false
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
+        os: [ ubuntu-latest ]
         category: ${{fromJSON(needs.testcategories.outputs.categories)}}
     runs-on: ${{ matrix.os }}
     name: ${{ matrix.category }}
@@ -117,8 +117,8 @@ jobs:
       - name: Configure Environment
         if: github.event_name == 'schedule'
         run: |
-          echo "Running on schedule..."
-          export PTS_ENABLED=false
+          echo "Running on schedule with PTS disabled..."
+          echo "PTS_ENABLED=false" >> $GITHUB_ENV
       - name: Run Tests
         uses: nick-fields/retry@v3
         with:
@@ -130,28 +130,28 @@ jobs:
           command: |
             ./testcas.sh --no-watch --category ${{ matrix.category }}
             [[ $? -eq 0 ]] && ./testcas.sh --no-watch --with-coverage
-      - name: "Upload to Codecov"
-        uses: "codecov/codecov-action@v4"
-        continue-on-error: true
-        if: ${{ env.CODECOV_TOKEN != null }}
-        with:
-          token: ${{ env.CODECOV_TOKEN }}
-          files: ./build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml
-          flags: ${{ matrix.category }}
-          name: ${{ matrix.category }}
-          verbose: false
-          fail_ci_if_error: false
+#      - name: "Upload to Codecov"
+#        uses: "codecov/codecov-action@v4"
+#        continue-on-error: true
+#        if: ${{ env.CODECOV_TOKEN != null }}
+#        with:
+#          token: ${{ env.CODECOV_TOKEN }}
+#          files: ./build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml
+#          flags: ${{ matrix.category }}
+#          name: ${{ matrix.category }}
+#          verbose: true
+#          fail_ci_if_error: false
       - name: "Upload Coverage Report"
         uses: "actions/upload-artifact@v4"
         with:
           name: "cas-tests-${{ matrix.category }}.coverage"
           path: "./build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
 
-##########################################################################
+  ##########################################################################
 
-  upload_coverage:
+  coverage:
     runs-on: ubuntu-latest
-    needs: [tests]
+    needs: [ tests ]
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK
@@ -161,33 +161,31 @@ jobs:
           distribution: ${{ env.JDK_DISTRIBUTION }}
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
-      - name: "Download coverage files"
+      - name: Download coverage files
         uses: "actions/download-artifact@v4"
         with:
           path: "reports"
-      - name: "Collect Files for SonarCloud"
+      - name: Collect Files for SonarCloud
         run: |
           find $PWD -type f -name 'jacocoRootReport.xml'
           export files=''
           for file in $(find $PWD -type f -name 'jacocoRootReport.xml'); do export files="$file,${files}"; done
           export files="${files%?}"
           echo $files
-          echo "SONAR_COVERAGE_REPORTS=${files}" >> $GITHUB_ENV
+          echo "COVERAGE_REPORTS=${files}" >> $GITHUB_ENV
       - name: Upload Coverage to SonarCloud
-        if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' && env.SONARCLOUD_TOKEN != null }}
-        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel sonarqube -x javadoc -Dsonar.login="${SONARCLOUD_TOKEN}" -DskipNestedConfigMetadataGen=true -Dverbose=true -Dsonar.coverage.jacoco.xmlReportPaths="${SONAR_COVERAGE_REPORTS}"
-      - name: "Collect Files for Codacy"
-        run: |
-          find $PWD -type f -name 'jacocoRootReport.xml'
-          export files=''
-          for file in $(find . -type f -name 'jacocoRootReport.xml'); do export files="$file,${files}"; done
-          export files="${files%?}"
-          echo $files
-          echo "CODACY_COVERAGE_REPORTS=${files}" >> $GITHUB_ENV
+        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel sonar -x javadoc -Dsonar.login="${SONARCLOUD_TOKEN}" -DskipNestedConfigMetadataGen=true -Dverbose=true -Dsonar.coverage.jacoco.xmlReportPaths="${COVERAGE_REPORTS}"
       - name: Upload Coverage to Codacy
-        if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' && env.CODACY_PROJECT_TOKEN != null }}
         uses: codacy/codacy-coverage-reporter-action@v1
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
-          coverage-reports: ${{ env.CODACY_COVERAGE_REPORTS }}
-
+          coverage-reports: ${{ env.COVERAGE_REPORTS }}
+      - name: Upload to Codecov
+        uses: codecov/codecov-action@v4
+        if: ${{ env.CODECOV_TOKEN != null }}
+        continue-on-error: true
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          verbose: true
+          fail_ci_if_error: false
+          files: ${{ env.COVERAGE_REPORTS }}
