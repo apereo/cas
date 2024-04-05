@@ -20,6 +20,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * This is {@link OidcCibaController}.
@@ -86,6 +87,13 @@ public class OidcCibaController extends BaseOidcController {
         if ((deliveryMode == OidcBackchannelTokenDeliveryModes.PUSH || deliveryMode == OidcBackchannelTokenDeliveryModes.PING)
             && StringUtils.isBlank(cibaRequest.getClientNotificationToken())) {
             return ResponseEntity.badRequest().body(OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Client notification token is required"));
+        }
+
+        if (StringUtils.isNotBlank(cibaRequest.getIdTokenHint())) {
+            val claims = configurationContext.getIdTokenSigningAndEncryptionService().decode(cibaRequest.getIdTokenHint(), Optional.of(registeredService));
+            if (!claims.hasClaim(OAuth20Constants.CLAIM_SUB) || !claims.hasClaim(OidcConstants.ISS) || !claims.hasClaim(OidcConstants.AUD)) {
+                return ResponseEntity.badRequest().body(OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "ID token hint is missing required claims"));
+            }
         }
 
         return ResponseEntity.ok(Map.of());

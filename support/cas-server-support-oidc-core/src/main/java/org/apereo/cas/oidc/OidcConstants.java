@@ -54,6 +54,11 @@ public interface OidcConstants {
      */
     String AMR = "amr";
     /**
+     * Audience claim.
+     */
+    String AUD = "aud";
+
+    /**
      * The Authorization Server MUST NOT display any authentication or consent user interface pages.
      */
     String PROMPT_NONE = "none";
