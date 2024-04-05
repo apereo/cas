@@ -114,6 +114,11 @@ public interface OidcConstants {
     String MAX_AGE = "max_age";
 
     /**
+     * The authentication request id in CIBA.
+     */
+    String AUTH_REQ_ID = "auth_req_id";
+
+    /**
      * The {@code ui_locales} parameter.
      * End-User's preferred languages and scripts for the user interface, represented
      * as a space-separated list of language tag values, ordered by preference.

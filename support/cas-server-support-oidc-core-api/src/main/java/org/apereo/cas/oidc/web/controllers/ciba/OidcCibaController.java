@@ -1,13 +1,18 @@
 package org.apereo.cas.oidc.web.controllers.ciba;
 
+import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.ticket.OidcCibaRequest;
+import org.apereo.cas.oidc.ticket.OidcCibaRequestFactory;
 import org.apereo.cas.oidc.web.controllers.BaseOidcController;
 import org.apereo.cas.services.OidcBackchannelTokenDeliveryModes;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.token.JwtBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -30,7 +35,7 @@ import java.util.Optional;
  */
 @Slf4j
 public class OidcCibaController extends BaseOidcController {
-    
+
     public OidcCibaController(final OidcConfigurationContext configurationContext) {
         super(configurationContext);
     }
@@ -45,7 +50,7 @@ public class OidcCibaController extends BaseOidcController {
     @PostMapping(value = {
         '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.CIBA_URL,
         "/**/" + OidcConstants.CIBA_URL}, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity handleBackchannelAuthnRequest(final HttpServletRequest request, final HttpServletResponse response) {
+    public ResponseEntity handleBackchannelAuthnRequest(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         val context = new JEEContext(request, response);
         val manager = new ProfileManager(context, getConfigurationContext().getSessionStore());
         val requestParameterResolver = getConfigurationContext().getRequestParameterResolver();
@@ -59,6 +64,7 @@ public class OidcCibaController extends BaseOidcController {
             .loginHintToken(requestParameterResolver.resolveRequestParameter(webContext, OidcConstants.LOGIN_HINT_TOKEN).orElse(null))
             .requestedExpiry(requestParameterResolver.resolveRequestParameter(webContext, OidcConstants.REQUESTED_EXPIRY, Long.class).orElse(0L))
             .scope(requestParameterResolver.resolveRequestScopes(context))
+            .clientId(manager.getProfile().orElseThrow().getAttribute(OAuth20Constants.CLIENT_ID).toString())
             .userCode(requestParameterResolver.resolveRequestParameter(webContext, OidcConstants.USER_CODE).orElse(null))
             .build();
 
@@ -66,36 +72,68 @@ public class OidcCibaController extends BaseOidcController {
         hintCount += StringUtils.isNotBlank(cibaRequest.getLoginHintToken()) ? 1 : 0;
         hintCount += StringUtils.isNotBlank(cibaRequest.getIdTokenHint()) ? 1 : 0;
         if (hintCount > 1) {
-            return ResponseEntity.badRequest().body(OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "More than one hint specified"));
+            return badCibaRequest("More than one hint specified");
         }
         if (cibaRequest.getScope().isEmpty() || !cibaRequest.getScope().contains(OidcConstants.StandardScopes.OPENID.getScope())) {
-            return ResponseEntity.badRequest().body(OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST,
-                "Scope must contain %s".formatted(OidcConstants.StandardScopes.OPENID.getScope())));
+            return badCibaRequest("Scope must contain %s".formatted(OidcConstants.StandardScopes.OPENID.getScope()));
         }
-        val clientId = manager.getProfile().orElseThrow().getAttribute(OAuth20Constants.CLIENT_ID).toString();
-        val registeredService = (OidcRegisteredService) OAuth20Utils.getRegisteredOAuthServiceByClientId(configurationContext.getServicesManager(), clientId);
+        val registeredService = (OidcRegisteredService) OAuth20Utils.getRegisteredOAuthServiceByClientId(configurationContext.getServicesManager(), cibaRequest.getClientId());
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
         if (!registeredService.isBackchannelUserCodeParameterSupported() && !configurationContext.getDiscoverySettings().isBackchannelUserCodeParameterSupported()
             && StringUtils.isNotBlank(cibaRequest.getUserCode())) {
-            return ResponseEntity.badRequest().body(OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "User code is not supported"));
+            return badCibaRequest("User code is not supported");
         }
         if ((registeredService.isBackchannelUserCodeParameterSupported() || configurationContext.getDiscoverySettings().isBackchannelUserCodeParameterSupported())
             && StringUtils.isBlank(cibaRequest.getUserCode())) {
-            return ResponseEntity.badRequest().body(OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "User code is required"));
+            return badCibaRequest("User code is required");
         }
         val deliveryMode = OidcBackchannelTokenDeliveryModes.valueOf(registeredService.getBackchannelTokenDeliveryMode().toUpperCase(Locale.ENGLISH));
         if ((deliveryMode == OidcBackchannelTokenDeliveryModes.PUSH || deliveryMode == OidcBackchannelTokenDeliveryModes.PING)
             && StringUtils.isBlank(cibaRequest.getClientNotificationToken())) {
-            return ResponseEntity.badRequest().body(OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Client notification token is required"));
+            return badCibaRequest("Client notification token is required");
+        }
+        val principal = determineCibaRequestPrincipal(cibaRequest, registeredService);
+        if (principal == null) {
+            return badCibaRequest("Unable to determine subject");
         }
 
+        val cibaRequestId = recordCibaRequest(cibaRequest, principal);
+        return buildCibaResponse(cibaRequestId);
+    }
+
+    protected ResponseEntity buildCibaResponse(final OidcCibaRequest cibaRequestId) {
+        return ResponseEntity.ok(Map.of(
+            OidcConstants.AUTH_REQ_ID, cibaRequestId.getId(),
+            OAuth20Constants.EXPIRES_IN, cibaRequestId.getExpirationPolicy().getTimeToLive()
+        ));
+    }
+
+    protected OidcCibaRequest recordCibaRequest(final CibaRequestContext cibaRequest, final Principal principal) throws Throwable {
+        val cibaFactory = (OidcCibaRequestFactory) configurationContext.getTicketFactory().get(OidcCibaRequest.class);
+        val cibaRequestId = cibaFactory.create(cibaRequest.withPrincipal(principal));
+        configurationContext.getTicketRegistry().addTicket(cibaRequestId);
+        return cibaRequestId;
+    }
+
+    protected ResponseEntity badCibaRequest(final String error) {
+        val body = OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, error);
+        return ResponseEntity.badRequest().body(body);
+    }
+
+    protected Principal determineCibaRequestPrincipal(final CibaRequestContext cibaRequest,
+                                                      final OidcRegisteredService registeredService) throws Throwable {
+        var subject = cibaRequest.getLoginHint();
         if (StringUtils.isNotBlank(cibaRequest.getIdTokenHint())) {
-            val claims = configurationContext.getIdTokenSigningAndEncryptionService().decode(cibaRequest.getIdTokenHint(), Optional.of(registeredService));
-            if (!claims.hasClaim(OAuth20Constants.CLAIM_SUB) || !claims.hasClaim(OidcConstants.ISS) || !claims.hasClaim(OidcConstants.AUD)) {
-                return ResponseEntity.badRequest().body(OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "ID token hint is missing required claims"));
-            }
+            val claims = configurationContext.getIdTokenSigningAndEncryptionService()
+                .decode(cibaRequest.getIdTokenHint(), Optional.of(registeredService));
+            subject = claims.getSubject();
         }
-
-        return ResponseEntity.ok(Map.of());
+        if (StringUtils.isNotBlank(cibaRequest.getLoginHintToken())) {
+            subject = JwtBuilder.parse(cibaRequest.getLoginHint()).getSubject();
+        }
+        if (StringUtils.isNotBlank(subject)) {
+            return configurationContext.getPrincipalResolver().resolve(new BasicIdentifiableCredential(subject));
+        }
+        return null;
     }
 }

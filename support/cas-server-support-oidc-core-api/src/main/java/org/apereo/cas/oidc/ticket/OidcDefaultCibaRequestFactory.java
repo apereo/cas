@@ -1,9 +1,13 @@
 package org.apereo.cas.oidc.ticket;
 
+import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
+import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.web.controllers.ciba.CibaRequestContext;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
+import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -32,7 +36,17 @@ public class OidcDefaultCibaRequestFactory implements OidcCibaRequestFactory {
     @Override
     public OidcCibaRequest create(final CibaRequestContext holder) throws Throwable {
         val id = idGenerator.getNewTicketId(OidcCibaRequest.PREFIX);
-        val expirationPolicy = expirationPolicyBuilder.buildTicketExpirationPolicy();
-        return new OidcDefaultCibaRequest(id, expirationPolicy, holder.getScope(), holder.getClientNotificationToken());
+        val expirationPolicy = holder.getRequestedExpiry() > 0
+            ? new HardTimeoutExpirationPolicy(holder.getRequestedExpiry())
+            : expirationPolicyBuilder.buildTicketExpirationPolicy();
+
+        val authentication = new DefaultAuthenticationBuilder(holder.getPrincipal())
+            .addAttribute(OAuth20Constants.SCOPE, holder.getScope())
+            .addAttribute(OAuth20Constants.CLIENT_ID, holder.getClientId())
+            .addAttribute(OidcConstants.USER_CODE, holder.getUserCode())
+            .addAttribute(OidcConstants.CLIENT_NOTIFICATION_TOKEN, holder.getClientNotificationToken())
+            .addAttribute(OidcConstants.BINDING_MESSAGE, holder.getBindingMessage())
+            .build();
+        return new OidcDefaultCibaRequest(id, authentication, expirationPolicy, holder.getScope(), holder.getClientNotificationToken());
     }
 }
