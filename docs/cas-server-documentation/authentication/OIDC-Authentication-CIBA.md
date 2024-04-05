@@ -24,7 +24,7 @@ Please study [the specification](https://openid.net/specs/openid-client-initiate
 
 ## Applications
 
-Applications that wish to take advantage of CIBA can be registered with CAS as follows:
+Applications that wish to take advantage of CIBA can be registered with CAS:
 
 ```json
 {
@@ -41,3 +41,25 @@ Applications that wish to take advantage of CIBA can be registered with CAS as f
   "backchannelUserCodeParameterSupported": false
 }
 ```
+
+### Delivery Modes
+
+The Client will receive the ID Token, Access Token, and optionally Refresh Token through either the `poll`, `ping`, or `push` modes. This choice MUST be 
+established when the relying party is registered with CAS.
+
+- Poll Mode
+
+When configured in Poll mode, the Client will poll the token endpoint to get a response with the tokens. That is, the authentication result is retrieved by 
+the Client by polling the CAS token endpoint using the CIBA grant type.
+
+- Ping Mode
+
+When configured in Ping mode, CAS will send a request to a callback URI previously registered by the Client 
+with the unique identifier returned from the Backchannel Authentication Endpoint. Upon receipt of the notification, 
+the Client makes a request to the token endpoint to obtain the tokens.
+
+- Push Mode
+
+When configured in Push mode, CAS will send a `POST` request with the tokens to a callback URI previously registered by the Client.
+
+
