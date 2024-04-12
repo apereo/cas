@@ -352,6 +352,7 @@ fi
 
 if [[ "${DISABLE_LINTER}" == "false" ]]; then
   printgreen "Running ESLint on scenario [${scenarioName}]..."
+  export ESLINT_USE_FLAT_CONFIG=false 
   npx eslint "${scriptPath}"
   if [ $? -ne 0 ]; then
     printred "Found linting errors; unable to run the scenario [${scenarioName}]"
