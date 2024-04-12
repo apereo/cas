@@ -108,7 +108,7 @@ apply from: rootProject.file("gradle/dependencyUpdates.gradle")
 if (!providers.systemProperty("skipSonarqube").present) {
     apply plugin: "org.sonarqube"
 
-    sonarqube {
+    sonar {
         def exclusions = rootProject.excludedFilesFromTestCoverage.join(",")
         def token = providers.systemProperty("SONARCLOUD_TOKEN")
                 .getOrElse(System.getenv("SONARCLOUD_TOKEN"))
