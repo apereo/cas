@@ -51,13 +51,12 @@ class OidcDynamicClientRegistrationEndpointControllerTests extends AbstractOidcT
 
     @Test
     void verifyBadRedirect() throws Throwable {
-        val registrationReq = '{'
-                              + "   \"redirect_uris\":"
-                              + "     [\"https://client.example.org/callback#something\","
-                              + "      \"https://client.example.org/callback2\"],"
-                              + "   \"request_uris\":"
-                              + "     [\"https://client.example.org/rf.txt#qpXaRLh_n93TTR9F252ValdatUQvQiJi5BDub2BeznA\"]"
-                              + "  }";
+        val registrationReq = """
+    {
+       "redirect_uris": ["https://client.example.org/callback#something", "https://client.example.org/callback2"],
+       "request_uris": ["https://client.example.org/rf.txt#qpXaRLh_n93TTR9F252ValdatUQvQiJi5BDub2BeznA"]
+      }
+    """;
 
         val request = getHttpRequestForEndpoint(OidcConstants.REGISTRATION_URL);
         val response = new MockHttpServletResponse();
@@ -73,31 +72,28 @@ class OidcDynamicClientRegistrationEndpointControllerTests extends AbstractOidcT
             webServer.responseBodyJson(List.of("https://client.example.org/callback", "https://client.example.org/callback2"));
             webServer.start();
 
-            val registrationReq = '{'
-                + "   \"application_type\": \"web\","
-                + "   \"default_acr_values\":"
-                + "     [\"mfa-duo\",\"mfa-gauth\"],"
-                + "   \"redirect_uris\":"
-                + "     [\"https://client.example.org/callback\","
-                + "      \"https://client.example.org/callback2\"],"
-                + "   \"client_name\": \"My Example\","
-                + "   \"client_name#ja-Japan-JP\":"
-                + "     \"Japanese\","
-                + "   \"logo_uri\": \"https://client.example.org/logo.png\","
-                + "   \"policy_uri\": \"https://client.example.org/policy\","
-                + "   \"tos_uri\": \"https://client.example.org/tos\","
-                + "   \"subject_type\": \"pairwise\","
-                + "   \"sector_identifier_uri\":"
-                + "     \"http://localhost:%s\",".formatted(webServer.getPort())
-                + "   \"token_endpoint_auth_method\": \"client_secret_basic\","
-                + "   \"jwks_uri\": \"https://client.example.org/my_public_keys.jwks\","
-                + "   \"id_token_signed_response_alg\": \"RS256\","
-                + "   \"id_token_encrypted_response_alg\": \"RSA1_5\","
-                + "   \"id_token_encrypted_response_enc\": \"A128CBC-HS256\","
-                + "   \"userinfo_encrypted_response_alg\": \"RSA1_5\","
-                + "   \"userinfo_encrypted_response_enc\": \"A128CBC-HS256\","
-                + "   \"contacts\": [\"ve7jtb@example.org\", \"mary@example.org\"]"
-                + "  }";
+            val registrationReq = """
+    {
+        "application_type": "web",
+        "default_acr_values": ["mfa-duo","mfa-gauth"],
+        "redirect_uris": ["https://client.example.org/callback","https://client.example.org/callback2"],
+        "client_name": "My Example",
+        "client_name#ja-Japan-JP": "Japanese",
+        "logo_uri": "https://client.example.org/logo.png",
+        "policy_uri": "https://client.example.org/policy",
+        "tos_uri": "https://client.example.org/tos",
+        "subject_type": "pairwise",
+        "sector_identifier_uri": "http://localhost:%s",
+        "token_endpoint_auth_method": "client_secret_basic",
+        "jwks_uri": "https://client.example.org/my_public_keys.jwks",
+        "id_token_signed_response_alg": "RS256",
+        "id_token_encrypted_response_alg": "RSA1_5",
+        "id_token_encrypted_response_enc": "A128CBC-HS256",
+        "userinfo_encrypted_response_alg": "RSA1_5",
+        "userinfo_encrypted_response_enc": "A128CBC-HS256",
+        "contacts": ["ve7jtb@example.org", "mary@example.org"]
+    }
+    """.formatted(webServer.getPort());
             val responseEntity = (ResponseEntity<OidcClientRegistrationResponse>) controller.handleRequestInternal(registrationReq, request, response);
             assertEquals(HttpStatus.SC_CREATED, responseEntity.getStatusCode().value());
             assertTrue(responseEntity.getBody().getClientIdIssuedAt() > 0);
@@ -113,31 +109,64 @@ class OidcDynamicClientRegistrationEndpointControllerTests extends AbstractOidcT
             webServer.responseBodyJson(List.of("https://client.example.org/callback", "https://client.example.org/callback2"));
             webServer.start();
 
-            val registrationReq = '{'
-                + "   \"application_type\": \"web\","
-                + "   \"default_acr_values\":"
-                + "     [\"mfa-duo\",\"mfa-gauth\"],"
-                + "   \"redirect_uris\":"
-                + "     [\"https://client.example.org/callback\","
-                + "      \"https://client.example.org/callback2\"],"
-                + "   \"client_name#ja-Japan-JP\":"
-                + "     \"Japanese\","
-                + "   \"logo_uri\": \"https://client.example.org/logo.png\","
-                + "   \"policy_uri\": \"https://client.example.org/policy\","
-                + "   \"tos_uri\": \"https://client.example.org/tos\","
-                + "   \"subject_type\": \"pairwise\","
-                + "   \"sector_identifier_uri\":"
-                + "     \"http://localhost:%s\",".formatted(webServer.getPort())
-                + "   \"token_endpoint_auth_method\": \"client_secret_basic\","
-                + "   \"jwks\": {\"keys\":[{}]},"
-                + "   \"id_token_signed_response_alg\": \"RS256\","
-                + "   \"id_token_encrypted_response_alg\": \"RSA1_5\","
-                + "   \"id_token_encrypted_response_enc\": \"A128CBC-HS256\","
-                + "   \"userinfo_encrypted_response_alg\": \"RSA1_5\","
-                + "   \"contacts\": [\"ve7jtb@example.org\", \"mary@example.org\"]"
-                + "  }";
+            val registrationReq = """
+    {
+        "application_type": "web",
+        "default_acr_values": ["mfa-duo", "mfa-gauth"],
+        "redirect_uris": ["https://client.example.org/callback", "https://client.example.org/callback2"],
+        "client_name#ja-Japan-JP": "Japanese",
+        "logo_uri": "https://client.example.org/logo.png",
+        "policy_uri": "https://client.example.org/policy",
+        "tos_uri": "https://client.example.org/tos",
+        "subject_type": "pairwise",
+        "sector_identifier_uri": "http://localhost:%s",
+        "token_endpoint_auth_method": "client_secret_basic",
+        "jwks": {"keys": []},
+        "id_token_signed_response_alg": "RS256",
+        "id_token_encrypted_response_alg": "RSA1_5",
+        "id_token_encrypted_response_enc": "A128CBC-HS256",
+        "userinfo_encrypted_response_alg": "RSA1_5",
+        "contacts": ["ve7jtb@example.org", "mary@example.org"]
+    }
+""".formatted(webServer.getPort());
 
             assertEquals(HttpStatus.SC_CREATED,
+                controller.handleRequestInternal(registrationReq, request, response).getStatusCode().value());
+        }
+    }
+
+    @Test
+    void verifyMissingBackchannelEndpoint() throws Throwable {
+        val request = getHttpRequestForEndpoint(OidcConstants.REGISTRATION_URL);
+        val response = new MockHttpServletResponse();
+
+        try (val webServer = new MockWebServer(org.springframework.http.HttpStatus.OK)) {
+            webServer.responseBodyJson(List.of("https://client.example.org/callback", "https://client.example.org/callback2"));
+            webServer.start();
+
+            var registrationReq = """
+    {
+        "application_type": "web",
+        "backchannel_token_delivery_mode": "ping",
+        "default_acr_values": ["mfa-duo", "mfa-gauth"],
+        "redirect_uris": ["https://client.example.org/callback", "https://client.example.org/callback2"],
+        "contacts": ["ve7jtb@example.org", "mary@example.org"]
+    }
+""";
+            assertEquals(HttpStatus.SC_BAD_REQUEST,
+                controller.handleRequestInternal(registrationReq, request, response).getStatusCode().value());
+
+            registrationReq = """
+    {
+        "application_type": "web",
+        "backchannel_token_delivery_mode": "ping",
+        "backchannel_client_notification_endpoint": "http://localhost:9811",
+        "default_acr_values": ["mfa-duo", "mfa-gauth"],
+        "redirect_uris": ["https://client.example.org/callback", "https://client.example.org/callback2"],
+        "contacts": ["ve7jtb@example.org", "mary@example.org"]
+    }
+""";
+            assertEquals(HttpStatus.SC_BAD_REQUEST,
                 controller.handleRequestInternal(registrationReq, request, response).getStatusCode().value());
         }
     }

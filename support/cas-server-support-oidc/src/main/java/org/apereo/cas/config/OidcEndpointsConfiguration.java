@@ -17,6 +17,7 @@ import org.apereo.cas.oidc.web.OidcHandlerInterceptorAdapter;
 import org.apereo.cas.oidc.web.OidcLocaleChangeInterceptor;
 import org.apereo.cas.oidc.web.controllers.authorize.OidcAuthorizeEndpointController;
 import org.apereo.cas.oidc.web.controllers.authorize.OidcPushedAuthorizeEndpointController;
+import org.apereo.cas.oidc.web.controllers.ciba.OidcCibaController;
 import org.apereo.cas.oidc.web.controllers.discovery.OidcWellKnownEndpointController;
 import org.apereo.cas.oidc.web.controllers.dynareg.OidcClientConfigurationEndpointController;
 import org.apereo.cas.oidc.web.controllers.dynareg.OidcDynamicClientRegistrationEndpointController;
@@ -261,6 +262,15 @@ class OidcEndpointsConfiguration {
             @Qualifier("oidcWebFingerDiscoveryService")
             final OidcWebFingerDiscoveryService oidcWebFingerDiscoveryService) {
             return new OidcWellKnownEndpointController(oidcConfigurationContext, oidcWebFingerDiscoveryService);
+        }
+
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "oidcCibaController")
+        @Bean
+        public OidcCibaController oidcCibaController(
+            @Qualifier(OidcConfigurationContext.BEAN_NAME)
+            final OidcConfigurationContext oidcConfigurationContext) {
+            return new OidcCibaController(oidcConfigurationContext);
         }
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

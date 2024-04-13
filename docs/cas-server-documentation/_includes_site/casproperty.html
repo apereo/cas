@@ -212,9 +212,9 @@ java -jar build/libs/cas.war --{{ include.name | replace: "[]", "[0]"}}={{ prope
         {%- if include.deprecationLevel.size > 0 -%}
         <p/><p class="small text-left"><i class="fas fa-skull"></i> Deprecation status is <code>{{ include.deprecationLevel }}</code>
         {%- if include.deprecationReplacement.size > 0 -%}
-        with a replacement setting: <code>{{ include.deprecationReplacement | default: "N/A" }}</code>.
+         with a replacement setting: <code>{{ include.deprecationReplacement | default: "N/A" }}</code>.
         {%- else -%}
-        without a replacement setting.
+         without a replacement setting.
         {%- endif -%}
     </p>
         {%- endif -%}

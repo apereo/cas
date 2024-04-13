@@ -89,6 +89,8 @@ public class CasEvent implements Serializable {
     @Serial
     private static final long serialVersionUID = -4206712375316470417L;
 
+    private static final String FIELD_DEVICE_FINGERPRINT = "deviceFingerprint";
+
     @Id
     @JsonProperty
     @Transient
@@ -232,6 +234,25 @@ public class CasEvent implements Serializable {
         putGeoLongitude(location.getLongitude());
         putGeoTimestamp(location.getTimestamp());
         return this;
+    }
+
+    /**
+     * Put device fingerprint into cas event.
+     *
+     * @param value the value
+     * @return the cas event
+     */
+    public CasEvent putDeviceFingerprint(final String value) {
+        return put(FIELD_DEVICE_FINGERPRINT, value);
+    }
+
+    /**
+     * Gets device fingerprint.
+     *
+     * @return the device fingerprint
+     */
+    public String getDeviceFingerprint() {
+        return get(FIELD_DEVICE_FINGERPRINT);
     }
 
     /**
