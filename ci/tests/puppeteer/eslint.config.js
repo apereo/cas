@@ -1,8 +1,7 @@
-import js from "@eslint/js";
-import globals from "globals";
+const js = require("@eslint/js");
+const globals = require("globals");
 
-export default [
-
+module.exports = [
     js.configs.recommended,
     {
         languageOptions: {
@@ -47,6 +46,7 @@ export default [
             "no-empty-pattern": "error",
             "no-fallthrough": "error",
             "no-dupe-args": "error",
+            "no-else-return": "error",
             "no-duplicate-case": "error",
             "no-duplicate-imports": "error",
             "no-dupe-else-if": "error",
@@ -80,5 +80,4 @@ export default [
             "yoda": "error"
         }
     }
-
 ];
