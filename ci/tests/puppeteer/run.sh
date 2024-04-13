@@ -89,6 +89,7 @@ BUILD_SPAWN="background"
 QUIT_QUIETLY="false"
 DISABLE_LINTER="false"
 
+
 while (( "$#" )); do
   case "$1" in
   --nbr)
@@ -751,7 +752,11 @@ if [[ "${DRYRUN}" != "true" && ("${NATIVE_BUILD}" == "false" || "${NATIVE_RUN}" 
 
   if [[ "${NATIVE_RUN}" == "false" ]]; then
 
-    max_retries=3
+    max_retries=1
+    if [[ "$CI" == "true" ]]; then
+      max_retries=3
+    fi
+
     retry_count=0
     while [ $retry_count -lt $max_retries ]; do
         echo -e "**************************************************************************"
