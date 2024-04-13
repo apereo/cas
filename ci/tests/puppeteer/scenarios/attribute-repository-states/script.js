@@ -7,6 +7,7 @@ async function returnCasResponse(page, appId) {
     await cas.gotoLogout(page);
     const service = `http://localhost:9889/anything/${appId}`;
     await cas.gotoLogin(page, service);
+    await cas.sleep(1000);
     await cas.loginWith(page);
     await cas.sleep(2000);
     await cas.logPage(page);
