@@ -510,6 +510,8 @@ if (gradle.startParameter.taskNames.any { task -> task.startsWith("jacoco") }) {
         ansi.green("Coverage execution data files: ${executions}")
         executionData.from(executions)
         inputs.files(executions)
+                .withPropertyName('jacocoRootReport')
+                .withPathSensitivity(PathSensitivity.RELATIVE)
         outputs.files(rootProject.layout.buildDirectory.file('reports/jacoco/jacocoRootReport/jacocoRootReport.xml').get().asFile)
 
         reports {

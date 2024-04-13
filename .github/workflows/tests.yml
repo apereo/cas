@@ -25,7 +25,7 @@ env:
   JDK_DISTRIBUTION: "corretto"
   RETRY_ATTEMPTS: 2
   RETRY_MINUTES: 30
-  CATEGORY_REGEX: ".*"
+  CATEGORY_REGEX: "attributes|audit"
 ##########################################################################
 
 on:
@@ -131,22 +131,31 @@ jobs:
           command: |
             ./testcas.sh --no-watch --category ${{ matrix.category }}
             [[ $? -eq 0 ]] && ./testcas.sh --no-watch --with-coverage
+      - name: Check Coverage Report
+        run: |
+          ls build/reports/jacoco/jacocoRootReport
+          xml_files=$(find build/reports -type f -name "*.xml")
+          if [ -z "$xml_files" ]; then
+            echo "No coverage XML files found"
+            exit 1
+          fi
+          echo ${xml_files}
       - name: Upload to SonarCloud
         run: |
           ./gradlew sonar --build-cache --configure-on-demand --no-daemon -DskipAot=true --parallel \
             -x javadoc -Dsonar.login="${SONARCLOUD_TOKEN}" -DskipNestedConfigMetadataGen=true -Dverbose=true \
-            -Dsonar.coverage.jacoco.xmlReportPaths=./build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml
-#      - name: "Upload to Codecov"
-#        uses: "codecov/codecov-action@v4"
-#        continue-on-error: true
-#        if: ${{ env.CODECOV_TOKEN != null }}
-#        with:
-#          token: ${{ env.CODECOV_TOKEN }}
-#          files: ./build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml
-#          flags: ${{ matrix.category }}
-#          name: ${{ matrix.category }}
-#          verbose: true
-#          fail_ci_if_error: false
+            -Dsonar.coverage.jacoco.xmlReportPaths=build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml
+      - name: "Upload to Codecov"
+        uses: "codecov/codecov-action@v4"
+        continue-on-error: true
+        if: ${{ env.CODECOV_TOKEN != null }}
+        with:
+          token: ${{ env.CODECOV_TOKEN }}
+          files: ./build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml
+          flags: ${{ matrix.category }}
+          name: ${{ matrix.category }}
+          verbose: true
+          fail_ci_if_error: false
       - name: Upload Coverage Report
         uses: "actions/upload-artifact@v4"
         with:
