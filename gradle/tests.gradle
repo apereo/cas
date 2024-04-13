@@ -198,7 +198,7 @@ TestCategories.values().each({ testCategory ->
                     mode = PredictiveTestSelectionMode.valueOf(System.getenv("PTS_MODE") ?: "RELEVANT_TESTS")
                     profile = PredictiveTestSelectionProfile.valueOf(System.getenv("PTS_PROFILE") ?: "FAST")
                 }
-                ansi.green "Predictive test selection for ${project.name} with task ${taskName} is ${ptsEnabled ? 'enabled' : 'disabled'}."
+                logger.info "Predictive test selection for ${project.name} with task ${taskName} is ${ptsEnabled ? 'enabled' : 'disabled'}."
 
                 if (testCategory.parallelEnabled) {
                     systemProperty("junit.jupiter.execution.parallel.enabled", true)

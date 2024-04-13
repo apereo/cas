@@ -118,7 +118,7 @@ if (!providers.systemProperty("skipSonarqube").present) {
             property "sonar.sourceEncoding", "UTF-8"
             property "sonar.java.source", project.targetCompatibility
             property "sonar.organization", "apereo"
-            property "sonar.login", token
+            property "sonar.token", token
             property "sonar.gradle.skipCompile", true
             property "sonar.coverage.exclusions", exclusions
             property "sonar.java.coveragePlugin", "jacoco"
