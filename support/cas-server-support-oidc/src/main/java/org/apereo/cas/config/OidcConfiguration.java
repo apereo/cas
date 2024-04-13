@@ -53,6 +53,9 @@ import org.apereo.cas.oidc.scopes.DefaultOidcAttributeReleasePolicyFactory;
 import org.apereo.cas.oidc.scopes.OidcAttributeReleasePolicyFactory;
 import org.apereo.cas.oidc.services.OidcServiceRegistryListener;
 import org.apereo.cas.oidc.services.OidcServicesManagerRegisteredServiceLocator;
+import org.apereo.cas.oidc.ticket.OidcCibaRequestExpirationPolicyBuilder;
+import org.apereo.cas.oidc.ticket.OidcCibaRequestFactory;
+import org.apereo.cas.oidc.ticket.OidcDefaultCibaRequestFactory;
 import org.apereo.cas.oidc.ticket.OidcDefaultPushedAuthorizationRequestFactory;
 import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequestExpirationPolicyBuilder;
 import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequestFactory;
@@ -1044,6 +1047,42 @@ class OidcConfiguration {
             final OidcPushedAuthorizationRequestFactory oidcPushedAuthorizationRequestFactory) {
             return () -> oidcPushedAuthorizationRequestFactory;
         }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "cibaRequestExpirationPolicy")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public ExpirationPolicyBuilder cibaRequestExpirationPolicy(final CasConfigurationProperties casProperties) {
+            return new OidcCibaRequestExpirationPolicyBuilder(casProperties);
+        }
+        
+        @ConditionalOnMissingBean(name = "oidcCibaRequestFactory")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public OidcCibaRequestFactory oidcCibaRequestFactory(
+            @Qualifier("cibaRequestExpirationPolicy")
+            final ExpirationPolicyBuilder cibaRequestExpirationPolicy,
+            @Qualifier("cibaRequestIdGenerator")
+            final UniqueTicketIdGenerator cibaRequestIdGenerator) {
+            return new OidcDefaultCibaRequestFactory(cibaRequestIdGenerator, cibaRequestExpirationPolicy);
+        }
+
+        @ConditionalOnMissingBean(name = "cibaRequestIdGenerator")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public UniqueTicketIdGenerator cibaRequestIdGenerator() {
+            return new DefaultUniqueTicketIdGenerator();
+        }
+
+
+        @ConditionalOnMissingBean(name = "oidcCibaRequestFactoryConfigurer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public TicketFactoryExecutionPlanConfigurer oidcCibaRequestFactoryConfigurer(
+            @Qualifier("oidcCibaRequestFactory")
+            final OidcCibaRequestFactory oidcCibaRequestFactory) {
+            return () -> oidcCibaRequestFactory;
+        }
+
     }
 
     @Configuration(value = "OidcResponseModesConfiguration", proxyBeanMethods = false)

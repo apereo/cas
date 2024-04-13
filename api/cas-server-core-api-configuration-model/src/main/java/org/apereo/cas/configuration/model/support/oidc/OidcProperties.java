@@ -53,6 +53,12 @@ public class OidcProperties implements Serializable {
     private OidcIdTokenProperties idToken = new OidcIdTokenProperties();
 
     /**
+     * OIDC CIBA protocol settings.
+     */
+    @NestedConfigurationProperty
+    private OidcCibaProperties ciba = new OidcCibaProperties();
+
+    /**
      * OIDC webfinger protocol settings.
      */
     @NestedConfigurationProperty

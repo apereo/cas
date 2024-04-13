@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
@@ -14,7 +13,6 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
-
 import java.io.Serial;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -81,6 +79,16 @@ public class OidcRegisteredService extends OAuthRegisteredService {
 
     private RegisteredServiceOidcIdTokenExpirationPolicy idTokenExpirationPolicy;
 
+    @JacksonInject("backchannelTokenDeliveryMode")
+    private String backchannelTokenDeliveryMode = OidcBackchannelTokenDeliveryModes.POLL.getMode();
+    
+    private String backchannelClientNotificationEndpoint;
+
+    @JacksonInject("backchannelAuthenticationRequestSigningAlg")
+    private String backchannelAuthenticationRequestSigningAlg;
+
+    private boolean backchannelUserCodeParameterSupported;
+    
     /**
      * Gets subject type.
      *

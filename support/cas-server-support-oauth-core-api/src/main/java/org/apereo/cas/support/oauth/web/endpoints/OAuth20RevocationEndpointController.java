@@ -2,14 +2,11 @@ package org.apereo.cas.support.oauth.web.endpoints;
 
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.OAuth20Token;
-import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -23,7 +20,6 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -37,26 +33,6 @@ import jakarta.servlet.http.HttpServletResponse;
 public class OAuth20RevocationEndpointController<T extends OAuth20ConfigurationContext> extends BaseOAuth20Controller<T> {
     public OAuth20RevocationEndpointController(final T oAuthConfigurationContext) {
         super(oAuthConfigurationContext);
-    }
-
-    /**
-     * Is the OAuth token a Refresh Token?
-     *
-     * @param token the token
-     * @return whether the token type is a RefreshToken
-     */
-    private static boolean isRefreshToken(final OAuth20Token token) {
-        return token instanceof OAuth20RefreshToken;
-    }
-
-    /**
-     * Is the OAuth token an Access Token?
-     *
-     * @param token the token
-     * @return whether the token type is a RefreshToken
-     */
-    private static boolean isAccessToken(final OAuth20Token token) {
-        return token instanceof OAuth20AccessToken;
     }
 
     /**
@@ -135,20 +111,6 @@ public class OAuth20RevocationEndpointController<T extends OAuth20ConfigurationC
         val mv = new ModelAndView(new MappingJackson2JsonView());
         mv.setStatus(HttpStatus.OK);
         return mv;
-    }
-    
-    private void revokeToken(final OAuth20RefreshToken token) throws Exception {
-        revokeToken(token.getId());
-        token.getAccessTokens().forEach(Unchecked.consumer(this::revokeToken));
-    }
-
-    protected void revokeToken(final String token) throws Exception {
-        LOGGER.debug("Revoking token [{}]", token);
-        getConfigurationContext().getTicketRegistry().deleteTicket(token);
-    }
-
-    protected OAuthRegisteredService getRegisteredServiceByClientId(final String clientId) {
-        return OAuth20Utils.getRegisteredOAuthServiceByClientId(getConfigurationContext().getServicesManager(), clientId);
     }
 
     private boolean verifyRevocationRequest(final WebContext context) throws Throwable {

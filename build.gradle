@@ -108,7 +108,7 @@ apply from: rootProject.file("gradle/dependencyUpdates.gradle")
 if (!providers.systemProperty("skipSonarqube").present) {
     apply plugin: "org.sonarqube"
 
-    sonarqube {
+    sonar {
         def exclusions = rootProject.excludedFilesFromTestCoverage.join(",")
         def token = providers.systemProperty("SONARCLOUD_TOKEN")
                 .getOrElse(System.getenv("SONARCLOUD_TOKEN"))
@@ -118,7 +118,7 @@ if (!providers.systemProperty("skipSonarqube").present) {
             property "sonar.sourceEncoding", "UTF-8"
             property "sonar.java.source", project.targetCompatibility
             property "sonar.organization", "apereo"
-            property "sonar.login", token
+            property "sonar.token", token
             property "sonar.gradle.skipCompile", true
             property "sonar.coverage.exclusions", exclusions
             property "sonar.java.coveragePlugin", "jacoco"
@@ -510,6 +510,8 @@ if (gradle.startParameter.taskNames.any { task -> task.startsWith("jacoco") }) {
         ansi.green("Coverage execution data files: ${executions}")
         executionData.from(executions)
         inputs.files(executions)
+                .withPropertyName('jacocoRootReport')
+                .withPathSensitivity(PathSensitivity.RELATIVE)
         outputs.files(rootProject.layout.buildDirectory.file('reports/jacoco/jacocoRootReport/jacocoRootReport.xml').get().asFile)
 
         reports {
