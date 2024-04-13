@@ -38,7 +38,7 @@ const assert = require("assert");
 
     body = JSON.stringify(service, undefined, 2);
     await cas.log(`Sending ${body}`);
-    let result = await cas.doRequest("https://localhost:8443/cas/oidc/register", "POST",
+    const result = await cas.doRequest("https://localhost:8443/cas/oidc/register", "POST",
         {
             "Authorization": `Bearer ${tokenResponse.access_token}`,
             "Content-Length": body.length,
@@ -55,7 +55,7 @@ const assert = require("assert");
     
     body = JSON.stringify(service, undefined, 2);
     await cas.log(`Sending ${body}`);
-    result = await cas.doRequest("https://localhost:8443/cas/oidc/register", "POST",
+    await cas.doRequest("https://localhost:8443/cas/oidc/register", "POST",
         {
             "Content-Length": body.length,
             "Content-Type": "application/json"

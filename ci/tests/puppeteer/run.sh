@@ -352,14 +352,15 @@ else
 fi
 
 if [[ "${DISABLE_LINTER}" == "false" ]]; then
-  printgreen "Running ESLint on scenario [${scenarioName}]..."
-  export ESLINT_USE_FLAT_CONFIG=false 
-  npx eslint "${scriptPath}"
+  printgreen "Running ESLint on scenario [${scenarioName}] from ${PUPPETEER_DIR}..."
+  pushd "$PUPPETEER_DIR" || exit 1
+  npx eslint "./scenarios/${SCENARIO}/script.js"
   if [ $? -ne 0 ]; then
     printred "Found linting errors; unable to run the scenario [${scenarioName}]"
     printred "Please run: npx eslint --fix ${scriptPath}"
     exit 1
   fi
+  popd || exit 1
 fi
 
 if [[ "${RERUN}" != "true" ]]; then
