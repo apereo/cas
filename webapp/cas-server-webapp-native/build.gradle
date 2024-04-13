@@ -151,6 +151,7 @@ graalvmNative {
 
             buildArgs.add('--initialize-at-build-time=java.beans')
             buildArgs.add('--initialize-at-build-time=com.sun.beans')
+            buildArgs.add('--initialize-at-build-time=com.sun.xml.stream.buffer.sax')
             buildArgs.add('--initialize-at-build-time=groovyjarjarantlr4.v4.runtime')
             buildArgs.add('--initialize-at-build-time=org.codehaus.groovy')
             buildArgs.add('--initialize-at-build-time=org.apache.groovy')
