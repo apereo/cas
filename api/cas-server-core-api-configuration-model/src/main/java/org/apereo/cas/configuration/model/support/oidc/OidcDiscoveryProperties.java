@@ -118,8 +118,11 @@ public class OidcDiscoveryProperties implements Serializable {
      * Supported grant types.
      */
     private List<String> grantTypesSupported = Stream.of(
-        "authorization_code", "password",
-        "client_credentials", "refresh_token",
+        "authorization_code",
+        "password",
+        "client_credentials",
+        "refresh_token",
+        "urn:openid:params:grant-type:ciba",
         "urn:ietf:params:oauth:grant-type:token-exchange",
         "urn:ietf:params:oauth:grant-type:device_code",
         "urn:ietf:params:oauth:grant-type:uma-ticket").toList();
@@ -241,6 +244,26 @@ public class OidcDiscoveryProperties implements Serializable {
         "A192CBC-HS384", "A256CBC-HS512",
         "A128GCM", "A192GCM", "A256GCM").toList();
 
+    /**
+     * Supported backchannel token delivery modes used for CIBA.
+     */
+    private List<String> backchannelTokenDeliveryModesSupported = Stream.of("poll", "ping", "push").toList();
+
+    /**
+     * List of the JWS signing algorithms (alg values) supported by the CAS for signed authentication requests.
+     * If omitted, signed authentication requests are not supported by the CAS.
+     */
+    private List<String> backchannelAuthenticationRequestSigningAlgValuesSupported = Stream.of("none", "RS256", "RS384",
+        "RS512", "PS256", "PS384",
+        "PS512", "ES256", "ES384",
+        "ES512", "HS256", "HS384",
+        "HS512").toList();
+
+    /**
+     * Boolean value specifying whether the OP supports the use of the {@code user_code} parameter.
+     */
+    private boolean backchannelUserCodeParameterSupported;
+    
     /**
      * Boolean value indicating support for verified_claims, i.e., the OpenID Connect for Identity Assurance extension.
      */

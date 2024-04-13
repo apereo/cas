@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.jooq.lambda.Unchecked;
 import jakarta.servlet.http.HttpServletRequest;
@@ -51,6 +52,9 @@ public class ClientInfo implements Serializable {
     @JsonProperty("userAgent")
     private String userAgent;
 
+    @JsonProperty("deviceFingerprint")
+    private String deviceFingerprint;
+
     @JsonProperty("headers")
     private Map<String, String> headers = new HashMap<>();
 
@@ -66,6 +70,15 @@ public class ClientInfo implements Serializable {
         setServerIpAddress(serverIpAddress);
         setUserAgent(userAgent);
         setGeoLocation(geoLocation);
+    }
+
+    /**
+     * Gets device fingerprint.
+     *
+     * @return the fingerprint
+     */
+    public String getDeviceFingerprint() {
+        return Objects.requireNonNullElse(this.deviceFingerprint, UNKNOWN);
     }
 
     /**
@@ -183,6 +196,19 @@ public class ClientInfo implements Serializable {
     }
 
     /**
+     * Sets device fingerprint.
+     *
+     * @param value the fingerprint
+     * @return the device fingerprint
+     */
+    @CanIgnoreReturnValue
+    public ClientInfo setDeviceFingerprint(final String value) {
+        this.deviceFingerprint = value;
+        return this;
+    }
+
+
+    /**
      * Sets locale.
      *
      * @param locale the locale
@@ -270,6 +296,7 @@ public class ClientInfo implements Serializable {
 
         var geoLocation = UNKNOWN;
         var userAgent = UNKNOWN;
+        var deviceFingerprint = UNKNOWN;
 
         if (request != null) {
             if (options.isUseServerHostAddress()) {
@@ -292,6 +319,8 @@ public class ClientInfo implements Serializable {
                 geo = request.getHeader("geolocation");
             }
             geoLocation = geo == null ? UNKNOWN : geo;
+
+            deviceFingerprint = StringUtils.defaultIfBlank(request.getParameter("deviceFingerprint"), UNKNOWN);
         }
 
         val serverIp = serverIpAddress == null ? UNKNOWN : serverIpAddress;
@@ -304,6 +333,7 @@ public class ClientInfo implements Serializable {
             .setLocale(locale)
             .setGeoLocation(StringEscapeUtils.escapeHtml4(geoLocation))
             .setUserAgent(StringEscapeUtils.escapeHtml4(userAgent))
+            .setDeviceFingerprint(deviceFingerprint)
             .setHeaders(headers);
     }
 }

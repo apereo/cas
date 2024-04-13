@@ -6,6 +6,7 @@ import org.apereo.cas.oidc.dynareg.OidcClientRegistrationRequest;
 import org.apereo.cas.oidc.profile.OidcUserProfileSigningAndEncryptionService;
 import org.apereo.cas.services.DefaultRegisteredServiceContact;
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
+import org.apereo.cas.services.OidcBackchannelTokenDeliveryModes;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.OidcSubjectTypes;
 import org.apereo.cas.services.PairwiseOidcRegisteredServiceUsernameAttributeProvider;
@@ -30,6 +31,7 @@ import org.apache.hc.core5.http.HttpStatus;
 import org.hjson.JsonValue;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.http.HttpMethod;
+import org.springframework.util.Assert;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.time.ZoneOffset;
@@ -136,10 +138,19 @@ public class OidcDefaultClientRegistrationRequestTranslator implements OidcClien
         processContacts(registrationRequest, registeredService);
         processTlsClientAuthentication(registrationRequest, registeredService);
         processClientSecretExpiration(context, registeredService);
+        processClientBackchannelAuthentication(registrationRequest, registeredService);
 
         registeredService.setDescription("Registered service ".concat(registeredService.getName()));
         validate(registrationRequest, registeredService);
         return registeredService;
+    }
+
+    private static void processClientBackchannelAuthentication(final OidcClientRegistrationRequest registrationRequest,
+                                                               final OidcRegisteredService registeredService) {
+        registeredService.setBackchannelTokenDeliveryMode(registrationRequest.getBackchannelTokenDeliveryMode());
+        registeredService.setBackchannelUserCodeParameterSupported(registrationRequest.isBackchannelUserCodeParameterSupported());
+        registeredService.setBackchannelClientNotificationEndpoint(registrationRequest.getBackchannelClientNotificationEndpoint());
+        registeredService.setBackchannelAuthenticationRequestSigningAlg(registrationRequest.getBackchannelAuthenticationRequestSigningAlg());
     }
 
     private static void processTlsClientAuthentication(final OidcClientRegistrationRequest registrationRequest,
@@ -289,6 +300,15 @@ public class OidcDefaultClientRegistrationRequestTranslator implements OidcClien
                 }
             }
         }
+
+        if (StringUtils.equalsAnyIgnoreCase(registeredService.getBackchannelTokenDeliveryMode(),
+            OidcBackchannelTokenDeliveryModes.PUSH.getMode(), OidcBackchannelTokenDeliveryModes.PING.getMode())) {
+            Assert.hasText(registeredService.getBackchannelClientNotificationEndpoint(),
+                "Backchannel client notification endpoint must be specified");
+            Assert.isTrue(StringUtils.startsWith(registeredService.getBackchannelClientNotificationEndpoint(), "https://"),
+                "Backchannel client notification endpoint MUST be an HTTPS url");
+        }
+        
     }
 
 }

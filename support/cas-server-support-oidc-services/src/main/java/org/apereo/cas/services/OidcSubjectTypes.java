@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 /**
  * This is {@link OidcSubjectTypes}.
@@ -9,6 +10,7 @@ import lombok.Getter;
  * @since 5.2.0
  */
 @Getter
+@RequiredArgsConstructor
 public enum OidcSubjectTypes {
 
     /**
@@ -21,8 +23,4 @@ public enum OidcSubjectTypes {
     PAIRWISE("pairwise");
 
     private final String type;
-
-    OidcSubjectTypes(final String type) {
-        this.type = type;
-    }
 }
