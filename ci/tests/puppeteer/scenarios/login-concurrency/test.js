@@ -6,8 +6,8 @@ const assert = require("assert");
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
     const service = "https://localhost:9859/anything/app";
-    let ticket = null;
-    let userid = null;
+    let ticket;
+    let userid;
     try {
         const page = await cas.newPage(browser);
         const availableUsers = ["casuser", "casadmin"];
