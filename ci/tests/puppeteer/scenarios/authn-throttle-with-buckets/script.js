@@ -35,6 +35,7 @@ const cas = require("../../cas.js");
 
 async function submitLogin(page, user = "casuser", password = "BadPassword1") {
     await cas.gotoLogin(page);
+    await cas.sleep(500);
     await cas.loginWith(page, user, password);
     await cas.sleep(500);
 }

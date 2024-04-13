@@ -102,4 +102,5 @@ to the typical user, the refactoring and cleanup should make it significantly ea
 - Apache Tomcat
 - Slack
 - Pac4j
+- Logback
 - Azure Identity
