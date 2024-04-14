@@ -54,6 +54,6 @@ class MultifactorAuthnTrustedDeviceFingerprintConfigurationTests {
         assertNotNull(deviceFingerprintGeoLocationComponentExtractor);
         assertNotNull(deviceFingerprintUserAgentComponentExtractor);
 
-        assertEquals(4, deviceFingerprintStrategy.deviceFingerprintComponentManagers().size());
+        assertEquals(4, deviceFingerprintStrategy.getDeviceFingerprintComponentManagers().size());
     }
 }

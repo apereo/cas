@@ -41,18 +41,18 @@ public class MultifactorAuthenticationVerifyTrustAction extends BaseCasWebflowAc
 
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
-        val authn = WebUtils.getAuthentication(requestContext);
-        if (authn == null) {
+        val authentication = WebUtils.getAuthentication(requestContext);
+        if (authentication == null) {
             LOGGER.warn("Could not determine authentication from the request context");
             return no();
         }
         val registeredService = WebUtils.getRegisteredService(requestContext);
         val service = WebUtils.getService(requestContext);
-        if (bypassEvaluator.shouldBypassTrustedDevice(registeredService, service, authn)) {
+        if (bypassEvaluator.shouldBypassTrustedDevice(registeredService, service, authentication)) {
             LOGGER.debug("Trusted device registration is disabled for [{}]", registeredService);
             return result(CasWebflowConstants.TRANSITION_ID_SKIP);
         }
-        val principal = authn.getPrincipal().getId();
+        val principal = authentication.getPrincipal().getId();
         LOGGER.trace("Retrieving trusted authentication records for [{}]", principal);
         val results = storage.isAvailable() ? storage.get(principal) : Set.<MultifactorAuthenticationTrustRecord>of();
         if (results.isEmpty()) {
@@ -61,7 +61,7 @@ public class MultifactorAuthenticationVerifyTrustAction extends BaseCasWebflowAc
         }
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-        val fingerprint = deviceFingerprintStrategy.determineFingerprintComponent(principal, request, response);
+        val fingerprint = deviceFingerprintStrategy.determineFingerprintComponent(authentication, request, response);
         LOGGER.trace("Retrieving authentication records for [{}] that matches [{}]", principal, fingerprint);
         if (results.stream().noneMatch(entry -> entry.getDeviceFingerprint().equals(fingerprint))) {
             LOGGER.debug("No trusted authentication records could be found for [{}] to match the current device fingerprint", principal);
@@ -71,7 +71,7 @@ public class MultifactorAuthenticationVerifyTrustAction extends BaseCasWebflowAc
         LOGGER.debug("Trusted authentication records found for [{}] that matches the current device fingerprint", principal);
         MultifactorAuthenticationTrustUtils.setMultifactorAuthenticationTrustedInScope(requestContext);
         MultifactorAuthenticationTrustUtils.trackTrustedMultifactorAuthenticationAttribute(
-            authn,
+            authentication,
             trustedProperties.getCore().getAuthenticationContextAttribute());
         return yes();
     }

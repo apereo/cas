@@ -1,5 +1,6 @@
 package org.apereo.cas.trusted.web.flow.fingerprint;
 
+import org.apereo.cas.authentication.Authentication;
 import org.springframework.core.Ordered;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -37,5 +38,5 @@ public interface DeviceFingerprintComponentManager extends Ordered {
      * @return The fingerprint component
      * @throws Throwable the throwable
      */
-    Optional<String> extractComponent(String principal, HttpServletRequest request, HttpServletResponse response) throws Throwable;
+    Optional<String> extractComponent(Authentication principal, HttpServletRequest request, HttpServletResponse response) throws Throwable;
 }

@@ -3,6 +3,7 @@ package org.apereo.cas.trusted.authentication.storage.fingerprint;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.trusted.web.flow.fingerprint.GeoLocationDeviceFingerprintComponentManager;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.http.HttpRequestUtils;
@@ -41,7 +42,7 @@ class GeoLocationDeviceFingerprintComponentManagerTests {
         when(geoLocationService.locate(anyDouble(), anyDouble())).thenReturn(geoResp);
         when(geoLocationService.locate(any(GeoLocationRequest.class))).thenReturn(geoResp);
         val ex = new GeoLocationDeviceFingerprintComponentManager(geoLocationService);
-        val result = ex.extractComponent("casuser",
+        val result = ex.extractComponent(RegisteredServiceTestUtils.getAuthentication(),
             context.getHttpServletRequest(), context.getHttpServletResponse());
         assertTrue(result.isPresent());
     }
@@ -54,7 +55,8 @@ class GeoLocationDeviceFingerprintComponentManagerTests {
         when(geoLocationService.locate(anyDouble(), anyDouble())).thenReturn(geoResp);
         when(geoLocationService.locate(any(GeoLocationRequest.class))).thenReturn(geoResp);
         val ex = new GeoLocationDeviceFingerprintComponentManager(geoLocationService);
-        val result = ex.extractComponent("casuser", context.getHttpServletRequest(), context.getHttpServletResponse());
+        val result = ex.extractComponent(RegisteredServiceTestUtils.getAuthentication(),
+            context.getHttpServletRequest(), context.getHttpServletResponse());
         assertFalse(result.isPresent());
     }
 

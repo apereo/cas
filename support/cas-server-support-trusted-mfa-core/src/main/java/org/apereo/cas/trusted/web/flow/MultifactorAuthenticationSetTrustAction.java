@@ -86,7 +86,7 @@ public class MultifactorAuthenticationSetTrustAction extends BaseCasWebflowActio
             LOGGER.debug("Attempting to store trusted authentication record for [{}] as device [{}]", principal, deviceRecord.getDeviceName());
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-            val fingerprint = deviceFingerprintStrategy.determineFingerprintComponent(principal, request, response);
+            val fingerprint = deviceFingerprintStrategy.determineFingerprintComponent(authentication, request, response);
             val record = MultifactorAuthenticationTrustRecord.newInstance(principal,
                 MultifactorAuthenticationTrustUtils.generateGeography(), fingerprint);
             record.setName(deviceRecord.getDeviceName());

@@ -1,5 +1,6 @@
 package org.apereo.cas.trusted.web.flow.fingerprint;
 
+import org.apereo.cas.authentication.Authentication;
 import lombok.Getter;
 import lombok.Setter;
 import org.apereo.inspektr.common.web.ClientInfo;
@@ -21,7 +22,7 @@ public class ClientIpDeviceFingerprintComponentManager implements DeviceFingerpr
     private int order = LOWEST_PRECEDENCE;
 
     @Override
-    public Optional<String> extractComponent(final String principal,
+    public Optional<String> extractComponent(final Authentication authentication,
                                              final HttpServletRequest request,
                                              final HttpServletResponse response) {
         return Optional.ofNullable(ClientInfoHolder.getClientInfo()).map(ClientInfo::getClientIpAddress);

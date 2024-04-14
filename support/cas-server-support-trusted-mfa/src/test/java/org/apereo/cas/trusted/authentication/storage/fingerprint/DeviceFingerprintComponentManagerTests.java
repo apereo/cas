@@ -1,5 +1,6 @@
 package org.apereo.cas.trusted.authentication.storage.fingerprint;
 
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.trusted.web.flow.fingerprint.DeviceFingerprintComponentManager;
 
 import lombok.val;
@@ -26,7 +27,7 @@ class DeviceFingerprintComponentManagerTests {
         val response = new MockHttpServletResponse();
         val noOp = DeviceFingerprintComponentManager.noOp();
         assertEquals(Ordered.LOWEST_PRECEDENCE, noOp.getOrder());
-        assertTrue(noOp.extractComponent("user", request, response).isEmpty());
+        assertTrue(noOp.extractComponent(RegisteredServiceTestUtils.getAuthentication(), request, response).isEmpty());
     }
 
 }
