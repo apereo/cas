@@ -11,7 +11,9 @@ import com.github.benmanes.caffeine.cache.Cache;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.Resource;
 
 import java.io.File;
@@ -30,12 +32,16 @@ import java.util.Optional;
 public class FileSystemSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocator {
     private final File metadataLocation;
 
-    public FileSystemSamlIdPMetadataLocator(final Resource resource, final Cache<String, SamlIdPMetadataDocument> metadataCache) throws Exception {
-        this(resource.getFile(), metadataCache);
+    public FileSystemSamlIdPMetadataLocator(final CipherExecutor cipherExecutor,
+                                            final Resource resource, final Cache<String, SamlIdPMetadataDocument> metadataCache,
+                                            final ConfigurableApplicationContext applicationContext) throws Exception {
+        this(cipherExecutor, resource.getFile(), metadataCache, applicationContext);
     }
 
-    public FileSystemSamlIdPMetadataLocator(final File resource, final Cache<String, SamlIdPMetadataDocument> metadataCache) {
-        super(CipherExecutor.noOpOfStringToString(), metadataCache);
+    public FileSystemSamlIdPMetadataLocator(final CipherExecutor cipherExecutor, final File resource,
+                                            final Cache<String, SamlIdPMetadataDocument> metadataCache,
+                                            final ConfigurableApplicationContext applicationContext) {
+        super(cipherExecutor, metadataCache, applicationContext);
         this.metadataLocation = resource;
     }
 
@@ -103,10 +109,10 @@ public class FileSystemSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLoc
             }
         }
         initializeMetadataDirectory();
-        return ResourceUtils.toFileSystemResource(new File(this.metadataLocation, artifactName));
+        val resource = ResourceUtils.toFileSystemResource(new File(this.metadataLocation, artifactName));
+        val content = FileUtils.readFileToString(resource.getFile(), StandardCharsets.UTF_8);
+        return resolveContentToResource(content);
     }
-
-    
 
     private void initializeMetadataDirectory() {
         if (!this.metadataLocation.exists()) {

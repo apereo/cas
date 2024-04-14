@@ -10,6 +10,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.val;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.Optional;
 
@@ -33,8 +34,9 @@ public class RedisSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocator 
     public RedisSamlIdPMetadataLocator(final CipherExecutor<String, String> metadataCipherExecutor,
                                        final Cache<String, SamlIdPMetadataDocument> metadataCache,
                                        final CasRedisTemplate<String, SamlIdPMetadataDocument> redisTemplate,
+                                       final ConfigurableApplicationContext applicationContext,
                                        final long scanCount) {
-        super(metadataCipherExecutor, metadataCache);
+        super(metadataCipherExecutor, metadataCache, applicationContext);
         this.redisTemplate = redisTemplate;
         this.scanCount = scanCount;
     }

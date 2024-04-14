@@ -89,7 +89,7 @@ class SamlIdPRestfulIdPMetadataConfiguration {
             .supply(() -> {
                 val idp = casProperties.getAuthn().getSamlIdp();
                 return new RestfulSamlIdPMetadataLocator(samlIdPMetadataGeneratorCipherExecutor,
-                    samlIdPMetadataCache, idp.getMetadata().getRest());
+                    samlIdPMetadataCache, idp.getMetadata().getRest(), applicationContext);
             })
             .otherwiseProxy()
             .get();

@@ -102,6 +102,8 @@ class SamlIdPGitIdPMetadataConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public SamlIdPMetadataLocator samlIdPMetadataLocator(
+        @Qualifier("samlIdPMetadataGeneratorCipherExecutor")
+        final CipherExecutor samlIdPMetadataGeneratorCipherExecutor,
         final ConfigurableApplicationContext applicationContext,
         @Qualifier("samlIdPMetadataCache")
         final Cache<String, SamlIdPMetadataDocument> samlIdPMetadataCache,
@@ -110,7 +112,8 @@ class SamlIdPGitIdPMetadataConfiguration {
         return BeanSupplier.of(SamlIdPMetadataLocator.class)
             .when(CONDITION_ENABLED.given(applicationContext.getEnvironment()))
             .and(CONDITION_URL.given(applicationContext.getEnvironment()))
-            .supply(() -> new GitSamlIdPMetadataLocator(gitIdPMetadataRepositoryInstance, samlIdPMetadataCache))
+            .supply(() -> new GitSamlIdPMetadataLocator(gitIdPMetadataRepositoryInstance,
+                samlIdPMetadataCache, samlIdPMetadataGeneratorCipherExecutor, applicationContext))
             .otherwiseProxy()
             .get();
     }

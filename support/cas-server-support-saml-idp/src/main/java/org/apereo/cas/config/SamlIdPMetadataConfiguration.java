@@ -345,13 +345,18 @@ class SamlIdPMetadataConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlIdPMetadataLocator samlIdPMetadataLocator(
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier("samlIdPMetadataGeneratorCipherExecutor")
+            final CipherExecutor samlIdPMetadataGeneratorCipherExecutor,
             final CasConfigurationProperties casProperties,
             @Qualifier("samlIdPMetadataCache")
             final Cache<String, SamlIdPMetadataDocument> samlIdPMetadataCache) throws Exception {
             val idp = casProperties.getAuthn().getSamlIdp();
-            val location = SpringExpressionLanguageValueResolver.getInstance().resolve(idp.getMetadata().getFileSystem().getLocation());
+            val location = SpringExpressionLanguageValueResolver.getInstance()
+                .resolve(idp.getMetadata().getFileSystem().getLocation());
             val metadataLocation = ResourceUtils.getRawResourceFrom(location);
-            return new FileSystemSamlIdPMetadataLocator(metadataLocation, samlIdPMetadataCache);
+            return new FileSystemSamlIdPMetadataLocator(samlIdPMetadataGeneratorCipherExecutor,
+                metadataLocation, samlIdPMetadataCache, applicationContext);
         }
     }
 
