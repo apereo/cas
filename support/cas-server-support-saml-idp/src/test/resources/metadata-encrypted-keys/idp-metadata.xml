@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EntityDescriptor xmlns="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:shibmd="urn:mace:shibboleth:metadata:1.0" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui" entityID="https://cas.example.org/idp">
+    <IDPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol urn:oasis:names:tc:SAML:1.1:protocol urn:mace:shibboleth:1.0">
+        <Extensions>
+            <shibmd:Scope regexp="false">example.org</shibmd:Scope>
+
+            <!--
+            <mdui:UIInfo xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui">
+                <mdui:DisplayName xml:lang="en">CAS</mdui:DisplayName>
+                <mdui:Description xml:lang="en">Apereo CAS</mdui:Description>
+                <mdui:InformationURL xml:lang="en">https://apereo.org/projects/cas</mdui:InformationURL>
+                <mdui:PrivacyStatementURL xml:lang="en">https://apereo.org/projects/cas</mdui:PrivacyStatementURL>
+                <mdui:Logo height="60" width="1119" xml:lang="en">https://apereo.github.io/cas/images/cas_logo.png</mdui:Logo>
+            </mdui:UIInfo>
+            -->
+            
+        </Extensions>
+        <KeyDescriptor use="signing">
+            <ds:KeyInfo>
+                <ds:X509Data>
+                    <ds:X509Certificate>MIIDHjCCAgagAwIBAgIVALMbwVFgdeXJstsfQm0+Tj5TNSD7MA0GCSqGSIb3DQEB
+CwUAMBoxGDAWBgNVBAMMD2Nhcy5leGFtcGxlLm9yZzAeFw0yMDA0MTMxNjM2MTRa
+Fw00MDA0MTMxNjM2MTRaMBoxGDAWBgNVBAMMD2Nhcy5leGFtcGxlLm9yZzCCASIw
+DQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMbmthg4aUzFuVCYnNODOz94Vz6y
+gClw3KAuFnd8jBDylD/6LXsuy8fxeJ+03fc+gcwVCI1EdK/F/Z7WvQH1qiNwxh5J
+xSe1kFQ/pyRs1hY0m7RWITEIHHqB4SF6YRws0LcaO/wbvHxmfx4DO9ARIAMuaJU+
+DLmpsjp0XTf9wqb555oxTewxfUIkTBdutH6blVTA7lHtS541zxRJ9FQ1tAixnQYP
+jOKnZK5afpMwihdMd3ehxyYAX2qP8JWaj3zsHZckFe6Vpkf3x6eFU1PYg7bK0GrU
+qcKpUPwC/T9neX7Z2yPnhceXNx/kGoC5UrHTpjrq5fQw94X0kq9H+xbdtAsCAwEA
+AaNbMFkwHQYDVR0OBBYEFJf2+B9GGMet6heHRQaXNrzrtRDbMDgGA1UdEQQxMC+C
+D2Nhcy5leGFtcGxlLm9yZ4YcY2FzLmV4YW1wbGUub3JnL2lkcC9tZXRhZGF0YTAN
+BgkqhkiG9w0BAQsFAAOCAQEAIcmTuX5CvoaDlflHtLl1Lom0Aa38VB58ERsnXzbD
+YK6oBEdG2eaZz7aqevoLlZM870g/WP09oba4pV5CP/YKfj0fugmIbJJIbEjlQ54R
+5/SVfDfVbtqP16+0h6ETBlVWm2JMtURtqaBa8CigdITy7pUe1M67H3TtYPqoLd5y
++E9N0topYi7eAV2JZYXdEnJwXAZcPVhkgTl2ewMo3H5z+2dB2OM+je34xUdfn/YC
+sdDgtzlrPpO9InwpYcOpUzrKpHf089d4csIjbGdL6Kb/zDm9hadTZqrGmMGskyXi
+b0CfxW374ZqbP6ijIoFtxfSvMjwVtEVX5unLasID1I9fKA==</ds:X509Certificate>
+                </ds:X509Data>
+            </ds:KeyInfo>
+        </KeyDescriptor>
+        <KeyDescriptor use="encryption">
+            <ds:KeyInfo>
+                <ds:X509Data>
+                    <ds:X509Certificate>MIIDHTCCAgWgAwIBAgIUY8r3Ady7sdxFcgwGDXntpUvoBEEwDQYJKoZIhvcNAQEL
+BQAwGjEYMBYGA1UEAwwPY2FzLmV4YW1wbGUub3JnMB4XDTIwMDQxMzE2MzYxNFoX
+DTQwMDQxMzE2MzYxNFowGjEYMBYGA1UEAwwPY2FzLmV4YW1wbGUub3JnMIIBIjAN
+BgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlX8nFUjRqbtjfv1+dVOiGUVL/4Kd
+kx4yKgUnZi1ww5KUmeQDsKZBW6wllwkt8dFrajtbHixEj9w0Vks2TK6KLZ9l9P+/
+j51yekf60G2w7eCxonFNb/6KiR9Om5uEh2Du1cuX8P0djxGkXbWbTdgeDDzgWpkd
+DudEnyqRIrPDkY2sqW2wGjdd98xlF76G0zYxVu35In8J6qiTmDycM7faFvZIeaKR
+G7Sfsw/rwltX34vda/AGyoNwRxkDJzRECyjcqU//PDBqBzMjzDp4WACuo3V5z6XL
+EW02sQqZVDcEHiKXomw6X+XAFTvWfreMbCRgpfs26SqbOY0A84FlsyGKHwIDAQAB
+o1swWTAdBgNVHQ4EFgQU66WY5l6zYQntSAOCCgJLTraqiD0wOAYDVR0RBDEwL4IP
+Y2FzLmV4YW1wbGUub3JnhhxjYXMuZXhhbXBsZS5vcmcvaWRwL21ldGFkYXRhMA0G
+CSqGSIb3DQEBCwUAA4IBAQBEqhu9g2YxtOYx5HAu8tNnuyqFsVveV7lF84d2IbUQ
+ST1/4lbwqsg8iSQTL35VvILA6/uwx1wMkKVAnHXaqcjvE2xyvpVUp2ICNT8RheDk
+wXheZ3mddOTM2Y0o1xIlBllpchfp0YiDJiGWZAerAta1D5pkZYpe/y2AKQV3Q4xe
+gNsZVQzhVGmiWNRXS3KGpKmWEHT2+Ih4tZpwWWt89ffT6mb6MaEZOAlFlo16dk2d
+vjKHG2HBWtGYf0huaKtpvDyZFuEohQGLmlToy+g9l7xpKconKtsfzDTKYDjjb68X
+eEjvVhAN7JLn741Oe2wtxDCp8N/5DG6dDoukuBIzkXNN</ds:X509Certificate>
+                </ds:X509Data>
+            </ds:KeyInfo>
+        </KeyDescriptor>
+
+        <!--
+        <ArtifactResolutionService Binding="urn:oasis:names:tc:SAML:1.0:bindings:SOAP-binding" 
+                                   Location="https://cas.example.org:8443/cas/idp/profile/SAML1/SOAP/ArtifactResolution" index="1"/>
+        -->
+        
+        <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://cas.example.org:8443/cas/idp/profile/SAML2/POST/SLO"/>
+        <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://cas.example.org:8443/cas/idp/profile/SAML2/Redirect/SLO" />
+
+        <NameIDFormat>urn:mace:shibboleth:1.0:nameIdentifier</NameIDFormat>
+        <NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</NameIDFormat>
+
+        <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://cas.example.org:8443/cas/idp/profile/SAML2/POST/SSO"/>
+        <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign" Location="https://cas.example.org:8443/cas/idp/profile/SAML2/POST-SimpleSign/SSO"/>
+        <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://cas.example.org:8443/cas/idp/profile/SAML2/Redirect/SSO"/>
+        <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://cas.example.org:8443/cas/idp/profile/SAML2/SOAP/ECP"/>
+    </IDPSSODescriptor>
+
+    <!--
+    <AttributeAuthorityDescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:1.1:protocol urn:oasis:names:tc:SAML:2.0:protocol">
+        <Extensions>
+            <shibmd:Scope regexp="false">example.org</shibmd:Scope>
+        </Extensions>
+        <KeyDescriptor use="signing">
+            <ds:KeyInfo>
+                <ds:X509Data>
+                    <ds:X509Certificate>MIIDHjCCAgagAwIBAgIVALMbwVFgdeXJstsfQm0+Tj5TNSD7MA0GCSqGSIb3DQEB
+CwUAMBoxGDAWBgNVBAMMD2Nhcy5leGFtcGxlLm9yZzAeFw0yMDA0MTMxNjM2MTRa
+Fw00MDA0MTMxNjM2MTRaMBoxGDAWBgNVBAMMD2Nhcy5leGFtcGxlLm9yZzCCASIw
+DQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMbmthg4aUzFuVCYnNODOz94Vz6y
+gClw3KAuFnd8jBDylD/6LXsuy8fxeJ+03fc+gcwVCI1EdK/F/Z7WvQH1qiNwxh5J
+xSe1kFQ/pyRs1hY0m7RWITEIHHqB4SF6YRws0LcaO/wbvHxmfx4DO9ARIAMuaJU+
+DLmpsjp0XTf9wqb555oxTewxfUIkTBdutH6blVTA7lHtS541zxRJ9FQ1tAixnQYP
+jOKnZK5afpMwihdMd3ehxyYAX2qP8JWaj3zsHZckFe6Vpkf3x6eFU1PYg7bK0GrU
+qcKpUPwC/T9neX7Z2yPnhceXNx/kGoC5UrHTpjrq5fQw94X0kq9H+xbdtAsCAwEA
+AaNbMFkwHQYDVR0OBBYEFJf2+B9GGMet6heHRQaXNrzrtRDbMDgGA1UdEQQxMC+C
+D2Nhcy5leGFtcGxlLm9yZ4YcY2FzLmV4YW1wbGUub3JnL2lkcC9tZXRhZGF0YTAN
+BgkqhkiG9w0BAQsFAAOCAQEAIcmTuX5CvoaDlflHtLl1Lom0Aa38VB58ERsnXzbD
+YK6oBEdG2eaZz7aqevoLlZM870g/WP09oba4pV5CP/YKfj0fugmIbJJIbEjlQ54R
+5/SVfDfVbtqP16+0h6ETBlVWm2JMtURtqaBa8CigdITy7pUe1M67H3TtYPqoLd5y
++E9N0topYi7eAV2JZYXdEnJwXAZcPVhkgTl2ewMo3H5z+2dB2OM+je34xUdfn/YC
+sdDgtzlrPpO9InwpYcOpUzrKpHf089d4csIjbGdL6Kb/zDm9hadTZqrGmMGskyXi
+b0CfxW374ZqbP6ijIoFtxfSvMjwVtEVX5unLasID1I9fKA==</ds:X509Certificate>
+                </ds:X509Data>
+            </ds:KeyInfo>
+        </KeyDescriptor>
+        <AttributeService Binding="urn:oasis:names:tc:SAML:1.0:bindings:SOAP-binding" Location="https://cas.example.org:8443/cas/idp/profile/SAML1/SOAP/AttributeQuery"/>
+        <AttributeService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://cas.example.org:8443/cas/idp/profile/SAML2/SOAP/AttributeQuery"/>
+    </AttributeAuthorityDescriptor>
+    -->
+    
+    <!--
+    <Organization>
+        <OrganizationName xml:lang="en">Institution Name</OrganizationName>
+        <OrganizationDisplayName xml:lang="en">Institution DisplayName</OrganizationDisplayName>
+        <OrganizationURL xml:lang="en">URL</OrganizationURL>
+    </Organization>
+    <ContactPerson contactType="administrative">
+        <GivenName>John Smith</GivenName>
+        <EmailAddress>jsmith@example.org</EmailAddress>
+    </ContactPerson>
+    <ContactPerson contactType="technical">
+        <GivenName>John Smith</GivenName>
+        <EmailAddress>jsmith@example.org</EmailAddress>
+    </ContactPerson>
+    <ContactPerson contactType="support">
+        <GivenName>IT Services Support</GivenName>
+        <EmailAddress>support@example.org</EmailAddress>
+    </ContactPerson>
+    -->
+</EntityDescriptor>

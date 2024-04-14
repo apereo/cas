@@ -199,7 +199,7 @@ class SamlIdPJpaIdPMetadataConfiguration {
             final CipherExecutor samlIdPMetadataGeneratorCipherExecutor) {
             return BeanSupplier.of(SamlIdPMetadataLocator.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> new JpaSamlIdPMetadataLocator(samlIdPMetadataGeneratorCipherExecutor, samlIdPMetadataCache))
+                .supply(() -> new JpaSamlIdPMetadataLocator(samlIdPMetadataGeneratorCipherExecutor, samlIdPMetadataCache, applicationContext))
                 .otherwiseProxy()
                 .get();
         }

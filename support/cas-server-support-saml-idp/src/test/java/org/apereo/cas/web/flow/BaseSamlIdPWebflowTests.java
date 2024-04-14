@@ -10,6 +10,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -21,6 +22,7 @@ import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.io.FileSystemResource;
@@ -84,10 +86,12 @@ public abstract class BaseSamlIdPWebflowTests extends BaseWebflowConfigurerTests
         private Cache<String, SamlIdPMetadataDocument> samlIdPMetadataCache;
 
         @Bean
-        public SamlIdPMetadataLocator samlIdPMetadataLocator() throws Exception {
+        public SamlIdPMetadataLocator samlIdPMetadataLocator(
+            final ConfigurableApplicationContext applicationContext) throws Exception {
             return new FileSystemSamlIdPMetadataLocator(
+                CipherExecutor.noOpOfStringToString(),
                 new FileSystemResource(FileUtils.getTempDirectory()),
-                samlIdPMetadataCache);
+                samlIdPMetadataCache, applicationContext);
         }
     }
 }
