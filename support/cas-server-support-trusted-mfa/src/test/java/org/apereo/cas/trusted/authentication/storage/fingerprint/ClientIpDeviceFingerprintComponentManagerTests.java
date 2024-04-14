@@ -1,5 +1,6 @@
 package org.apereo.cas.trusted.authentication.storage.fingerprint;
 
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.trusted.web.flow.fingerprint.ClientIpDeviceFingerprintComponentManager;
 
 import lombok.NoArgsConstructor;
@@ -29,7 +30,7 @@ class ClientIpDeviceFingerprintComponentManagerTests {
         val response = new MockHttpServletResponse();
         ClientInfoHolder.setClientInfo(null);
         val ex = new ClientIpDeviceFingerprintComponentManager();
-        assertFalse(ex.extractComponent("casuser", request, response).isPresent());
+        assertFalse(ex.extractComponent(RegisteredServiceTestUtils.getAuthentication(), request, response).isPresent());
     }
 
     @Test
@@ -40,6 +41,6 @@ class ClientIpDeviceFingerprintComponentManagerTests {
         val clientInfo = ClientInfo.from(request);
         ClientInfoHolder.setClientInfo(clientInfo);
         val ex = new ClientIpDeviceFingerprintComponentManager();
-        assertTrue(ex.extractComponent("casuser", request, response).isPresent());
+        assertTrue(ex.extractComponent(RegisteredServiceTestUtils.getAuthentication(), request, response).isPresent());
     }
 }

@@ -1,5 +1,6 @@
 package org.apereo.cas.trusted.authentication.storage.fingerprint;
 
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.trusted.web.flow.fingerprint.UserAgentDeviceFingerprintComponentManager;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.http.HttpRequestUtils;
@@ -30,7 +31,7 @@ class UserAgentDeviceFingerprintComponentManagerTests {
         val context = MockRequestContext.create(applicationContext);
         ClientInfoHolder.setClientInfo(null);
         val ex = new UserAgentDeviceFingerprintComponentManager();
-        assertFalse(ex.extractComponent("casuser",
+        assertFalse(ex.extractComponent(RegisteredServiceTestUtils.getAuthentication(),
             context.getHttpServletRequest(), context.getHttpServletResponse()).isPresent());
     }
 
@@ -40,7 +41,7 @@ class UserAgentDeviceFingerprintComponentManagerTests {
         context.setRemoteAddr("1.2.3.4");
         context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "TestAgent");
         val ex = new UserAgentDeviceFingerprintComponentManager();
-        assertTrue(ex.extractComponent("casuser",
+        assertTrue(ex.extractComponent(RegisteredServiceTestUtils.getAuthentication(),
             context.getHttpServletRequest(), context.getHttpServletResponse()).isPresent());
     }
 }

@@ -1,5 +1,6 @@
 package org.apereo.cas.trusted.web.flow.fingerprint;
 
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.web.support.WebUtils;
@@ -31,7 +32,7 @@ public class GeoLocationDeviceFingerprintComponentManager implements DeviceFinge
     private int order = LOWEST_PRECEDENCE;
 
     @Override
-    public Optional<String> extractComponent(final String principal,
+    public Optional<String> extractComponent(final Authentication authentication,
                                              final HttpServletRequest request,
                                              final HttpServletResponse response) throws Throwable {
         val loc = WebUtils.getHttpServletRequestGeoLocation(request);
