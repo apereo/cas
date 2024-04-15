@@ -26,15 +26,15 @@ import java.util.Optional;
 @Setter
 @Slf4j
 @RequiredArgsConstructor
-public class GeoLocationDeviceFingerprintComponentManager implements DeviceFingerprintComponentManager {
+public class GeoLocationDeviceFingerprintExtractor implements DeviceFingerprintExtractor {
     private final GeoLocationService geoLocationService;
 
     private int order = LOWEST_PRECEDENCE;
 
     @Override
-    public Optional<String> extractComponent(final Authentication authentication,
-                                             final HttpServletRequest request,
-                                             final HttpServletResponse response) throws Throwable {
+    public Optional<String> extract(final Authentication authentication,
+                                    final HttpServletRequest request,
+                                    final HttpServletResponse response) throws Throwable {
         val loc = WebUtils.getHttpServletRequestGeoLocation(request);
 
         if (loc != null && loc.isValid()) {

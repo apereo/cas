@@ -14,13 +14,13 @@ import java.util.Optional;
  * @since 5.3.0
  */
 @FunctionalInterface
-public interface DeviceFingerprintComponentManager extends Ordered {
+public interface DeviceFingerprintExtractor extends Ordered {
     /**
      * Return a no-op DeviceFingerprintComponent.
      *
      * @return a no-op DeviceFingerprintComponent.
      */
-    static DeviceFingerprintComponentManager noOp() {
+    static DeviceFingerprintExtractor noOp() {
         return (principal, request, response) -> Optional.empty();
     }
 
@@ -38,5 +38,5 @@ public interface DeviceFingerprintComponentManager extends Ordered {
      * @return The fingerprint component
      * @throws Throwable the throwable
      */
-    Optional<String> extractComponent(Authentication principal, HttpServletRequest request, HttpServletResponse response) throws Throwable;
+    Optional<String> extract(Authentication principal, HttpServletRequest request, HttpServletResponse response) throws Throwable;
 }

@@ -4,7 +4,7 @@ import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.trusted.web.flow.fingerprint.GeoLocationDeviceFingerprintComponentManager;
+import org.apereo.cas.trusted.web.flow.fingerprint.GeoLocationDeviceFingerprintExtractor;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.val;
@@ -18,14 +18,14 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * This is {@link GeoLocationDeviceFingerprintComponentManagerTests}.
+ * This is {@link GeoLocationDeviceFingerprintExtractorTests}.
  *
  * @author Misagh Moayyed
  * @since 6.1.0
  */
 @Tag("GeoLocation")
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
-class GeoLocationDeviceFingerprintComponentManagerTests {
+class GeoLocationDeviceFingerprintExtractorTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
     
@@ -41,8 +41,8 @@ class GeoLocationDeviceFingerprintComponentManagerTests {
         val geoLocationService = mock(GeoLocationService.class);
         when(geoLocationService.locate(anyDouble(), anyDouble())).thenReturn(geoResp);
         when(geoLocationService.locate(any(GeoLocationRequest.class))).thenReturn(geoResp);
-        val ex = new GeoLocationDeviceFingerprintComponentManager(geoLocationService);
-        val result = ex.extractComponent(RegisteredServiceTestUtils.getAuthentication(),
+        val ex = new GeoLocationDeviceFingerprintExtractor(geoLocationService);
+        val result = ex.extract(RegisteredServiceTestUtils.getAuthentication(),
             context.getHttpServletRequest(), context.getHttpServletResponse());
         assertTrue(result.isPresent());
     }
@@ -54,8 +54,8 @@ class GeoLocationDeviceFingerprintComponentManagerTests {
         val geoLocationService = mock(GeoLocationService.class);
         when(geoLocationService.locate(anyDouble(), anyDouble())).thenReturn(geoResp);
         when(geoLocationService.locate(any(GeoLocationRequest.class))).thenReturn(geoResp);
-        val ex = new GeoLocationDeviceFingerprintComponentManager(geoLocationService);
-        val result = ex.extractComponent(RegisteredServiceTestUtils.getAuthentication(),
+        val ex = new GeoLocationDeviceFingerprintExtractor(geoLocationService);
+        val result = ex.extract(RegisteredServiceTestUtils.getAuthentication(),
             context.getHttpServletRequest(), context.getHttpServletResponse());
         assertFalse(result.isPresent());
     }
