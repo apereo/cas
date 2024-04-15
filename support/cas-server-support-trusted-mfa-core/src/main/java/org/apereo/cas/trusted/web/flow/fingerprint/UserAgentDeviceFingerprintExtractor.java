@@ -16,13 +16,13 @@ import java.util.Optional;
  */
 @Getter
 @Setter
-public class UserAgentDeviceFingerprintComponentManager implements DeviceFingerprintComponentManager {
+public class UserAgentDeviceFingerprintExtractor implements DeviceFingerprintExtractor {
     private int order = LOWEST_PRECEDENCE;
 
     @Override
-    public Optional<String> extractComponent(final Authentication authentication,
-                                             final HttpServletRequest request,
-                                             final HttpServletResponse response) {
+    public Optional<String> extract(final Authentication authentication,
+                                    final HttpServletRequest request,
+                                    final HttpServletResponse response) {
         return Optional.ofNullable(HttpRequestUtils.getHttpServletRequestUserAgent(request));
     }
 }

@@ -54,6 +54,11 @@ public class DeviceFingerprintProperties implements Serializable {
      */
     private GeoLocation geolocation = new GeoLocation();
 
+    /**
+     * Configure usage of browser within trusted device fingerprints.
+     */
+    private GeoLocation browser = new GeoLocation();
+
     @Getter
     @Setter
     @Accessors(chain = true)
@@ -139,6 +144,25 @@ public class DeviceFingerprintProperties implements Serializable {
         private static final int DEFAULT_ORDER = 4;
 
         public GeoLocation() {
+            setEnabled(false);
+            setOrder(DEFAULT_ORDER);
+        }
+    }
+
+    @Getter
+    @Setter
+    @Accessors(chain = true)
+    @RequiresModule(name = "cas-server-support-trusted-mfa")
+    public static class Browser extends BaseDeviceFingerprintComponentProperties {
+        @Serial
+        private static final long serialVersionUID = -4125531035180836136L;
+
+        /**
+         * Default Order for GeoLocation component.
+         */
+        private static final int DEFAULT_ORDER = 5;
+
+        public Browser() {
             setEnabled(false);
             setOrder(DEFAULT_ORDER);
         }

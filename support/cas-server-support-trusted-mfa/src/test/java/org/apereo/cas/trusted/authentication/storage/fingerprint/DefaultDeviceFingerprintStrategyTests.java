@@ -20,7 +20,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Getter
-@SpringBootTest(classes = AbstractMultifactorAuthenticationTrustStorageTests.SharedTestConfiguration.class)
+@SpringBootTest(classes = AbstractMultifactorAuthenticationTrustStorageTests.SharedTestConfiguration.class,
+    properties = "cas.authn.mfa.trusted.device-fingerprint.browser.enabled=true")
 @Tag("MFATrustedDevices")
 class DefaultDeviceFingerprintStrategyTests extends AbstractMultifactorAuthenticationTrustStorageTests {
 
