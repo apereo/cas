@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.hz.HazelcastConfigurationFactory;
+import org.apereo.cas.hz.HazelcastMapCustomizer;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.catalog.CasTicketCatalogConfigurationValuesProvider;
@@ -28,9 +29,12 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
+import java.util.ArrayList;
 
 /**
  * Spring's Java configuration component for {@code HazelcastInstance} that is consumed and used by
@@ -58,16 +62,13 @@ public class CasHazelcastTicketRegistryAutoConfiguration {
         return new CasTicketCatalogConfigurationValuesProvider() {
         };
     }
-    
+
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public TicketRegistry ticketRegistry(
-        @Qualifier(TicketSerializationManager.BEAN_NAME)
-        final TicketSerializationManager ticketSerializationManager,
-        @Qualifier("casTicketRegistryHazelcastInstance")
-        final HazelcastInstance casTicketRegistryHazelcastInstance,
-        @Qualifier(TicketCatalog.BEAN_NAME)
-        final TicketCatalog ticketCatalog,
+        @Qualifier(TicketSerializationManager.BEAN_NAME) final TicketSerializationManager ticketSerializationManager,
+        @Qualifier("casTicketRegistryHazelcastInstance") final HazelcastInstance casTicketRegistryHazelcastInstance,
+        @Qualifier(TicketCatalog.BEAN_NAME) final TicketCatalog ticketCatalog,
         final CasConfigurationProperties casProperties) {
         val hz = casProperties.getTicket().getRegistry().getHazelcast();
         val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(hz.getCrypto(), "hazelcast");
@@ -79,8 +80,8 @@ public class CasHazelcastTicketRegistryAutoConfiguration {
     @ConditionalOnMissingBean(name = "casTicketRegistryHazelcastInstance")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public HazelcastInstance casTicketRegistryHazelcastInstance(
-        @Qualifier(TicketCatalog.BEAN_NAME)
-        final TicketCatalog ticketCatalog,
+        final ConfigurableApplicationContext applicationContext,
+        @Qualifier(TicketCatalog.BEAN_NAME) final TicketCatalog ticketCatalog,
         final CasConfigurationProperties casProperties) {
         val hz = casProperties.getTicket().getRegistry().getHazelcast();
         LOGGER.debug("Creating Hazelcast instance for members [{}]", hz.getCluster().getNetwork().getMembers());
@@ -92,8 +93,8 @@ public class CasHazelcastTicketRegistryAutoConfiguration {
             .map(defn -> {
                 LOGGER.debug("Creating Hazelcast map configuration for [{}]", defn.getProperties());
                 val props = defn.getProperties();
-                val cfg = HazelcastConfigurationFactory.buildMapConfig(hz, props.getStorageName(), props.getStorageTimeout());
-                if (cfg instanceof final MapConfig mapConfig) {
+                val config = HazelcastConfigurationFactory.buildMapConfig(hz, props.getStorageName(), props.getStorageTimeout());
+                if (config instanceof final MapConfig mapConfig) {
                     mapConfig.addIndexConfig(new IndexConfig(IndexType.HASH, "id"));
                     mapConfig.addIndexConfig(new IndexConfig(IndexType.HASH, "type"));
                     mapConfig.addIndexConfig(new IndexConfig(IndexType.HASH, "principal"));
@@ -103,7 +104,12 @@ public class CasHazelcastTicketRegistryAutoConfiguration {
                     attributeConfig.setExtractorClassName(MapAttributeValueExtractor.class.getName());
                     mapConfig.addAttributeConfig(attributeConfig);
                 }
-                return cfg;
+                return config;
+            })
+            .peek(map -> {
+                val customizers = new ArrayList<>(applicationContext.getBeansOfType(HazelcastMapCustomizer.class).values());
+                AnnotationAwareOrderComparator.sortIfNecessary(customizers);
+                customizers.forEach(customizer -> customizer.customize(map));
             })
             .forEach(map -> HazelcastConfigurationFactory.setConfigMap(map, hazelcastInstance.getConfig()));
 
@@ -111,7 +117,7 @@ public class CasHazelcastTicketRegistryAutoConfiguration {
             ticketDefinitions.forEach(defn -> {
                 val query = buildCreateMappingQuery(defn);
                 LOGGER.trace("Creating mapping for [{}] via [{}]", defn.getPrefix(), query);
-                try (val createResults = hazelcastInstance.getSql().execute(query)) {
+                try (val __ = hazelcastInstance.getSql().execute(query)) {
                     LOGGER.info("Created Hazelcast SQL mapping for [{}]", defn.getPrefix());
                 }
             });

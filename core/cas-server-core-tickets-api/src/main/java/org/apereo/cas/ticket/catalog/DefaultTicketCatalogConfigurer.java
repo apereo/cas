@@ -15,6 +15,7 @@ import org.apereo.cas.ticket.TransientSessionTicketImpl;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -34,7 +35,9 @@ public class DefaultTicketCatalogConfigurer extends BaseTicketCatalogConfigurer 
     protected final CasConfigurationProperties casProperties;
     protected final ConfigurableApplicationContext applicationContext;
     private final ObjectProvider<CasTicketCatalogConfigurationValuesProvider> configurationValuesProvider;
-
+    @Getter
+    private final int order = Ordered.HIGHEST_PRECEDENCE;
+    
     @Override
     public final void configureTicketCatalog(final TicketCatalog plan,
                                              final CasConfigurationProperties casProperties) {
