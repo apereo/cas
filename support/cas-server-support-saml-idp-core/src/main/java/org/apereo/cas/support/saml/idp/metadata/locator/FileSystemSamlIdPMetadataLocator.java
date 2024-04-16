@@ -110,11 +110,14 @@ public class FileSystemSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLoc
         }
         initializeMetadataDirectory();
         val resource = ResourceUtils.toFileSystemResource(new File(this.metadataLocation, artifactName));
-        val content = FileUtils.readFileToString(resource.getFile(), StandardCharsets.UTF_8);
-        return resolveContentToResource(content);
+        if (resource.exists()) {
+            val content = FileUtils.readFileToString(resource.getFile(), StandardCharsets.UTF_8);
+            return resolveContentToResource(content);
+        }
+        return ResourceUtils.toFileSystemResource(resource.getFile());
     }
 
-    private void initializeMetadataDirectory() {
+    protected void initializeMetadataDirectory() {
         if (!this.metadataLocation.exists()) {
             LOGGER.debug("Metadata directory [{}] does not exist. Creating...", this.metadataLocation);
             if (!this.metadataLocation.mkdir()) {

@@ -1,9 +1,9 @@
 package org.apereo.inspektr.common.spi;
 
-import org.apereo.cas.util.http.HttpRequestUtils;
-import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
+import lombok.val;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import org.aspectj.lang.JoinPoint;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
