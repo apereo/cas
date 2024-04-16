@@ -100,7 +100,9 @@ to the typical user, the refactoring and cleanup should make it significantly ea
 - Spring Boot Admin
 - Spring Data
 - Apache Tomcat
+- Spring Kafka
 - Slack
 - Pac4j
 - Logback
+- Hazelcast
 - Azure Identity
