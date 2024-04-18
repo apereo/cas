@@ -35,18 +35,18 @@ class DefaultDeviceFingerprintStrategyTests extends AbstractMultifactorAuthentic
         ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
         val authentication = RegisteredServiceTestUtils.getAuthentication();
-        val f1 = deviceFingerprintStrategy.determineFingerprintComponent(authentication, request, context.getHttpServletResponse());
+        val f1 = deviceFingerprintStrategy.determineFingerprint(authentication, request, context.getHttpServletResponse());
         request.setCookies(context.getHttpServletResponse().getCookies());
-        val f2 = deviceFingerprintStrategy.determineFingerprintComponent(authentication, request, context.getHttpServletResponse());
+        val f2 = deviceFingerprintStrategy.determineFingerprint(authentication, request, context.getHttpServletResponse());
         request.setCookies(context.getHttpServletResponse().getCookies());
         assertEquals(f1, f2);
 
-        val f3 = deviceFingerprintStrategy.determineFingerprintComponent(authentication, request, context.getHttpServletResponse());
+        val f3 = deviceFingerprintStrategy.determineFingerprint(authentication, request, context.getHttpServletResponse());
         assertNotNull(context.getHttpServletResponse().getCookies());
         assertEquals(1, context.getHttpServletResponse().getCookies().length);
         request.setCookies(context.getHttpServletResponse().getCookies());
 
-        val f4 = deviceFingerprintStrategy.determineFingerprintComponent(authentication, request, context.getHttpServletResponse());
+        val f4 = deviceFingerprintStrategy.determineFingerprint(authentication, request, context.getHttpServletResponse());
         assertEquals(f3, f4);
     }
 }

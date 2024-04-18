@@ -55,7 +55,7 @@ public class MultifactorAuthenticationTrustProviderSelectionCriteriaTests extend
         attributes.put(MultifactorAuthenticationProvider.class.getName(), dummyProvider);
         requestContext.setCurrentEvent(new Event(this, "eventId", attributes));
         val principal = UUID.randomUUID().toString();
-        val deviceFingerprint = deviceFingerprintStrategy.determineFingerprintComponent(RegisteredServiceTestUtils.getAuthentication(principal),
+        val deviceFingerprint = deviceFingerprintStrategy.determineFingerprint(RegisteredServiceTestUtils.getAuthentication(principal),
             requestContext.getHttpServletRequest(), requestContext.getHttpServletResponse());
         var record = getMultifactorAuthenticationTrustRecord();
         record.setPrincipal(principal);
@@ -76,7 +76,7 @@ public class MultifactorAuthenticationTrustProviderSelectionCriteriaTests extend
         attributes.put(MultifactorAuthenticationProvider.class.getName(), dummyProvider);
         requestContext.setCurrentEvent(new Event(this, "eventId", attributes));
         val principal = UUID.randomUUID().toString();
-        val deviceFingerprint = deviceFingerprintStrategy.determineFingerprintComponent(RegisteredServiceTestUtils.getAuthentication(principal),
+        val deviceFingerprint = deviceFingerprintStrategy.determineFingerprint(RegisteredServiceTestUtils.getAuthentication(principal),
             requestContext.getHttpServletRequest(), requestContext.getHttpServletResponse());
         var record = getMultifactorAuthenticationTrustRecord();
         record.setPrincipal(principal);
