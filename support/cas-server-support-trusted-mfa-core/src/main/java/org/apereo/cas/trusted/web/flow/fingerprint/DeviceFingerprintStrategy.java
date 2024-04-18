@@ -25,9 +25,9 @@ public interface DeviceFingerprintStrategy {
      * @param response  the response
      * @return The generated fingerprint
      */
-    String determineFingerprintComponent(Authentication authentication,
-                                         HttpServletRequest request,
-                                         HttpServletResponse response);
+    String determineFingerprint(Authentication authentication,
+                                HttpServletRequest request,
+                                HttpServletResponse response);
 
     /**
      * Gets device fingerprint component extractors.

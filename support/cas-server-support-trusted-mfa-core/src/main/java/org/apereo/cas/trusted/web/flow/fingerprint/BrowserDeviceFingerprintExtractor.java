@@ -1,7 +1,6 @@
 package org.apereo.cas.trusted.web.flow.fingerprint;
 
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.Getter;
 import lombok.Setter;
 import org.apereo.inspektr.common.web.ClientInfoHolder;

@@ -38,8 +38,6 @@ class FileSystemSamlIdPMetadataGeneratorTests {
             assertNotNull(samlIdPMetadataLocator.resolveEncryptionKey(Optional.empty()));
             assertNotNull(samlIdPMetadataLocator.resolveSigningCertificate(Optional.empty()));
             assertNotNull(samlIdPMetadataLocator.resolveSigningKey(Optional.empty()));
-
-            FileUtils.delete(metadata.getFile());
             assertNotNull(samlIdPMetadataGenerator.generate(Optional.empty()));
         }
     }

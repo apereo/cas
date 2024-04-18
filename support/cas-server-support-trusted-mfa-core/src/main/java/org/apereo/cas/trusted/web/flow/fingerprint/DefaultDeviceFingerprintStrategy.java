@@ -26,9 +26,9 @@ public class DefaultDeviceFingerprintStrategy implements DeviceFingerprintStrate
     private final String componentSeparator;
     
     @Override
-    public String determineFingerprintComponent(final Authentication authentication,
-                                                final HttpServletRequest request,
-                                                final HttpServletResponse response) {
+    public String determineFingerprint(final Authentication authentication,
+                                       final HttpServletRequest request,
+                                       final HttpServletResponse response) {
         return deviceFingerprintExtractors
             .stream()
             .filter(BeanSupplier::isNotProxy)
