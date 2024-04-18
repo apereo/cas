@@ -158,6 +158,7 @@ graalvmNative {
             buildArgs.add('--initialize-at-build-time=groovy.lang')
             buildArgs.add('--initialize-at-build-time=groovyjarjarasm.asm.Type')
             buildArgs.add('--initialize-at-build-time=groovyjarjarasm.asm.Handle')
+            buildArgs.add('--initialize-at-build-time=org.apache.xerces.jaxp.datatype')
 
             buildArgs.add('--initialize-at-run-time=com.sun.xml.ws')
             buildArgs.add('--initialize-at-run-time=groovy.grape.GrapeIvy')
