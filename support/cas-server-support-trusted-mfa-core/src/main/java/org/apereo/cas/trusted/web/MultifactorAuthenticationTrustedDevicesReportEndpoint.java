@@ -44,6 +44,7 @@ import java.util.Set;
  * @since 5.3.0
  */
 @Slf4j
+@SuppressWarnings("removal")
 @RestControllerEndpoint(id = "multifactorTrustedDevices", enableByDefault = false)
 public class MultifactorAuthenticationTrustedDevicesReportEndpoint extends BaseCasActuatorEndpoint {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()

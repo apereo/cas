@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.GetMapping;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
+@SuppressWarnings("removal")
 @RestControllerEndpoint(id = "oidcJwks", enableByDefault = false)
 public class OidcJwksRotationEndpoint extends BaseCasActuatorEndpoint {
     private final ObjectProvider<OidcJsonWebKeystoreRotationService> rotationService;

@@ -6,7 +6,7 @@
 # Check expiration date via:
 # openssl x509 -noout -enddate -in redis.crt
 
-export REDIS_VERSION=${1:-7.2.0-v6}
+export REDIS_VERSION=${1:-7.2.0-v10}
 export REDIS_SENTINEL_VERSION=${1:-7.2.3}
 
 echo "Running Redis $REDIS_VERSION, Sentinel: $REDIS_SENTINEL_VERSION"

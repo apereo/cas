@@ -34,6 +34,7 @@ import java.util.Objects;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
+@SuppressWarnings("removal")
 @RestControllerEndpoint(id = "duoAdmin", enableByDefault = false)
 public class DuoSecurityAdminApiEndpoint extends BaseCasActuatorEndpoint {
     private final ApplicationContext applicationContext;

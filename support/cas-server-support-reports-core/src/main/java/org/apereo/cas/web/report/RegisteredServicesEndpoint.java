@@ -51,6 +51,7 @@ import java.util.zip.ZipInputStream;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@SuppressWarnings("removal")
 @RestControllerEndpoint(id = "registeredServices", enableByDefault = false)
 @Slf4j
 public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {

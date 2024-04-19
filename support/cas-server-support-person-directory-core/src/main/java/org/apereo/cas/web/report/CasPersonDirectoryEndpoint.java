@@ -22,6 +22,7 @@ import java.util.Objects;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
+@SuppressWarnings("removal")
 @RestControllerEndpoint(id = "personDirectory", enableByDefault = false)
 public class CasPersonDirectoryEndpoint extends BaseCasActuatorEndpoint {
     private final ObjectProvider<PersonAttributeDao> cachingAttributeRepository;

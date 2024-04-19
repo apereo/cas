@@ -43,6 +43,7 @@ import java.util.Objects;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
+@SuppressWarnings("removal")
 @RestControllerEndpoint(id = "webAuthnDevices", enableByDefault = false)
 @Slf4j
 public class WebAuthnRegisteredDevicesEndpoint extends BaseCasActuatorEndpoint {

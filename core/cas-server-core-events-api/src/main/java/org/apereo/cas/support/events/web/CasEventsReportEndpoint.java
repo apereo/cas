@@ -35,6 +35,7 @@ import java.util.zip.ZipInputStream;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@SuppressWarnings("removal")
 @RestControllerEndpoint(id = "events", enableByDefault = false)
 public class CasEventsReportEndpoint extends BaseCasActuatorEndpoint {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()

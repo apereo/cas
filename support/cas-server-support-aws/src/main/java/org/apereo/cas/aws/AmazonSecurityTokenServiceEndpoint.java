@@ -43,6 +43,7 @@ import java.util.UUID;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
+@SuppressWarnings("removal")
 @RestControllerEndpoint(id = "awsSts", enableByDefault = false)
 @Slf4j
 public class AmazonSecurityTokenServiceEndpoint extends BaseCasActuatorEndpoint {

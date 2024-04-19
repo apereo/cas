@@ -78,6 +78,7 @@ import java.util.regex.Pattern;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
+@SuppressWarnings("removal")
 public class CasDocumentationApplication {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasDocumentationApplication.class);
 

@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
+@SuppressWarnings("removal")
 @RestControllerEndpoint(id = "throttles", enableByDefault = false)
 public class ThrottledSubmissionHandlerEndpoint extends BaseCasActuatorEndpoint {
 

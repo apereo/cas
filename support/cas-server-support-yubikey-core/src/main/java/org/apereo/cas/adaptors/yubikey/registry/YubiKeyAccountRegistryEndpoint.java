@@ -41,6 +41,7 @@ import java.util.Objects;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
+@SuppressWarnings("removal")
 @RestControllerEndpoint(id = "yubikeyAccountRepository", enableByDefault = false)
 @Slf4j
 public class YubiKeyAccountRegistryEndpoint extends BaseCasActuatorEndpoint {

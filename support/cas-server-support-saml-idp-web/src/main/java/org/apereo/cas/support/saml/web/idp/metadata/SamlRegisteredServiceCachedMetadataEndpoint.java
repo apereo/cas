@@ -50,6 +50,7 @@ import java.util.stream.StreamSupport;
  * @since 6.1.0
  */
 @Slf4j
+@SuppressWarnings("removal")
 @RestControllerEndpoint(id = "samlIdPRegisteredServiceMetadataCache", enableByDefault = false)
 public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasActuatorEndpoint {
     private final ObjectProvider<SamlRegisteredServiceCachingMetadataResolver> cachingMetadataResolver;

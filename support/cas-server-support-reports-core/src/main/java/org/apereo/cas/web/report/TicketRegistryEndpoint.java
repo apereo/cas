@@ -24,6 +24,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
+@SuppressWarnings("removal")
 @RestControllerEndpoint(id = "ticketRegistry", enableByDefault = false)
 @Slf4j
 @Getter

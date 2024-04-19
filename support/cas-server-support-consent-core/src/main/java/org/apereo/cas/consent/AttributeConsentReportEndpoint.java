@@ -43,6 +43,7 @@ import java.util.Objects;
  * @since 5.3.0
  */
 @Slf4j
+@SuppressWarnings("removal")
 @RestControllerEndpoint(id = "attributeConsent", enableByDefault = false)
 public class AttributeConsentReportEndpoint extends BaseCasActuatorEndpoint {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()

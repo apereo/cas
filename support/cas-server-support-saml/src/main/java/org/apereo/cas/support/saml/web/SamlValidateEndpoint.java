@@ -44,6 +44,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
+@SuppressWarnings("removal")
 @RestControllerEndpoint(id = "samlValidate", enableByDefault = false)
 public class SamlValidateEndpoint extends BaseCasActuatorEndpoint {
     private final ObjectProvider<ServicesManager> servicesManager;

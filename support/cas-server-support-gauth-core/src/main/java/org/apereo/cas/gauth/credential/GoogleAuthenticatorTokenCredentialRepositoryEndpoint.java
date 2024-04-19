@@ -38,6 +38,7 @@ import java.util.Objects;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
+@SuppressWarnings("removal")
 @RestControllerEndpoint(id = "gauthCredentialRepository", enableByDefault = false)
 @Slf4j
 public class GoogleAuthenticatorTokenCredentialRepositoryEndpoint extends BaseCasActuatorEndpoint {

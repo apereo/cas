@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.PathVariable;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
+@SuppressWarnings("removal")
 @RestControllerEndpoint(id = "redisTicketsCache", enableByDefault = false)
 public class RedisTicketRegistryCacheEndpoint extends BaseCasActuatorEndpoint {
 

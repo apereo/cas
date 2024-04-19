@@ -25,6 +25,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
+@SuppressWarnings("removal")
 @RestControllerEndpoint(id = "sso", enableByDefault = false)
 @RequiredArgsConstructor
 public class SingleSignOnSessionStatusEndpoint {

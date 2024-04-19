@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @since 7.0.0
  */
 @Slf4j
+@SuppressWarnings("removal")
 @RestControllerEndpoint(id = "mfaSimple", enableByDefault = false)
 public class CasSimpleMultifactorAuthenticationEndpoint extends BaseCasActuatorEndpoint {
     private final ConfigurableApplicationContext applicationContext;
