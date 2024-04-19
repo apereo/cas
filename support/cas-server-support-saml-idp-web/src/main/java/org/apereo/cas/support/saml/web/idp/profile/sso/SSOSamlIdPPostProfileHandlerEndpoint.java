@@ -87,6 +87,7 @@ import java.util.UUID;
  * @since 6.1.0
  */
 @Slf4j
+@SuppressWarnings("removal")
 @RestControllerEndpoint(id = "samlPostProfileResponse", enableByDefault = false)
 public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasActuatorEndpoint {
 

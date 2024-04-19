@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
+@SuppressWarnings("removal")
 @RequiredArgsConstructor
 @RestControllerEndpoint(id = "casConfig", enableByDefault = false)
 public class ConfigurationJasyptCipherEndpoint {

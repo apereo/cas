@@ -40,6 +40,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 7.1.0
  */
+@SuppressWarnings("removal")
 @RestControllerEndpoint(id = "serviceAccess", enableByDefault = false)
 @Slf4j
 public class RegisteredServiceAccessEndpoint extends BaseCasActuatorEndpoint {

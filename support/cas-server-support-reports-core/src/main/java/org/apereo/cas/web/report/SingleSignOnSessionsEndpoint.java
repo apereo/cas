@@ -58,6 +58,7 @@ import java.util.stream.Stream;
 @Slf4j
 @ToString
 @Getter
+@SuppressWarnings("removal")
 @RestControllerEndpoint(id = "ssoSessions", enableByDefault = false)
 public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
     private static final ISOStandardDateFormat DATE_FORMAT = new ISOStandardDateFormat();

@@ -34,6 +34,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
+@SuppressWarnings("removal")
 @RequiredArgsConstructor
 @RestControllerEndpoint(id = "casValidate", enableByDefault = false)
 public class CasProtocolValidationEndpoint {
