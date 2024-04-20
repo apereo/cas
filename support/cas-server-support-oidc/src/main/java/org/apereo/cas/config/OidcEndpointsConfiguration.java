@@ -384,10 +384,11 @@ class OidcEndpointsConfiguration {
         @ConditionalOnAvailableEndpoint
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OidcJwksRotationEndpoint jwksRotationEndpoint(
+            final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier("oidcJsonWebKeystoreRotationService")
             final ObjectProvider<OidcJsonWebKeystoreRotationService> oidcJsonWebKeystoreRotationService) {
-            return new OidcJwksRotationEndpoint(casProperties, oidcJsonWebKeystoreRotationService);
+            return new OidcJwksRotationEndpoint(casProperties, applicationContext, oidcJsonWebKeystoreRotationService);
         }
     }
 

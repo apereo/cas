@@ -16,7 +16,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.LoggingUtils;
-import org.apereo.cas.web.BaseCasActuatorEndpoint;
+import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -25,11 +25,13 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
+import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.Optional;
@@ -40,10 +42,10 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 7.1.0
  */
-@SuppressWarnings("removal")
-@RestControllerEndpoint(id = "serviceAccess", enableByDefault = false)
+@Endpoint(id = "serviceAccess", enableByDefault = false)
 @Slf4j
-public class RegisteredServiceAccessEndpoint extends BaseCasActuatorEndpoint {
+@RequestMapping("${management.endpoints.web.base-path}/serviceAccess")
+public class RegisteredServiceAccessEndpoint extends BaseCasRestActuatorEndpoint {
     private final ObjectProvider<ServicesManager> servicesManager;
     private final ObjectProvider<AuthenticationServiceSelectionPlan> authenticationServiceSelectionPlan;
     private final ObjectProvider<ArgumentExtractor> argumentExtractor;
@@ -54,6 +56,7 @@ public class RegisteredServiceAccessEndpoint extends BaseCasActuatorEndpoint {
 
     public RegisteredServiceAccessEndpoint(
         final CasConfigurationProperties casProperties,
+        final ConfigurableApplicationContext applicationContext,
         final ObjectProvider<ServicesManager> servicesManager,
         final ObjectProvider<AuthenticationServiceSelectionPlan> authenticationServiceSelectionPlan,
         final ObjectProvider<ArgumentExtractor> argumentExtractor,
@@ -61,7 +64,7 @@ public class RegisteredServiceAccessEndpoint extends BaseCasActuatorEndpoint {
         final ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport,
         final ObjectProvider<PrincipalResolver> principalResolver,
         final ObjectProvider<PrincipalFactory> principalFactory) {
-        super(casProperties);
+        super(casProperties, applicationContext);
         this.authenticationServiceSelectionPlan = authenticationServiceSelectionPlan;
         this.servicesManager = servicesManager;
         this.argumentExtractor = argumentExtractor;

@@ -42,9 +42,9 @@ public class WebAuthnPopulateCsrfTokenActionTests {
         webAuthnPopulateCsrfTokenAction.execute(context);
         val csrf1 = context.getFlowScope().get("_csrf", CsrfToken.class);
         assertNotNull(csrf1);
-        assertEquals("X-XSRF-TOKEN", csrf1.getHeaderName());
+        assertEquals("X-CSRF-TOKEN", csrf1.getHeaderName());
 
-        request.setCookies(response.getCookie("XSRF-TOKEN"));
+        request.setCookies(response.getCookie("CSRF-TOKEN"));
 
         webAuthnPopulateCsrfTokenAction.execute(context);
         val csrf2 = context.getFlowScope().get("_csrf", CsrfToken.class);

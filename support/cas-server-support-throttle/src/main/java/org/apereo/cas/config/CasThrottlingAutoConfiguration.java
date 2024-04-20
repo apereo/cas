@@ -173,9 +173,10 @@ public class CasThrottlingAutoConfiguration {
         @ConditionalOnAvailableEndpoint
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ThrottledSubmissionHandlerEndpoint throttledSubmissionHandlerEndpoint(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier(AuthenticationThrottlingExecutionPlan.BEAN_NAME)
             final ObjectProvider<AuthenticationThrottlingExecutionPlan> plan, final CasConfigurationProperties casProperties) {
-            return new ThrottledSubmissionHandlerEndpoint(casProperties, plan);
+            return new ThrottledSubmissionHandlerEndpoint(casProperties, applicationContext, plan);
         }
     }
 

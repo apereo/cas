@@ -151,6 +151,7 @@ class SamlIdPMetadataConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnAvailableEndpoint
         public SSOSamlIdPPostProfileHandlerEndpoint ssoSamlPostProfileHandlerEndpoint(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("casSamlIdPMetadataResolver")
             final MetadataResolver casSamlIdPMetadataResolver,
             final CasConfigurationProperties casProperties,
@@ -168,7 +169,8 @@ class SamlIdPMetadataConfiguration {
             final SamlProfileObjectBuilder<Response> samlProfileSamlResponseBuilder,
             @Qualifier("samlIdPServiceFactory")
             final ServiceFactory samlIdPServiceFactory) {
-            return new SSOSamlIdPPostProfileHandlerEndpoint(casProperties, servicesManager,
+            return new SSOSamlIdPPostProfileHandlerEndpoint(casProperties,
+                applicationContext, servicesManager,
                 authenticationSystemSupport, samlIdPServiceFactory,
                 PrincipalFactoryUtils.newPrincipalFactory(),
                 samlProfileSamlResponseBuilder,

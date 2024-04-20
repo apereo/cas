@@ -12,7 +12,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.web.BaseCasActuatorEndpoint;
+import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
@@ -29,12 +29,13 @@ import org.opensaml.saml.metadata.criteria.entity.impl.EvaluableEntityRoleEntity
 import org.opensaml.saml.saml2.common.TimeBoundSAMLObject;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
+import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import java.util.Collection;
 import java.util.List;
@@ -50,9 +51,9 @@ import java.util.stream.StreamSupport;
  * @since 6.1.0
  */
 @Slf4j
-@SuppressWarnings("removal")
-@RestControllerEndpoint(id = "samlIdPRegisteredServiceMetadataCache", enableByDefault = false)
-public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasActuatorEndpoint {
+@Endpoint(id = "samlIdPRegisteredServiceMetadataCache", enableByDefault = false)
+@RequestMapping("${management.endpoints.web.base-path}/samlIdPRegisteredServiceMetadataCache")
+public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasRestActuatorEndpoint {
     private final ObjectProvider<SamlRegisteredServiceCachingMetadataResolver> cachingMetadataResolver;
 
     private final ObjectProvider<ServicesManager> servicesManager;
@@ -66,7 +67,7 @@ public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasActuator
                                                        final ObjectProvider<ServicesManager> servicesManager,
                                                        final ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer,
                                                        final ObjectProvider<OpenSamlConfigBean> openSamlConfigBean) {
-        super(casProperties);
+        super(casProperties, openSamlConfigBean.getObject().getApplicationContext());
         this.cachingMetadataResolver = cachingMetadataResolver;
         this.servicesManager = servicesManager;
         this.registeredServiceAccessStrategyEnforcer = registeredServiceAccessStrategyEnforcer;

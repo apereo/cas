@@ -3,20 +3,21 @@ package org.apereo.cas.ticket.registry;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
-import org.apereo.cas.web.BaseCasActuatorEndpoint;
-
+import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import com.github.benmanes.caffeine.cache.Cache;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
+import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
  * This is {@link RedisTicketRegistryCacheEndpoint}.
@@ -24,18 +25,19 @@ import org.springframework.web.bind.annotation.PathVariable;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@SuppressWarnings("removal")
-@RestControllerEndpoint(id = "redisTicketsCache", enableByDefault = false)
-public class RedisTicketRegistryCacheEndpoint extends BaseCasActuatorEndpoint {
+@Endpoint(id = "redisTicketsCache", enableByDefault = false)
+@RequestMapping("${management.endpoints.web.base-path}/redisTicketsCache")
+public class RedisTicketRegistryCacheEndpoint extends BaseCasRestActuatorEndpoint {
 
     private final ObjectProvider<TicketRegistry> ticketRegistry;
 
     private final ObjectProvider<Cache<String, Ticket>> ticketCache;
 
     public RedisTicketRegistryCacheEndpoint(final CasConfigurationProperties casProperties,
+                                            final ConfigurableApplicationContext applicationContext,
                                             final ObjectProvider<TicketRegistry> ticketRegistry,
                                             final ObjectProvider<Cache<String, Ticket>> ticketCache) {
-        super(casProperties);
+        super(casProperties, applicationContext);
         this.ticketRegistry = ticketRegistry;
         this.ticketCache = ticketCache;
     }

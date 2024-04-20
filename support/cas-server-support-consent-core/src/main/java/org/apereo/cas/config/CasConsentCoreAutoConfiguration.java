@@ -181,12 +181,13 @@ public class CasConsentCoreAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnAvailableEndpoint
         public AttributeConsentReportEndpoint attributeConsentReportEndpoint(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier(ConsentEngine.BEAN_NAME)
             final ObjectProvider<ConsentEngine> consentEngine,
             @Qualifier(ConsentRepository.BEAN_NAME)
             final ObjectProvider<ConsentRepository> consentRepository,
             final CasConfigurationProperties casProperties) {
-            return new AttributeConsentReportEndpoint(casProperties, consentRepository, consentEngine);
+            return new AttributeConsentReportEndpoint(casProperties, applicationContext, consentRepository, consentEngine);
         }
     }
 }
