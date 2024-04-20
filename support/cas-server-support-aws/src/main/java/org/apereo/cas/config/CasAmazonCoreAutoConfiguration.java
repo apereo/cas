@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 
@@ -27,9 +28,10 @@ public class CasAmazonCoreAutoConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnAvailableEndpoint
     public AmazonSecurityTokenServiceEndpoint awsSecurityTokenServiceEndpoint(
+        final ConfigurableApplicationContext applicationContext,
         final ObjectProvider<CasConfigurationProperties> casProperties,
         @Qualifier(RestAuthenticationService.DEFAULT_BEAN_NAME)
         final ObjectProvider<RestAuthenticationService> restAuthenticationService) {
-        return new AmazonSecurityTokenServiceEndpoint(casProperties, restAuthenticationService);
+        return new AmazonSecurityTokenServiceEndpoint(casProperties, applicationContext, restAuthenticationService);
     }
 }

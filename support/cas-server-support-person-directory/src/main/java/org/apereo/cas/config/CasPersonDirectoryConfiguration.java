@@ -73,9 +73,11 @@ class CasPersonDirectoryConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasPersonDirectoryEndpoint casPersonDirectoryEndpoint(
             @Autowired
-            @Qualifier("cachingAttributeRepository") final ObjectProvider<PersonAttributeDao> cachingAttributeRepository,
+            @Qualifier("cachingAttributeRepository")
+            final ObjectProvider<PersonAttributeDao> cachingAttributeRepository,
+            final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
-            return new CasPersonDirectoryEndpoint(casProperties, cachingAttributeRepository);
+            return new CasPersonDirectoryEndpoint(casProperties, applicationContext, cachingAttributeRepository);
         }
 
 

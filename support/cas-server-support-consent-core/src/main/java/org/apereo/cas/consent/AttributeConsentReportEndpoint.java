@@ -3,8 +3,7 @@ package org.apereo.cas.consent;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CompressionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import org.apereo.cas.web.BaseCasActuatorEndpoint;
-
+import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,7 +13,8 @@ import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
+import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
@@ -25,8 +25,8 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -43,9 +43,9 @@ import java.util.Objects;
  * @since 5.3.0
  */
 @Slf4j
-@SuppressWarnings("removal")
-@RestControllerEndpoint(id = "attributeConsent", enableByDefault = false)
-public class AttributeConsentReportEndpoint extends BaseCasActuatorEndpoint {
+@Endpoint(id = "attributeConsent", enableByDefault = false)
+@RequestMapping("${management.endpoints.web.base-path}/attributeConsent")
+public class AttributeConsentReportEndpoint extends BaseCasRestActuatorEndpoint {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
@@ -54,9 +54,10 @@ public class AttributeConsentReportEndpoint extends BaseCasActuatorEndpoint {
     private final ObjectProvider<ConsentEngine> consentEngine;
 
     public AttributeConsentReportEndpoint(final CasConfigurationProperties casProperties,
+                                          final ConfigurableApplicationContext applicationContext,
                                           final ObjectProvider<ConsentRepository> consentRepository,
                                           final ObjectProvider<ConsentEngine> consentEngine) {
-        super(casProperties);
+        super(casProperties, applicationContext);
         this.consentRepository = consentRepository;
         this.consentEngine = consentEngine;
     }

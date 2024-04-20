@@ -419,10 +419,11 @@ class WebAuthnConfiguration {
             @ConditionalOnAvailableEndpoint
             @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
             public WebAuthnRegisteredDevicesEndpoint webAuthnRegisteredDevicesEndpoint(
+                final ConfigurableApplicationContext applicationContext,
                 final CasConfigurationProperties casProperties,
                 @Qualifier(WebAuthnCredentialRepository.BEAN_NAME)
                 final ObjectProvider<WebAuthnCredentialRepository> webAuthnCredentialRepository) {
-                return new WebAuthnRegisteredDevicesEndpoint(casProperties, webAuthnCredentialRepository);
+                return new WebAuthnRegisteredDevicesEndpoint(casProperties, applicationContext, webAuthnCredentialRepository);
             }
 
             @ConditionalOnMissingBean(name = "webAuthnController")

@@ -153,8 +153,7 @@ class WebAuthnControllerMvcTests {
                 securityProperties.getUser().getPassword()));
         }
 
-        return mvc.perform(builder
-                .header("X-XSRF-TOKEN", csrfToken != null ? csrfToken.getToken() : StringUtils.EMPTY))
+        return mvc.perform(builder.header("X-CSRF-TOKEN", csrfToken != null ? csrfToken.getToken() : StringUtils.EMPTY))
             .andExpect(status().is(expectedStatus))
             .andReturn();
     }

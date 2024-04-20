@@ -178,9 +178,10 @@ class MultifactorAuthnTrustConfiguration {
         @ConditionalOnAvailableEndpoint
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public MultifactorAuthenticationTrustedDevicesReportEndpoint mfaTrustedDevicesReportEndpoint(
+            final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier(MultifactorAuthenticationTrustStorage.BEAN_NAME) final ObjectProvider<MultifactorAuthenticationTrustStorage> mfaTrustEngine) {
-            return new MultifactorAuthenticationTrustedDevicesReportEndpoint(casProperties, mfaTrustEngine);
+            return new MultifactorAuthenticationTrustedDevicesReportEndpoint(casProperties, applicationContext, mfaTrustEngine);
         }
     }
 }
