@@ -46,7 +46,7 @@ import static org.mockito.Mockito.*;
     WebEndpointAutoConfiguration.class,
     EndpointAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class
-})
+}, properties = "spring.main.allow-bean-definition-overriding=true")
 @EnableConfigurationProperties({CasConfigurationProperties.class, WebProperties.class})
 class DefaultSingleSignOnParticipationStrategyTests {
 
