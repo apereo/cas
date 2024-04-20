@@ -20,7 +20,9 @@ configurations.configureEach {
             eachDependency { DependencyResolveDetails details ->
                 def requested = details.requested
                 if (requested.group == "org.bouncycastle") {
-                    details.useVersion("${bouncyCastleVersion}")
+                    if (requested.name != "bcprov-ext-jdk18on") {
+                        details.useVersion("${bouncyCastleVersion}")
+                    }
                 }
                 if (requested.group == "gnu-getopt") {
                     details.useTarget group: "gnu.getopt", name: "java-getopt", version: requested.version

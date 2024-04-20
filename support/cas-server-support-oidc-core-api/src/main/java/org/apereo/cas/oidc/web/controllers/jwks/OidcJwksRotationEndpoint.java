@@ -13,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
  * This is {@link OidcJwksRotationEndpoint}.
@@ -22,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @since 6.5.0
  */
 @Endpoint(id = "oidcJwks", enableByDefault = false)
-@RequestMapping("${management.endpoints.web.base-path}/oidcJwks")
 public class OidcJwksRotationEndpoint extends BaseCasRestActuatorEndpoint {
     private final ObjectProvider<OidcJsonWebKeystoreRotationService> rotationService;
 

@@ -30,7 +30,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.ByteArrayInputStream;
@@ -49,7 +48,6 @@ import java.util.zip.ZipInputStream;
  * @since 5.2.0
  */
 @Endpoint(id = "registeredServices", enableByDefault = false)
-@RequestMapping("${management.endpoints.web.base-path}/registeredServices")
 @Slf4j
 public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
     private final ObjectProvider<ServicesManager> servicesManager;

@@ -16,7 +16,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
 import jakarta.validation.Valid;
 import java.util.List;
 
@@ -29,7 +28,6 @@ import java.util.List;
 @Endpoint(id = "ticketRegistry", enableByDefault = false)
 @Slf4j
 @Getter
-@RequestMapping("${management.endpoints.web.base-path}/ticketRegistry")
 public class TicketRegistryEndpoint extends BaseCasRestActuatorEndpoint {
     private final ObjectProvider<TicketRegistry> ticketRegistryProvider;
     private final ObjectProvider<TicketRegistrySupport> ticketRegistrySupportProvider;

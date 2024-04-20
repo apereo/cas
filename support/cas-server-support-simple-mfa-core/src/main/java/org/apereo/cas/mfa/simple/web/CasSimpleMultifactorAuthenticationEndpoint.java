@@ -26,7 +26,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
@@ -37,7 +36,6 @@ import org.springframework.web.bind.annotation.RequestParam;
  */
 @Slf4j
 @Endpoint(id = "mfaSimple", enableByDefault = false)
-@RequestMapping("${management.endpoints.web.base-path}/mfaSimple")
 public class CasSimpleMultifactorAuthenticationEndpoint extends BaseCasRestActuatorEndpoint {
     public CasSimpleMultifactorAuthenticationEndpoint(final CasConfigurationProperties casProperties,
                                                       final ConfigurableApplicationContext applicationContext) {

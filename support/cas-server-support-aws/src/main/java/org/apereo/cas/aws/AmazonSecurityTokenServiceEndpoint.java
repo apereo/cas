@@ -23,7 +23,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import software.amazon.awssdk.profiles.ProfileProperty;
 import software.amazon.awssdk.regions.Region;
@@ -44,7 +43,6 @@ import java.util.UUID;
  * @since 6.4.0
  */
 @Endpoint(id = "awsSts", enableByDefault = false)
-@RequestMapping("${management.endpoints.web.base-path}/awsSts")
 @Slf4j
 public class AmazonSecurityTokenServiceEndpoint extends BaseCasRestActuatorEndpoint {
     private final ObjectProvider<RestAuthenticationService> restAuthenticationService;

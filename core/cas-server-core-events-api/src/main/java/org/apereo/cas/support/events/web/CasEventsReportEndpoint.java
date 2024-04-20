@@ -16,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.ByteArrayInputStream;
@@ -32,7 +31,6 @@ import java.util.zip.ZipInputStream;
  * @since 5.3.0
  */
 @Endpoint(id = "events", enableByDefault = false)
-@RequestMapping("${management.endpoints.web.base-path}/events")
 public class CasEventsReportEndpoint extends BaseCasRestActuatorEndpoint {
     public CasEventsReportEndpoint(final CasConfigurationProperties casProperties,
                                    final ConfigurableApplicationContext applicationContext) {

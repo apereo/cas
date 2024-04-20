@@ -32,7 +32,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.LinkedHashMap;
@@ -47,7 +46,6 @@ import java.util.Optional;
  * @since 6.1.0
  */
 @Endpoint(id = "samlValidate", enableByDefault = false)
-@RequestMapping("${management.endpoints.web.base-path}/samlValidate")
 public class SamlValidateEndpoint extends BaseCasRestActuatorEndpoint {
     private final ObjectProvider<ServicesManager> servicesManager;
 

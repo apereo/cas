@@ -31,7 +31,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -58,7 +57,6 @@ import java.util.stream.Stream;
 @ToString
 @Getter
 @Endpoint(id = "ssoSessions", enableByDefault = false)
-@RequestMapping("${management.endpoints.web.base-path}/ssoSessions")
 public class SingleSignOnSessionsEndpoint extends BaseCasRestActuatorEndpoint {
     private static final ISOStandardDateFormat DATE_FORMAT = new ISOStandardDateFormat();
 

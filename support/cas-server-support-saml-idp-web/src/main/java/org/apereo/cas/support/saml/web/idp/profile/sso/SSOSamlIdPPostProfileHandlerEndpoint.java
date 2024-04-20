@@ -67,7 +67,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import jakarta.servlet.http.HttpServletRequest;
@@ -90,7 +89,6 @@ import java.util.UUID;
  */
 @Slf4j
 @Endpoint(id = "samlPostProfileResponse", enableByDefault = false)
-@RequestMapping("${management.endpoints.web.base-path}/samlPostProfileResponse")
 public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasRestActuatorEndpoint {
 
     private final ServicesManager servicesManager;

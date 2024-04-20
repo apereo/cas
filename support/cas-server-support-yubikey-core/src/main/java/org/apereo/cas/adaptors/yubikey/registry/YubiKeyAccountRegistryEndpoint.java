@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.File;
@@ -41,7 +40,6 @@ import java.util.Objects;
  */
 @Endpoint(id = "yubikeyAccountRepository", enableByDefault = false)
 @Slf4j
-@RequestMapping("${management.endpoints.web.base-path}/yubikeyAccountRepository")
 public class YubiKeyAccountRegistryEndpoint extends BaseCasRestActuatorEndpoint {
     private final ObjectProvider<YubiKeyAccountRegistry> registry;
 
