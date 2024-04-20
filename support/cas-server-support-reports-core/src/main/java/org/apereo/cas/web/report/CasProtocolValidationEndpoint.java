@@ -25,7 +25,6 @@ import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.http.MediaType;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Optional;
@@ -37,7 +36,6 @@ import java.util.Optional;
  * @since 7.0.0
  */
 @Endpoint(id = "casValidate", enableByDefault = false)
-@RequestMapping("${management.endpoints.web.base-path}/casValidate")
 public class CasProtocolValidationEndpoint extends BaseCasRestActuatorEndpoint {
     private final ServiceValidateConfigurationContext configurationContext;
 

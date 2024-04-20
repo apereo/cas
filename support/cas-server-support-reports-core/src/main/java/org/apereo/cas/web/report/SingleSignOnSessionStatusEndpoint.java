@@ -15,7 +15,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -27,7 +26,6 @@ import java.util.Map;
  * @since 6.0.0
  */
 @Endpoint(id = "sso", enableByDefault = false)
-@RequestMapping("${management.endpoints.web.base-path}/sso")
 public class SingleSignOnSessionStatusEndpoint extends BaseCasRestActuatorEndpoint {
 
     private final ObjectProvider<CasCookieBuilder> ticketGrantingTicketCookieGeneratorProvider;

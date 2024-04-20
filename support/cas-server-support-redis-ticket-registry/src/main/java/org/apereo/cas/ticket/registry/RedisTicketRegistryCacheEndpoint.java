@@ -17,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
  * This is {@link RedisTicketRegistryCacheEndpoint}.
@@ -26,7 +25,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @since 7.0.0
  */
 @Endpoint(id = "redisTicketsCache", enableByDefault = false)
-@RequestMapping("${management.endpoints.web.base-path}/redisTicketsCache")
 public class RedisTicketRegistryCacheEndpoint extends BaseCasRestActuatorEndpoint {
 
     private final ObjectProvider<TicketRegistry> ticketRegistry;

@@ -31,7 +31,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.Optional;
@@ -44,7 +43,6 @@ import java.util.Optional;
  */
 @Endpoint(id = "serviceAccess", enableByDefault = false)
 @Slf4j
-@RequestMapping("${management.endpoints.web.base-path}/serviceAccess")
 public class RegisteredServiceAccessEndpoint extends BaseCasRestActuatorEndpoint {
     private final ObjectProvider<ServicesManager> servicesManager;
     private final ObjectProvider<AuthenticationServiceSelectionPlan> authenticationServiceSelectionPlan;

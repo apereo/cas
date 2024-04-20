@@ -15,7 +15,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.Objects;
 
 /**
@@ -25,7 +24,6 @@ import java.util.Objects;
  * @since 7.0.0
  */
 @Endpoint(id = "personDirectory", enableByDefault = false)
-@RequestMapping("${management.endpoints.web.base-path}/personDirectory")
 public class CasPersonDirectoryEndpoint extends BaseCasRestActuatorEndpoint {
     private final ObjectProvider<PersonAttributeDao> cachingAttributeRepository;
 

@@ -12,7 +12,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import java.util.Collection;
 import java.util.List;
@@ -26,7 +25,6 @@ import java.util.stream.Collectors;
  * @since 6.3.0
  */
 @Endpoint(id = "throttles", enableByDefault = false)
-@RequestMapping("${management.endpoints.web.base-path}/throttles")
 public class ThrottledSubmissionHandlerEndpoint extends BaseCasRestActuatorEndpoint {
 
     private final ObjectProvider<AuthenticationThrottlingExecutionPlan> authenticationThrottlingExecutionPlan;

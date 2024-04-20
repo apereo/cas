@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.services.web.support.MappedExceptionErrorViewResolver;
+import org.apereo.cas.util.spring.RestActuatorEndpoint;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apereo.cas.web.CasYamlHttpMessageConverter;
@@ -17,23 +18,39 @@ import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
 import org.apereo.cas.web.view.CasReloadableMessageBundle;
 import org.apereo.cas.web.view.DynamicHtmlView;
+import lombok.Getter;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.PropertiesFactoryBean;
+import org.springframework.boot.actuate.endpoint.EndpointFilter;
+import org.springframework.boot.actuate.endpoint.EndpointId;
+import org.springframework.boot.actuate.endpoint.Operation;
+import org.springframework.boot.actuate.endpoint.annotation.AbstractDiscoveredEndpoint;
+import org.springframework.boot.actuate.endpoint.annotation.DiscoveredOperationMethod;
+import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
+import org.springframework.boot.actuate.endpoint.annotation.EndpointDiscoverer;
+import org.springframework.boot.actuate.endpoint.invoke.OperationInvoker;
+import org.springframework.boot.actuate.endpoint.invoke.ParameterValueMapper;
+import org.springframework.boot.actuate.endpoint.web.PathMapper;
+import org.springframework.boot.actuate.endpoint.web.annotation.ControllerEndpointsSupplier;
+import org.springframework.boot.actuate.endpoint.web.annotation.ExposableControllerEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorViewResolver;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.HierarchicalMessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
+import org.springframework.core.annotation.MergedAnnotations;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
@@ -43,6 +60,8 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 import org.springframework.webflow.conversation.NoSuchConversationException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -200,5 +219,64 @@ class CasCoreWebConfiguration {
                 }
             };
         }
+
+        @Bean
+        public RestActuatorEndpointDiscoverer controllerEndpointDiscoverer(
+            final ConfigurableApplicationContext applicationContext,
+            final ObjectProvider<PathMapper> endpointPathMappers,
+            final ObjectProvider<Collection<EndpointFilter<ExposableControllerEndpoint>>> filters) {
+            return new RestActuatorEndpointDiscoverer(applicationContext,
+                endpointPathMappers.orderedStream().toList(),
+                filters.getIfAvailable(Collections::emptyList));
+        }
+
+        public static class RestActuatorEndpointDiscoverer extends EndpointDiscoverer<ExposableControllerEndpoint, Operation> implements ControllerEndpointsSupplier {
+            private final List<PathMapper> endpointPathMappers;
+
+            RestActuatorEndpointDiscoverer(final ApplicationContext applicationContext, final List<PathMapper> endpointPathMappers,
+                                           final Collection<EndpointFilter<ExposableControllerEndpoint>> filters) {
+                super(applicationContext, ParameterValueMapper.NONE, List.of(), filters);
+                this.endpointPathMappers = endpointPathMappers;
+            }
+            @Override
+            protected boolean isEndpointTypeExposed(final Class<?> beanType) {
+                val annotations = MergedAnnotations.from(beanType, MergedAnnotations.SearchStrategy.SUPERCLASS);
+                return annotations.isPresent(RestActuatorEndpoint.class) && annotations.isPresent(Endpoint.class);
+            }
+            
+            @Override
+            protected ExposableControllerEndpoint createEndpoint(final Object endpointBean,
+                                                                 final EndpointId id,
+                                                                 final boolean enabledByDefault,
+                                                                 final Collection<Operation> operations) {
+                val rootPath = PathMapper.getRootPath(this.endpointPathMappers, id);
+                return new DiscoveredRestActuatorEndpoint(this, endpointBean, id, rootPath, enabledByDefault);
+            }
+            @Override
+            protected Operation createOperation(final EndpointId endpointId, final DiscoveredOperationMethod operationMethod, final OperationInvoker invoker) {
+                throw new IllegalStateException("RestActuatorEndpoint must not declare operations");
+            }
+
+            @Override
+            protected EndpointDiscoverer.OperationKey createOperationKey(final Operation operation) {
+                throw new IllegalStateException("RestActuatorEndpoint must not declare operations");
+            }
+        }
+
+        @Getter
+        private static class DiscoveredRestActuatorEndpoint extends AbstractDiscoveredEndpoint<Operation> implements ExposableControllerEndpoint {
+            private final String rootPath;
+
+            DiscoveredRestActuatorEndpoint(final EndpointDiscoverer<?, ?> discoverer, final Object endpointBean,
+                                           final EndpointId id, final String rootPath, final boolean enabledByDefault) {
+                super(discoverer, endpointBean, id, enabledByDefault, List.of());
+                this.rootPath = rootPath;
+            }
+            @Override
+            public Object getController() {
+                return this.getEndpointBean();
+            }
+        }
+
     }
 }

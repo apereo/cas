@@ -28,7 +28,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import jakarta.servlet.http.HttpServletRequest;
@@ -45,7 +44,6 @@ import java.util.Objects;
  */
 @Endpoint(id = "webAuthnDevices", enableByDefault = false)
 @Slf4j
-@RequestMapping("${management.endpoints.web.base-path}/webAuthnDevices")
 public class WebAuthnRegisteredDevicesEndpoint extends BaseCasRestActuatorEndpoint {
     private final ObjectProvider<WebAuthnCredentialRepository> registrationStorage;
 

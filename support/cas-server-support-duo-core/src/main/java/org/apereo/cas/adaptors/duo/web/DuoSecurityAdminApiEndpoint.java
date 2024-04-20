@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -36,7 +35,6 @@ import java.util.Objects;
  * @since 6.4.0
  */
 @Endpoint(id = "duoAdmin", enableByDefault = false)
-@RequestMapping("${management.endpoints.web.base-path}/duoAdmin")
 public class DuoSecurityAdminApiEndpoint extends BaseCasRestActuatorEndpoint {
 
     public DuoSecurityAdminApiEndpoint(final CasConfigurationProperties casProperties,

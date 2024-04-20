@@ -35,7 +35,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import java.util.Collection;
 import java.util.List;
@@ -52,7 +51,6 @@ import java.util.stream.StreamSupport;
  */
 @Slf4j
 @Endpoint(id = "samlIdPRegisteredServiceMetadataCache", enableByDefault = false)
-@RequestMapping("${management.endpoints.web.base-path}/samlIdPRegisteredServiceMetadataCache")
 public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasRestActuatorEndpoint {
     private final ObjectProvider<SamlRegisteredServiceCachingMetadataResolver> cachingMetadataResolver;
 
