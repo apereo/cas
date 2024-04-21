@@ -31,8 +31,7 @@ public class DefaultAttributeRepositoryResolver implements AttributeRepositoryRe
     @Override
     public Set<String> resolve(final AttributeRepositoryQuery query) {
         val repositoryIds = new HashSet<String>();
-        Optional.ofNullable(query.getService())
-            .map(servicesManager::findServiceBy)
+        determineRegisteredService(query)
             .map(RegisteredService::getAttributeReleasePolicy)
             .map(RegisteredServiceAttributeReleasePolicy::getPrincipalAttributesRepository)
             .map(RegisteredServicePrincipalAttributesRepository::getAttributeRepositoryIds)
@@ -52,5 +51,10 @@ public class DefaultAttributeRepositoryResolver implements AttributeRepositoryRe
             repositoryIds.add(PersonAttributeDao.WILDCARD);
         }
         return repositoryIds;
+    }
+
+    protected Optional<RegisteredService> determineRegisteredService(final AttributeRepositoryQuery query) {
+        val result = Optional.ofNullable(query.getService()).map(servicesManager::findServiceBy).orElseGet(query::getRegisteredService);
+        return Optional.ofNullable(result);
     }
 }
