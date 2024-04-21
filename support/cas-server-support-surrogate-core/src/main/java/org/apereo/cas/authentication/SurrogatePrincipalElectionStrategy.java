@@ -25,8 +25,19 @@ public class SurrogatePrincipalElectionStrategy extends DefaultPrincipalElection
     private static final long serialVersionUID = -3112906686072339162L;
 
     @Override
-    protected Map<String, List<Object>> getPrincipalAttributesForPrincipal(final Principal principal, final Map<String, List<Object>> principalAttributes) {
-        return principal.getAttributes();
+    protected Map<String, List<Object>> getPrincipalAttributesForPrincipal(final Collection<Authentication> authentications,
+                                                                           final Principal principal,
+                                                                           final Map<String, List<Object>> principalAttributes) {
+        val result = authentications
+            .stream()
+            .map(Authentication::getPrincipal)
+            .filter(SurrogatePrincipal.class::isInstance)
+            .map(SurrogatePrincipal.class::cast)
+            .findFirst();
+        if (result.isPresent()) {
+            return principal.getAttributes();
+        }
+        return super.getPrincipalAttributesForPrincipal(authentications, principal, principalAttributes);
     }
 
     @Override
@@ -63,7 +74,7 @@ public class SurrogatePrincipalElectionStrategy extends DefaultPrincipalElection
                 .map(principal -> CoreAuthenticationUtils.mergeAttributes(primaryAttributes, principal.getAttributes(), getAttributeMerger()))
                 .forEach(primaryAttributes::putAll);
             surrogate.getPrimary().getAttributes().putAll(primaryAttributes);
-            LOGGER.debug("Found surrogate principal [{}]", surrogate);
+            LOGGER.debug("Nominated surrogate principal [{}]", surrogate);
             return surrogate;
         }
         return super.nominate(principals, attributes);
