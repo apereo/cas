@@ -1,0 +1,13 @@
+{
+  "@class": "java.util.TreeMap",
+  "groupMembership" : {
+    "@class" : "org.apereo.cas.authentication.attribute.DefaultAttributeDefinition",
+    "key": "groupMembership",
+    "singleValue": true
+  },
+  "countries" : {
+    "@class" : "org.apereo.cas.authentication.attribute.DefaultAttributeDefinition",
+    "key": "countries",
+    "singleValue": false
+  }
+}
