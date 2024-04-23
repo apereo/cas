@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -38,7 +39,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.5.2
  */
 @Tag("OAuthWeb")
-@TestPropertySource(properties = "cas.ticket.track-descendant-tickets=false")
+@TestPropertySource(properties = {
+    "cas.authn.attribute-repository.attribute-definition-store.json.location=classpath:/oauth-definitions.json",
+    "cas.ticket.track-descendant-tickets=false"
+})
 class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Tests {
     @Autowired
     @Qualifier("oauth20ProtocolEndpointConfigurer")
@@ -47,6 +51,7 @@ class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Tests {
     @Autowired
     @Qualifier("defaultAccessTokenFactory")
     private OAuth20AccessTokenFactory accessTokenFactory;
+    
     @Autowired
     @Qualifier("oauthProfileController")
     private OAuth20UserProfileEndpointController oAuth20ProfileController;
@@ -93,7 +98,7 @@ class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Tests {
         val accessToken = expiringAccessTokenFactory.create(RegisteredServiceTestUtils.getService(), authentication,
             new MockTicketGrantingTicket("casuser"), new ArrayList<>(), code.getId(), code.getClientId(), new HashMap<>(),
             OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
-        this.ticketRegistry.addTicket(accessToken);
+        ticketRegistry.addTicket(accessToken);
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.PROFILE_URL);
         mockRequest.setParameter(OAuth20Constants.ACCESS_TOKEN, accessToken.getId());
@@ -122,7 +127,7 @@ class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Tests {
                 OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         val jwtAccessTokenWithBadPayload = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.xxxx.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
         accessToken.setId(jwtAccessTokenWithBadPayload);
-        this.ticketRegistry.addTicket(accessToken);
+        ticketRegistry.addTicket(accessToken);
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.PROFILE_URL);
         mockRequest.setParameter(OAuth20Constants.ACCESS_TOKEN, accessToken.getId());
@@ -139,7 +144,7 @@ class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Tests {
     void verifyOK() throws Throwable {
         val map = new HashMap<String, List<Object>>();
         map.put(NAME, List.of(VALUE));
-        val list = List.of(VALUE, VALUE);
+        val list = List.of(VALUE, UUID.randomUUID().toString());
         map.put(NAME2, (List) list);
 
         val principal = CoreAuthenticationTestUtils.getPrincipal(ID, map);
@@ -149,7 +154,7 @@ class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Tests {
         val accessToken = accessTokenFactory.create(RegisteredServiceTestUtils.getService(), authentication,
             new MockTicketGrantingTicket("casuser"), new ArrayList<>(), code.getId(), code.getClientId(), new HashMap<>(),
             OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
-        this.ticketRegistry.addTicket(accessToken);
+        ticketRegistry.addTicket(accessToken);
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.PROFILE_URL);
         mockRequest.setParameter(OAuth20Constants.ACCESS_TOKEN, accessToken.getId());
@@ -162,8 +167,8 @@ class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Tests {
 
         val receivedBody = (Map) entity.getBody();
         assertEquals(ID, receivedBody.get("id"));
-        val attributes = (Map<String, List>) receivedBody.get("attributes");
-        assertEquals(VALUE, attributes.get(NAME).getFirst());
+        val attributes = (Map<String, ?>) receivedBody.get("attributes");
+        assertEquals(VALUE, attributes.get(NAME).toString());
         assertEquals(list, attributes.get(NAME2));
     }
     
@@ -171,7 +176,7 @@ class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Tests {
     void verifyOKWithExpiredTicketGrantingTicket() throws Throwable {
         val map = new HashMap<String, List<Object>>();
         map.put(NAME, List.of(VALUE));
-        val list = List.of(VALUE, VALUE);
+        val list = List.of(VALUE, UUID.randomUUID().toString());
         map.put(NAME2, (List) list);
 
         val principal = CoreAuthenticationTestUtils.getPrincipal(ID, map);
@@ -183,7 +188,7 @@ class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Tests {
             code.getId(), code.getClientId(), new HashMap<>(),
             OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         accessToken.getTicketGrantingTicket().markTicketExpired();
-        this.ticketRegistry.addTicket(accessToken);
+        ticketRegistry.addTicket(accessToken);
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.PROFILE_URL);
         mockRequest.setParameter(OAuth20Constants.ACCESS_TOKEN, accessToken.getId());
@@ -205,8 +210,8 @@ class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Tests {
 
         val receivedBody = (Map) entity.getBody();
         assertEquals(ID, receivedBody.get("id"));
-        val attributes = (Map<String, List>) receivedBody.get("attributes");
-        assertEquals(VALUE, attributes.get(NAME).getFirst());
+        val attributes = (Map<String, ?>) receivedBody.get("attributes");
+        assertEquals(VALUE, attributes.get(NAME).toString());
         assertEquals(list, attributes.get(NAME2));
     }
 
@@ -214,7 +219,7 @@ class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Tests {
     void verifyOKWithAuthorizationHeader() throws Throwable {
         val map = new HashMap<String, List<Object>>();
         map.put(NAME, List.of(VALUE));
-        val list = List.of(VALUE, VALUE);
+        val list = List.of(VALUE, UUID.randomUUID().toString());
         map.put(NAME2, (List) list);
 
         val principal = CoreAuthenticationTestUtils.getPrincipal(ID, map);
@@ -224,7 +229,7 @@ class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Tests {
             new MockTicketGrantingTicket("casuser"), new ArrayList<>(),
             code.getId(), code.getClientId(), new HashMap<>(),
             OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
-        this.ticketRegistry.addTicket(accessToken);
+        ticketRegistry.addTicket(accessToken);
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.PROFILE_URL);
         mockRequest.addHeader("Authorization", OAuth20Constants.TOKEN_TYPE_BEARER + ' ' + accessToken.getId());
@@ -235,8 +240,39 @@ class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Tests {
 
         val receivedBody = (Map) entity.getBody();
         assertEquals(ID, receivedBody.get("id"));
-        val attributes = (Map<String, List>) receivedBody.get("attributes");
-        assertEquals(VALUE, attributes.get(NAME).getFirst());
+        val attributes = (Map<String, ?>) receivedBody.get("attributes");
+        assertEquals(VALUE, attributes.get(NAME).toString());
         assertEquals(list, attributes.get(NAME2));
+    }
+
+    @Test
+    void verifyAttributeDefinitions() throws Throwable {
+        val map = new HashMap<String, List<Object>>();
+        map.put("groupMembership", List.of("admin"));
+        val list = List.of("USA");
+        map.put("countries", (List) list);
+
+        val principal = CoreAuthenticationTestUtils.getPrincipal(ID, map);
+        val authentication = getAuthentication(principal);
+        val code = addCode(principal, addRegisteredService());
+
+        val accessToken = accessTokenFactory.create(RegisteredServiceTestUtils.getService(), authentication,
+            new MockTicketGrantingTicket("casuser"), new ArrayList<>(), code.getId(), code.getClientId(), new HashMap<>(),
+            OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
+        ticketRegistry.addTicket(accessToken);
+
+        val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.PROFILE_URL);
+        mockRequest.setParameter(OAuth20Constants.ACCESS_TOKEN, accessToken.getId());
+        val mockResponse = new MockHttpServletResponse();
+
+        val entity = oAuth20ProfileController.handleGetRequest(mockRequest, mockResponse);
+        assertEquals(HttpStatus.OK, entity.getStatusCode());
+        assertEquals(MediaType.APPLICATION_JSON_VALUE, mockResponse.getContentType());
+
+        val receivedBody = (Map) entity.getBody();
+        assertEquals(ID, receivedBody.get("id"));
+        val attributes = (Map<String, ?>) receivedBody.get("attributes");
+        assertEquals("admin", attributes.get("groupMembership").toString());
+        assertEquals(list, attributes.get("countries"));
     }
 }

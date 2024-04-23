@@ -799,10 +799,13 @@ class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20UserProfileViewRenderer oauthUserProfileViewRenderer(
-            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
+            @Qualifier(AttributeDefinitionStore.BEAN_NAME)
+            final AttributeDefinitionStore attributeDefinitionStore,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
             final CasConfigurationProperties casProperties) {
             return new OAuth20DefaultUserProfileViewRenderer(servicesManager,
-                casProperties.getAuthn().getOauth());
+                casProperties.getAuthn().getOauth(), attributeDefinitionStore);
         }
 
         @ConditionalOnMissingBean(name = "callbackAuthorizeViewResolver")
