@@ -164,6 +164,15 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
                         return Optional.of(clazz.cast(CollectionUtils.wrapArrayList(values)));
                     }
                     val singleValue = EncodingUtils.urlDecode(values[0]);
+                    if (Long.class.isAssignableFrom(clazz)){
+                        return Optional.ofNullable(singleValue).map(Long::parseLong).map(clazz::cast);
+                    }
+                    if (Integer.class.isAssignableFrom(clazz)){
+                        return Optional.ofNullable(singleValue).map(Integer::parseInt).map(clazz::cast);
+                    }
+                    if (Double.class.isAssignableFrom(clazz)){
+                        return Optional.ofNullable(singleValue).map(Double::parseDouble).map(clazz::cast);
+                    }
                     return Optional.ofNullable(singleValue).map(clazz::cast);
                 }
                 return Optional.empty();
