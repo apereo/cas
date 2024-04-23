@@ -6,7 +6,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.sso.SingleSignOnProperties;
 import org.apereo.cas.configuration.support.TriStateBoolean;
@@ -22,8 +22,12 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.autoconfigure.endpoint.EndpointAutoConfiguration;
+import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -37,8 +41,13 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @Tag("Webflow")
-@SpringBootTest(classes = CasCoreHttpConfiguration.class)
-@EnableConfigurationProperties(CasConfigurationProperties.class)
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
+    WebEndpointAutoConfiguration.class,
+    EndpointAutoConfiguration.class,
+    CasCoreWebConfiguration.class
+}, properties = "spring.main.allow-bean-definition-overriding=true")
+@EnableConfigurationProperties({CasConfigurationProperties.class, WebProperties.class})
 class DefaultSingleSignOnParticipationStrategyTests {
 
     @Autowired

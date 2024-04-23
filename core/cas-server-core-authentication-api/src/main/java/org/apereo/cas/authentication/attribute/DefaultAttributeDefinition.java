@@ -82,6 +82,8 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
     private Map<String, String> patterns = new LinkedHashMap<>();
 
     private String flattened;
+
+    private boolean singleValue;
     
     private static List<Object> formatValuesWithScope(final String scope, final List<Object> currentValues) {
         return currentValues

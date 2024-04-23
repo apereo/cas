@@ -1,9 +1,11 @@
 package org.apereo.cas.authentication.attribute;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -97,7 +99,13 @@ public interface AttributeDefinition extends Serializable, Comparable<AttributeD
      */
     Map<String, String> getPatterns();
 
-
+    /**
+     * Indicate if the attribute value should be rendered a single element
+     * if the container that carries the attribute values has a size of 1.
+     * @return true/false
+     */
+    boolean isSingleValue();
+    
     /**
      * Flatten the final values produced for this definition
      * into a single value, and separate the results by the assigned delimiter.
@@ -114,4 +122,17 @@ public interface AttributeDefinition extends Serializable, Comparable<AttributeD
      * @throws Throwable the throwable
      */
     List<Object> resolveAttributeValues(AttributeDefinitionResolutionContext context) throws Throwable;
+
+    /**
+     * To attribute value.
+     *
+     * @param givenValues the given values
+     * @return the object
+     */
+    @JsonIgnore
+    default Object toAttributeValue(final Object givenValues) {
+        return isSingleValue() && givenValues instanceof final Collection values && values.size() == 1
+            ? values.iterator().next()
+            : givenValues;
+    }
 }
